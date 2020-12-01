@@ -105,24 +105,24 @@
 															</td>
 													</tr>
 													{% if firearm_details %}
-															{% with firearm_types="firearms ammunition components_for_firearms components_for_ammunition" %}
+														{% with firearm_types="firearms ammunition components_for_firearms components_for_ammunition" %}
 															{% if firearm_details.type.key in firearm_types.split %}
+																{% if firearm_details.type.key == "firearms" %}
 																	<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Year of manufacture</th>
-																			<td class="govuk-table__cell">{{ firearm_details.year_of_manufacture }}</td>
+																		<th scope="row" class="govuk-table__header">Year of manufacture</th>
+																		<td class="govuk-table__cell">{{ firearm_details.year_of_manufacture }}</td>
 																	</tr>
-																	{% if firearm_details.type.key == "firearms" %}
-																			<tr class="govuk-table__row app-table__row">
-																					<th scope="row" class="govuk-table__header">Replica firearm</th>
-																					<td class="govuk-table__cell">
-																							{% if firearm_details.is_replica is not None %}
-																									{{ firearm_details.is_replica|friendly_boolean }}, {{ firearm_details.replica_description }}
-																							{% else %}
-																									N/A
-																							{% endif %}
-																					</td>
-																			</tr>
-																	{% endif %}
+																	<tr class="govuk-table__row app-table__row">
+																		<th scope="row" class="govuk-table__header">Replica firearm</th>
+																		<td class="govuk-table__cell">
+																			{% if firearm_details.is_replica is not None %}
+																				{{ firearm_details.is_replica|friendly_boolean }}, {{ firearm_details.replica_description }}
+																			{% else %}
+																				N/A
+																			{% endif %}
+																		</td>
+																	</tr>
+																{% endif %}
 
 																	<tr class="govuk-table__row app-table__row">
 																			<th scope="row" class="govuk-table__header">Calibre</th>
