@@ -13,8 +13,11 @@ from lite_forms.components import Option, TextArea
 def get_units(request, units=[]):  # noqa
     if units:
         return units
-    data = client.get(request, "/static/units/").json().get("units")
-    for key, value in data.items():
+    response = client.get(request, "/static/units/")
+    response.raise_for_status()
+    parsed = response.json()
+
+    for key, value in parsed["units"].items():
         units.append(Option(key, value))
     return units
 

@@ -188,6 +188,41 @@
                                 </tr>
                             {% endif %}
                             {% endwith %}
+
+                            {% if good_on_application.firearm_details.has_proof_mark is not None %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Has valid proof marks</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.firearm_details.has_proof_mark %}
+                                            Yes
+                                        {% else %}
+                                            No, {{ good_on_application.firearm_details.no_proof_mark_details }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% if good_on_application.firearm_details.has_proof_mark is not None %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Deactivated</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.firearm_details.is_deactivated %}
+                                            Yes, {{ good_on_application.firearm_details.date_of_deactivation }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Proof house standard</th>
+                                    <td class="govuk-table__cell">
+                                        {% if good_on_application.firearm_details.deactivation_standard %}
+                                            Yes, {{ good_on_application.firearm_details.deactivation_standard }}
+                                        {% else %}
+                                            No, {{ good_on_application.firearm_details.deactivation_standard_other }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
                         {% endif %}
                         <tr class="govuk-table__row app-table__row">
                             <th scope="row" class="govuk-table__header">Incorporated</th>
@@ -230,4 +265,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js" integrity="sha512-XITCo00srdVr9XH7ep5JEijPPpLA60TqvvoqLCyQlIdctLUjEsIRCtlgSaoj+RbsF+e/YnkaRTV/7Ei5GvVylg==" crossorigin="anonymous"></script>
     <script src="{% static 'javascripts/search-cases.js' %}"></script>
-    {% endblock %}
+{% endblock %}

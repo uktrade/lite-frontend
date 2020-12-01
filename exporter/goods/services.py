@@ -87,6 +87,19 @@ def add_firearm_details_to_data(json):
         del json["identification_markings_details"]
         del json["no_identification_markings_details"]
 
+    for name in [
+        "date_of_deactivation",
+        "has_proof_mark",
+        "no_proof_mark_details",
+        "is_deactivated",
+        "date_of_deactivation",
+        "deactivation_standard",
+        "deactivation_standard_other",
+        "is_deactivated_to_standard",
+    ]:
+        if name in json:
+            firearm_details[name] = json.pop(name)
+
     json["firearm_details"] = firearm_details
     return json
 

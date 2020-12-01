@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 
+from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
@@ -54,7 +55,7 @@ def product_category_form(request):
                     Option(key="group1_device", value=CreateGoodForm.ProductCategory.GROUP1_DEVICE),
                     Option(key="group1_components", value=CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
                     Option(key="group1_materials", value=CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
-                    Option(key="group2_firearms", value=CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
+                    Option(key=PRODUCT_CATEGORY_FIREARM, value=CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
                     Option(key="group3_software", value=CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
                     Option(key="group3_technology", value=CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
                 ],
