@@ -766,6 +766,7 @@ def enter_firearm_year_of_manufacture(driver, year):  # noqa
     good_details_page.enter_year_of_manufacture(year)
     functions.click_submit(driver)
 
+
 @when(parsers.parse('I enter calibre as "{calibre}"'))
 def enter_firearm_calibre(driver, calibre):  # noqa
     good_details_page = AddGoodDetails(driver)
