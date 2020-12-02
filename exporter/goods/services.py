@@ -53,9 +53,7 @@ def add_firearm_details_to_data(json):
     Return a firearm_details dictionary to be used when creating/editing a group 2 firearm good
     Mutable - items in firearm_details are removed from the original json (duplicates)
     """
-    firearm_details = {
-        "is_sporting_shotgun": False
-    }
+    firearm_details = {}
     if "product_type_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
         firearm_details["type"] = json.get("type")
@@ -110,7 +108,11 @@ def add_firearm_details_to_data(json):
         if name in json:
             firearm_details[name] = json.pop(name)
 
-    json["firearm_details"] = firearm_details
+    if firearm_details and "is_sporting_shotgun" not in firearm_details:
+        firearm_details["is_sporting_shotgun"] = False
+
+    if firearm_details:
+        json["firearm_details"] = firearm_details
     return json
 
 
