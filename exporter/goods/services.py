@@ -108,7 +108,11 @@ def add_firearm_details_to_data(json):
         if name in json:
             firearm_details[name] = json.pop(name)
 
-    json["firearm_details"] = firearm_details
+    if firearm_details and "is_sporting_shotgun" not in firearm_details:
+        firearm_details["is_sporting_shotgun"] = False
+
+    if firearm_details:
+        json["firearm_details"] = firearm_details
     return json
 
 

@@ -75,8 +75,7 @@ def good_on_application_form(request, good, sub_case_type, application_id):
                 questions.append(firearm_proof_mark_field())
             elif firearm_type == "components_for_firearms":
                 questions.append(does_firearm_component_require_proof_marks_field())
-            if firearm_type == "firearms":
-                questions.append(firearm_is_deactivated_field())
+            questions.append(firearm_is_deactivated_field())
 
         return Form(
             title=AddGoodToApplicationForm.TITLE,
