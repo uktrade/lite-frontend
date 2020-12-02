@@ -122,8 +122,9 @@ def test_good_on_application_form_ammunition(default_request, good_ammo, mock_un
         request=default_request, good=good_ammo, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
-    assert len(form.questions) == 7
-    assert form.questions[-1].title == goods.firearm_proof_mark_field().title
+    assert len(form.questions) == 8
+    assert form.questions[-2].title == goods.firearm_proof_mark_field().title
+    assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
 
 
 def test_good_on_application_form_firearm(default_request, good_shotgun, mock_units):
@@ -141,8 +142,9 @@ def test_good_on_application_form_firearm_component(default_request, good_gun_ba
         request=default_request, good=good_gun_barrel, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
-    assert len(form.questions) == 7
-    assert form.questions[-1].options[0].components[0].title == goods.firearm_proof_mark_field().title
+    assert len(form.questions) == 8
+    assert form.questions[-2].options[0].components[0].title == goods.firearm_proof_mark_field().title
+    assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
 
 
 def test_good_on_application_form_not_firearm(default_request, good_widget, mock_units):
