@@ -626,6 +626,7 @@ def firearm_replica_form(firearm_type):
 def firearm_calibre_details_form():
     return Form(
         title="What is the calibre of the product?",
+        default_button_name="Save and continue",
         questions=[
             HiddenField("firearm_calibre_step", True),
             TextInput(title="", description="", name="calibre", optional=False,),
