@@ -122,6 +122,16 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             "software_related_to_firearms",
             "technology_related_to_firearms",
         ]
+        selected_section = copied_request.get("firearms_act_section")
+        show_section_upload_form = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", False) and (
+            selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
+        )
+        section = ""
+        if selected_section == "firearms_act_section1":
+            section = "Section 1"
+        elif selected_section == "firearms_act_section2":
+            section = "Section 2"
+
         self.forms = add_good_form_group(
             request,
             is_pv_graded,
@@ -130,6 +140,8 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             is_firearms_core,
             is_firearms_accessory,
             is_firearms_software_tech,
+            show_section_upload_form,
+            section,
             draft_pk=self.draft_pk,
             base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
         )

@@ -38,6 +38,7 @@ from lite_forms.components import (
     FormGroup,
     Heading,
     HelpSection,
+    Checkboxes,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
@@ -343,6 +344,8 @@ def add_good_form_group(
     is_firearms_core: bool = None,
     is_firearms_accessory: bool = None,
     is_firearms_software_tech: bool = None,
+    show_section_upload_form: bool = None,
+    section: str = "",
     draft_pk: str = None,
     base_form_back_link: str = None,
 ):
@@ -358,7 +361,10 @@ def add_good_form_group(
             conditional(is_firearm and bool(draft_pk), firearm_year_of_manufacture_details_form()),
             conditional(is_firearm, firearm_replica_form(request.POST.get("type"))),
             conditional(is_firearms_core, firearm_calibre_details_form()),
-            conditional(is_firearms_core, firearms_act_confirmation_form()),
+            conditional(is_firearms_core and bool(draft_pk), firearms_act_confirmation_form()),
+            conditional(
+                is_firearms_core and bool(show_section_upload_form), upload_firearms_act_certificate_form(section, None)
+            ),
             conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
@@ -672,27 +678,64 @@ def firearms_act_confirmation_form():
                 name="is_covered_by_firearm_act_section_one_two_or_five",
                 options=[
                     Option(
-                        key=True,
+                        key="Yes",
                         value=CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
                         components=[
-                            TextInput(
-                                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_CERTIFICATE_NUMBER,
-                                description="",
-                                name="section_certificate_number",
-                                optional=False,
-                            ),
-                            DateInput(
-                                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE,
-                                description=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE_HINT,
-                                prefix="section_certificate_date_of_expiry",
-                                name="section_certificate_date_of_expiry",
-                            ),
+                            RadioButtons(
+                                title="Select section",
+                                name="firearms_act_section",
+                                options=[
+                                    Option(key="firearms_act_section1", value="Section 1"),
+                                    Option(key="firearms_act_section2", value="Section 2"),
+                                ],
+                            )
                         ],
                     ),
-                    Option(key=False, value=CreateGoodForm.FirearmGood.FirearmsActCertificate.NO),
+                    Option(key="No", value=CreateGoodForm.FirearmGood.FirearmsActCertificate.NO),
+                    Option(key="Unsure", value=CreateGoodForm.FirearmGood.FirearmsActCertificate.DONT_KNOW),
                 ],
             ),
         ],
+    )
+
+
+def upload_firearms_act_certificate_form(section, back_link):
+    return Form(
+        title=f"Upload your Firearms Act 1968 {section} certificate",
+        description="The file must be smaller than 50MB",
+        questions=[
+            FileUpload(),
+            TextInput(
+                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_CERTIFICATE_NUMBER,
+                description="",
+                name="section_certificate_number",
+                optional=False,
+            ),
+            DateInput(
+                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE,
+                description=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE_HINT,
+                prefix="section_certificate_date_of_expiry",
+                name="section_certificate_date_of_expiry",
+            ),
+            Label(text="Or"),
+            Checkboxes(
+                name="section_certificate_missing",
+                options=[
+                    Option(
+                        key="section_certificate_missing",
+                        value=f"I do not have a Firearms Act 1968 {section} certificate",
+                    )
+                ],
+            ),
+            TextArea(
+                title="Provide a reason why you do not have a certificate",
+                name="section_certificate_missing_reason",
+                optional=False,
+            ),
+        ],
+        back_link=back_link,
+        buttons=[Button("Save and continue", "submit")],
+        javascript_imports={"/javascripts/add-good.js"},
     )
 
 
