@@ -198,6 +198,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             is_firearms_core,
             is_firearms_accessory,
             is_firearms_software_tech,
+            base_form_back_link=reverse("goods:goods"),
         )
 
         # we require the form index of the last form in the group, not the total number
