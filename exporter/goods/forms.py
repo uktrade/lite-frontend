@@ -351,7 +351,7 @@ def add_good_form_group(
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
-            group_two_product_type_form(draft_pk, back_link=base_form_back_link),
+            group_two_product_type_form(back_link=base_form_back_link),
             conditional(is_firearms_core and draft_pk, identification_markings_form()),
             conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
             add_goods_questions(control_list_entries, draft_pk),
@@ -526,7 +526,7 @@ def delete_good_form(good):
     )
 
 
-def group_two_product_type_form(draft_pk, back_link=None):
+def group_two_product_type_form(back_link=None):
     form = Form(
         title=CreateGoodForm.FirearmGood.ProductType.TITLE,
         questions=[
