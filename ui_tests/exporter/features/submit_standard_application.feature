@@ -268,7 +268,7 @@ Feature: I want to indicate the standard licence I want
     And I see summary screen for "Firearms" product with description "new firearm" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
-    And I enter product details with unit of measurement "Number of articles", quantity "5" and value "20,000" and Save
+    And I enter product details with unit of measurement "Number of articles", quantity "5", value "20,000" and deactivated "No" and Save
     Then the product "new firearm" is added to the application
 
 
@@ -286,7 +286,7 @@ Feature: I want to indicate the standard licence I want
     And I see summary screen for "Accessory of a firearm" product with description "firearm accessory" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
-    And I enter product details with unit of measurement "Number of articles", quantity "9" and value "25,000" and Save
+    And I enter product details with unit of measurement "Number of articles", quantity "9", value "25,000" and deactivated "No" and Save
     Then the product "firearm accessory" is added to the application
 
 
@@ -304,7 +304,7 @@ Feature: I want to indicate the standard licence I want
     And I see summary screen for "Software relating to a firearm" product with description "Test software for firearms" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
-    And I enter product details with unit of measurement "Number of articles", quantity "25" and value "50,000" and Save
+    And I enter product details with unit of measurement "Number of articles", quantity "25", value "50,000" and deactivated "No" and Save
     Then the product "Test software for firearms" is added to the application
 
 

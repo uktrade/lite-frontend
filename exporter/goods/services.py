@@ -115,6 +115,19 @@ def add_firearm_details_to_data(json):
     if firearm_details and "is_sporting_shotgun" not in firearm_details:
         firearm_details["is_sporting_shotgun"] = False
 
+    if firearm_details and "year_of_manufacture" not in firearm_details:
+        firearm_details["year_of_manufacture"] = 0
+
+    if firearm_details and "is_covered_by_firearm_act_section_one_two_or_five" not in firearm_details:
+        firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = False
+        firearm_details["section_certificate_number"] = ""
+        firearm_details["section_certificate_date_of_expiry"] = "2012-12-21"
+
+    if firearm_details and "has_identification_markings" not in firearm_details:
+        firearm_details["has_identification_markings"] = False
+        firearm_details["no_identification_markings_details"] = "n/a"
+        firearm_details["identification_markings_details"] = "n/a"
+
     if firearm_details:
         json["firearm_details"] = firearm_details
     return json
