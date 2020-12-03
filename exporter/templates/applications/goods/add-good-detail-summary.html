@@ -21,9 +21,6 @@
 				{{ good.firearm_details.type.value|default_na }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
-				{% if good.status.key == 'draft' %}
-					<a id="change-product-type" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_type' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.PRODUCT_TYPE" %}</span></a>
-				{% endif %}
 			</dd>
 		</div>
 		{% if good.item_category.key == 'group2_firearms' %}
