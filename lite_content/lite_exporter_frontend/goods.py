@@ -247,9 +247,10 @@ class CreateGoodForm:
             NO = "No"
 
         class IdentificationMarkings:
-            TITLE = "Does the product have identification markings?"
-            MARKINGS_DETAILS = "Provide the identification markings"
-            NO_MARKINGS_DETAILS = "Explain why there are no identification markings"
+            TITLE = "Has the product been marked with a serial number or other type of identification marking?"
+            MARKINGS_DETAILS = "Serial number or other type of marking"
+            MARKINGS_HELP_TEXT = "Enter one or more"
+            NO_MARKINGS_DETAILS = "Explain why the product has not been marked"
             YES = "Yes"
             NO = "No"
 

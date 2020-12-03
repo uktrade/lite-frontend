@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from exporter.applications.forms.goods import good_on_application_form
+from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.services import (
     get_application,
@@ -16,7 +16,7 @@ from exporter.applications.services import (
     post_good_on_application,
     delete_application_preexisting_good,
     add_document_data,
-    validate_application_good,
+    validate_good_on_application,
 )
 from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, PRODUCT_CATEGORY_FIREARM
 from core.helpers import convert_dict_to_query_params
@@ -25,7 +25,6 @@ from exporter.goods.forms import (
     document_grading_form,
     attach_documents_form,
     add_good_form_group,
-    firearm_year_of_manufacture_details_form,
 )
 from exporter.goods.services import (
     get_goods,
@@ -35,7 +34,7 @@ from exporter.goods.services import (
     post_good_document_sensitivity,
     validate_good,
 )
-from lite_forms.components import FiltersBar, TextInput, FormGroup
+from lite_forms.components import FiltersBar, TextInput
 from exporter.goods.helpers import FIREARM_AMMUNITION_COMPONENT_TYPES
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
@@ -199,26 +198,18 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
 class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
+        good_pk = kwargs["good_pk"]
         application = get_application(self.request, self.object_pk)
-        good, _ = get_good(request, kwargs["good_pk"])
+        good, _ = get_good(request, good_pk)
 
-        is_firearm = good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM
+        sub_case_type = application["case_type"]["sub_type"]
+        is_preexisting = str_to_bool(request.GET.get("preexisting", True))
 
-        # These are only asked if user is adding a preexisting good, but not
-        # if the good being added to the application has been created as
-        # part of this same flow
-        preexisting_good_forms = (
-            [firearm_year_of_manufacture_details_form(good.get("id")) if is_firearm else None,]
-            if str_to_bool(request.GET.get("preexisting", True))
-            else []
+        self.forms = good_on_application_form_group(
+            request, is_preexisting=is_preexisting, good=good, sub_case_type=sub_case_type, draft_pk=self.object_pk
         )
 
-        always_asked_forms = [
-            good_on_application_form(request, good, application["case_type"]["sub_type"], self.object_pk),
-        ]
-
-        self.forms = FormGroup(forms=preexisting_good_forms + always_asked_forms)
-        self.action = validate_application_good
+        self.action = validate_good_on_application
         self.success_url = reverse_lazy("applications:goods", kwargs={"pk": self.object_pk})
 
     def on_submission(self, request, **kwargs):

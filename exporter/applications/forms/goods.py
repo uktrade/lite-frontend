@@ -3,8 +3,10 @@ from django.urls import reverse_lazy
 from exporter.core.constants import EXHIBITION, PRODUCT_CATEGORY_FIREARM
 from exporter.core.services import get_units, get_item_types
 from exporter.goods.helpers import good_summary
+from exporter.goods.forms import identification_markings_form, firearm_year_of_manufacture_details_form
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.goods import AddGoodToApplicationForm
+from lite_forms.helpers import conditional
 from lite_forms.components import (
     Form,
     HiddenField,
@@ -16,10 +18,11 @@ from lite_forms.components import (
     BackLink,
     TextArea,
     DateInput,
+    FormGroup,
 )
 
 
-def exhibition_good_on_application_form(request, good_id, application_id):
+def exhibition_item_type(request, good_id, application_id):
     return Form(
         title=AddGoodToApplicationForm.Exhibition.TITLE,
         description=AddGoodToApplicationForm.Exhibition.DESCRIPTION,
@@ -34,9 +37,21 @@ def exhibition_good_on_application_form(request, good_id, application_id):
     )
 
 
-def good_on_application_form(request, good, sub_case_type, application_id):
+def good_on_application_form_group(request, is_preexisting, good, sub_case_type, draft_pk):
+    # is_preexisting are only asked if user is adding a preexisting good from their product list
+    # but not if the good being added to the application is a new good created as part of this same flow
+    return FormGroup(
+        [
+            conditional(is_preexisting, identification_markings_form(draft_pk)),
+            unit_quantity_value(request, good, sub_case_type, draft_pk),
+            conditional(is_preexisting, firearm_year_of_manufacture_details_form()),
+        ]
+    )
+
+
+def unit_quantity_value(request, good, sub_case_type, application_id):
     if sub_case_type["key"] == EXHIBITION:
-        return exhibition_good_on_application_form(request, good.get("id"), application_id)
+        return exhibition_item_type(request, good.get("id"), application_id)
     else:
         questions = [
             good_summary(good),
@@ -75,7 +90,8 @@ def good_on_application_form(request, good, sub_case_type, application_id):
                 questions.append(firearm_proof_mark_field())
             elif firearm_type == "components_for_firearms":
                 questions.append(does_firearm_component_require_proof_marks_field())
-            questions.append(firearm_is_deactivated_field())
+            if firearm_type == "firearms":
+                questions.append(firearm_is_deactivated_field())
 
         return Form(
             title=AddGoodToApplicationForm.TITLE,
