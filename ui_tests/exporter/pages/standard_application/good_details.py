@@ -25,3 +25,7 @@ class StandardApplicationGoodDetails(BasePage):
 
     def check_is_good_incorporated_false(self):
         self.driver.find_element_by_id(self.RADIO_IS_GOOD_INCORPORATED_FALSE_ID).click()
+
+    def set_deactivated_status(self, status):
+        status = "True" if status == "Yes" else "False"
+        self.driver.find_element_by_id(f"is_deactivated-{status}").click()

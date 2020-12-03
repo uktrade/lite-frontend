@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -132,6 +132,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             is_firearms_accessory,
             is_firearms_software_tech,
             draft_pk=self.draft_pk,
+            base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
         )
 
         # we require the form index of the last form in the group, not the total number

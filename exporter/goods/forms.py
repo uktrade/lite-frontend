@@ -344,11 +344,12 @@ def add_good_form_group(
     is_firearms_accessory: bool = None,
     is_firearms_software_tech: bool = None,
     draft_pk: str = None,
+    base_form_back_link: str = None,
 ):
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
-            group_two_product_type_form(),
+            group_two_product_type_form(back_link=base_form_back_link),
             conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
@@ -523,8 +524,8 @@ def delete_good_form(good):
     )
 
 
-def group_two_product_type_form():
-    return Form(
+def group_two_product_type_form(back_link=None):
+    form = Form(
         title=CreateGoodForm.FirearmGood.ProductType.TITLE,
         questions=[
             HiddenField("product_type_step", True),
@@ -556,6 +557,11 @@ def group_two_product_type_form():
         ],
         default_button_name="Save and continue",
     )
+
+    if back_link:
+        form.back_link = BackLink("Back", back_link)
+
+    return form
 
 
 def firearms_sporting_shotgun_form(firearm_type):

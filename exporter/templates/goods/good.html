@@ -296,13 +296,6 @@
 						{{ good.firearm_details.type.value|default_na }}
 					</dd>
 					<dd class="govuk-summary-list__actions">
-						{% if good.status.key == 'draft' %}
-							{% if draft_pk %}
-							<a id="change-product-type" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearm_type_add_application' good.id draft_pk %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.PRODUCT_TYPE" %}</span></a>
-							{% else %}
-							<a id="change-product-type" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearm_type' good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "goods.GoodPage.Table.FirearmDetails.PRODUCT_TYPE" %}</span></a>
-							{% endif %}
-						{% endif %}
 					</dd>
 				</div>
 

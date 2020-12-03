@@ -865,15 +865,16 @@ def summary_screen_for_product_type(driver, product_type_value, description, pro
 
 @when(
     parsers.parse(
-        'I enter product details with unit of measurement "{unit}", quantity "{quantity}" and value "{value}" and Save'
+        'I enter product details with unit of measurement "{unit}", quantity "{quantity}", value "{value}" and deactivated "{status}" and Save'
     )
 )  # noqa
-def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, value):  # noqa
+def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, value, status):  # noqa
     details_page = StandardApplicationGoodDetails(driver)
     details_page.select_unit(unit)
     details_page.enter_quantity(quantity)
     details_page.enter_value(value)
     details_page.check_is_good_incorporated_false()
+    details_page.set_deactivated_status(status)
 
     functions.click_submit(driver)
 
