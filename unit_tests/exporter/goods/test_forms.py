@@ -101,50 +101,49 @@ def pv_gradings(mock_pv_gradings, rf, client):
     [
         (
             {"is_firearms_core": True},
-            6,
+            5,
             [
-                {"findex": 0, "qindex": 1, "name": "type"},
-                {"findex": 1, "qindex": 2, "name": "is_sporting_shotgun"},
-                {"findex": 2, "qindex": 0, "name": "description"},
-                {"findex": 3, "qindex": 1, "name": "calibre"},
-                {"findex": 4, "qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
-                {"findex": 5, "qindex": 1, "name": "has_identification_markings"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 2, "name": "is_sporting_shotgun"},
+                {"qindex": 0, "name": "description"},
+                {"qindex": 1, "name": "calibre"},
+                {"qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
         (
             {"is_firearms_core": True, "draft_pk": "123", "is_firearm": True},
             8,
             [
-                {"findex": 0, "qindex": 1, "name": "type"},
-                {"findex": 1, "qindex": 2, "name": "is_sporting_shotgun"},
-                {"findex": 2, "qindex": 0, "name": "description"},
-                {"findex": 3, "qindex": 1, "name": "year_of_manufacture"},
-                {"findex": 4, "qindex": 2, "name": "is_replica"},
-                {"findex": 5, "qindex": 1, "name": "calibre"},
-                {"findex": 6, "qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
-                {"findex": 7, "qindex": 1, "name": "has_identification_markings"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 1, "name": "has_identification_markings"},
+                {"qindex": 2, "name": "is_sporting_shotgun"},
+                {"qindex": 0, "name": "description"},
+                {"qindex": 1, "name": "year_of_manufacture"},
+                {"qindex": 2, "name": "is_replica"},
+                {"qindex": 1, "name": "calibre"},
+                {"qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
         (
             {"is_firearms_accessory": True},
             5,
             [
-                {"findex": 0, "qindex": 1, "name": "type"},
-                {"findex": 1, "qindex": 0, "name": "description"},
-                {"findex": 2, "qindex": 1, "name": "is_military_use"},
-                {"findex": 3, "qindex": 1, "name": "is_component"},
-                {"findex": 4, "qindex": 1, "name": "uses_information_security"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 0, "name": "description"},
+                {"qindex": 1, "name": "is_military_use"},
+                {"qindex": 1, "name": "is_component"},
+                {"qindex": 1, "name": "uses_information_security"},
             ],
         ),
         (
             {"is_firearms_software_tech": True},
             5,
             [
-                {"findex": 0, "qindex": 1, "name": "type"},
-                {"findex": 1, "qindex": 0, "name": "description"},
-                {"findex": 2, "qindex": 1, "name": "software_or_technology_details"},
-                {"findex": 3, "qindex": 1, "name": "is_military_use"},
-                {"findex": 4, "qindex": 1, "name": "uses_information_security"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 0, "name": "description"},
+                {"qindex": 1, "name": "software_or_technology_details"},
+                {"qindex": 1, "name": "is_military_use"},
+                {"qindex": 1, "name": "uses_information_security"},
             ],
         ),
     ],
@@ -154,8 +153,8 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
     data = {"product_type_step": True, "type": "firearms"}
     kwargs = {"is_pv_graded": False, **params}
     request = post_request(rf, client, data=data)
-    form = forms.add_good_form_group(request, **kwargs)
-    assert len(form.forms) == int(num_forms)
+    form_parts = forms.add_good_form_group(request, **kwargs).forms
+    assert len(form_parts) == int(num_forms)
 
-    for q in question_checks:
-        assert form.forms[q["findex"]].questions[q["qindex"]].name == q["name"]
+    for i, q in enumerate(question_checks):
+        assert form_parts[i].questions[q["qindex"]].name == q["name"]
