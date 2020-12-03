@@ -101,11 +101,10 @@ def get_application_goods(request, pk):
     return data.json().get("goods") if data.status_code == HTTPStatus.OK else None
 
 
-def validate_application_good(request, pk, json):
-    post_data = serialize_good_on_app_data(json)
+def validate_good_on_application(request, pk, json):
+    post_data = json
     post_data["validate_only"] = True
-    response = client.post(request, f"/applications/{pk}/goods/", post_data)
-    return response.json(), response.status_code
+    return post_good_on_application(request, pk, post_data)
 
 
 def get_application_goods_types(request, pk):
@@ -124,9 +123,6 @@ def serialize_good_on_app_data(json):
         post_data = remove_prefix(json, "good_on_app_")
     else:
         post_data = json
-
-    if "good_id" not in post_data:
-        post_data["good_id"] = json["good_id"]
     for key in {"value", "quantity"} & set(post_data.keys()):
         if "," in post_data[key]:
             post_data[key] = post_data[key].replace(",", "")
