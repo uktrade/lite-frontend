@@ -95,6 +95,7 @@ class GoodPage:
             PRODUCT_TYPE = "Product type"
             SPORTING_SHOTGUN = "Sporting shotgun"
             YEAR_OF_MANUFACTURE = "Year of manufacture"
+            REPLICA_FIREARM = "Replica firearm"
             CALIBRE = "Calibre"
             COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
             IDENTIFICATION_MARKINGS = "Identification markings"
@@ -224,6 +225,10 @@ class CreateGoodForm:
             YEAR_OF_MANUFACTURE = "Year of manufacture"
             CALIBRE = "Enter the calibre"
 
+        class FirearmsReplica:
+            TITLE = "Is the product a replica firearm?"
+            DESCRIPTION = "Describe the firearm the product is a replica of"
+
         class FirearmsActCertificate:
             TITLE = "Is the product covered by Section 1, Section 2 or Section 5 of the Firearms Act 1968?"
 
@@ -242,9 +247,10 @@ class CreateGoodForm:
             NO = "No"
 
         class IdentificationMarkings:
-            TITLE = "Does the product have identification markings?"
-            MARKINGS_DETAILS = "Provide the identification markings"
-            NO_MARKINGS_DETAILS = "Explain why there are no identification markings"
+            TITLE = "Has the product been marked with a serial number or other type of identification marking?"
+            MARKINGS_DETAILS = "Serial number or other type of marking"
+            MARKINGS_HELP_TEXT = "Enter one or more"
+            NO_MARKINGS_DETAILS = "Explain why the product has not been marked"
             YES = "Yes"
             NO = "No"
 

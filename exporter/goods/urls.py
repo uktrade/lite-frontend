@@ -19,7 +19,13 @@ urlpatterns = [
         views.EditFirearmSportingShotgunStatus.as_view(),
         name="sporting-shotgun",
     ),
-    path("<uuid:pk>/edit-firearm-details/ammunition/", views.EditAmmunition.as_view(), name="ammunition"),
+    path(
+        "<uuid:pk>/edit-firearm-details/year-of-manufacture/",
+        views.EditYearOfManufacture.as_view(),
+        name="year-of-manufacture",
+    ),
+    path("<uuid:pk>/edit-firearm-details/replica/", views.EditFirearmReplica.as_view(), name="replica",),
+    path("<uuid:pk>/edit-firearm-details/calibre/", views.EditCalibre.as_view(), name="calibre"),
     path("<uuid:pk>/edit-firearm-details/firearms-act/", views.EditFirearmActDetails.as_view(), name="firearms_act"),
     path(
         "<uuid:pk>/edit-firearm-details/identification_markings/",
@@ -46,9 +52,14 @@ if settings.FEATURE_FLAG_FIREARMS_ENABLED:
             name="sporting-shotgun-add-application",
         ),
         path(
-            "<uuid:pk>/edit-firearm-details/ammunition/application/<uuid:draft_pk>/",
-            views.EditAmmunition.as_view(),
-            name="ammunition-add-application",
+            "<uuid:pk>/edit-firearm-details/year-of-manufacture/application/<uuid:draft_pk>/",
+            views.EditCalibre.as_view(),
+            name="year-of-manufacture-add-application",
+        ),
+        path(
+            "<uuid:pk>/edit-firearm-details/calibre/application/<uuid:draft_pk>/",
+            views.EditCalibre.as_view(),
+            name="calibre-add-application",
         ),
         path(
             "<uuid:pk>/software-technology/application/<uuid:draft_pk>/",

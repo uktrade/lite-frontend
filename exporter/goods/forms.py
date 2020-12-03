@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 
+from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
@@ -54,7 +55,7 @@ def product_category_form(request):
                     Option(key="group1_device", value=CreateGoodForm.ProductCategory.GROUP1_DEVICE),
                     Option(key="group1_components", value=CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
                     Option(key="group1_materials", value=CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
-                    Option(key="group2_firearms", value=CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
+                    Option(key=PRODUCT_CATEGORY_FIREARM, value=CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
                     Option(key="group3_software", value=CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
                     Option(key="group3_technology", value=CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
                 ],
@@ -338,21 +339,26 @@ def add_good_form_group(
     request,
     is_pv_graded: bool = None,
     is_software_technology: bool = None,
+    is_firearm: bool = None,
     is_firearms_core: bool = None,
     is_firearms_accessory: bool = None,
     is_firearms_software_tech: bool = None,
     draft_pk: str = None,
+    base_form_back_link: str = None,
 ):
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
-            group_two_product_type_form(),
+            group_two_product_type_form(back_link=base_form_back_link),
+            conditional(is_firearms_core and draft_pk, identification_markings_form()),
             conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
-            conditional(is_firearms_core, firearm_ammunition_details_form()),
+            # only ask if adding to a draft application
+            conditional(is_firearm and bool(draft_pk), firearm_year_of_manufacture_details_form()),
+            conditional(is_firearm, firearm_replica_form(request.POST.get("type"))),
+            conditional(is_firearms_core, firearm_calibre_details_form()),
             conditional(is_firearms_core, firearms_act_confirmation_form()),
-            conditional(is_firearms_core, identification_markings_form()),
             conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
@@ -368,7 +374,8 @@ def add_firearm_good_form_group(request, is_pv_graded: bool = None, draft_pk: st
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             group_two_product_type_form(),
-            firearm_ammunition_details_form(),
+            firearm_year_of_manufacture_details_form(),
+            firearm_calibre_details_form(),
             firearms_act_confirmation_form(),
             identification_markings_form(),
         ]
@@ -517,8 +524,8 @@ def delete_good_form(good):
     )
 
 
-def group_two_product_type_form():
-    return Form(
+def group_two_product_type_form(back_link=None):
+    form = Form(
         title=CreateGoodForm.FirearmGood.ProductType.TITLE,
         questions=[
             HiddenField("product_type_step", True),
@@ -551,6 +558,11 @@ def group_two_product_type_form():
         default_button_name="Save and continue",
     )
 
+    if back_link:
+        form.back_link = BackLink("Back", back_link)
+
+    return form
+
 
 def firearms_sporting_shotgun_form(firearm_type):
     title = get_sporting_shotgun_form_title(firearm_type)
@@ -570,23 +582,60 @@ def firearms_sporting_shotgun_form(firearm_type):
     )
 
 
-def firearm_ammunition_details_form():
+def firearm_year_of_manufacture_details_form(good_id=None):
     return Form(
-        title=CreateGoodForm.FirearmGood.FirearmsAmmunitionDetails.TITLE,
+        title="What is the year of manufacture of the firearm?",
+        default_button_name="Save and continue",
+        questions=list(
+            filter(
+                bool,
+                [
+                    HiddenField("good_id", good_id) if good_id else None,
+                    HiddenField("firearm_year_of_manufacture_step", True),
+                    TextInput(description="", name="year_of_manufacture", optional=False,),
+                ],
+            )
+        ),
+    )
+
+
+def firearm_replica_form(firearm_type):
+    return Form(
+        title=CreateGoodForm.FirearmGood.FirearmsReplica.TITLE,
+        default_button_name="Save and continue",
         questions=[
-            HiddenField("firearm_ammunition_step", True),
-            TextInput(
-                title=CreateGoodForm.FirearmGood.FirearmsAmmunitionDetails.YEAR_OF_MANUFACTURE,
-                description="",
-                name="year_of_manufacture",
-                optional=False,
+            HiddenField("type", firearm_type),
+            HiddenField("is_replica_step", True),
+            RadioButtons(
+                title="",
+                name="is_replica",
+                options=[
+                    Option(
+                        key=True,
+                        value="Yes",
+                        components=[
+                            TextArea(
+                                title=CreateGoodForm.FirearmGood.FirearmsReplica.DESCRIPTION,
+                                description="",
+                                name="replica_description",
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(key=False, value="No",),
+                ],
             ),
-            TextInput(
-                title=CreateGoodForm.FirearmGood.FirearmsAmmunitionDetails.CALIBRE,
-                description="",
-                name="calibre",
-                optional=False,
-            ),
+        ],
+    )
+
+
+def firearm_calibre_details_form():
+    return Form(
+        title="What is the calibre of the product?",
+        default_button_name="Save and continue",
+        questions=[
+            HiddenField("firearm_calibre_step", True),
+            TextInput(title="", description="", name="calibre", optional=False,),
         ],
     )
 
@@ -647,40 +696,41 @@ def firearms_act_confirmation_form():
     )
 
 
-def identification_markings_form():
-    return Form(
-        title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE,
-        questions=[
-            HiddenField("identification_markings_step", True),
-            RadioButtons(
-                title="",
-                name="has_identification_markings",
-                options=[
-                    Option(
-                        key=True,
-                        value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
-                        components=[
-                            TextArea(
-                                title=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_DETAILS,
-                                description="",
-                                name="identification_markings_details",
-                                optional=False,
-                            ),
-                        ],
-                    ),
-                    Option(
-                        key=False,
-                        value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
-                        components=[
-                            TextArea(
-                                title=CreateGoodForm.FirearmGood.IdentificationMarkings.NO_MARKINGS_DETAILS,
-                                description="",
-                                name="no_identification_markings_details",
-                                optional=False,
-                            )
-                        ],
-                    ),
-                ],
-            ),
-        ],
-    )
+def identification_markings_form(draft_pk=None, good_id=None):
+    questions = [
+        HiddenField("identification_markings_step", True),
+        RadioButtons(
+            title="",
+            name="has_identification_markings",
+            options=[
+                Option(
+                    key=True,
+                    value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
+                    components=[
+                        TextArea(
+                            title=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_DETAILS,
+                            description=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_HELP_TEXT,
+                            name="identification_markings_details",
+                            optional=False,
+                        ),
+                    ],
+                ),
+                Option(
+                    key=False,
+                    value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
+                    components=[
+                        TextArea(
+                            title=CreateGoodForm.FirearmGood.IdentificationMarkings.NO_MARKINGS_DETAILS,
+                            description="",
+                            name="no_identification_markings_details",
+                            optional=False,
+                        )
+                    ],
+                ),
+            ],
+        ),
+        HiddenField("pk", draft_pk) if draft_pk else None,
+        HiddenField("good_id", good_id) if good_id else None,
+    ]
+
+    return Form(title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE, questions=questions,)

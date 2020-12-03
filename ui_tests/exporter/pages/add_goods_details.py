@@ -157,6 +157,14 @@ class AddGoodDetails(BasePage):
     def enter_year_of_manufacture(self, year):
         self.enter_related_field_details(self.FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID, text=year)
 
+    def select_replica_status(self, status, description=""):
+        status = "True" if status == "Yes" else "False"
+        self.driver.find_element_by_id(f"is_replica-{status}").click()
+        if status == "True":
+            desc = self.driver.find_element_by_id("replica_description")
+            desc.clear()
+            desc.send_keys(description)
+
     def enter_calibre(self, calibre):
         self.enter_related_field_details(self.FIREARM_CALIBRE_TEXTFIELD_ID, text=calibre)
 
