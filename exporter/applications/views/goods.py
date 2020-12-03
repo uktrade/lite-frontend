@@ -18,7 +18,7 @@ from exporter.applications.services import (
     add_document_data,
     validate_good_on_application,
 )
-from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, PRODUCT_CATEGORY_FIREARM
+from exporter.core.constants import EXHIBITION, APPLICANT_EDITING
 from core.helpers import convert_dict_to_query_params
 from exporter.core.helpers import str_to_bool
 from exporter.goods.forms import (
