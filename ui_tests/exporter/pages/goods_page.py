@@ -3,7 +3,7 @@ from ui_tests.exporter.pages.BasePage import BasePage
 
 class GoodsPage(BasePage):
 
-    LINK_EDIT_ID = "link-edit"
+    LINK_EDIT_ID = "link-edit-description"
     QUERY_TABLE_ID = "query_table"
     BUTTON_DELETE_GOOD_ID = "button-delete-good"
 
@@ -45,3 +45,6 @@ class GoodsPage(BasePage):
 
     def click_delete_button(self):
         self.driver.find_element_by_id(self.BUTTON_DELETE_GOOD_ID).click()
+
+    def get_uploaded_documents_delete_links(self):
+        return self.driver.find_elements_by_link_text("Delete")

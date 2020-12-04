@@ -20,6 +20,9 @@
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.DESCRIPTION' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.PART_NUMBER' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.CONTROL_LIST_ENTRIES' %}</th>
+						{% if feature_flag_firearms_enabled %}
+						<th scope="col" class="govuk-table__header"></th>
+						{% endif %}
 						<th scope="col" class="govuk-table__header"></th>
 					</tr>
 				</thead>
@@ -36,8 +39,13 @@
 							<td class="govuk-table__cell" id="good-control_code">
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
 							</td>
+							{% if feature_flag_firearms_enabled %}
 							<td class="govuk-table__cell lite-!-text-align-right">
-								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+								<a class="govuk-link govuk-link--no-visited-state" id="import-product-view-product" href='{% url "goods:good_detail_application" good.id "application" draft_id %}' draggable="false">View</a>
+							</td>
+							{% endif %}
+							<td class="govuk-table__cell lite-!-text-align-right">
+								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}?preexisting=True" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 									Add <span class="govuk-visually-hidden">{{ good.description }}</span> to application
 								</a>
 							</td>

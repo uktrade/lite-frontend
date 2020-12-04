@@ -5,15 +5,15 @@
     <input type="hidden" name="page" id="id_page">
     <div class="lite-filter-bar govuk-!-margin-top-0">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
+            <div class="govuk-grid-column-one-half">
                 <div id="div_id_term" class="govuk-form-group">
-                    <label for="id_term" class="govuk-label">Product name</label>
+                    <label for="id_term" class="govuk-label govuk-!-font-weight-bold">Search keywords</label>
                     <input id="id_search_string" type="text" name="search_string" class="govuk-input">
                 </div>
             </div>
         </div>
         <div class="lite-filter-bar__buttons">
-            <button type="submit" class="govuk-button" id="search-button">Search</button>
+            <button type="submit" class="govuk-button" id="search-button">Run search</button>
             <a href="?" class="govuk-button govuk-button--secondary govuk-button--secondary-white"
                 id="button-clear-filters">
                 Clear
@@ -25,47 +25,38 @@
 
     </div>
     <div class="results-area">
-        <p id="text-case-count" class="lite-filters__hint-text">{{ results.count }} items found</p>
+        <p class="govuk-body govuk-!-margin-bottom-0">{{ results.count }} results found</p>
         {% if results.count %}
 
-        <table class="govuk-table" id="results-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">Name</th>
-                    <th class="govuk-table__header" scope="col">Destination</th>
-                    <th class="govuk-table__header" scope="col">ARS</th>
-                    <th class="govuk-table__header" scope="col">Rating</th>
-                    <th class="govuk-table__header" scope="col">Regime</th>
-                    <th class="govuk-table__header" scope="col">Comment</th>
-                    <th class="govuk-table__header" scope="col">Date</th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                {% for item in results.results %}
-                    {% if item.inner_hits %}
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell govuk-table__cell"  style="border-top: 3px solid black; padding-top: 40px; padding-bottom: 40px; font-size: 25px" colspan="7">
-                               {{ item.canonical_name.0 }}
-                            </td>
-                        </tr>
-                    {% endif %}
-
+        <table class="govuk-table productpedia-results-table" id="results-table">
+            {% for item in results.results %}
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-table__cell govuk-!-padding-top-6 govuk-!-padding-bottom-4 govuk-!-font-weight-bold" colspan="7">
+                           {{ item.canonical_name.0 }}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row" tyle="border-top: 0;">
+                        <th class="govuk-table__header" scope="col">Destination</th>
+                        <th class="govuk-table__header govuk-!-width-one-quarter" scope="col">ARS</th>
+                        <th class="govuk-table__header" scope="col">Rating</th>
+                        <th class="govuk-table__header" scope="col">Regime</th>
+                        <th class="govuk-table__header" scope="col">Date added</th>
+                        <th class="govuk-table__header govuk-!-width-one-quarter" scope="col">Comment</th>
+                        <th class="govuk-table__header" scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
                     {% for item in item.inner_hits.hits %}
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell govuk-table__cell" >
-                                <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-                                    <a href="{% url 'search:product-details' pk=item.id %}">{{ item.name|default:item.description }}</a>
-                                </p>
-                                <div style="background-color:{% if item.index == 'spire' %}#2980B9;{% else %}#b95c29{%endif %}" class="govuk-tag govuk-!-margin-0 govuk-!-margin-top-2">
-                                    <details>
-                                        <summary>{{ item.index|upper }} </summary>
-                                        <code style="line-break:anywhere">{{ item|pprint_dict|safe }}</code>
-                                    </details>
-                                </div>
+                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
+                                <details>
+                                    <summary>{{ item.destination }}</summary>
+                                    <code style="line-break:anywhere">{{ item|pprint_dict|safe }}</code>
+                                </details>
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell">{{ item.destination }}</td>
-                            <td class="govuk-table__cell govuk-table__cell">{{ item.report_summary }}</td>
-                            <td class="govuk-table__cell govuk-table__cell">
+                            <td class="govuk-table__cell govuk-!-width-one-quarter govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.report_summary }}</td>
+                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
                                 {% if item.control_list_entries %}
                                     {% for entry in item.control_list_entries %}
                                         <span>{{ entry.rating }}</span>
@@ -77,9 +68,12 @@
                                     None
                                 {% endif %}
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell">{{ item.regime }}</td>
-                            <td class="govuk-table__cell govuk-table__cell">{{ item.rating_comment }}</td>
-                            <td class="govuk-table__cell govuk-table__cell">{{ item.date }}</td>
+                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.regime }}</td>
+                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.date }}</td>
+                            <td class="govuk-table__cell govuk-table__cell govuk-!-width-one-quarter {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.rating_comment }}</td>
+                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
+                                <a href="{% url 'search:product-details' pk=item.id %}">View</a>
+                            </td>
                         </tr>
                     {% endfor %}
                 {% endfor %}

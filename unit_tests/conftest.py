@@ -21,6 +21,12 @@ def mock_control_list_entries(requests_mock, data_control_list_entries):
 
 
 @pytest.fixture
+def mock_pv_gradings(requests_mock):
+    url = client._build_absolute_uri("/static/private-venture-gradings/")
+    yield requests_mock.get(url=url, json={"pv_gradings": []})
+
+
+@pytest.fixture
 def data_open_case():
     return {
         "case": {
@@ -517,25 +523,27 @@ def data_standard_case():
                 "usage": None,
                 "destinations": {
                     "type": "end_user",
-                    "data": {
-                        "id": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
-                        "name": "44",
-                        "address": "44",
-                        "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True,},
-                        "website": "",
-                        "type": "end_user",
-                        "organisation": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",
-                        "document": None,
-                        "sub_type": {"key": "individual", "value": "Individual"},
-                        "sub_type_other": None,
-                        "role": {"key": "other", "value": "Other"},
-                        "role_other": None,
-                        "flags": [],
-                        "copy_of": None,
-                        "deleted_at": None,
-                        "clearance_level": None,
-                        "descriptors": None,
-                    },
+                    "data": [
+                        {
+                            "id": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+                            "name": "44",
+                            "address": "44",
+                            "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True,},
+                            "website": "",
+                            "type": "end_user",
+                            "organisation": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",
+                            "document": None,
+                            "sub_type": {"key": "individual", "value": "Individual"},
+                            "sub_type_other": None,
+                            "role": {"key": "other", "value": "Other"},
+                            "role_other": None,
+                            "flags": [],
+                            "copy_of": None,
+                            "deleted_at": None,
+                            "clearance_level": None,
+                            "descriptors": None,
+                        },
+                    ],
                 },
                 "additional_documents": [],
                 "is_military_end_use_controls": False,

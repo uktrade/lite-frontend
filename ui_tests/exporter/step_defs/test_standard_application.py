@@ -33,6 +33,7 @@ from faker import Faker
 fake = Faker()
 
 scenarios(
+    "../features/goods.feature",
     "../features/submit_standard_application.feature",
     "../features/edit_standard_application.feature",
     strict_gherkin=False,
@@ -98,7 +99,57 @@ def i_add_a_non_incorporated_good_to_the_application(driver, context):  # noqa
     StandardApplicationGoodsPage(driver).click_add_preexisting_good_button()
 
     # Click the "Add to application" link on the first good
-    driver.find_elements_by_css_selector(".govuk-table__row .govuk-link")[0].click()
+    driver.find_elements_by_id("add-to-application")[0].click()
+
+    # Enter good details
+    StandardApplicationGoodDetails(driver).enter_value("1")
+    StandardApplicationGoodDetails(driver).enter_quantity("2")
+    StandardApplicationGoodDetails(driver).select_unit("Number of articles")
+    StandardApplicationGoodDetails(driver).check_is_good_incorporated_true()
+    context.is_good_incorporated = "Yes"
+
+    functions.click_submit(driver)
+
+
+@when("I choose to add a new product")  # noqa
+def i_choose_to_add_a_new_product(driver, context):  # noqa
+    StandardApplicationGoodsPage(driver).click_add_new_good_button()
+
+
+@when("I choose to add a product from product list")  # noqa
+def i_choose_to_add_product_from_product_list(driver, context):  # noqa
+    StandardApplicationGoodsPage(driver).click_add_preexisting_good_button()
+
+
+@when(parsers.parse('I choose to review the product details of product "{index:d}"'))  # noqa
+def i_choose_to_review_product_details(driver, index):  # noqa
+    # Click the "View" link on the given good index
+    detail_link = driver.find_element_by_id("import-product-view-product")
+    detail_link.click()
+
+
+@when("I see option to add product to application on details page")
+def i_see_option_to_add_product_to_application(driver):
+    add_to_application_btn = driver.find_element_by_id("button-add-good-to-application")
+
+
+@when(parsers.parse('I append "{text}" to description and submit'))  # noqa
+def i_update_description(driver, text):  # noqa
+    change_description = driver.find_elements_by_id("link-edit-description")[0]
+    change_description.click()
+
+    desc_element = driver.find_element_by_id("description")
+    updated_description = f"{desc_element.text} {text}"
+    desc_element.clear()
+    desc_element.send_keys(updated_description)
+
+    functions.click_submit(driver)
+
+
+@when("I add product to application")
+def i_add_product_to_application(driver, context):
+    add_to_application_btn = driver.find_element_by_id("button-add-good-to-application")
+    add_to_application_btn.click()
 
     # Enter good details
     StandardApplicationGoodDetails(driver).enter_value("1")

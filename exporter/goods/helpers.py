@@ -26,13 +26,37 @@ COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP = {
 }
 
 
-ITEM_CATEGORY_TO_DISPLAY_STRING_MAP = {"group3_software": "software", "group3_technology": "technology"}
+ITEM_CATEGORY_TO_DISPLAY_STRING_MAP = {
+    "group3_software": "software",
+    "group3_technology": "technology",
+    "software_related_to_firearms": "software",
+    "technology_related_to_firearms": "technology",
+}
 
 
 def get_category_display_string(category):
     if category in ITEM_CATEGORY_TO_DISPLAY_STRING_MAP.keys():
         return ITEM_CATEGORY_TO_DISPLAY_STRING_MAP[category]
     return ""
+
+
+FIREARM_AMMUNITION_COMPONENT_TYPES = [
+    "firearms",
+    "ammunition",
+    "components_for_firearms",
+    "components_for_ammunition",
+]
+
+
+def get_sporting_shotgun_form_title(product_type):
+    if product_type == "firearms":
+        return "Is the product a sporting shotgun?"
+    elif product_type == "ammunition":
+        return "Is the product sporting shotgun ammunition?"
+    elif product_type == "components_for_firearms":
+        return "Is the product a component of a sporting shotgun?"
+    elif product_type == "components_for_ammunition":
+        return "Is the product a component of sporting shotgun ammunition?"
 
 
 def return_to_good_summary(kwargs, application_id, object_pk):

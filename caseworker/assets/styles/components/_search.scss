@@ -46,4 +46,20 @@ body {
     color: white;
     font-weight: bold;
   }
+
+  .productpedia-results-table {
+    thead > tr {
+      border-top: 0;
+
+      td {
+        border-bottom: 0;
+      }
+    }
+    tbody {
+      border-bottom: 3px solid black;
+    }
+    summary::marker {
+      content: ''
+    }
+  }
 }

@@ -45,6 +45,7 @@ class GoodsList:
 
 class GoodPage:
     TITLE = "Product"
+    ADD_TO_APPLICATION = "Add to application"
     DELETE_GOOD = "Delete product"
     YOUR_QUERY_HEADING = "Your query"
     VERIFIED = "ECJU has verified this product based on the information provided"
@@ -92,7 +93,9 @@ class GoodPage:
 
         class FirearmDetails:
             PRODUCT_TYPE = "Product type"
+            SPORTING_SHOTGUN = "Sporting shotgun"
             YEAR_OF_MANUFACTURE = "Year of manufacture"
+            REPLICA_FIREARM = "Replica firearm"
             CALIBRE = "Calibre"
             COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
             IDENTIFICATION_MARKINGS = "Identification markings"
@@ -210,14 +213,21 @@ class CreateGoodForm:
         class ProductType:
             TITLE = "Select the type of product"
             FIREARM = "Firearm"
-            COMPONENTS_FOR_FIREARM = "Component for a firearm"
+            COMPONENTS_FOR_FIREARM = "Component of a firearm"
             AMMUNITION = "Ammunition"
-            COMPONENTS_FOR_AMMUNITION = "Component for ammunition"
+            COMPONENTS_FOR_AMMUNITION = "Component of firearm ammunition"
+            FIREARMS_ACCESSORY = "Accessory of a firearm"
+            SOFTWARE_RELATED_TO_FIREARM = "Software relating to a firearm"
+            TECHNOLOGY_RELATED_TO_FIREARM = "Technology relating to a firearm"
 
         class FirearmsAmmunitionDetails:
             TITLE = "Firearms and ammunition details"
             YEAR_OF_MANUFACTURE = "Year of manufacture"
             CALIBRE = "Enter the calibre"
+
+        class FirearmsReplica:
+            TITLE = "Is the product a replica firearm?"
+            DESCRIPTION = "Describe the firearm the product is a replica of"
 
         class FirearmsActCertificate:
             TITLE = "Is the product covered by Section 1, Section 2 or Section 5 of the Firearms Act 1968?"
@@ -237,9 +247,10 @@ class CreateGoodForm:
             NO = "No"
 
         class IdentificationMarkings:
-            TITLE = "Does the product have identification markings?"
-            MARKINGS_DETAILS = "Provide the identification markings"
-            NO_MARKINGS_DETAILS = "Explain why there are no identification markings"
+            TITLE = "Has the product been marked with a serial number or other type of identification marking?"
+            MARKINGS_DETAILS = "Serial number or other type of marking"
+            MARKINGS_HELP_TEXT = "Enter one or more"
+            NO_MARKINGS_DETAILS = "Explain why the product has not been marked"
             YES = "Yes"
             NO = "No"
 

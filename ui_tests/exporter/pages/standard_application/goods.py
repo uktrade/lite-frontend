@@ -51,6 +51,14 @@ class StandardApplicationGoodsPage(BasePage):
     def goods_exist_on_the_application(self):
         return functions.element_with_css_selector_exists(self.driver, self.REMOVE_GOOD_LINK)
 
+    def good_with_description_exists(self, expected):
+        for row in self.driver.find_elements_by_class_name("govuk-table__row"):
+            actual = row.find_elements_by_xpath('//td[@class="govuk-table__cell"]')[0].text
+            if actual == expected:
+                return True
+        else:
+            return False
+
     def find_remove_location_link(self):
         try:
             return self.driver.find_element_by_id(self.REMOVE_LOCATION_LINK)

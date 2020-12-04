@@ -148,6 +148,9 @@ class Form:
                 for item in getattr(component, "javascript_imports", []):
                     self.javascript_imports.add(item)
 
+    def __str__(self):
+        return f'{self.__class__.__module__}.{self.__class__.__name__}(title="{self.title}")'
+
 
 class DetailComponent:
     def __init__(self, title, description="", components=None):

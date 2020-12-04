@@ -4,32 +4,33 @@ Feature: I want to edit and remove goods on the goods list
   I want to add edit and remove goods on my goods list
   So that I can ensure the correct goods are listed on my goods list
 
-  @LT_928_edit @regression
+  @LT_928_edit @regression @broken
   Scenario: Add, edit and delete good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I select product category "one" for a good
-    And I add a good with description "123 pistol" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
+    And I add a good with description "123 pistol" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "nato_restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
     And I specify the "category 1" good details military use "yes_modified" component "yes_general" and information security "Yes"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
     And I get the goods ID
     Then I see good in goods list
-    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
+    When I edit the good to description "edited" part number "321" controlled "True" and control list entry "ML1a"
     And I edit the "category 1" good details to military use "yes_designed" component "yes_designed" information security "No"
     Then I see my edited good details in the good page
+    And I delete document "1" from the good
     When I delete my good
     Then my good is no longer in the goods list
 
-  @LT_1006_add_clc_query_good @regression
+  @LT_1006_add_clc_query_good @regression @broken
   Scenario: Add queried good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I select product category "one" for a good
-    And I add a good with description "Hand pistol" part number "321" controlled "Unsure" control code " " and graded "grading_required"
+    And I add a good with description "Hand pistol" part number "321" controlled "None" control code " " and graded "grading_required"
     And I specify the "category 1" good details military use "yes_designed" component "yes_modified" and information security "No"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
@@ -37,13 +38,13 @@ Feature: I want to edit and remove goods on the goods list
     Then I see good information
     And I see the good is in a query
 
-  @LT_1262_add_good_without_document @regression
+  @LT_1262_add_good_without_document @regression @broken
   Scenario: Add a new good without a document for a valid reason
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I select product category "one" for a good
-    And I add a good with description "Hand pistol" part number "321" controlled "Unsure" control code " " and graded "no"
+    And I add a good with description "Hand pistol" part number "321" controlled "None" control code " " and graded "no"
     And I specify the "category 1" good details military use "no" component "no" and information security "No"
     And I select that I cannot attach a document
     Then I see ECJU helpline details
@@ -51,13 +52,13 @@ Feature: I want to edit and remove goods on the goods list
     When I click the back link
     Then My good is created
 
-  @LT_2704_add_software_good_and_edit @regression
+  @LT_2704_add_software_good_and_edit @regression @broken
   Scenario: Add, edit and delete software good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
     And I select product category "three-software" for a good
-    And I add a good with description "123 pistol" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
+    And I add a good with description "123 software" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "nato_restricted" suffix "def" issuing authority "NATO" reference "12345" Date of issue "10-05-2015"
     And I specify software and technology purpose details for a good that is in those categories
     And I specify the "category 3" good details military use "yes_modified" component "yes_general" and information security "Yes"
@@ -65,27 +66,50 @@ Feature: I want to edit and remove goods on the goods list
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
     And I get the goods ID
     Then I see good in goods list
-    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
+    When I edit the good to description "edited" part number "321" controlled "True" and control list entry "ML1a"
     And I edit the "category 3" good details to military use "yes_designed" component "yes_designed" information security "No"
     And I edit the software and technology purpose details for a good to "edited software purpose"
     Then I see my edited good details in the good page
     When I delete my good
     Then my good is no longer in the goods list
 
-  @LT_2351_add_firearm_category_two_good_and_edit @regression
-  Scenario: Add, edit and delete firearm good
+  @LT_2351_add_firearm_category_two_good_and_delete @regression
+  Scenario: Add and delete firearm good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
     And I click add a good button
-    And I select product category "two" for a good
-    And I add a good with description "9mm barrel" part number "321" controlled "Yes" control code "ML1a" and graded "yes"
+    And I select product type "firearm"
+    And I select sporting shotgun status as "No"
+    And I add a good with description "9mm barrel" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "uk_official" suffix "def" issuing authority "MoD" reference "12345" Date of issue "10-05-2015"
-    And I specify the firearm good details type "firearm" year of manufacture, calibre, firearms act applicable "No" and identification markings "No"
+    And I enter calibre as "0.45"
+    And I specify firearms act sections apply as "Yes"
+    And I specify firearms identification markings as "Yes" with details "laser engraving"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
     And I get the goods ID
     Then I see good in goods list
-    When I edit the good to description "edited" part number "321" controlled "Yes" and control list entry "ML1a"
+    When I edit the good to description "edited" part number "321" controlled "True" and control list entry "ML1a"
+    When I delete my good
+    Then my good is no longer in the goods list
+
+  @LT_2351_add_firearm_category_two_good_and_edit @regression @broken
+  Scenario: Add, edit and delete firearm good
+    Given I go to exporter homepage and choose Test Org
+    When I click on goods link
+    And I click add a good button
+    And I select product type "firearm"
+    And I select sporting shotgun status as "No"
+    And I add a good with description "9mm barrel" part number "321" controlled "True" control code "ML1a" and graded "yes"
+    And I add the goods grading with prefix "abc" grading "uk_official" suffix "def" issuing authority "MoD" reference "12345" Date of issue "10-05-2015"
+    And I enter calibre as "0.45"
+    And I specify firearms act sections apply as "Yes"
+    And I specify firearms identification markings as "Yes" with details "laser engraving"
+    And I confirm I can upload a document
+    And I upload file "file_for_doc_upload_test_1.txt" with description "This is a file I want to upload to show."
+    And I get the goods ID
+    Then I see good in goods list
+    When I edit the good to description "edited" part number "321" controlled "True" and control list entry "ML1a"
     And I edit the firearm good details to type "components_for_firearm" firearms act applicable "Yes" and identification markings "Yes"
     Then I see my edited good details in the good page
     When I delete my good

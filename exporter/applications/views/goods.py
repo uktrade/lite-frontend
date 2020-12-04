@@ -1,13 +1,14 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from exporter.applications.forms.goods import good_on_application_form
+from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.services import (
     get_application,
@@ -15,9 +16,11 @@ from exporter.applications.services import (
     post_good_on_application,
     delete_application_preexisting_good,
     add_document_data,
+    validate_good_on_application,
 )
 from exporter.core.constants import EXHIBITION, APPLICANT_EDITING
 from core.helpers import convert_dict_to_query_params
+from exporter.core.helpers import str_to_bool
 from exporter.goods.forms import (
     document_grading_form,
     attach_documents_form,
@@ -32,6 +35,7 @@ from exporter.goods.services import (
     validate_good,
 )
 from lite_forms.components import FiltersBar, TextInput
+from exporter.goods.helpers import FIREARM_AMMUNITION_COMPONENT_TYPES
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
@@ -45,12 +49,14 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         application = get_application(self.request, kwargs["pk"])
         goods = get_application_goods(self.request, kwargs["pk"])
+        includes_firearms = any(["firearm_details" in good.keys() for good in goods])
         is_exhibition = application["case_type"]["sub_type"]["key"] == EXHIBITION
         return super().get_context_data(
             goods=goods,
             application=application,
             exhibition=is_exhibition,
             goods_value=None if is_exhibition else get_total_goods_value(goods),
+            includes_firearms=includes_firearms,
             **kwargs,
         )
 
@@ -94,6 +100,7 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
+            "feature_flag_firearms_enabled": settings.FEATURE_FLAG_FIREARMS_ENABLED,
         }
         return render(request, "applications/goods/preexisting.html", context)
 
@@ -108,9 +115,23 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "") == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        is_firearms = copied_request.get("item_category") == "group2_firearms"
+        is_firearm = copied_request.get("type") == "firearms"
+        is_firearms_core = copied_request.get("type") in FIREARM_AMMUNITION_COMPONENT_TYPES
+        is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
+        is_firearms_software_tech = copied_request.get("type") in [
+            "software_related_to_firearms",
+            "technology_related_to_firearms",
+        ]
         self.forms = add_good_form_group(
-            request, is_pv_graded, is_software_technology, is_firearms, draft_pk=self.draft_pk
+            request,
+            is_pv_graded,
+            is_software_technology,
+            is_firearm,
+            is_firearms_core,
+            is_firearms_accessory,
+            is_firearms_software_tech,
+            draft_pk=self.draft_pk,
+            base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
         )
 
         # we require the form index of the last form in the group, not the total number
@@ -139,7 +160,10 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
             url = "applications:add_good_to_application"
         else:
             url = "applications:attach_documents"
-        return reverse_lazy(url, kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+        return (
+            reverse_lazy(url, kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+            + f"?preexisting={self.request.GET.get('preexisting', False)}"
+        )
 
 
 @method_decorator(csrf_exempt, "dispatch")
@@ -167,17 +191,33 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
 
         return redirect(
             reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+            + f"?preexisting={self.request.GET.get('preexisting', False)}"
         )
 
 
-class AddGoodToApplication(LoginRequiredMixin, SingleFormView):
+class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
+        good_pk = kwargs["good_pk"]
         application = get_application(self.request, self.object_pk)
-        good, _ = get_good(request, kwargs["good_pk"])
-        self.form = good_on_application_form(request, good, application["case_type"]["sub_type"], self.object_pk)
-        self.action = post_good_on_application
+        good, _ = get_good(request, good_pk)
+
+        sub_case_type = application["case_type"]["sub_type"]
+        is_preexisting = str_to_bool(request.GET.get("preexisting", True))
+
+        self.forms = good_on_application_form_group(
+            request, is_preexisting=is_preexisting, good=good, sub_case_type=sub_case_type, draft_pk=self.object_pk
+        )
+
+        self.action = validate_good_on_application
         self.success_url = reverse_lazy("applications:goods", kwargs={"pk": self.object_pk})
+
+    def on_submission(self, request, **kwargs):
+        # we require the form index of the last form in the group, not the total number
+
+        number_of_forms = len(self.forms.get_forms()) - 1
+        if int(self.request.POST.get("form_pk")) == number_of_forms:
+            self.action = post_good_on_application
 
 
 class RemovePreexistingGood(LoginRequiredMixin, TemplateView):

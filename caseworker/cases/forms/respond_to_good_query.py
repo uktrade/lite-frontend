@@ -76,7 +76,7 @@ def respond_to_clc_query_form(request, queue_pk, case):
                 ],
             ),
             DetailComponent(
-                title=CLCReviewGoods.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,}),],
+                title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,},),],
             ),
         ],
         default_button_name=CLCReviewGoods.SUBMIT_BUTTON,
@@ -123,7 +123,7 @@ def respond_to_grading_query_form(request, queue_pk, case):
                 classes=["app-pv-grading-inputs"],
             ),
             DetailComponent(
-                title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,}),],
+                title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,},),],
             ),
         ],
         default_button_name=PVGradingForm.SUBMIT_BUTTON,

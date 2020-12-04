@@ -3,7 +3,11 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'goods:good_detail' good_id "case-notes" %}" id="back-link" class="govuk-back-link">{% lcs "goods.DeleteGoodDocumentPage.BACK" %}</a>
+	{% if draft_pk %}
+		<a href="{% url 'goods:good_detail_application' good_id 'application' draft_pk %}" id="back-link" class="govuk-back-link">{% lcs "goods.DeleteGoodDocumentPage.BACK" %}</a>
+	{% else %}
+		<a href="{% url 'goods:good_detail' good_id "case-notes" %}" id="back-link" class="govuk-back-link">{% lcs "goods.DeleteGoodDocumentPage.BACK" %}</a>
+	{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -48,9 +52,13 @@
 	</div>
 
 	<div class="buttons-row">
-	<form method="post" action="{% url 'goods:delete_document' good_id document.id %}">
+	{% if draft_pk %}
+		<form method="post" action="{% url 'goods:delete_document_add_application' good_id draft_pk document.id %}">
+	{% else %}
+		<form method="post" action="{% url 'goods:delete_document' good_id document.id %}">
+	{% endif %}
 		{% csrf_token %}
-		<button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "goods.DeleteGoodDocumentPage.BUTTON" %}</button>
+		<button type="submit" value="submit" class="govuk-button govuk-button--warning govuk-!-margin-right-2">{% lcs "goods.DeleteGoodDocumentPage.BUTTON" %}</button>
 	</form>
 </div>
 {% endblock %}

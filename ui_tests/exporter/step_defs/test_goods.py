@@ -92,6 +92,14 @@ def delete_my_good_in_list(driver, context):
     functions.click_submit(driver)
 
 
+@then(parsers.parse('I delete document "{item_index:d}" from the good'))
+def delete_uploaded_document_from_good_and_submit(driver, item_index):
+    document = GoodsPage(driver).get_uploaded_documents_delete_links()[item_index - 1]
+    driver.execute_script("arguments[0].scrollIntoView();", document)
+    driver.execute_script("arguments[0].click();", document)
+    functions.click_submit(driver)
+
+
 @then("my good is no longer in the goods list")
 def good_is_no_longer_in_list(driver, context):
     assert context.good_description not in Shared(driver).get_text_of_gov_table()
@@ -173,20 +181,6 @@ def create_a_new_good_in_application(driver, description, part_number, controlle
     functions.click_submit(driver)
 
 
-@when(
-    parsers.parse(
-        'I enter details for the new good on an application with value "{value}", quantity "{quantity}" and unit of measurement "{unit}" and I click Continue'
-    )
-)  # noqa
-def i_enter_detail_for_the_good_on_the_application(driver, value, quantity, unit):
-    StandardApplicationGoodDetails(driver).enter_value(value)
-    StandardApplicationGoodDetails(driver).enter_quantity(quantity)
-    StandardApplicationGoodDetails(driver).select_unit(unit)
-    StandardApplicationGoodDetails(driver).check_is_good_incorporated_false()
-
-    functions.click_submit(driver)
-
-
 @when("I confirm I can upload a document")
 def confirm_can_upload_document(driver):
     # Confirm you have a document that is not sensitive
@@ -221,15 +215,6 @@ def good_created(driver, context):
 @when("I click add a good button")  # noqa
 def click_add_from_organisation_button(driver):  # noqa
     GoodsListPage(driver).click_add_a_good()
-
-
-@when(parsers.parse('I upload file "{filename}" with description "{description}"'))  # noqa
-def upload_a_file_with_description(driver, filename, description):  # noqa
-    attach_document_page = AttachDocumentPage(driver)
-    file_path = get_file_upload_path(filename)
-    attach_document_page.choose_file(file_path)
-    attach_document_page.enter_description(description)
-    functions.click_submit(driver)
 
 
 @when(
@@ -268,11 +253,11 @@ def add_new_good(driver, description, part, controlled, control_code, graded, co
     context.part = good_part
     context.control_code = control_code
     add_goods_page.enter_description_of_goods(good_description)
-    add_goods_page.select_is_your_good_controlled(controlled)
     if "not needed" in good_part:
         good_part_needed = False
     elif "empty" not in good_part:
         add_goods_page.enter_part_number(good_part)
+    add_goods_page.select_is_your_good_controlled(controlled)
     if controlled.lower() == "yes":
         add_goods_page.enter_control_list_entries(control_code)
     add_goods_page.select_is_your_good_graded(graded)
@@ -317,24 +302,6 @@ def add_good_details(driver, category, military_use, component, infosec, context
         good_details_page.select_is_product_a_component(component)
         functions.click_submit(driver)
     good_details_page.does_product_employ_information_security(infosec)
-    functions.click_submit(driver)
-
-
-@when(  # noqa
-    parsers.parse(
-        'I specify the firearm good details type "{product_type}" year of manufacture, calibre, firearms act applicable "{firearms_act}" and identification markings "{has_markings}"'
-    )
-)
-def add_firearm_good_details(driver, product_type, firearms_act, has_markings, context):  # noqa
-    good_details_page = AddGoodDetails(driver)
-    good_details_page.select_firearm_product_type(product_type)
-    functions.click_submit(driver)
-    good_details_page.enter_year_of_manufacture()
-    good_details_page.enter_calibre()
-    functions.click_submit(driver)
-    good_details_page.select_do_firearms_act_sections_apply(firearms_act)
-    functions.click_submit(driver)
-    good_details_page.does_firearm_have_identification_markings(has_markings)
     functions.click_submit(driver)
 
 
