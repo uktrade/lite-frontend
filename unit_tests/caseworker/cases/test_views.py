@@ -9,7 +9,7 @@ def setup(
     mock_case_activity_system_user,
     mock_case,
     mock_control_list_entries,
-    mock_search,
+    mock_application_search,
     mock_good_on_appplication,
 ):
     yield
@@ -167,7 +167,7 @@ def build_wizard_step_data(view_name, step_name, data):
 
 def test_good_on_application_detail(
     authorized_client,
-    mock_search,
+    mock_application_search,
     queue_pk,
     standard_case_pk,
     good_on_application_pk,
@@ -183,7 +183,7 @@ def test_good_on_application_detail(
 
     assert response.status_code == 200
     # then the search endpoint is requested for cases with goods with the same part number and control list entries
-    assert mock_search.request_history[0].qs == {"part": ["44"], "clc_rating": ["ml1", "ml2"]}
+    assert mock_application_search.request_history[0].qs == {"part": ["44"], "clc_rating": ["ml1", "ml2"]}
     # and the view exposes the data that the template needs
     assert response.context_data["good_on_application"] == data_good_on_application
     assert response.context_data["other_cases"] == data_search
@@ -193,7 +193,12 @@ def test_good_on_application_detail(
 
 
 def test_good_on_application_detail_no_part_number(
-    authorized_client, mock_search, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
 ):
     # given I access good on application details for a good with control list entries but no part number
     data_good_on_application["good"]["part_number"] = ""
@@ -204,13 +209,18 @@ def test_good_on_application_detail_no_part_number(
 
     assert response.status_code == 200
     # then the search endpoint is requested for cases with goods with the same control list entries
-    assert mock_search.request_history[0].qs == {"clc_rating": ["ml1", "ml2"]}
+    assert mock_application_search.request_history[0].qs == {"clc_rating": ["ml1", "ml2"]}
     # and the form is pre-populated with the part number and control list entries
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1" clc_rating:"ML2"'
 
 
 def test_good_on_application_detail_no_part_number_no_control_list_entries(
-    authorized_client, mock_search, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
 ):
     # given I access good on application details for a good with neither part number of control list entries
     data_good_on_application["good"]["part_number"] = ""
@@ -222,13 +232,18 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
 
     assert response.status_code == 200
     # then the search endpoint is not requested
-    assert len(mock_search.request_history) == 0
+    assert len(mock_application_search.request_history) == 0
     # and the form is left blank
     assert response.context_data["form"]["search_string"].initial == ""
 
 
 def test_good_on_application_detail_not_rated_at_application_level(
-    authorized_client, mock_search, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
 ):
     # given I access good on application details for a good that has not been rated at application level
     data_good_on_application["control_list_entries"] = []
@@ -241,6 +256,6 @@ def test_good_on_application_detail_not_rated_at_application_level(
 
     assert response.status_code == 200
     # then the search endpoint is requested for cases with goods with the same control list entries as canonical good
-    assert mock_search.request_history[0].qs == {"clc_rating": ["ml1"]}
+    assert mock_application_search.request_history[0].qs == {"clc_rating": ["ml1"]}
     # and the form is pre-populated with the canonical good control list entries
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1"'
