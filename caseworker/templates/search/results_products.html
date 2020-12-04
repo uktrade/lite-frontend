@@ -70,7 +70,7 @@
                             </td>
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.regime }}</td>
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.date }}</td>
-                            <td class="govuk-table__cell govuk-table__cell govuk-!-width-one-quarter {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.rating_comment }}</td>
+                            <td class="govuk-table__cell govuk-table__cell rating-comment {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}" title="{{ item.rating_comment }}">{{ item.rating_comment }}</td>
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
                                 <a href="{% url 'search:product-details' pk=item.id %}">View</a>
                             </td>
