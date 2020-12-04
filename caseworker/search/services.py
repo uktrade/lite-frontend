@@ -15,7 +15,6 @@ def get_application_search_results(request, query_params):
     return response.json()
 
 
-
 def get_application_autocomplete(request, q):
     if not settings.LITE_API_SEARCH_ENABLED:
         return []
