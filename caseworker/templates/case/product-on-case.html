@@ -129,7 +129,7 @@
 																			<td class="govuk-table__cell">{{ firearm_details.calibre }}</td>
 																	</tr>
 																	<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Covered by Firearms Act 1968</th>
+																			<th scope="row" class="govuk-table__header">Covered by the Firearms Act 1968</th>
 																			<td class="govuk-table__cell">
 																					{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
 																							Yes, section {{ firearm_details.section_certificate_number}}
@@ -139,7 +139,7 @@
 																			</td>
 																	</tr>
 																	<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Identification markings</th>
+																			<th scope="row" class="govuk-table__header">Serial numbers</th>
 																			<td class="govuk-table__cell">
 																					{% if firearm_details.has_identification_markings %}
 																							Yes, {{ firearm_details.identification_markings_details }}
