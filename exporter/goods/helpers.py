@@ -40,14 +40,6 @@ def get_category_display_string(category):
     return ""
 
 
-FIREARM_AMMUNITION_COMPONENT_TYPES = [
-    "firearms",
-    "ammunition",
-    "components_for_firearms",
-    "components_for_ammunition",
-]
-
-
 def get_sporting_shotgun_form_title(product_type):
     if product_type == "firearms":
         return "Is the product a sporting shotgun?"

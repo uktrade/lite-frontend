@@ -344,8 +344,6 @@ def add_good_form_group(
     is_firearms_core: bool = None,
     is_firearms_accessory: bool = None,
     is_firearms_software_tech: bool = None,
-    show_section_upload_form: bool = None,
-    section: str = "",
     draft_pk: str = None,
     base_form_back_link: str = None,
 ):
@@ -362,7 +360,6 @@ def add_good_form_group(
             conditional(is_firearm, firearm_replica_form(request.POST.get("type"))),
             conditional(is_firearms_core, firearm_calibre_details_form()),
             conditional(is_firearms_core and bool(draft_pk), firearms_act_confirmation_form()),
-            # conditional(is_firearms_core, upload_firearms_act_certificate_form(section, None)),
             conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),

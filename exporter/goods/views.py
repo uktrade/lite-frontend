@@ -19,6 +19,7 @@ from exporter.applications.services import (
     get_status_properties,
     get_case_generated_documents,
 )
+from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.goods.forms import (
     attach_documents_form,
     delete_good_form,
@@ -42,7 +43,6 @@ from exporter.goods.forms import (
 from exporter.goods.helpers import (
     COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP,
     return_to_good_summary,
-    FIREARM_AMMUNITION_COMPONENT_TYPES,
 )
 from exporter.goods.services import (
     get_goods,

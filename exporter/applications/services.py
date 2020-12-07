@@ -11,7 +11,7 @@ from exporter.applications.helpers.date_fields import (
     format_date,
     create_formatted_date_from_components,
 )
-from exporter.goods.services import add_firearm_details_to_data
+from exporter.goods import services
 
 from exporter.core.helpers import remove_prefix, add_validate_only_to_data
 from core.helpers import convert_parameters_to_query_params
@@ -129,7 +129,7 @@ def serialize_good_on_app_data(json):
 
     if json.get("date_of_deactivationday"):
         post_data["date_of_deactivation"] = format_date(post_data, "date_of_deactivation")
-    post_data = add_firearm_details_to_data(post_data)
+    post_data = services.add_firearm_details_to_data(post_data)
     return post_data
 
 

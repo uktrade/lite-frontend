@@ -20,7 +20,7 @@ from exporter.applications.services import (
     post_application_document,
     delete_application_document,
 )
-from exporter.core.constants import EXHIBITION, APPLICANT_EDITING
+from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, FIREARM_AMMUNITION_COMPONENT_TYPES
 from core.helpers import convert_dict_to_query_params
 from exporter.core.helpers import str_to_bool
 from exporter.goods.forms import (
@@ -39,7 +39,6 @@ from exporter.goods.services import (
     post_goods_and_upload_firearms_act_certificate,
 )
 from lite_forms.components import FiltersBar, TextInput
-from exporter.goods.helpers import FIREARM_AMMUNITION_COMPONENT_TYPES
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
@@ -114,6 +113,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         self.draft_pk = str(kwargs["pk"])
         self.forms = add_good_form_group(request, draft_pk=self.draft_pk)
         self.action = validate_good
+        self.show_section_upload_form = False
 
     def on_submission(self, request, **kwargs):
         copied_request = request.POST.copy()
@@ -127,7 +127,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             "technology_related_to_firearms",
         ]
         selected_section = copied_request.get("firearms_act_section")
-        show_section_upload_form = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", False) and (
+        self.show_section_upload_form = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", False) and (
             selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
         )
         section = ""
@@ -144,8 +144,6 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             is_firearms_core,
             is_firearms_accessory,
             is_firearms_software_tech,
-            show_section_upload_form,
-            section,
             draft_pk=self.draft_pk,
             base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
         )
@@ -154,10 +152,18 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         number_of_forms = len(self.forms.get_forms()) - 1
 
         if int(self.request.POST.get("form_pk")) == number_of_forms:
-            request.session["old_post"] = copied_request
+            if self.show_section_upload_form:
+                firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.draft_pk}"
+                request.session[firearms_data_id] = copied_request
+            else:
+                self.action = post_goods
 
     def get_success_url(self):
-        return reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.draft_pk})
+        if self.show_section_upload_form:
+            return reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
+        else:
+            good = self.get_validated_data()["good"]
+            return reverse_lazy("applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]})
 
 
 @method_decorator(csrf_exempt, "dispatch")
@@ -172,31 +178,48 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
         draft_pk = str(kwargs["pk"])
+        good_pk = str(kwargs.get("good_pk", ""))
         doc_data, error = add_document_data(request)
         if error:
             return error_page(request, error)
 
-        old_post = request.session.get("old_post", None)
+        if good_pk:
+            firearms_data_id = f"post_{request.session['lite_api_user_id']}_{draft_pk}_{good_pk}"
+        else:
+            firearms_data_id = f"post_{request.session['lite_api_user_id']}_{draft_pk}"
+        old_post = request.session.get(firearms_data_id, None)
         if not old_post:
             return error_page(request, "Previous Firearms data is missing in session")
 
         copied_request = {k: request.POST.get(k) for k in request.POST}
         data = {**old_post, **copied_request}
 
-        response, status_code = post_goods(request, data)
-        if status_code != HTTPStatus.CREATED:
-            delete_application_document(request, draft_pk, draft_pk, doc_data)
-            form = upload_firearms_act_certificate_form("section", None)
-            return form_page(request, form, data=data, errors=response["errors"])
+        if good_pk:
+            response, status_code = post_good_on_application(request, draft_pk, data)
+            if status_code != HTTPStatus.CREATED:
+                delete_application_document(request, draft_pk, draft_pk, doc_data)
+                form = upload_firearms_act_certificate_form("section", None)
+                return form_page(request, form, data=data, errors=response["errors"])
 
-        del request.session["old_post"]
+            success_url = reverse_lazy("applications:goods", kwargs={"pk": draft_pk})
 
-        good_id = response["good"]["id"]
-        data, status_code = post_application_document(request, draft_pk, good_id, doc_data)
+        else:
+            response, status_code = post_goods(request, data)
+            if status_code != HTTPStatus.CREATED:
+                delete_application_document(request, draft_pk, draft_pk, doc_data)
+                form = upload_firearms_act_certificate_form("section", None)
+                return form_page(request, form, data=data, errors=response["errors"])
+
+            good_pk = response["good"]["id"]
+            success_url = reverse_lazy("applications:add_good_summary", kwargs={"pk": draft_pk, "good_pk": good_pk})
+
+        del request.session[firearms_data_id]
+
+        data, status_code = post_application_document(request, draft_pk, good_pk, doc_data)
         if status_code != HTTPStatus.CREATED:
             return error_page(request, data["errors"]["file"])
 
-        return redirect(reverse_lazy("applications:add_good_summary", kwargs={"pk": draft_pk, "good_pk": good_id}))
+        return redirect(success_url)
 
 
 class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
@@ -250,9 +273,9 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
 class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
-        good_pk = kwargs["good_pk"]
+        self.good_pk = kwargs["good_pk"]
         application = get_application(self.request, self.object_pk)
-        good, _ = get_good(request, good_pk)
+        good, _ = get_good(request, self.good_pk)
 
         sub_case_type = application["case_type"]["sub_type"]
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
@@ -262,14 +285,25 @@ class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
         )
 
         self.action = validate_good_on_application
-        self.success_url = reverse_lazy("applications:goods", kwargs={"pk": self.object_pk})
+        self.success_url = reverse_lazy(
+            "applications:attach-firearms-certificate-existing-good",
+            kwargs={"pk": self.object_pk, "good_pk": self.good_pk},
+        )
 
     def on_submission(self, request, **kwargs):
+        selected_section = request.POST.get("firearms_act_section")
+        show_section_upload_form = request.POST.get("is_covered_by_firearm_act_section_one_two_or_five", False) and (
+            selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
+        )
         # we require the form index of the last form in the group, not the total number
-
         number_of_forms = len(self.forms.get_forms()) - 1
         if int(self.request.POST.get("form_pk")) == number_of_forms:
-            self.action = post_good_on_application
+            if show_section_upload_form:
+                firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.object_pk}_{self.good_pk}"
+                request.session[firearms_data_id] = self.request.POST.copy()
+            else:
+                self.action = post_good_on_application
+                self.success_url = reverse("applications:goods", kwargs={"pk": self.object_pk})
 
 
 class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
