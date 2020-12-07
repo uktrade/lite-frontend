@@ -228,6 +228,18 @@ def delete_additional_party_document(request, pk, doc_pk):
     return data.status_code
 
 
+def post_application_document(request, pk, good_pk, data):
+    response = client.post(request, f"/applications/{pk}/goods/{good_pk}/documents/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def delete_application_document(request, pk, good_pk, data):
+    response = client.delete(request, f"/applications/{pk}/goods/{good_pk}/documents/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def delete_application_preexisting_good(request, good_on_application_pk):
     response = client.delete(request, f"/applications/good-on-application/{good_on_application_pk}")
     return response.status_code

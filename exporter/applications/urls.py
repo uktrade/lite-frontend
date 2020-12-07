@@ -59,6 +59,7 @@ urlpatterns = [
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
+    path("<uuid:pk>/goods/add-firearms-certificate/", goods.AttachFirearmActSectionDocument.as_view(), name="attach-firearms-certificate"),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
         GoodSoftwareTechnology.as_view(),

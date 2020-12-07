@@ -17,6 +17,8 @@ from exporter.applications.services import (
     delete_application_preexisting_good,
     add_document_data,
     validate_good_on_application,
+    post_application_document,
+    delete_application_document,
 )
 from exporter.core.constants import EXHIBITION, APPLICANT_EDITING
 from core.helpers import convert_dict_to_query_params
@@ -25,6 +27,7 @@ from exporter.goods.forms import (
     document_grading_form,
     attach_documents_form,
     add_good_form_group,
+    upload_firearms_act_certificate_form,
 )
 from exporter.goods.services import (
     get_goods,
@@ -33,6 +36,7 @@ from exporter.goods.services import (
     post_good_documents,
     post_good_document_sensitivity,
     validate_good,
+    post_goods_and_upload_firearms_act_certificate,
 )
 from lite_forms.components import FiltersBar, TextInput
 from exporter.goods.helpers import FIREARM_AMMUNITION_COMPONENT_TYPES
@@ -150,13 +154,49 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         number_of_forms = len(self.forms.get_forms()) - 1
 
         if int(self.request.POST.get("form_pk")) == number_of_forms:
-            self.action = post_goods
+            request.session["old_post"] = copied_request
 
     def get_success_url(self):
-        return reverse_lazy(
-            "applications:add_good_summary",
-            kwargs={"pk": self.draft_pk, "good_pk": self.get_validated_data()["good"]["id"]},
-        )
+        return reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.draft_pk})
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        draft_pk = str(kwargs["pk"])
+        # back_link = reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+        form = upload_firearms_act_certificate_form("section", None)
+        return form_page(request, form)
+
+    def post(self, request, **kwargs):
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+
+        draft_pk = str(kwargs["pk"])
+        doc_data, error = add_document_data(request)
+        if error:
+            return error_page(request, error)
+
+        old_post = request.session.get("old_post", None)
+        if not old_post:
+            return error_page(request, "Previous Firearms data is missing in session")
+
+        copied_request = {k: request.POST.get(k) for k in request.POST}
+        data = {**old_post, **copied_request}
+
+        response, status_code = post_goods(request, data)
+        if status_code != HTTPStatus.CREATED:
+            delete_application_document(request, draft_pk, draft_pk, doc_data)
+            form = upload_firearms_act_certificate_form("section", None)
+            return form_page(request, form, data=data, errors=response["errors"])
+
+        del request.session["old_post"]
+
+        good_id = response["good"]["id"]
+        data, status_code = post_application_document(request, draft_pk, good_id, doc_data)
+        if status_code != HTTPStatus.CREATED:
+            return error_page(request, data["errors"]["file"])
+
+        return redirect(reverse_lazy("applications:add_good_summary", kwargs={"pk": draft_pk, "good_pk": good_id}))
 
 
 class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
