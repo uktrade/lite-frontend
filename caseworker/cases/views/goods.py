@@ -126,6 +126,7 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
             "report_summary": self.object["good"]["report_summary"],
             "comment": source["comment"],
             "end_use_control": self.object["end_use_control"],
+            "is_precedent": self.object.get("is_precedent", False),
         }
         initial.update(super().get_form_initial(step))
         return initial
