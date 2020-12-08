@@ -35,6 +35,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": ["MEND", "MEND1"],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -42,6 +43,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": ["MEND", "MEND1"],
+            "is_precedent": False,
         },
     ),
     # multiple control list entries
@@ -52,6 +54,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -59,6 +62,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
     ),
     # no comment
@@ -69,6 +73,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "",
@@ -76,6 +81,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
     ),
     # not controlled and no control list entries
@@ -87,6 +93,7 @@ good_review_parametrize_data = (
             "is_good_controlled": False,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -94,6 +101,7 @@ good_review_parametrize_data = (
             "is_good_controlled": False,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
     ),
     # is controlled but no control list entries
@@ -105,6 +113,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -112,6 +121,25 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
+        },
+    ),
+    # backwards compat, if API is not sending is_precedent
+    (
+        {
+            "comment": "Some comment",
+            "control_list_entries": ["ML1a"],
+            "is_good_controlled": True,
+            "report_summary": "some-report-summary-id",
+            "end_use_control": ["MEND", "MEND1"],
+        },
+        {
+            "comment": "Some comment",
+            "control_list_entries": ["ML1a"],
+            "is_good_controlled": True,
+            "report_summary": "some-report-summary-id",
+            "end_use_control": ["MEND", "MEND1"],
+            "is_precedent": False,
         },
     ),
 )
