@@ -46,7 +46,7 @@ $('#unit').on('input', function () {
 	}
 });
 
-$("input[name='section_certificate_missing']").change(function () {
+function showHideCertificateMissingReason() {
 	var textarea = $("#section_certificate_missing_reason")
 	var label = $('label[for="section_certificate_missing_reason"]');
 
@@ -57,4 +57,13 @@ $("input[name='section_certificate_missing']").change(function () {
 		label.hide()
 		textarea.hide()
 	}
+}
+
+$("input[name='section_certificate_missing']").change(function () {
+	showHideCertificateMissingReason()
 });
+
+
+(function () {
+	showHideCertificateMissingReason()
+})();

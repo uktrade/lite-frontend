@@ -18,7 +18,7 @@ from exporter.applications.services import (
     add_document_data,
     validate_good_on_application,
     post_application_document,
-    delete_application_document,
+    delete_application_document_data,
 )
 from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, FIREARM_AMMUNITION_COMPONENT_TYPES
 from core.helpers import convert_dict_to_query_params
@@ -36,7 +36,6 @@ from exporter.goods.services import (
     post_good_documents,
     post_good_document_sensitivity,
     validate_good,
-    post_goods_and_upload_firearms_act_certificate,
 )
 from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
@@ -127,14 +126,9 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             "technology_related_to_firearms",
         ]
         selected_section = copied_request.get("firearms_act_section")
-        self.show_section_upload_form = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", False) and (
-            selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
-        )
-        section = ""
-        if selected_section == "firearms_act_section1":
-            section = "Section 1"
-        elif selected_section == "firearms_act_section2":
-            section = "Section 2"
+        self.show_section_upload_form = copied_request.get(
+            "is_covered_by_firearm_act_section_one_two_or_five", False
+        ) and (selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2")
 
         self.forms = add_good_form_group(
             request,
@@ -163,25 +157,30 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             return reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
         else:
             good = self.get_validated_data()["good"]
-            return reverse_lazy("applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]})
+            return reverse_lazy(
+                "applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]}
+            )
 
 
 @method_decorator(csrf_exempt, "dispatch")
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
-        draft_pk = str(kwargs["pk"])
-        # back_link = reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
         form = upload_firearms_act_certificate_form("section", None)
         return form_page(request, form)
 
     def post(self, request, **kwargs):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
+        certificate_available = request.POST.get("section_certificate_missing", False) == False
+
         draft_pk = str(kwargs["pk"])
         good_pk = str(kwargs.get("good_pk", ""))
-        doc_data, error = add_document_data(request)
-        if error:
-            return error_page(request, error)
+        doc_data = {}
+
+        if certificate_available:
+            doc_data, error = add_document_data(request)
+            if error:
+                return error_page(request, error)
 
         if good_pk:
             firearms_data_id = f"post_{request.session['lite_api_user_id']}_{draft_pk}_{good_pk}"
@@ -197,7 +196,8 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         if good_pk:
             response, status_code = post_good_on_application(request, draft_pk, data)
             if status_code != HTTPStatus.CREATED:
-                delete_application_document(request, draft_pk, draft_pk, doc_data)
+                if certificate_available:
+                    delete_application_document_data(request, draft_pk, good_pk, doc_data)
                 form = upload_firearms_act_certificate_form("section", None)
                 return form_page(request, form, data=data, errors=response["errors"])
 
@@ -206,7 +206,8 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         else:
             response, status_code = post_goods(request, data)
             if status_code != HTTPStatus.CREATED:
-                delete_application_document(request, draft_pk, draft_pk, doc_data)
+                if certificate_available:
+                    delete_application_document_data(request, draft_pk, draft_pk, doc_data)
                 form = upload_firearms_act_certificate_form("section", None)
                 return form_page(request, form, data=data, errors=response["errors"])
 
@@ -215,9 +216,10 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
 
         del request.session[firearms_data_id]
 
-        data, status_code = post_application_document(request, draft_pk, good_pk, doc_data)
-        if status_code != HTTPStatus.CREATED:
-            return error_page(request, data["errors"]["file"])
+        if certificate_available:
+            data, status_code = post_application_document(request, draft_pk, good_pk, doc_data)
+            if status_code != HTTPStatus.CREATED:
+                return error_page(request, data["errors"]["file"])
 
         return redirect(success_url)
 

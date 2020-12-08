@@ -245,12 +245,49 @@
 						{% lcs "Goods.AddGoodSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five is not None %}
-							{{ good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five|friendly_boolean}}
-							{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
-								- certificate number {{ good.firearm_details.section_certificate_number|default_na }} expires on
-								{{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
+						{% with covered_by_firearms_act=good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five section=good.firearm_details.firearms_act_section %}
+							{% if covered_by_firearms_act == "Yes" %}
+								{{ covered_by_firearms_act }}
+								<span class="govuk-hint govuk-!-margin-0">
+									{% if section == "firearms_act_section1" %}
+										Section 1
+									{% elif section == "firearms_act_section2" %}
+										Section 2
+									{% endif %}
+								</span>
+								{% if not good.firearm_details.section_certificate_missing %}
+									<span class="govuk-hint govuk-!-margin-0">
+										Expires {{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
+									</span>
+									<span class="govuk-hint govuk-!-margin-0">
+										Reference {{ good.firearm_details.section_certificate_number }}
+									</span>
+								{% endif %}
 							{% endif %}
+						{% endwith %}
+					</dd>
+					<dd class="govuk-summary-list__actions">
+						{% if good.status.key == 'draft' %}
+							<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearms_act' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+						{% endif %}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">Document</dt>
+					<dd class="govuk-summary-list__value">
+						{% if good.firearm_details.section_certificate_missing %}
+							No
+							<span class="govuk-hint govuk-!-margin-0">
+								{{ good.firearm_details.section_certificate_missing_reason }}
+							</span>
+						{% else %}
+							Yes
+							{% for document in good_application_documents.documents %}
+								<span class="govuk-hint govuk-!-margin-0">
+									{{ document.name }}									
+								</span>
+							{% endfor %}
 						{% endif %}
 					</dd>
 					<dd class="govuk-summary-list__actions">

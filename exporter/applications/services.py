@@ -234,7 +234,7 @@ def post_application_document(request, pk, good_pk, data):
     return response.json(), response.status_code
 
 
-def delete_application_document(request, pk, good_pk, data):
+def delete_application_document_data(request, pk, good_pk, data):
     response = client.delete(request, f"/applications/{pk}/goods/{good_pk}/documents/", data)
     response.raise_for_status()
     return response.json(), response.status_code

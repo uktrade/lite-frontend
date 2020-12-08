@@ -3,9 +3,6 @@ from http import HTTPStatus
 from exporter.applications.helpers.date_fields import format_date
 from core import client
 from core.helpers import convert_parameters_to_query_params
-from exporter.applications import services
-from lite_forms.generators import error_page
-from s3chunkuploader.file_handler import S3FileUploadHandler
 
 
 def get_goods(
@@ -51,21 +48,7 @@ def post_goods(request, json):
     return data.json(), data.status_code
 
 
-def post_goods_and_upload_firearms_act_certificate(request, json):
-
-    if "section_certificate_missing" in json:
-        return post_goods(request, json)
-
-    import pdb; pdb.set_trace()
-
-    data, error = services.add_document_data(request)
-    if error:
-        return error_page(request, error)
-
-
-
 def add_section_certificate_details(firearm_details, json):
-    print(f"===> {json}")
     if "section_certificate_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
         firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = json.get(
@@ -80,8 +63,9 @@ def add_section_certificate_details(firearm_details, json):
                 formatted_section_certificate_date if formatted_section_certificate_date != "--" else None
             )
         else:
+            firearm_details["section_certificate_missing"] = True
+            firearm_details["section_certificate_missing_reason"] = json.get("section_certificate_missing_reason", "")
             firearm_details["section_certificate_number"] = ""
-            firearm_details["section_certificate_date_of_expiry"] = ""
         # del json["section_certificate_number"]
     elif firearm_details and "is_covered_by_firearm_act_section_one_two_or_five" not in firearm_details:
         # firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = ""
