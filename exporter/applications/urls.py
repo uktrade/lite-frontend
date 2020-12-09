@@ -33,6 +33,7 @@ from exporter.goods.views import (
     EditIdentificationMarkings,
     EditYearOfManufacture,
     EditFirearmReplica,
+    EditFirearmActCertificateDetails,
 )
 
 app_name = "applications"
@@ -102,6 +103,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/firearms-act/",
         EditFirearmActDetails.as_view(),
         name="firearms_act",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/firearms-act-certificate/",
+        EditFirearmActCertificateDetails.as_view(),
+        name="firearms_act_certificate",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/identification_markings/",

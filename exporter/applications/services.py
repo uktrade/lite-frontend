@@ -228,6 +228,12 @@ def delete_additional_party_document(request, pk, doc_pk):
     return data.status_code
 
 
+def get_application_documents(request, pk, good_pk):
+    response = client.get(request, f"/applications/{pk}/goods/{good_pk}/documents/")
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def post_application_document(request, pk, good_pk, data):
     response = client.post(request, f"/applications/{pk}/goods/{good_pk}/documents/", data)
     response.raise_for_status()

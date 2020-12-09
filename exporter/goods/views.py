@@ -18,6 +18,7 @@ from exporter.applications.services import (
     download_document_from_s3,
     get_status_properties,
     get_case_generated_documents,
+    get_application_documents,
 )
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.goods.forms import (
@@ -35,6 +36,7 @@ from exporter.goods.forms import (
     group_two_product_type_form,
     firearm_calibre_details_form,
     firearms_act_confirmation_form,
+    upload_firearms_act_certificate_form,
     identification_markings_form,
     firearms_sporting_shotgun_form,
     firearm_year_of_manufacture_details_form,
@@ -634,33 +636,106 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
 
     def get_data(self):
         if self.data:
-            new_data = {
-                "section_certificate_number": self.data.get("section_certificate_number"),
+            return {
                 "is_covered_by_firearm_act_section_one_two_or_five": self.data.get(
                     "is_covered_by_firearm_act_section_one_two_or_five"
                 ),
+                "firearms_act_section": self.data.get("firearms_act_section"),
             }
-            # Get the certificate date split into components to display on the form
-            certificate_date_of_expiry = self.data.get("section_certificate_date_of_expiry")
-            if certificate_date_of_expiry:
-                date_prefix = "section_certificate_date_of_expiry"
-                # Pre-populate the date fields
-                (
-                    new_data[date_prefix + "year"],
-                    new_data[date_prefix + "month"],
-                    new_data[date_prefix + "day"],
-                ) = split_date_into_components(certificate_date_of_expiry, "-")
-
-            return new_data
 
     def get_success_url(self):
+        updated_data = self.get_validated_data()["good"]["firearm_details"]
+        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five")
+        section_selected = updated_data.get("firearms_act_section")
+        show_upload_form = covered_by_firearms_act and section_selected
+
         if self.draft_pk:
             return reverse(
                 "goods:good_detail_application",
                 kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
             )
         elif self.application_id and self.object_pk:
-            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+            if show_upload_form:
+                return reverse(
+                    "applications:firearms_act_certificate",
+                    kwargs={"pk": self.application_id, "good_pk": self.object_pk},
+                )
+            else:
+                return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+        elif self.object_pk:
+            return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+
+
+class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = upload_firearms_act_certificate_form("section", None)
+        self.action = edit_good_firearm_details
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+
+    def get_data(self):
+        if self.data:
+            expiry_date = self.data.get("section_certificate_date_of_expiry")
+            day = month = year = ""
+            if expiry_date:
+                year, month, day = expiry_date.split("-")
+            return {
+                "section_certificate_number": self.data.get("section_certificate_number"),
+                "section_certificate_date_of_expiryday": day,
+                "section_certificate_date_of_expirymonth": month,
+                "section_certificate_date_of_expiryyear": year,
+                "section_certificate_missing": self.data.get("section_certificate_missing"),
+                "section_certificate_missing_reason": self.data.get("section_certificate_missing_reason"),
+            }
+
+    def post(self, request, **kwargs):
+        data = get_good_details(request, kwargs["good_pk"])[0]["firearm_details"]
+        certificate_available = request.POST.get("section_certificate_missing", False) == False
+
+        # No need to return if there is an error here if user hasn't selected file here
+        # because we are editing this, a document might have uploaded before so we don't
+        # process unless user selects file to upload again
+        doc_data, error = add_document_data(request)
+
+        json = {k: v for k, v in request.POST.items()}
+        validated_data, status = edit_good_firearm_details(request, kwargs["good_pk"], json)
+        if "errors" in validated_data:
+            form = upload_firearms_act_certificate_form("section", None)
+            return form_page(request, form, data=json, errors=validated_data["errors"])
+
+        # documents = get_application_documents(request, kwargs["pk"], kwargs["good_pk"])
+
+        return redirect(
+            reverse_lazy("applications:add_good_summary", kwargs={"pk": kwargs["pk"], "good_pk": kwargs["good_pk"]})
+        )
+
+    def get_success_url(self):
+        updated_data = self.get_validated_data()["good"]["firearm_details"]
+        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five")
+        section_selected = updated_data.get("firearms_act_section")
+        show_upload_form = covered_by_firearms_act and section_selected
+
+        if self.draft_pk:
+            return reverse(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
+            )
+        elif self.application_id and self.object_pk:
+            if show_upload_form:
+                return reverse_lazy(
+                    "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
+            else:
+                return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
         elif self.object_pk:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 

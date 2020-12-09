@@ -19,6 +19,7 @@ from exporter.applications.services import (
     validate_good_on_application,
     post_application_document,
     delete_application_document_data,
+    get_application_documents,
 )
 from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, FIREARM_AMMUNITION_COMPONENT_TYPES
 from core.helpers import convert_dict_to_query_params
@@ -340,6 +341,14 @@ class AddGoodsSummary(LoginRequiredMixin, TemplateView):
         good_id = str(kwargs["good_pk"])
         good = get_good(request, good_id, full_detail=True)[0]
 
-        context = {"good": good, "application_id": application_id, "good_id": good_id}
+        good_application_documents, status = get_application_documents(request, application_id, good_id)
+        print(f"++++++++++++ {good_application_documents}")
+
+        context = {
+            "good": good,
+            "application_id": application_id,
+            "good_id": good_id,
+            "good_application_documents": good_application_documents,
+        }
 
         return render(request, "applications/goods/add-good-detail-summary.html", context)
