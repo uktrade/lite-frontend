@@ -101,13 +101,12 @@ def pv_gradings(mock_pv_gradings, rf, client):
     [
         (
             {"is_firearms_core": True},
-            5,
+            4,
             [
                 {"qindex": 1, "name": "type"},
                 {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 0, "name": "description"},
                 {"qindex": 1, "name": "calibre"},
-                {"qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
         (

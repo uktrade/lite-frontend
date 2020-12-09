@@ -485,6 +485,15 @@ def add_new_goods_type(driver, description, controlled, control_code, incorporat
     functions.click_submit(driver)
 
 
+@when("I add an existing good to the application")  # noqa
+def i_add_an_existing_good_to_the_application(driver, context):  # noqa
+    goods_page = StandardApplicationGoodsPage(driver)
+    goods_page.click_add_preexisting_good_button()
+
+    # Click the "Add to application" link on the first good
+    driver.find_elements_by_id("add-to-application")[0].click()
+
+
 @when("I add a non-incorporated good to the application")  # noqa
 def i_add_a_non_incorporated_good_to_the_application(driver, context):  # noqa
     goods_page = StandardApplicationGoodsPage(driver)
@@ -738,6 +747,17 @@ def select_product_type(driver, product_type):  # noqa
     functions.click_submit(driver)
 
 
+@when(
+    parsers.parse(
+        'I select "{has_markings}" for serial number of other identification marking with details as "{details}"'
+    )
+)  # noqa
+def specify_serial_number_of_other_identification_details(driver, has_markings, details):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.set_identification_details(has_markings, details)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select sporting shotgun status as "{status}"'))  # noqa
 def select_sporting_gun_status(driver, status):  # noqa
     good_details_page = AddGoodDetails(driver)
@@ -781,10 +801,35 @@ def enter_firearm_calibre(driver, calibre):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I specify firearms act sections apply as "{sections_choice}"'))
-def specify_firearms_act_sections_choice(driver, sections_choice):  # noqa
+@when(parsers.parse('I specify firearms act sections apply as "{choice}"'))
+def specify_firearms_act_sections_choice(driver, choice):  # noqa
     good_details_page = AddGoodDetails(driver)
-    good_details_page.select_do_firearms_act_sections_apply(sections_choice)
+    good_details_page.select_do_firearms_act_sections_apply(choice)
+
+    if choice != "Yes":
+        functions.click_submit(driver)
+
+
+@when(parsers.parse('I select firearms act section "{num}"'))
+def specify_firearms_act_section_num(driver, num):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_firearms_act_section(num)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I upload firearms certificate file "{filename}"'))  # noqa
+def upload_a_file_with_description(driver, filename):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    file_path = get_file_upload_path(filename)
+    good_details_page.choose_firearms_certificate_file(file_path)
+
+
+@when(parsers.parse('I enter certificate number as "{cert_num}" with expiry date "{expiry_date}"'))  # noqa
+def upload_a_file_with_description(driver, cert_num, expiry_date):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_firearms_act_certificate_number(cert_num)
+    day, month, year = expiry_date.split("-")
+    good_details_page.enter_certificate_expiry_date(day, month, year)
     functions.click_submit(driver)
 
 
@@ -874,7 +919,9 @@ def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, valu
     details_page.enter_quantity(quantity)
     details_page.enter_value(value)
     details_page.check_is_good_incorporated_false()
-    details_page.set_deactivated_status(status)
+    # this step is not applicable if we are adding an existing good to the application
+    if status != "N/A":
+        details_page.set_deactivated_status(status)
 
     functions.click_submit(driver)
 
