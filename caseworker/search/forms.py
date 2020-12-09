@@ -69,3 +69,7 @@ class AutocompleteForm(forms.Form):
 
     def clean_q(self):
         return filters_regex_pattern.sub("", self.cleaned_data["q"])
+
+
+class CommentForm(forms.Form):
+    text = forms.CharField()

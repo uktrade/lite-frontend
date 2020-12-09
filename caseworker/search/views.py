@@ -1,6 +1,7 @@
 from rest_framework import views
 from rest_framework.response import Response
 
+from django.shortcuts import redirect
 from django.views.generic import FormView, TemplateView
 
 from core.auth.permissions import IsAuthbrokerAuthenticated
@@ -72,17 +73,31 @@ class ProductAutocompleteView(AbstractAutocompleteView, views.APIView):
     service = staticmethod(services.get_product_autocomplete)
 
 
-class ProductDetailSpireView(LoginRequiredMixin, TemplateView):
+class ProductDetailSpireView(LoginRequiredMixin, FormView):
     template_name = "search/product-details.html"
+    form_class = forms.CommentForm
 
     def get_context_data(self, **kwargs):
         product = services.get_spire_product(request=self.request, pk=self.kwargs["pk"])
         return super().get_context_data(product=product, **kwargs)
 
+    def form_valid(self, form):
+        services.create_spire_product_comment(
+            request=self.request, pk=self.kwargs["pk"], data={"source": "SPIRE", "text": form.cleaned_data["text"]}
+        )
+        return redirect(self.request.get_full_path())
 
-class ProductDetailLiteView(LoginRequiredMixin, TemplateView):
+
+class ProductDetailLiteView(LoginRequiredMixin, FormView):
     template_name = "search/product-details.html"
+    form_class = forms.CommentForm
 
     def get_context_data(self, **kwargs):
         product = services.get_lite_product(request=self.request, pk=self.kwargs["pk"])
         return super().get_context_data(product=product, **kwargs)
+
+    def form_valid(self, form):
+        services.create_product_comment(
+            request=self.request, pk=self.kwargs["pk"], data={"source": "LITE", "text": form.cleaned_data["text"]}
+        )
+        return redirect(self.request.get_full_path())
