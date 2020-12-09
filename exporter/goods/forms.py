@@ -22,6 +22,7 @@ from lite_content.lite_exporter_frontend.goods import (
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
     Form,
+    HTMLBlock,
     TextArea,
     RadioButtons,
     Option,
@@ -641,32 +642,43 @@ def firearm_calibre_details_form():
     )
 
 
+def format_list_item(link, name, description):
+    return "<br>" + "<li>" + linkify(link, name=name,) + f"&nbsp;&nbsp;{description}" + "</li>"
+
+
 def firearms_act_confirmation_form():
     return Form(
         title=CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE,
+        default_button_name="Save and continue",
         questions=[
             HiddenField("section_certificate_step", True),
-            Label(CreateGoodForm.FirearmGood.FirearmsActCertificate.FIREARMS_ACT),
-            Label(
-                id="section-1-link",
-                text=linkify(
+            HTMLBlock(
+                "<br>"
+                + "<details class='govuk-details' data-module='govuk-details'>"
+                + "<summary class='govuk-details__summary'>"
+                + "    <span class='govuk-details__summary-text'>What do the sections cover?</span>"
+                + "</summary>"
+                + "<div>"
+                + " <ol class='govuk-list govuk-!-padding-left-8'>"
+                + format_list_item(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE_LINK,
-                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE,
-                ),
-            ),
-            Label(
-                id="section-2-link",
-                text=linkify(
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE,
+                    "  is a broad category covering most types of firearm and ammunition, including rifles and high powered air weapons.",
+                )
+                + format_list_item(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO_LINK,
-                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO,
-                ),
-            ),
-            Label(
-                id="section-5-link",
-                text=linkify(
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO,
+                    "  covers most types of shotgun.",
+                )
+                + format_list_item(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE_LINK,
-                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE,
-                ),
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE,
+                    "  covers weapons and ammunition that are generally prohibited.",
+                )
+                + "</ol>"
+                + "</div>"
+                + "</details>"
+                "<br>"
             ),
             RadioButtons(
                 title="",
@@ -691,6 +703,7 @@ def firearms_act_confirmation_form():
                 ],
             ),
         ],
+        javascript_imports={"/javascripts/add-good.js"},
     )
 
 
@@ -724,7 +737,7 @@ def upload_firearms_act_certificate_form(section, back_link):
                 optional=False,
             ),
         ],
-        back_link=back_link,
+        back_link=BackLink("Back", back_link) if back_link else None,
         buttons=[Button("Save and continue", "submit")],
         javascript_imports={"/javascripts/add-good.js"},
     )
@@ -767,4 +780,8 @@ def identification_markings_form(draft_pk=None, good_id=None):
         HiddenField("good_id", good_id) if good_id else None,
     ]
 
-    return Form(title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE, questions=questions,)
+    return Form(
+        title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE,
+        questions=questions,
+        default_button_name="Save and continue",
+    )

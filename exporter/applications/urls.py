@@ -134,6 +134,11 @@ urlpatterns = [
         goods.RemovePreexistingGood.as_view(),
         name="remove_preexisting_good",
     ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/documents/<uuid:doc_pk>/",
+        goods.GoodOnApplicationDocumentView.as_view(),
+        name="good-on-application-document",
+    ),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
     path("<uuid:pk>/questions/", questions.AdditionalInformationFormView.as_view(), name="questions"),

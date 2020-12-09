@@ -56,3 +56,19 @@ def return_to_good_summary(kwargs, application_id, object_pk):
         return reverse_lazy("applications:add_good_summary", kwargs={"pk": application_id, "good_pk": object_pk})
     else:
         return reverse_lazy("goods:good", kwargs={"pk": object_pk})
+
+
+def is_firearms_act_status_changed(initial, updated):
+    if (
+        initial["is_covered_by_firearm_act_section_one_two_or_five"] == "Yes"
+        and updated["is_covered_by_firearm_act_section_one_two_or_five"] == "Yes"
+    ) and initial["firearms_act_section"] != updated["firearms_act_section"]:
+        return True
+
+    if (
+        initial["is_covered_by_firearm_act_section_one_two_or_five"] == "Yes"
+        and updated["is_covered_by_firearm_act_section_one_two_or_five"] != "Yes"
+    ):
+        return True
+
+    return False

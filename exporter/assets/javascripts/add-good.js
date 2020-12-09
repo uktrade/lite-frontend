@@ -63,7 +63,6 @@ $("input[name='section_certificate_missing']").change(function () {
 	showHideCertificateMissingReason()
 });
 
-
 (function () {
 	showHideCertificateMissingReason()
 })();

@@ -54,7 +54,8 @@ def add_section_certificate_details(firearm_details, json):
             "is_covered_by_firearm_act_section_one_two_or_five", ""
         )
         firearm_details["firearms_act_section"] = json.get("firearms_act_section", "")
-    elif "firearms_certificate_uploaded" in json:
+
+    if "firearms_certificate_uploaded" in json:
         certificate_missing = json.get("section_certificate_missing", False)
         if not certificate_missing:
             firearm_details["section_certificate_number"] = json.get("section_certificate_number")
@@ -62,15 +63,12 @@ def add_section_certificate_details(firearm_details, json):
             firearm_details["section_certificate_date_of_expiry"] = (
                 formatted_section_certificate_date if formatted_section_certificate_date != "--" else None
             )
+            firearm_details["section_certificate_missing"] = False
+            firearm_details["section_certificate_missing_reason"] = ""
         else:
             firearm_details["section_certificate_missing"] = True
             firearm_details["section_certificate_missing_reason"] = json.get("section_certificate_missing_reason", "")
             firearm_details["section_certificate_number"] = ""
-        # del json["section_certificate_number"]
-    elif firearm_details and "is_covered_by_firearm_act_section_one_two_or_five" not in firearm_details:
-        # firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = ""
-        firearm_details["section_certificate_number"] = ""
-        firearm_details["section_certificate_date_of_expiry"] = "2012-12-21"
 
     return firearm_details
 

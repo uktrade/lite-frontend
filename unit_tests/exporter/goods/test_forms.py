@@ -120,7 +120,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
                 {"qindex": 1, "name": "year_of_manufacture"},
                 {"qindex": 2, "name": "is_replica"},
                 {"qindex": 1, "name": "calibre"},
-                {"qindex": 5, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
+                {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
         (

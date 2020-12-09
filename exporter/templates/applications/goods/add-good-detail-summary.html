@@ -263,6 +263,10 @@
 										Reference {{ good.firearm_details.section_certificate_number }}
 									</span>
 								{% endif %}
+							{% elif covered_by_firearms_act == "No" %}
+								No
+							{% elif covered_by_firearms_act == "Unsure" %}
+								I don't know
 							{% endif %}
 						{% endwith %}
 					</dd>
@@ -273,29 +277,31 @@
 					</dd>
 				</div>
 
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">Document</dt>
-					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.section_certificate_missing %}
-							No
-							<span class="govuk-hint govuk-!-margin-0">
-								{{ good.firearm_details.section_certificate_missing_reason }}
-							</span>
-						{% else %}
-							Yes
-							{% for document in good_application_documents.documents %}
+				{% if good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Document</dt>
+						<dd class="govuk-summary-list__value">
+							{% if good.firearm_details.section_certificate_missing %}
+								No
 								<span class="govuk-hint govuk-!-margin-0">
-									{{ document.name }}									
+									{{ good.firearm_details.section_certificate_missing_reason }}
 								</span>
-							{% endfor %}
-						{% endif %}
-					</dd>
-					<dd class="govuk-summary-list__actions">
-						{% if good.status.key == 'draft' %}
-							<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearms_act' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
-						{% endif %}
-					</dd>
-				</div>
+							{% else %}
+								Yes
+								{% for document in good_application_documents %}
+									<span class="govuk-hint govuk-!-margin-0">
+										<a {% if document.safe == True %}href="{% url 'applications:good-on-application-document' pk=application_id good_pk=good.id doc_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+									</span>
+								{% endfor %}
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearms_act_certificate' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+							{% endif %}
+						</dd>
+					</div>
+				{% endif %}
 
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">

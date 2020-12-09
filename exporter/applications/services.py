@@ -240,6 +240,25 @@ def post_application_document(request, pk, good_pk, data):
     return response.json(), response.status_code
 
 
+def get_application_document(request, pk, good_pk, doc_pk):
+    response = client.get(request, f"/applications/{pk}/goods/{good_pk}/documents/{doc_pk}/")
+    response.raise_for_status()
+    return response.json().get("document"), response.status_code
+
+
+def delete_application_document(request, pk, good_pk, doc_pk):
+    response = client.delete(request, f"/applications/{pk}/goods/{good_pk}/documents/{doc_pk}/")
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def fetch_and_delete_previous_application_documents(request, pk, good_pk):
+    documents, _ = get_application_documents(request, pk, good_pk)
+    for doc in documents["documents"]:
+        if doc["safe"]:
+            delete_application_document(request, pk, good_pk, doc["id"])
+
+
 def delete_application_document_data(request, pk, good_pk, data):
     response = client.delete(request, f"/applications/{pk}/goods/{good_pk}/documents/", data)
     response.raise_for_status()

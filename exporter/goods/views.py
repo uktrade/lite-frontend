@@ -9,7 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from exporter.applications.helpers.date_fields import split_date_into_components
 from exporter.applications.services import (
     get_application_ecju_queries,
     get_case_notes,
@@ -18,7 +17,8 @@ from exporter.applications.services import (
     download_document_from_s3,
     get_status_properties,
     get_case_generated_documents,
-    get_application_documents,
+    post_application_document,
+    fetch_and_delete_previous_application_documents,
 )
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.goods.forms import (
@@ -45,6 +45,7 @@ from exporter.goods.forms import (
 from exporter.goods.helpers import (
     COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP,
     return_to_good_summary,
+    is_firearms_act_status_changed,
 )
 from exporter.goods.services import (
     get_goods,
@@ -645,7 +646,7 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         updated_data = self.get_validated_data()["good"]["firearm_details"]
-        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five")
+        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes"
         section_selected = updated_data.get("firearms_act_section")
         show_upload_form = covered_by_firearms_act and section_selected
 
@@ -655,6 +656,11 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
                 kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
             )
         elif self.application_id and self.object_pk:
+            # If the new status is that the product is not covered by firearms act or section change
+            # then delete the previous certificate
+            if is_firearms_act_status_changed(self.data, updated_data):
+                fetch_and_delete_previous_application_documents(self.request, self.application_id, self.object_pk)
+
             if show_upload_form:
                 return reverse(
                     "applications:firearms_act_certificate",
@@ -666,6 +672,7 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
+@method_decorator(csrf_exempt, "dispatch")
 class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
     application_id = None
 
@@ -674,13 +681,16 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             # coming from the application
             self.object_pk = str(kwargs["good_pk"])
             self.application_id = str(kwargs["pk"])
+            back_link = reverse(
+                "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+            )
         else:
+            back_link = None
             self.object_pk = str(kwargs["pk"])
         self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
-        self.form = upload_firearms_act_certificate_form("section", None)
+        self.form = upload_firearms_act_certificate_form("section", back_link)
         self.action = edit_good_firearm_details
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
     def get_data(self):
         if self.data:
@@ -698,24 +708,36 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             }
 
     def post(self, request, **kwargs):
-        data = get_good_details(request, kwargs["good_pk"])[0]["firearm_details"]
-        certificate_available = request.POST.get("section_certificate_missing", False) == False
-
-        # No need to return if there is an error here if user hasn't selected file here
-        # because we are editing this, a document might have uploaded before so we don't
-        # process unless user selects file to upload again
-        doc_data, error = add_document_data(request)
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+        doc_data = {}
+        error = None
 
         json = {k: v for k, v in request.POST.items()}
-        validated_data, status = edit_good_firearm_details(request, kwargs["good_pk"], json)
+        certificate_available = json.get("section_certificate_missing", False) is False
+
+        if certificate_available:
+            doc_data, error = add_document_data(request)
+
+        validated_data, _ = edit_good_firearm_details(request, kwargs["good_pk"], json)
         if "errors" in validated_data:
+            if certificate_available and error:
+                validated_data["errors"]["file"] = ["Select certificate file to upload"]
             form = upload_firearms_act_certificate_form("section", None)
             return form_page(request, form, data=json, errors=validated_data["errors"])
 
-        # documents = get_application_documents(request, kwargs["pk"], kwargs["good_pk"])
+        if certificate_available and error:
+            form = upload_firearms_act_certificate_form("section", None)
+            return form_page(request, form, data=json, errors={"file": ["Select certificate file to upload"]})
+
+        if doc_data and json.get("section_certificate_missing", False) is False:
+            fetch_and_delete_previous_application_documents(request, kwargs["pk"], kwargs["good_pk"])
+
+            data, status_code = post_application_document(request, kwargs["pk"], kwargs["good_pk"], doc_data)
+            if status_code != HTTPStatus.CREATED:
+                return error_page(request, data["errors"]["file"])
 
         return redirect(
-            reverse_lazy("applications:add_good_summary", kwargs={"pk": kwargs["pk"], "good_pk": kwargs["good_pk"]})
+            reverse("applications:add_good_summary", kwargs={"pk": kwargs["pk"], "good_pk": kwargs["good_pk"]})
         )
 
     def get_success_url(self):
@@ -731,7 +753,7 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             )
         elif self.application_id and self.object_pk:
             if show_upload_form:
-                return reverse_lazy(
+                return reverse(
                     "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
                 )
             else:

@@ -129,7 +129,7 @@
 																			<td class="govuk-table__cell">{{ firearm_details.calibre }}</td>
 																	</tr>
 																	<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Covered by Firearms Act 1968</th>
+																			<th scope="row" class="govuk-table__header">Firearms Act 1968</th>
 																			<td class="govuk-table__cell">
 																					{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
 																						{% if firearm_details.firearms_act_section == "firearms_act_section1" %}
@@ -155,8 +155,13 @@
 																		<tr class="govuk-table__row app-table__row">
 																			<th scope="row" class="govuk-table__header">Certificate number</th>
 																			<td class="govuk-table__cell">
-																				{{ firearm_details.section_certificate_number }}
-																				<span class="govuk-hint"> Expires {{ firearm_details.section_certificate_date_of_expiry|date_display }} </span>
+																				{% if not firearm_details.section_certificate_missing %}
+																					{{ firearm_details.section_certificate_number }}
+																					<span class="govuk-hint"> Expires {{ firearm_details.section_certificate_date_of_expiry|date_display }} </span>
+																				{% else %}
+																					No
+																					<span class="govuk-hint"> {{ firearm_details.section_certificate_missing_reason }} </span>
+																				{% endif %}
 																			</td>
 																		</tr>
 																	{% endif %}
