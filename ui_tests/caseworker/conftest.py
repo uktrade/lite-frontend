@@ -4,7 +4,7 @@ import time
 
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
-from ui_tests.caseworker.pages.goods_queries_pages import GoodsQueriesPages
+from ui_tests.caseworker.pages.goods_queries_pages import StandardGoodsReviewPages, OpenGoodsReviewPages
 
 from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.fixtures.env import environment  # noqa
@@ -314,16 +314,18 @@ def generated_document(driver, context):  # noqa
     parsers.parse('I respond "{controlled}", "{control_list_entry}", "{report}", "{comment}" and click submit')
 )  # noqa
 def click_continue(driver, controlled, control_list_entry, report, comment, context):  # noqa
+    is_standard = "SIEL" in context.reference_code
     controlled = controlled == "yes"
-    query_page = GoodsQueriesPages(driver)
+    query_page = StandardGoodsReviewPages(driver) if is_standard else OpenGoodsReviewPages(driver)
+
     query_page.click_is_good_controlled(controlled)
     query_page.type_in_to_control_list_entry(control_list_entry)
     context.goods_control_list_entry = control_list_entry
-    query_page.choose_report_summary()
+    query_page.enter_ars(report)
     context.report = report
     query_page.enter_a_comment(comment)
     context.comment = comment
-    Shared(driver).click_submit()
+    query_page.click_submit()
 
 
 @then("the status has been changed in the application")  # noqa
