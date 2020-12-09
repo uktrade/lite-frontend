@@ -2,7 +2,7 @@ from rest_framework import views
 from rest_framework.response import Response
 
 from django.shortcuts import redirect
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView
 
 from core.auth.permissions import IsAuthbrokerAuthenticated
 from core.auth.views import LoginRequiredMixin
@@ -23,10 +23,10 @@ class AbstractSearchView:
         form = self.get_form()
         query_params = {}
         if form.is_valid():
-            if form.cleaned_data["search_string"]:
-                query_params["search"] = form.cleaned_data["search_string"]
-            if form.cleaned_data["page"]:
-                query_params["page"] = form.cleaned_data["page"]
+            for name in ["search_string", "page"]:
+                if form.cleaned_data[name]:
+                    query_params[name] = form.cleaned_data[name]
+
             query_params.update(form.cleaned_data["filters"])
         results = self.service(self.request, query_params)
         helpers.highlight_results(results=results["results"])
@@ -63,6 +63,7 @@ class ApplicationAutocompleteView(AbstractAutocompleteView, views.APIView):
 
 class ProductSearchView(AbstractSearchView, LoginRequiredMixin, FormView):
     template_name = "search/search-product.html"
+    form_class = forms.SearchForm
     service = staticmethod(services.get_product_search_results)
 
     def get_context_data(self, **kwargs):

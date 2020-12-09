@@ -16,7 +16,7 @@ def highlight_results(results):
                     for highlight in highlights:
                         result[target] = mark_safe(highlight)
 
-        if "inner_hits" in result:
+        if "inner_hits" in result and "hits" in result["inner_hits"]:
             highlight_results(result["inner_hits"]["hits"])
 
 

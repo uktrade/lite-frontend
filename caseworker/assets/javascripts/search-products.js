@@ -134,4 +134,16 @@
 
   listenToPaginationClick()
 
+  function handleExpandClick() {
+      event.preventDefault()
+      var selector = this.getAttribute('data-target-selector')
+      document.getElementById(selector).classList.remove('hide-rows')
+      this.remove()
+  }
+
+  var elements= document.querySelectorAll('.js-expand-inner-hits')
+  for (var i = 0; i < elements.length; i++) {
+      elements.item(i).addEventListener('click', handleExpandClick)
+  }
+
 })()

@@ -45,19 +45,22 @@
                         <th class="govuk-table__header" scope="col"></th>
                     </tr>
                 </thead>
-                <tbody class="govuk-table__body">
-                    {% for item in item.inner_hits.hits %}
+                <tbody class="govuk-table__body hide-rows" id="js-inner-hits-{{ item.id }}">
+                    {% for inner in item.inner_hits.hits %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
                                 <details>
-                                    <summary>{{ item.destination }}</summary>
-                                    <code style="line-break:anywhere">{{ item|pprint_dict|safe }}</code>
+                                    <summary>{{ inner.destination }}</summary>
+                                    <code style="line-break:anywhere">{{ inner|pprint_dict|safe }}</code>
                                 </details>
+                                {% if forloop.counter == 4 and item.inner_hits.total > 4 %}
+                                    <a href="" class="js-expand-inner-hits govuk-!-margin-top-6 govuk-!-margin-bottom-0" data-target-selector="js-inner-hits-{{ item.id }}">Show all</a>
+                                {% endif %}
                             </td>
                             <td class="govuk-table__cell govuk-!-width-one-quarter govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.report_summary }}</td>
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
-                                {% if item.control_list_entries %}
-                                    {% for entry in item.control_list_entries %}
+                                {% if inner.control_list_entries %}
+                                    {% for entry in inner.control_list_entries %}
                                         <span>{{ entry.rating }}</span>
                                     {% if not forloop.last %}
                                     ,
@@ -67,11 +70,11 @@
                                     None
                                 {% endif %}
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.regime }}</td>
-                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ item.date }}</td>
-                            <td class="govuk-table__cell govuk-table__cell rating-comment {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}" title="{{ item.rating_comment }}">{{ item.rating_comment }}</td>
+                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ inner.regime }}</td>
+                            <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ inner.date }}</td>
+                            <td class="govuk-table__cell govuk-table__cell rating-comment {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}" title="{{ inner.rating_comment }}">{{ inner.rating_comment }}</td>
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
-                                <a href="{% url 'search:product-details' pk=item.id %}?{{ request.GET.urlencode }}">View</a>
+                                <a href="{% url 'search:product-details' pk=inner.id %}?{{ request.GET.urlencode }}">View</a>
                             </td>
                         </tr>
                     {% endfor %}
