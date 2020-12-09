@@ -2,138 +2,131 @@
 
 {% load parse_date pprint_dict from spire_tags %}
 
-{% block back_link %}{% endblock %}
+{% block back_link %}
+{% endblock %}
 
 {% block title %}SPIRE license details{% endblock %}
 
-
 {% block body %}
-
-    <div class="lite-gutter">
-
-        <div class="govuk-breadcrumbs ">
-          <ol class="govuk-breadcrumbs__list">
-            <li class="govuk-breadcrumbs__list-item">
-              <a class="govuk-breadcrumbs__link" href="#">Productpedia</a>
-            </li>
-            <li class="govuk-breadcrumbs__list-item">
-              <a class="govuk-breadcrumbs__link" href="#">{{ product.canonical_name }}</a>
-            </li>
-            <li class="govuk-breadcrumbs__list-item">
-              <a class="govuk-breadcrumbs__link" href="#">{{ product.destination }}</a>
-            </li>
-            <li class="govuk-breadcrumbs__list-item">
-              <a class="govuk-breadcrumbs__link" href="#">{{ product.end_use|truncatechars:20 }}</a>
-            </li>
-            {% if product.end_user_type %}
-              <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="#">{{ product.end_user_type }}</a>
-              </li>
-            {% endif %}
-          </ol>
-        </div>
-
-        <table class="govuk-table govuk-!-margin-top-8">
-          <caption class="govuk-table__caption">{{ product.canonical_name }}</caption>
-          <tbody class="govuk-table__body">
-            <tr class="govuk-table__row">
-              <th scope="row" class="govuk-table__header">Destination</th>
-              <td class="govuk-table__cell">{{ product.destination }}</td>
-            </tr>
-            <tr class="govuk-table__row">
-              <th scope="row" class="govuk-table__header">End use</th>
-              <td class="govuk-table__cell">{{ product.end_use }}</td>
-            </tr>
-            <tr class="govuk-table__row">
-              <th scope="row" class="govuk-table__header">End user type</th>
-              <td class="govuk-table__cell">{{ product.end_user_type }}</td>
-            </tr>
-            <tr class="govuk-table__row">
-              <th scope="row" class="govuk-table__header">Ratings</th>
-              <td class="govuk-table__cell">
-                {% for item in product.control_list_entries %}
-                    {{ item.rating }}
-                {% endfor %}
-              </td>
-            </tr>
-
-          </tbody>
-        </table>
-
-        <h2 class="govuk-heading-l">Related cases</h2>
-        <ul>
-            <li>
-              <a class="govuk-link govuk-link--no-visited-state" id="case-{{ product.application.id }}" href="{% url 'spire:application-detail' id=product.application.id %}">
-                <span class="govuk-visually-hidden">View</span> {{ product.application.reference_code }}
-              </a>
-            </li>
-            {% for related_product in product.related_products %}
-            <li>
-                <a class="govuk-link govuk-link--no-visited-state" id="case-{{ related_product.application.id }}"
-                  href="{% url 'spire:application-detail' id=related_product.application.id %}">
-                  <span class="govuk-visually-hidden">View</span> {{ related_product.application.reference_code }}</a>
-            </li>
+  <div class="lite-gutter">
+    <a href="{% url 'search:products' %}?{{ request.GET.urlencode }}" id="back-link" class="govuk-back-link">Back</a>
+    <table class="govuk-table govuk-!-margin-top-4">
+      <caption class="govuk-table__caption govuk-!-margin-bottom-2">{{ product.description }}</caption>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">Destination</th>
+          <td class="govuk-table__cell">{{ product.destination }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">End use</th>
+          <td class="govuk-table__cell">{{ product.end_use }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">End user type</th>
+          <td class="govuk-table__cell">{{ product.end_user_type }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">Ratings</th>
+          <td class="govuk-table__cell">
+            {% for item in product.control_list_entries %}
+                {{ item.rating }}
             {% endfor %}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">Regime</th>
+          <td class="govuk-table__cell">{{ product.regime }}</td>
+        </tr>
 
-        </ul>
+      </tbody>
+    </table>
 
-        {# also show cases that use the same canonical name #}
-        <div id="audit-trail" class="app-activity__list govuk-!-margin-top-8">
-          {% for case in product.cases %}
-            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
-              <p class="govuk-body">
-                <span class="app-activity__item__user">{{ case.name}}</span>
-                <span data-max-length="400">{{ case.id }}</span>
-              </p>
-            </div>
-          {% endfor %}
+    <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-2">Cases that include this product</h2>
+
+    <table class="govuk-table productpedia-results-table" id="results-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row" style="border-top: 0; border-bottom: 0;">
+                <th class="govuk-table__header" scope="col">Case</th>
+                <th class="govuk-table__header" scope="col">Destination</th>
+                <th class="govuk-table__header" scope="col">ARS</th>
+                <th class="govuk-table__header" scope="col">Rating</th>
+                <th class="govuk-table__header" scope="col">Regime</th>
+                <th class="govuk-table__header" scope="col">Comment</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body" style="border-bottom: 0;">
+          {% for item in product.related_products %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-table__cell">
+                    <a class="govuk-link govuk-link--no-visited-state" id="case-{{ itemy.application.id }}" href="{% url 'spire:application-detail' id=item.application.id %}">{{ product.application.reference_code }}</a>
+                    <p>{{ item.organisation }}</p>
+                </td>
+                <td class="govuk-table__cell govuk-table__cell">
+                    <details>
+                        <summary>{{ item.destination }}</summary>
+                        <code style="line-break:anywhere">{{ item|pprint_dict|safe }}</code>
+                    </details>
+                </td>
+                <td class="govuk-table__cell govuk-table__cell">{{ item.report_summary }}</td>
+                <td class="govuk-table__cell govuk-table__cell">
+                    {% if item.control_list_entries %}
+                        {% for entry in item.control_list_entries %}
+                            <span>{{ entry.rating }}</span>
+                        {% if not forloop.last %}
+                        ,
+                        {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+                <td class="govuk-table__cell govuk-table__cell">{{ item.regime }}</td>
+                <td class="govuk-table__cell govuk-table__cell rating-comment" title="{{ item.rating_comment }}">{{ item.rating_comment }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# also show cases that use the same canonical name #}
+    <div id="audit-trail" class="app-activity__list govuk-!-margin-top-8">
+      {% for case in product.cases %}
+        <div id="case-activity-{{ audit.id }}" class="app-activity__item">
+          <p class="govuk-body">
+            <span class="app-activity__item__user">{{ case.name}}</span>
+            <span data-max-length="400">{{ case.id }}</span>
+          </p>
         </div>
+      {% endfor %}
+    </div>
 
-        <h2 class="govuk-heading-l">Discuss</h2>
-        <div id="audit-trail" class="app-activity__list">
-            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
-              <p class="govuk-body">
-                <span class="app-activity__item__user" style="display: block;">You</span>
-                <textarea style="width: 100%; min-height: 100px"></textarea>
-                <button onclick="confirm('This will move the precedent flag to this product. Do you want to continue?')">📌</button>
-                <input type="file"></input>
-                <button style="float: right;">Submit</button>
-              </p>
-            </div>
-
-            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
-              <p class="govuk-body">
-                <span class="app-activity__item__user">Marcus Aurelius</span>
-                <span data-max-length="400">{% lorem 3 %}</span>
-              </p>
-              <p class="govuk-hint govuk-!-font-size-16">10 Jan 2019</p>
-            </div>
-
-            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
-              <p class="govuk-body">
-                <span class="app-activity__item__user">Diogenes</span>
-                <span data-max-length="400">{% lorem 3 %}</span>
-              </p>
-              <p class="govuk-hint govuk-!-font-size-16">01 Jan 2019</p>
-            </div>
-
-            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
-              <p class="govuk-body">
-                <span class="app-activity__item__user">Seneca</span>
-                <span data-max-length="400">{% lorem 3 %}</span>
-              </p>
-              <p class="govuk-hint govuk-!-font-size-16">01 Jan 2018</p>
-            </div>
-
-            <div id="case-activity-{{ audit.id }}" class="app-activity__item">
-              <p class="govuk-body">
-                <span class="app-activity__item__user">Epictetus</span>
-                <span data-max-length="400">{% lorem 3 %}</span>
-              </p>
-              <p class="govuk-hint govuk-!-font-size-16">01 Jan 2017</p>
-            </div>
-
+    <h2 class="govuk-heading-l">Comments</h2>
+    <div id="case-activity-{{ audit.id }}">
+      <form class="govuk-body lite-case-note__container" method="post">
+        {% csrf_token %}
+        <textarea name="text" class="lite-case-note__textarea" style="width: 100%; min-height: 100px"></textarea>
+        <div class="lite-case-note__controls" style="text-align: right;">
+          <div>&nbsp;</div>
+          <div class="lite-case-note__controls-buttons">
+            <button class="govuk-button govuk-!-margin-right-4" type="submit">Add comment</button>
+            <button class="govuk-button govuk-button--secondary" type="submit">Attach file</button>
+          </div>
         </div>
+      </form>
+    </div>
+
+    <div id="audit-trail" class="app-activity__list">
+        {% for comment in product.comments %}
+          <div id="case-activity-{{ audit.id }}" class="app-activity__item">
+            <p class="govuk-body">
+              <span class="app-activity__item__user">{{ comment.user.first_name }} {{ comment.user.last_name }}</span>
+              <span data-max-length="400">added a comment</span>
+            </p>
+            <p class="govuk-body">{{ comment.updated_at }}</p>
+            <p class="govuk-hint govuk-!-margin-0">{{ comment.text }}</p>
+          </div>
+        {% endfor %}
+
+      </div>
 
     </div>
 

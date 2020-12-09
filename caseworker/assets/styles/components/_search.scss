@@ -61,5 +61,20 @@ body {
     summary::marker {
       content: ''
     }
+    .rating-comment {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
   }
+
+  .js-expand-inner-hits {
+    display: inline-block;
+  }
+
+  .hide-rows tr:nth-child(n+5) {
+    display: none;
+  }
+
 }

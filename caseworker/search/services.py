@@ -57,3 +57,15 @@ def get_lite_product(request, pk):
     response = client.get(request, f"/search/product/lite/{pk}/")
     response.raise_for_status()
     return response.json()
+
+
+def create_product_comment(request, pk, data):
+    response = client.post(request, f"/search/product/lite/{pk}/comment/", data)
+    response.raise_for_status()
+    return response.json()
+
+
+def create_spire_product_comment(request, pk, data):
+    response = client.post(request, f"/search/product/spire/{pk}/comment/", data)
+    response.raise_for_status()
+    return response.json()

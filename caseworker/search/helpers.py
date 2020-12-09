@@ -12,6 +12,12 @@ def highlight_results(results):
                     for highlight in highlights:
                         if item[target] == strip_tags(highlight):
                             item[target] = mark_safe(highlight)
+                if not path and target in result:
+                    for highlight in highlights:
+                        result[target] = mark_safe(highlight)
+
+        if "inner_hits" in result and "hits" in result["inner_hits"]:
+            highlight_results(result["inner_hits"]["hits"])
 
 
 def keypath_lookup(level, keys):
