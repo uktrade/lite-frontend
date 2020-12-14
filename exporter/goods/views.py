@@ -76,12 +76,14 @@ from core.auth.views import LoginRequiredMixin
 
 class Goods(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
+        name = request.GET.get("name", "").strip()
         description = request.GET.get("description", "").strip()
         part_number = request.GET.get("part_number", "").strip()
         control_list_entry = request.GET.get("control_list_entry", "").strip()
 
         filters = FiltersBar(
             [
+                TextInput(title="name", name="name"),
                 TextInput(title="description", name="description"),
                 TextInput(title="control list entry", name="control_list_entry"),
                 TextInput(title="part number", name="part_number"),
@@ -90,6 +92,7 @@ class Goods(LoginRequiredMixin, TemplateView):
 
         params = {
             "page": int(request.GET.get("page", 1)),
+            "name": name,
             "description": description,
             "part_number": part_number,
             "control_list_entry": control_list_entry,
@@ -97,6 +100,7 @@ class Goods(LoginRequiredMixin, TemplateView):
 
         context = {
             "goods": get_goods(request, **params),
+            "name": name,
             "description": description,
             "part_number": part_number,
             "control_list_entry": control_list_entry,
