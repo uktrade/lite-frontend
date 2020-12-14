@@ -10,6 +10,7 @@ from caseworker.search.forms import SearchForm
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
+from caseworker.search.services import get_product_like_this
 from core.auth.views import LoginRequiredMixin
 from lite_forms.views import SingleFormView
 
@@ -90,7 +91,13 @@ class AbstractReviewGoodWizardView(SessionWizardView):
             errors = {bound_field.id_for_label: bound_field.errors for bound_field in form}
         else:
             errors = {}
-        return super().get_context_data(case=self.case, object=self.object, errors=errors, **kwargs)
+        return super().get_context_data(
+            case=self.case,
+            object=self.object,
+            errors=errors,
+            related_products=self.related_products,
+            **kwargs
+        )
 
     def process_step(self, form):
         data = {**form.cleaned_data, "objects": [self.object_pk]}
@@ -101,6 +108,10 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     def done(self, form_list, **kwargs):
         url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
         return redirect(url)
+
+    @property
+    def related_products(self):
+        return get_product_like_this(self.request, pk=self.object['id'])
 
 
 class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):

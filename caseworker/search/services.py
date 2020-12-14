@@ -69,3 +69,12 @@ def create_spire_product_comment(request, pk, data):
     response = client.post(request, f"/search/product/spire/{pk}/comment/", data)
     response.raise_for_status()
     return response.json()
+
+
+def get_product_like_this(request, pk):
+    if not settings.LITE_API_SEARCH_ENABLED:
+        return []
+
+    response = client.get(request, f"/search/product/more-like-this/{pk}/")
+    response.raise_for_status()
+    return response.json()
