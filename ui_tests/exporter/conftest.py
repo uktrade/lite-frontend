@@ -767,11 +767,13 @@ def select_sporting_gun_status(driver, status):  # noqa
 
 @when(
     parsers.parse(
-        'I enter good description as "{description}" part number "{part_number}" controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
+        'I enter good name as "{name}" description as "{description}" part number "{part_number}" '
+        'controlled "{controlled}" control code "{control_code}" and graded "{graded}"'
     )
 )  # noqa
-def create_a_new_good_in_application(driver, description, part_number, controlled, control_code, graded):  # noqa
+def create_a_new_good_in_application(driver, name, description, part_number, controlled, control_code, graded):  # noqa
     add_goods_page = AddGoodPage(driver)
+    add_goods_page.enter_good_name(name)
     add_goods_page.enter_description_of_goods(description)
     add_goods_page.enter_part_number(part_number)
     add_goods_page.select_is_your_good_controlled(controlled)
@@ -926,6 +928,13 @@ def i_enter_product_details_unit_quantity_and_value(driver, unit, quantity, valu
     functions.click_submit(driver)
 
 
+@then(parsers.parse('the product with name "{expected}" is added to the application'))
+def product_with_name_is_added_to_application(driver, expected):  # noqa
+    products_page = StandardApplicationGoodsPage(driver)
+    actual = products_page.get_product_name()
+    assert actual == expected
+
+
 @then(parsers.parse('the product "{description}" is added to the application'))
 def product_with_description_is_added_to_application(driver, description):  # noqa
     products_page = StandardApplicationGoodsPage(driver)
@@ -940,6 +949,7 @@ def edit_good_details_in_application(driver, field_name, updated_value):  # noqa
     driver.execute_script("arguments[0].click();", link)
 
     pages_map = {
+        "Name": AddGoodPage(driver).enter_good_name,
         "Description": AddGoodPage(driver).enter_description_of_goods,
         "Part number": AddGoodPage(driver).enter_part_number,
         "Year of manufacture": AddGoodDetails(driver).enter_year_of_manufacture,

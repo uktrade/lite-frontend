@@ -28,6 +28,7 @@ def good_template():
         "uses_information_security": None,
         # to be set by fixture
         "item_category": {},
+        "name": "good",
         "description": "",
         "firearm_details": {},
     }
@@ -37,6 +38,7 @@ def good_template():
 def good_ammo(good_template):
     return {
         **good_template,
+        "name": "Ammunition",
         "description": "box of 25 game shot cartridges",
         "item_category": {"key": "group2_firearms", "value": "Firearms"},
         "firearm_details": {
@@ -59,6 +61,7 @@ def good_ammo(good_template):
 def good_shotgun(good_template):
     return {
         **good_template,
+        "name": "Shotgun",
         "description": "A shotgun",
         "item_category": {"key": "group2_firearms", "value": "Firearms"},
         "firearm_details": {
@@ -81,6 +84,7 @@ def good_shotgun(good_template):
 def good_gun_barrel(good_template):
     return {
         **good_template,
+        "name": "Gun barrel",
         "description": "A barrel",
         "item_category": {"key": "group2_firearms", "value": "Firearms"},
         "firearm_details": {
@@ -104,6 +108,7 @@ def good_widget(good_template):
 
     return {
         **good_template,
+        "name": "Widget",
         "description": "A widget",
         "item_category": {"key": "group1_components", "value": "Components, modules or accessories of something"},
     }

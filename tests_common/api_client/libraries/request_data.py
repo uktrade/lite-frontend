@@ -1,8 +1,22 @@
 import random
+import string
 
 from faker import Faker
 
 fake = Faker()
+
+example_goods = [
+    {"name": "Rifle", "description": "Firearms"},
+    {"name": "Gatling gun", "description": "Firearms"},
+    {"name": "Router", "description": "Network router"},
+    {"name": "Artillery", "description": "Firearms"},
+    {"name": "Spectrometer", "description": "Specialized optics"},
+    {"name": "CCD Detector", "description": "Image sensor"},
+    {"name": "Cryptographical software", "description": "Encryption software"},
+    {"name": "Aileron", "description": "Aircraft component"},
+    {"name": "Ammunition", "description": "Sporting shotgun ammunition"},
+    {"name": "Assembly board", "description": "Electronics assembly board"},
+]
 
 
 def build_user(user):
@@ -48,8 +62,9 @@ def build_organisation(name, type, address):
     }
 
 
-def build_good(description, control_list_entry="ML1a", part_number="1234"):
+def build_good(name, description, control_list_entry="ML1a", part_number="1234"):
     return {
+        "name": name,
         "description": description,
         "is_good_controlled": True,
         "control_list_entries": [control_list_entry],
@@ -90,15 +105,26 @@ def random_colour():
     return random.choice(["red", "orange", "blue", "yellow", "green", "pink", "purple", "brown", "turquoise"])
 
 
+def random_part_number(max_len=16):
+    def randstr(len):
+        return "".join(random.choice(string.ascii_uppercase) for _ in range(len))
+
+    def randint(len):
+        return "".join(random.choice(string.digits) for _ in range(len))
+
+    return f"{randstr(2)}-{randstr(4)}-{randint(8)}"
+
+
 def build_request_data(exporter_user, gov_user):
     exporter = build_user(exporter_user)
+    good = random.choice(example_goods)
     request_data = {
         "organisation": build_organisation_with_user(exporter, "commercial", "Archway Communications"),
         # Please leave this as HMRC as tests depend on this being HMRC.
         "organisation_for_switching_organisations": build_organisation_with_user(
             exporter, "hmrc", "HMRC Wayne Enterprises"
         ),
-        "good": build_good("Lentils"),
+        "good": build_good(good["name"], good["description"], part_number=random_part_number()),
         "application": {
             "name": "application",
             "application_type": "siel",
