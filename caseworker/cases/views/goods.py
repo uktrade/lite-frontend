@@ -92,11 +92,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
         else:
             errors = {}
         return super().get_context_data(
-            case=self.case,
-            object=self.object,
-            errors=errors,
-            related_products=self.related_products,
-            **kwargs
+            case=self.case, object=self.object, errors=errors, related_products=self.related_products, **kwargs
         )
 
     def process_step(self, form):
@@ -111,7 +107,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
 
     @property
     def related_products(self):
-        return get_product_like_this(self.request, pk=self.object['id'])
+        return get_product_like_this(self.request, pk=self.object["id"])
 
 
 class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
