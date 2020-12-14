@@ -256,5 +256,7 @@
             </tr>
         </tbody>
     </table>
-    {% include 'case/review-goods-related-cases.html' %}
+    {% if related_products %}
+        {% include 'case/review-goods-related-cases.html' %}
+    {% endif %}
 {% endblock %}

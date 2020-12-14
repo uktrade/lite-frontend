@@ -7,10 +7,6 @@
             {% for item in related_products %}
                 <tr class="govuk-table__row app-table__row">
                     <td class="govuk-table__cell">
-                      <details style="display: inline">
-                          <summary>&nbsp;</summary>
-                          <code style="line-break:anywhere">{{ item|pprint_dict|safe }}</code>
-                      </details>
                       {% if item.index == 'lite' %}
                           {% if item.queues %}
                             <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}"
@@ -27,6 +23,10 @@
                         <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}" href="{% url 'spire:application-detail' id=item.application.id %}">{{ item.application.reference_code }}</a>
                         <div>{{ item.organisation }}</div>
                       {% endif %}
+                      <details style="display: inline">
+                          <summary>&nbsp;</summary>
+                          <code style="line-break:anywhere">{{ item|pprint_dict|safe }}</code>
+                      </details>
                     </div>
                     <div>{{ item.date }}</div>
                     {% if item.control_list_entries %}
