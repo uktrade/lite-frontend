@@ -1,0 +1,42 @@
+{% load pprint_dict from spire_tags %}
+
+<div>
+    <h2 class="govuk-heading-m">Other cases including this product</h2>
+    <table class="govuk-table app-table">
+        <tbody class="govuk-table__body" id="tbody-placeholder">
+            {% for item in related_products %}
+                <tr class="govuk-table__row app-table__row">
+                    <td class="govuk-table__cell">
+                      {% if item.index == 'lite' %}
+                          {% if item.queues %}
+                            <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}"
+                                href="{% url 'cases:case' queue_pk=item.queues.0.id pk=item.application.id %}">
+                                <span class="govuk-visually-hidden">View</span> {{ item.application.reference_code }}
+                            </a>
+                          {% else %}
+                            <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}"
+                                href="{% url 'cases:case' queue_pk=queue.id pk=item.application.id %}">
+                                <span class="govuk-visually-hidden">View</span> {{ item.application.reference_code }}
+                            </a>
+                          {% endif %}
+                      {% elif item.index == 'spire' %}
+                        <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}" href="{% url 'spire:application-detail' id=item.application.id %}">{{ item.application.reference_code }}</a>
+                        <div>{{ item.organisation }}</div>
+                      {% endif %}
+                      <details style="display: inline">
+                          <summary>&nbsp;</summary>
+                          <code style="line-break:anywhere">{{ item|pprint_dict|safe }}</code>
+                      </details>
+                    </div>
+                    <div>{{ item.date }}</div>
+                    {% if item.control_list_entries %}
+                      <span>
+                         Rating: {% for entry in item.control_list_entries %}{{ entry.rating }}{% if not forloop.last %},{% endif %}{% endfor %}
+                      </span>
+                    {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

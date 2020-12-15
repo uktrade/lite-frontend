@@ -147,10 +147,19 @@ good_review_parametrize_data = (
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
 def test_standard_review_goods(
-    authorized_client, requests_mock, standard_case_pk, queue_pk, data, expected, data_standard_case
+    authorized_client,
+    requests_mock,
+    standard_case_pk,
+    queue_pk,
+    data,
+    expected,
+    data_standard_case,
+    mock_product_more_like_this,
 ):
     requests_mock_instance = requests_mock.post(f"/goods/control-list-entries/{standard_case_pk}/", json={})
     good_pk = data_standard_case["case"]["data"]["goods"][0]["good"]["id"]
+    good_on_application_pk = data_standard_case["case"]["data"]["goods"][0]["id"]
+
     step_data = build_wizard_step_data(
         view_name="review_standard_application_good_wizard_view", step_name=good_pk, data=data,
     )
@@ -166,9 +175,20 @@ def test_standard_review_goods(
     assert requests_mock_instance.call_count == 1
     assert requests_mock_instance.request_history[0].json() == {**expected, "objects": [good_pk]}
 
+    assert good_on_application_pk in mock_product_more_like_this.request_history[0].url
+
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
-def test_open_review_goods(authorized_client, requests_mock, open_case_pk, queue_pk, data, expected, data_open_case):
+def test_open_review_goods(
+    authorized_client,
+    requests_mock,
+    open_case_pk,
+    queue_pk,
+    data,
+    expected,
+    data_open_case,
+    mock_product_more_like_this,
+):
     requests_mock_instance = requests_mock.post(f"/goods/control-list-entries/{open_case_pk}/", json={})
     good_pk = data_open_case["case"]["data"]["goods_types"][0]["id"]
     step_data = build_wizard_step_data(
@@ -185,6 +205,7 @@ def test_open_review_goods(authorized_client, requests_mock, open_case_pk, queue
     assert response.status_code == 302
     assert requests_mock_instance.call_count == 1
     assert requests_mock_instance.request_history[0].json() == {**expected, "objects": [good_pk]}
+    assert good_pk in mock_product_more_like_this.request_history[0].url
 
 
 def build_wizard_step_data(view_name, step_name, data):

@@ -900,6 +900,12 @@ def mock_product_search(requests_mock, data_search):
 
 
 @pytest.fixture(autouse=True)
+def mock_product_more_like_this(requests_mock, data_search):
+    url = client._build_absolute_uri("/search/product/more-like-this/")
+    yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_search)
+
+
+@pytest.fixture(autouse=True)
 def mock_put_flags(requests_mock, stub_response):
     url = client._build_absolute_uri("/flags/assign/")
     yield requests_mock.put(url=url, json=stub_response), 200

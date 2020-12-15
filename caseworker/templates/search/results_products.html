@@ -53,7 +53,7 @@
                                     <summary>{{ inner.destination }}</summary>
                                     <code style="line-break:anywhere">{{ inner|pprint_dict|safe }}</code>
                                 </details>
-                                {% if forloop.counter == 4 and item.inner_hits.total > 4 %}
+                                {% if forloop.counter == 4 and item.inner_hits|length > 4 %}
                                     <a href="" class="js-expand-inner-hits govuk-!-margin-top-6 govuk-!-margin-bottom-0" data-target-selector="js-inner-hits-{{ item.id }}">Show all</a>
                                 {% endif %}
                             </td>
