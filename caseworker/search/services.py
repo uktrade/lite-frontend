@@ -29,8 +29,6 @@ def get_product_search_results(request, query_params):
     if not settings.LITE_API_SEARCH_ENABLED:
         return []
 
-    if query_params:
-        query_params["ordering"] = "canonical_name"
     querystring = parse.urlencode(query_params, doseq=True)
     response = client.get(request, f"/search/product/search/?{querystring}")
     response.raise_for_status()

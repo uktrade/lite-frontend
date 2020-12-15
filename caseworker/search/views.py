@@ -23,7 +23,7 @@ class AbstractSearchView:
         form = self.get_form()
         query_params = {}
         if form.is_valid():
-            for name in ["search_string", "page"]:
+            for name in ["search", "page"]:
                 if form.cleaned_data[name]:
                     query_params[name] = form.cleaned_data[name]
 
