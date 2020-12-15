@@ -343,8 +343,8 @@ class HelpAddress:
 
 class AdditionalDocuments:
     ADD = "Add a document"
-    NO_RESULTS = "There are no supporting documents on the application"
-    TITLE = "Supporting documents"
+    NO_RESULTS = "No additional documents have yet been added to this application"
+    TITLE = "Additional documents"
     BACK = "Back to application overview"
     NAME_COLUMN = "Document"
     DESCRIPTION_COLUMN = "Description"
