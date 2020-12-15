@@ -251,20 +251,23 @@ Feature: I want to indicate the standard licence I want
     And I add product to application
 
 
-  @LTD_389_Add_a_new_firearm_product @regression
+  @LTD_398_Add_a_new_firearm_product @regression
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "firearm"
+    And I select "Yes" for serial number of other identification marking with details as "serial number FR8654-Z"
     And I select sporting shotgun status as "Yes"
     And I enter good description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter firearm year of manufacture as "2020"
     And I select firearm replica status as "Yes" with description "More details about the replica"
     And I enter calibre as "0.22"
     And I specify firearms act sections apply as "Yes"
-    And I specify firearms identification markings as "Yes" with details "laser engraving"
+    And I select firearms act section "2"
+    And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
+    And I enter certificate number as "FR2468/1234/1" with expiry date "12-10-2030"
     And I see summary screen for "Firearms" product with description "new firearm" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
@@ -272,7 +275,7 @@ Feature: I want to indicate the standard licence I want
     Then the product "new firearm" is added to the application
 
 
-  @LTD_389_Add_a_new_firearm_accessory @regression
+  @LTD_398_Add_a_new_firearm_accessory @regression
   Scenario: Add a new Firearm product of type firearms accesory to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -290,7 +293,7 @@ Feature: I want to indicate the standard licence I want
     Then the product "firearm accessory" is added to the application
 
 
-  @LTD_389_Add_a_new_software_related_to_firearm_product @regression
+  @LTD_398_Add_a_new_software_related_to_firearm_product @regression
   Scenario: Add a new Software relating to a Firearm product to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -308,7 +311,7 @@ Feature: I want to indicate the standard licence I want
     Then the product "Test software for firearms" is added to the application
 
 
-  @LTD_389_Add_a_new_firearm_product_and_check_edit @regression
+  @LTD_398_Add_a_new_firearm_product_and_check_edit @regression
   Scenario: Add a new Firearm product and check if we can edit fields from summary screen
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -329,7 +332,7 @@ Feature: I want to indicate the standard licence I want
     And I can edit good "Calibre" as "0.45"
 
 
-  @LTD_389_Add_a_new_firearm_accessory_and_check_edit @regression
+  @LTD_398_Add_a_new_firearm_accessory_and_check_edit @regression
   Scenario: Add a new Firearm accessory and check if we can edit fields from summary screen
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type

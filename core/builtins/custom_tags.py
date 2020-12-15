@@ -264,6 +264,15 @@ def linkify(address, name=None):
     )
 
 
+@register.filter()
+def dummy_link(name=None):
+    name = escape(name)
+
+    return safe(
+        f'<a href="javascript:void(0);" rel="noreferrer noopener" target="_blank" class="govuk-link govuk-link--no-visited-state">{name}</a>'
+    )
+
+
 @register.filter
 @stringfilter
 @mark_safe

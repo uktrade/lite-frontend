@@ -33,6 +33,7 @@ from exporter.goods.views import (
     EditIdentificationMarkings,
     EditYearOfManufacture,
     EditFirearmReplica,
+    EditFirearmActCertificateDetails,
 )
 
 app_name = "applications"
@@ -59,6 +60,16 @@ urlpatterns = [
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
+    path(
+        "<uuid:pk>/goods/add-firearms-certificate/",
+        goods.AttachFirearmActSectionDocument.as_view(),
+        name="attach-firearms-certificate",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add-firearms-certificate/",
+        goods.AttachFirearmActSectionDocument.as_view(),
+        name="attach-firearms-certificate-existing-good",
+    ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
         GoodSoftwareTechnology.as_view(),
@@ -94,6 +105,11 @@ urlpatterns = [
         name="firearms_act",
     ),
     path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/firearms-act-certificate/",
+        EditFirearmActCertificateDetails.as_view(),
+        name="firearms_act_certificate",
+    ),
+    path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/identification_markings/",
         EditIdentificationMarkings.as_view(),
         name="identification_markings",
@@ -117,6 +133,11 @@ urlpatterns = [
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),
         name="remove_preexisting_good",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/documents/<uuid:doc_pk>/",
+        goods.GoodOnApplicationDocumentView.as_view(),
+        name="good-on-application-document",
     ),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),

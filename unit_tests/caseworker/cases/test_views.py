@@ -1,3 +1,4 @@
+from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
 from django.urls import reverse
 
 import pytest
@@ -11,6 +12,7 @@ def setup(
     mock_control_list_entries,
     mock_search,
     mock_good_on_appplication,
+    mock_good_on_appplication_documents,
 ):
     yield
 
