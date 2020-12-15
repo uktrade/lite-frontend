@@ -220,6 +220,18 @@ def get_good_on_application(request, pk):
     return response.json()
 
 
+def get_good_on_application_documents(request, pk, good_pk):
+    response = client.get(request, f"/applications/{pk}/goods/{good_pk}/documents/")
+    response.raise_for_status()
+    return response.json()
+
+
+def get_good_on_application_document_detail(request, pk, good_pk, doc_pk):
+    response = client.get(request, f"/applications/{pk}/goods/{good_pk}/documents/{doc_pk}/")
+    response.raise_for_status()
+    return response.json()
+
+
 def get_good(request, pk):
     data = client.get(request, f"/goods/{pk}")
     return data.json(), data.status_code

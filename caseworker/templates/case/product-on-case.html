@@ -8,8 +8,8 @@
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
             <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
                 <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Product details</h2>
-                <div class="govuk-caption-l">{{ good_on_application.good.description}}</div>
-            </div>
+				<div class="govuk-caption-l">{{ good_on_application.good.description}}</div>
+			</div>
 
             <div class="govuk-tabs" data-module="govuk-tabs">
 
@@ -129,15 +129,44 @@
 																			<td class="govuk-table__cell">{{ firearm_details.calibre }}</td>
 																	</tr>
 																	<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Covered by the Firearms Act 1968</th>
+																			<th scope="row" class="govuk-table__header">Firearms Act 1968</th>
 																			<td class="govuk-table__cell">
-																					{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
-																							Yes, section {{ firearm_details.section_certificate_number}}
-																					{% else %}
-																							No
+																					{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+																						{% if firearm_details.firearms_act_section == "firearms_act_section1" %}
+																							Section 1
+																						{% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
+																							Section 2
+																						{% endif %}
+
+																						{% for document in good_on_application_documents.documents %}
+																							<span class="govuk-hint">
+																								<a {% if document.safe == True %}href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=document.id %}"
+																									{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+																							</span>
+																						{% endfor %}
+																					{% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "No" %}
+																						No
+																					{% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
+																						I don't know
 																					{% endif %}
 																			</td>
 																	</tr>
+																	{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five and firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+																		<tr class="govuk-table__row app-table__row">
+																			<th scope="row" class="govuk-table__header">Certificate number</th>
+																			<td class="govuk-table__cell">
+																				{% if not firearm_details.section_certificate_missing %}
+																					{{ firearm_details.section_certificate_number }}
+																					<span class="govuk-hint"> Expires {{ firearm_details.section_certificate_date_of_expiry|date_display }} </span>
+																				{% else %}
+																					No
+																					<span class="govuk-hint"> {{ firearm_details.section_certificate_missing_reason }} </span>
+																				{% endif %}
+																			</td>
+																		</tr>
+																	{% endif %}
+
+
 																	<tr class="govuk-table__row app-table__row">
 																			<th scope="row" class="govuk-table__header">Serial numbers</th>
 																			<td class="govuk-table__cell">

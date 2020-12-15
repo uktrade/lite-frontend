@@ -97,8 +97,9 @@ class GoodPage:
             YEAR_OF_MANUFACTURE = "Year of manufacture"
             REPLICA_FIREARM = "Replica firearm"
             CALIBRE = "Calibre"
-            COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
+            COVERED_BY_THE_FIREARMS_ACT_1968 = "Firearms Act 1968"
             IDENTIFICATION_MARKINGS = "Serial numbers"
+            IDENTIFICATION_MARKINGS = "Identification markings"
 
 
 class DocumentSensitivityForm:
@@ -230,21 +231,22 @@ class CreateGoodForm:
             DESCRIPTION = "Describe the firearm the product is a replica of"
 
         class FirearmsActCertificate:
-            TITLE = "Is the product covered by Section 1, Section 2 or Section 5 of the Firearms Act 1968?"
+            TITLE = "Is the product covered by Section 1, 2 or 5 of the Firearms Act 1968?"
 
             FIREARMS_ACT = "Firearms Act 1968:"
-            SECTION_ONE = "Section 1 (opens in new tab)"
+            SECTION_ONE = "Section 1"
             SECTION_ONE_LINK = "http://www.legislation.gov.uk/ukpga/1968/27/section/1"
-            SECTION_TWO = "Section 2 (opens in new tab)"
+            SECTION_TWO = "Section 2"
             SECTION_TWO_LINK = "http://www.legislation.gov.uk/ukpga/1968/27/section/2"
-            SECTION_FIVE = "Section 5 (opens in new tab)"
+            SECTION_FIVE = "Section 5"
             SECTION_FIVE_LINK = "http://www.legislation.gov.uk/ukpga/1968/27/section/5"
 
-            SECTION_CERTIFICATE_NUMBER = "Section certificate number"
+            SECTION_CERTIFICATE_NUMBER = "Certificate number"
             EXPIRY_DATE = "Expiry date"
             EXPIRY_DATE_HINT = "For example, 12 11 2022"
             YES = "Yes"
             NO = "No"
+            DONT_KNOW = "I don't know"
 
         class IdentificationMarkings:
             TITLE = "Has the product been marked with a serial number or other type of identification marking?"
@@ -519,7 +521,7 @@ class GoodsDetailSummary:
         PRODUCT_TYPE = "Product type"
         YEAR_OF_MANUFACTURE = "Year of manufacture"
         CALIBRE = "Calibre"
-        COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
+        COVERED_BY_THE_FIREARMS_ACT_1968 = "Firearms Act 1968"
         IDENTIFICATION_MARKINGS = "Identification markings"
 
 
