@@ -14,17 +14,14 @@
       <caption class="govuk-table__caption govuk-!-margin-bottom-2">{{ product.description }}</caption>
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">Part number</th>
+          <td class="govuk-table__cell">{{ product.part_number }}</td>
+        </tr>
+        <tr class="govuk-table__row">
           <th scope="row" class="govuk-table__header">Destination</th>
           <td class="govuk-table__cell">{{ product.destination }}</td>
         </tr>
-        <tr class="govuk-table__row">
-          <th scope="row" class="govuk-table__header">End use</th>
-          <td class="govuk-table__cell">{{ product.end_use }}</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th scope="row" class="govuk-table__header">End user type</th>
-          <td class="govuk-table__cell">{{ product.end_user_type }}</td>
-        </tr>
+
         <tr class="govuk-table__row">
           <th scope="row" class="govuk-table__header">Ratings</th>
           <td class="govuk-table__cell">
@@ -37,7 +34,6 @@
           <th scope="row" class="govuk-table__header">Regime</th>
           <td class="govuk-table__cell">{{ product.regime }}</td>
         </tr>
-
       </tbody>
     </table>
 
@@ -58,7 +54,6 @@
           {% for item in product.related_products %}
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell govuk-table__cell">
-
                   {% if item.index == 'lite' %}
                       {% if item.queues %}
                         <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}"
@@ -66,7 +61,10 @@
                             <span class="govuk-visually-hidden">View</span> {{ item.application.reference_code }}
                         </a>
                       {% else %}
-                          <span>{{ item.reference_code }}</span>
+                        <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}"
+                            href="{% url 'cases:case' queue_pk='00000000-0000-0000-0000-000000000001' pk=item.application.id %}">
+                            <span class="govuk-visually-hidden">View</span> {{ item.application.reference_code }}
+                        </a>
                       {% endif %}
                   {% elif item.index == 'spire' %}
                     <a class="govuk-link govuk-link--no-visited-state" id="case-{{ item.application.id }}" href="{% url 'spire:application-detail' id=item.application.id %}">{{ product.application.reference_code }}</a>
