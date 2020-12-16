@@ -178,70 +178,93 @@ class AddGood(LoginRequiredMixin, MultiFormView):
 
 @method_decorator(csrf_exempt, "dispatch")
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
+    def dispatch(self, request, **kwargs):
+        self.draft_pk = str(kwargs["pk"])
+        self.good_pk = str(kwargs.get("good_pk", ""))
+        if self.good_pk:
+            self.firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.draft_pk}_{self.good_pk}"
+        else:
+            self.firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.draft_pk}"
+
+        self.selected_section = "section"
+        self.certificate_filename = ""
+        post_data = request.session[self.firearms_data_id]
+
+        if post_data["firearms_act_section"] == "firearms_act_section1":
+            self.selected_section = "Section 1"
+        elif post_data["firearms_act_section"] == "firearms_act_section2":
+            self.selected_section = "Section 2"
+
+        return super().dispatch(request, **kwargs)
+
     def get(self, request, **kwargs):
-        form = upload_firearms_act_certificate_form("section", None)
+        form = upload_firearms_act_certificate_form(self.selected_section, "", None)
         return form_page(request, form)
 
+    @csrf_exempt
     def post(self, request, **kwargs):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
-
         certificate_available = request.POST.get("section_certificate_missing", False) is False
 
-        draft_pk = str(kwargs["pk"])
-        good_pk = str(kwargs.get("good_pk", ""))
         doc_data = {}
         doc_error = None
+        new_file_selected = False
+        file_upload_key = f"{self.firearms_data_id}_file"
 
-        if certificate_available:
-            doc_data, doc_error = add_document_data(request)
-
-        if good_pk:
-            firearms_data_id = f"post_{request.session['lite_api_user_id']}_{draft_pk}_{good_pk}"
+        doc_data, doc_error = add_document_data(request)
+        if doc_data:
+            request.session[file_upload_key] = doc_data
+            self.certificate_filename = doc_data["name"]
+            new_file_selected = True
         else:
-            firearms_data_id = f"post_{request.session['lite_api_user_id']}_{draft_pk}"
+            file_info = request.session.get(file_upload_key)
+            if file_info:
+                doc_data = file_info
+                doc_error = None
+                new_file_selected = True
+                self.certificate_filename = file_info["name"]
 
-        old_post = request.session.get(firearms_data_id, None)
+        old_post = request.session.get(self.firearms_data_id, None)
         if not old_post:
             return error_page(request, "Firearms data from previous forms is missing in session")
 
         copied_request = {k: request.POST.get(k) for k in request.POST}
         data = {**old_post, **copied_request}
 
-        if doc_error:
-            form = upload_firearms_act_certificate_form("section", None)
-            return form_page(request, form, data=data, errors={"file": ["Select certificate file to upload"]})
-
-        if good_pk:
-            response, status_code = post_good_on_application(request, draft_pk, data)
+        if self.good_pk:
+            response, status_code = post_good_on_application(request, self.draft_pk, data)
             if status_code != HTTPStatus.CREATED:
-                if certificate_available and doc_data:
-                    delete_application_document_data(request, draft_pk, good_pk, doc_data)
                 if doc_error:
                     response["errors"]["file"] = ["Select certificate file to upload"]
-                form = upload_firearms_act_certificate_form("section", None)
+                form = upload_firearms_act_certificate_form("section", self.certificate_filename, None)
                 return form_page(request, form, data=data, errors=response["errors"])
 
-            success_url = reverse_lazy("applications:goods", kwargs={"pk": draft_pk})
+            success_url = reverse_lazy("applications:goods", kwargs={"pk": self.draft_pk})
 
         else:
             response, status_code = post_goods(request, data)
             if status_code != HTTPStatus.CREATED:
-                if certificate_available and doc_data:
-                    delete_application_document_data(request, draft_pk, draft_pk, doc_data)
                 if doc_error:
                     response["errors"]["file"] = ["Select certificate file to upload"]
-                form = upload_firearms_act_certificate_form("section", None)
+                form = upload_firearms_act_certificate_form("section", self.certificate_filename, None)
                 return form_page(request, form, data=data, errors=response["errors"])
 
-            good_pk = response["good"]["id"]
-            success_url = reverse("applications:add_good_summary", kwargs={"pk": draft_pk, "good_pk": good_pk})
+            self.good_pk = response["good"]["id"]
+            success_url = reverse(
+                "applications:add_good_summary", kwargs={"pk": self.draft_pk, "good_pk": self.good_pk}
+            )
 
-        del request.session[firearms_data_id]
-
-        if certificate_available:
-            data, status_code = post_application_document(request, draft_pk, good_pk, doc_data)
+        if certificate_available and new_file_selected:
+            data, status_code = post_application_document(request, self.draft_pk, self.good_pk, doc_data)
             if status_code != HTTPStatus.CREATED:
                 return error_page(request, data["errors"]["file"])
+        elif doc_data:
+            delete_application_document_data(request, self.draft_pk, self.good_pk, doc_data)
+
+        self.certificate_filename = ""
+        del request.session[self.firearms_data_id]
+        del request.session[file_upload_key]
+        request.session.modified = True
 
         return redirect(success_url)
 

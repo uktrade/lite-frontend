@@ -63,6 +63,15 @@ $("input[name='section_certificate_missing']").change(function () {
 	showHideCertificateMissingReason()
 });
 
+
+function populateUploadedCertificate() {
+	var existingCertificate = $("input[name='uploaded_file_name']").val();
+	if (existingCertificate) {
+		$("input[type=file]").next().html(existingCertificate + "<br><span class='lite-file-upload__or-label'>Drag and drop your document here or <span class='lite-file-upload__link'>click to browse</span> to replace it</span>");
+	}
+}
+
 (function () {
+	populateUploadedCertificate()
 	showHideCertificateMissingReason()
 })();
