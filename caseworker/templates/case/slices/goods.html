@@ -88,7 +88,8 @@
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Rating</span>
-							{% if good.control_list_entries is not None %}
+							{# if good.is_good_controlled is anything other than None, this indicates the caseworker has reviewed the good-on-application level, so use that as source of truth #}
+							{% if good.is_good_controlled is not None %}
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries end_use_control=good.end_use_control %}
 							{% elif good.good.control_list_entries is not None %}
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries end_use_control=good.end_use_control %}
@@ -180,7 +181,8 @@
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span aria-hidden="true" class="govuk-table__header">Rating</span>
-							{% if good.control_list_entries is not None %}
+							{# if good.is_good_controlled is anything other than None, this indicates the caseworker has reviewed the good-on-application level, so use that as source of truth #}
+							{% if good.is_good_controlled is not None %}
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries end_use_control=good.end_use_control %}
 							{% else %}
 								None
