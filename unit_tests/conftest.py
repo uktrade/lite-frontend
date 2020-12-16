@@ -617,6 +617,7 @@ def data_good_on_application(data_standard_case):
         "end_use_control": ["MEND"],
         "comment": "",
         "report_summary": "",
+        "is_precedent": False,
         "good_on_application_documents": [],
         "audit_trail": [
             {

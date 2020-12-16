@@ -896,9 +896,21 @@ def data_search():
 
 
 @pytest.fixture(autouse=True)
-def mock_search(requests_mock, data_search):
-    url = client._build_absolute_uri("/search/application/application_search/")
+def mock_application_search(requests_mock, data_search):
+    url = client._build_absolute_uri("/search/application/search/")
     yield requests_mock.get(url=url, json=data_search)
+
+
+@pytest.fixture(autouse=True)
+def mock_product_search(requests_mock, data_search):
+    url = client._build_absolute_uri("/search/product/search/")
+    yield requests_mock.get(url=url, json=data_search)
+
+
+@pytest.fixture(autouse=True)
+def mock_product_more_like_this(requests_mock, data_search):
+    url = client._build_absolute_uri("/search/product/more-like-this/")
+    yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_search)
 
 
 @pytest.fixture(autouse=True)

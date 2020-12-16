@@ -10,7 +10,7 @@ def setup(
     mock_case_activity_system_user,
     mock_case,
     mock_control_list_entries,
-    mock_search,
+    mock_application_search,
     mock_good_on_appplication,
     mock_good_on_appplication_documents,
 ):
@@ -37,6 +37,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": ["MEND", "MEND1"],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -44,6 +45,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": ["MEND", "MEND1"],
+            "is_precedent": False,
         },
     ),
     # multiple control list entries
@@ -54,6 +56,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -61,6 +64,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
     ),
     # no comment
@@ -71,6 +75,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "",
@@ -78,6 +83,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
     ),
     # not controlled and no control list entries
@@ -89,6 +95,7 @@ good_review_parametrize_data = (
             "is_good_controlled": False,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -96,6 +103,7 @@ good_review_parametrize_data = (
             "is_good_controlled": False,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
     ),
     # is controlled but no control list entries
@@ -107,6 +115,7 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
         },
         {
             "comment": "Some comment",
@@ -114,6 +123,25 @@ good_review_parametrize_data = (
             "is_good_controlled": True,
             "report_summary": "some-report-summary-id",
             "end_use_control": [],
+            "is_precedent": False,
+        },
+    ),
+    # backwards compat, if API is not sending is_precedent
+    (
+        {
+            "comment": "Some comment",
+            "control_list_entries": ["ML1a"],
+            "is_good_controlled": True,
+            "report_summary": "some-report-summary-id",
+            "end_use_control": ["MEND", "MEND1"],
+        },
+        {
+            "comment": "Some comment",
+            "control_list_entries": ["ML1a"],
+            "is_good_controlled": True,
+            "report_summary": "some-report-summary-id",
+            "end_use_control": ["MEND", "MEND1"],
+            "is_precedent": False,
         },
     ),
 )
@@ -121,10 +149,19 @@ good_review_parametrize_data = (
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
 def test_standard_review_goods(
-    authorized_client, requests_mock, standard_case_pk, queue_pk, data, expected, data_standard_case
+    authorized_client,
+    requests_mock,
+    standard_case_pk,
+    queue_pk,
+    data,
+    expected,
+    data_standard_case,
+    mock_product_more_like_this,
 ):
     requests_mock_instance = requests_mock.post(f"/goods/control-list-entries/{standard_case_pk}/", json={})
     good_pk = data_standard_case["case"]["data"]["goods"][0]["good"]["id"]
+    good_on_application_pk = data_standard_case["case"]["data"]["goods"][0]["id"]
+
     step_data = build_wizard_step_data(
         view_name="review_standard_application_good_wizard_view", step_name=good_pk, data=data,
     )
@@ -140,9 +177,20 @@ def test_standard_review_goods(
     assert requests_mock_instance.call_count == 1
     assert requests_mock_instance.request_history[0].json() == {**expected, "objects": [good_pk]}
 
+    assert good_on_application_pk in mock_product_more_like_this.request_history[0].url
+
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
-def test_open_review_goods(authorized_client, requests_mock, open_case_pk, queue_pk, data, expected, data_open_case):
+def test_open_review_goods(
+    authorized_client,
+    requests_mock,
+    open_case_pk,
+    queue_pk,
+    data,
+    expected,
+    data_open_case,
+    mock_product_more_like_this,
+):
     requests_mock_instance = requests_mock.post(f"/goods/control-list-entries/{open_case_pk}/", json={})
     good_pk = data_open_case["case"]["data"]["goods_types"][0]["id"]
     step_data = build_wizard_step_data(
@@ -159,6 +207,7 @@ def test_open_review_goods(authorized_client, requests_mock, open_case_pk, queue
     assert response.status_code == 302
     assert requests_mock_instance.call_count == 1
     assert requests_mock_instance.request_history[0].json() == {**expected, "objects": [good_pk]}
+    assert good_pk in mock_product_more_like_this.request_history[0].url
 
 
 def build_wizard_step_data(view_name, step_name, data):
@@ -169,7 +218,7 @@ def build_wizard_step_data(view_name, step_name, data):
 
 def test_good_on_application_detail(
     authorized_client,
-    mock_search,
+    mock_application_search,
     queue_pk,
     standard_case_pk,
     good_on_application_pk,
@@ -185,7 +234,7 @@ def test_good_on_application_detail(
 
     assert response.status_code == 200
     # then the search endpoint is requested for cases with goods with the same part number and control list entries
-    assert mock_search.request_history[0].qs == {"part": ["44"], "clc_rating": ["ml1", "ml2"]}
+    assert mock_application_search.request_history[0].qs == {"part": ["44"], "clc_rating": ["ml1", "ml2"]}
     # and the view exposes the data that the template needs
     assert response.context_data["good_on_application"] == data_good_on_application
     assert response.context_data["other_cases"] == data_search
@@ -195,7 +244,12 @@ def test_good_on_application_detail(
 
 
 def test_good_on_application_detail_no_part_number(
-    authorized_client, mock_search, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
 ):
     # given I access good on application details for a good with control list entries but no part number
     data_good_on_application["good"]["part_number"] = ""
@@ -206,13 +260,18 @@ def test_good_on_application_detail_no_part_number(
 
     assert response.status_code == 200
     # then the search endpoint is requested for cases with goods with the same control list entries
-    assert mock_search.request_history[0].qs == {"clc_rating": ["ml1", "ml2"]}
+    assert mock_application_search.request_history[0].qs == {"clc_rating": ["ml1", "ml2"]}
     # and the form is pre-populated with the part number and control list entries
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1" clc_rating:"ML2"'
 
 
 def test_good_on_application_detail_no_part_number_no_control_list_entries(
-    authorized_client, mock_search, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
 ):
     # given I access good on application details for a good with neither part number of control list entries
     data_good_on_application["good"]["part_number"] = ""
@@ -224,13 +283,18 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
 
     assert response.status_code == 200
     # then the search endpoint is not requested
-    assert len(mock_search.request_history) == 0
+    assert len(mock_application_search.request_history) == 0
     # and the form is left blank
     assert response.context_data["form"]["search_string"].initial == ""
 
 
 def test_good_on_application_detail_not_rated_at_application_level(
-    authorized_client, mock_search, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
 ):
     # given I access good on application details for a good that has not been rated at application level
     data_good_on_application["control_list_entries"] = []
@@ -243,6 +307,6 @@ def test_good_on_application_detail_not_rated_at_application_level(
 
     assert response.status_code == 200
     # then the search endpoint is requested for cases with goods with the same control list entries as canonical good
-    assert mock_search.request_history[0].qs == {"clc_rating": ["ml1"]}
+    assert mock_application_search.request_history[0].qs == {"clc_rating": ["ml1"]}
     # and the form is pre-populated with the canonical good control list entries
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1"'

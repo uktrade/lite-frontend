@@ -46,4 +46,35 @@ body {
     color: white;
     font-weight: bold;
   }
+
+  .productpedia-results-table {
+    thead > tr {
+      border-top: 0;
+
+      td {
+        border-bottom: 0;
+      }
+    }
+    tbody {
+      border-bottom: 3px solid black;
+    }
+    summary::marker {
+      content: ''
+    }
+    .rating-comment {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
+  }
+
+  .js-expand-inner-hits {
+    display: inline-block;
+  }
+
+  .hide-rows tr:nth-child(n+5) {
+    display: none;
+  }
+
 }

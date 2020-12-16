@@ -287,4 +287,7 @@
             </tr>
         </tbody>
     </table>
+    {% if related_products %}
+        {% include 'case/review-goods-related-cases.html' %}
+    {% endif %}
 {% endblock %}

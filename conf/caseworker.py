@@ -104,3 +104,5 @@ CACHES = {
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient",},
     }
 }
+
+FEATURE_PRODUCTPEDIA_ON = env.bool("FEATURE_PRODUCTPEDIA_ON", False)

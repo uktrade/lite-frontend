@@ -56,6 +56,7 @@ class ExportControlCharacteristicsForm(forms.Form):
     does_not_have_control_list_entries = forms.BooleanField(
         label="This product does not have a control list entry", required=False,
     )
+    is_precedent = forms.BooleanField(label="Mark this product rating as a precedent", required=False)
     is_good_controlled = forms.TypedChoiceField(
         label="Is a licence required?",
         coerce=lambda x: x == "True",

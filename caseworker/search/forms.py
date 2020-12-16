@@ -29,6 +29,7 @@ filter_names = "|".join(
         "incorporated",
         "case_type",
         "case_subtype",
+        "destination",  # for products
         *build_filter_lookups("created"),
         *build_filter_lookups("updated"),
     ]
@@ -37,7 +38,7 @@ filter_names = "|".join(
 filters_regex_pattern = re.compile(f'({filter_names}?):"(.*?)"')
 
 
-class CasesSearchForm(forms.Form):
+class SearchForm(forms.Form):
     input_css_classname = "govuk-input"
     label_css_classname = "lite-filter-bar__label"
 
@@ -60,7 +61,7 @@ class CasesSearchForm(forms.Form):
         self.cleaned_data["page"] = self.cleaned_data["page"] or 1
         self.cleaned_data["offset"] = (self.cleaned_data["page"] - 1) * self.page_size
         self.cleaned_data["filters"] = self.extract_filters(self.cleaned_data["search_string"])
-        self.cleaned_data["search_string"] = filters_regex_pattern.sub("", self.cleaned_data["search_string"]).strip()
+        self.cleaned_data["search"] = filters_regex_pattern.sub("", self.cleaned_data["search_string"]).strip()
 
 
 class AutocompleteForm(forms.Form):
@@ -68,3 +69,7 @@ class AutocompleteForm(forms.Form):
 
     def clean_q(self):
         return filters_regex_pattern.sub("", self.cleaned_data["q"])
+
+
+class CommentForm(forms.Form):
+    text = forms.CharField()

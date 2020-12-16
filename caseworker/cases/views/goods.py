@@ -11,11 +11,12 @@ from caseworker.cases.services import (
     get_good_on_application,
     get_good_on_application_documents,
 )
-from caseworker.search.services import get_search_results
-from caseworker.search.forms import CasesSearchForm
+from caseworker.search.services import get_application_search_results
+from caseworker.search.forms import SearchForm
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
+from caseworker.search.services import get_product_like_this
 from core.auth.views import LoginRequiredMixin
 from lite_forms.views import SingleFormView
 
@@ -96,7 +97,9 @@ class AbstractReviewGoodWizardView(SessionWizardView):
             errors = {bound_field.id_for_label: bound_field.errors for bound_field in form}
         else:
             errors = {}
-        return super().get_context_data(case=self.case, object=self.object, errors=errors, **kwargs)
+        return super().get_context_data(
+            case=self.case, object=self.object, errors=errors, related_products=self.related_products, **kwargs
+        )
 
     def process_step(self, form):
         data = {**form.cleaned_data, "objects": [self.object_pk]}
@@ -107,6 +110,10 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     def done(self, form_list, **kwargs):
         url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
         return redirect(url)
+
+    @property
+    def related_products(self):
+        return get_product_like_this(self.request, pk=self.object["id"])
 
 
 class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
@@ -132,6 +139,7 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
             "report_summary": self.object["good"]["report_summary"],
             "comment": source["comment"],
             "end_use_control": self.object["end_use_control"],
+            "is_precedent": self.object.get("is_precedent", False),
         }
         initial.update(super().get_form_initial(step))
         return initial
@@ -173,7 +181,7 @@ class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
 
 class GoodDetails(LoginRequiredMixin, FormView):
     template_name = "case/product-on-case.html"
-    form_class = CasesSearchForm
+    form_class = SearchForm
 
     @cached_property
     def object(self):
@@ -184,7 +192,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
         form = self.get_form()
         search_string = self.get_initial()["search_string"]
         if search_string:
-            return get_search_results(self.request, query_params=form.extract_filters(search_string))
+            return get_application_search_results(self.request, query_params=form.extract_filters(search_string))
         return []
 
     def get_initial(self):
