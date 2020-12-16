@@ -24,6 +24,10 @@
                     </td>
             </tr>
             <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Name</th>
+                <td class="govuk-table__cell">{% if object.good.name %} {{ object.good.name }} {% else %} {{ object.good.description }} {% endif %}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Description</th>
                 <td class="govuk-table__cell">{{ object.good.description }}</td>
             </tr>

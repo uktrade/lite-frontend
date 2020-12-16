@@ -8,7 +8,7 @@
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
             <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
                 <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Product details</h2>
-				<div class="govuk-caption-l">{{ good_on_application.good.description}}</div>
+				<div class="govuk-caption-l">{% if good_on_application.good.name %} {{ good_on_application.good.name }} {% else %} {{ good_on_application.good.description }} {% endif %}</div>
 			</div>
 
             <div class="govuk-tabs" data-module="govuk-tabs">
@@ -70,6 +70,10 @@
 																			</td>
 																	</tr>
 													{% endif %}
+													<tr class="govuk-table__row app-table__row">
+														<th scope="row" class="govuk-table__header">Name</th>
+														<td class="govuk-table__cell">{% if good_on_application.good.name %} {{ good_on_application.good.name }} {% else %} {{ good_on_application.good.description }} {% endif %}</td>
+													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Description</th>
 															<td class="govuk-table__cell">{{ good_on_application.good.description }}</td>

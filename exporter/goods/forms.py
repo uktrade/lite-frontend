@@ -252,15 +252,12 @@ def add_goods_questions(control_list_entries, application_pk=None):
     return Form(
         title=conditional(application_pk, "Add a product to your application", "Add a product to your product list"),
         questions=[
-            TextArea(
-                title="Description",
-                description=(
-                    "Start with the product name to make it easier to find the product when needed. Include the "
-                    "commodity code if you know it."
-                ),
-                name="description",
-                extras={"max_length": 280},
+            TextInput(
+                title="Name",
+                description=("Give your product a name so it is easier to find in your product list"),
+                name="name",
             ),
+            TextArea(title="Description", name="description", extras={"max_length": 280}, rows=5, optional=True,),
             TextInput(title="Part number", name="part_number", optional=True),
             RadioButtons(
                 title="Is the product on the control list?",
@@ -389,10 +386,16 @@ def edit_good_detail_form(request, good_id):
         title=EditGoodForm.TITLE,
         description=EditGoodForm.DESCRIPTION,
         questions=[
+            TextInput(
+                title="Name",
+                description=("Give your product a name so it is easier to find in your product list"),
+                name="name",
+            ),
             TextArea(
                 title=EditGoodForm.Description.TITLE,
-                description=EditGoodForm.Description.DESCRIPTION,
                 name="description",
+                rows=5,
+                optional=True,
                 extras={"max_length": 280},
             ),
             TextInput(title=EditGoodForm.PartNumber.TITLE, name="part_number", optional=True),

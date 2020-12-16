@@ -27,10 +27,16 @@ class AddGoodPage(BasePage):
     UNSURE_CLC_DETAILS = "clc_raised_reasons"  # ID
     UNSURE_PV_GRADING_DETAILS = "pv_grading_raised_reasons"  # ID
 
-    def enter_description_of_goods(self, description):
-        element = self.driver.find_element_by_id(self.DESCRIPTION)
+    def input_element_by_id(self, id, text):
+        element = self.driver.find_element_by_id(id)
         element.clear()
-        element.send_keys(description)
+        element.send_keys(text)
+
+    def enter_good_name(self, name):
+        self.input_element_by_id("name", name)
+
+    def enter_description_of_goods(self, description):
+        self.input_element_by_id(self.DESCRIPTION, description)
 
     def select_is_your_good_controlled(self, option):
         # The options accepted here are 'True', 'False' and 'None'

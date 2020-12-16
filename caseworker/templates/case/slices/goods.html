@@ -34,7 +34,7 @@
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>
-					<th scope="col" class="govuk-table__header">Description</th>
+					<th scope="col" class="govuk-table__header">Name</th>
 					{% if case.goods.0.item_type %}
 						<th scope="col" class="govuk-table__header">Type</th>
 					{% endif %}
@@ -64,8 +64,8 @@
 						{% endif %}
 						<td class="govuk-table__cell govuk-table__cell--line-number {% if show_advice %}lite-!-no-border{% endif %}">{{ forloop.counter }}.</td>
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
-							<span class="govuk-table__header" aria-hidden="false">Description</span>
-							<span data-max-length="200">{{ good.good.description }}</span>
+							<span class="govuk-table__header" aria-hidden="false">Name</span>
+							<span data-max-length="200">{% if good.good.name %} {{ good.good.name }} {% else %} {{ good.good.description }} {% endif %}</span>
 						</td>
 						{% if case.goods.0.item_type %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
@@ -142,7 +142,7 @@
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>
-					<th scope="col" class="govuk-table__header">Description</th>
+					<th scope="col" class="govuk-table__header">Name</th>
 					<th scope="col" class="govuk-table__header">Licence required</th>
 					<th scope="col" class="govuk-table__header">Rating</th>
 					<th scope="col" class="govuk-table__header">Flags</th>
@@ -167,8 +167,8 @@
 							{{ forloop.counter }}.
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
-							<span aria-hidden="true" class="govuk-table__header">Description</span>
-							<span data-max-length="200">{{ good.description }}</span>
+							<span aria-hidden="true" class="govuk-table__header">Name</span>
+							<span data-max-length="200">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span>
 						</td>
 						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 							<span aria-hidden="true" class="govuk-table__header">Licence required</span>

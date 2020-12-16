@@ -9,7 +9,7 @@
 {% block body %}
 	<h1 class="govuk-heading-l">{% block title %}{% lcs 'goods.AddPreexistingGoodToApplicationForm.TITLE' %}{% endblock %}</h1>
 
-	{% if data or description or part_number or control_code %}
+	{% if data or name or description or part_number or control_code %}
 
 		{% include 'filters.html' %}
 
@@ -17,6 +17,7 @@
 			<table class="govuk-table">
 				<thead class="govuk-table__head">
 					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header">Name</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.DESCRIPTION' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.PART_NUMBER' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.CONTROL_LIST_ENTRIES' %}</th>
@@ -29,9 +30,16 @@
 				<tbody class="govuk-table__body">
 					{% for good in data.results %}
 						<tr class="govuk-table__row">
+							<td class="govuk-table__cell" id="good-name">
+								{% if good.name %}
+									{{ good.name|highlight_text:name }}
+								{% else %}
+									{{ good.description|highlight_text:description }}
+								{% endif %}
+								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
+							</td>
 							<td class="govuk-table__cell" id="good-description">
 								{{ good.description|highlight_text:description }}
-								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 							</td>
 							<td class="govuk-table__cell" id="good-part-number">
 								{{ good.part_number|highlight_text:part_number|default_na }}
@@ -46,7 +54,7 @@
 							{% endif %}
 							<td class="govuk-table__cell lite-!-text-align-right">
 								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}?preexisting=True" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
-									Add <span class="govuk-visually-hidden">{{ good.description }}</span> to application
+									Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 								</a>
 							</td>
 						</tr>

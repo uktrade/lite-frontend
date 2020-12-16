@@ -6,7 +6,7 @@ from core.helpers import convert_parameters_to_query_params
 
 
 def get_goods(
-    request, page: int = 1, description=None, part_number=None, control_list_entry=None, for_application=None
+    request, page: int = 1, name=None, description=None, part_number=None, control_list_entry=None, for_application=None
 ):
     data = client.get(request, "/goods/" + convert_parameters_to_query_params(locals()))
     return data.json()

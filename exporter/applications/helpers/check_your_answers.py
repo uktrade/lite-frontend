@@ -213,8 +213,14 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False):
             control_list_application = convert_control_list_entries(good_on_application["control_list_entries"])
             if control_list_entries != control_list_application:
                 control_list_entries = f"<span class='strike'>{control_list_entries}</span> {control_list_application}"
+
+        if good_on_application["good"].get("name"):
+            name = good_on_application["good"]["name"]
+        else:
+            name = good_on_application["good"]["description"]
+
         item = {
-            "Description": good_on_application["good"]["description"],
+            "Name": name,
             "Part number": default_na(good_on_application["good"]["part_number"]),
             "Controlled": mark_safe(is_controlled),  # nosec
             "Control list entries": mark_safe(control_list_entries),  # nosec

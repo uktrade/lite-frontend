@@ -27,8 +27,8 @@ def test_add_goods_questions_feature_flag_on(settings):
 
     form = forms.add_goods_questions(control_list_entries=[])
 
-    assert form.questions[2].options[-1].components[0].__class__ == HelpSection
     assert form.questions[3].options[-1].components[0].__class__ == HelpSection
+    assert form.questions[4].options[-1].components[0].__class__ == HelpSection
 
 
 def test_add_goods_questions_feature_flag_off(settings):
@@ -36,8 +36,8 @@ def test_add_goods_questions_feature_flag_off(settings):
 
     form = forms.add_goods_questions(control_list_entries=[])
 
-    assert form.questions[2].options[-1].components == []
     assert form.questions[3].options[-1].components == []
+    assert form.questions[4].options[-1].components == []
 
 
 @pytest.mark.parametrize(
@@ -105,7 +105,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
             [
                 {"qindex": 1, "name": "type"},
                 {"qindex": 2, "name": "is_sporting_shotgun"},
-                {"qindex": 0, "name": "description"},
+                {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "calibre"},
             ],
         ),
@@ -116,7 +116,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
                 {"qindex": 1, "name": "type"},
                 {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 2, "name": "is_sporting_shotgun"},
-                {"qindex": 0, "name": "description"},
+                {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "year_of_manufacture"},
                 {"qindex": 2, "name": "is_replica"},
                 {"qindex": 1, "name": "calibre"},
@@ -128,7 +128,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
             5,
             [
                 {"qindex": 1, "name": "type"},
-                {"qindex": 0, "name": "description"},
+                {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "is_military_use"},
                 {"qindex": 1, "name": "is_component"},
                 {"qindex": 1, "name": "uses_information_security"},
@@ -139,7 +139,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
             5,
             [
                 {"qindex": 1, "name": "type"},
-                {"qindex": 0, "name": "description"},
+                {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "software_or_technology_details"},
                 {"qindex": 1, "name": "is_military_use"},
                 {"qindex": 1, "name": "uses_information_security"},

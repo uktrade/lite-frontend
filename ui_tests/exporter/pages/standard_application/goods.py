@@ -51,6 +51,11 @@ class StandardApplicationGoodsPage(BasePage):
     def goods_exist_on_the_application(self):
         return functions.element_with_css_selector_exists(self.driver, self.REMOVE_GOOD_LINK)
 
+    def get_product_name(self):
+        rows = self.driver.find_elements_by_class_name("govuk-table__row")
+        assert len(rows) == 2
+        return rows[1].find_elements_by_xpath('//td[@class="govuk-table__cell"]')[0].text
+
     def good_with_description_exists(self, expected):
         for row in self.driver.find_elements_by_class_name("govuk-table__row"):
             actual = row.find_elements_by_xpath('//td[@class="govuk-table__cell"]')[0].text

@@ -19,7 +19,7 @@
                     {{ wizard.steps.step1 }} of {{ wizard.steps.count }}
                 {% endif %}
             </h2>
-            <p class="govuk-!-margin-bottom-6 govuk-caption-m">{{ object.good.description }}</p>
+            <p class="govuk-!-margin-bottom-6 govuk-caption-m">{% if object.good.name %} {{ object.good.name }} {% else %} {{ object.good.description }} {% endif %}</p>
 			<form method="post" enctype="multipart/form-data" novalidate="novalidate">
                 {% csrf_token %}
                 <div class="w-2-3" id="form-container">

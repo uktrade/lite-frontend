@@ -11,7 +11,7 @@ def good_summary(good):
 
     return Summary(
         values={
-            "Description": good["description"],
+            "Name": good["description"] if not good["name"] else good["name"],
             "Control list entries": convert_control_list_entries(good["control_list_entries"]),
             "Part number": default_na(good["part_number"]),
         },
