@@ -27,6 +27,19 @@
 				</div>
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
+						Name
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if good.good.name %}
+							{{ good.good.name }}
+						{% else %}
+							{{ good.good.description }}
+						{% endif %}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
 						{% lcs "goods.GoodPage.Table.DESCRIPTION" %}
 					</dt>
 					<dd class="govuk-summary-list__value">

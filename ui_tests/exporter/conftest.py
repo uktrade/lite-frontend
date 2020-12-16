@@ -872,17 +872,13 @@ def specify_product_infosec_details(driver, supports_infosec):  # noqa
     functions.click_submit(driver)
 
 
-@when(
-    parsers.parse(
-        'I see summary screen for "{product_type_value}" product with description "{description}" and "{proceed}"'
-    )
-)
-def summary_screen_for_product_type(driver, product_type_value, description, proceed):  # noqa
+@when(parsers.parse('I see summary screen for "{product_type_value}" product with name "{name}" and "{proceed}"'))
+def summary_screen_for_product_type(driver, product_type_value, name, proceed):  # noqa
     summary_page = ProductSummary(driver)
     assert summary_page.get_page_heading() == "Product summary"
     summary = summary_page.get_summary_details()
     assert summary["Product type"] == product_type_value
-    assert summary["Description"] == description
+    assert summary["Name"] == name
     expected_fields = [
         "Part number",
         "CLC",

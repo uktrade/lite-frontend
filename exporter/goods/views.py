@@ -413,6 +413,7 @@ class EditGood(LoginRequiredMixin, SingleFormView):
         self.data["control_list_entries"] = [
             {"key": clc["rating"], "value": clc["rating"]} for clc in self.data["control_list_entries"]
         ]
+        self.data["is_good_controlled"] = self.data["is_good_controlled"].get("key")
         return self.data
 
     def get_success_url(self):

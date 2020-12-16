@@ -250,7 +250,8 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.draft_pk = kwargs["pk"]
         self.object_pk = kwargs["good_pk"]
-        self.form = document_grading_form(request, self.object_pk)
+        back_link = reverse("applications:add_good_summary", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+        self.form = document_grading_form(request, self.object_pk, back_url=back_link)
         self.action = post_good_document_sensitivity
 
     def get_success_url(self):

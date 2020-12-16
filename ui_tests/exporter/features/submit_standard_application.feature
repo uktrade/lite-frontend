@@ -268,7 +268,29 @@ Feature: I want to indicate the standard licence I want
     And I select firearms act section "2"
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
     And I enter certificate number as "FR2468/1234/1" with expiry date "12-10-2030"
-    And I see summary screen for "Firearms" product with description "new firearm" and "continue"
+    And I see summary screen for "Firearms" product with name "Rifle" and "continue"
+    And I confirm I can upload a document
+    And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
+    And I enter product details with unit of measurement "Number of articles", quantity "5", value "20,000" and deactivated "No" and Save
+    Then the product with name "Rifle" is added to the application
+
+
+  @LTD_375_Add_a_new_firearm_product_not_covered_by_firearms_act @regression
+  Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application that is not covered by Firearms Act
+    Given I go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    When I click on the "goods" section
+    And I choose to add a new product
+    And I select product type "component_for_ammunition"
+    And I select "Yes" for serial number of other identification marking with details as "serial number FR8654-Z"
+    And I select sporting shotgun status as "Yes"
+    And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
+    And I enter calibre as "0.22"
+    And I specify firearms act sections apply as "Yes"
+    And I select firearms act section "2"
+    And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
+    And I enter certificate number as "FR2468/1234/1" with expiry date "12-10-2030"
+    And I see summary screen for "Components for ammunition" product with name "Rifle" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with unit of measurement "Number of articles", quantity "5", value "20,000" and deactivated "No" and Save
@@ -286,7 +308,7 @@ Feature: I want to indicate the standard licence I want
     And I specify military use details as "yes_designed"
     And I specify component details as "yes_designed"
     And I specify product employs information security features as "Yes"
-    And I see summary screen for "Accessory of a firearm" product with description "firearm accessory" and "continue"
+    And I see summary screen for "Accessory of a firearm" product with name "firearm accessory" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with unit of measurement "Number of articles", quantity "9", value "25,000" and deactivated "No" and Save
@@ -304,7 +326,7 @@ Feature: I want to indicate the standard licence I want
     And I specify the "software" product purpose as "For product diagnostics"
     And I specify military use details as "yes_designed"
     And I specify product employs information security features as "Yes"
-    And I see summary screen for "Software relating to a firearm" product with description "Test software for firearms" and "continue"
+    And I see summary screen for "Software relating to a firearm" product with name "Firearms software" and "continue"
     And I confirm I can upload a document
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with unit of measurement "Number of articles", quantity "25", value "50,000" and deactivated "No" and Save
@@ -328,7 +350,7 @@ Feature: I want to indicate the standard licence I want
     And I select firearms act section "1"
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
     And I enter certificate number as "FR2468/1234/1" with expiry date "12-12-2025"
-    And I see summary screen for "Firearms" product with description "new firearm" and "review"
+    And I see summary screen for "Firearms" product with name "Rifle" and "review"
     And I can edit good "Name" as "Powerful Rifle"
     And I can edit good "Description" as "updated firearm description"
     And I can edit good "Part number" as "PN-ABC/123"
@@ -347,7 +369,7 @@ Feature: I want to indicate the standard licence I want
     And I specify military use details as "yes_designed"
     And I specify component details as "yes_designed"
     And I specify product employs information security features as "Yes"
-    And I see summary screen for "Accessory of a firearm" product with description "firearm accessory" and "review"
+    And I see summary screen for "Accessory of a firearm" product with name "firearm accessory" and "review"
     And I can edit good "Name" as "Updated firearm accessory"
     And I can edit good "Description" as "updated firearm accessory description"
     And I can edit good "Part number" as "ACC-123/Y"
