@@ -1,6 +1,6 @@
 plural = []
 
-$("#unit > option").each(function() {
+$("#unit > option").each(function () {
 	if ($(this).text().endsWith('(s)')) {
 		plural.push($(this).val());
 	}
@@ -9,10 +9,10 @@ $("#unit > option").each(function() {
 for (var i = 0; i < plural.length; i++) {
 	key = plural[i]
 	option = $('#unit > option[value=' + key + ']')
-    option.text(option.text().substring(0, option.text().length - 3) + 's')
+	option.text(option.text().substring(0, option.text().length - 3) + 's')
 }
 
-$('#quantity').on('input propertychange paste', function() {
+$('#quantity').on('input propertychange paste', function () {
 	for (var i = 0; i < plural.length; i++) {
 		key = plural[i]
 		option = $('#unit > option[value=' + key + ']')
@@ -28,7 +28,7 @@ $('#quantity').on('input propertychange paste', function() {
 	}
 });
 
-$('#unit').on('input', function() {
+$('#unit').on('input', function () {
 	let quantity_for = "quantity";
 	let quantity_label = $('label[for=' + quantity_for + ']');
 	let value_for = "value";
@@ -45,3 +45,24 @@ $('#unit').on('input', function() {
 		value_label.children().remove();
 	}
 });
+
+function showHideCertificateMissingReason() {
+	var textarea = $("#section_certificate_missing_reason")
+	var label = $('label[for="section_certificate_missing_reason"]');
+
+	if ($("input[name='section_certificate_missing']").is(":checked")) {
+		label.show()
+		textarea.show()
+	} else {
+		label.hide()
+		textarea.hide()
+	}
+}
+
+$("input[name='section_certificate_missing']").change(function () {
+	showHideCertificateMissingReason()
+});
+
+(function () {
+	showHideCertificateMissingReason()
+})();

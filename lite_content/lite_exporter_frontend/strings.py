@@ -120,7 +120,7 @@ class EndUser:
         DESCRIPTION = "This is the document that has been uploaded for this end user."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
-        PROCESSING = "Processing"
+        PROCESSING = "Uploading"
         TITLE = "End user document"
         VIRUS_INFECTED = "Virus infected"
 
@@ -152,7 +152,7 @@ class UltimateEndUser:
         DESCRIPTION = "This is the document that has been uploaded for this ultimate recipient."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
-        PROCESSING = "Processing"
+        PROCESSING = "Uploading"
         SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Ultimate recipient document"
         VIRUS_INFECTED = "The selected file contains a virus"
@@ -179,7 +179,7 @@ class Consignee:
         DESCRIPTION = "This is the document that has been uploaded for this consignee."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
-        PROCESSING = "Processing"
+        PROCESSING = "Uploading"
         SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Consignee document"
         VIRUS_INFECTED = "The selected file contains a virus"
@@ -209,7 +209,7 @@ class ThirdParties:
         DESCRIPTION = "This is the document that has been uploaded for this third party."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
-        PROCESSING = "Processing"
+        PROCESSING = "Uploading"
         SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Third party document"
         VIRUS_INFECTED = "The selected file contains a virus"
@@ -293,7 +293,7 @@ class Goods:
             YEAR_OF_MANUFACTURE = "Year of manufacture"
             REPLICA_FIREARM = "Replica firearm"
             CALIBRE = "Calibre"
-            COVERED_BY_THE_FIREARMS_ACT_1968 = "Covered by the Firearms Act 1968"
+            COVERED_BY_THE_FIREARMS_ACT_1968 = "Firearms Act 1968"
             IDENTIFICATION_MARKINGS = "Identification markings"
 
     class Documents:
@@ -301,7 +301,7 @@ class Goods:
         DESCRIPTION = ""
         DOWNLOAD_DOCUMENT = "Download document"
         GOOD_HAS_NO_DOCUMENTS = "There are no documents"
-        PROCESSING = "Processing"
+        PROCESSING = "Uploading"
         TITLE = "Product documents"
         VIRUS_INFECTED = "The selected file contains a virus"
 
@@ -343,8 +343,8 @@ class HelpAddress:
 
 class AdditionalDocuments:
     ADD = "Add a document"
-    NO_RESULTS = "There are no supporting documents on the application"
-    TITLE = "Supporting documents"
+    NO_RESULTS = "No additional documents have yet been added to this application"
+    TITLE = "Additional documents"
     BACK = "Back to application overview"
     NAME_COLUMN = "Document"
     DESCRIPTION_COLUMN = "Description"
@@ -359,7 +359,7 @@ class AdditionalDocuments:
         DOWNLOAD_DOCUMENT = "Download"
         VIRUS = "Document processing failed. Attach another."
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
-        PROCESSING = "Processing"
+        PROCESSING = "Uploading"
         SAVE_AND_RETURN_LATER = "save and return to the application overview"
         TITLE = "Additional document"
         VIRUS_INFECTED = "The selected file contains a virus"

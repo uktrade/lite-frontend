@@ -11,7 +11,7 @@ def good_summary(good):
 
     return Summary(
         values={
-            "Description": good["description"],
+            "Name": good["description"] if not good["name"] else good["name"],
             "Control list entries": convert_control_list_entries(good["control_list_entries"]),
             "Part number": default_na(good["part_number"]),
         },
@@ -40,14 +40,6 @@ def get_category_display_string(category):
     return ""
 
 
-FIREARM_AMMUNITION_COMPONENT_TYPES = [
-    "firearms",
-    "ammunition",
-    "components_for_firearms",
-    "components_for_ammunition",
-]
-
-
 def get_sporting_shotgun_form_title(product_type):
     if product_type == "firearms":
         return "Is the product a sporting shotgun?"
@@ -64,3 +56,19 @@ def return_to_good_summary(kwargs, application_id, object_pk):
         return reverse_lazy("applications:add_good_summary", kwargs={"pk": application_id, "good_pk": object_pk})
     else:
         return reverse_lazy("goods:good", kwargs={"pk": object_pk})
+
+
+def is_firearms_act_status_changed(initial, updated):
+    if (
+        initial["is_covered_by_firearm_act_section_one_two_or_five"] == "Yes"
+        and updated["is_covered_by_firearm_act_section_one_two_or_five"] == "Yes"
+    ) and initial["firearms_act_section"] != updated["firearms_act_section"]:
+        return True
+
+    if (
+        initial["is_covered_by_firearm_act_section_one_two_or_five"] == "Yes"
+        and updated["is_covered_by_firearm_act_section_one_two_or_five"] != "Yes"
+    ):
+        return True
+
+    return False

@@ -22,6 +22,7 @@ from lite_content.lite_exporter_frontend.goods import (
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
     Form,
+    HTMLBlock,
     TextArea,
     RadioButtons,
     Option,
@@ -38,6 +39,7 @@ from lite_forms.components import (
     FormGroup,
     Heading,
     HelpSection,
+    Checkboxes,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
@@ -250,15 +252,12 @@ def add_goods_questions(control_list_entries, application_pk=None):
     return Form(
         title=conditional(application_pk, "Add a product to your application", "Add a product to your product list"),
         questions=[
-            TextArea(
-                title="Description",
-                description=(
-                    "Start with the product name to make it easier to find the product when needed. Include the "
-                    "commodity code if you know it."
-                ),
-                name="description",
-                extras={"max_length": 280},
+            TextInput(
+                title="Name",
+                description=("Give your product a name so it is easier to find in your product list"),
+                name="name",
             ),
+            TextArea(title="Description", name="description", extras={"max_length": 280}, rows=5, optional=True,),
             TextInput(title="Part number", name="part_number", optional=True),
             RadioButtons(
                 title="Is the product on the control list?",
@@ -358,7 +357,7 @@ def add_good_form_group(
             conditional(is_firearm and bool(draft_pk), firearm_year_of_manufacture_details_form()),
             conditional(is_firearm, firearm_replica_form(request.POST.get("type"))),
             conditional(is_firearms_core, firearm_calibre_details_form()),
-            conditional(is_firearms_core, firearms_act_confirmation_form()),
+            conditional(is_firearms_core and bool(draft_pk), firearms_act_confirmation_form()),
             conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
@@ -387,10 +386,16 @@ def edit_good_detail_form(request, good_id):
         title=EditGoodForm.TITLE,
         description=EditGoodForm.DESCRIPTION,
         questions=[
+            TextInput(
+                title="Name",
+                description=("Give your product a name so it is easier to find in your product list"),
+                name="name",
+            ),
             TextArea(
                 title=EditGoodForm.Description.TITLE,
-                description=EditGoodForm.Description.DESCRIPTION,
                 name="description",
+                rows=5,
+                optional=True,
                 extras={"max_length": 280},
             ),
             TextInput(title=EditGoodForm.PartNumber.TITLE, name="part_number", optional=True),
@@ -640,59 +645,104 @@ def firearm_calibre_details_form():
     )
 
 
+def format_list_item(link, name, description):
+    return "<br>" + "<li>" + linkify(link, name=name,) + f"&nbsp;&nbsp;{description}" + "</li>"
+
+
 def firearms_act_confirmation_form():
     return Form(
         title=CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE,
+        default_button_name="Save and continue",
         questions=[
             HiddenField("section_certificate_step", True),
-            Label(CreateGoodForm.FirearmGood.FirearmsActCertificate.FIREARMS_ACT),
-            Label(
-                id="section-1-link",
-                text=linkify(
+            HTMLBlock(
+                "<br>"
+                + "<details class='govuk-details' data-module='govuk-details'>"
+                + "<summary class='govuk-details__summary'>"
+                + "    <span class='govuk-details__summary-text'>What do the sections cover?</span>"
+                + "</summary>"
+                + "<div>"
+                + " <ol class='govuk-list govuk-!-padding-left-8'>"
+                + format_list_item(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE_LINK,
-                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE,
-                ),
-            ),
-            Label(
-                id="section-2-link",
-                text=linkify(
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE,
+                    "  is a broad category covering most types of firearm and ammunition, including rifles and high powered air weapons.",
+                )
+                + format_list_item(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO_LINK,
-                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO,
-                ),
-            ),
-            Label(
-                id="section-5-link",
-                text=linkify(
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO,
+                    "  covers most types of shotgun.",
+                )
+                + format_list_item(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE_LINK,
-                    name=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE,
-                ),
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE,
+                    "  covers weapons and ammunition that are generally prohibited.",
+                )
+                + "</ol>"
+                + "</div>"
+                + "</details>"
+                "<br>"
             ),
             RadioButtons(
                 title="",
                 name="is_covered_by_firearm_act_section_one_two_or_five",
                 options=[
                     Option(
-                        key=True,
+                        key="Yes",
                         value=CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
                         components=[
-                            TextInput(
-                                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_CERTIFICATE_NUMBER,
-                                description="",
-                                name="section_certificate_number",
-                                optional=False,
-                            ),
-                            DateInput(
-                                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE,
-                                description=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE_HINT,
-                                prefix="section_certificate_date_of_expiry",
-                                name="section_certificate_date_of_expiry",
-                            ),
+                            RadioButtons(
+                                title="Select section",
+                                name="firearms_act_section",
+                                options=[
+                                    Option(key="firearms_act_section1", value="Section 1"),
+                                    Option(key="firearms_act_section2", value="Section 2"),
+                                ],
+                            )
                         ],
                     ),
-                    Option(key=False, value=CreateGoodForm.FirearmGood.FirearmsActCertificate.NO),
+                    Option(key="No", value=CreateGoodForm.FirearmGood.FirearmsActCertificate.NO),
+                    Option(key="Unsure", value=CreateGoodForm.FirearmGood.FirearmsActCertificate.DONT_KNOW),
                 ],
             ),
         ],
+        javascript_imports={"/javascripts/add-good.js"},
+    )
+
+
+def upload_firearms_act_certificate_form(section, back_link):
+    return Form(
+        title=f"Upload your Firearms Act 1968 {section} certificate",
+        description="The file must be smaller than 50MB",
+        questions=[
+            HiddenField("firearms_certificate_uploaded", False),
+            FileUpload(),
+            TextInput(
+                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_CERTIFICATE_NUMBER,
+                description="",
+                name="section_certificate_number",
+                optional=False,
+            ),
+            DateInput(
+                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE,
+                description=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE_HINT,
+                prefix="section_certificate_date_of_expiry",
+                name="section_certificate_date_of_expiry",
+            ),
+            Label(text="Or"),
+            Checkboxes(
+                name="section_certificate_missing",
+                options=[Option(key="True", value=f"I do not have a Firearms Act 1968 {section} certificate",)],
+            ),
+            TextArea(
+                title="Provide a reason why you do not have a certificate",
+                name="section_certificate_missing_reason",
+                optional=False,
+            ),
+        ],
+        back_link=BackLink("Back", back_link) if back_link else None,
+        buttons=[Button("Save and continue", "submit")],
+        javascript_imports={"/javascripts/add-good.js"},
     )
 
 
@@ -733,4 +783,8 @@ def identification_markings_form(draft_pk=None, good_id=None):
         HiddenField("good_id", good_id) if good_id else None,
     ]
 
-    return Form(title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE, questions=questions,)
+    return Form(
+        title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE,
+        questions=questions,
+        default_button_name="Save and continue",
+    )

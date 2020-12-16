@@ -27,6 +27,19 @@
 				</div>
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
+						Name
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if good.good.name %}
+							{{ good.good.name }}
+						{% else %}
+							{{ good.good.description }}
+						{% endif %}
+					</dd>
+				</div>
+
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
 						{% lcs "goods.GoodPage.Table.DESCRIPTION" %}
 					</dt>
 					<dd class="govuk-summary-list__value">
@@ -159,15 +172,52 @@
 							{% lcs "goods.GoodsDetailSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{% if good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five is not None %}
-								{{ good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five|friendly_boolean}}
-								{% if good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
-									- certificate number {{ good.good.firearm_details.section_certificate_number|default_na }} expires on
-									{{ good.good.firearm_details.section_certificate_date_of_expiry|date_display }}
+							{% with covered_by_firearms_act=good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five section=good.good.firearm_details.firearms_act_section %}
+							{% if covered_by_firearms_act == "Yes" %}
+								{{ covered_by_firearms_act }}
+								<span class="govuk-hint govuk-!-margin-0">
+									{% if section == "firearms_act_section1" %}
+										Section 1
+									{% elif section == "firearms_act_section2" %}
+										Section 2
+									{% endif %}
+								</span>
+								{% if not good.good.firearm_details.section_certificate_missing %}
+									<span class="govuk-hint govuk-!-margin-0">
+										Expires {{ good.good.firearm_details.section_certificate_date_of_expiry|date_display }}
+									</span>
+									<span class="govuk-hint govuk-!-margin-0">
+										Reference {{ good.good.firearm_details.section_certificate_number }}
+									</span>
 								{% endif %}
+							{% elif covered_by_firearms_act == "No" %}
+								No
+							{% elif covered_by_firearms_act == "Unsure" %}
+								I don't know
 							{% endif %}
+						{% endwith %}
 						</dd>
 					</div>
+					{% if good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">Document</dt>
+							<dd class="govuk-summary-list__value">
+								{% if good.good.firearm_details.section_certificate_missing %}
+									No
+									<span class="govuk-hint govuk-!-margin-0">
+										{{ good.good.firearm_details.section_certificate_missing_reason }}
+									</span>
+								{% else %}
+									Yes
+									{% for document in good.good_application_documents %}
+										<span class="govuk-hint govuk-!-margin-0">
+											<a {% if document.safe == True %}href="{% url 'applications:good-on-application-document' pk=application_id good_pk=good.good.id doc_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+										</span>
+									{% endfor %}
+								{% endif %}
+							</dd>
+						</div>
+					{% endif %}
 
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">

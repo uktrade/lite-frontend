@@ -1,9 +1,14 @@
 from django.urls import reverse_lazy
 
-from exporter.core.constants import EXHIBITION, PRODUCT_CATEGORY_FIREARM
+from exporter.core.constants import EXHIBITION, PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.core.services import get_units, get_item_types
 from exporter.goods.helpers import good_summary
-from exporter.goods.forms import identification_markings_form, firearm_year_of_manufacture_details_form
+from exporter.goods.forms import (
+    identification_markings_form,
+    firearm_year_of_manufacture_details_form,
+    firearms_act_confirmation_form,
+)
+
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.goods import AddGoodToApplicationForm
 from lite_forms.helpers import conditional
@@ -40,11 +45,17 @@ def exhibition_item_type(request, good_id, application_id):
 def good_on_application_form_group(request, is_preexisting, good, sub_case_type, draft_pk):
     # is_preexisting are only asked if user is adding a preexisting good from their product list
     # but not if the good being added to the application is a new good created as part of this same flow
+    firearm_type = None
+    if good.get("firearm_details"):
+        firearm_type = good["firearm_details"]["type"]["key"]
+
+    is_firearm_core = firearm_type and firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES
     return FormGroup(
         [
             conditional(is_preexisting, identification_markings_form(draft_pk)),
-            unit_quantity_value(request, good, sub_case_type, draft_pk),
             conditional(is_preexisting, firearm_year_of_manufacture_details_form()),
+            unit_quantity_value(request, good, sub_case_type, draft_pk),
+            conditional(is_preexisting and is_firearm_core, firearms_act_confirmation_form()),
         ]
     )
 

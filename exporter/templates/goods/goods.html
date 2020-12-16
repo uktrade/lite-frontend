@@ -40,6 +40,7 @@
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</th>
 					<th class="govuk-table__header" scope="col"></th>
 					<th class="govuk-table__header" scope="col">{% lcs 'goods.GoodsList.Table.CONTROL_LIST_ENTRY' %}</th>
@@ -51,6 +52,14 @@
 			<tbody class="govuk-table__body">
 				{% for good in goods.results %}
 					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">
+							<span class="govuk-table__header" aria-hidden="true">Name</span>
+							{% if good.name %}
+								{{ good.name|highlight_text:name }}
+							{% else %}
+								{{ good.description|highlight_text:description }}
+							{% endif %}
+						</td>
 						<td class="govuk-table__cell">
 							<span class="govuk-table__header" aria-hidden="true">{% lcs 'goods.GoodsList.Table.DESCRIPTION' %}</span>
 							{{ good.description|highlight_text:description }}

@@ -11,7 +11,7 @@ from exporter.applications.helpers.date_fields import (
     format_date,
     create_formatted_date_from_components,
 )
-from exporter.goods.services import add_firearm_details_to_data
+from exporter.goods import services
 
 from exporter.core.helpers import remove_prefix, add_validate_only_to_data
 from core.helpers import convert_parameters_to_query_params
@@ -129,7 +129,7 @@ def serialize_good_on_app_data(json):
 
     if json.get("date_of_deactivationday"):
         post_data["date_of_deactivation"] = format_date(post_data, "date_of_deactivation")
-    post_data = add_firearm_details_to_data(post_data)
+    post_data = services.add_firearm_details_to_data(post_data)
     return post_data
 
 
@@ -226,6 +226,43 @@ def get_additional_document(request, pk, doc_pk):
 def delete_additional_party_document(request, pk, doc_pk):
     data = client.delete(request, f"/applications/{pk}/documents/{doc_pk}/")
     return data.status_code
+
+
+def get_application_documents(request, pk, good_pk):
+    response = client.get(request, f"/applications/{pk}/goods/{good_pk}/documents/")
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def post_application_document(request, pk, good_pk, data):
+    response = client.post(request, f"/applications/{pk}/goods/{good_pk}/documents/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def get_application_document(request, pk, good_pk, doc_pk):
+    response = client.get(request, f"/applications/{pk}/goods/{good_pk}/documents/{doc_pk}/")
+    response.raise_for_status()
+    return response.json().get("document"), response.status_code
+
+
+def delete_application_document(request, pk, good_pk, doc_pk):
+    response = client.delete(request, f"/applications/{pk}/goods/{good_pk}/documents/{doc_pk}/")
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def fetch_and_delete_previous_application_documents(request, pk, good_pk):
+    documents, _ = get_application_documents(request, pk, good_pk)
+    for doc in documents["documents"]:
+        if doc["safe"]:
+            delete_application_document(request, pk, good_pk, doc["id"])
+
+
+def delete_application_document_data(request, pk, good_pk, data):
+    response = client.delete(request, f"/applications/{pk}/goods/{good_pk}/documents/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
 
 
 def delete_application_preexisting_good(request, good_on_application_pk):

@@ -843,6 +843,14 @@ def mock_good_on_appplication(requests_mock, mock_case, data_good_on_application
     yield requests_mock.get(url=re.compile(f"{url}.*"), json=data_good_on_application)
 
 
+@pytest.fixture
+def mock_good_on_appplication_documents(requests_mock, mock_case, data_good_on_application):
+    pk = data_good_on_application["application"]
+    good_pk = data_good_on_application["good"]["id"]
+    url = client._build_absolute_uri(f"/applications/{pk}/goods/{good_pk}/documents/")
+    yield requests_mock.get(url=re.compile(f"{url}.*"), json={"documents": []})
+
+
 @pytest.fixture(autouse=True)
 def data_search():
     return {

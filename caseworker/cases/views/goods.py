@@ -4,9 +4,15 @@ from formtools.wizard.views import SessionWizardView
 
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
-from caseworker.cases.services import get_case, post_review_good, post_review_goods, get_good_on_application
-from caseworker.search.services import get_application_search_results
-from caseworker.search.forms import SearchForm
+from caseworker.cases.services import (
+    get_case,
+    post_review_good,
+    post_review_goods,
+    get_good_on_application,
+    get_good_on_application_documents,
+)
+from caseworker.search.services import get_search_results, get_application_search_results
+from caseworker.search.forms import CasesSearchForm, SearchForm
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
@@ -201,8 +207,12 @@ class GoodDetails(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         form = self.get_form()
+        goa_documents = get_good_on_application_documents(
+            self.request, self.object["application"], self.object["good"]["id"]
+        )
         return super().get_context_data(
             good_on_application=self.object,
+            good_on_application_documents=goa_documents,
             case=get_case(self.request, self.kwargs["pk"]),
             other_cases=self.other_cases,
             # for pagination

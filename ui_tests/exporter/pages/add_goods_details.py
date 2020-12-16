@@ -58,8 +58,9 @@ class AddGoodDetails(BasePage):
 
     # Firearms - Firearms act sections 1,2,5 applicable
     FIREARMS_ACT_PREFIX = "is_covered_by_firearm_act_section_one_two_or_five-"
-    FIREARMS_ACT_YES_ID = FIREARMS_ACT_PREFIX + "True"
-    FIREARMS_ACT_NO_ID = FIREARMS_ACT_PREFIX + "False"
+    FIREARMS_ACT_YES_ID = FIREARMS_ACT_PREFIX + "Yes"
+    FIREARMS_ACT_NO_ID = FIREARMS_ACT_PREFIX + "No"
+    FIREARMS_ACT_DONTKNOW_ID = FIREARMS_ACT_PREFIX + "Unsure"
     SECTION_CERTIFICATE_NUMBER_TEXTFIELD_ID = "section_certificate_number"
 
     CERTIFICATE_EXPIRY_DATE_PREFIX = "section_certificate_date_of_expiry"
@@ -74,6 +75,9 @@ class AddGoodDetails(BasePage):
     FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "identification_markings_details"
     FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "no_identification_markings_details"
 
+    def true_or_false(self, status):
+        return "True" if status == "Yes" else "False"
+
     def select_product_category(self, category):
         # Accept categories "one", "two", "three-software", "three-technology" and match with an id accordingly
         if category == "two":
@@ -85,8 +89,14 @@ class AddGoodDetails(BasePage):
         if category == "one":
             self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
 
+    def set_identification_details(self, has_markings, details):
+        has_markings = self.true_or_false(has_markings)
+        markings_id = f"has_identification_markings-{has_markings}"
+        self.driver.find_element_by_id(markings_id).click()
+        self.enter_related_field_details("identification_markings_details", details)
+
     def select_sporting_gun_status(self, status):
-        status = "True" if status == "Yes" else "False"
+        status = self.true_or_false(status)
         self.driver.find_element_by_id(f"is_sporting_shotgun-{status}").click()
 
     def select_is_product_for_military_use(self, option):
@@ -158,7 +168,7 @@ class AddGoodDetails(BasePage):
         self.enter_related_field_details(self.FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID, text=year)
 
     def select_replica_status(self, status, description=""):
-        status = "True" if status == "Yes" else "False"
+        status = self.true_or_false(status)
         self.driver.find_element_by_id(f"is_replica-{status}").click()
         if status == "True":
             desc = self.driver.find_element_by_id("replica_description")
@@ -168,13 +178,22 @@ class AddGoodDetails(BasePage):
     def enter_calibre(self, calibre):
         self.enter_related_field_details(self.FIREARM_CALIBRE_TEXTFIELD_ID, text=calibre)
 
-    def select_do_firearms_act_sections_apply(self, option):
-        if option == "Yes":
+    def select_do_firearms_act_sections_apply(self, choice):
+        if choice == "Yes":
             self.driver.find_element_by_id(self.FIREARMS_ACT_YES_ID).click()
-            self.enter_related_field_details(self.SECTION_CERTIFICATE_NUMBER_TEXTFIELD_ID, text=fake.ean(length=13))
-            self.enter_certificate_expiry_date("03", "8", "2027")
-        if option == "No":
+        if choice == "No":
             self.driver.find_element_by_id(self.FIREARMS_ACT_NO_ID).click()
+        if choice == "Unsure":
+            self.driver.find_element_by_id(self.FIREARMS_ACT_DONTKNOW_ID).click()
+
+    def select_firearms_act_section(self, num):
+        self.driver.find_element_by_id(f"firearms_act_section-firearms_act_section{num}").click()
+
+    def choose_firearms_certificate_file(self, path):
+        self.driver.find_element_by_id("file").send_keys(path)
+
+    def enter_firearms_act_certificate_number(self, cert_num):
+        self.enter_related_field_details(self.SECTION_CERTIFICATE_NUMBER_TEXTFIELD_ID, cert_num)
 
     def enter_certificate_expiry_date(self, day, month, year):
         self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_DAY_ID).send_keys(day)

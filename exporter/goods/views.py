@@ -9,7 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
-from exporter.applications.helpers.date_fields import split_date_into_components
 from exporter.applications.services import (
     get_application_ecju_queries,
     get_case_notes,
@@ -18,7 +17,10 @@ from exporter.applications.services import (
     download_document_from_s3,
     get_status_properties,
     get_case_generated_documents,
+    post_application_document,
+    fetch_and_delete_previous_application_documents,
 )
+from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.goods.forms import (
     attach_documents_form,
     delete_good_form,
@@ -34,6 +36,7 @@ from exporter.goods.forms import (
     group_two_product_type_form,
     firearm_calibre_details_form,
     firearms_act_confirmation_form,
+    upload_firearms_act_certificate_form,
     identification_markings_form,
     firearms_sporting_shotgun_form,
     firearm_year_of_manufacture_details_form,
@@ -42,7 +45,7 @@ from exporter.goods.forms import (
 from exporter.goods.helpers import (
     COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP,
     return_to_good_summary,
-    FIREARM_AMMUNITION_COMPONENT_TYPES,
+    is_firearms_act_status_changed,
 )
 from exporter.goods.services import (
     get_goods,
@@ -73,12 +76,14 @@ from core.auth.views import LoginRequiredMixin
 
 class Goods(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
+        name = request.GET.get("name", "").strip()
         description = request.GET.get("description", "").strip()
         part_number = request.GET.get("part_number", "").strip()
         control_list_entry = request.GET.get("control_list_entry", "").strip()
 
         filters = FiltersBar(
             [
+                TextInput(title="name", name="name"),
                 TextInput(title="description", name="description"),
                 TextInput(title="control list entry", name="control_list_entry"),
                 TextInput(title="part number", name="part_number"),
@@ -87,6 +92,7 @@ class Goods(LoginRequiredMixin, TemplateView):
 
         params = {
             "page": int(request.GET.get("page", 1)),
+            "name": name,
             "description": description,
             "part_number": part_number,
             "control_list_entry": control_list_entry,
@@ -94,6 +100,7 @@ class Goods(LoginRequiredMixin, TemplateView):
 
         context = {
             "goods": get_goods(request, **params),
+            "name": name,
             "description": description,
             "part_number": part_number,
             "control_list_entry": control_list_entry,
@@ -406,6 +413,7 @@ class EditGood(LoginRequiredMixin, SingleFormView):
         self.data["control_list_entries"] = [
             {"key": clc["rating"], "value": clc["rating"]} for clc in self.data["control_list_entries"]
         ]
+        self.data["is_good_controlled"] = self.data["is_good_controlled"].get("key")
         return self.data
 
     def get_success_url(self):
@@ -634,33 +642,127 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
 
     def get_data(self):
         if self.data:
-            new_data = {
-                "section_certificate_number": self.data.get("section_certificate_number"),
+            return {
                 "is_covered_by_firearm_act_section_one_two_or_five": self.data.get(
                     "is_covered_by_firearm_act_section_one_two_or_five"
                 ),
+                "firearms_act_section": self.data.get("firearms_act_section"),
             }
-            # Get the certificate date split into components to display on the form
-            certificate_date_of_expiry = self.data.get("section_certificate_date_of_expiry")
-            if certificate_date_of_expiry:
-                date_prefix = "section_certificate_date_of_expiry"
-                # Pre-populate the date fields
-                (
-                    new_data[date_prefix + "year"],
-                    new_data[date_prefix + "month"],
-                    new_data[date_prefix + "day"],
-                ) = split_date_into_components(certificate_date_of_expiry, "-")
-
-            return new_data
 
     def get_success_url(self):
+        updated_data = self.get_validated_data()["good"]["firearm_details"]
+        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes"
+        section_selected = updated_data.get("firearms_act_section")
+        show_upload_form = covered_by_firearms_act and section_selected
+
         if self.draft_pk:
             return reverse(
                 "goods:good_detail_application",
                 kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
             )
         elif self.application_id and self.object_pk:
-            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+            # If the new status is that the product is not covered by firearms act or section change
+            # then delete the previous certificate
+            if is_firearms_act_status_changed(self.data, updated_data):
+                fetch_and_delete_previous_application_documents(self.request, self.application_id, self.object_pk)
+
+            if show_upload_form:
+                return reverse(
+                    "applications:firearms_act_certificate",
+                    kwargs={"pk": self.application_id, "good_pk": self.object_pk},
+                )
+            else:
+                return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+        elif self.object_pk:
+            return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+            back_link = reverse(
+                "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+            )
+        else:
+            back_link = None
+            self.object_pk = str(kwargs["pk"])
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = upload_firearms_act_certificate_form("section", back_link)
+        self.action = edit_good_firearm_details
+
+    def get_data(self):
+        if self.data:
+            expiry_date = self.data.get("section_certificate_date_of_expiry")
+            day = month = year = ""
+            if expiry_date:
+                year, month, day = expiry_date.split("-")
+            return {
+                "section_certificate_number": self.data.get("section_certificate_number"),
+                "section_certificate_date_of_expiryday": day,
+                "section_certificate_date_of_expirymonth": month,
+                "section_certificate_date_of_expiryyear": year,
+                "section_certificate_missing": self.data.get("section_certificate_missing"),
+                "section_certificate_missing_reason": self.data.get("section_certificate_missing_reason"),
+            }
+
+    def post(self, request, **kwargs):
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+        doc_data = {}
+        error = None
+
+        json = {k: v for k, v in request.POST.items()}
+        certificate_available = json.get("section_certificate_missing", False) is False
+
+        if certificate_available:
+            doc_data, error = add_document_data(request)
+
+        validated_data, _ = edit_good_firearm_details(request, kwargs["good_pk"], json)
+        if "errors" in validated_data:
+            if certificate_available and error:
+                validated_data["errors"]["file"] = ["Select certificate file to upload"]
+            form = upload_firearms_act_certificate_form("section", None)
+            return form_page(request, form, data=json, errors=validated_data["errors"])
+
+        if certificate_available and error:
+            form = upload_firearms_act_certificate_form("section", None)
+            return form_page(request, form, data=json, errors={"file": ["Select certificate file to upload"]})
+
+        if doc_data and json.get("section_certificate_missing", False) is False:
+            fetch_and_delete_previous_application_documents(request, kwargs["pk"], kwargs["good_pk"])
+
+            data, status_code = post_application_document(request, kwargs["pk"], kwargs["good_pk"], doc_data)
+            if status_code != HTTPStatus.CREATED:
+                return error_page(request, data["errors"]["file"])
+
+        return redirect(
+            reverse("applications:add_good_summary", kwargs={"pk": kwargs["pk"], "good_pk": kwargs["good_pk"]})
+        )
+
+    def get_success_url(self):
+        updated_data = self.get_validated_data()["good"]["firearm_details"]
+        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five")
+        section_selected = updated_data.get("firearms_act_section")
+        show_upload_form = covered_by_firearms_act and section_selected
+
+        if self.draft_pk:
+            return reverse(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
+            )
+        elif self.application_id and self.object_pk:
+            if show_upload_form:
+                return reverse(
+                    "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
+            else:
+                return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
         elif self.object_pk:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 

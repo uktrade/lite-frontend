@@ -618,6 +618,7 @@ def data_good_on_application(data_standard_case):
         "comment": "",
         "report_summary": "",
         "is_precedent": False,
+        "good_on_application_documents": [],
         "audit_trail": [
             {
                 "id": "86f4d159-a282-4a25-b236-7e3d195356be",
