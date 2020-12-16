@@ -98,6 +98,7 @@ class GoodPage:
             REPLICA_FIREARM = "Replica firearm"
             CALIBRE = "Calibre"
             COVERED_BY_THE_FIREARMS_ACT_1968 = "Firearms Act 1968"
+            IDENTIFICATION_MARKINGS = "Serial numbers"
             IDENTIFICATION_MARKINGS = "Identification markings"
 
 
