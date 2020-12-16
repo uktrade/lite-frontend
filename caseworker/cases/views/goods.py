@@ -11,8 +11,8 @@ from caseworker.cases.services import (
     get_good_on_application,
     get_good_on_application_documents,
 )
-from caseworker.search.services import get_search_results, get_application_search_results
-from caseworker.search.forms import CasesSearchForm, SearchForm
+from caseworker.search.services import get_application_search_results
+from caseworker.search.forms import SearchForm
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
