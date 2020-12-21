@@ -36,7 +36,7 @@ def get_queues(
         options = []
 
         for queue in data:
-            option = Option(queue.get("id"), queue.get("name"))
+            option = Option(queue.get("id"), queue.get("name"), id=queue.get("id"))
 
             queue_team = queue.get("team")
             if queue_team:
