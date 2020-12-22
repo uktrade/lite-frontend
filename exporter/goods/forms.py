@@ -710,13 +710,14 @@ def firearms_act_confirmation_form():
     )
 
 
-def upload_firearms_act_certificate_form(section, back_link):
+def upload_firearms_act_certificate_form(section, filename, back_link):
     return Form(
         title=f"Upload your Firearms Act 1968 {section} certificate",
         description="The file must be smaller than 50MB",
         questions=[
             HiddenField("firearms_certificate_uploaded", False),
             FileUpload(),
+            HiddenField("uploaded_file_name", filename),
             TextInput(
                 title=CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_CERTIFICATE_NUMBER,
                 description="",

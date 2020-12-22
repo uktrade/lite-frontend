@@ -18,6 +18,7 @@ from exporter.applications.services import (
     get_status_properties,
     get_case_generated_documents,
     post_application_document,
+    get_application_documents,
     fetch_and_delete_previous_application_documents,
 )
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
@@ -686,15 +687,31 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             # coming from the application
             self.object_pk = str(kwargs["good_pk"])
             self.application_id = str(kwargs["pk"])
-            back_link = reverse(
+            self.back_link = reverse(
                 "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
             )
         else:
-            back_link = None
+            self.back_link = None
             self.object_pk = str(kwargs["pk"])
         self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
-        self.form = upload_firearms_act_certificate_form("section", back_link)
+
+        self.selected_section = "section"
+        if self.data["firearms_act_section"] == "firearms_act_section1":
+            self.selected_section = "Section 1"
+        elif self.data["firearms_act_section"] == "firearms_act_section2":
+            self.selected_section = "Section 2"
+
+        self.certificate_filename = ""
+        if not self.data["section_certificate_missing"]:
+            documents, _ = get_application_documents(request, self.application_id, self.object_pk)
+            if documents["documents"]:
+                self.certificate_filename = documents["documents"][0]["name"]
+
+        self.firearms_data_id = f"edit_{request.session['lite_api_user_id']}_{self.application_id}_{self.object_pk}"
+        self.form = upload_firearms_act_certificate_form(
+            self.selected_section, self.certificate_filename, self.back_link
+        )
         self.action = edit_good_firearm_details
 
     def get_data(self):
@@ -712,57 +729,71 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
                 "section_certificate_missing_reason": self.data.get("section_certificate_missing_reason"),
             }
 
+    @csrf_exempt
     def post(self, request, **kwargs):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
+        self.init(request, **kwargs)
         doc_data = {}
-        error = None
+        new_file_selected = False
+        file_upload_key = f"{self.firearms_data_id}_file"
 
         json = {k: v for k, v in request.POST.items()}
         certificate_available = json.get("section_certificate_missing", False) is False
 
-        if certificate_available:
-            doc_data, error = add_document_data(request)
+        doc_data, _ = add_document_data(request)
+        if doc_data:
+            self.request.session[file_upload_key] = doc_data
+            self.certificate_filename = doc_data["name"]
+            new_file_selected = True
+        else:
+            file_info = self.request.session.get(file_upload_key)
+            if file_info:
+                doc_data = file_info
+                new_file_selected = True
+                self.certificate_filename = file_info["name"]
+
+        # if certificate_available and error and self.certificate_filename == "":
+        if certificate_available and self.certificate_filename == "":
+            form = upload_firearms_act_certificate_form(
+                self.selected_section, self.certificate_filename, self.back_link
+            )
+            return form_page(request, form, data=json, errors={"file": ["Select certificate file to upload"]})
 
         validated_data, _ = edit_good_firearm_details(request, kwargs["good_pk"], json)
         if "errors" in validated_data:
-            if certificate_available and error:
-                validated_data["errors"]["file"] = ["Select certificate file to upload"]
-            form = upload_firearms_act_certificate_form("section", None)
+            form = upload_firearms_act_certificate_form(
+                self.selected_section, self.certificate_filename, self.back_link
+            )
             return form_page(request, form, data=json, errors=validated_data["errors"])
 
-        if certificate_available and error:
-            form = upload_firearms_act_certificate_form("section", None)
-            return form_page(request, form, data=json, errors={"file": ["Select certificate file to upload"]})
-
-        if doc_data and json.get("section_certificate_missing", False) is False:
+        if certificate_available and new_file_selected:
             fetch_and_delete_previous_application_documents(request, kwargs["pk"], kwargs["good_pk"])
 
             data, status_code = post_application_document(request, kwargs["pk"], kwargs["good_pk"], doc_data)
             if status_code != HTTPStatus.CREATED:
                 return error_page(request, data["errors"]["file"])
 
+        if not certificate_available and self.certificate_filename:
+            fetch_and_delete_previous_application_documents(request, kwargs["pk"], kwargs["good_pk"])
+
+        if file_upload_key in request.session.keys():
+            del self.request.session[file_upload_key]
+            self.request.session.modified = True
+
         return redirect(
             reverse("applications:add_good_summary", kwargs={"pk": kwargs["pk"], "good_pk": kwargs["good_pk"]})
         )
 
     def get_success_url(self):
-        updated_data = self.get_validated_data()["good"]["firearm_details"]
-        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five")
-        section_selected = updated_data.get("firearms_act_section")
-        show_upload_form = covered_by_firearms_act and section_selected
-
         if self.draft_pk:
             return reverse(
                 "goods:good_detail_application",
                 kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
             )
         elif self.application_id and self.object_pk:
-            if show_upload_form:
-                return reverse(
-                    "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
-                )
-            else:
-                return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+            return reverse(
+                "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+            )
         elif self.object_pk:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
