@@ -200,3 +200,9 @@ def get_menu_notifications(request):
         request.cached_get_menu_notifications = client.get(request, "/gov-users/notifications/")
     response = request.cached_get_menu_notifications
     return response.json()
+
+
+def get_control_list_entries(request):
+    response = client.get(request, "/static/control-list-entries/?include_parent=True")
+    response.raise_for_status()
+    return response.json().get("control_list_entries")
