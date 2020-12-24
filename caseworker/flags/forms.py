@@ -141,7 +141,6 @@ def select_flagging_rule_type():
 
 
 def select_condition_and_flag(request, type: str):
-    title = ""
     condition = []
     flags = []
     is_for_verified_goods_only = None
@@ -157,7 +156,7 @@ def select_condition_and_flag(request, type: str):
             ],
             title=FlaggingRules.Create.Condition_and_flag.GOODS_QUESTION,
         )
-        control_list_entries = get_control_list_entries(request)
+        control_list_entries = get_control_list_entries(request, include_parent=True)
         clc_groups = [item for item in control_list_entries if item["parent"] is None]
         clc_entries = [item for item in control_list_entries if item["parent"] is not None]
 
@@ -170,7 +169,7 @@ def select_condition_and_flag(request, type: str):
         ]
 
         return Form(
-            title=title,
+            title="Set flagging rules",
             questions=[
                 Heading("Add a condition", HeadingStyle.S),
                 TokenBar(
@@ -192,31 +191,42 @@ def select_condition_and_flag(request, type: str):
             default_button_name="Create flagging rule",
         )
     elif type == "Destination":
-        title = strings.FlaggingRules.Create.Condition_and_flag.DESTINATION_TITLE
-        condition = AutocompleteInput(
-            title=strings.FlaggingRules.Create.Condition_and_flag.DESTINATION,
-            name="matching_value",
-            options=get_countries(request, convert_to_options=True),
-        )
         flags = get_destination_flags(request=request)
-    elif type == "Case":
-        title = strings.FlaggingRules.Create.Condition_and_flag.APPLICATION_TITLE
-        case_type_options = [Option(option["key"], option["value"]) for option in get_case_types(request)]
-        condition = Select(
-            title=strings.FlaggingRules.Create.Condition_and_flag.APPLICATION,
-            name="matching_value",
-            options=case_type_options,
+
+        return Form(
+            title="Set flagging rules",
+            questions=[
+                Heading("Add a condition", HeadingStyle.S),
+                TokenBar(
+                    title="Select destinations",
+                    name="matching_values",
+                    description="Type to get suggestions. For example, Australia",
+                    options=get_countries(request, convert_to_options=True),
+                ),
+                Heading("Add an action", HeadingStyle.S),
+                Select(title=strings.FlaggingRules.Create.Condition_and_flag.FLAG, name="flag", options=flags),
+            ],
+            default_button_name="Create flagging rule",
         )
+    elif type == "Case":
+        case_type_options = [Option(option["key"], option["value"]) for option in get_case_types(request)]
         flags = get_cases_flags(request=request)
 
-    return Form(
-        title=title,
-        questions=[
-            condition,
-            Select(title=strings.FlaggingRules.Create.Condition_and_flag.FLAG, name="flag", options=flags),
-            is_for_verified_goods_only,
-        ],
-    )
+        return Form(
+            title="Set flagging rules",
+            questions=[
+                Heading("Add a condition", HeadingStyle.S),
+                TokenBar(
+                    title="Select application type",
+                    name="matching_values",
+                    description="Type to get suggestions.\nFor example, Standard Individual Export Licence",
+                    options=case_type_options,
+                ),
+                Heading("Add an action", HeadingStyle.S),
+                Select(title=strings.FlaggingRules.Create.Condition_and_flag.FLAG, name="flag", options=flags),
+            ],
+            default_button_name="Create flagging rule",
+        )
 
 
 def create_flagging_rules_formGroup(request=None, type=None):

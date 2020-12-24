@@ -145,7 +145,9 @@ def get_user_permissions(request, with_team=False):
 
 
 # Control List Entries
-def get_control_list_entries(request, convert_to_options=False, converted_control_list_entries_cache=[]):  # noqa
+def get_control_list_entries(
+    request, convert_to_options=False, include_parent=True, converted_control_list_entries_cache=[]
+):  # noqa
     """
     Preliminary caching mechanism, requires service restart to repopulate control list entries
     """
@@ -166,8 +168,13 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
 
         return converted_control_list_entries_cache
 
-    response = client.get(request, "/static/control-list-entries/?group=True")
-    return response.json()["control_list_entries"]
+    if include_parent:
+        response = client.get(request, "/static/control-list-entries/?include_parent=True")
+    else:
+        response = client.get(request, "/static/control-list-entries/?group=True")
+
+    response.raise_for_status()
+    return response.json().get("control_list_entries")
 
 
 def get_gov_pv_gradings(request, convert_to_options=False):
@@ -200,9 +207,3 @@ def get_menu_notifications(request):
         request.cached_get_menu_notifications = client.get(request, "/gov-users/notifications/")
     response = request.cached_get_menu_notifications
     return response.json()
-
-
-def get_control_list_entries(request):
-    response = client.get(request, "/static/control-list-entries/?include_parent=True")
-    response.raise_for_status()
-    return response.json().get("control_list_entries")

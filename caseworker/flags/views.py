@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.urls import reverse_lazy
+from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
 from caseworker.cases.helpers.advice import get_param_goods, get_param_destinations
@@ -12,7 +13,7 @@ from caseworker.cases.services import put_flag_assignments, get_case
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import get_params_if_exist
 from core.helpers import convert_dict_to_query_params
-from caseworker.core.services import get_user_permissions
+from caseworker.core.services import get_countries, get_user_permissions
 from caseworker.flags.enums import FlagLevel, FlagStatus
 from caseworker.flags.forms import (
     add_flag_form,
@@ -156,6 +157,12 @@ class ManageFlagRules(LoginRequiredMixin, TemplateView):
             ]
         )
 
+        countries, _ = get_countries(request)
+        countries_map = {country["id"]: country["name"] for country in countries["countries"]}
+        for rule in data["results"]:
+            if rule["level"] == "Destination":
+                rule["matching_values"] = [countries_map[id] for id in rule["matching_values"]]
+
         context = {
             "data": data,
             "team": get_gov_user(request)[0]["user"]["team"]["id"],
@@ -186,6 +193,30 @@ class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
         self.form.buttons[0].value = "Edit flagging rule"
         self.action = put_flagging_rule
         self.success_url = reverse_lazy("flags:flagging_rules")
+
+    @cached_property
+    def get_countries(self):
+        countries, _ = get_countries(self.request)
+        return countries["countries"]
+
+    def get_data(self):
+        if self.data["level"] == "Destination":
+            countries_map = {country["id"]: country["name"] for country in self.get_countries}
+            self.data["matching_values"] = [countries_map[id] for id in self.data["matching_values"]]
+
+        return self.data
+
+    def on_submission(self, request, **kwargs):
+        copied_request = request.POST.copy()
+        if self.data["level"] == "Destination":
+            reverse_countries_map = {country["name"]: country["id"] for country in self.get_countries}
+            country_ids = [
+                reverse_countries_map[name] if name in reverse_countries_map else name
+                for name in copied_request.getlist("matching_values[]")
+            ]
+            copied_request.setlist("matching_values[]", country_ids)
+
+        return copied_request
 
 
 class ChangeFlaggingRuleStatus(LoginRequiredMixin, SingleFormView):
