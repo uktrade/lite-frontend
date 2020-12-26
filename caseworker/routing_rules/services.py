@@ -18,19 +18,22 @@ def _remove_none_from_post_data_additional_rules_list(json):
     :param json: this is data that is going to be posted
     """
     data = json
-    additional_rules = json.get("additional_rules", None)
-    if additional_rules and "None" in additional_rules:
-        new_additional_rules = []
-        for rule in additional_rules:
-            if rule != "None":
-                new_additional_rules.append(rule)
-        data["additional_rules"] = new_additional_rules
+    additional_rules = json.get("additional_rules", [])
+    data["additional_rules"] = list(set([rule for rule in additional_rules if rule != "None"]))
+    return data
+
+def convert_flags_to_list(data):
+    if "flags_to_include" in data:
+        data["flags_to_include"] = [flag_id.strip() for flag_id in data["flags_to_include"].split(",") if flag_id]
+    if "flags_to_exclude" in data:
+        data["flags_to_exclude"] = [flag_id.strip() for flag_id in data["flags_to_exclude"].split(",") if flag_id]
 
     return data
 
 
 def post_routing_rule(request, json):
     data = _remove_none_from_post_data_additional_rules_list(json)
+    data = convert_flags_to_list(data)
     response = client.post(request, "/routing-rules/", data)
     return response.json(), response.status_code
 
@@ -43,6 +46,7 @@ def validate_put_routing_rule(request, id, json):
 
 def put_routing_rule(request, id, json):
     data = _remove_none_from_post_data_additional_rules_list(json)
+    data = convert_flags_to_list(data)
     response = client.put(request, f"/routing-rules/{id}", data)
     return response.json(), response.status_code
 

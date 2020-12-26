@@ -11,6 +11,7 @@ from lite_content.lite_internal_frontend.routing_rules import (
 from lite_forms.components import (
     FormGroup,
     Form,
+    Label,
     Select,
     AutocompleteInput,
     TextInput,
@@ -19,9 +20,13 @@ from lite_forms.components import (
     RadioButtons,
     BackLink,
     HiddenField,
+    HTMLBlock,
+    Filter,
+    Button,
 )
 from lite_forms.generators import confirm_form
 from lite_forms.helpers import conditional
+from lite_forms.styles import ButtonStyle
 from caseworker.teams.services import get_users_by_team, get_teams, get_team_queues
 
 additional_rules = [
@@ -35,22 +40,34 @@ additional_rules = [
 def select_a_team(request):
     return Form(
         title=Forms.TEAM,
-        questions=[RadioButtons(name="team", options=get_teams(request, True))],
+        questions=[RadioButtons(name="team", options=get_teams(request, True)),],
         back_link=BackLink(Forms.BACK_BUTTON, reverse_lazy("routing_rules:list")),
     )
 
 
-def initial_routing_rule_questions(request, team_id, is_editing: bool):
-    if is_editing:
-        title = Forms.EDIT_TITLE
-    else:
-        title = Forms.CREATE_TITLE
+def initial_routing_rule_questions(request, select_team, team_id, is_editing: bool):
+    select_team_question = []
+    if select_team:
+        select_team_question = [
+            AutocompleteInput(
+                title=Forms.TEAM,
+                name="team",
+                options=get_teams(request, True),
+                description="Type to get suggestions. For example, TAU.",
+            ),
+        ]
 
     return Form(
-        title=title,
-        questions=[
+        title=Forms.EDIT_TITLE if is_editing else Forms.CREATE_TITLE,
+        questions=select_team_question
+        + [
             Select(title=Forms.CASE_STATUS, name="status", options=get_statuses(request, True)),
-            AutocompleteInput(title=Forms.QUEUE, name="queue", options=get_team_queues(request, team_id, True, True),),
+            AutocompleteInput(
+                title=Forms.QUEUE,
+                name="queue",
+                options=get_team_queues(request, team_id, True, True) if team_id else [],
+                description="Type to get suggestions.\nFor example, HMRC enquiries.",
+            ),
             TextInput(title=Forms.TIER, name="tier"),
             HiddenField(name="additional_rules[]", value=None),
             Checkboxes(title=Forms.ADDITIONAL_RULES, name="additional_rules[]", options=additional_rules,),
@@ -73,10 +90,14 @@ def select_case_type(request):
     )
 
 
-def select_flags(request, team_id):
+def select_flags(request, team_id, flags_to_include, flags_to_exclude):
     return Form(
         title=Forms.FLAGS,
         questions=[
+            HiddenField(name="flags_to_include", value=",".join(flags_to_include)),
+            HiddenField(name="flags_to_exclude", value=",".join(flags_to_exclude)),
+            HTMLBlock("<div id='routing-rules-flags-details'></div>"),
+            Filter(),
             Checkboxes(
                 name="flags[]",
                 options=[
@@ -85,8 +106,23 @@ def select_flags(request, team_id):
                         request, level="", team_id=team_id, include_system_flags=True
                     )[0]
                 ],
-            )
+                import_custom_js=["/javascripts/filter-checkbox-list-flags.js"],
+            ),
+            Label(text="Apply routing rules to cases that"),
+            RadioButtons(
+                title="",
+                name="routing_rules_flags_condition",
+                options=[
+                    Option(key="contain_selected_flags", value="Contain selected flags"),
+                    Option(key="doesnot_contain_selected_flags", value="Do not contain selected flags"),
+                ],
+            ),
         ],
+        buttons=[
+            Button("Save and continue", "submit"),
+            Button("Add another condition", "", ButtonStyle.SECONDARY, link="#"),
+        ],
+        javascript_imports={"/javascripts/routing-rules-flags.js"},
     )
 
 
@@ -100,17 +136,24 @@ def select_country(request):
 def select_team_member(request, team_id):
     return Form(
         title=Forms.USER,
-        questions=[RadioButtons(name="user", options=get_users_by_team(request, team_id, convert_to_options=True),)],
+        questions=[
+            RadioButtons(
+                name="user", options=get_users_by_team(request, team_id, convert_to_options=True) if team_id else [],
+            )
+        ],
     )
 
 
-def routing_rule_form_group(request, additional_rules, team_id, is_editing=False, select_team=False):
+def routing_rule_form_group(
+    request, additional_rules, team_id, flags_to_include, flags_to_exclude, is_editing=False, select_team=False
+):
     return FormGroup(
         [
-            conditional(select_team, select_a_team(request),),
-            initial_routing_rule_questions(request, team_id, is_editing),
+            initial_routing_rule_questions(request, select_team, team_id, is_editing),
             conditional("case_types" in additional_rules, select_case_type(request)),
-            conditional("flags" in additional_rules, select_flags(request, team_id)),
+            conditional(
+                "flags" in additional_rules, select_flags(request, team_id, flags_to_include, flags_to_exclude)
+            ),
             conditional("country" in additional_rules, select_country(request)),
             conditional("users" in additional_rules, select_team_member(request, team_id)),
         ]

@@ -13,7 +13,11 @@ from lite_forms.generators import form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import MultiFormView, SingleFormView
 from caseworker.queues.services import get_queues
-from caseworker.routing_rules.forms import routing_rule_form_group, deactivate_or_activate_routing_rule_form
+from caseworker.routing_rules.forms import (
+    additional_rules,
+    routing_rule_form_group,
+    deactivate_or_activate_routing_rule_form,
+)
 from caseworker.routing_rules.services import (
     get_routing_rules,
     post_routing_rule,
@@ -79,11 +83,13 @@ class CreateRoutingRule(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         select_team = has_permission(request, Permission.MANAGE_ALL_ROUTING_RULES)
         team_id = request.POST.get("team", get_gov_user(request)[0]["user"]["team"]["id"])
+        if not team_id:
+            team_id = get_gov_user(request)[0]["user"]["team"]["id"]
+        additional_rules = (request.POST.getlist("additional_rules[]", ()),)
+        flags_to_include = request.POST.getlist("flags_to_include")
+        flags_to_exclude = request.POST.getlist("flags_to_exclude")
         self.forms = routing_rule_form_group(
-            request=request,
-            additional_rules=request.POST.getlist("additional_rules[]", ()),
-            team_id=team_id,
-            select_team=select_team,
+            request, additional_rules[0], team_id, flags_to_include, flags_to_exclude, select_team=select_team,
         )
         self.success_url = reverse("routing_rules:list")
         self.action = post_routing_rule
@@ -123,10 +129,19 @@ class EditRoutingRules(LoginRequiredMixin, MultiFormView):
         self.object_pk = kwargs["pk"]
         self.data = get_routing_rule(request, self.object_pk)[0]
         team_id = self.data["team"]
+        flags_to_include = self.data["flags_to_include"]
+        flags_to_exclude = self.data["flags_to_exclude"]
 
         if request.method == "POST":
             additional_rules = request.POST.getlist("additional_rules[]", [])
-            self.forms = routing_rule_form_group(request, additional_rules, team_id, is_editing=True)
+            if "flags_to_include" in request.POST:
+                flags_to_include = [flag for flag in request.POST.get("flags_to_include", []).split(",") if flag]
+            if "flags_to_exclude" in request.POST:
+                flags_to_exclude = [flag for flag in request.POST.get("flags_to_exclude", []).split(",") if flag]
+
+            self.forms = routing_rule_form_group(
+                request, additional_rules, team_id, flags_to_include, flags_to_exclude, is_editing=True
+            )
 
             # we only want to update the data during the last form post
             if (len(self.get_forms().forms) - 1) == int(request.POST.get("form_pk", 0)):
@@ -135,7 +150,17 @@ class EditRoutingRules(LoginRequiredMixin, MultiFormView):
                 self.action = validate_put_routing_rule
 
         else:
-            self.forms = routing_rule_form_group(request, list(), team_id, is_editing=True)
+            self.forms = routing_rule_form_group(
+                request, list(), team_id, flags_to_include, flags_to_exclude, is_editing=True
+            )
             self.action = put_routing_rule
 
         self.success_url = reverse_lazy("routing_rules:list")
+
+    def get_data(self):
+        data = self.data
+        if "flags_to_include" in data:
+            data["flags_to_include"] = ",".join(data["flags_to_include"])
+        if "flags_to_exclude" in data:
+            data["flags_to_exclude"] = ",".join(data["flags_to_exclude"])
+        return data

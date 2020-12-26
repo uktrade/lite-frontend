@@ -282,6 +282,7 @@ class Checkboxes(_Component):
         empty_notice: str = "No items",
         show_select_links: bool = False,
         filterable: bool = False,
+        import_custom_js: list = [],
     ):
         super().__init__(
             name=name,
@@ -299,6 +300,8 @@ class Checkboxes(_Component):
         self.javascript_imports = ["/javascripts/select-links.js"]
         if filterable:
             self.javascript_imports.append("/javascripts/filter-checkbox-list.js")
+        if import_custom_js:
+            self.javascript_imports.extend(import_custom_js)
 
 
 class RadioButtons(_Component):
