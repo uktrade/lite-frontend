@@ -90,6 +90,47 @@ def select_case_type(request):
     )
 
 
+def get_flag_details_html(flag):
+    rules_html = ""
+    rules = flag["flagging_rules"]
+    if rules:
+        rows = []
+        for rule in rules:
+            group_entries = [f"{g} group" for g in rule["matching_groups"]]
+            all_entries = ", ".join(rule["matching_values"] + group_entries)
+            rows.append(
+                f"""
+                <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <dt class="govuk-summary-list__key govuk-!-padding-top-0">Parameter:</dt>
+                    <dd class="govuk-summary-list__value govuk-!-padding-top-0 govuk-!-width-two-thirds">{rule["level"]}</dd>
+                </div>
+                <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <dt class="govuk-summary-list__key govuk-!-padding-top-0">In</dt>
+                    <dd class="govuk-summary-list__value govuk-!-padding-top-0 govuk-!-width-two-thirds">{all_entries}</dd>
+                </div>
+            """
+            )
+        rules_html = "<hr>".join(rows)
+    else:
+        rules_html = "None"
+
+    return f"""
+        <li>{flag["name"]}</li>
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                Flagging rules
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                <dl class="govuk-summary-list">
+                    {rules_html}
+                </dl>
+            </div>
+        </details>
+    """
+
+
 def select_flags(request, team_id, flags_to_include, flags_to_exclude):
     return Form(
         title=Forms.FLAGS,
@@ -101,7 +142,7 @@ def select_flags(request, team_id, flags_to_include, flags_to_exclude):
             Checkboxes(
                 name="flags[]",
                 options=[
-                    Option(flag["id"], flag["name"])
+                    Option(flag["id"], flag["name"], data_attribute=get_flag_details_html(flag))
                     for flag in get_flags_for_team_of_level(
                         request, level="", team_id=team_id, include_system_flags=True
                     )[0]

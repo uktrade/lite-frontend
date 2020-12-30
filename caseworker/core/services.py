@@ -146,11 +146,14 @@ def get_user_permissions(request, with_team=False):
 
 # Control List Entries
 def get_control_list_entries(
-    request, convert_to_options=False, include_parent=True, converted_control_list_entries_cache=[]
-):  # noqa
+    request, convert_to_options=False, include_parent=False, converted_control_list_entries_cache=None
+):
     """
     Preliminary caching mechanism, requires service restart to repopulate control list entries
     """
+    if converted_control_list_entries_cache is None:
+        converted_control_list_entries_cache = []
+
     if convert_to_options:
         if converted_control_list_entries_cache:
             return converted_control_list_entries_cache

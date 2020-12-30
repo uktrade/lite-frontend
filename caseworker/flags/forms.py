@@ -14,7 +14,6 @@ from lite_forms.components import (
     Form,
     FormGroup,
     RadioButtons,
-    AutocompleteInput,
     NumberInput,
     DetailComponent,
     TextArea,
@@ -141,12 +140,10 @@ def select_flagging_rule_type():
 
 
 def select_condition_and_flag(request, type: str):
-    condition = []
     flags = []
     is_for_verified_goods_only = None
 
     if type == "Good":
-        title = strings.FlaggingRules.Create.Condition_and_flag.GOOD_TITLE
         flags = get_goods_flags(request=request)
         is_for_verified_goods_only = RadioButtons(
             name="is_for_verified_goods_only",

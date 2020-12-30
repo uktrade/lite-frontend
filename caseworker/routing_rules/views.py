@@ -14,7 +14,6 @@ from lite_forms.helpers import conditional
 from lite_forms.views import MultiFormView, SingleFormView
 from caseworker.queues.services import get_queues
 from caseworker.routing_rules.forms import (
-    additional_rules,
     routing_rule_form_group,
     deactivate_or_activate_routing_rule_form,
 )
@@ -85,11 +84,12 @@ class CreateRoutingRule(LoginRequiredMixin, MultiFormView):
         team_id = request.POST.get("team", get_gov_user(request)[0]["user"]["team"]["id"])
         if not team_id:
             team_id = get_gov_user(request)[0]["user"]["team"]["id"]
-        additional_rules = (request.POST.getlist("additional_rules[]", ()),)
+        additional_rules = request.POST.getlist("additional_rules[]", ())
+        print(f"==> Additional rules: {additional_rules}")
         flags_to_include = request.POST.getlist("flags_to_include")
         flags_to_exclude = request.POST.getlist("flags_to_exclude")
         self.forms = routing_rule_form_group(
-            request, additional_rules[0], team_id, flags_to_include, flags_to_exclude, select_team=select_team,
+            request, additional_rules, team_id, flags_to_include, flags_to_exclude, select_team=select_team,
         )
         self.success_url = reverse("routing_rules:list")
         self.action = post_routing_rule

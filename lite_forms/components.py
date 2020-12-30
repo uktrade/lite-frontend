@@ -282,7 +282,7 @@ class Checkboxes(_Component):
         empty_notice: str = "No items",
         show_select_links: bool = False,
         filterable: bool = False,
-        import_custom_js: list = [],
+        import_custom_js: list = None,
     ):
         super().__init__(
             name=name,

@@ -29,6 +29,7 @@
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.TIER' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.CASE_TYPES' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.FLAGS' %}</th>
+					<th class="govuk-table__header" scope="col">Excluded flags</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.COUNTRY' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.QUEUE' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.USERS' %}</th>
@@ -61,7 +62,6 @@
 							{% endif %}
 						</td>
 						<td class="govuk-table__cell">
-							Includes:<br>
 							{% if rule.flags_to_include %}
 								{% for flag in rule.flags_to_include %}
 									{% if flag.status == "Active" %}
@@ -74,9 +74,8 @@
 							{% else %}
 								Not set
 							{% endif %}
-							<br>
-
-							Excludes:<br>
+						</td>
+						<td class="govuk-table__cell">
 							{% if rule.flags_to_exclude %}
 								{% for flag in rule.flags_to_exclude %}
 									{% if flag.status == "Active" %}
