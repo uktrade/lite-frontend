@@ -95,22 +95,23 @@ def get_flag_details_html(flag):
     rules = flag["flagging_rules"]
     if rules:
         rows = []
-        for rule in rules:
+        for index, rule in enumerate(rules, start=1):
             group_entries = [f"{g} group" for g in rule["matching_groups"]]
             all_entries = ", ".join(rule["matching_values"] + group_entries)
+            border_class = "govuk-summary-list__row--no-border" if index == len(rules) else ""
             rows.append(
                 f"""
                 <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-                    <dt class="govuk-summary-list__key govuk-!-padding-top-0">Parameter:</dt>
+                    <dt class="govuk-summary-list__key">Parameter:</dt>
                     <dd class="govuk-summary-list__value govuk-!-padding-top-0 govuk-!-width-two-thirds">{rule["level"]}</dd>
                 </div>
-                <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-                    <dt class="govuk-summary-list__key govuk-!-padding-top-0">In</dt>
+                <div class="govuk-summary-list__row {border_class}">
+                    <dt class="govuk-summary-list__key govuk-!-padding-top-0">Includes:</dt>
                     <dd class="govuk-summary-list__value govuk-!-padding-top-0 govuk-!-width-two-thirds">{all_entries}</dd>
                 </div>
             """
             )
-        rules_html = "<hr>".join(rows)
+        rules_html = "".join(rows)
     else:
         rules_html = "None"
 
@@ -160,7 +161,7 @@ def select_flags(request, team_id, flags_to_include, flags_to_exclude):
             ),
         ],
         buttons=[
-            Button("Save and continue", "submit"),
+            Button("Save and continue", "submit", id="save_and_continue"),
             Button("Add another condition", "", ButtonStyle.SECONDARY, link="#"),
         ],
         javascript_imports={"/javascripts/routing-rules-flags.js"},

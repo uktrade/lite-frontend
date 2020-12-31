@@ -68,7 +68,7 @@
         return allIds;
     }
 
-    $('a:contains("Add another condition")').click(function () {
+    function addConditionWithSelectedFlags() {
         // get all the selected flags
         var selectedFlags = $("input[type='checkbox']:checked").map(function () {
             var text = $(this).parent().find(".govuk-checkboxes__label").text();
@@ -79,13 +79,20 @@
         if (condition) {
             var flag_ids = selectedFlags.map(function (flag) { return flag.id; });
             flagsConditions.push({ condition: condition, flags: selectedFlags, ids: flag_ids.join(",") });
-
-            updateFlagInputFields(flagsConditions);
         }
+        updateFlagInputFields(flagsConditions);
 
         if (selectedFlags.length) {
             renderTable(flagsConditions);
         }
+    }
+
+    $('.lite-buttons-row').on('click', '#button-save_and_continue', function(){
+        addConditionWithSelectedFlags()
+    });
+
+    $('a:contains("Add another condition")').click(function () {
+        addConditionWithSelectedFlags()
     });
 
     // pre-populate selected flags in case of editing the rule

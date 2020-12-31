@@ -22,6 +22,7 @@ def _remove_none_from_post_data_additional_rules_list(json):
     data["additional_rules"] = list(set([rule for rule in additional_rules if rule != "None"]))
     return data
 
+
 def convert_flags_to_list(data):
     if "flags_to_include" in data:
         data["flags_to_include"] = [flag_id.strip() for flag_id in data["flags_to_include"].split(",") if flag_id]

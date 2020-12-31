@@ -52,7 +52,10 @@
 					<td class="govuk-table__cell">
 						{{ flagging_rule.matching_values|join:", " }}
 						{% if flagging_rule.matching_groups %}
-							<br>{{ flagging_rule.matching_groups|join:", " }} group
+							{% if flagging_rule.matching_values %}
+								<br>
+							{% endif %}
+							{{ flagging_rule.matching_groups|join:", " }} group
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell">

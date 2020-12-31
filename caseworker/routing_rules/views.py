@@ -85,7 +85,6 @@ class CreateRoutingRule(LoginRequiredMixin, MultiFormView):
         if not team_id:
             team_id = get_gov_user(request)[0]["user"]["team"]["id"]
         additional_rules = request.POST.getlist("additional_rules[]", ())
-        print(f"==> Additional rules: {additional_rules}")
         flags_to_include = request.POST.getlist("flags_to_include")
         flags_to_exclude = request.POST.getlist("flags_to_exclude")
         self.forms = routing_rule_form_group(
@@ -129,11 +128,12 @@ class EditRoutingRules(LoginRequiredMixin, MultiFormView):
         self.object_pk = kwargs["pk"]
         self.data = get_routing_rule(request, self.object_pk)[0]
         team_id = self.data["team"]
+        additional_rules = self.data["additional_rules"]
         flags_to_include = self.data["flags_to_include"]
         flags_to_exclude = self.data["flags_to_exclude"]
 
         if request.method == "POST":
-            additional_rules = request.POST.getlist("additional_rules[]", [])
+            additional_rules = request.POST.getlist("additional_rules[]", additional_rules)
             if "flags_to_include" in request.POST:
                 flags_to_include = [flag for flag in request.POST.get("flags_to_include", []).split(",") if flag]
             if "flags_to_exclude" in request.POST:
@@ -151,7 +151,7 @@ class EditRoutingRules(LoginRequiredMixin, MultiFormView):
 
         else:
             self.forms = routing_rule_form_group(
-                request, list(), team_id, flags_to_include, flags_to_exclude, is_editing=True
+                request, additional_rules, team_id, flags_to_include, flags_to_exclude, is_editing=True
             )
             self.action = put_routing_rule
 

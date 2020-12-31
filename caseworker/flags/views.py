@@ -208,6 +208,15 @@ class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
 
     def on_submission(self, request, **kwargs):
         copied_request = request.POST.copy()
+
+        if "status" not in copied_request:
+            copied_request["status"] = self.data["status"]
+        # if the Tokenfields are empty then it is not being included in the request data
+        if "matching_values[]" not in copied_request:
+            copied_request.setlist("matching_values[]", [])
+        if self.data["level"] == "Good" and "matching_groups[]" not in copied_request:
+            copied_request.setlist("matching_groups[]", [])
+
         if self.data["level"] == "Destination":
             reverse_countries_map = {country["name"]: country["id"] for country in self.get_countries}
             country_ids = [
