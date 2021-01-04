@@ -32,15 +32,15 @@ class Filter:
 class AdditionalRules:
     CASE_TYPES = "Case Types"
     FLAGS = "Flags"
-    COUNTRY = "Country"
+    COUNTRY = "Destinations"
     USERS = "Users"
 
 
 class Forms:
-    CREATE_TITLE = "Create a new routing rule"
+    CREATE_TITLE = "Routing rule parameters"
     EDIT_TITLE = "Edit the routing rule"
     CASE_STATUS = "Select a case status"
-    TEAM = "Select a team to create routing rules for"
+    TEAM = "Select a team to create a rule for"
     QUEUE = "Select a team work queue"
     TIER = "Enter a tier number"
     ADDITIONAL_RULES = "Select the combination of options you need to create the case routing rule"

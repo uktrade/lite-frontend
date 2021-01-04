@@ -27,9 +27,9 @@
 		<thead class="govuk-table__head">
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.TEAM' %}</th>
-				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.TYPE' %}</th>
-				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.FLAG' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.PARAMETER' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.CONDITION' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.FLAG' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.STATUS' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.ACTIONS' %}</th>
 			</tr>
@@ -41,13 +41,25 @@
 						{{ flagging_rule.team.name }}
 					</td>
 					<td class="govuk-table__cell">
-						{{ flagging_rule.level }}
+						{% if flagging_rule.level == "Good" %}
+							Products
+						{% elif flagging_rule.level == "Destination" %}
+							Destinations
+						{% elif flagging_rule.level == "Case" %}
+							Application types
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell">
+						{{ flagging_rule.matching_values|join:", " }}
+						{% if flagging_rule.matching_groups %}
+							{% if flagging_rule.matching_values %}
+								<br>
+							{% endif %}
+							{{ flagging_rule.matching_groups|join:", " }} group
+						{% endif %}
 					</td>
 					<td class="govuk-table__cell">
 						{{ flagging_rule.flag_name }}
-					</td>
-					<td class="govuk-table__cell">
-						{{ flagging_rule.matching_value }}
 					</td>
 					<td class="govuk-table__cell">
 						{{ flagging_rule.status }}

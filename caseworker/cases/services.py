@@ -270,7 +270,12 @@ def get_flags_for_team_of_level(request, level, team_id, include_system_flags=Fa
     :param include_system_flags: used to indicate adding system flags to list of team flags returned
     :return:
     """
-    data = client.get(request, "/flags/" + convert_parameters_to_query_params(locals()) + "&disable_pagination=True")
+    data = client.get(
+        request,
+        "/flags/"
+        + convert_parameters_to_query_params(locals())
+        + "&disable_pagination=True&include_flagging_rules=True",
+    )
     return data.json(), data.status_code
 
 

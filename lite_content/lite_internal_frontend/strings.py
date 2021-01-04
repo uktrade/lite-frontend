@@ -82,8 +82,9 @@ class FlaggingRules:
 
         TEAM = "Team"
         TYPE = "Type"
+        PARAMETER = "Parameter"
         FLAG = "Flag"
-        CONDITION = "Condition"
+        CONDITION = "Conditions"
         STATUS = "Status"
         ACTIONS = "Actions"
 
@@ -95,25 +96,26 @@ class FlaggingRules:
         BACKLINK = "Back to flagging rules"
 
         class Type:
-            TITLE = "Select flagging rule type"
-            SAVE = "Continue"
+            TITLE = "Select parameters"
+            SAVE = "Save and continue"
 
-            GOOD = "Good"
-            DESTINATION = "Destination"
-            APPLICATION = "Application type"
+            GOOD = "Products"
+            DESTINATION = "Destinations"
+            APPLICATION = "Application types"
 
         class Condition_and_flag:
-            GOOD_TITLE = "Select a control list classification and flag"
+            GOOD_TITLE = "Set flagging rules"
             DESTINATION_TITLE = "Select a country and flag"
             APPLICATION_TITLE = "Select a application type and flag"
+            ADD_CONDITION = "Add a condition"
 
-            GOOD = "Control list classification (case sensitive)"
+            GOOD = "Select individual control list entries"
             DESTINATION = "Country"
             APPLICATION = "Application type"
 
-            FLAG = "Flag"
+            FLAG = "Select a flag"
 
-            GOODS_QUESTION = "Must this rule only apply to verified goods?"
+            GOODS_QUESTION = "Only apply this rule to verified goods?"
             YES_OPTION = "Yes"
             NO_OPTION = "No"
 
