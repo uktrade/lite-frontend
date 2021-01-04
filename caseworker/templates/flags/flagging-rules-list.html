@@ -57,6 +57,12 @@
 							{% endif %}
 							{{ flagging_rule.matching_groups|join:", " }} group
 						{% endif %}
+						{% if flagging_rule.excluded_values %}
+							{% if flagging_rule.matching_values %}
+								<br>
+							{% endif %}
+							Excludes: {{ flagging_rule.excluded_values|join:", " }}
+						{% endif %}
 					</td>
 					<td class="govuk-table__cell">
 						{{ flagging_rule.flag_name }}

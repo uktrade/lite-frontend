@@ -216,6 +216,8 @@ class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
             copied_request.setlist("matching_values[]", [])
         if self.data["level"] == "Good" and "matching_groups[]" not in copied_request:
             copied_request.setlist("matching_groups[]", [])
+        if self.data["level"] == "Good" and "excluded_values[]" not in copied_request:
+            copied_request.setlist("excluded_values[]", [])
 
         if self.data["level"] == "Destination":
             reverse_countries_map = {country["name"]: country["id"] for country in self.get_countries}

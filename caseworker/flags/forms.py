@@ -181,6 +181,12 @@ def select_condition_and_flag(request, type: str):
                     description="Type to get suggestions. For example, ML8.\nThis will add every control list entry under ML8.",
                     options=clc_groups_options,
                 ),
+                TokenBar(
+                    title="Excluded control list entries",
+                    name="excluded_values",
+                    description="Type to get suggestions. For example, ML1a, ML8.\nThis will exclude ML1a and every control list entry under ML8.",
+                    options=clc_groups_options + clc_entries_options,
+                ),
                 Heading("Set an action", HeadingStyle.S),
                 Select(title=strings.FlaggingRules.Create.Condition_and_flag.FLAG, name="flag", options=flags),
                 is_for_verified_goods_only,
