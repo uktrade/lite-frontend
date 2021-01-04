@@ -34,7 +34,7 @@
 				</dt>
 				<dd class="govuk-summary-list__value">
 					<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
-					<a href="{% url 'applications:download_generated_document' licence.document.id licence.application.id %}" class="govuk-button" id="licence-document-download">{% lcs "licences.LicencePage.Summary.DOWNLOAD_LICENCE_DOCUMENT" %}</a>
+					<a href="{% url 'applications:download_generated_document' document_pk=licence.document.id case_pk=licence.application.id %}" class="govuk-button" id="licence-document-download">{% lcs "licences.LicencePage.Summary.DOWNLOAD_LICENCE_DOCUMENT" %}</a>
 				</dd>
 			</div>
 			<div class="govuk-summary-list__row">
@@ -136,7 +136,7 @@
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{% for document in licence.application.documents %}
-						<a href="{% url 'applications:download_generated_document' document.id licence.application.id %}" class="govuk-link govuk-link--no-visited-state" id="generated-document-download">{{ document.name }}</a><br>
+						<a href="{% url 'applications:download_generated_document' document_pk=document.id case_pk=licence.application.id %}" class="govuk-link govuk-link--no-visited-state" id="generated-document-download">{{ document.name }}</a><br>
 					{% endfor %}
 				</dd>
 			</div>

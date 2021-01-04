@@ -102,7 +102,7 @@
 							</span>
 							{% for document in licence.application.documents %}
 								<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
-								<a href="{% url 'applications:download_generated_document' document.id licence.application.id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ document.advice_type.value }}.pdf</a>
+								<a href="{% url 'applications:download_generated_document' document_pk=document.id case_pk=licence.application.id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ document.advice_type.value }}.pdf</a>
 							{% endfor %}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight lite-mobile-hide">
