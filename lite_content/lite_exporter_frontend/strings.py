@@ -138,7 +138,7 @@ class EndUser:
                 "can attach them later before you submit the application.\n\nThe files must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
-            BACK = "Back to the application overview"
+            BACK = "Back to end user summary"
             # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload documents later."
@@ -190,7 +190,7 @@ class Consignee:
                 "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
-            BACK = "Back to the application overview"
+            BACK = "Back to consignee summary"
             # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload a document later."
