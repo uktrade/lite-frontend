@@ -27,6 +27,7 @@ from lite_forms.components import (
     RadioButtons,
     Option,
     BackLink,
+    Custom,
     FileUpload,
     TextInput,
     HiddenField,
@@ -741,10 +742,21 @@ def upload_firearms_act_certificate_form(section, filename, back_link):
                 optional=False,
             ),
         ],
-        back_link=BackLink("Back", back_link) if back_link else None,
+        back_link=back_link,
         buttons=[Button("Save and continue", "submit")],
         javascript_imports={"/javascripts/add-good.js"},
     )
+
+
+def build_firearm_back_link_create(form_url, form_data):
+    return Custom(
+        data={**form_data, "form_pk": int(form_data["form_pk"]) + 1, "form_url": form_url,},
+        template="applications/firearm_upload_back_link.html",
+    )
+
+
+def build_firearm_create_back(back_link):
+    return BackLink("Back", back_link)
 
 
 def identification_markings_form(draft_pk=None, good_id=None):
