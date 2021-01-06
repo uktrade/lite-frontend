@@ -3,7 +3,9 @@
 {% load static custom_tags %}
 
 {% block back_link %}
-	{% if page.back_link|classname == "Breadcrumbs" %}
+	{% if page.back_link.input_type == 'custom' %}
+		{% include page.back_link.template with component=page.back_link data=page.back_link.data value=page.back_link.data %}
+	{% elif page.back_link|classname == "Breadcrumbs" %}
 		<div class="govuk-breadcrumbs">
 			<ol class="govuk-breadcrumbs__list">
 				{% for breadcrumb in page.back_link.back_links %}

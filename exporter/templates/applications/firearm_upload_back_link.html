@@ -1,0 +1,9 @@
+<form method="post" action="{{ data.form_url }}">
+	{% csrf_token %}
+	{% dict_hidden_field 'form_pk' form_pk %}
+	{% for key, value in data.items %}
+		{% dict_hidden_field key value %}
+	{% endfor %}
+	<button class="lite-back-link-button" role="link" id="back-link" type="submit" name="_action" value="back" action="back">Back</button>
+</form>
+

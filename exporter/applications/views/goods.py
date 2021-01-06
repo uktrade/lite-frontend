@@ -31,6 +31,7 @@ from exporter.goods.forms import (
     attach_documents_form,
     add_good_form_group,
     upload_firearms_act_certificate_form,
+    build_firearm_back_link_create,
 )
 from exporter.goods.services import (
     get_goods,
@@ -198,7 +199,11 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         return super().dispatch(request, **kwargs)
 
     def get(self, request, **kwargs):
-        form = upload_firearms_act_certificate_form(self.selected_section, "", None)
+        back_link = build_firearm_back_link_create(
+            form_url=reverse("applications:new_good", kwargs={"pk": kwargs["pk"]}),
+            form_data=request.session.get(self.firearms_data_id, {}),
+        )
+        form = upload_firearms_act_certificate_form(section=self.selected_section, filename="", back_link=back_link)
         return form_page(request, form)
 
     @csrf_exempt
@@ -230,13 +235,18 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
 
         copied_request = {k: request.POST.get(k) for k in request.POST}
         data = {**old_post, **copied_request}
+        back_link = build_firearm_back_link_create(
+            form_url=reverse("applications:new_good", kwargs={"pk": kwargs["pk"]}), form_data=old_post,
+        )
 
         if self.good_pk:
             response, status_code = post_good_on_application(request, self.draft_pk, data)
             if status_code != HTTPStatus.CREATED:
                 if doc_error:
                     response["errors"]["file"] = ["Select certificate file to upload"]
-                form = upload_firearms_act_certificate_form("section", self.certificate_filename, None)
+                form = upload_firearms_act_certificate_form(
+                    section="section", filename=self.certificate_filename, back_link=back_link,
+                )
                 return form_page(request, form, data=data, errors=response["errors"])
 
             success_url = reverse_lazy("applications:goods", kwargs={"pk": self.draft_pk})
@@ -246,7 +256,9 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
             if status_code != HTTPStatus.CREATED:
                 if doc_error:
                     response["errors"]["file"] = ["Select certificate file to upload"]
-                form = upload_firearms_act_certificate_form("section", self.certificate_filename, None)
+                form = upload_firearms_act_certificate_form(
+                    section="section", filename=self.certificate_filename, back_link=back_link,
+                )
                 return form_page(request, form, data=data, errors=response["errors"])
 
             self.good_pk = response["good"]["id"]

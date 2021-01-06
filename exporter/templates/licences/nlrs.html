@@ -98,7 +98,7 @@
 								{% lcs "licences.LicencesList.Table.DOCUMENTS_COLUMN" %}
 							</span>
 							<span class="govuk-visually-hidden">{% lcs "licences.LicencesList.DOWNLOAD_HIDDEN_TEXT" %}</span>
-							<a href="{% url 'applications:download_generated_document' licence.id licence.case_id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ licence.advice_type }}.pdf</a>
+							<a href="{% url 'applications:download_generated_document' document_pk=licence.id case_pk=licence.case_id %}" class="govuk-link govuk-link--no-visited-state" id="document-download">{{ licence.advice_type }}.pdf</a>
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
 							<a id="expand-{{ licence.id }}" class="lite-accordian-table__chevron">

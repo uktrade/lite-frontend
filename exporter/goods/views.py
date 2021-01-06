@@ -38,6 +38,7 @@ from exporter.goods.forms import (
     firearm_calibre_details_form,
     firearms_act_confirmation_form,
     upload_firearms_act_certificate_form,
+    build_firearm_create_back,
     identification_markings_form,
     firearms_sporting_shotgun_form,
     firearm_year_of_manufacture_details_form,
@@ -687,8 +688,8 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             # coming from the application
             self.object_pk = str(kwargs["good_pk"])
             self.application_id = str(kwargs["pk"])
-            self.back_link = reverse(
-                "applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+            self.back_link = build_firearm_create_back(
+                reverse("applications:add_good_summary", kwargs={"pk": self.application_id, "good_pk": self.object_pk})
             )
         else:
             self.back_link = None
