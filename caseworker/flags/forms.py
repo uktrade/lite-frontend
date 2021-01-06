@@ -139,6 +139,30 @@ def select_flagging_rule_type():
     )
 
 
+def get_clc_entry_groups_and_nodes(entries):
+    groups = []
+    nodes = []
+
+    for item in entries:
+        if not item["parent_id"] and not item.get("children"):
+            groups.append({"rating": item["rating"], "text": item["text"]})
+
+        if item["parent_id"] and item.get("children"):
+            nodes.append({"rating": item["rating"], "text": item["text"]})
+
+        if item.get("children"):
+            groups.append({"rating": item["rating"], "text": item["text"]})
+            children, child_nodes = get_clc_entry_groups_and_nodes(item["children"])
+            if children:
+                groups.extend(children)
+            if child_nodes:
+                nodes.extend(child_nodes)
+        elif item["parent_id"]:
+            nodes.append({"rating": item["rating"], "text": item["text"]})
+
+    return groups, nodes
+
+
 def select_condition_and_flag(request, type: str):
     flags = []
     is_for_verified_goods_only = None
@@ -153,16 +177,31 @@ def select_condition_and_flag(request, type: str):
             ],
             title=FlaggingRules.Create.Condition_and_flag.GOODS_QUESTION,
         )
-        control_list_entries = get_control_list_entries(request, include_parent=True)
-        clc_groups = [item for item in control_list_entries if item["parent"] is None]
-        clc_entries = [item for item in control_list_entries if item["parent"] is not None]
+        entries = get_control_list_entries(request)
+        clc_groups, clc_nodes = get_clc_entry_groups_and_nodes(entries)
 
-        clc_entries_options = [
-            Option(key=item["rating"], value=item["rating"], description=item["text"],) for item in clc_entries
+        # if the child node has children of its own then that needs to selectable as
+        # both individual entry as well as group entry because of this duplicates are
+        # possible in the combined list hence remove them. We need groups at the top
+        # because autocomplete only shows first 10 entries which makes it difficult to
+        # select certain groups otherwise. eg ML10b1 comes before ML1
+        combined_entries = list(clc_groups)
+        rating_seen = set([item["rating"] for item in combined_entries])
+        for item in clc_nodes:
+            if item["rating"] not in rating_seen:
+                rating_seen.add(item["rating"])
+                combined_entries.append(item)
+
+        clc_nodes_options = [
+            Option(key=item["rating"], value=item["rating"], description=item["text"],) for item in clc_nodes
         ]
 
         clc_groups_options = [
             Option(key=item["rating"], value=item["rating"], description=item["text"],) for item in clc_groups
+        ]
+
+        clc_combined_options = [
+            Option(key=item["rating"], value=item["rating"], description=item["text"],) for item in combined_entries
         ]
 
         return Form(
@@ -173,7 +212,7 @@ def select_condition_and_flag(request, type: str):
                     title="Select individual control list entries",
                     name="matching_values",
                     description="Type to get suggestions. For example, ML1a.",
-                    options=clc_entries_options,
+                    options=clc_nodes_options,
                 ),
                 TokenBar(
                     title="Select a control list entry group",
@@ -185,7 +224,7 @@ def select_condition_and_flag(request, type: str):
                     title="Excluded control list entries",
                     name="excluded_values",
                     description="Type to get suggestions. For example, ML1a, ML8.\nThis will exclude ML1a and every control list entry under ML8.",
-                    options=clc_groups_options + clc_entries_options,
+                    options=clc_combined_options,
                 ),
                 Heading("Set an action", HeadingStyle.S),
                 Select(title=strings.FlaggingRules.Create.Condition_and_flag.FLAG, name="flag", options=flags),
