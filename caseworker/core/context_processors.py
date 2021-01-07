@@ -80,6 +80,7 @@ def lite_menu(request):
                 or Permission.MANAGE_ALL_ROUTING_RULES.value in permissions,
                 {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/routing-rules"},
             ),
+            {"title": "Denial records", "url": reverse_lazy("external_data:denials-upload"), "icon": "menu/cases"},
         ]
     else:
         pages = []

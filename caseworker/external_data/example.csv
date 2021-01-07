@@ -1,0 +1,2 @@
+denied_name,authority,denial_type,organisation_type,address,website
+Foo Example,org1,end_user,commercial,123 fake street,https://www.example.com
