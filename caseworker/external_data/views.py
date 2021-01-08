@@ -17,6 +17,7 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "external_data/denial-upload.html"
     form_class = forms.DenialUploadForm
     success_message = "Denials created successfully"
+    extra_context = {'base_64_csv': base_64_csv}
 
     def form_valid(self, form):
         response = services.upload_denials(request=self.request, data=form.cleaned_data)
@@ -30,6 +31,3 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_success_url(self):
         return self.request.get_full_path()
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(base_64_csv=base_64_csv, **kwargs)
