@@ -80,6 +80,7 @@ class CaseDetail(CaseView):
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
+            Slices.DENIAL_MATCHES,
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
             Slices.END_USE_DETAILS,

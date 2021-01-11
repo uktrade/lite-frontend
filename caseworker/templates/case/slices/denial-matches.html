@@ -1,0 +1,65 @@
+{% with denial_matches=denial_matches|default:case.data.denial_matches %}
+    {% if denial_matches %}
+        <h2 class="govuk-heading-m">Denial matches</h2>
+        {% if not hide_controls %}
+        <form method="post" data-enable-on-checkboxes="#table-denial-matches">
+            {% csrf_token %}
+            <div class="lite-buttons-row">
+                <button id="button-remove-denial-matches" formaction="{% url 'cases:remove-matching-denials' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
+                    Remove denial match
+                </button>
+            </div>
+            {% endif %}
+
+            <table id="table-denial-matches" class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        {% if not hide_checkboxes %}
+                        <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
+                            <button id="link-select-all-denial-matches" type="button" name="button" class="lite-button-checkbox"
+                                title="Select all/Deselect all"></button>
+                        </th>
+                        {% endif %}
+                        <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header">Authority</th>
+                        <th scope="col" class="govuk-table__header">Denial type</th>
+                        <th scope="col" class="govuk-table__header">Organisation type</th>
+                        <th scope="col" class="govuk-table__header">Address</th>
+                        <th scope="col" class="govuk-table__header">Website</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for match in denial_matches %}
+                        <tr class="govuk-table__row">
+                            {% if not hide_checkboxes %}
+                            <td class="govuk-table__cell govuk-table__cell--checkbox">
+                                <div>
+                                    <input class="govuk-checkboxes__input" type="checkbox" name="objects"
+                                        value="{{ match.id }}" id="{{ match.id }}">
+                                    <label class="govuk-label govuk-checkboxes__label" for="{{ match.id }}">{{
+                                        match.denial.denied_name }}</label>
+                                </div>
+                            </td>
+                            {% endif %}
+                            <td class="govuk-table__cell">
+                                {{ match.denial.denied_name }}<br>
+                                {% if match.category == "exact" %}
+                                    <strong class="govuk-tag govuk-tag--grey">EXACT MATCH</strong>
+                                {% elif match.category == "partial" %}
+                                    <strong class="govuk-tag govuk-tag--grey">PARTIAL MATCH</strong>
+                                {% endif %}
+                            </td>
+                            <td class="govuk-table__cell">{{ match.denial.authority }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.data.denial_type }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.data.organisation_type }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.data.address }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.data.website }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% if not hide_controls %}
+        </form>
+        {% endif %}
+    {% endif %}
+{% endwith %}
