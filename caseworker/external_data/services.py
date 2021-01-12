@@ -15,7 +15,7 @@ def get_denial(request, pk):
     return response.json()
 
 
-def delete_denial(request, pk):
-    response = client.delete(request=request, appended_address=f"/external-data/denial/{pk}/")
+def revoke_denial(request, pk):
+    response = client.patch(request=request, appended_address=f"/external-data/denial/{pk}/", data={'is_revoked': True})
     response.raise_for_status()
     return response.json()

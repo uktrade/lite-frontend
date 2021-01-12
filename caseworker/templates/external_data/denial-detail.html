@@ -20,7 +20,7 @@
 
     <form enctype="multipart/form-data" method="post">
         {% csrf_token %}
-        <button type="submit" class="govuk-button" id="search-button" disabled="">Revoke denial</button>
+        <button type="submit" class="govuk-button" id="search-button" {% if denial.is_revoked %}disabled=""{% endif %}>Revoke denial</button>
     </form>
 
 
@@ -37,6 +37,10 @@
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Address</th>
                 <td class="govuk-table__cell">{{ denial.address }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Revoked</th>
+                <td class="govuk-table__cell">{{ denial.is_revoked|yesno }}</td>
             </tr>
             {% for key, value in denial.data.items %}
                 <tr class="govuk-table__row app-table__row">

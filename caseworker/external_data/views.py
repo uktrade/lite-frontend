@@ -1,7 +1,9 @@
 import base64
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 
@@ -34,13 +36,17 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return self.request.get_full_path()
 
 
-class DenialDetailView(LoginRequiredMixin, TemplateView):
+class DenialDetailView(LoginRequiredMixin, SuccessMessageMixin, TemplateView):
     template_name = "external_data/denial-detail.html"
+    success_message = "Denial successfully revoked"
 
     def get_context_data(self, **kwargs):
         denial = services.get_denial(request=self.request, pk=self.kwargs["pk"])
         return super().get_context_data(denial=denial, **kwargs)
 
-    def post(self, request):
-        # perform delete
-        pass
+    def post(self, request, pk):
+        response = services.revoke_denial(request=self.request, pk=pk)
+
+        messages.success(self.request, self.success_message)
+
+        return redirect(request.get_full_path())
