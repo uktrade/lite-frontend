@@ -47,6 +47,7 @@ class Slices:
     SUMMARY = Slice("summary")
     GOODS = Slice("goods")
     DESTINATIONS = Slice("destinations")
+    DENIAL_MATCHES = Slice("denial-matches")
     DELETED_ENTITIES = Slice("deleted-entities")
     LOCATIONS = Slice("locations")
     F680_DETAILS = Slice("f680-details", "F680 details")

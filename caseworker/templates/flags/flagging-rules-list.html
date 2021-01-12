@@ -29,6 +29,7 @@
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.TEAM' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.PARAMETER' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.CONDITION' %}</th>
+				<th class="govuk-table__header" scope="col">Applies to verified goods</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.FLAG' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.STATUS' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'FlaggingRules.List.ACTIONS' %}</th>
@@ -56,6 +57,19 @@
 								<br>
 							{% endif %}
 							{{ flagging_rule.matching_groups|join:", " }} group
+						{% endif %}
+						{% if flagging_rule.excluded_values %}
+							{% if flagging_rule.matching_values %}
+								<br>
+							{% endif %}
+							Excludes: {{ flagging_rule.excluded_values|join:", " }}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell">
+						{% if flagging_rule.level == "Good" %}
+							{{ flagging_rule.is_for_verified_goods_only|friendly_boolean }}
+						{% else %}
+							N/A
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell">
