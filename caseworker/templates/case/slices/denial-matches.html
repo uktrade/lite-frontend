@@ -20,12 +20,12 @@
                                 title="Select all/Deselect all"></button>
                         </th>
                         {% endif %}
+                        <th scope="col" class="govuk-table__header">Reference</th>
                         <th scope="col" class="govuk-table__header">Name</th>
-                        <th scope="col" class="govuk-table__header">Authority</th>
-                        <th scope="col" class="govuk-table__header">Denial type</th>
-                        <th scope="col" class="govuk-table__header">Organisation type</th>
                         <th scope="col" class="govuk-table__header">Address</th>
-                        <th scope="col" class="govuk-table__header">Website</th>
+                        <th scope="col" class="govuk-table__header">field_n</th>
+                        <th scope="col" class="govuk-table__header">field_one</th>
+                        <th scope="col" class="govuk-table__header">field_two</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
@@ -37,23 +37,23 @@
                                     <input class="govuk-checkboxes__input" type="checkbox" name="objects"
                                         value="{{ match.id }}" id="{{ match.id }}">
                                     <label class="govuk-label govuk-checkboxes__label" for="{{ match.id }}">{{
-                                        match.denial.denied_name }}</label>
+                                        match.denial.reference }}</label>
                                 </div>
                             </td>
                             {% endif %}
                             <td class="govuk-table__cell">
-                                {{ match.denial.denied_name }}<br>
+                                <a href="{% url 'external_data:denial-detail' pk=match.denial.id %}">{{ match.denial.reference }}</a><br>
                                 {% if match.category == "exact" %}
                                     <strong class="govuk-tag govuk-tag--grey">EXACT MATCH</strong>
                                 {% elif match.category == "partial" %}
                                     <strong class="govuk-tag govuk-tag--grey">PARTIAL MATCH</strong>
                                 {% endif %}
                             </td>
-                            <td class="govuk-table__cell">{{ match.denial.authority }}</td>
-                            <td class="govuk-table__cell">{{ match.denial.data.denial_type }}</td>
-                            <td class="govuk-table__cell">{{ match.denial.data.organisation_type }}</td>
-                            <td class="govuk-table__cell">{{ match.denial.data.address }}</td>
-                            <td class="govuk-table__cell">{{ match.denial.data.website }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.name }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.address }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.data.field_n }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.data.field_one }}</td>
+                            <td class="govuk-table__cell">{{ match.denial.data.field_two }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

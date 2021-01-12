@@ -17,57 +17,65 @@
         </div>
 
         <div class="govuk-grid-column-full">
-            <form method="post" id="table-denials">
-                <div class="lite-buttons-row" data-enable-on-checkboxes="#table-denials">
-                    <button class="govuk-button">Add as exact match</button>
-                    <button id="button-edit-destinations-flags" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add as partial match</button>
+            {% if not hide_controls %}
+            <form method="post" data-enable-on-checkboxes="#table-denials">
+                {% csrf_token %}
+                <div class="lite-buttons-row">
+                    <button id="button-exact-match" formaction="{% url 'cases:matching-denials' queue.id case.id 'exact' %}" class="govuk-button" data-module="govuk-button">
+                        Add as exact match
+                    </button>
+                    <button id="button-exact-match" formaction="{% url 'cases:matching-denials' queue.id case.id 'partial' %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                        Add as partial match
+                    </button>
                 </div>
+            {% endif %}
 
-                {% if results %}
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr>
-                                <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-                                    <button id="link-select-all-destinations" type="button" name="button" class="lite-button-checkbox" title="{% lcs 'cases.ApplicationPage.Parties.SELECT_ALL' %}"></button>
-                                </th>
-                                <th scope="col" class="govuk-table__header">Reference</th>
-                                <th scope="col" class="govuk-table__header">Name</th>
-                                <th scope="col" class="govuk-table__header">Address</th>
-                                {% for key in results.0.data.keys %}
-                                    <th scope="col" class="govuk-table__header">{{ key }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            {% for denial in results %}
-                                <tr>
-                                    <td class="govuk-table__cell govuk-table__cell--checkbox">
-                                        <div>
-                                            <input class="govuk-checkboxes__input" type="checkbox" name="{{ denial.type }}" value="{{ denial.id }}" id="{{ denial.id }}">
-                                            <label class="govuk-label govuk-checkboxes__label" for="{{ denial.id }}">{{ denial.type|sentence_case }}</label>
-                                        </div>
-                                    </td>
-                                    <td class="govuk-table__cell">
-                                        <a href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.reference }}</a>
-                                    </td>
-                                    <td class="govuk-table__cell">{{ denial.name }}</td>
-                                    <td class="govuk-table__cell">{{ denial.address }}</td>
-                                    {% for value in denial.data.values %}<td class="govuk-table__cell ">{{ value }}</td>{% endfor %}
-                                </tr>
+            {% if results %}
+                <table id="table-denials" class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            {% if not hide_checkboxes %}
+                            <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
+                                <button id="link-select-all-denial" type="button" name="button" class="lite-button-checkbox"
+                                    title="Select all/Deselect all"></button>
+                            </th>
+                            <th scope="col" class="govuk-table__header">Reference</th>
+                            <th scope="col" class="govuk-table__header">Name</th>
+                            <th scope="col" class="govuk-table__header">Address</th>
+                            {% for key in results.0.data.keys %}
+                                <th scope="col" class="govuk-table__header">{{ key }}</th>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <div>No matching denials</div>
-                {% endif %}
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for denial in results %}
+                            <tr>
+                                <td class="govuk-table__cell govuk-table__cell--checkbox">
+                                    <div>
+                                        <input class="govuk-checkboxes__input" type="checkbox" name="objects" value="{{ denial.id }}" id="{{ denial.id }}">
+                                        <label class="govuk-label govuk-checkboxes__label" for="{{ denial.id }}">{{ denial.reference|sentence_case }}</label>
+                                    </div>
+                                </td>
+                                <td class="govuk-table__cell">
+                                    <a href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.reference }}</a>
+                                </td>
+                                <td class="govuk-table__cell">{{ denial.name }}</td>
+                                <td class="govuk-table__cell">{{ denial.address }}</td>
+                                {% for value in denial.data.values %}<td class="govuk-table__cell ">{{ value }}</td>{% endfor %}
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+            {% else %}
+                <div>No matching denials</div>
+            {% endif %}
+
+            {% if not hide_controls %}
             </form>
+            {% endif %}
         </div>
     </div>
-{% endblock %}
-
-{% block javascript %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.css" integrity="sha512-eP0uk3AYTRMF+HDgLNFW8cFh0mO73gVsnJdgqXH94Zc//fEgtNzMmdyK+cX8qF/SCs7gKUUkeJhJsiTRJstEKA==" crossorigin="anonymous" /><script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.4.0/fetch.min.js" integrity="sha512-+iXlQLHKQZYoFQZfyWkUuJB6X7aZA2+FvAB5PyiYzxRKbgmSLp6vzwXjTlqdvKV5OJS09HHN4lIekb5OOCKhQw==" crossorigin="anonymous"></script>
-    <script src="{% static 'javascripts/tokenfield.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" integrity="sha512-1Fr8m8dxYPgUEwpEKZy1AIUZnGupa1bhl7GbG+ueWxlWVBJvdEnLdgQVQA8pqkrrmkTV0DW7C5ZVmVGdJmMuZg==" crossorigin="anonymous"></script>
-    <script src="{% static 'javascripts/review-good.js' %}"></script>
 {% endblock %}
