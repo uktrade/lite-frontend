@@ -2,6 +2,7 @@ import base64
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 
 from core.auth.views import LoginRequiredMixin
@@ -17,7 +18,7 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "external_data/denial-upload.html"
     form_class = forms.DenialUploadForm
     success_message = "Denials created successfully"
-    extra_context = {'base_64_csv': base_64_csv}
+    extra_context = {"base_64_csv": base_64_csv}
 
     def form_valid(self, form):
         response = services.upload_denials(request=self.request, data=form.cleaned_data)
@@ -31,3 +32,15 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_success_url(self):
         return self.request.get_full_path()
+
+
+class DenialDetailView(LoginRequiredMixin, TemplateView):
+    template_name = "external_data/denial-detail.html"
+
+    def get_context_data(self, **kwargs):
+        denial = services.get_denial(request=self.request, pk=self.kwargs["pk"])
+        return super().get_context_data(denial=denial, **kwargs)
+
+    def post(self, request):
+        # perform delete
+        pass

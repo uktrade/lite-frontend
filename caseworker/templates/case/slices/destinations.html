@@ -3,9 +3,11 @@
 		<h2 class="govuk-heading-m">{{ destinations|length }} destination{{ destinations|pluralize }}</h2>
 
 		{% if not hide_controls %}
+
 			<form action="{% url 'cases:assign_flags' queue.id case.id %}" method="get" data-enable-on-checkboxes="#table-destinations">
 				<div class="lite-buttons-row">
-					<button id="button-edit-destinations-flags" class="govuk-button" data-module="govuk-button">
+					<button class="govuk-button" formaction="{% url 'cases:denials' queue_pk=queue.id pk=case.id %}">View related denials</button>
+					<button id="button-edit-destinations-flags" class="govuk-button govuk-button--secondary" data-module="govuk-button">
 						{% lcs 'cases.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
 					</button>
 				</div>

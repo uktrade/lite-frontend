@@ -1,0 +1,50 @@
+{% extends 'layouts/base.html' %}
+
+{% load static from staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}Denial record details{% endblock %}
+
+{% block body %}
+    <div class="lite-app-bar govuk-!-margin-bottom-0">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-l">{{ denial.name }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+        <h1 class="govuk-heading-l">Denial details record</h1>
+    </div>
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <button type="submit" class="govuk-button" id="search-button" disabled="">Revoke denial</button>
+    </form>
+
+
+    <table class="govuk-table app-table">
+        <tbody class="govuk-table__body" id="tbody-placeholder">
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Reference</th>
+                <td class="govuk-table__cell">{{ denial.reference }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Name</th>
+                <td class="govuk-table__cell">{{ denial.name }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Address</th>
+                <td class="govuk-table__cell">{{ denial.address }}</td>
+            </tr>
+            {% for key, value in denial.data.items %}
+                <tr class="govuk-table__row app-table__row">
+                    <th scope="row" class="govuk-table__header">{{ key }}</th>
+                    <td class="govuk-table__cell">{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
