@@ -3,9 +3,10 @@ import base64
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView, CreateView
 
 from core.auth.views import LoginRequiredMixin
 
@@ -36,17 +37,28 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return self.request.get_full_path()
 
 
-class DenialDetailView(LoginRequiredMixin, SuccessMessageMixin, TemplateView):
+class DenialDetailView(LoginRequiredMixin, TemplateView):
     template_name = "external_data/denial-detail.html"
-    success_message = "Denial successfully revoked"
 
     def get_context_data(self, **kwargs):
         denial = services.get_denial(request=self.request, pk=self.kwargs["pk"])
         return super().get_context_data(denial=denial, **kwargs)
 
-    def post(self, request, pk):
-        response = services.revoke_denial(request=self.request, pk=pk)
 
-        messages.success(self.request, self.success_message)
+class DenialRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = "external_data/denial-revoke.html"
+    success_message = "Denial successfully revoked"
+    form_class = forms.DenialRevoke
 
-        return redirect(request.get_full_path())
+    def get_context_data(self, **kwargs):
+        denial = services.get_denial(request=self.request, pk=self.kwargs["pk"])
+        return super().get_context_data(denial=denial, **kwargs)
+
+    def get_success_url(self):
+        return reverse("external_data:denial-detail", kwargs={"pk": self.kwargs["pk"]})
+
+    def form_valid(self, form):
+        response = services.revoke_denial(
+            request=self.request, pk=self.kwargs["pk"], comment=form.cleaned_data["comment"]
+        )
+        return super().form_valid(form)

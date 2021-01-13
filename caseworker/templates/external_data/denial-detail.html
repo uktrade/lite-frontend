@@ -10,19 +10,16 @@
 {% block body %}
     <div class="lite-app-bar govuk-!-margin-bottom-0">
         <div class="lite-app-bar__content">
-            <h1 class="govuk-heading-l">{{ denial.name }}</h1>
+            <h1 class="govuk-heading-l">{{ denial.reference }} <span class="heading-subheader govuk-!-margin-left-4">{{ denial.name }}</span></h1>
         </div>
     </div>
 
-    <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+    <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-0">
         <h1 class="govuk-heading-l">Denial details record</h1>
     </div>
-
-    <form enctype="multipart/form-data" method="post">
-        {% csrf_token %}
-        <button type="submit" class="govuk-button" id="search-button" {% if denial.is_revoked %}disabled=""{% endif %}>Revoke denial</button>
-    </form>
-
+    {% if not denial.is_revoked %}
+        <a href="{% url 'external_data:denial-revoke' pk=denial.id %}" class="govuk-button" id="search-button">Revoke denial</a>
+    {% endif %}
 
     <table class="govuk-table app-table">
         <tbody class="govuk-table__body" id="tbody-placeholder">
@@ -40,7 +37,7 @@
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Revoked</th>
-                <td class="govuk-table__cell">{{ denial.is_revoked|yesno }}</td>
+                <td class="govuk-table__cell">{{ denial.is_revoked|yesno }}{% if denial.is_revoked %}, {{ denial.is_revoked_comment }}{% endif %}</td>
             </tr>
             {% for key, value in denial.data.items %}
                 <tr class="govuk-table__row app-table__row">
