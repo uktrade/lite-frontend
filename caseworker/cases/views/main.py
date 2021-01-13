@@ -457,11 +457,16 @@ class Denials(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         case = get_case(self.request, self.kwargs["pk"])
 
-        names = list(set([case.data[key]["name"] for key in self.request.GET.keys() if key in case.data]))
-        if names:
-            response = search_denials(request=self.request, data={"denial_name": names})
+        search = set()
+        for key in self.request.GET.keys():
+            if key in case.data:
+                search.add(case.data[key]["name"])
+                search.add(case.data[key]["address"])
+
+        if search:
+            response = search_denials(request=self.request, search=list(search))
             results = [item["_source"] for item in response.json()["hits"]["hits"]]
         else:
             results = []
 
-        return super().get_context_data(case=case, results=results, names=names, **kwargs)
+        return super().get_context_data(case=case, results=results, **kwargs)
