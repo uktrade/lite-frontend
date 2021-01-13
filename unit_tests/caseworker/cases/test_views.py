@@ -3,6 +3,8 @@ from django.urls import reverse
 
 import pytest
 
+from core import client
+
 
 @pytest.fixture(autouse=True)
 def setup(
@@ -310,3 +312,21 @@ def test_good_on_application_detail_not_rated_at_application_level(
     assert mock_application_search.request_history[0].qs == {"clc_rating": ["ml1"]}
     # and the form is pre-populated with the canonical good control list entries
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1"'
+
+
+def test_search_denials(authorized_client, data_standard_case, requests_mock, queue_pk, standard_case_pk):
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+    end_user_name = data_standard_case["case"]["data"]["end_user"]["name"]
+    end_user_address = data_standard_case["case"]["data"]["end_user"]["address"]
+
+    requests_mock.get(
+        client._build_absolute_uri(f"/external-data/denial-search/?search={end_user_name}&search={end_user_address}"),
+        json={"hits": {"hits": []}},
+    )
+
+    url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
+    data = {"objects": ["1", "2", "3"]}
+
+    response = authorized_client.get(f"{url}?end_user={end_user_id}")
+
+    assert response.status_code == 200
