@@ -16,3 +16,10 @@ class DenialUploadForm(forms.Form):
     def save(self):
         # the CreateView expects this method
         pass
+
+
+class DenialRevoke(forms.Form):
+    comment = forms.CharField(
+        label='Enter a reason why this denial should be revoked',
+        widget=forms.Textarea
+    )
