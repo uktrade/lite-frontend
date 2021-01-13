@@ -5,8 +5,8 @@ def upload_denials(request, data):
     return client.post(request=request, appended_address="/external-data/denial/", data=data,)
 
 
-def search_denials(request, data):
-    return client.get(request=request, appended_address="/external-data/denial-search/", data=data)
+def search_denials(request, search):
+    return client.get(request=request, appended_address=f"/external-data/denial-search/?search={search}")
 
 
 def get_denial(request, pk):
@@ -17,9 +17,9 @@ def get_denial(request, pk):
 
 def revoke_denial(request, pk, comment):
     response = client.patch(
-    	request=request,
-    	appended_address=f"/external-data/denial/{pk}/",
-    	data={"is_revoked": True, "is_revoked_comment": comment}
+        request=request,
+        appended_address=f"/external-data/denial/{pk}/",
+        data={"is_revoked": True, "is_revoked_comment": comment},
     )
     response.raise_for_status()
     return response.json()
