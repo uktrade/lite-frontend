@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from core import client
 
 
@@ -6,7 +8,9 @@ def upload_denials(request, data):
 
 
 def search_denials(request, search):
-    return client.get(request=request, appended_address=f"/external-data/denial-search/?search={search}")
+    data = {"search": search}
+    querystring = urlencode(data, doseq=True)
+    return client.get(request=request, appended_address=f"/external-data/denial-search/?{querystring}")
 
 
 def get_denial(request, pk):
