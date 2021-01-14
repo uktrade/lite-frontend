@@ -42,9 +42,6 @@
                             <th scope="col" class="govuk-table__header">Reference</th>
                             <th scope="col" class="govuk-table__header">Name</th>
                             <th scope="col" class="govuk-table__header">Address</th>
-                            {% for key in results.0.data.keys %}
-                                <th scope="col" class="govuk-table__header">{{ key }}</th>
-                            {% endfor %}
                             {% endif %}
                         </tr>
                     </thead>
@@ -58,11 +55,10 @@
                                     </div>
                                 </td>
                                 <td class="govuk-table__cell">
-                                    <a href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.reference }}</a>
+                                    <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.reference }}</a>
                                 </td>
                                 <td class="govuk-table__cell">{{ denial.name }}</td>
                                 <td class="govuk-table__cell">{{ denial.address }}</td>
-                                {% for value in denial.data.values %}<td class="govuk-table__cell ">{{ value }}</td>{% endfor %}
                             </tr>
                         {% endfor %}
 
