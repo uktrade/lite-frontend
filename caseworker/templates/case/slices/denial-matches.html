@@ -23,9 +23,6 @@
                         <th scope="col" class="govuk-table__header">Reference</th>
                         <th scope="col" class="govuk-table__header">Name</th>
                         <th scope="col" class="govuk-table__header">Address</th>
-                        <th scope="col" class="govuk-table__header">field_n</th>
-                        <th scope="col" class="govuk-table__header">field_one</th>
-                        <th scope="col" class="govuk-table__header">field_two</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
@@ -51,9 +48,6 @@
                             </td>
                             <td class="govuk-table__cell">{{ match.denial.name }}</td>
                             <td class="govuk-table__cell">{{ match.denial.address }}</td>
-                            <td class="govuk-table__cell">{{ match.denial.data.field_n }}</td>
-                            <td class="govuk-table__cell">{{ match.denial.data.field_one }}</td>
-                            <td class="govuk-table__cell">{{ match.denial.data.field_two }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
