@@ -41,8 +41,10 @@ class DenialDetailView(LoginRequiredMixin, TemplateView):
     template_name = "external_data/denial-detail.html"
 
     def get_context_data(self, **kwargs):
+        queue_id = self.request.GET.get("queue_id", None)
+        case_id = self.request.GET.get("case_id", None)
         denial = services.get_denial(request=self.request, pk=self.kwargs["pk"])
-        return super().get_context_data(denial=denial, **kwargs)
+        return super().get_context_data(denial=denial, queue_id=queue_id, case_id=case_id, **kwargs)
 
 
 class DenialRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
@@ -51,8 +53,10 @@ class DenialRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = forms.DenialRevoke
 
     def get_context_data(self, **kwargs):
+        queue_id = self.request.GET.get("queue_id", None)
+        case_id = self.request.GET.get("case_id", None)
         denial = services.get_denial(request=self.request, pk=self.kwargs["pk"])
-        return super().get_context_data(denial=denial, **kwargs)
+        return super().get_context_data(denial=denial, queue_id=queue_id, case_id=case_id, **kwargs)
 
     def get_success_url(self):
         return reverse("external_data:denial-detail", kwargs={"pk": self.kwargs["pk"]})

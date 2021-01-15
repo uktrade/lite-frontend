@@ -15,14 +15,18 @@
     </div>
 
     <div class="govuk-!-margin-bottom-6">
-        <a class="lite-back-link-button govuk-back-link" id="back-link" href="#">Back</a>
+        {% if queue_id and case_id %}
+            <a class="lite-back-link-button govuk-back-link" id="back-link" href="{% url 'cases:case' queue_id case_id %}">Back</a>
+        {% else %}
+            <a class="lite-back-link-button govuk-back-link" id="back-link" href="#">Back</a>
+        {% endif %}
     </div>
 
     <div class="govuk-!-margin-top-6 govuk-!-margin-bottom-0">
         <h1 class="govuk-heading-l">Denial details record</h1>
     </div>
     {% if not denial.is_revoked %}
-        <a href="{% url 'external_data:denial-revoke' pk=denial.id %}" class="govuk-button" id="search-button">Revoke denial</a>
+        <a href="{% url 'external_data:denial-revoke' pk=denial.id %}?queue_id={{queue_id}}&case_id={{case_id}}" class="govuk-button" id="search-button">Revoke denial</a>
     {% endif %}
 
     <table class="govuk-table app-table">
