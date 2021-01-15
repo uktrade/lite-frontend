@@ -39,7 +39,7 @@
                             </td>
                             {% endif %}
                             <td class="govuk-table__cell">
-                                <a href="{% url 'external_data:denial-detail' pk=match.denial.id %}">{{ match.denial.reference }}</a><br>
+                                <a href="{% url 'external_data:denial-detail' pk=match.denial.id %}?queue_id={{queue.id}}&case_id={{case.id}}">{{ match.denial.reference }}</a><br>
                                 {% if match.category == "exact" %}
                                     <strong class="govuk-tag govuk-tag--grey">EXACT MATCH</strong>
                                 {% elif match.category == "partial" %}
