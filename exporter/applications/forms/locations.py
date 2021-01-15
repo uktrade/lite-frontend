@@ -168,9 +168,9 @@ def external_locations_form(request, application_type):
 
 
 def sites_form(request, application_type):
-    exclude = []
+    exclude = ""
     if application_type in [CaseTypes.SITL, CaseTypes.SICL, CaseTypes.OICL]:
-        exclude.append("GB")
+        exclude = "GB"
 
     return Form(
         title="Select locations",
