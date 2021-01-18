@@ -8,14 +8,8 @@ from lite_content.lite_exporter_frontend.sites import AddSiteForm
 from lite_forms.components import Option
 
 
-def get_sites(
-    request, organisation_id, convert_to_options=False, get_total_users=False, exclude="", postcode=""
-):
-    querystring = urlencode([
-        ("exclude", exclude),
-        ("get_total_users", get_total_users),
-        ("postcode", postcode),
-    ])
+def get_sites(request, organisation_id, convert_to_options=False, get_total_users=False, exclude="", postcode=""):
+    querystring = urlencode([("exclude", exclude), ("get_total_users", get_total_users), ("postcode", postcode),])
     data = client.get(request, f"/organisations/{organisation_id}/sites/?{querystring}").json()["sites"]
 
     primary_site = " " + strings.sites.SitesPage.PRIMARY_SITE
