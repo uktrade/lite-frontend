@@ -1,10 +1,8 @@
 import base64
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
-from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, CreateView
 
@@ -62,7 +60,5 @@ class DenialRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return reverse("external_data:denial-detail", kwargs={"pk": self.kwargs["pk"]})
 
     def form_valid(self, form):
-        response = services.revoke_denial(
-            request=self.request, pk=self.kwargs["pk"], comment=form.cleaned_data["comment"]
-        )
+        services.revoke_denial(request=self.request, pk=self.kwargs["pk"], comment=form.cleaned_data["comment"])
         return super().form_valid(form)
