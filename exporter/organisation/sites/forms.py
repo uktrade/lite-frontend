@@ -27,7 +27,7 @@ def new_site_forms(request):
     in_uk = request.POST.get("location", "").lower() == "united_kingdom"
     sites = []
     if request.POST.get("address.postcode"):
-        sites = get_sites(request, request.session["organisation"], postcode=request.POST.get("address.postcode"))
+        sites = get_sites(request, request.session["organisation"], postcode=request.POST.get("address.postcode", ""))
 
     return FormGroup(
         [
