@@ -44,6 +44,30 @@
                 <td class="govuk-table__cell">{{ denial.address }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Notifying government</th>
+                <td class="govuk-table__cell">{{ denial.notifying_government }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Final Destination</th>
+                <td class="govuk-table__cell">{{ denial.final_destination }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Item List Codes</th>
+                <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Item Description</th>
+                <td class="govuk-table__cell">{{ denial.item_description }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">End Use</th>
+                <td class="govuk-table__cell">{{ denial.end_use }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Consignee name</th>
+                <td class="govuk-table__cell">{{ denial.consignee_name }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Revoked</th>
                 <td class="govuk-table__cell">{{ denial.is_revoked|yesno }}{% if denial.is_revoked %}, {{ denial.is_revoked_comment }}{% endif %}</td>
             </tr>
