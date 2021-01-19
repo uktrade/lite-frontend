@@ -11,6 +11,7 @@ INSTALLED_APPS += [
     "caseworker.core",
     "caseworker.spire",
     "caseworker.letter_templates",
+    "caseworker.external_data",
     "crispy_forms",
     "crispy_forms_gds",
 ]

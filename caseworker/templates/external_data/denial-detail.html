@@ -1,0 +1,83 @@
+{% extends 'layouts/base.html' %}
+
+{% load static from staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block back_link %}{% endblock %}
+
+{% block title %}Denial record details{% endblock %}
+
+{% block body %}
+    <div class="lite-app-bar govuk-!-margin-bottom-0">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-l">{{ denial.reference }} <span class="heading-subheader govuk-!-margin-left-4">{{ denial.name }}</span></h1>
+        </div>
+    </div>
+
+    <div class="govuk-!-margin-bottom-6">
+        {% if queue_id and case_id %}
+            <a class="lite-back-link-button govuk-back-link" id="back-link" href="{% url 'cases:case' queue_id case_id %}">Back</a>
+        {% else %}
+            <a class="lite-back-link-button govuk-back-link" id="back-link" href="#">Back</a>
+        {% endif %}
+    </div>
+
+    <div class="govuk-!-margin-top-6 govuk-!-margin-bottom-0">
+        <h1 class="govuk-heading-l">Denial details record</h1>
+    </div>
+    {% if not denial.is_revoked %}
+        <a href="{% url 'external_data:denial-revoke' pk=denial.id %}?queue_id={{queue_id}}&case_id={{case_id}}" class="govuk-button" id="search-button">Revoke denial</a>
+    {% endif %}
+
+    <table class="govuk-table app-table">
+        <tbody class="govuk-table__body" id="tbody-placeholder">
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Reference</th>
+                <td class="govuk-table__cell">{{ denial.reference }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Name</th>
+                <td class="govuk-table__cell">{{ denial.name }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Address</th>
+                <td class="govuk-table__cell">{{ denial.address }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Notifying government</th>
+                <td class="govuk-table__cell">{{ denial.notifying_government }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Final Destination</th>
+                <td class="govuk-table__cell">{{ denial.final_destination }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Item List Codes</th>
+                <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Item Description</th>
+                <td class="govuk-table__cell">{{ denial.item_description }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">End Use</th>
+                <td class="govuk-table__cell">{{ denial.end_use }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Consignee name</th>
+                <td class="govuk-table__cell">{{ denial.consignee_name }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Revoked</th>
+                <td class="govuk-table__cell">{{ denial.is_revoked|yesno }}{% if denial.is_revoked %}, {{ denial.is_revoked_comment }}{% endif %}</td>
+            </tr>
+            {% for key, value in denial.data.items %}
+                <tr class="govuk-table__row app-table__row">
+                    <th scope="row" class="govuk-table__header">{{ key }}</th>
+                    <td class="govuk-table__cell">{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

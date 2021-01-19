@@ -1,6 +1,6 @@
 from django.urls import path
 
-from caseworker.cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance
+from caseworker.cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance, external_data
 from caseworker.flags.views import AssignFlags
 
 app_name = "cases"
@@ -15,6 +15,8 @@ urlpatterns = [
     path("attach/", main.AttachDocuments.as_view(), name="attach_documents"),
     path("documents/<str:file_pk>/", main.Document.as_view(), name="document"),
     path("assign-flags/", AssignFlags.as_view(), name="assign_flags"),
+    path("remove-matching-denials/", external_data.RemoveMatchingDenials.as_view(), name="remove-matching-denials",),
+    path("matching-denials/<str:category>/", external_data.MatchingDenials.as_view(), name="matching-denials",),
     path("coalesce-user-advice/", advice.CoalesceUserAdvice.as_view(), name="coalesce_user_advice"),
     path("coalesce-team-advice/", advice.CoalesceTeamAdvice.as_view(), name="coalesce_team_advice"),
     path("team-advice-view/", advice.ClearTeamAdvice.as_view(), name="team_advice_view"),
@@ -84,6 +86,7 @@ urlpatterns = [
     path("compliance-licence/", compliance.ComplianceWithLicences.as_view(), name="compliance_with_licences"),
     path("knowledge-people/", compliance.KnowledgePeople.as_view(), name="knowledge_of_people"),
     path("knowledge-products/", compliance.KnowledgeProduct.as_view(), name="knowledge_of_products"),
+    path("denials/", main.Denials.as_view(), name="denials"),
     # tabs
     path("<str:tab>/", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
     path("<str:tab>/give-advice/", advice.GiveAdvice.as_view(), name="give_advice"),

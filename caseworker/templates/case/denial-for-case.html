@@ -1,0 +1,87 @@
+{% extends 'layouts/case.html' %}
+
+{% load static from staticfiles %}
+
+{% load crispy_forms_tags %}
+
+{% block details %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
+            <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
+        </div>
+        <div class="govuk-grid-column-full">   
+            <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
+                Denial matches
+                <p class="govuk-!-margin-top-2 govuk-caption-l">{{ names|join:', ' }}</p>
+            </h2>
+        </div>
+
+        <div class="govuk-grid-column-full">
+            {% if not hide_controls %}
+            <form method="post" data-enable-on-checkboxes="#table-denials">
+                {% csrf_token %}
+                <div class="lite-buttons-row">
+                    <button id="button-exact-match" formaction="{% url 'cases:matching-denials' queue.id case.id 'exact' %}" class="govuk-button" data-module="govuk-button">
+                        Add as exact match
+                    </button>
+                    <button id="button-exact-match" formaction="{% url 'cases:matching-denials' queue.id case.id 'partial' %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                        Add as partial match
+                    </button>
+                </div>
+            {% endif %}
+
+            {% if results %}
+                <table id="table-denials" class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            {% if not hide_checkboxes %}
+                                <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
+                                    <button id="link-select-all-denial" type="button" name="button" class="lite-button-checkbox"
+                                        title="Select all/Deselect all"></button>
+                                </th>
+                                <th scope="col" class="govuk-table__header">Reference</th>
+                                <th scope="col" class="govuk-table__header">Name</th>
+                                <th scope="col" class="govuk-table__header">Address</th>
+                                <th scope="col" class="govuk-table__header">Final destination</th>
+                                <th scope="col" class="govuk-table__header">Item list codes</th>
+                                <th scope="col" class="govuk-table__header">Item description</th>
+                                <th scope="col" class="govuk-table__header">End use</th>
+                                <th scope="col" class="govuk-table__header">Consignee name</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for denial in results %}
+                            <tr>
+                                <td class="govuk-table__cell govuk-table__cell--checkbox">
+                                    <div>
+                                        <input class="govuk-checkboxes__input" type="checkbox" name="objects" value="{{ denial.id }}" id="{{ denial.id }}">
+                                        <label class="govuk-label govuk-checkboxes__label" for="{{ denial.id }}">{{ denial.reference|sentence_case }}</label>
+                                    </div>
+                                </td>
+                                <td class="govuk-table__cell">
+                                    <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.reference }}</a>
+                                </td>
+                                <td class="govuk-table__cell">{{ denial.name }}</td>
+                                <td class="govuk-table__cell">{{ denial.address }}</td>
+                                <td class="govuk-table__cell">{{ denial.final_destination }}</td>
+                                <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
+                                <td class="govuk-table__cell">{{ denial.item_description }}</td>
+                                <td class="govuk-table__cell">{{ denial.end_use }}</td>
+                                <td class="govuk-table__cell">{{ denial.consignee_name }}</td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+            {% else %}
+                <div>No matching denials</div>
+            {% endif %}
+
+            {% if not hide_controls %}
+            </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
