@@ -42,10 +42,10 @@
                                 <th scope="col" class="govuk-table__header">Reference</th>
                                 <th scope="col" class="govuk-table__header">Name</th>
                                 <th scope="col" class="govuk-table__header">Address</th>
-                                <th scope="col" class="govuk-table__header">Notifying government</th>
                                 <th scope="col" class="govuk-table__header">Final destination</th>
                                 <th scope="col" class="govuk-table__header">Item list codes</th>
                                 <th scope="col" class="govuk-table__header">Item description</th>
+                                <th scope="col" class="govuk-table__header">End use</th>
                                 <th scope="col" class="govuk-table__header">Consignee name</th>
                             {% endif %}
                         </tr>
@@ -64,10 +64,10 @@
                                 </td>
                                 <td class="govuk-table__cell">{{ denial.name }}</td>
                                 <td class="govuk-table__cell">{{ denial.address }}</td>
-                                <td class="govuk-table__cell">{{ denial.notifying_government }}</td>
                                 <td class="govuk-table__cell">{{ denial.final_destination }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_description }}</td>
+                                <td class="govuk-table__cell">{{ denial.end_use }}</td>
                                 <td class="govuk-table__cell">{{ denial.consignee_name }}</td>
                             </tr>
                         {% endfor %}

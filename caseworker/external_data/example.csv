@@ -1,2 +1,2 @@
-reference,name,address,notifying_government,final_destination,item_list_codes,item_description,consignee_name,field_one,field_two,field_n
-ABC123,44,123 fake street,France,Germany,ABC123,Grapes,Fred Example,value_one,value_two,value_n
+reference,name,address,notifying_government,final_destination,item_list_codes,item_description,consignee_name,end_use,field_one,field_two,field_n
+ABC123,44,123 fake street,France,Germany,ABC123,Grapes,Fred Example,Used in car,value_one,value_two,value_n
