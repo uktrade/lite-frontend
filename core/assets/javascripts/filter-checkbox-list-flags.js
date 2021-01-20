@@ -1,4 +1,6 @@
-$(".lite-search__container").show();
+if (!$(".lite-search__container").is(":hidden")) {
+    $(".lite-search__container").show();
+}
 
 $("#filter-box").on('input', function () {
     var value = $(this).val().toLowerCase();
@@ -37,9 +39,9 @@ function addCheckedCheckboxesToList() {
     });
     $("#checkbox-list").append("<ol class='govuk-list govuk-!-padding-left-4' style='list-style:decimal'>" + formattedText + "</ol>")
     if ($("input[type='checkbox']:checked").length == 0) {
-        $("#checkbox-counter").hide();
+        $("#checkbox-counter").hide().children().hide();
     } else {
-        $("#checkbox-counter").show();
+        $("#checkbox-counter").show().children().show();
     }
 
     $("a").on('click', function (event) {
