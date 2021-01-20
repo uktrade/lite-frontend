@@ -1,5 +1,6 @@
 import pytest
 import requests
+from django.test import override_settings
 
 from lite_forms.components import HelpSection
 
@@ -147,6 +148,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
         ),
     ],
 )
+@override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=True)
 def test_core_firearm_product_form_group(rf, client, params, num_forms, question_checks):
     """ Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
     data = {"product_type_step": True, "type": "firearms"}

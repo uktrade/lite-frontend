@@ -349,7 +349,12 @@ def add_good_form_group(
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
     return FormGroup(
         [
-            group_two_product_type_form(back_link=base_form_back_link),
+            conditional(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS, product_category_form(request)),
+            conditional(
+                request.POST.get("item_category") == PRODUCT_CATEGORY_FIREARM
+                or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
+                group_two_product_type_form(back_link=base_form_back_link),
+            ),
             conditional(is_firearms_core and draft_pk, identification_markings_form()),
             conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
             add_goods_questions(control_list_entries, draft_pk),
