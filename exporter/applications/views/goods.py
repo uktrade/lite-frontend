@@ -161,7 +161,13 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         if int(self.request.POST.get("form_pk")) == number_of_forms:
             if self.show_section_upload_form:
                 firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.draft_pk}"
-                request.session[firearms_data_id] = copied_request
+                session_data = copied_request.dict()
+                if "control_list_entries[]" in copied_request:
+                    session_data["control_list_entries"] = copied_request.getlist("control_list_entries[]")
+                    del session_data["control_list_entries[]"]
+
+                request.session[firearms_data_id] = session_data
+
             elif self.certificate_not_required:
                 self.action = post_goods
             else:
