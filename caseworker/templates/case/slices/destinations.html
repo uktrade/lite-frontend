@@ -34,6 +34,7 @@
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.BUSINESS' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.WEBSITE' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DOCUMENTS' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.SIGNATORY_NAME' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</th>
 					</tr>
 				</thead>
@@ -99,6 +100,10 @@
 										{{ destination.document.name }}
 									</a>
 								{% endif %}
+							</td>
+							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.SIGNATORY_NAME' %}</span>
+								{{ destination.signatory_name_euu }}
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</span>

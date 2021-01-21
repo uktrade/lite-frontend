@@ -414,6 +414,9 @@ def convert_party(party, application, editable):
         "Website": convert_to_link(party["website"]),
     }
 
+    if party["type"] == "end_user":
+        data["Signatory name"] = party.get("signatory_name_euu")
+
     if party["type"] == "third_party":
         data["Role"] = party.get("role_other") if party.get("role_other") else party.get("role").get("value")
 
