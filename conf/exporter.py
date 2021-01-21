@@ -71,3 +71,4 @@ SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SPIRE_URL = "https://www.spire.trade.gov.uk/spire/fox/espire/LOGIN/login"
 
 FEATURE_FLAG_FIREARMS_ENABLED = env.bool("FEATURE_FLAG_FIREARMS_ENABLED", False)
+FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = env.bool("FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS", False)
