@@ -144,7 +144,7 @@ def select_flags(request, team_id, flags_to_include, flags_to_exclude):
                     Option(flag["id"], flag["name"], data_attribute=get_flag_details_html(flag))
                     for flag in get_flags_for_team_of_level(
                         request, level="", team_id=team_id, include_system_flags=True
-                    )[0]
+                    )
                 ],
                 import_custom_js=["/javascripts/filter-checkbox-list-flags.js"],
             ),
