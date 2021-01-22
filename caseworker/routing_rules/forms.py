@@ -46,26 +46,23 @@ def select_a_team(request):
 
 
 def initial_routing_rule_questions(request, select_team, team_id, is_editing: bool):
-    select_team_question = []
-    if select_team:
-        select_team_question = [
+
+    team_queues_options = get_team_queues(request, team_id, convert_to_options=True, ignore_pagination=True)
+
+    return Form(
+        title=Forms.EDIT_TITLE if is_editing else Forms.CREATE_TITLE,
+        questions=[
             AutocompleteInput(
                 title=Forms.TEAM,
                 name="team",
                 options=get_teams(request, True),
                 description="Type to get suggestions. For example, TAU.",
             ),
-        ]
-
-    return Form(
-        title=Forms.EDIT_TITLE if is_editing else Forms.CREATE_TITLE,
-        questions=select_team_question
-        + [
             Select(title=Forms.CASE_STATUS, name="status", options=get_statuses(request, True)),
             AutocompleteInput(
                 title=Forms.QUEUE,
                 name="queue",
-                options=get_team_queues(request, team_id, True, True) if team_id else [],
+                options=team_queues_options,
                 description="Type to get suggestions.\nFor example, HMRC enquiries.",
             ),
             TextInput(title=Forms.TIER, name="tier"),
@@ -73,6 +70,7 @@ def initial_routing_rule_questions(request, select_team, team_id, is_editing: bo
             Checkboxes(title=Forms.ADDITIONAL_RULES, name="additional_rules[]", options=additional_rules,),
         ],
         back_link=BackLink(Forms.BACK_BUTTON, reverse_lazy("routing_rules:list")),
+        javascript_imports={"/javascripts/routing-rules-teams.js"},
     )
 
 
@@ -189,6 +187,8 @@ def select_team_member(request, team_id):
 def routing_rule_form_group(
     request, additional_rules, team_id, flags_to_include, flags_to_exclude, is_editing=False, select_team=False
 ):
+    additional_rules = additional_rules or []
+
     return FormGroup(
         [
             initial_routing_rule_questions(request, select_team, team_id, is_editing),
