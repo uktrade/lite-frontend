@@ -90,7 +90,8 @@ def select_case_type(request):
 
 def get_flag_details_html(flag):
     rules_html = ""
-    rules = flag["flagging_rules"]
+    rules = flag.get("flagging_rules")
+
     if rules:
         rows = []
         for index, rule in enumerate(rules, start=1):
