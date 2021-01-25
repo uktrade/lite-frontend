@@ -131,6 +131,12 @@ def get_flag_details_html(flag):
 
 
 def select_flags(request, team_id, flags_to_include, flags_to_exclude):
+
+    flags_checkboxes = [
+        Option(flag["id"], flag["name"], data_attribute=get_flag_details_html(flag))
+        for flag in get_flags_for_team_of_level(request, level="", team_id=team_id, include_system_flags=True)
+    ]
+
     return Form(
         title=Forms.FLAGS,
         questions=[
@@ -140,12 +146,7 @@ def select_flags(request, team_id, flags_to_include, flags_to_exclude):
             Filter(),
             Checkboxes(
                 name="flags[]",
-                options=[
-                    Option(flag["id"], flag["name"], data_attribute=get_flag_details_html(flag))
-                    for flag in get_flags_for_team_of_level(
-                        request, level="", team_id=team_id, include_system_flags=True
-                    )
-                ],
+                options=flags_checkboxes,
                 import_custom_js=["/javascripts/filter-checkbox-list-flags.js"],
             ),
             Label(text="Apply routing rules to cases that"),
