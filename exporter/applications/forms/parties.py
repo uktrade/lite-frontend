@@ -72,6 +72,15 @@ def party_address_form(request, title, button, is_gb_excluded=False):
     )
 
 
+def party_signatory_name_form(title, button):
+    return Form(
+        title=title,
+        description="This is the name of the person who signed the end user undertaking or stockist undertaking",
+        questions=[TextInput("signatory_name_euu")],
+        default_button_name=button,
+    )
+
+
 def party_clearance_level_form(options, button):
     return Form(
         title=strings.Parties.Clearance.Level.TITLE,
@@ -111,5 +120,8 @@ def new_party_form_group(request, application, strings, back_url, clearance_opti
     forms.append(
         party_address_form(request, strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON, is_gb_excluded=is_gb_excluded)
     )
+
+    if is_end_user:
+        forms.append(party_signatory_name_form("Signatory name", "Save and continue"))
 
     return FormGroup(forms)

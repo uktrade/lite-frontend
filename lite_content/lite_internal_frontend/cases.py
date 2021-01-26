@@ -166,6 +166,7 @@ class CasePage:
                 BUSINESS = "Business"
                 WEBSITE = "Website"
                 DOCUMENTS = "Documents"
+                SIGNATORY_NAME = "Signatory name"
                 FLAGS = "Flags"
 
         class EndUseDetails:
