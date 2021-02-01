@@ -113,7 +113,7 @@ class Goods(LoginRequiredMixin, TemplateView):
 
 class GoodsDetailEmpty(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
-        return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
+        return redirect(reverse("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
 
 
 class GoodsDetail(LoginRequiredMixin, TemplateView):
