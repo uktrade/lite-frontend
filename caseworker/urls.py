@@ -20,6 +20,7 @@ urlpatterns = [
     path("routing-rules/", include("caseworker.routing_rules.urls")),
     path("compliance/", include("caseworker.compliance.urls")),
     path("api/", include("core.api.urls")),  # proxies for lite-api views. used by frontend javascript
+    path("", include("caseworker.external_data.urls")),
 ]
 
 if settings.LITE_API_SEARCH_ENABLED:

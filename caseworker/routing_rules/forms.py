@@ -131,7 +131,7 @@ def get_flag_details_html(flag):
     """
 
 
-def select_flags(request, team_id, flags_to_include, flags_to_exclude):
+def select_flags(request, team_id, flags_to_include, flags_to_exclude, is_editing):
 
     flags_checkboxes = [
         Option(flag["id"], flag["name"], data_attribute=get_flag_details_html(flag))
@@ -139,30 +139,30 @@ def select_flags(request, team_id, flags_to_include, flags_to_exclude):
     ]
 
     return Form(
-        title=Forms.FLAGS,
+        title=Forms.FLAGS if not is_editing else "Edit flags",
         questions=[
             HiddenField(name="flags_to_include", value=",".join(flags_to_include)),
             HiddenField(name="flags_to_exclude", value=",".join(flags_to_exclude)),
             HTMLBlock("<div id='routing-rules-flags-details'></div>"),
+            Label(id="condition-label", text="Apply the routing rule to:"),
+            RadioButtons(
+                title="",
+                name="routing_rules_flags_condition",
+                options=[
+                    Option(key="contain_selected_flags", value="Cases that contain selected flags"),
+                    Option(key="doesnot_contain_selected_flags", value="Cases that do not contain selected flags"),
+                ],
+            ),
             Filter(),
             Checkboxes(
                 name="flags[]",
                 options=flags_checkboxes,
                 import_custom_js=["/javascripts/filter-checkbox-list-flags.js"],
             ),
-            Label(text="Apply routing rules to cases that"),
-            RadioButtons(
-                title="",
-                name="routing_rules_flags_condition",
-                options=[
-                    Option(key="contain_selected_flags", value="Contain selected flags"),
-                    Option(key="doesnot_contain_selected_flags", value="Do not contain selected flags"),
-                ],
-            ),
         ],
         buttons=[
             Button("Save and continue", "submit", id="save_and_continue"),
-            Button("Add another condition", "", ButtonStyle.SECONDARY, link="#"),
+            Button("Add another condition", "", ButtonStyle.SECONDARY, id="add-another-condition", link="#"),
         ],
         javascript_imports={"/javascripts/routing-rules-flags.js"},
     )
@@ -196,7 +196,8 @@ def routing_rule_form_group(
             initial_routing_rule_questions(request, select_team, team_id, is_editing),
             conditional("case_types" in additional_rules, select_case_type(request)),
             conditional(
-                "flags" in additional_rules, select_flags(request, team_id, flags_to_include, flags_to_exclude)
+                "flags" in additional_rules,
+                select_flags(request, team_id, flags_to_include, flags_to_exclude, is_editing),
             ),
             conditional("country" in additional_rules, select_country(request)),
             conditional("users" in additional_rules, select_team_member(request, team_id)),

@@ -37,6 +37,7 @@ from caseworker.cases.services import (
 )
 from caseworker.cases.services import post_case_documents, get_document
 from caseworker.compliance.services import get_compliance_licences
+from core.auth.views import LoginRequiredMixin
 from django.conf import settings
 from caseworker.core.services import get_permissible_statuses
 from lite_content.lite_internal_frontend import cases
@@ -47,6 +48,7 @@ from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
 from caseworker.queues.services import put_queue_single_case_assignment, get_queue
 from caseworker.users.services import get_gov_user_from_form_selection
+from caseworker.external_data.services import search_denials
 
 
 class CaseDetail(CaseView):
@@ -80,6 +82,7 @@ class CaseDetail(CaseView):
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
+            Slices.DENIAL_MATCHES,
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
             Slices.END_USE_DETAILS,
@@ -446,3 +449,24 @@ class NextReviewDate(SingleFormView):
                 date_split = data[field].split("-")
                 data[field + "year"], data[field + "month"], data[field + "day"] = date_split
         return data
+
+
+class Denials(LoginRequiredMixin, TemplateView):
+    template_name = "case/denial-for-case.html"
+
+    def get_context_data(self, **kwargs):
+        case = get_case(self.request, self.kwargs["pk"])
+
+        search = []
+        for key in self.request.GET.keys():
+            if key in case.data:
+                search.append(case.data[key]["name"])
+                search.append(case.data[key]["address"])
+
+        if search:
+            response = search_denials(request=self.request, search=search)
+            results = [item["_source"] for item in response.json()["hits"]["hits"]]
+        else:
+            results = []
+
+        return super().get_context_data(case=case, results=results, **kwargs)

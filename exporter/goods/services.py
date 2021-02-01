@@ -23,7 +23,7 @@ def get_good_details(request, pk):
 
 
 def post_goods(request, json):
-    json["item_category"] = "group2_firearms"
+    json["item_category"] = json.get("item_category", "group2_firearms")
 
     if "is_pv_graded" in json and json["is_pv_graded"] == "yes":
         if "reference" in json:
