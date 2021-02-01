@@ -94,6 +94,14 @@ def submit_paged_form(  # noqa
         # Add existing post data to previous form as hidden fields
         post_data, _ = _prepare_data(request, {})
         for key, value in post_data.items():
+
+            # If the key is already in the questions in the previous form, don't copy them
+            # because the user will input their answers again
+            previous_form_question_names = [q.name for q in previous_form.questions if hasattr(q, 'name')]
+
+            if key in previous_form_question_names or f"{key}[]" in previous_form_question_names:
+                continue
+
             # If the keys value is a list, insert each individually
             if isinstance(value, list):
                 for sub_value in value:
@@ -158,7 +166,16 @@ def submit_paged_form(  # noqa
 
     # Add existing post data to new form as hidden fields
     post_data, _ = _prepare_data(request, {})
+
     for key, value in post_data.items():
+
+        # If the key is already in the questions in the next form, don't copy them
+        # because the user will input their answers again
+        next_form_question_names = [q.name for q in next_form.questions if hasattr(q, 'name')]
+
+        if key in next_form_question_names or f"{key}[]" in next_form_question_names:
+            continue
+
         # If the keys value is a list, insert each individually
         if isinstance(value, list):
             for sub_value in value:
