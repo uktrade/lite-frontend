@@ -121,8 +121,9 @@ def dict_hidden_field(key, value):
     if isinstance(value, dict):
         value = json.dumps(value)
     if isinstance(value, list):
+        unique_values = set(value)
         final_str = ""
-        for item in value:
+        for item in unique_values:
             final_str += f"<input type='hidden' name='{key}[]' value='{escape(str(item))}'>"
         return final_str
     return f"<input type='hidden' name='{key}' value='{escape(str(value))}'>"
