@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.applications.helpers.summaries import application_summary
 from lite_content.lite_exporter_frontend import strings
@@ -14,7 +14,7 @@ def withdraw_application_confirmation(application, pk):
         yes_label=strings.applications.ApplicationSummaryPage.Withdraw.YES_LABEL,
         no_label=strings.applications.ApplicationSummaryPage.Withdraw.NO_LABEL,
         submit_button_text=strings.applications.ApplicationSummaryPage.Withdraw.SUBMIT_BUTTON,
-        back_url=reverse_lazy("applications:application", kwargs={"pk": pk}),
+        back_url=reverse("applications:application", kwargs={"pk": pk}),
         side_by_side=True,
     )
 
@@ -28,6 +28,6 @@ def surrender_application_confirmation(application, pk):
         yes_label=strings.applications.ApplicationSummaryPage.Surrender.YES_LABEL,
         no_label=strings.applications.ApplicationSummaryPage.Surrender.NO_LABEL,
         submit_button_text=strings.applications.ApplicationSummaryPage.Surrender.SUBMIT_BUTTON,
-        back_url=reverse_lazy("applications:application", kwargs={"pk": pk}),
+        back_url=reverse("applications:application", kwargs={"pk": pk}),
         side_by_side=True,
     )

@@ -128,13 +128,13 @@ class ChangeFlagStatus(LoginRequiredMixin, TemplateView):
 
         update_flag(request, str(kwargs["pk"]), json={"status": request.POST["status"]})
 
-        return redirect(reverse_lazy("flags:flags"))
+        return redirect(reverse("flags:flags"))
 
 
 class ManageFlagRules(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
-            return redirect(reverse_lazy("cases:cases"))
+            return redirect(reverse("cases:cases"))
 
         params = {"page": int(request.GET.get("page", 1))}
         params = get_params_if_exist(request, ["only_my_team", "level", "include_deactivated"], params)
@@ -174,25 +174,25 @@ class ManageFlagRules(LoginRequiredMixin, TemplateView):
 class CreateFlagRules(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
-            return redirect(reverse_lazy("cases:cases"))
+            return redirect(reverse("cases:cases"))
 
         type = request.POST.get("level", None)
         self.forms = create_flagging_rules_formGroup(request=self.request, type=type)
         self.action = post_flagging_rules
-        self.success_url = reverse_lazy("flags:flagging_rules")
+        self.success_url = reverse("flags:flagging_rules")
 
 
 class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
-            return redirect(reverse_lazy("cases:cases"))
+            return redirect(reverse("cases:cases"))
 
         self.object_pk = kwargs["pk"]
         self.data = get_flagging_rule(request, self.object_pk)[0]["flag"]
         self.form = select_condition_and_flag(request, type=self.data["level"])
         self.form.buttons[0].value = "Edit flagging rule"
         self.action = put_flagging_rule
-        self.success_url = reverse_lazy("flags:flagging_rules")
+        self.success_url = reverse("flags:flagging_rules")
 
     @cached_property
     def get_countries(self):
@@ -235,7 +235,7 @@ class ChangeFlaggingRuleStatus(LoginRequiredMixin, SingleFormView):
 
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
-            return redirect(reverse_lazy("cases:cases"))
+            return redirect(reverse("cases:cases"))
 
         status = kwargs["status"]
         self.object_pk = kwargs["pk"]

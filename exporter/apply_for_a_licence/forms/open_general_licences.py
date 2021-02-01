@@ -1,4 +1,4 @@
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 from exporter.apply_for_a_licence.enums import OpenGeneralExportLicenceTypes
 from exporter.core.services import (
@@ -196,11 +196,9 @@ def open_general_licence_submit_success_page(request, **kwargs):
         includes="includes/open-general-licence.html",
         additional_context={"licence": open_general_licence},
         links={
-            OpenGeneralLicenceRegistration.Links.VIEW_OGLS_LINK: reverse_lazy(
-                "licences:list-open-and-standard-licences"
-            )
+            OpenGeneralLicenceRegistration.Links.VIEW_OGLS_LINK: reverse("licences:list-open-and-standard-licences")
             + "?licence_type=open_general_licences",
-            OpenGeneralLicenceRegistration.Links.APPLY_AGAIN: reverse_lazy("apply_for_a_licence:start"),
-            OpenGeneralLicenceRegistration.Links.RETURN_TO_DASHBOARD: reverse_lazy("core:home"),
+            OpenGeneralLicenceRegistration.Links.APPLY_AGAIN: reverse("apply_for_a_licence:start"),
+            OpenGeneralLicenceRegistration.Links.RETURN_TO_DASHBOARD: reverse("core:home"),
         },
     )

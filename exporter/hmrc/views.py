@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.hmrc import confirm_organisation_form, reference_name_form
@@ -51,7 +51,7 @@ class SelectAnOrganisation(LoginRequiredMixin, TemplateView):
                 # Return an error if the user hasn't selected an organisation
                 return self.get(request, show_error=True, *args, **kwargs)
         else:
-            return redirect(reverse_lazy("hmrc:reference_name", kwargs={"org_id": organisation}))
+            return redirect(reverse("hmrc:reference_name", kwargs={"org_id": organisation}))
 
 
 class ReferenceName(LoginRequiredMixin, TemplateView):
@@ -64,4 +64,4 @@ class ReferenceName(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return form_page(request, reference_name_form(), errors=response.get("errors"))
         else:
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": response["id"]}))
+            return redirect(reverse("applications:task_list", kwargs={"pk": response["id"]}))

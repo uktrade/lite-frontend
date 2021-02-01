@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.core.constants import SUPER_USER_ROLE_ID, DEFAULT_USER_ROLE_ID
 from lite_forms.views import SingleFormView
@@ -29,7 +29,7 @@ class AddRole(SingleFormView):
     def init(self, request, **kwargs):
         self.form = add_role(request, add=True)
         self.action = post_role
-        self.success_url = reverse_lazy("organisation:roles:roles")
+        self.success_url = reverse("organisation:roles:roles")
 
 
 class EditRole(SingleFormView):
@@ -38,4 +38,4 @@ class EditRole(SingleFormView):
         self.data = get_role(request, self.object_pk)
         self.form = add_role(request, add=False)
         self.action = put_role
-        self.success_url = reverse_lazy("organisation:roles:roles")
+        self.success_url = reverse("organisation:roles:roles")

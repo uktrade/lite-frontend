@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from caseworker.core.constants import Permission
@@ -96,17 +96,17 @@ class OrganisationView(TemplateView):
                 Tab(
                     "details",
                     OrganisationPage.Details.TITLE,
-                    reverse_lazy("organisations:organisation", kwargs={"pk": self.organisation_id}),
+                    reverse("organisations:organisation", kwargs={"pk": self.organisation_id}),
                 ),
                 Tab(
                     "members",
                     OrganisationPage.Members.TITLE,
-                    reverse_lazy("organisations:organisation_members", kwargs={"pk": self.organisation_id}),
+                    reverse("organisations:organisation_members", kwargs={"pk": self.organisation_id}),
                 ),
                 Tab(
                     "sites",
                     OrganisationPage.Sites.TITLE,
-                    reverse_lazy("organisations:organisation_sites", kwargs={"pk": self.organisation_id}),
+                    reverse("organisations:organisation_sites", kwargs={"pk": self.organisation_id}),
                 ),
             ],
             "activity": get_organisation_activity(request, self.organisation_id),
@@ -124,7 +124,7 @@ class OrganisationReview(LoginRequiredMixin, SingleFormView):
         self.object_pk = kwargs["pk"]
         self.action = put_organisation_status
         self.form = review_organisation_form(request, self.object_pk)
-        self.success_url = reverse_lazy("organisations:organisation", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("organisations:organisation", kwargs={"pk": self.object_pk})
 
 
 class OrganisationMembers(LoginRequiredMixin, OrganisationView):
@@ -166,7 +166,7 @@ class EditOrganisation(LoginRequiredMixin, SingleFormView):
         organisation = get_organisation(request, str(self.object_pk))
         self.data = organisation
         self.action = put_organisation
-        self.success_url = reverse_lazy("organisations:organisation", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("organisations:organisation", kwargs={"pk": self.object_pk})
 
     def get_form(self):
         user_permissions = get_user_permissions(self.request)

@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from core.builtins.custom_tags import default_na
 from exporter.core.helpers import convert_control_list_entries
@@ -53,9 +53,9 @@ def get_sporting_shotgun_form_title(product_type):
 
 def return_to_good_summary(kwargs, application_id, object_pk):
     if "good_pk" in kwargs:
-        return reverse_lazy("applications:add_good_summary", kwargs={"pk": application_id, "good_pk": object_pk})
+        return reverse("applications:add_good_summary", kwargs={"pk": application_id, "good_pk": object_pk})
     else:
-        return reverse_lazy("goods:good", kwargs={"pk": object_pk})
+        return reverse("goods:good", kwargs={"pk": object_pk})
 
 
 def is_firearms_act_status_changed(initial, updated):

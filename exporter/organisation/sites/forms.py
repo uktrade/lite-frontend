@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.core.constants import Permissions
 from exporter.core.services import get_countries, get_organisation_users
@@ -53,7 +53,7 @@ def new_site_forms(request):
                     )
                 ],
                 default_button_name=generic.CONTINUE,
-                back_link=BackLink(AddSiteForm.BACK_LINK, reverse_lazy("organisation:sites:sites")),
+                back_link=BackLink(AddSiteForm.BACK_LINK, reverse("organisation:sites:sites")),
             ),
             Form(
                 caption="Step 2 of 4",
@@ -68,7 +68,7 @@ def new_site_forms(request):
                         HeadingStyle.M,
                     ),
                     *conditional(
-                        in_uk, address_questions(None), foreign_address_questions(get_countries(request, True, ["GB"])),
+                        in_uk, address_questions(None), foreign_address_questions(get_countries(request, True, ["GB"]))
                     ),
                     HiddenField("validate_only", True),
                 ],
@@ -78,13 +78,13 @@ def new_site_forms(request):
                 sites,
                 Form(
                     title=AddSiteForm.Postcode.TITLE,
-                    description=AddSiteForm.Postcode.DESCRIPTION.format(", ".join(site["name"] for site in sites)),
+                    description=AddSiteForm.Postcode.DESCRIPTION.format(", ".join((site["name"] for site in sites))),
                     questions=[
                         HiddenField(name="are_you_sure", value=None),
                         RadioButtons(
                             name="are_you_sure",
                             title=AddSiteForm.Postcode.CONTROL_TITLE,
-                            options=[Option(True, AddSiteForm.Postcode.YES), Option(False, AddSiteForm.Postcode.NO),],
+                            options=[Option(True, AddSiteForm.Postcode.YES), Option(False, AddSiteForm.Postcode.NO)],
                         ),
                     ],
                     default_button_name=generic.CONTINUE,
@@ -118,10 +118,9 @@ def new_site_forms(request):
 def edit_site_name_form(site):
     return Form(
         title=strings.sites.SitesPage.EDIT + site["name"],
-        questions=[TextInput(title="Name", name="name"),],
+        questions=[TextInput(title="Name", name="name")],
         back_link=BackLink(
-            strings.sites.SitesPage.BACK_TO + site["name"],
-            reverse_lazy("organisation:sites:site", kwargs={"pk": site["id"]}),
+            strings.sites.SitesPage.BACK_TO + site["name"], reverse("organisation:sites:site", kwargs={"pk": site["id"]})
         ),
     )
 
@@ -156,7 +155,7 @@ def site_records_location(request, in_uk=True, is_editing=False):
                                     ),
                                     Label(
                                         'If the site isn\'t listed, you need to <a id="site-dashboard" href="'
-                                        + str(reverse_lazy("organisation:sites:sites"))
+                                        + str(reverse("organisation:sites:sites"))
                                         + '" class="govuk-link govuk-link--no-visited-state">'
                                         + "add the site"
                                         + "</a> "
@@ -165,13 +164,13 @@ def site_records_location(request, in_uk=True, is_editing=False):
                                 ],
                             ),
                         ],
-                    ),
+                    )
                 ],
                 [
                     HiddenField("site_records_stored_here", False),
                     Label(
                         'If the site isn\'t listed, you need to <a id="site-dashboard" href="'
-                        + str(reverse_lazy("organisation:sites:sites"))
+                        + str(reverse("organisation:sites:sites"))
                         + '" class="govuk-link govuk-link--no-visited-state">'
                         + "add the site"
                         + "</a> "

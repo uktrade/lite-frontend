@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
 from exporter.core.constants import Permissions
@@ -33,10 +33,10 @@ class OrganisationView(TemplateView):
             "can_administer_roles": can_administer_roles,
             "user_permissions": user_permissions,
             "tabs": [
-                Tab("members", Tabs.MEMBERS, reverse_lazy("organisation:members:members")),
-                conditional(can_administer_sites, Tab("sites", Tabs.SITES, reverse_lazy("organisation:sites:sites"))),
-                conditional(can_administer_roles, Tab("roles", Tabs.ROLES, reverse_lazy("organisation:roles:roles"))),
-                Tab("details", Tabs.DETAILS, reverse_lazy("organisation:details")),
+                Tab("members", Tabs.MEMBERS, reverse("organisation:members:members")),
+                conditional(can_administer_sites, Tab("sites", Tabs.SITES, reverse("organisation:sites:sites"))),
+                conditional(can_administer_roles, Tab("roles", Tabs.ROLES, reverse("organisation:roles:roles"))),
+                Tab("details", Tabs.DETAILS, reverse("organisation:details")),
             ],
         }
         context.update(self.get_additional_context())

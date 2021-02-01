@@ -4,7 +4,7 @@ from http import HTTPStatus
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from caseworker.cases.constants import CaseType
@@ -192,7 +192,7 @@ class FinaliseGoodsCountries(LoginRequiredMixin, SingleFormView):
         }
         self.form = finalise_goods_countries_form(kwargs["pk"], kwargs["queue_pk"])
         self.action = post_good_countries_decisions
-        self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
+        self.success_url = reverse("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
 
 
 class Finalise(LoginRequiredMixin, TemplateView):
@@ -266,9 +266,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
             return form_page(request, form, data=form_data, errors=res.json()["errors"], extra_data={"case": case})
 
-        return redirect(
-            reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case["id"]},)
-        )
+        return redirect(reverse("cases:finalise_documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case["id"]}))
 
 
 class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
@@ -286,4 +284,4 @@ class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
         }
         self.action = grant_licence
         self.success_message = GenerateGoodsDecisionForm.SUCCESS_MESSAGE
-        self.success_url = reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
+        self.success_url = reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})

@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView, RedirectView
 
 from caseworker.core.constants import Permission
@@ -27,7 +27,7 @@ class TeamsList(LoginRequiredMixin, TemplateView):
 class Team(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self):
         user, _ = get_gov_user(self.request)
-        return reverse_lazy("teams:team", kwargs={"pk": user["user"]["team"]["id"]})
+        return reverse("teams:team", kwargs={"pk": user["user"]["team"]["id"]})
 
 
 class TeamDetail(LoginRequiredMixin, TemplateView):

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
@@ -255,10 +255,10 @@ def add_goods_questions(control_list_entries, application_pk=None):
         questions=[
             TextInput(
                 title="Name",
-                description=("Give your product a name so it is easier to find in your product list"),
+                description="Give your product a name so it is easier to find in your product list",
                 name="name",
             ),
-            TextArea(title="Description", name="description", extras={"max_length": 280}, rows=5, optional=True,),
+            TextArea(title="Description", name="description", extras={"max_length": 280}, rows=5, optional=True),
             TextInput(title="Part number", name="part_number", optional=True),
             RadioButtons(
                 title="Is the product on the control list?",
@@ -275,11 +275,11 @@ def add_goods_questions(control_list_entries, application_pk=None):
         ],
         back_link=conditional(
             application_pk,
-            BackLink("Back", reverse_lazy("applications:goods", kwargs={"pk": application_pk})),
+            BackLink("Back", reverse("applications:goods", kwargs={"pk": application_pk})),
             Breadcrumbs(
                 [
-                    BackLink(generic.SERVICE_NAME, reverse_lazy("core:home")),
-                    BackLink(GoodsList.TITLE, reverse_lazy("goods:goods")),
+                    BackLink(generic.SERVICE_NAME, reverse("core:home")),
+                    BackLink(GoodsList.TITLE, reverse("goods:goods")),
                     BackLink(GoodsList.CREATE_GOOD),
                 ]
             ),
@@ -301,7 +301,7 @@ def edit_grading_form(request, good_id):
                 ],
             )
         ],
-        back_link=BackLink(CreateGoodForm.BACK_BUTTON, reverse_lazy("goods:good", kwargs={"pk": good_id})),
+        back_link=BackLink(CreateGoodForm.BACK_BUTTON, reverse("goods:good", kwargs={"pk": good_id})),
     )
 
 
@@ -394,15 +394,11 @@ def edit_good_detail_form(request, good_id):
         questions=[
             TextInput(
                 title="Name",
-                description=("Give your product a name so it is easier to find in your product list"),
+                description="Give your product a name so it is easier to find in your product list",
                 name="name",
             ),
             TextArea(
-                title=EditGoodForm.Description.TITLE,
-                name="description",
-                rows=5,
-                optional=True,
-                extras={"max_length": 280},
+                title=EditGoodForm.Description.TITLE, name="description", rows=5, optional=True, extras={"max_length": 280}
             ),
             TextInput(title=EditGoodForm.PartNumber.TITLE, name="part_number", optional=True),
             RadioButtons(
@@ -418,14 +414,14 @@ def edit_good_detail_form(request, good_id):
                                 control_list_entries=get_control_list_entries(request, convert_to_options=True),
                                 title=EditGoodForm.ControlListEntry.TITLE,
                                 description=EditGoodForm.ControlListEntry.DESCRIPTION,
-                            ),
+                            )
                         ],
                     ),
                     Option(key=False, value=EditGoodForm.IsControlled.NO),
                 ],
             ),
         ],
-        back_link=BackLink(CreateGoodForm.BACK_BUTTON, reverse_lazy("goods:good", kwargs={"pk": good_id})),
+        back_link=BackLink(CreateGoodForm.BACK_BUTTON, reverse("goods:good", kwargs={"pk": good_id})),
     )
 
 
@@ -435,7 +431,7 @@ def document_grading_form(request, good_id, back_url=None):
     if back_url:
         link = back_url
     else:
-        link = reverse_lazy("goods:good", kwargs={"pk": good_id})
+        link = reverse("goods:good", kwargs={"pk": good_id})
 
     return Form(
         title=DocumentSensitivityForm.TITLE,
@@ -529,7 +525,7 @@ def delete_good_form(good):
                 value=EditGoodForm.DeleteConfirmationForm.NO,
                 action="",
                 style=ButtonStyle.SECONDARY,
-                link=reverse_lazy("goods:good", kwargs={"pk": good["id"]}),
+                link=reverse("goods:good", kwargs={"pk": good["id"]}),
             ),
         ],
     )

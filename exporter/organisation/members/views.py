@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from core.helpers import convert_dict_to_query_params
@@ -44,7 +44,7 @@ class Members(OrganisationView):
 class AddUser(SingleFormView):
     def init(self, request, **kwargs):
         self.form = add_user_form(request)
-        self.success_url = reverse_lazy("organisation:members:members")
+        self.success_url = reverse("organisation:members:members")
         self.action = post_users
 
 
@@ -74,7 +74,7 @@ class ViewUser(TemplateView):
 class ViewProfile(TemplateView):
     def get(self, request, **kwargs):
         pk = request.session["lite_api_user_id"]
-        return redirect(reverse_lazy("organisation:members:user", kwargs={"pk": pk}))
+        return redirect(reverse("organisation:members:user", kwargs={"pk": pk}))
 
 
 class EditUser(SingleFormView):
@@ -85,7 +85,7 @@ class EditUser(SingleFormView):
         self.form = edit_user_form(request, self.object_pk, can_edit_role)
         self.data = user
         self.action = put_organisation_user
-        self.success_url = reverse_lazy("organisation:members:user", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("organisation:members:user", kwargs={"pk": self.object_pk})
 
 
 class ChangeUserStatus(TemplateView):
@@ -122,7 +122,7 @@ class ChangeUserStatus(TemplateView):
 
         put_organisation_user(request, str(kwargs["pk"]), request.POST)
 
-        return redirect(reverse_lazy("organisation:members:user", kwargs={"pk": kwargs["pk"]}))
+        return redirect(reverse("organisation:members:user", kwargs={"pk": kwargs["pk"]}))
 
 
 class AssignSites(SingleFormView):
@@ -131,4 +131,4 @@ class AssignSites(SingleFormView):
         self.data = get_user(request, self.object_pk)["user"]
         self.form = assign_sites(request)
         self.action = put_assign_sites
-        self.success_url = reverse_lazy("organisation:members:user", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("organisation:members:user", kwargs={"pk": self.object_pk})

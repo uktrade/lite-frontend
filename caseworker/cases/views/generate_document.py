@@ -2,7 +2,7 @@ from http import HTTPStatus
 from urllib.parse import quote
 
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from caseworker.cases.forms.generate_document import (
@@ -72,9 +72,7 @@ class GenerateDocument(MultiFormView):
             )
 
     def init(self, request, **kwargs):
-        self.back_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "documents"}
-        )
+        self.back_url = reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "documents"})
         self.contacts = get_case_additional_contacts(request, kwargs["pk"])
         self.applicant = get_case_applicant(request, kwargs["pk"])
         self.template = request.POST.get(TEMPLATE)
@@ -100,7 +98,7 @@ class GenerateDocument(MultiFormView):
 
 class GenerateDecisionDocument(LoginRequiredMixin, GenerateDocument):
     def get_forms(self):
-        self.back_url = reverse_lazy(
+        self.back_url = reverse(
             "cases:finalise_documents", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]}
         )
         return FormGroup(
@@ -163,9 +161,7 @@ class CreateDocument(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
         else:
-            return redirect(
-                reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": str(pk), "tab": "documents"})
-            )
+            return redirect(reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": str(pk), "tab": "documents"}))
 
 
 class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
@@ -179,4 +175,4 @@ class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
         else:
-            return redirect(reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))
+            return redirect(reverse("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))

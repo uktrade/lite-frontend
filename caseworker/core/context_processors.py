@@ -1,6 +1,6 @@
 import os
 
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions, get_menu_notifications
@@ -43,23 +43,23 @@ def lite_menu(request):
         notification_data = notifications["notifications"]
         has_notifications = notifications["has_notifications"]
         pages = [
-            {"title": "Cases", "url": reverse_lazy("core:index"), "icon": "menu/cases"},
+            {"title": "Cases", "url": reverse("core:index"), "icon": "menu/cases"},
             {
                 "title": OrganisationsPage.TITLE,
-                "url": reverse_lazy("organisations:organisations"),
+                "url": reverse("organisations:organisations"),
                 "icon": "menu/businesses",
                 "notifications": notification_data.get("organisations"),
             },
-            {"title": TeamsPage.TITLE, "url": reverse_lazy("teams:teams"), "icon": "menu/teams"},
-            {"title": "My Team", "url": reverse_lazy("teams:team"), "icon": "menu/teams"},
-            {"title": QueuesList.TITLE, "url": reverse_lazy("queues:manage"), "icon": "menu/queues"},
-            {"title": UsersPage.TITLE, "url": reverse_lazy("users:users"), "icon": "menu/users"},
-            {"title": FlagsList.TITLE, "url": reverse_lazy("flags:flags"), "icon": "menu/flags"},
+            {"title": TeamsPage.TITLE, "url": reverse("teams:teams"), "icon": "menu/teams"},
+            {"title": "My Team", "url": reverse("teams:team"), "icon": "menu/teams"},
+            {"title": QueuesList.TITLE, "url": reverse("queues:manage"), "icon": "menu/queues"},
+            {"title": UsersPage.TITLE, "url": reverse("users:users"), "icon": "menu/users"},
+            {"title": FlagsList.TITLE, "url": reverse("flags:flags"), "icon": "menu/flags"},
             conditional(
                 Permission.MAINTAIN_OGL.value in permissions,
                 {
                     "title": open_general_licences.List.TITLE,
-                    "url": reverse_lazy("open_general_licences:open_general_licences"),
+                    "url": reverse("open_general_licences:open_general_licences"),
                     "icon": "menu/open-general-licences",
                 },
             ),
@@ -67,20 +67,20 @@ def lite_menu(request):
                 Permission.CONFIGURE_TEMPLATES.value in permissions,
                 {
                     "title": strings.DOCUMENT_TEMPLATES_TITLE,
-                    "url": reverse_lazy("letter_templates:letter_templates"),
+                    "url": reverse("letter_templates:letter_templates"),
                     "icon": "menu/letter-templates",
                 },
             ),
             conditional(
                 Permission.MANAGE_FLAGGING_RULES.value in permissions,
-                {"title": "Flagging rules", "url": reverse_lazy("flags:flagging_rules"), "icon": "menu/flags"},
+                {"title": "Flagging rules", "url": reverse("flags:flagging_rules"), "icon": "menu/flags"},
             ),
             conditional(
                 Permission.MANAGE_TEAM_ROUTING_RULES.value in permissions
                 or Permission.MANAGE_ALL_ROUTING_RULES.value in permissions,
-                {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/routing-rules"},
+                {"title": "Routing rules", "url": reverse("routing_rules:list"), "icon": "menu/routing-rules"},
             ),
-            {"title": "Denial records", "url": reverse_lazy("external_data:denials-upload"), "icon": "menu/cases"},
+            {"title": "Denial records", "url": reverse("external_data:denials-upload"), "icon": "menu/cases"},
         ]
     else:
         pages = []

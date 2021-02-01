@@ -2,7 +2,7 @@ from operator import itemgetter
 
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.countries import (
@@ -51,7 +51,7 @@ def get_locations_page(request, application_id, **kwargs):
     application = get_application(request, application_id)
 
     if not application["goods_locations"]:
-        return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": application_id}))
+        return redirect(reverse("applications:edit_location", kwargs={"pk": application_id}))
 
     context = {
         "application": application,
@@ -79,22 +79,22 @@ class EditGoodsLocation(LoginRequiredMixin, SingleFormView):
 
         if application.status == "submitted":
             if application["goods_locations"]:
-                return reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
+                return reverse("applications:location", kwargs={"pk": self.object_pk})
             elif application["sites"]:
-                return reverse_lazy("applications:existing_sites", kwargs={"pk": self.object_pk})
+                return reverse("applications:existing_sites", kwargs={"pk": self.object_pk})
 
     def get_success_url(self):
         choice = self.get_validated_data()["choice"]
         if choice == Locations.EXTERNAL:
             return (
-                reverse_lazy("applications:select_add_external_location", kwargs={"pk": self.object_pk})
+                reverse("applications:select_add_external_location", kwargs={"pk": self.object_pk})
                 + "?return_to_link="
                 + self.request.get_full_path()
             )
         elif choice == Locations.ORGANISATION:
-            return reverse_lazy("applications:existing_sites", kwargs={"pk": self.object_pk})
+            return reverse("applications:existing_sites", kwargs={"pk": self.object_pk})
         elif choice == Locations.DEPARTED:
-            return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+            return reverse("applications:task_list", kwargs={"pk": self.object_pk})
 
 
 class SelectAddExternalLocation(LoginRequiredMixin, SingleFormView):
@@ -107,12 +107,12 @@ class SelectAddExternalLocation(LoginRequiredMixin, SingleFormView):
         choice = self.get_validated_data()["choice"]
         if choice == "new":
             return (
-                reverse_lazy("applications:add_external_location", kwargs={"pk": self.object_pk})
+                reverse("applications:add_external_location", kwargs={"pk": self.object_pk})
                 + "?return_to_link="
                 + self.request.get_full_path()
             )
         else:
-            return reverse_lazy("applications:add_preexisting_external_location", kwargs={"pk": self.object_pk})
+            return reverse("applications:add_preexisting_external_location", kwargs={"pk": self.object_pk})
 
 
 class ExistingSites(LoginRequiredMixin, SingleFormView):
@@ -126,7 +126,7 @@ class ExistingSites(LoginRequiredMixin, SingleFormView):
         self.data, _ = get_sites_on_draft(request, self.object_pk)
         self.form = sites_form(request, application.type_reference)
         self.action = post_sites_on_draft
-        self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:location", kwargs={"pk": self.object_pk})
 
 
 class AddExternalLocation(LoginRequiredMixin, MultiFormView):
@@ -136,7 +136,7 @@ class AddExternalLocation(LoginRequiredMixin, MultiFormView):
         location_type = request.POST.get("location_type", None)
         self.forms = new_external_location_form(request, application.type_reference, location_type)
         self.action = post_external_locations
-        self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:location", kwargs={"pk": self.object_pk})
 
 
 class RemoveExternalLocation(LoginRequiredMixin, TemplateView):
@@ -163,7 +163,7 @@ class AddExistingExternalLocation(LoginRequiredMixin, SingleFormView):
         self.data, _ = get_external_locations_on_draft(request, self.object_pk)
         self.form = external_locations_form(request, application.type_reference)
         self.action = post_external_locations_on_draft
-        self.success_url = reverse_lazy("applications:location", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:location", kwargs={"pk": self.object_pk})
 
 
 class Countries(LoginRequiredMixin, SingleFormView):
@@ -183,7 +183,7 @@ class Countries(LoginRequiredMixin, SingleFormView):
 
         # Only military OIELs and Open Trade Control Licences have contract types per destination
         if not (is_application_oiel_of_type("military", application) or application.type_reference == CaseTypes.OICL):
-            return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+            return reverse("applications:task_list", kwargs={"pk": self.object_pk})
 
         countries_without_contract_type = [
             entry["country_id"]
@@ -192,9 +192,9 @@ class Countries(LoginRequiredMixin, SingleFormView):
         ]
 
         if not countries_without_contract_type:
-            return reverse_lazy("applications:countries_summary", kwargs={"pk": self.object_pk})
+            return reverse("applications:countries_summary", kwargs={"pk": self.object_pk})
         else:
-            return reverse_lazy("applications:choose_contract_type", kwargs={"pk": self.object_pk})
+            return reverse("applications:choose_contract_type", kwargs={"pk": self.object_pk})
 
 
 class ChooseContractType(LoginRequiredMixin, SingleFormView):
@@ -212,18 +212,17 @@ class ChooseContractType(LoginRequiredMixin, SingleFormView):
         ]
 
         if choice == ContractTypes.Variables.ALL_COUNTRIES_CHOSEN:
-            return reverse_lazy(
+            return reverse(
                 "applications:add_contract_type",
                 kwargs={"pk": self.object_pk, "country": ContractTypes.Variables.ALL_COUNTRIES_CHOSEN},
             )
         if countries_without_contract_type:
-            return reverse_lazy(
-                "applications:add_contract_type",
-                kwargs={"pk": self.object_pk, "country": countries_without_contract_type[0]},
+            return reverse(
+                "applications:add_contract_type", kwargs={"pk": self.object_pk, "country": countries_without_contract_type[0]}
             )
         else:
             # Redirect to the summary page if a country has been removed
-            return reverse_lazy("applications:countries_summary", kwargs={"pk": self.object_pk})
+            return reverse("applications:countries_summary", kwargs={"pk": self.object_pk})
 
 
 class AddContractTypes(LoginRequiredMixin, SingleFormView):
@@ -275,11 +274,9 @@ class AddContractTypes(LoginRequiredMixin, SingleFormView):
                     next_country = country_entry["country_id"]
                     break
         if next_country:
-            return reverse_lazy(
-                "applications:add_contract_type", kwargs={"pk": self.object_pk, "country": next_country}
-            )
+            return reverse("applications:add_contract_type", kwargs={"pk": self.object_pk, "country": next_country})
         else:
-            return reverse_lazy("applications:countries_summary", kwargs={"pk": self.object_pk})
+            return reverse("applications:countries_summary", kwargs={"pk": self.object_pk})
 
 
 class CountriesAndContractTypesSummary(LoginRequiredMixin, TemplateView):

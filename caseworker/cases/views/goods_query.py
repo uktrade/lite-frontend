@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 
 from caseworker.cases.forms.respond_to_good_query import respond_to_clc_query_form, respond_to_grading_query_form
 from caseworker.cases.services import get_case, put_goods_query_clc, put_goods_query_pv_grading
@@ -22,7 +22,7 @@ class RespondCLCQuery(LoginRequiredMixin, SingleFormView):
         self.success_message = CLCReviewGoods.SUCCESS_MESSAGE
 
         if not has_permission(request, Permission.REVIEW_GOODS):
-            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))
+            return redirect(reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))
 
 
 class RespondPVGradingQuery(LoginRequiredMixin, SingleFormView):
@@ -36,4 +36,4 @@ class RespondPVGradingQuery(LoginRequiredMixin, SingleFormView):
         self.success_message = PVGradingForm.SUCCESS_MESSAGE
 
         if not has_permission(request, Permission.RESPOND_PV_GRADING):
-            return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))
+            return redirect(reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))

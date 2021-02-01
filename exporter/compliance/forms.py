@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from lite_content.lite_exporter_frontend.compliance import OpenReturnsForm, OpenReturnsHelpPage
 from lite_forms.components import FormGroup, Form, Select, Option, FileUpload, Label, DetailComponent, BackLink, Custom
@@ -18,12 +18,10 @@ def open_licence_return_form_group():
                 title=OpenReturnsHelpPage.TITLE,
                 questions=[
                     Label(OpenReturnsHelpPage.DESCRIPTION),
-                    DetailComponent(
-                        OpenReturnsHelpPage.FORMATTING_HELP_LINK, OpenReturnsHelpPage.FORMATTING_HELP_DETAILS
-                    ),
+                    DetailComponent(OpenReturnsHelpPage.FORMATTING_HELP_LINK, OpenReturnsHelpPage.FORMATTING_HELP_DETAILS),
                 ],
                 default_button_name=OpenReturnsHelpPage.BUTTON,
-                back_link=BackLink(OpenReturnsHelpPage.BACK, reverse_lazy("core:home")),
+                back_link=BackLink(OpenReturnsHelpPage.BACK, reverse("core:home")),
             ),
             Form(
                 title=OpenReturnsForm.Year.TITLE,

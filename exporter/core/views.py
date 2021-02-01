@@ -3,7 +3,7 @@ from json import JSONDecodeError
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.services import has_existing_applications_and_licences_and_nlrs
@@ -90,7 +90,7 @@ class PickOrganisation(LoginRequiredMixin, TemplateView):
         organisation = get_organisation(request, request.POST["organisation"])
 
         if "errors" in organisation:
-            return redirect(reverse_lazy("core:register_an_organisation_confirm") + "?show_back_link=True")
+            return redirect(reverse("core:register_an_organisation_confirm") + "?show_back_link=True")
 
         request.session["organisation_name"] = organisation["name"]
 
@@ -185,16 +185,16 @@ class RegisterAnOrganisationConfirmation(TemplateView):
 
         return success_page(
             request=request,
-            title=f"You've successfully registered: {organisation_name}",
-            secondary_title="We're currently processing your application.",
+            title=f"You"ve successfully registered: {organisation_name}",
+            secondary_title="We"re currently processing your application.",
             description="",
             what_happens_next=[
-                "Export Control Joint Unit (ECJU) is processing your request for an export control account. "
-                "We'll send you an email when we've made a final decision."
+                "Export Control Joint Unit (ECJU) is processing your request for an export control account. We"ll send you an"
+                " email when we"ve made a final decision."
             ],
             links={},
             back_link=conditional(
-                request.GET.get("show_back_link", False), BackLink(generic.BACK, reverse_lazy("core:pick_organisation"))
+                request.GET.get("show_back_link", False), BackLink(generic.BACK, reverse("core:pick_organisation"))
             ),
             animated=True,
             additional_context={"user_in_limbo": True},

@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from lite_content.lite_internal_frontend.users import AddUserForm, EditUserForm
 from lite_forms.components import Form, Select, TextInput, BackLink
@@ -32,7 +32,7 @@ def add_user_form(request):
                 options=get_queues(request, include_system=True, convert_to_options=True),
             ),
         ],
-        back_link=BackLink(AddUserForm.BACK_LINK, reverse_lazy("users:users")),
+        back_link=BackLink(AddUserForm.BACK_LINK, reverse("users:users")),
         javascript_imports={"/javascripts/filter-default-queue-list.js"},
     )
 
@@ -66,7 +66,7 @@ def edit_user_form(request, user, can_edit_role: bool):
         ],
         back_link=BackLink(
             EditUserForm.BACK_LINK.format(user["first_name"], user["last_name"]),
-            reverse_lazy("users:user", kwargs={"pk": user["id"]}),
+            reverse("users:user", kwargs={"pk": user["id"]}),
         ),
         default_button_name=EditUserForm.SUBMIT_BUTTON,
         javascript_imports={"/javascripts/filter-default-queue-list.js"},

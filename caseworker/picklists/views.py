@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import str_date
@@ -103,7 +103,7 @@ class AddPicklistItem(LoginRequiredMixin, SingleFormView):
         denial_reasons = get_denial_reasons(request, False)
 
         self.context = {**countries, "flags": flags, "denial_reasons": denial_reasons}
-        self.success_url = reverse_lazy("picklists:picklists") + "?type=" + self.request.GET.get("type")
+        self.success_url = reverse("picklists:picklists") + "?type=" + self.request.GET.get("type")
 
     def get_form(self):
         if self.request.GET.get("type") == "letter_paragraph":
@@ -118,7 +118,7 @@ class EditPicklistItem(LoginRequiredMixin, SingleFormView):
         self.object = get_picklist_item(request, self.object_pk)
         self.data = self.object
         self.action = put_picklist_item
-        self.success_url = reverse_lazy("picklists:picklist_item", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("picklists:picklist_item", kwargs={"pk": self.object_pk})
         self.success_message = EditPicklistItemForm.SUCCESS_MESSAGE
         countries, _ = get_countries(request)
         flags = get_flags(request, status=FlagStatus.ACTIVE.value)

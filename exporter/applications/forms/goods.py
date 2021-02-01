@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.core.constants import EXHIBITION, PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.core.services import get_units, get_item_types
@@ -37,7 +37,7 @@ def exhibition_item_type(request, good_id, application_id):
         ],
         back_link=BackLink(
             AddGoodToApplicationForm.Exhibition.BACK_LINK,
-            reverse_lazy("applications:preexisting_good", kwargs={"pk": application_id}),
+            reverse("applications:preexisting_good", kwargs={"pk": application_id}),
         ),
     )
 
@@ -108,8 +108,7 @@ def unit_quantity_value(request, good, sub_case_type, application_id):
             description=AddGoodToApplicationForm.DESCRIPTION,
             questions=questions,
             back_link=BackLink(
-                strings.BACK_TO_APPLICATION,
-                reverse_lazy("applications:preexisting_good", kwargs={"pk": application_id}),
+                strings.BACK_TO_APPLICATION, reverse("applications:preexisting_good", kwargs={"pk": application_id})
             ),
             javascript_imports={"/javascripts/add-good.js"},
         )

@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.applications.components import back_to_task_list
 from exporter.applications.services import put_application, get_application
@@ -25,6 +25,6 @@ class SetClearanceLevel(LoginRequiredMixin, SingleFormView):
         pv_grading_options = get_pv_gradings(request, convert_to_options=True)
         self.form = clearance_level_form(application_id=kwargs["pk"], options=pv_grading_options)
         self.action = put_application
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:task_list", kwargs={"pk": self.object_pk})
         application = get_application(request, self.object_pk)
         self.data = {"clearance_level": application["clearance_level"]}

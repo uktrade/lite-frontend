@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.services import post_applications, post_open_general_licences_applications
@@ -29,7 +29,7 @@ class LicenceType(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         licence_type = self.get_validated_data()["licence_type"]
-        return reverse_lazy(f"apply_for_a_licence:{licence_type}_questions")
+        return reverse(f"apply_for_a_licence:{licence_type}_questions")
 
 
 class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
@@ -50,10 +50,10 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
 
     def get_success_url(self):
         if self.request.POST.get("application_type") == CaseTypes.OGEL:
-            return reverse_lazy("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGEL})
+            return reverse("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGEL})
         else:
             pk = self.get_validated_data()["id"]
-            return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+            return reverse("applications:task_list", kwargs={"pk": pk})
 
 
 class TradeControlLicenceQuestions(LoginRequiredMixin, MultiFormView):
@@ -63,10 +63,10 @@ class TradeControlLicenceQuestions(LoginRequiredMixin, MultiFormView):
 
     def get_success_url(self):
         if self.request.POST.get("application_type") == CaseTypes.OGTCL:
-            return reverse_lazy("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGTCL})
+            return reverse("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGTCL})
         else:
             pk = self.get_validated_data()["id"]
-            return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+            return reverse("applications:task_list", kwargs={"pk": pk})
 
 
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
@@ -77,10 +77,10 @@ class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
 
     def get_success_url(self):
         if self.request.POST.get("application_type") == CaseTypes.OGTL:
-            return reverse_lazy("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGTL})
+            return reverse("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGTL})
         else:
             pk = self.get_validated_data()["id"]
-            return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+            return reverse("applications:task_list", kwargs={"pk": pk})
 
 
 class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
@@ -93,7 +93,7 @@ class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
 
     def get_success_url(self):
         pk = self.get_validated_data()["id"]
-        return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+        return reverse("applications:task_list", kwargs={"pk": pk})
 
 
 class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):

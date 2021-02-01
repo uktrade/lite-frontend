@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -199,7 +199,7 @@ class ImDoneView(SingleFormView):
         )
         self.form = done_with_case_form(request, kwargs["queue_pk"], self.object_pk, has_review_date)
         self.action = put_unassign_queues
-        self.success_url = reverse_lazy("queues:cases", kwargs={"queue_pk": kwargs["queue_pk"]})
+        self.success_url = reverse("queues:cases", kwargs={"queue_pk": kwargs["queue_pk"]})
         self.success_message = DoneWithCaseOnQueueForm.SUCCESS_MESSAGE.format(case.reference_code)
 
 
@@ -226,7 +226,7 @@ class ChangeStatus(SingleFormView):
 
     def get_success_url(self):
         messages.success(self.request, cases.ChangeStatusPage.SUCCESS_MESSAGE)
-        return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+        return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
 
 class MoveCase(SingleFormView):
@@ -238,9 +238,7 @@ class MoveCase(SingleFormView):
         self.action = put_case_queues
         self.context = {"case": case}
         self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
-        self.success_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
-        )
+        self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
 
 class AddAnAdditionalContact(SingleFormView):
@@ -354,9 +352,8 @@ class UserWorkQueue(SingleFormView):
 
     def get_success_url(self):
         user_id = self.get_validated_data().get("user").get("id")
-        return reverse_lazy(
-            "cases:assign_user_queue",
-            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "user_pk": user_id},
+        return reverse(
+            "cases:assign_user_queue", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "user_pk": user_id}
         )
 
 
@@ -370,7 +367,7 @@ class UserTeamQueue(SingleFormView):
         self.context = {"case": case}
 
     def get_success_url(self):
-        return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+        return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
 
 class RerunRoutingRules(SingleFormView):
@@ -380,9 +377,7 @@ class RerunRoutingRules(SingleFormView):
         case = get_case(request, self.object_pk)
         self.context = {"case": case}
         self.form = rerun_routing_rules_confirmation_form()
-        self.success_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
-        )
+        self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
@@ -407,9 +402,7 @@ class ReissueOGL(SingleFormView):
         case = get_case(request, self.object_pk)
         self.context = {"case": case}
         self.form = reissue_ogl_confirmation_form(self.object_pk, self.kwargs["queue_pk"])
-        self.success_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
-        )
+        self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)

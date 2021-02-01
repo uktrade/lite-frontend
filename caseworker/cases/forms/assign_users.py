@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 from caseworker.core.constants import UserStatuses
 from lite_content.lite_internal_frontend import strings
@@ -92,10 +92,9 @@ def users_team_queues(request, queue_pk, case_pk, user_pk):
             HiddenField("user_pk", user_pk),
             HiddenField("case_pk", case_pk),
             DetailComponent(
-                title=cases.Manage.AssignUserAndQueue.NOTE,
-                components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+                title=cases.Manage.AssignUserAndQueue.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"])]
             ),
         ],
-        back_link=BackLink(url=reverse_lazy("cases:assign_user", kwargs={"queue_pk": queue_pk, "pk": case_pk})),
+        back_link=BackLink(url=reverse("cases:assign_user", kwargs={"queue_pk": queue_pk, "pk": case_pk})),
         container="case",
     )

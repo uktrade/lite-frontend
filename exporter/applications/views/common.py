@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.application_actions import (
@@ -91,7 +91,7 @@ class DeleteApplication(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         if self.get_validated_data().get("status"):
-            return reverse_lazy("applications:applications") + "?submitted=False"
+            return reverse("applications:applications") + "?submitted=False"
         else:
             return self.request.GET.get("return_to")
 
@@ -102,7 +102,7 @@ class ApplicationEditType(LoginRequiredMixin, TemplateView):
         data = get_application(request, application_id)
 
         if data.get("status") and data.get("status").get("key") == APPLICANT_EDITING:
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
+            return redirect(reverse("applications:task_list", kwargs={"pk": application_id}))
 
         return form_page(request, edit_type_form(application_id))
 
@@ -123,7 +123,7 @@ class ApplicationEditType(LoginRequiredMixin, TemplateView):
                 errors={"edit-type": ["Select the type of edit you need to make"]},
             )
 
-        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": str(kwargs["pk"])}))
+        return redirect(reverse("applications:task_list", kwargs={"pk": str(kwargs["pk"])}))
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
@@ -142,11 +142,11 @@ class ApplicationTaskList(LoginRequiredMixin, TemplateView):
 
         if application.sub_type not in [NotificationType.EUA, NotificationType.GOODS]:
             # All other application types direct to the summary page
-            return HttpResponseRedirect(reverse_lazy("applications:summary", kwargs={"pk": application_id}))
+            return HttpResponseRedirect(reverse("applications:summary", kwargs={"pk": application_id}))
         else:
             # Redirect to the success page to prevent the user going back after the Post
             # Follows this pattern: https://en.wikipedia.org/wiki/Post/Redirect/Get
-            return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": application_id}))
+            return HttpResponseRedirect(reverse("applications:success_page", kwargs={"pk": application_id}))
 
 
 class ApplicationDetail(LoginRequiredMixin, TemplateView):
@@ -200,9 +200,7 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
         if "errors" in response:
             return self.get(request, error=response["errors"], text=request.POST.get("text"), **kwargs)
 
-        return redirect(
-            reverse_lazy("applications:application", kwargs={"pk": self.application_id, "type": "case-notes"})
-        )
+        return redirect(reverse("applications:application", kwargs={"pk": self.application_id, "type": "case-notes"}))
 
 
 class ApplicationSummary(LoginRequiredMixin, TemplateView):
@@ -243,9 +241,9 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
             if status_code != HTTPStatus.OK:
                 return get_application_task_list(request, self.application, errors=data.get("errors"))
 
-            return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": self.application_id}))
+            return HttpResponseRedirect(reverse("applications:success_page", kwargs={"pk": self.application_id}))
         else:
-            return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
+            return HttpResponseRedirect(reverse("applications:declaration", kwargs={"pk": self.application_id}))
 
 
 class WithdrawApplication(LoginRequiredMixin, SingleFormView):
@@ -254,7 +252,7 @@ class WithdrawApplication(LoginRequiredMixin, SingleFormView):
         application = get_application(request, self.object_pk)
         self.form = withdraw_application_confirmation(application, self.object_pk)
         self.action = validate_withdraw_application
-        self.success_url = reverse_lazy("applications:application", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:application", kwargs={"pk": self.object_pk})
 
 
 class SurrenderApplication(LoginRequiredMixin, SingleFormView):
@@ -263,7 +261,7 @@ class SurrenderApplication(LoginRequiredMixin, SingleFormView):
         application = get_application(request, self.object_pk)
         self.form = surrender_application_confirmation(application, self.object_pk)
         self.action = validate_surrender_application_and_update_case_status
-        self.success_url = reverse_lazy("applications:application", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:application", kwargs={"pk": self.object_pk})
 
 
 class Notes(LoginRequiredMixin, TemplateView):
@@ -275,7 +273,7 @@ class Notes(LoginRequiredMixin, TemplateView):
         context = {
             "application": application,
             "notes": notes,
-            "post_url": reverse_lazy("applications:notes", kwargs={"pk": application_id}),
+            "post_url": reverse("applications:notes", kwargs={"pk": application_id}),
             "error": kwargs.get("error"),
             "text": kwargs.get("text", ""),
         }
@@ -288,7 +286,7 @@ class Notes(LoginRequiredMixin, TemplateView):
         if "errors" in response:
             return self.get(request, error=response["errors"]["text"][0], text=request.POST.get("text"), **kwargs)
 
-        return redirect(reverse_lazy("applications:notes", kwargs={"pk": application_id}))
+        return redirect(reverse("applications:notes", kwargs={"pk": application_id}))
 
 
 class CheckYourAnswers(LoginRequiredMixin, TemplateView):
@@ -338,7 +336,7 @@ class ApplicationCopy(LoginRequiredMixin, MultiFormView):
 
     def get_success_url(self):
         id = self.get_validated_data()["data"]
-        return reverse_lazy("applications:task_list", kwargs={"pk": id})
+        return reverse("applications:task_list", kwargs={"pk": id})
 
 
 class ExhibitionDetail(LoginRequiredMixin, SingleFormView):
@@ -358,7 +356,7 @@ class ExhibitionDetail(LoginRequiredMixin, SingleFormView):
         return data
 
     def get_success_url(self):
-        return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+        return reverse("applications:task_list", kwargs={"pk": self.object_pk})
 
 
 class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
@@ -368,4 +366,4 @@ class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
         self.action = submit_application
 
     def get_success_url(self):
-        return reverse_lazy("applications:success_page", kwargs={"pk": self.object_pk})
+        return reverse("applications:success_page", kwargs={"pk": self.object_pk})

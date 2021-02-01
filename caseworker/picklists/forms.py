@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from lite_content.lite_internal_frontend import picklists
 from lite_forms.components import TextInput, TextArea, Form, Button, MarkdownArea, HiddenField, BackLink, HelpSection
@@ -9,21 +9,17 @@ def add_picklist_item_form(picklist_type):
     return Form(
         title=getattr(picklists.NewPicklistForm, picklist_type.upper()),
         questions=[
-            TextInput(
-                title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-three-quarters"]
-            ),
+            TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-three-quarters"]),
             HiddenField("type", picklist_type),
             TextArea(
                 title=picklists.NewPicklistForm.Text.TITLE,
                 name="text",
                 rows=20,
-                extras={"max_length": 5000,},
+                extras={"max_length": 5000},
                 classes=["govuk-!-width-three-quarters"],
             ),
         ],
-        back_link=BackLink(
-            picklists.NewPicklistForm.BACK_LINK, reverse_lazy("picklists:picklists") + f"?type={picklist_type}"
-        ),
+        back_link=BackLink(picklists.NewPicklistForm.BACK_LINK, reverse("picklists:picklists") + f"?type={picklist_type}"),
     )
 
 
@@ -33,11 +29,10 @@ def edit_picklist_item_form(picklist_item):
         questions=[
             TextInput(title="Name", name="name"),
             HiddenField("type", picklist_item["type"]["key"]),
-            TextArea(title="Text", name="text", extras={"max_length": 5000,}),
+            TextArea(title="Text", name="text", extras={"max_length": 5000}),
         ],
         back_link=BackLink(
-            "Back to " + picklist_item["name"],
-            reverse_lazy("picklists:picklist_item", kwargs={"pk": picklist_item["id"]}),
+            "Back to " + picklist_item["name"], reverse("picklists:picklist_item", kwargs={"pk": picklist_item["id"]})
         ),
         default_button_name="Save",
     )
@@ -72,14 +67,11 @@ def deactivate_picklist_item(picklist_item):
         title="Are you sure you want to deactivate " + picklist_item["name"] + "?",
         description="You can always reactivate it later if need be.",
         questions=[],
-        back_link=BackLink("Back", reverse_lazy("picklists:edit", kwargs={"pk": picklist_item["id"]})),
+        back_link=BackLink("Back", reverse("picklists:edit", kwargs={"pk": picklist_item["id"]})),
         buttons=[
             Button("Deactivate", "submit", ButtonStyle.WARNING),
             Button(
-                "Cancel",
-                "cancel",
-                ButtonStyle.SECONDARY,
-                reverse_lazy("picklists:edit", kwargs={"pk": picklist_item["id"]}),
+                "Cancel", "cancel", ButtonStyle.SECONDARY, reverse("picklists:edit", kwargs={"pk": picklist_item["id"]})
             ),
         ],
     )
@@ -90,14 +82,11 @@ def reactivate_picklist_item(picklist_item):
         title="Are you sure you want to reactivate " + picklist_item["name"] + "?",
         description="You can always deactivate it later if need be.",
         questions=[],
-        back_link=BackLink("Back", reverse_lazy("picklists:edit", kwargs={"pk": picklist_item["id"]})),
+        back_link=BackLink("Back", reverse("picklists:edit", kwargs={"pk": picklist_item["id"]})),
         buttons=[
             Button("Reactivate", "submit", ButtonStyle.DEFAULT),
             Button(
-                "Cancel",
-                "cancel",
-                ButtonStyle.SECONDARY,
-                reverse_lazy("picklists:edit", kwargs={"pk": picklist_item["id"]}),
+                "Cancel", "cancel", ButtonStyle.SECONDARY, reverse("picklists:edit", kwargs={"pk": picklist_item["id"]})
             ),
         ],
     )

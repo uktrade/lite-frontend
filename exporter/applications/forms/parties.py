@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
@@ -104,7 +104,7 @@ def clearance_level_forms(options, button):
 
 
 def new_party_form_group(request, application, strings, back_url, clearance_options=None, is_end_user=False):
-    back_link = BackLink(PartyTypeForm.BACK_LINK, reverse_lazy(back_url, kwargs={"pk": application["id"]}))
+    back_link = BackLink(PartyTypeForm.BACK_LINK, reverse(back_url, kwargs={"pk": application["id"]}))
 
     forms = [
         party_type_form(application, strings.TITLE, strings.BUTTON, back_link),

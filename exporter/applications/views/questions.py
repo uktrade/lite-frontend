@@ -1,7 +1,7 @@
 import json
 
 from django.contrib.humanize.templatetags.humanize import intcomma
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -45,7 +45,7 @@ class AdditionalInformationFormView(LoginRequiredMixin, SummaryListFormView):
         self.data = self.get_additional_information(request, self.object_pk)
         self.forms = questions_forms()
         self.action = questions_action
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:task_list", kwargs={"pk": self.object_pk})
         self.summary_list_title = applications.F680ClearanceTaskList.ADDITIONAL_INFORMATION
         self.summary_list_notice_title = applications.F680ClearanceTaskList.NOTICE_TITLE
         self.summary_list_notice_text = applications.F680ClearanceTaskList.NOTICE_TEXT

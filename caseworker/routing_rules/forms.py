@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from caseworker.cases.services import get_case_types, get_flags_for_team_of_level
 from caseworker.core.services import get_statuses, get_countries
@@ -40,8 +40,8 @@ additional_rules = [
 def select_a_team(request):
     return Form(
         title=Forms.TEAM,
-        questions=[RadioButtons(name="team", options=get_teams(request, True)),],
-        back_link=BackLink(Forms.BACK_BUTTON, reverse_lazy("routing_rules:list")),
+        questions=[RadioButtons(name="team", options=get_teams(request, True))],
+        back_link=BackLink(Forms.BACK_BUTTON, reverse("routing_rules:list")),
     )
 
 
@@ -70,9 +70,9 @@ def initial_routing_rule_questions(request, select_team, team_id, is_editing: bo
             ),
             TextInput(title=Forms.TIER, name="tier"),
             HiddenField(name="additional_rules[]", value=None),
-            Checkboxes(title=Forms.ADDITIONAL_RULES, name="additional_rules[]", options=additional_rules,),
+            Checkboxes(title=Forms.ADDITIONAL_RULES, name="additional_rules[]", options=additional_rules),
         ],
-        back_link=BackLink(Forms.BACK_BUTTON, reverse_lazy("routing_rules:list")),
+        back_link=BackLink(Forms.BACK_BUTTON, reverse("routing_rules:list")),
     )
 
 
@@ -219,7 +219,7 @@ def deactivate_or_activate_routing_rule_form(activate, status):
         title=title,
         description=description,
         back_link_text=Forms.BACK_BUTTON,
-        back_url=reverse_lazy("routing_rules:list"),
+        back_url=reverse("routing_rules:list"),
         yes_label=yes_label,
         no_label=no_label,
         hidden_field=status,

@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from lite_content.lite_internal_frontend.cases import UploadEnforcementXML
 from lite_content.lite_internal_frontend.strings import cases
@@ -27,6 +27,6 @@ def upload_document_form(queue_pk):
     return Form(
         UploadEnforcementXML.TITLE,
         UploadEnforcementXML.DESCRIPTION,
-        [FileUpload(name="file"),],
-        back_link=BackLink(UploadEnforcementXML.BACK_LINK, reverse_lazy("queues:cases", kwargs={"queue_pk": queue_pk})),
+        [FileUpload(name="file")],
+        back_link=BackLink(UploadEnforcementXML.BACK_LINK, reverse("queues:cases", kwargs={"queue_pk": queue_pk})),
     )

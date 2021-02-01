@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.services import (
@@ -61,7 +61,7 @@ class ComplianceSiteDetails(LoginRequiredMixin, TemplateView):
         if "errors" in response:
             return self.get(request, pk, tab, errors=response["errors"]["text"][0], text=request.POST.get("text"))
 
-        return redirect(reverse_lazy("compliance:compliance_site_details", kwargs={"pk": pk, "tab": tab}))
+        return redirect(reverse("compliance:compliance_site_details", kwargs={"pk": pk, "tab": tab}))
 
 
 class ComplianceVisitDetails(LoginRequiredMixin, TemplateView):
@@ -113,9 +113,8 @@ class AddAnnualReturn(LoginRequiredMixin, MultiFormView):
         self.action = post_open_licence_return
 
     def get_success_url(self):
-        return reverse_lazy(
-            "compliance:add_open_licence_return_success",
-            kwargs={"pk": self.get_validated_data()["open_licence_returns"]},
+        return reverse(
+            "compliance:add_open_licence_return_success", kwargs={"pk": self.get_validated_data()["open_licence_returns"]}
         )
 
 
@@ -128,7 +127,7 @@ class AddAnnualReturnSuccess(LoginRequiredMixin, TemplateView):
             description=OpenReturnsForm.Success.DESCRIPTION,
             what_happens_next="",
             links={
-                OpenReturnsForm.Success.OPEN_LICENCE_RETURNS_LINK: reverse_lazy("compliance:open_licence_returns_list"),
-                OpenReturnsForm.Success.HOME_LINK: reverse_lazy("core:home"),
+                OpenReturnsForm.Success.OPEN_LICENCE_RETURNS_LINK: reverse("compliance:open_licence_returns_list"),
+                OpenReturnsForm.Success.HOME_LINK: reverse("core:home"),
             },
         )

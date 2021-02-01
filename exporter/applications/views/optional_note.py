@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.applications.forms.hmrc import query_explanation_form
 from exporter.applications.services import get_application, put_application
@@ -13,4 +13,4 @@ class ApplicationOptionalNote(LoginRequiredMixin, SingleFormView):
         self.data = get_application(request, self.object_pk)
         self.form = query_explanation_form(self.object_pk)
         self.action = put_application
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:task_list", kwargs={"pk": self.object_pk})

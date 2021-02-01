@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_trade_control_activities, get_trade_control_product_categories
@@ -35,7 +35,7 @@ def application_type_form():
         ],
         default_button_name=generic.CONTINUE,
         back_link=BackLink(
-            TradeControlLicenceQuestions.TradeControlLicenceQuestion.BACK, reverse_lazy("apply_for_a_licence:start")
+            TradeControlLicenceQuestions.TradeControlLicenceQuestion.BACK, reverse("apply_for_a_licence:start")
         ),
     )
 

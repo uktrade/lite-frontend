@@ -155,7 +155,7 @@ class EditRoutingRules(LoginRequiredMixin, MultiFormView):
             )
             self.action = put_routing_rule
 
-        self.success_url = reverse_lazy("routing_rules:list")
+        self.success_url = reverse("routing_rules:list")
 
     def get_data(self):
         data = self.data

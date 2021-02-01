@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from caseworker.core.constants import SUPER_USER_ROLE_ID, UserStatuses
@@ -83,7 +83,7 @@ class ViewUser(TemplateView):
 
 class ViewProfile(TemplateView):
     def get(self, request, **kwargs):
-        return redirect(reverse_lazy("users:user", kwargs={"pk": request.session["lite_api_user_id"]}))
+        return redirect(reverse("users:user", kwargs={"pk": request.session["lite_api_user_id"]}))
 
 
 class EditUser(SingleFormView):

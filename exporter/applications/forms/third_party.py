@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.applications.forms.parties import (
     party_name_form,
@@ -28,7 +28,7 @@ def _third_party_role_form(application, title, button, options, back_url):
         title=title,
         questions=[RadioButtons("role", options=options)],
         default_button_name=button,
-        back_link=BackLink(PartyTypeForm.BACK_LINK, reverse_lazy(back_url, kwargs={"pk": application["id"]})),
+        back_link=BackLink(PartyTypeForm.BACK_LINK, reverse(back_url, kwargs={"pk": application["id"]})),
     )
 
 

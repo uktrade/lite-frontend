@@ -1,7 +1,7 @@
 from caseworker.core.services import get_statuses
 from lite_content.lite_internal_frontend.roles import AddRoleForm, EditRoleForm
 from django.http import HttpRequest
-from django.urls import reverse_lazy
+from django.urls import reverse
 from lite_forms.components import Form, TextInput, Checkboxes, BackLink
 
 from caseworker.users.services import get_permissions
@@ -30,7 +30,7 @@ def add_role(request: HttpRequest):
                 classes=["govuk-checkboxes--small"],
             ),
         ],
-        back_link=BackLink(AddRoleForm.BACK_LINK, reverse_lazy("users:roles")),
+        back_link=BackLink(AddRoleForm.BACK_LINK, reverse("users:roles")),
         default_button_name=AddRoleForm.FORM_CREATE,
     )
 
@@ -58,6 +58,6 @@ def edit_role(request: HttpRequest):
                 classes=["govuk-checkboxes--small"],
             ),
         ],
-        back_link=BackLink(EditRoleForm.BACK_LINK, reverse_lazy("users:roles")),
+        back_link=BackLink(EditRoleForm.BACK_LINK, reverse("users:roles")),
         default_button_name=EditRoleForm.FORM_CREATE,
     )

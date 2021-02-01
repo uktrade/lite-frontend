@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.forms.end_use_details import end_use_details_form, intended_end_use_form
@@ -15,7 +15,7 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.object_pk = kwargs["pk"]
         self.application = get_application(request, self.object_pk)
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk}) + "#end_use_details"
+        self.success_url = reverse("applications:task_list", kwargs={"pk": self.object_pk}) + "#end_use_details"
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):

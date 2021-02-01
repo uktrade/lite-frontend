@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from caseworker.cases.services import get_case_types
 from caseworker.core.services import get_countries, get_control_list_entries
@@ -71,22 +71,19 @@ def add_flag_form():
                     Option("pink", "Pink", classes=["app-radios__item--pink"]),
                 ],
             ),
-            TextInput(name="label", title=CreateFlagForm.Label.TITLE, description=CreateFlagForm.Label.DESCRIPTION,),
+            TextInput(name="label", title=CreateFlagForm.Label.TITLE, description=CreateFlagForm.Label.DESCRIPTION),
             NumberInput(
                 name="priority", title=CreateFlagForm.Priority.TITLE, description=CreateFlagForm.Priority.DESCRIPTION
             ),
             RadioButtons(
                 name="blocks_approval",
                 title=CreateFlagForm.BlocksApproval.TITLE,
-                options=[
-                    Option(True, CreateFlagForm.BlocksApproval.YES),
-                    Option(False, CreateFlagForm.BlocksApproval.NO),
-                ],
+                options=[Option(True, CreateFlagForm.BlocksApproval.YES), Option(False, CreateFlagForm.BlocksApproval.NO)],
                 classes=["govuk-radios--inline"],
             ),
         ],
         default_button_name=CreateFlagForm.SUBMIT_BUTTON,
-        back_link=BackLink(CreateFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
+        back_link=BackLink(CreateFlagForm.BACK_LINK, reverse("flags:flags")),
         javascript_imports={"/javascripts/add-edit-flags.js"},
     )
 
@@ -115,16 +112,14 @@ def edit_flag_form():
                 ],
             ),
             TextInput(name="label", title=EditFlagForm.Label.TITLE, description=EditFlagForm.Label.DESCRIPTION),
-            NumberInput(
-                name="priority", title=EditFlagForm.Priority.TITLE, description=EditFlagForm.Priority.DESCRIPTION
-            ),
+            NumberInput(name="priority", title=EditFlagForm.Priority.TITLE, description=EditFlagForm.Priority.DESCRIPTION),
             RadioButtons(
                 name="blocks_approval",
                 title=EditFlagForm.BlocksApproval.TITLE,
-                options=[Option(True, EditFlagForm.BlocksApproval.YES), Option(False, EditFlagForm.BlocksApproval.NO),],
+                options=[Option(True, EditFlagForm.BlocksApproval.YES), Option(False, EditFlagForm.BlocksApproval.NO)],
             ),
         ],
-        back_link=BackLink(EditFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
+        back_link=BackLink(EditFlagForm.BACK_LINK, reverse("flags:flags")),
         default_button_name=EditFlagForm.SUBMIT_BUTTON,
         javascript_imports={"/javascripts/add-edit-flags.js"},
     )
@@ -133,8 +128,8 @@ def edit_flag_form():
 def select_flagging_rule_type():
     return Form(
         title=strings.FlaggingRules.Create.Type.TITLE,
-        questions=[RadioButtons(name="level", options=_levels,)],
-        back_link=BackLink(strings.FlaggingRules.Create.BACKLINK, reverse_lazy("flags:flagging_rules")),
+        questions=[RadioButtons(name="level", options=_levels)],
+        back_link=BackLink(strings.FlaggingRules.Create.BACKLINK, reverse("flags:flagging_rules")),
         default_button_name=strings.FlaggingRules.Create.Type.SAVE,
     )
 
@@ -280,7 +275,7 @@ def deactivate_or_activate_flagging_rule_form(title, description, confirm_text, 
         title=title,
         description=description,
         back_link_text=strings.FlaggingRules.Status.BACK,
-        back_url=reverse_lazy("flags:flagging_rules"),
+        back_url=reverse("flags:flagging_rules"),
         yes_label=confirm_text,
         no_label=strings.FlaggingRules.Status.CANCEL,
         hidden_field=status,

@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from caseworker.core.services import get_countries
 from lite_content.lite_internal_frontend.cases import AddAdditionalContact
@@ -27,7 +27,7 @@ def add_additional_contact_form(request, queue_id, case_id):
         ],
         back_link=BackLink(
             AddAdditionalContact.BACK_LINK,
-            reverse_lazy("cases:case", kwargs={"queue_pk": queue_id, "pk": case_id, "tab": "additional-contacts"}),
+            reverse("cases:case", kwargs={"queue_pk": queue_id, "pk": case_id, "tab": "additional-contacts"}),
         ),
         default_button_name=AddAdditionalContact.SUBMIT_BUTTON,
         container="case",

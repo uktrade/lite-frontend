@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.applications.forms.route_of_goods import route_of_goods_form
 from exporter.applications.services import get_application, put_application_route_of_goods
@@ -10,7 +10,7 @@ from core.auth.views import LoginRequiredMixin
 
 class RouteOfGoods(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
-        application_url = reverse_lazy("applications:task_list", kwargs={"pk": kwargs["pk"]}) + "#route_of_goods"
+        application_url = reverse("applications:task_list", kwargs={"pk": kwargs["pk"]}) + "#route_of_goods"
         self.object_pk = kwargs["pk"]
         self.data = self.get_form_data(request)
         self.form = route_of_goods_form(back_link=application_url)

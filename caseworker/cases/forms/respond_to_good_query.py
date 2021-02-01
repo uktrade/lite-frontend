@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from core.builtins.custom_tags import default_na
 from caseworker.core.components import PicklistPicker
@@ -75,12 +75,10 @@ def respond_to_clc_query_form(request, queue_pk, case):
                     Option(key=False, value="no"),
                 ],
             ),
-            DetailComponent(
-                title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,},),],
-            ),
+            DetailComponent(title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500})]),
         ],
         default_button_name=CLCReviewGoods.SUBMIT_BUTTON,
-        back_link=BackLink(url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]}),),
+        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]})),
         container="case",
     )
 
@@ -112,21 +110,14 @@ def respond_to_grading_query_form(request, queue_pk, case):
             Group(
                 components=[
                     TextInput(title=PVGradingForm.Grading.PREFIX, name="prefix", optional=True),
-                    Select(
-                        # request not supplied since static endpoints don't require it.
-                        options=pv_gradings,
-                        title=PVGradingForm.Grading.GRADING,
-                        name="grading",
-                    ),
+                    Select(options=pv_gradings, title=PVGradingForm.Grading.GRADING, name="grading"),
                     TextInput(title=PVGradingForm.Grading.SUFFIX, name="suffix", optional=True),
                 ],
                 classes=["app-pv-grading-inputs"],
             ),
-            DetailComponent(
-                title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,},),],
-            ),
+            DetailComponent(title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500})]),
         ],
         default_button_name=PVGradingForm.SUBMIT_BUTTON,
-        back_link=BackLink(url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]}),),
+        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]})),
         container="case",
     )

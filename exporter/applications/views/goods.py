@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -175,12 +175,10 @@ class AddGood(LoginRequiredMixin, MultiFormView):
 
     def get_success_url(self):
         if self.show_section_upload_form:
-            return reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
+            return reverse("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
         else:
             good = self.get_validated_data()["good"]
-            return reverse_lazy(
-                "applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]}
-            )
+            return reverse("applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]})
 
 
 @method_decorator(csrf_exempt, "dispatch")
@@ -255,7 +253,7 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
                 )
                 return form_page(request, form, data=data, errors=response["errors"])
 
-            success_url = reverse_lazy("applications:goods", kwargs={"pk": self.draft_pk})
+            success_url = reverse("applications:goods", kwargs={"pk": self.draft_pk})
 
         else:
             response, status_code = post_goods(request, data)
@@ -302,8 +300,8 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
         else:
             url = "applications:attach_documents"
         return (
-            reverse_lazy(url, kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
-            + f"?preexisting={self.request.GET.get('preexisting', False)}"
+            reverse(url, kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+            + f"?preexisting={self.request.GET.get("preexisting', False)}"
         )
 
 
@@ -312,7 +310,7 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
-        back_link = reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+        back_link = reverse("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
         form = attach_documents_form(back_link)
         return form_page(request, form, extra_data={"good_id": good_id})
 
@@ -331,8 +329,8 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
             return error_page(request, data["errors"]["file"])
 
         return redirect(
-            reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
-            + f"?preexisting={self.request.GET.get('preexisting', False)}"
+            reverse("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+            + f"?preexisting={self.request.GET.get("preexisting', False)}"
         )
 
 
@@ -351,9 +349,8 @@ class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
         )
 
         self.action = validate_good_on_application
-        self.success_url = reverse_lazy(
-            "applications:attach-firearms-certificate-existing-good",
-            kwargs={"pk": self.object_pk, "good_pk": self.good_pk},
+        self.success_url = reverse(
+            "applications:attach-firearms-certificate-existing-good", kwargs={"pk": self.object_pk, "good_pk": self.good_pk}
         )
 
     def on_submission(self, request, **kwargs):
@@ -392,7 +389,7 @@ class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
         if status_code != 200:
             return error_page(request, "Unexpected error removing product")
 
-        return redirect(reverse_lazy("applications:goods", kwargs={"pk": application_id}))
+        return redirect(reverse("applications:goods", kwargs={"pk": application_id}))
 
 
 class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):

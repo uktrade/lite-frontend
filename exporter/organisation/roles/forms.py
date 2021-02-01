@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import Form, TextInput, Checkboxes, BackLink
@@ -24,6 +24,6 @@ def add_role(request: HttpRequest, add: bool):
                 description=form_strings.PERMISSIONS_DESCRIPTION,
             ),
         ],
-        back_link=BackLink(form_strings.FORM_BACK_TO_ROLES, reverse_lazy("organisation:roles:roles")),
+        back_link=BackLink(form_strings.FORM_BACK_TO_ROLES, reverse("organisation:roles:roles")),
         default_button_name=form_strings.FORM_CREATE,
     )

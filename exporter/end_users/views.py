@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView, RedirectView
 
 from exporter.applications.services import (
@@ -115,7 +115,7 @@ class ApplyForAnAdvisory(LoginRequiredMixin, TemplateView):
 
 class EndUserDetailEmpty(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        return reverse_lazy("end_users:end_user_detail", kwargs={"pk": self.kwargs["pk"], "type": "case-notes"})
+        return reverse("end_users:end_user_detail", kwargs={"pk": self.kwargs["pk"], "type": "case-notes"})
 
 
 class EndUserDetail(LoginRequiredMixin, TemplateView):
@@ -165,6 +165,4 @@ class EndUserDetail(LoginRequiredMixin, TemplateView):
         if "errors" in response:
             return self.get(request, error=response["errors"]["text"][0], text=request.POST.get("text"), **kwargs)
 
-        return redirect(
-            reverse_lazy("end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "case-notes"})
-        )
+        return redirect(reverse("end_users:end_user_detail", kwargs={"pk": self.end_user_advisory_id, "type": "case-notes"}))

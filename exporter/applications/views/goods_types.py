@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from exporter.applications.constants import OielLicenceTypes
@@ -26,7 +26,7 @@ class GoodsTypeList(LoginRequiredMixin, TemplateView):
         are_goods_noneditable = None
 
         if not application["goods_types"]:
-            return redirect(reverse_lazy("applications:add_goods_type", kwargs={"pk": application_id}))
+            return redirect(reverse("applications:add_goods_type", kwargs={"pk": application_id}))
 
         # UK continental shelf and military OIELs can modify goods
         if application.get("goodstype_category"):
@@ -47,7 +47,7 @@ class GoodsTypeAdd(LoginRequiredMixin, SingleFormView):
         application = get_application(request, self.object_pk)
         self.form = goods_type_form(request, application.sub_type)
         self.action = post_goods_type
-        self.success_url = reverse_lazy("applications:goods_types", kwargs={"pk": self.object_pk})
+        self.success_url = reverse("applications:goods_types", kwargs={"pk": self.object_pk})
 
 
 class GoodsTypeRemove(LoginRequiredMixin, TemplateView):
@@ -60,7 +60,7 @@ class GoodsTypeRemove(LoginRequiredMixin, TemplateView):
         if status_code != 200:
             return error_page(request, "Unexpected error removing product description")
 
-        return redirect(reverse_lazy("applications:goods_types", kwargs={"pk": application_id}))
+        return redirect(reverse("applications:goods_types", kwargs={"pk": application_id}))
 
 
 class GoodsTypeCountries(LoginRequiredMixin, TemplateView):
@@ -126,4 +126,4 @@ class GoodsTypeCountries(LoginRequiredMixin, TemplateView):
             }
             return render(request, "applications/goods-types/countries.html", context)
 
-        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+        return redirect(reverse("applications:task_list", kwargs={"pk": self.application_id}))

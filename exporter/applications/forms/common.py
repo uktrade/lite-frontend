@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.applications.forms.edit import told_by_an_official_form, reference_name_form
 from exporter.core.constants import STANDARD
@@ -45,9 +45,7 @@ def edit_type_form(application_id):
                 ],
             )
         ],
-        back_link=BackLink(
-            strings.BACK_TO_APPLICATION, reverse_lazy("applications:application", kwargs={"pk": application_id}),
-        ),
+        back_link=BackLink(strings.BACK_TO_APPLICATION, reverse("applications:application", kwargs={"pk": application_id})),
         default_button_name=strings.CONTINUE,
     )
 
@@ -60,9 +58,9 @@ def application_success_page(request, application_reference_code):
         description=ApplicationSuccessPage.DESCRIPTION,
         what_happens_next=ApplicationSuccessPage.WHAT_HAPPENS_NEXT,
         links={
-            ApplicationSuccessPage.VIEW_APPLICATIONS: reverse_lazy("applications:applications"),
-            ApplicationSuccessPage.APPLY_AGAIN: reverse_lazy("apply_for_a_licence:start"),
-            ApplicationSuccessPage.RETURN_TO_DASHBOARD: reverse_lazy("core:home"),
+            ApplicationSuccessPage.VIEW_APPLICATIONS: reverse("applications:applications"),
+            ApplicationSuccessPage.APPLY_AGAIN: reverse("apply_for_a_licence:start"),
+            ApplicationSuccessPage.RETURN_TO_DASHBOARD: reverse("core:home"),
         },
     )
 
@@ -97,9 +95,7 @@ def exhibition_details_form(application_id):
                 extras={"max_length": 2000},
             ),
         ],
-        back_link=BackLink(
-            strings.BACK_TO_APPLICATION, reverse_lazy("applications:task_list", kwargs={"pk": application_id}),
-        ),
+        back_link=BackLink(strings.BACK_TO_APPLICATION, reverse("applications:task_list", kwargs={"pk": application_id})),
     )
 
 
@@ -108,61 +104,64 @@ def declaration_form(application_id):
         title=strings.declaration.Declaration.TITLE,
         questions=[
             HiddenField(name="submit_declaration", value=True),
-            # Terms and conditions
             Label("<b>" + strings.declaration.TermsAndConditions.TITLE + "</b>"),
             Label(strings.declaration.TermsAndConditions.PARAGRAPH_ONE),
             Label(strings.declaration.TermsAndConditions.PARAGRAPH_TWO),
-            # Licence conditions
             Label("<b>" + strings.declaration.LicenceConditions.TITLE + "<b>"),
-            # Authorisation
             Label("<u>" + strings.declaration.LicenceConditions.Authorisation.TITLE + "</u>"),
             Label(strings.declaration.LicenceConditions.Authorisation.PARAGRAPH_ONE),
             HTMLBlock(
-                "<ol class='govuk-list govuk-list--number'>"
-                "<ol type='a'>"
-                "<li>" + strings.declaration.LicenceConditions.Authorisation.OPTION_A + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Authorisation.OPTION_B + "</li>"
-                "</ol>"
-                "</ol>"
+                "<ol class="govuk-list govuk-list--number'><ol type='a'><li>"
+                + strings.declaration.LicenceConditions.Authorisation.OPTION_A
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Authorisation.OPTION_B
+                + "</li></ol></ol>"
             ),
             Label(strings.declaration.LicenceConditions.Authorisation.PARAGRAPH_TWO),
-            # Conditions
             Label("<u>" + strings.declaration.LicenceConditions.Conditions.TITLE + "</u>"),
             HTMLBlock(
-                "<ol class='govuk-list govuk-list--number'>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_ONE + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_TWO + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE + "<ol type='a'>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE_A + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE_B + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE_C + "</li>"
-                "</ol>"
-                "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FOUR + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE + "<ol type='a'>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_A + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_B + "<ol type='i'>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_B_I + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_B_II + "</li>"
-                "</ol>"
-                "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C + "<ol type='i'>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C_I + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C_II + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C_III + "</li>"
-                "</ol>"
-                "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_D + "</li>"
-                "</ol>"
-                "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_SIX + "</li>"
-                "<li>" + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_SEVEN + "</li>"
-                "</ol>"
+                "<ol class="govuk-list govuk-list--number'><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_ONE
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_TWO
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE
+                + "<ol type="a'><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE_A
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE_B
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_THREE_C
+                + "</li></ol></li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FOUR
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE
+                + "<ol type="a'><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_A
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_B
+                + "<ol type="i'><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_B_I
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_B_II
+                + "</li></ol></li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C
+                + "<ol type="i'><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C_I
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C_II
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_C_III
+                + "</li></ol></li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_FIVE_D
+                + "</li></ol></li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_SIX
+                + "</li><li>"
+                + strings.declaration.LicenceConditions.Conditions.LIST_ITEM_SEVEN
+                + "</li></ol>"
             ),
-            # Standard conditions
             Label("<u>" + strings.declaration.LicenceConditions.StandardConditions.TITLE + "</u>"),
-            List(strings.declaration.LicenceConditions.StandardConditions.BULLET_POINTS, type=List.ListType.NUMBERED,),
-            # General notes
+            List(strings.declaration.LicenceConditions.StandardConditions.BULLET_POINTS, type=List.ListType.NUMBERED),
             Label("<u>" + strings.declaration.LicenceConditions.GeneralNotes.TITLE + "</u>"),
             Label(strings.declaration.LicenceConditions.GeneralNotes.LINK_TEXT),
             Link(
@@ -173,7 +172,6 @@ def declaration_form(application_id):
             Label(strings.declaration.LicenceConditions.GeneralNotes.PARAGRAPH_ONE),
             Label(strings.declaration.LicenceConditions.GeneralNotes.PARAGRAPH_TWO),
             Label(strings.declaration.LicenceConditions.GeneralNotes.PARAGRAPH_THREE),
-            # Declaration
             Label("<b>" + strings.declaration.Declaration.TITLE + "</b>"),
             Label(
                 strings.declaration.Declaration.PARAGRAPH_ONE
@@ -184,18 +182,15 @@ def declaration_form(application_id):
                 + "<br><br>"
                 + strings.declaration.Declaration.PARAGRAPH_FOUR
             ),
-            # User input
             RadioButtons(
                 name="agreed_to_foi",
                 title=strings.declaration.FOI.TITLE,
                 options=[
-                    Option(key=True, value=strings.declaration.FOI.AGREE_TO_FOI,),
+                    Option(key=True, value=strings.declaration.FOI.AGREE_TO_FOI),
                     Option(
                         key=False,
                         value=strings.declaration.FOI.DISAGREE_TO_FOI,
-                        components=[
-                            TextArea(title=strings.declaration.FOI.FOI_REASON, name="foi_reason", optional=False,),
-                        ],
+                        components=[TextArea(title=strings.declaration.FOI.FOI_REASON, name="foi_reason", optional=False)],
                     ),
                 ],
                 classes=["govuk-radios--inline"],
@@ -205,9 +200,7 @@ def declaration_form(application_id):
                 title=strings.declaration.Declaration.RADIO_TITLE,
                 options=[
                     Option(
-                        "True",
-                        strings.declaration.Declaration.AGREE_TO_DECLARATION,
-                        data_attribute="agreed_to_declaration",
+                        "True", strings.declaration.Declaration.AGREE_TO_DECLARATION, data_attribute="agreed_to_declaration"
                     )
                 ],
                 classes=["govuk-checkboxes--small"],
@@ -215,6 +208,6 @@ def declaration_form(application_id):
         ],
         default_button_name=strings.declaration.Declaration.BUTTON_TITLE,
         back_link=BackLink(
-            strings.declaration.Declaration.BACK, reverse_lazy("applications:summary", kwargs={"pk": application_id}),
+            strings.declaration.Declaration.BACK, reverse("applications:summary", kwargs={"pk": application_id})
         ),
     )

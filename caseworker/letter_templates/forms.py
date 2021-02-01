@@ -1,7 +1,7 @@
 from caseworker.cases.constants import CaseType
 from caseworker.cases.services import get_case_types, get_decisions
 from lite_content.lite_internal_frontend import strings
-from django.urls import reverse_lazy
+from django.urls import reverse
 from lite_forms.components import (
     Form,
     FormGroup,
@@ -52,8 +52,7 @@ def add_letter_template(request):
                 description=strings.LetterTemplates.AddLetterTemplate.Name.HINT,
                 questions=[TextInput(name="name")],
                 back_link=BackLink(
-                    strings.LetterTemplates.AddLetterTemplate.Name.BACK_LINK,
-                    reverse_lazy("letter_templates:letter_templates"),
+                    strings.LetterTemplates.AddLetterTemplate.Name.BACK_LINK, reverse("letter_templates:letter_templates")
                 ),
                 default_button_name=strings.LetterTemplates.AddLetterTemplate.Name.CONTINUE_BUTTON,
             ),
@@ -79,9 +78,7 @@ def add_letter_template(request):
                     questions=[
                         Checkboxes(
                             name="decisions[]",
-                            options=[
-                                Option(decision["key"], decision["value"]) for decision in get_decisions(request)[0]
-                            ],
+                            options=[Option(decision["key"], decision["value"]) for decision in get_decisions(request)[0]],
                             classes=["govuk-checkboxes--small"],
                         )
                     ],
@@ -95,14 +92,10 @@ def add_letter_template(request):
                     RadioButtons(
                         name="visible_to_exporter",
                         options=[
-                            Option(
-                                key=True, value=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.YES_OPTION
-                            ),
-                            Option(
-                                key=False, value=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.NO_OPTION
-                            ),
+                            Option(key=True, value=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.YES_OPTION),
+                            Option(key=False, value=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.NO_OPTION),
                         ],
-                    ),
+                    )
                 ],
                 default_button_name=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.BUTTON,
             ),
@@ -113,14 +106,10 @@ def add_letter_template(request):
                     RadioButtons(
                         name="include_digital_signature",
                         options=[
-                            Option(
-                                key=True, value=strings.LetterTemplates.AddLetterTemplate.IncludeSignature.YES_OPTION
-                            ),
-                            Option(
-                                key=False, value=strings.LetterTemplates.AddLetterTemplate.IncludeSignature.NO_OPTION
-                            ),
+                            Option(key=True, value=strings.LetterTemplates.AddLetterTemplate.IncludeSignature.YES_OPTION),
+                            Option(key=False, value=strings.LetterTemplates.AddLetterTemplate.IncludeSignature.NO_OPTION),
                         ],
-                    ),
+                    )
                 ],
                 default_button_name=strings.LetterTemplates.AddLetterTemplate.IncludeSignature.BUTTON,
             ),
@@ -172,7 +161,7 @@ def edit_letter_template(request, letter_template, case_type_options, decision_o
         ],
         back_link=BackLink(
             "Back to " + letter_template["name"],
-            reverse_lazy("letter_templates:letter_template", kwargs={"pk": letter_template["id"]}),
+            reverse("letter_templates:letter_template", kwargs={"pk": letter_template["id"]}),
         ),
         default_button_name=strings.LetterTemplates.EditLetterTemplate.BUTTON_NAME,
     )

@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
@@ -110,35 +110,32 @@ def copy_end_user_advisory_form(request, individual, commercial):
                     conditional(individual, TextInput(title="Email address", name="contact_email")),
                     conditional(individual, TextInput(title="Telephone number", name="contact_telephone")),
                     conditional(
-                        commercial, TextInput(title="Nature of the end user's business", name="nature_of_business"),
+                        commercial, TextInput(title="Nature of the end user"s business", name="nature_of_business")
                     ),
-                    conditional(not individual, TextInput(title="Contact's name", name="contact_name")),
-                    conditional(not individual, TextInput(title="Job title", name="contact_job_title"),),
-                    conditional(not individual, TextInput(title="Email address", name="contact_email"),),
-                    conditional(not individual, TextInput(title="Telephone number", name="contact_telephone"),),
+                    conditional(not individual, TextInput(title="Contact"s name", name="contact_name")),
+                    conditional(not individual, TextInput(title="Job title", name="contact_job_title")),
+                    conditional(not individual, TextInput(title="Email address", name="contact_email")),
+                    conditional(not individual, TextInput(title="Telephone number", name="contact_telephone")),
                     TextInput(title="Website address", name="end_user.website", optional=True),
                     TextArea(
                         title="Address",
-                        description="The delivery address or registered office for the person "
-                        "receiving the products",
+                        description="The delivery address or registered office for the person receiving the products",
                         name="end_user.address",
                     ),
                     country_question(countries=get_countries(request, True), prefix="end_user."),
                     HiddenField("validate_only", True),
                 ],
-                back_link=BackLink(
-                    strings.end_users.CopyEndUserAdvisoryForm.BACK_LINK, reverse_lazy("end_users:end_users")
-                ),
+                back_link=BackLink(strings.end_users.CopyEndUserAdvisoryForm.BACK_LINK, reverse("end_users:end_users")),
                 default_button_name=strings.CONTINUE,
             ),
             Form(
                 title="More information about the end user",
                 questions=[
                     TextArea(
-                        title="What's your reasoning behind this query?",
+                        title="What"s your reasoning behind this query?",
                         optional=True,
                         name="reasoning",
-                        extras={"max_length": 2000,},
+                        extras={"max_length": 2000},
                     ),
                     TextArea(
                         title="Is there any other information you can provide about the end user?",
@@ -160,10 +157,10 @@ def end_user_advisory_success_page(request, query_reference):
         title="Advisory submitted",
         secondary_title="ECJU reference: " + query_reference,
         description="ECJU usually takes 2 working days to check an end user.",
-        what_happens_next=["You'll receive an email from ECJU when the check is finished."],
+        what_happens_next=["You"ll receive an email from ECJU when the check is finished."],
         links={
-            "View your end user advisories": reverse_lazy("end_users:end_users"),
-            "Submit another end user advisory": reverse_lazy("end_users:apply"),
-            "Return to your export control account dashboard": reverse_lazy("core:home"),
+            "View your end user advisories": reverse("end_users:end_users"),
+            "Submit another end user advisory": reverse("end_users:apply"),
+            "Return to your export control account dashboard": reverse("core:home"),
         },
     )

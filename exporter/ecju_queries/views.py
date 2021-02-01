@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -52,22 +52,16 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
             self.ecju_query = get_ecju_query(request, self.case_id, self.ecju_query_id)
 
         if self.object_type == "application":
-            self.back_link = reverse_lazy(
-                "applications:application", kwargs={"pk": self.case_id, "type": "ecju-queries"}
-            )
+            self.back_link = reverse("applications:application", kwargs={"pk": self.case_id, "type": "ecju-queries"})
         elif self.object_type == "good":
-            self.back_link = reverse_lazy("goods:good_detail", kwargs={"pk": self.extra_id, "type": "ecju-queries"})
+            self.back_link = reverse("goods:good_detail", kwargs={"pk": self.extra_id, "type": "ecju-queries"})
         elif self.object_type == "end-user-advisory":
-            self.back_link = reverse_lazy(
-                "end_users:end_user_detail", kwargs={"pk": self.case_id, "type": "ecju-queries"}
-            )
+            self.back_link = reverse("end_users:end_user_detail", kwargs={"pk": self.case_id, "type": "ecju-queries"})
         elif self.object_type == "compliance-site":
-            self.back_link = reverse_lazy(
-                "compliance:compliance_site_details", kwargs={"pk": self.case_id, "tab": "ecju-queries"}
-            )
+            self.back_link = reverse("compliance:compliance_site_details", kwargs={"pk": self.case_id, "tab": "ecju-queries"})
         elif self.object_type == "compliance-visit":
             self.extra_id = kwargs["extra_pk"]
-            self.back_link = reverse_lazy(
+            self.back_link = reverse(
                 "compliance:compliance_visit_details",
                 kwargs={"site_case_id": self.extra_id, "pk": self.case_id, "tab": "ecju-queries"},
             )

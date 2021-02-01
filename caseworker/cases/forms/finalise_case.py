@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 
 import lite_content.lite_internal_frontend.advice
 from lite_forms.components import Form, TextInput, BackLink, DateInput, Label, HiddenField, Custom
@@ -23,17 +23,17 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
                 ),
             ),
             HiddenField(name="action", value="approve"),
-            conditional(goods, Custom(goods_html, data=goods,)),
+            conditional(goods, Custom(goods_html, data=goods)),
         ],
         container="case",
         back_link=conditional(
             is_open_licence,
             BackLink(
-                url=reverse_lazy("cases:finalise_goods_countries", kwargs={"queue_pk": queue_pk, "pk": case_id}),
+                url=reverse("cases:finalise_goods_countries", kwargs={"queue_pk": queue_pk, "pk": case_id}),
                 text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
             ),
             BackLink(
-                url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
+                url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
                 text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
             ),
         ),
@@ -52,11 +52,11 @@ def deny_licence_form(queue_pk, case_id, is_open_licence, nlr):
         back_link=conditional(
             is_open_licence,
             BackLink(
-                url=reverse_lazy("cases:finalise_goods_countries", kwargs={"queue_pk": queue_pk, "pk": case_id}),
+                url=reverse("cases:finalise_goods_countries", kwargs={"queue_pk": queue_pk, "pk": case_id}),
                 text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
             ),
             BackLink(
-                url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
+                url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
                 text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
             ),
         ),

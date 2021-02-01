@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.contrib import messages
 from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 from django.utils.functional import cached_property
 
@@ -124,7 +124,7 @@ class AddQueue(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.form = new_queue_form(request)
         self.action = post_queues
-        self.success_url = reverse_lazy("queues:manage")
+        self.success_url = reverse("queues:manage")
 
 
 class EditQueue(LoginRequiredMixin, SingleFormView):
@@ -133,7 +133,7 @@ class EditQueue(LoginRequiredMixin, SingleFormView):
         self.data = get_queue(request, self.object_pk)
         self.form = edit_queue_form(request, self.object_pk)
         self.action = put_queue
-        self.success_url = reverse_lazy("queues:manage")
+        self.success_url = reverse("queues:manage")
 
 
 class CaseAssignments(LoginRequiredMixin, SingleFormView):
@@ -180,4 +180,4 @@ class EnforcementXMLImport(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         messages.success(self.request, UploadEnforcementXML.SUCCESS_BANNER)
-        return reverse_lazy("queues:enforcement_xml_import", kwargs={"pk": self.object_pk})
+        return reverse("queues:enforcement_xml_import", kwargs={"pk": self.object_pk})
