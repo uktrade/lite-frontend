@@ -93,10 +93,7 @@ def submit_paged_form(  # noqa
     if data.get("_action") and data.get("_action") == "back":
 
         return form_with_hidden_fields(
-            request, data, post_data,
-            form=previous_form,
-            return_data=None,
-            additional_context=additional_context
+            request, data, post_data, form=previous_form, return_data=None, additional_context=additional_context
         )
 
     if object_pk:
@@ -148,10 +145,7 @@ def submit_paged_form(  # noqa
         return None, validated_data
 
     return form_with_hidden_fields(
-        request, data, post_data,
-        form=next_form,
-        return_data=validated_data,
-        additional_context=additional_context
+        request, data, post_data, form=next_form, return_data=validated_data, additional_context=additional_context
     )
 
 
@@ -161,7 +155,7 @@ def form_with_hidden_fields(request, data, post_data, form, return_data, additio
 
         # If the key is already in the questions in the next form, don't copy them
         # because the user will input their answers again
-        form_question_names = [q.name for q in form.questions if hasattr(q, 'name')]
+        form_question_names = [q.name for q in form.questions if hasattr(q, "name")]
 
         if key in form_question_names or f"{key}[]" in form_question_names:
             continue
