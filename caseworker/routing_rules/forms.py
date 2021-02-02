@@ -189,6 +189,7 @@ def select_team_member(request, team_id):
 def routing_rule_form_group(
     request, additional_rules, team_id, flags_to_include, flags_to_exclude, is_editing=False, select_team=False
 ):
+    additional_rules = additional_rules or []
     return FormGroup(
         [
             initial_routing_rule_questions(request, select_team, team_id, is_editing),
