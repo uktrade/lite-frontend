@@ -128,9 +128,9 @@ class EditRoutingRules(LoginRequiredMixin, MultiFormView):
         self.object_pk = kwargs["pk"]
         self.data = get_routing_rule(request, self.object_pk)[0]
         team_id = self.data["team"]
-        additional_rules = self.data["additional_rules"]
-        flags_to_include = self.data["flags_to_include"]
-        flags_to_exclude = self.data["flags_to_exclude"]
+        additional_rules = self.data.get("additional_rules", [])
+        flags_to_include = self.data.get("flags_to_include", [])
+        flags_to_exclude = self.data.get("flags_to_exclude", [])
 
         if request.method == "POST":
             additional_rules = request.POST.getlist("additional_rules[]", additional_rules)

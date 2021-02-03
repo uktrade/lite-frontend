@@ -19,6 +19,7 @@ urlpatterns = [
     path("users/", include("caseworker.users.urls")),
     path("routing-rules/", include("caseworker.routing_rules.urls")),
     path("compliance/", include("caseworker.compliance.urls")),
+    path("api/", include("core.api.urls")),  # proxies for lite-api views. used by frontend javascript
     path("", include("caseworker.external_data.urls")),
 ]
 
