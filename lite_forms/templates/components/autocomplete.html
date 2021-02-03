@@ -11,26 +11,22 @@
 	{% else %}
 		$(document).ready(function() {
 	{% endif %}
+			var selectElement = document.querySelector('#{{ component.name|prefix_dots }}');
+
 			accessibleAutocomplete.enhanceSelectElement({
 				defaultValue: '{{ component.initial }}',
 				displayMenu: 'overlay',
-				selectElement: document.querySelector('#{{ component.name|prefix_dots }}'),
+				selectElement: selectElement,
 				cssNamespace: 'lite-autocomplete',
-				onConfirm: (val) => {
-					if (val && $("#{{ component.name|prefix_dots }}").val()) {
-						$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-						  return $(this).text() != val;
-						}).prop('selected', false);
-						$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-						  return $(this).text() == val;
-						}).prop('selected', true);
-
-					} else if (val == undefined && $("#{{ component.name|prefix_dots }}").val() == "") {
-						$("#{{ component.name|prefix_dots }}-select option").filter(function() {
-						  return $(this).text() != val;
-						}).prop('selected', false);
+				onConfirm: (query => {
+					const requestedOption = [].filter.call(selectElement.options, option => (option.textContent || option.innerText) === query)[0]
+					if (requestedOption) {
+						requestedOption.selected = true
+						var changeEvent = new CustomEvent('autocomplete {{ component.name }} change', { detail: requestedOption.value });
+						document.dispatchEvent(changeEvent);
 					}
-				}
+				})
+
 			});
 	{% if component.deferred %}
 		}

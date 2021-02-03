@@ -46,26 +46,23 @@ def select_a_team(request):
 
 
 def initial_routing_rule_questions(request, select_team, team_id, is_editing: bool):
-    select_team_question = []
-    if select_team:
-        select_team_question = [
+
+    team_queues_options = get_team_queues(request, team_id, convert_to_options=True, ignore_pagination=True)
+
+    return Form(
+        title=Forms.EDIT_TITLE if is_editing else Forms.CREATE_TITLE,
+        questions=[
             AutocompleteInput(
                 title=Forms.TEAM,
                 name="team",
                 options=get_teams(request, True),
                 description="Type to get suggestions. For example, TAU.",
             ),
-        ]
-
-    return Form(
-        title=Forms.EDIT_TITLE if is_editing else Forms.CREATE_TITLE,
-        questions=select_team_question
-        + [
             Select(title=Forms.CASE_STATUS, name="status", options=get_statuses(request, True)),
             AutocompleteInput(
                 title=Forms.QUEUE,
                 name="queue",
-                options=get_team_queues(request, team_id, True, True) if team_id else [],
+                options=team_queues_options,
                 description="Type to get suggestions.\nFor example, HMRC enquiries.",
             ),
             TextInput(title=Forms.TIER, name="tier"),
@@ -73,6 +70,7 @@ def initial_routing_rule_questions(request, select_team, team_id, is_editing: bo
             Checkboxes(title=Forms.ADDITIONAL_RULES, name="additional_rules[]", options=additional_rules,),
         ],
         back_link=BackLink(Forms.BACK_BUTTON, reverse_lazy("routing_rules:list")),
+        javascript_imports={"/javascripts/routing-rules-teams.js"},
     )
 
 
@@ -93,6 +91,7 @@ def select_case_type(request):
 def get_flag_details_html(flag):
     rules_html = ""
     rules = flag.get("flagging_rules")
+
     if rules:
         rows = []
         for index, rule in enumerate(rules, start=1):
@@ -133,6 +132,12 @@ def get_flag_details_html(flag):
 
 
 def select_flags(request, team_id, flags_to_include, flags_to_exclude, is_editing):
+
+    flags_checkboxes = [
+        Option(flag["id"], flag["name"], data_attribute=get_flag_details_html(flag))
+        for flag in get_flags_for_team_of_level(request, level="", team_id=team_id, include_system_flags=True)
+    ]
+
     return Form(
         title=Forms.FLAGS if not is_editing else "Edit flags",
         questions=[
@@ -151,12 +156,7 @@ def select_flags(request, team_id, flags_to_include, flags_to_exclude, is_editin
             Filter(),
             Checkboxes(
                 name="flags[]",
-                options=[
-                    Option(flag["id"], flag["name"], data_attribute=get_flag_details_html(flag))
-                    for flag in get_flags_for_team_of_level(
-                        request, level="", team_id=team_id, include_system_flags=True
-                    )[0]
-                ],
+                options=flags_checkboxes,
                 import_custom_js=["/javascripts/filter-checkbox-list-flags.js"],
             ),
         ],
@@ -190,6 +190,7 @@ def routing_rule_form_group(
     request, additional_rules, team_id, flags_to_include, flags_to_exclude, is_editing=False, select_team=False
 ):
     additional_rules = additional_rules or []
+
     return FormGroup(
         [
             initial_routing_rule_questions(request, select_team, team_id, is_editing),

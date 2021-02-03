@@ -36,12 +36,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.contenttypes",
+    "django.contrib.auth",
     "django.contrib.humanize",
     "svg",
     "lite_forms",
     "health_check",
     "health_check.cache",
     "health_check.storage",
+    "core.api",
 ]
 
 MIDDLEWARE = [
