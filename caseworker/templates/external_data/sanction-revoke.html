@@ -1,0 +1,37 @@
+{% extends 'layouts/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static from staticfiles %}
+
+{% block title %}Sanction record details{% endblock %}
+
+{% block back_link %}{% endblock %}
+
+{% block body %}
+    <div>
+        <div class="lite-app-bar govuk-!-margin-bottom-0">
+            <div class="lite-app-bar__content">
+                <h1 class="govuk-heading-l">{{ case.reference_code }} <span class="heading-subheader govuk-!-margin-left-4">{{ case.organisation.name }}</span></h1>
+            </div>
+        </div>
+        <div class="govuk-grid-column-full govuk-!-margin-bottom-6 govuk-!-padding-left-0">
+            <a class="lite-back-link-button" href="{% url 'cases:case' queue_id case_id %}">Back</a>
+        </div>
+
+        <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+            <h1 class="govuk-heading-l">Remove sanction match</h1>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <form method="post" enctype="multipart/form-data" novalidate="novalidate">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="govuk-button">Remove sanction match</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

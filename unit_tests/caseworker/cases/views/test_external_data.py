@@ -36,3 +36,23 @@ def test_remove_matching_denials(authorized_client, requests_mock, mock_queue, m
     assert response.url == reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk})
 
     assert requests_mock.request_history[0].json() == {"objects": ["1", "2", "3"]}
+
+
+def test_remove_matching_sanctions_get(authorized_client, mock_case, open_case_pk, queue_pk, mock_queue):
+    url = reverse("cases:remove-matching-sanctions", kwargs={"pk": open_case_pk, "queue_pk": queue_pk})
+
+    response = authorized_client.get(f"{url}?objects=1")
+
+    assert response.status_code == 200
+
+
+def test_remove_matching_sanctions_submit(
+    authorized_client, requests_mock, open_case_pk, queue_pk, mock_queue, mock_case
+):
+    requests_mock.patch(client._build_absolute_uri("/external-data/sanction/123/"))
+
+    url = reverse("cases:remove-matching-sanctions", kwargs={"pk": open_case_pk, "queue_pk": queue_pk})
+
+    response = authorized_client.post(f"{url}?objects=123", {"comment": "This is revoked"})
+
+    assert response.status_code == 302

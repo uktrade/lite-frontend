@@ -60,6 +60,7 @@ class CaseDetail(CaseView):
             Slices.GOODS,
             Slices.DESTINATIONS,
             Slices.OPEN_APP_PARTIES,
+            Slices.SANCTION_MATCHES,
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
             *conditional(
@@ -83,6 +84,7 @@ class CaseDetail(CaseView):
             Slices.GOODS,
             Slices.DESTINATIONS,
             Slices.DENIAL_MATCHES,
+            Slices.SANCTION_MATCHES,
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
             Slices.END_USE_DETAILS,

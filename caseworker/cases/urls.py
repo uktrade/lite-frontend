@@ -16,6 +16,7 @@ urlpatterns = [
     path("documents/<str:file_pk>/", main.Document.as_view(), name="document"),
     path("assign-flags/", AssignFlags.as_view(), name="assign_flags"),
     path("remove-matching-denials/", external_data.RemoveMatchingDenials.as_view(), name="remove-matching-denials",),
+    path("remove-matching-sanction/", external_data.SanctionRevokeView.as_view(), name="remove-matching-sanctions",),
     path("matching-denials/<str:category>/", external_data.MatchingDenials.as_view(), name="matching-denials",),
     path("coalesce-user-advice/", advice.CoalesceUserAdvice.as_view(), name="coalesce_user_advice"),
     path("coalesce-team-advice/", advice.CoalesceTeamAdvice.as_view(), name="coalesce_team_advice"),

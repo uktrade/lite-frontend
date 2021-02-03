@@ -64,6 +64,7 @@ class FlagLevels:
     GOODS = "goods"
     ORGANISATIONS = "organisations"
     DESTINATIONS = "destinations"
+    PARTY_ON_APPLICATION = "party_on_application"
 
 
 class UserStatuses:

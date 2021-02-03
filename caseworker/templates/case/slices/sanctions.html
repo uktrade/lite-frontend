@@ -1,0 +1,62 @@
+{% with sanction_matches=case.data.sanction_matches %}
+    {% if sanction_matches %}
+        <h2 class="govuk-heading-m">Sanction matches</h2>
+        {% if not hide_controls %}
+        <form method="get" data-enable-on-checkboxes="#table-sanction-matches">
+            {% csrf_token %}
+            <div class="lite-buttons-row">
+                <button id="button-remove-sanction-matches" formaction="{% url 'cases:remove-matching-sanctions' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
+                    Remove sanction match
+                </button>
+            </div>
+            {% endif %}
+
+            <table id="table-sanction-matches" class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        {% if not hide_checkboxes %}
+                        <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
+                            <button id="link-select-all-sanction-matches" type="button" name="button" class="lite-button-checkbox"
+                                title="Select all/Deselect all"></button>
+                        </th>
+                        {% endif %}
+                        <th scope="col" class="govuk-table__header">List</th>
+                        <th scope="col" class="govuk-table__header">Reference</th>
+                        <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header"></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for match in sanction_matches %}
+                        <tr class="govuk-table__row">
+                            {% if not hide_checkboxes %}
+                            <td class="govuk-table__cell govuk-table__cell--checkbox">
+                                <div>
+                                    <input class="govuk-checkboxes__input" type="checkbox" name="objects"
+                                        value="{{ match.id }}" id="{{ match.id }}">
+                                    <label class="govuk-label govuk-checkboxes__label" for="{{ match.id }}">{{
+                                        match.reference }}</label>
+                                </div>
+                            </td>
+                            {% endif %}
+                            <td class="govuk-table__cell">{{ match.list_name }}</td>
+                            <td class="govuk-table__cell">{{ match.elasticsearch_reference }}</td>
+                            <td class="govuk-table__cell">{{ match.name }}</td>
+                            <td class="govuk-table__cell">
+                                {% if match.list_name == 'OFSI' %}
+                                    <a href="https://ofsistorage.blob.core.windows.net/publishlive/ConList.html" target="_blank">View the OFSI list</a>
+                                {% elif match.list_name == 'UN SC' %}
+                                    <a href="https://www.un.org/securitycouncil/content/un-sc-consolidated-list" target="_blank">View the UN Security Council list</a>
+                                {% elif match.list_name == 'UK' %}
+                                    <a href="https://www.gov.uk/government/publications/the-uk-sanctions-list" target="_blank">View the UK list</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% if not hide_controls %}
+        </form>
+        {% endif %}
+    {% endif %}
+{% endwith %}
