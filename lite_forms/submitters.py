@@ -68,7 +68,7 @@ def _prepare_data(request, inject_data):
 
 
 def submit_paged_form(  # noqa
-    request, form_group: FormGroup, action: Callable, object_pk=None, inject_data=None, additional_context: dict = {},
+    request, form_group: FormGroup, action: Callable, object_pk=None, inject_data=None, additional_context: dict = None,
 ):
     """
     Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
@@ -80,6 +80,8 @@ def submit_paged_form(  # noqa
     :param additional_context: Adds additional items to context for form
     :return: The next form page to display
     """
+    if additional_context is None:
+        additional_context = {}
 
     data, nested_data = _prepare_data(request, inject_data)
 
