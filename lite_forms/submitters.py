@@ -90,22 +90,12 @@ def submit_paged_form(  # noqa
     current_form = get_form_by_pk(form_pk, form_group)
     next_form = get_next_form(form_pk, form_group)
 
-    if data.get("_action") and data.get("_action") == "back":
-        # Add existing post data to previous form as hidden fields
-        post_data, _ = _prepare_data(request, {})
-        for key, value in post_data.items():
-            # If the keys value is a list, insert each individually
-            if isinstance(value, list):
-                for sub_value in value:
-                    previous_form.questions.insert(0, HiddenField(key + "[]", sub_value))
-            else:
-                previous_form.questions.insert(0, HiddenField(key, value))
+    post_data, _ = _prepare_data(request, {})
 
-        return (
-            form_page(
-                request, previous_form, data=data, extra_data={"form_pk": previous_form.pk, **additional_context},
-            ),
-            None,
+    if data.get("_action") and data.get("_action") == "back":
+
+        return form_with_hidden_fields(
+            request, data, post_data, form=previous_form, return_data=None, additional_context=additional_context
         )
 
     if object_pk:
@@ -156,18 +146,31 @@ def submit_paged_form(  # noqa
     if next_form is None:
         return None, validated_data
 
-    # Add existing post data to new form as hidden fields
-    post_data, _ = _prepare_data(request, {})
+    return form_with_hidden_fields(
+        request, data, post_data, form=next_form, return_data=validated_data, additional_context=additional_context
+    )
+
+
+def form_with_hidden_fields(request, data, post_data, form, return_data, additional_context):
+
     for key, value in post_data.items():
+
+        # If the key is already in the questions in the next form, don't copy them
+        # because the user will input their answers again
+        form_question_names = [q.name for q in form.questions if hasattr(q, "name")]
+
+        if key in form_question_names or f"{key}[]" in form_question_names:
+            continue
+
         # If the keys value is a list, insert each individually
         if isinstance(value, list):
             for sub_value in value:
-                next_form.questions.insert(0, HiddenField(key + "[]", sub_value))
+                form.questions.insert(0, HiddenField(key + "[]", sub_value))
         else:
-            next_form.questions.insert(0, HiddenField(key, value))
+            form.questions.insert(0, HiddenField(key, value))
 
     # Go to the next page
     return (
-        form_page(request, next_form, data=data, extra_data={"form_pk": next_form.pk, **additional_context}),
-        validated_data,
+        form_page(request, form, data=data, extra_data={"form_pk": form.pk, **additional_context}),
+        return_data,
     )
