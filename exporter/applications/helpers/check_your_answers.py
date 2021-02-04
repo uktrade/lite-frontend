@@ -204,7 +204,11 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False):
     converted = []
     for good_on_application in goods_on_application:
         # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
-        is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
+        if good_on_application["good"]["is_good_controlled"] is None:
+            is_controlled = "N/A"
+        else:
+            is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
+
         control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
         if good_on_application["is_good_controlled"] is not None:
             is_controlled_application = good_on_application["is_good_controlled"]["value"]
