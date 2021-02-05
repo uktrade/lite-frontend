@@ -14,6 +14,7 @@ from lite_content.lite_exporter_frontend.goods import (
     CreateGoodForm,
     GoodsQueryForm,
     EditGoodForm,
+    DocumentAvailabilityForm,
     DocumentSensitivityForm,
     AttachDocumentForm,
     GoodsList,
@@ -429,38 +430,41 @@ def edit_good_detail_form(request, good_id):
     )
 
 
-def document_grading_form(request, good_id, back_url=None):
-    select_options = get_document_missing_reasons(request)[0]["reasons"]
-
-    if back_url:
-        link = back_url
-    else:
-        link = reverse_lazy("goods:good", kwargs={"pk": good_id})
-
+def check_document_available_form(request, back_url):
     return Form(
-        title=DocumentSensitivityForm.TITLE,
-        description=DocumentSensitivityForm.DESCRIPTION,
+        title=DocumentAvailabilityForm.TITLE,
+        description=DocumentAvailabilityForm.DESCRIPTION,
         questions=[
             RadioButtons(
-                name="has_document_to_upload",
+                name="is_document_available",
                 options=[
                     Option(key="yes", value=DocumentSensitivityForm.Options.YES),
-                    Option(
-                        key="no",
-                        value=DocumentSensitivityForm.Options.NO,
-                        components=[
-                            Label(text=DocumentSensitivityForm.ECJU_HELPLINE),
-                            Select(
-                                name="missing_document_reason",
-                                title=DocumentSensitivityForm.LABEL,
-                                options=select_options,
-                            ),
-                        ],
-                    ),
+                    Option(key="no", value=DocumentSensitivityForm.Options.NO,),
                 ],
             ),
         ],
-        back_link=BackLink(DocumentSensitivityForm.BACK_BUTTON, link),
+        back_link=BackLink("Back", back_url),
+        default_button_name="Save and continue",
+    )
+
+
+def document_grading_form(request, back_url):
+    return Form(
+        title=DocumentSensitivityForm.TITLE,
+        questions=[
+            RadioButtons(
+                name="is_document_sensitive",
+                options=[
+                    Option(
+                        key="yes",
+                        value=DocumentSensitivityForm.Options.YES,
+                        components=[Label(text=DocumentSensitivityForm.ECJU_HELPLINE)],
+                    ),
+                    Option(key="no", value=DocumentSensitivityForm.Options.NO,),
+                ],
+            ),
+        ],
+        back_link=BackLink("Back", back_url),
         default_button_name=DocumentSensitivityForm.SUBMIT_BUTTON,
     )
 

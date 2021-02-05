@@ -228,6 +228,21 @@ def get_document_missing_reasons(request):
     return data.json(), data.status_code
 
 
+def get_good_document_availability(request, pk):
+    data = client.get(request, f"/goods/{pk}/document-availability/")
+    return data.json(), data.status_code
+
+
+def post_good_document_availability(request, pk, json):
+    data = client.post(request, f"/goods/{pk}/document-availability/", json)
+    return data.json(), data.status_code
+
+
+def get_good_document_sensitivity(request, pk):
+    data = client.get(request, f"/goods/{pk}/document-sensitivity/")
+    return data.json(), data.status_code
+
+
 def post_good_document_sensitivity(request, pk, json):
     data = client.post(request, f"/goods/{pk}/document-sensitivity/", json)
     return data.json(), data.status_code
