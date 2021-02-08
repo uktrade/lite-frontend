@@ -7,7 +7,6 @@ from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
 from exporter.goods.helpers import good_summary, get_category_display_string, get_sporting_shotgun_form_title
-from exporter.goods.services import get_document_missing_reasons
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.goods import (
@@ -430,7 +429,7 @@ def edit_good_detail_form(request, good_id):
     )
 
 
-def check_document_available_form(request, back_url):
+def check_document_available_form(back_url):
     return Form(
         title=DocumentAvailabilityForm.TITLE,
         description=DocumentAvailabilityForm.DESCRIPTION,
@@ -448,7 +447,7 @@ def check_document_available_form(request, back_url):
     )
 
 
-def document_grading_form(request, back_url):
+def document_grading_form(back_url):
     return Form(
         title=DocumentSensitivityForm.TITLE,
         questions=[

@@ -33,7 +33,14 @@ urlpatterns = [
         name="identification_markings",
     ),
     path("<uuid:pk>/delete/", views.DeleteGood.as_view(), name="delete"),
-    path("<uuid:pk>/add-document/", views.CheckDocumentGrading.as_view(), name="add_document"),
+    path(
+        "<uuid:pk>/check-document-availability/",
+        views.CheckDocumentAvailable.as_view(),
+        name="check_document_availability",
+    ),
+    path(
+        "<uuid:pk>/check-document-sensitivity/", views.CheckDocumentGrading.as_view(), name="check_document_sensitivity"
+    ),
     path("<uuid:pk>/documents/<uuid:file_pk>/", views.Document.as_view(), name="document"),
     path("<uuid:pk>/documents/<uuid:file_pk>/delete/", views.DeleteDocument.as_view(), name="delete_document"),
     path("<uuid:pk>/attach/", views.AttachDocuments.as_view(), name="attach_documents"),

@@ -45,7 +45,7 @@ from exporter.goods.services import (
     post_good_document_sensitivity,
     validate_good,
 )
-from lite_forms.components import FiltersBar, TextInput
+from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
@@ -297,7 +297,7 @@ class CheckDocumentAvailability(LoginRequiredMixin, SingleFormView):
         self.object_pk = kwargs["good_pk"]
         back_link = reverse("applications:add_good_summary", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
         self.data, _ = get_good_document_availability(request, self.object_pk)
-        self.form = check_document_available_form(request, back_link)
+        self.form = check_document_available_form(back_link)
         self.action = post_good_document_availability
 
     def get_data(self):
@@ -326,7 +326,7 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
             "applications:check_document_availability", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk}
         )
         self.data, _ = get_good_document_sensitivity(request, self.object_pk)
-        self.form = document_grading_form(request, back_link)
+        self.form = document_grading_form(back_link)
         self.action = post_good_document_sensitivity
 
     def get_data(self):
@@ -352,7 +352,9 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
-        back_link = reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+        back_link = BackLink(
+            "Back", reverse("applications:document_grading", kwargs={"pk": draft_id, "good_pk": good_id})
+        )
         form = attach_documents_form(back_link)
         return form_page(request, form, extra_data={"good_id": good_id})
 
@@ -361,10 +363,14 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
 
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
-        data, error = add_document_data(request)
+        back_link = BackLink(
+            "Back", reverse("applications:document_grading", kwargs={"pk": draft_id, "good_pk": good_id})
+        )
 
+        data, error = add_document_data(request)
         if error:
-            return error_page(request, error)
+            form = attach_documents_form(back_link)
+            return form_page(request, form, errors={"file": ["Select a document"]})
 
         data, status_code = post_good_documents(request, good_id, data)
         if status_code != HTTPStatus.CREATED:

@@ -1,5 +1,5 @@
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.generic import DESCRIPTION, PERMISSION_FINDER_LINK
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
 
 class GoodsList:
@@ -116,7 +116,7 @@ class DocumentSensitivityForm:
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
         "this document.\n\n You can continue with the application "
         "without attaching a document.\n\n**ECJU helpline**\n 020 7215 4594\n "
-        "[Find out about call charges](https://www.gov.uk/call-charges)"
+        "[Find out about call charges (opens in new tab)](https://www.gov.uk/call-charges)"
     )
     SUBMIT_BUTTON = "Save and continue"
 
@@ -356,7 +356,7 @@ class AttachDocumentForm:
         "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
         "\n\nThe file must be smaller than 50MB."
     )
-    BUTTON = "Save"
+    BUTTON = "Save and continue"
     BACK_FORM_LINK = "Back"
     BACK_GOOD_LINK = "Back to product"
 
