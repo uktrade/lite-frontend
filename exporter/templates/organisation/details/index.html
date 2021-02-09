@@ -1,144 +1,98 @@
 {% extends 'organisation/base.html' %}
 
 {% block contents %}
-    <dl class="govuk-summary-list govuk-summary-list--no-border govuk-!-width-two-thirds">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {% lcs 'organisation.Details.NAME' %}
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {{ organisation.name }}
-            </dd>
-        </div>
-        {% if organisation.eori_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% lcs 'organisation.Details.EORI_NUMBER' %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.eori_number }}
-                </dd>
-            </div>
-        {% endif %}
-        {% if organisation.sic_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% lcs 'organisation.Details.SIC_NUMBER' %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.sic_number }}
-                </dd>
-            </div>
-        {% endif %}
-        {% if organisation.vat_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% lcs 'organisation.Details.VAT_NUMBER' %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.vat_number }}
-                </dd>
-            </div>
-        {% endif %}
-        {% if organisation.registration_number %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% lcs 'organisation.Details.REGISTRATION_NUMBER' %}
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ organisation.registration_number }}
-                </dd>
-            </div>
-        {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {% lcs 'organisation.Details.CREATED_AT' %}
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {{ organisation.created_at|str_date }}
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {% lcs 'organisation.Details.PRIMARY_SITE' %}
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {{ organisation.primary_site.name }}<br>
-                <span class="govuk-hint">
-                    {% if organisation.primary_site.address.address_line_1 %}
-                        {{ organisation.primary_site.address.address_line_1 }}<br/>
-                        {% if organisation.primary_site.address.address_line_2 %}
-                            {{ organisation.primary_site.address.address_line_2 }}<br/>
-                        {% endif %}
-                        {{ organisation.primary_site.address.city }}<br/>
-                        {{ organisation.primary_site.address.postcode }}<br/>
-                        {{ organisation.primary_site.address.country.name }}
-                    {% else %}
-                        {{ organisation.primary_site.address.address }}<br/>
-                        {{ organisation.primary_site.address.country.name }}
-                    {% endif %}
-                </span>
-            </dd>
-            <dt class="govuk-summary-list__actions">
-                <a href="{% url 'organisation:sites:site' organisation.primary_site.id %}?return_to={{ request.path }}" class="govuk-link govuk-link--no-visited-state">
-                    {% lcs 'generic.VIEW' %}
-                    <span class="govuk-visually-hidden"> {% lcs 'organisation.Details.PRIMARY_SITE' %}</span>
-                </a>
-            </dt>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                {% lcs 'organisation.Details.TYPE' %}
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {{ organisation.type.value }}
-            </dd>
-        </div>
-
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Registered firearms dealer</dt>
-            <dd class="govuk-summary-list__value">
-                {% if documents.rfd_certificate %}
-                    {{ documents.rfd_certificate.is_expired|yesno:'No,Yes' }}
-                    <p>{{ documents.rfd_certificate.reference_code }}</p>
-                    <p>{{ documents.rfd_certificate.is_expired|yesno:'Expired,Expires'}} {{ documents.rfd_certificate.expiry_date }}</p>
-                {% else %}
-                    No
-                {% endif %}
-            </dd>
-            <dt class="govuk-summary-list__actions">
-                {% if documents.rfd_certificate %}
-                <div>
-                    <a href="#" class="govuk-link govuk-link--no-visited-state">View certificate</a>
-                </div>
-                {% endif %}
-                <div>
-                    <a href="{% url 'organisation:upload-firearms-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.rfd_certificate|yesno:'Replace,Upload'}} certificate</a>
-                </div>
-            </dt>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Authorised to export products under section 5 of Firearms act 1968</dt>
-            <dd class="govuk-summary-list__value">
-                {% if documents.section_five_certificate %}
-                    {{ documents.section_five_certificate.is_expired|yesno:'No,Yes' }}
-                    <p>{{ documents.section_five_certificate.reference_code }}</p>
-                    <p>{{ documents.section_five_certificate.is_expired|yesno:'Expired,Expires'}} {{ documents.section_five_certificate.expiry_date }}</p>
-                {% else %}
-                    No
-                {% endif %}
-            </dd>
-            <dt class="govuk-summary-list__actions">
-                {% if documents.section_five_certificate %}
-                    <div>
-                        <a href="#" class="govuk-link govuk-link--no-visited-state">View certificate</a>
-                    </div>
-                {% endif %}
-                <div>
-                    <a href="{% url 'organisation:upload-section-five-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.section_five_certificate|yesno:'Replace,Upload'}} certificate</a>
-                </div>
-            </dt>
-        </div>
-
-    </dl>
+	<dl class="govuk-summary-list govuk-summary-list--no-border govuk-!-width-two-thirds">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisation.Details.NAME' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.name }}
+			</dd>
+		</div>
+		{% if organisation.eori_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'organisation.Details.EORI_NUMBER' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.eori_number }}
+				</dd>
+			</div>
+		{% endif %}
+		{% if organisation.sic_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'organisation.Details.SIC_NUMBER' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.sic_number }}
+				</dd>
+			</div>
+		{% endif %}
+		{% if organisation.vat_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'organisation.Details.VAT_NUMBER' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.vat_number }}
+				</dd>
+			</div>
+		{% endif %}
+		{% if organisation.registration_number %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					{% lcs 'organisation.Details.REGISTRATION_NUMBER' %}
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ organisation.registration_number }}
+				</dd>
+			</div>
+		{% endif %}
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisation.Details.CREATED_AT' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.created_at|str_date }}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisation.Details.PRIMARY_SITE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.primary_site.name }}<br>
+				<span class="govuk-hint">
+					{% if organisation.primary_site.address.address_line_1 %}
+						{{ organisation.primary_site.address.address_line_1 }}<br/>
+						{% if organisation.primary_site.address.address_line_2 %}
+							{{ organisation.primary_site.address.address_line_2 }}<br/>
+						{% endif %}
+						{{ organisation.primary_site.address.city }}<br/>
+						{{ organisation.primary_site.address.postcode }}<br/>
+						{{ organisation.primary_site.address.country.name }}
+					{% else %}
+						{{ organisation.primary_site.address.address }}<br/>
+						{{ organisation.primary_site.address.country.name }}
+					{% endif %}
+				</span>
+			</dd>
+			<dt class="govuk-summary-list__actions">
+				<a href="{% url 'organisation:sites:site' organisation.primary_site.id %}?return_to={{ request.path }}" class="govuk-link govuk-link--no-visited-state">
+					{% lcs 'generic.VIEW' %}
+					<span class="govuk-visually-hidden"> {% lcs 'organisation.Details.PRIMARY_SITE' %}</span>
+				</a>
+			</dt>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% lcs 'organisation.Details.TYPE' %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.type.value }}
+			</dd>
+		</div>
+	</dl>
 {% endblock %}

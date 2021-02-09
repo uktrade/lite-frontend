@@ -10,10 +10,4 @@ urlpatterns = [
     path("sites/", include("exporter.organisation.sites.urls")),
     path("roles/", include("exporter.organisation.roles.urls")),
     path("details/", views.Details.as_view(), name="details"),
-    path("upload/firearms-certificate", views.UploadFirearmsCertificate.as_view(), name="upload-firearms-certificate"),
-    path(
-        "upload/section-five-certificate",
-        views.UploadSectionFiveCertificate.as_view(),
-        name="upload-section-five-certificate",
-    ),
 ]
