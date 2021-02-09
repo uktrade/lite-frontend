@@ -134,7 +134,6 @@ def add_firearm_details_to_data(json):
         "has_proof_mark",
         "no_proof_mark_details",
         "is_deactivated",
-        "date_of_deactivation",
         "deactivation_standard",
         "deactivation_standard_other",
         "is_deactivated_to_standard",
