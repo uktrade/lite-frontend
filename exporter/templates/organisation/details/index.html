@@ -109,7 +109,7 @@
             <dt class="govuk-summary-list__actions">
                 {% if documents.rfd_certificate %}
                 <div>
-                    <a href="#" class="govuk-link govuk-link--no-visited-state">View certificate</a>
+                    <a href="{% url 'organisation:document' pk=documents.rfd_certificate.id %}" class="govuk-link govuk-link--no-visited-state" target="_blank">View certificate</a>
                 </div>
                 {% endif %}
                 <div>
@@ -131,7 +131,7 @@
             <dt class="govuk-summary-list__actions">
                 {% if documents.section_five_certificate %}
                     <div>
-                        <a href="#" class="govuk-link govuk-link--no-visited-state">View certificate</a>
+                        <a href="{% url 'organisation:document' pk=documents.section_five_certificate.id %}" class="govuk-link govuk-link--no-visited-state" target="_blank">View certificate</a>
                     </div>
                 {% endif %}
                 <div>

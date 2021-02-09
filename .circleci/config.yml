@@ -110,7 +110,8 @@ commands:
 
   lint:
     steps:
-      - run: pipenv run bandit -r .
+      - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
+
       - run: pipenv run prospector
       - run: pipenv run black . --check --diff
 
