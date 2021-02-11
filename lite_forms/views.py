@@ -185,7 +185,6 @@ class MultiFormView(FormView):
             inject_data=self.get_data(),
             additional_context=self.additional_context,
         )
-
         # If there are more forms to go through, continue
         if response:
             return response

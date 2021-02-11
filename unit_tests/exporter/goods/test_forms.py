@@ -159,3 +159,47 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
 
     for i, q in enumerate(question_checks):
         assert form_parts[i].questions[q["qindex"]].name == q["name"]
+
+
+def test_has_valid_rfd_certificate_is_expired():
+    actual = forms.has_valid_rfd_certificate(
+        {"organisation": {"documents": [{"document_type": "rfd-certificate", "is_expired": True}]}}
+    )
+
+    assert actual is False
+
+
+def test_has_valid_rfd_certificate_not_expired():
+    actual = forms.has_valid_rfd_certificate(
+        {"organisation": {"documents": [{"document_type": "rfd-certificate", "is_expired": False}]}}
+    )
+
+    assert actual is True
+
+
+def test_has_valid_rfd_certificate_empty():
+    actual = forms.has_valid_rfd_certificate({"organisation": {"documents": []}})
+
+    assert actual is False
+
+
+def test_has_valid_section_five_certificate_is_expired():
+    actual = forms.has_valid_section_five_certificate(
+        {"organisation": {"documents": [{"document_type": "section-five-certificate", "is_expired": True}]}}
+    )
+
+    assert actual is False
+
+
+def test_has_valid_section_five_certificate_not_expired():
+    actual = forms.has_valid_section_five_certificate(
+        {"organisation": {"documents": [{"document_type": "section-five-certificate", "is_expired": False}]}}
+    )
+
+    assert actual is True
+
+
+def test_has_valid_section_five_certificate_empty():
+    actual = forms.has_valid_section_five_certificate({"organisation": {"documents": []}})
+
+    assert actual is False

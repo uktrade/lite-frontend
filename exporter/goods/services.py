@@ -54,7 +54,6 @@ def add_section_certificate_details(firearm_details, json):
             "is_covered_by_firearm_act_section_one_two_or_five", ""
         )
         firearm_details["firearms_act_section"] = json.get("firearms_act_section", "")
-
     if "firearms_certificate_uploaded" in json:
         certificate_missing = json.get("section_certificate_missing", False)
         if not certificate_missing:

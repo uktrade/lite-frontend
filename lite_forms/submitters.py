@@ -82,7 +82,6 @@ def submit_paged_form(  # noqa
     """
     if additional_context is None:
         additional_context = {}
-
     data, nested_data = _prepare_data(request, inject_data)
 
     form_pk = request.POST.get("form_pk")
