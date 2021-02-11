@@ -186,7 +186,6 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
 class AddGood(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = add_good_form_group(request)
-        self.action = validate_good
 
     def on_submission(self, request, **kwargs):
         copied_request = request.POST.copy()
@@ -210,14 +209,16 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             base_form_back_link=reverse("goods:goods"),
         )
 
-        # we require the form index of the last form in the group, not the total number
-        number_of_forms = len(self.forms.get_forms()) - 1
-
-        if int(self.request.POST.get("form_pk")) == number_of_forms:
-            self.action = post_goods
-
     def get_success_url(self):
         return reverse_lazy("goods:add_document", kwargs={"pk": self.get_validated_data()["good"]["id"]})
+
+    @property
+    def action(self):
+        # we require the form index of the last form in the group, not the total number
+        number_of_forms = len(self.forms.get_forms()) - 1
+        if int(self.request.POST.get("form_pk")) == number_of_forms:
+            return post_goods
+        return validate_good
 
 
 class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
