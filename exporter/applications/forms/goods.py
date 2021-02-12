@@ -1,10 +1,12 @@
 from django.urls import reverse_lazy
 
 from exporter.core.constants import EXHIBITION, PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
-from exporter.core.services import get_units, get_item_types
+from exporter.core.services import get_item_types
 from exporter.goods.helpers import good_summary
 from exporter.goods.forms import (
+    firearms_number_of_items,
     identification_markings_form,
+    firearms_capture_serial_numbers,
     firearm_year_of_manufacture_details_form,
     firearms_act_confirmation_form,
 )
@@ -16,7 +18,6 @@ from lite_forms.components import (
     Form,
     HiddenField,
     Select,
-    QuantityInput,
     CurrencyInput,
     RadioButtons,
     Option,
@@ -42,17 +43,24 @@ def exhibition_item_type(request, good_id, application_id):
     )
 
 
-def good_on_application_form_group(request, is_preexisting, good, sub_case_type, draft_pk):
+def good_on_application_form_group(request, is_preexisting, good, sub_case_type, draft_pk, show_serial_numbers_form):
     # is_preexisting are only asked if user is adding a preexisting good from their product list
     # but not if the good being added to the application is a new good created as part of this same flow
     firearm_type = None
+    number_of_items = None
     if good.get("firearm_details"):
         firearm_type = good["firearm_details"]["type"]["key"]
+        number_of_items = good["firearm_details"]["number_of_items"]
 
     is_firearm_core = firearm_type and firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES
     return FormGroup(
         [
-            conditional(is_preexisting, identification_markings_form(draft_pk)),
+            conditional(is_preexisting and is_firearm_core, firearms_number_of_items(firearm_type)),
+            conditional(is_preexisting and is_firearm_core, identification_markings_form(draft_pk)),
+            conditional(
+                is_preexisting and is_firearm_core and show_serial_numbers_form,
+                firearms_capture_serial_numbers(number_of_items),
+            ),
             conditional(is_preexisting, firearm_year_of_manufacture_details_form()),
             unit_quantity_value(request, good, sub_case_type, draft_pk),
             conditional(is_preexisting and is_firearm_core, firearms_act_confirmation_form()),
@@ -67,17 +75,6 @@ def unit_quantity_value(request, good, sub_case_type, application_id):
         questions = [
             good_summary(good),
             HiddenField(name="good_id", value=good.get("id")),
-            Select(
-                title=AddGoodToApplicationForm.Units.TITLE,
-                description="<noscript>" + AddGoodToApplicationForm.Units.DESCRIPTION + "</noscript>",
-                name="unit",
-                options=get_units(request),
-            ),
-            QuantityInput(
-                title=AddGoodToApplicationForm.Quantity.TITLE,
-                description=AddGoodToApplicationForm.Quantity.DESCRIPTION,
-                name="quantity",
-            ),
             CurrencyInput(
                 title=AddGoodToApplicationForm.VALUE.TITLE,
                 description=AddGoodToApplicationForm.VALUE.DESCRIPTION,

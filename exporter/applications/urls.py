@@ -30,7 +30,9 @@ from exporter.goods.views import (
     EditFirearmSportingShotgunStatus,
     EditCalibre,
     EditFirearmActDetails,
+    EditNumberofItems,
     EditIdentificationMarkings,
+    EditSerialNumbers,
     EditYearOfManufacture,
     EditFirearmReplica,
     EditFirearmActCertificateDetails,
@@ -113,6 +115,16 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/identification_markings/",
         EditIdentificationMarkings.as_view(),
         name="identification_markings",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/number_of_items/",
+        EditNumberofItems.as_view(),
+        name="number_of_items",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/serial_numbers/",
+        EditSerialNumbers.as_view(),
+        name="serial_numbers",
     ),
     path(
         "<uuid:pk>/goods/add-new/<uuid:good_pk>/good-detail-summary/",

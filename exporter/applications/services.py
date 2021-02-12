@@ -13,7 +13,7 @@ from exporter.applications.helpers.date_fields import (
 )
 from exporter.goods import services
 
-from exporter.core.helpers import remove_prefix, add_validate_only_to_data
+from exporter.core.helpers import remove_prefix, add_validate_only_to_data, str_to_bool
 from core.helpers import convert_parameters_to_query_params
 from exporter.core.objects import Application
 
@@ -114,14 +114,15 @@ def get_application_goods_types(request, pk):
 
 def post_good_on_application(request, pk, json):
     good = None
+    preexisting = str_to_bool(request.GET.get("preexisting"))
     if json.get("good_id"):
         good, _ = services.get_good(request, json["good_id"])
-    post_data = serialize_good_on_app_data(json, good)
+    post_data = serialize_good_on_app_data(json, good, preexisting)
     response = client.post(request, f"/applications/{pk}/goods/", post_data)
     return response.json(), response.status_code
 
 
-def serialize_good_on_app_data(json, good=None):
+def serialize_good_on_app_data(json, good=None, preexisting=False):
     if json.get("good_on_app_value") or json.get("good_on_app_value") == "":
         post_data = remove_prefix(json, "good_on_app_")
     else:
@@ -132,14 +133,17 @@ def serialize_good_on_app_data(json, good=None):
 
     if json.get("date_of_deactivationday"):
         post_data["date_of_deactivation"] = format_date(post_data, "date_of_deactivation")
+
     post_data = services.add_firearm_details_to_data(post_data)
 
-    if good:
+    # Adding new good to the application
+    if not preexisting:
         post_data["firearm_details"]["number_of_items"] = good["firearm_details"]["number_of_items"]
         if good["firearm_details"]["has_identification_markings"] is True:
             post_data["firearm_details"]["serial_numbers"] = good["firearm_details"]["serial_numbers"]
         else:
             post_data["firearm_details"]["serial_numbers"] = list()
+    print(f"===== POST data: {post_data}")
 
     return post_data
 

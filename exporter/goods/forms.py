@@ -41,7 +41,6 @@ from lite_forms.components import (
     Heading,
     HelpSection,
     Checkboxes,
-    Link,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
@@ -621,10 +620,13 @@ def firearms_capture_serial_numbers(number_of_items):
             number_of_items = int(number_of_items)
         except ValueError:
             number_of_items = 0
+    elif number_of_items is None:
+        number_of_items = 0
 
     questions = [
         HiddenField("capture_serial_numbers_step", True),
-        Group(components=[Label(text=f"Number of items: {number_of_items}"), Link(text="Change", address="#"),]),
+        HiddenField("number_of_items", number_of_items),
+        Group(components=[Label(text=f"Number of items: {number_of_items}")]),
     ]
 
     input_fields = [

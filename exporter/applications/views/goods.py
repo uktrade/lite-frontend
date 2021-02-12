@@ -391,13 +391,13 @@ class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
         self.object_pk = kwargs["pk"]
         self.good_pk = kwargs["good_pk"]
         application = get_application(self.request, self.object_pk)
-        good, _ = get_good(request, self.good_pk)
+        self.good, _ = get_good(request, self.good_pk)
 
-        sub_case_type = application["case_type"]["sub_type"]
+        self.sub_case_type = application["case_type"]["sub_type"]
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
 
         self.forms = good_on_application_form_group(
-            request, is_preexisting=is_preexisting, good=good, sub_case_type=sub_case_type, draft_pk=self.object_pk
+            request, is_preexisting, self.good, self.sub_case_type, self.object_pk, True
         )
 
         self.action = validate_good_on_application
@@ -407,10 +407,24 @@ class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
         )
 
     def on_submission(self, request, **kwargs):
+        is_preexisting = str_to_bool(request.GET.get("preexisting", True))
+        copied_request = request.POST.copy()
+        number_of_items = copied_request.get("number_of_items")
+        self.good["firearm_details"]["number_of_items"] = number_of_items
+
         selected_section = request.POST.get("firearms_act_section")
         show_section_upload_form = request.POST.get("is_covered_by_firearm_act_section_one_two_or_five", False) and (
             selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
         )
+
+        show_serial_numbers_form = True
+        if copied_request.get("has_identification_markings") == "False":
+            show_serial_numbers_form = False
+
+        self.forms = good_on_application_form_group(
+            request, is_preexisting, self.good, self.sub_case_type, self.object_pk, show_serial_numbers_form
+        )
+
         # we require the form index of the last form in the group, not the total number
         number_of_forms = len(self.forms.get_forms()) - 1
         if int(self.request.POST.get("form_pk")) == number_of_forms:

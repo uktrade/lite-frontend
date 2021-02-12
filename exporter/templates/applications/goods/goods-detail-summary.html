@@ -221,21 +221,50 @@
 
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
+							Number of items
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ good.firearm_details.number_of_items}}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
 							{% lcs "goods.GoodsDetailSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{% if good.good.firearm_details.has_identification_markings is not None %}
-								{{ good.good.firearm_details.has_identification_markings|friendly_boolean }}
+							{% if good.firearm_details.has_identification_markings is not None %}
+								{{ good.firearm_details.has_identification_markings|friendly_boolean }}
 								<span class="govuk-hint">
-									{% if good.good.firearm_details.has_identification_markings %}
-										{{ good.good.firearm_details.identification_markings_details|default_na }}
-									{% else %}
-										{{ good.good.firearm_details.no_identification_markings_details|default_na }}
+									{% if good.firearm_details.has_identification_markings is False %}
+										{{ good.firearm_details.no_identification_markings_details|default_na }}
 									{% endif %}
 								</span>
 							{% endif %}
 						</dd>
 					</div>
+
+					{% if good.firearm_details.has_identification_markings is True %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Serial numbers
+							</dt>
+							<dd class="govuk-summary-list__value">
+								<details class="govuk-details" data-module="govuk-details">
+									<summary class="govuk-details__summary">
+									  <span class="govuk-details__summary-text">
+										View serial numbers
+									  </span>
+									</summary>
+									<div class="govuk-details__text">
+										{% for item in good.firearm_details.serial_numbers %}
+										{{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
+										{% endfor %}
+									</div>
+							    </details>
+							</dd>
+						</div>
+					{% endif %}
 				{% endif %}
 
 				<div class="govuk-summary-list__row">

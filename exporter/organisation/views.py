@@ -1,4 +1,4 @@
-from s3chunkuploader.file_handler import s3_client, S3FileUploadHandler
+from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -18,7 +18,7 @@ from exporter.organisation.roles.services import get_user_permissions
 from exporter.organisation import forms
 from exporter.organisation.services import post_organisation_documents
 from core.auth.views import LoginRequiredMixin
-from lite_forms.generators import error_page, form_page
+from lite_forms.generators import form_page
 
 
 class OrganisationView(TemplateView):

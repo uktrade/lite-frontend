@@ -14,6 +14,7 @@ def good_summary(good):
             "Name": good["description"] if not good["name"] else good["name"],
             "Control list entries": convert_control_list_entries(good["control_list_entries"]),
             "Part number": default_na(good["part_number"]),
+            "Number of items": str(good["firearm_details"]["number_of_items"]),
         },
         classes=["govuk-summary-list--no-border"],
     )

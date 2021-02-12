@@ -79,9 +79,9 @@ def add_identification_marking_details(firearm_details, json):
         firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
         firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
         del json["no_identification_markings_details"]
-    elif firearm_details and "has_identification_markings" not in firearm_details:
-        firearm_details["has_identification_markings"] = False
-        firearm_details["no_identification_markings_details"] = "n/a"
+    # elif firearm_details and "has_identification_markings" not in firearm_details:
+    #     firearm_details["has_identification_markings"] = False
+    #     firearm_details["no_identification_markings_details"] = "n/a"
 
     return firearm_details
 
@@ -111,8 +111,13 @@ def add_firearm_details_to_data(json):
         firearm_details["number_of_items"] = 0
 
     if "capture_serial_numbers_step" in json:
+        try:
+            number_of_items = int(json.get("number_of_items"))
+        except ValueError:
+            number_of_items = 0
+
         serial_numbers = []
-        for i in range(firearm_details["number_of_items"]):
+        for i in range(number_of_items):
             serial_numbers.append(json.get(f"serial_number_input_{i}", ""))
             del json[f"serial_number_input_{i}"]
         firearm_details["serial_numbers"] = serial_numbers

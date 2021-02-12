@@ -325,7 +325,27 @@
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
-							<a id="change-number-of-items" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:identification_markings' application_id good.id %}">{% lcs 'generic.CHANGE' %}</a>
+							<a id="change-number-of-items" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:number_of_items' application_id good.id %}">{% lcs 'generic.CHANGE' %}</a>
+						{% endif %}
+					</dd>
+				</div>
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+						{% lcs "Goods.AddGoodSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}
+					</dt>
+					<dd class="govuk-summary-list__value">
+						{% if good.firearm_details.has_identification_markings is not None %}
+								{{ good.firearm_details.has_identification_markings|friendly_boolean }}
+								<span class="govuk-hint">
+									{% if good.firearm_details.has_identification_markings is False %}
+										{{ good.firearm_details.no_identification_markings_details|default_na }}
+									{% endif %}
+								</span>
+						{% endif %}
+					</dd>
+					<dd class="govuk-summary-list__actions">
+						{% if good.status.key == 'draft' %}
+							<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:identification_markings' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
 						{% endif %}
 					</dd>
 				</div>
@@ -351,7 +371,7 @@
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							{% if good.status.key == 'draft' %}
-								<a id="change-serial-numbers" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:identification_markings' application_id good.id %}">{% lcs 'generic.CHANGE' %}</a>
+								<a id="change-serial-numbers" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:serial_numbers' application_id good.id %}">{% lcs 'generic.CHANGE' %}</a>
 							{% endif %}
 						</dd>
 					</div>
