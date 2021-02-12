@@ -318,26 +318,44 @@
 
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">
-						{% lcs "Goods.AddGoodSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}
+						Number of items
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.has_identification_markings is not None %}
-							{{ good.firearm_details.has_identification_markings|friendly_boolean }}
-							<span class="govuk-hint">
-								{% if good.firearm_details.has_identification_markings %}
-									{{ good.firearm_details.identification_markings_details|default_na }}
-								{% else %}
-									{{ good.firearm_details.no_identification_markings_details|default_na }}
-								{% endif %}
-							</span>
-						{% endif %}
+						{{ good.firearm_details.number_of_items }}
 					</dd>
 					<dd class="govuk-summary-list__actions">
 						{% if good.status.key == 'draft' %}
-							<a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:identification_markings' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}</span></a>
+							<a id="change-number-of-items" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:identification_markings' application_id good.id %}">{% lcs 'generic.CHANGE' %}</a>
 						{% endif %}
 					</dd>
 				</div>
+
+				{% if good.firearm_details.has_identification_markings %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Serial numbers
+						</dt>
+						<dd class="govuk-summary-list__value">
+							<details class="govuk-details" data-module="govuk-details">
+								<summary class="govuk-details__summary">
+								  <span class="govuk-details__summary-text">
+									View serial numbers
+								  </span>
+								</summary>
+								<div class="govuk-details__text">
+									{% for item in good.firearm_details.serial_numbers %}
+									{{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
+									{% endfor %}
+								</div>
+							  </details>
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							{% if good.status.key == 'draft' %}
+								<a id="change-serial-numbers" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:identification_markings' application_id good.id %}">{% lcs 'generic.CHANGE' %}</a>
+							{% endif %}
+						</dd>
+					</div>
+				{% endif %}
 			{% endif %}
 		{% endwith %}
 

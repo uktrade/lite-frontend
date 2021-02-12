@@ -146,6 +146,9 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         self.show_section_upload_form = self.covered_by_firearms_act and (
             selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
         )
+        show_serial_numbers_form = True
+        if copied_request.get("has_identification_markings") == "False":
+            show_serial_numbers_form = False
 
         self.forms = add_good_form_group(
             request,
@@ -155,6 +158,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             is_firearms_core,
             is_firearms_accessory,
             is_firearms_software_tech,
+            show_serial_numbers_form,
             draft_pk=self.draft_pk,
             base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
         )

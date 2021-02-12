@@ -41,6 +41,7 @@ from lite_forms.components import (
     Heading,
     HelpSection,
     Checkboxes,
+    Link,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
@@ -343,6 +344,7 @@ def add_good_form_group(
     is_firearms_core: bool = None,
     is_firearms_accessory: bool = None,
     is_firearms_software_tech: bool = None,
+    show_serial_numbers_form: bool = False,
     draft_pk: str = None,
     base_form_back_link: str = None,
 ):
@@ -355,8 +357,13 @@ def add_good_form_group(
                 or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
                 group_two_product_type_form(back_link=base_form_back_link),
             ),
-            conditional(is_firearms_core and draft_pk, identification_markings_form()),
             conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
+            conditional(is_firearms_core and draft_pk, firearms_number_of_items(request.POST.get("type"))),
+            conditional(is_firearms_core and draft_pk, identification_markings_form()),
+            conditional(
+                is_firearms_core and draft_pk and show_serial_numbers_form,
+                firearms_capture_serial_numbers(request.POST.get("number_of_items", 0)),
+            ),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             # only ask if adding to a draft application
@@ -596,6 +603,48 @@ def firearms_sporting_shotgun_form(firearm_type):
     )
 
 
+def firearms_number_of_items(firearm_type):
+    return Form(
+        title="Number of items",
+        questions=[
+            HiddenField("type", firearm_type),
+            HiddenField("number_of_items_step", True),
+            TextInput(name="number_of_items"),
+        ],
+        default_button_name="Save and continue",
+    )
+
+
+def firearms_capture_serial_numbers(number_of_items):
+    if isinstance(number_of_items, str):
+        try:
+            number_of_items = int(number_of_items)
+        except ValueError:
+            number_of_items = 0
+
+    questions = [
+        HiddenField("capture_serial_numbers_step", True),
+        Group(components=[Label(text=f"Number of items: {number_of_items}"), Link(text="Change", address="#"),]),
+    ]
+
+    input_fields = [
+        Group(
+            components=[Label(text=f"{i+1}"), TextInput(name=f"serial_number_input_{i}")],
+            classes=["lite-app-bar__controls"],
+        )
+        for i in range(number_of_items)
+    ]
+
+    questions.append(Group(components=[Label(text="")] + input_fields))
+
+    return Form(
+        title="Enter the serial numbers for this product",
+        description="Enter one serial number in every row",
+        questions=questions,
+        default_button_name="Save and continue",
+    )
+
+
 def firearm_year_of_manufacture_details_form(good_id=None):
     return Form(
         title="What is the year of manufacture of the firearm?",
@@ -774,18 +823,7 @@ def identification_markings_form(draft_pk=None, good_id=None):
             title="",
             name="has_identification_markings",
             options=[
-                Option(
-                    key=True,
-                    value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
-                    components=[
-                        TextArea(
-                            title=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_DETAILS,
-                            description=CreateGoodForm.FirearmGood.IdentificationMarkings.MARKINGS_HELP_TEXT,
-                            name="identification_markings_details",
-                            optional=False,
-                        ),
-                    ],
-                ),
+                Option(key=True, value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,),
                 Option(
                     key=False,
                     value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,

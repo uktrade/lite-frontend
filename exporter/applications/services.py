@@ -113,12 +113,15 @@ def get_application_goods_types(request, pk):
 
 
 def post_good_on_application(request, pk, json):
-    post_data = serialize_good_on_app_data(json)
+    good = None
+    if json.get("good_id"):
+        good, _ = services.get_good(request, json["good_id"])
+    post_data = serialize_good_on_app_data(json, good)
     response = client.post(request, f"/applications/{pk}/goods/", post_data)
     return response.json(), response.status_code
 
 
-def serialize_good_on_app_data(json):
+def serialize_good_on_app_data(json, good=None):
     if json.get("good_on_app_value") or json.get("good_on_app_value") == "":
         post_data = remove_prefix(json, "good_on_app_")
     else:
@@ -130,6 +133,14 @@ def serialize_good_on_app_data(json):
     if json.get("date_of_deactivationday"):
         post_data["date_of_deactivation"] = format_date(post_data, "date_of_deactivation")
     post_data = services.add_firearm_details_to_data(post_data)
+
+    if good:
+        post_data["firearm_details"]["number_of_items"] = good["firearm_details"]["number_of_items"]
+        if good["firearm_details"]["has_identification_markings"] is True:
+            post_data["firearm_details"]["serial_numbers"] = good["firearm_details"]["serial_numbers"]
+        else:
+            post_data["firearm_details"]["serial_numbers"] = list()
+
     return post_data
 
 
