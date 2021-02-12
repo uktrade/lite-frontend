@@ -118,7 +118,7 @@
 		{% endif %}
 		{% if good.status.key == 'draft' %}
 			{% if good.is_good_controlled.key == "unsure" or good.is_pv_graded.key == "grading_required" %}
-				{%if documents or good.missing_document_reason.key  %}
+				{%if documents or good.is_document_sensitive  %}
 					<div class="govuk-inset-text">
 					{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
 						Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to raise a control list classification (CLC) query if you're not sure whether your product is on the control list.
@@ -740,7 +740,7 @@
 							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
 						</a>
 					{% else %}
-						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:add_document' good.id %}">
+						<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'goods:check_document_sensitivity' good.id %}?goodpage=yes">
 							{% lcs 'Goods.Documents.AttachDocuments.BUTTON' %}
 						</a>
 					{% endif %}
@@ -787,12 +787,20 @@
 				</li>
 			{% endfor %}
 		</ol>
-	{% elif good.missing_document_reason.key %}
+	{% elif good.is_document_sensitive %}
 		<div class="lite-information-text">
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>
 			<p class="lite-information-text__text">
 				<span class="govuk-visually-hidden">{% lcs "generic.NoticeComponent.INFORMATION" %}</span>
-				No document attached: {{ good.missing_document_reason.value }}
+				No document attached: Document is above OFFICIAL-SENSITIVE
+			</p>
+		</div>
+	{% elif not good.is_document_available %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">{% lcs "generic.NoticeComponent.INFORMATION" %}</span>
+				No document attached: No document available
 			</p>
 		</div>
 	{% else %}

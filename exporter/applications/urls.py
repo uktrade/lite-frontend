@@ -122,9 +122,14 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),
     path(
-        "<uuid:pk>/goods/add-new/<uuid:good_pk>/add-document/",
+        "<uuid:pk>/goods/add-new/<uuid:good_pk>/check-document-availability/",
+        goods.CheckDocumentAvailability.as_view(),
+        name="check_document_availability",
+    ),
+    path(
+        "<uuid:pk>/goods/add-new/<uuid:good_pk>/document-grading/",
         goods.CheckDocumentGrading.as_view(),
-        name="add_document",
+        name="document_grading",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/attach/", goods.AttachDocument.as_view(), name="attach_documents"),
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),

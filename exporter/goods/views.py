@@ -25,6 +25,7 @@ from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.goods.forms import (
     attach_documents_form,
     delete_good_form,
+    check_document_available_form,
     document_grading_form,
     raise_a_goods_query,
     add_good_form_group,
@@ -60,6 +61,7 @@ from exporter.goods.services import (
     post_good_documents,
     delete_good_document,
     raise_goods_query,
+    post_good_document_availability,
     post_good_document_sensitivity,
     validate_good,
     edit_good_pv_grading,
@@ -217,7 +219,7 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             self.action = post_goods
 
     def get_success_url(self):
-        return reverse_lazy("goods:add_document", kwargs={"pk": self.get_validated_data()["good"]["id"]})
+        return reverse_lazy("goods:check_document_availability", kwargs={"pk": self.get_validated_data()["good"]["id"]})
 
 
 class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
@@ -475,7 +477,7 @@ class EditGrading(LoginRequiredMixin, SingleFormView):
                 "goods:good_detail_application",
                 kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
             )
-        elif not good.get("documents") and not good.get("missing_document_reason"):
+        elif not good.get("documents") and not good.get("is_document_available"):
             return reverse_lazy("goods:add_document", kwargs={"pk": self.object_pk})
         elif raise_a_clc_query or raise_a_pv_query:
             return reverse_lazy("goods:raise_goods_query", kwargs={"pk": self.object_pk})
@@ -836,7 +838,7 @@ class DeleteGood(LoginRequiredMixin, TemplateView):
         return redirect(reverse_lazy("goods:goods"))
 
 
-class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
+class CheckDocumentAvailable(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.draft_pk = kwargs.get("draft_pk")
@@ -846,7 +848,44 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
                 "goods:good_detail_application",
                 kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
             )
-        self.form = document_grading_form(request, self.object_pk, back_url)
+        self.form = check_document_available_form(back_url)
+        self.action = post_good_document_availability
+
+    def get_success_url(self):
+        kwargs = {"pk": self.object_pk}
+        if self.draft_pk:
+            kwargs["draft_pk"] = self.draft_pk
+
+        if self.request.POST.get("is_document_available") == "no":
+            good = self.get_validated_data()["good"]
+            raise_a_clc_query = good["is_good_controlled"] is None
+            raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
+
+            if not (raise_a_clc_query or raise_a_pv_query):
+                url = "goods:good"
+            else:
+                url = "goods:raise_goods_query"
+        else:
+            url = "goods:check_document_sensitivity"
+
+        return reverse_lazy(url, kwargs=kwargs)
+
+
+class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
+    def init(self, request, **kwargs):
+        return_to_good_page = request.GET.get("goodpage", "no")
+        self.object_pk = kwargs["pk"]
+        self.draft_pk = kwargs.get("draft_pk")
+        if return_to_good_page == "yes":
+            back_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+        else:
+            back_url = reverse_lazy("goods:check_document_availability", kwargs={"pk": self.object_pk})
+        if self.draft_pk:
+            back_url = reverse_lazy(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
+            )
+        self.form = document_grading_form(back_url)
         self.action = post_good_document_sensitivity
 
     def get_success_url(self):
@@ -854,7 +893,7 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
         if self.draft_pk:
             kwargs["draft_pk"] = self.draft_pk
 
-        if self.request.POST.get("has_document_to_upload") == "no":
+        if self.request.POST.get("is_document_sensitive") == "yes":
             good = self.get_validated_data()["good"]
             raise_a_clc_query = good["is_good_controlled"] is None
             raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
@@ -907,23 +946,26 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
                 )
             else:
                 back_link = BackLink(
-                    AttachDocumentForm.BACK_FORM_LINK, reverse("goods:add_document", kwargs={"pk": good_id})
+                    AttachDocumentForm.BACK_FORM_LINK,
+                    reverse("goods:check_document_sensitivity", kwargs={"pk": good_id}),
                 )
         form = attach_documents_form(back_link)
         return form_page(request, form, extra_data=extra_data)
 
     @csrf_exempt
     def post(self, request, **kwargs):
+        draft_pk = str(kwargs.get("draft_pk", ""))
+        good_id = str(kwargs["pk"])
+        back_link = BackLink(
+            AttachDocumentForm.BACK_FORM_LINK, reverse("goods:check_document_sensitivity", kwargs={"pk": good_id}),
+        )
         self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
-        good_id = str(kwargs["pk"])
-        draft_pk = str(kwargs.get("draft_pk", ""))
         good, _ = get_good(request, good_id)
-
         data, error = add_document_data(request)
-
         if error:
-            return error_page(request, error)
+            form = attach_documents_form(back_link)
+            return form_page(request, form, errors={"file": ["Select a document"]})
 
         data, status_code = post_good_documents(request, good_id, data)
         if status_code != HTTPStatus.CREATED:

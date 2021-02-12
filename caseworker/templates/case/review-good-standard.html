@@ -278,11 +278,30 @@
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Document</th>
                 <td class="govuk-table__cell">
-                    {{ object.good.missing_document_reason.value }}
-                    {% for document in object.good.documents %}
-                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
-                        {% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                    {% if object.good.documents %}
+                        {% if object.good.documents|length > 1 %}
+                            <ol class="govuk-list govuk-list--number">
+                                {% for document in object.good.documents %}
+                                <li>
+                                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+                                    <span class="govuk-hint"> {{ document.description }} </span>
+                                </li>
+                                {% endfor %}
+                            </ol>
+                        {% else %}
+                            {% with document=object.good.documents.0 %}
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+                                <span class="govuk-hint"> {{ document.description }} </span>
+                            {% endwith %}
+                        {% endif %}
+                    {% else %}
+                        {% if object.good.is_document_sensitive %}
+                            Document is above OFFICIAL-SENSITIVE
+                        {% endif %}
+                        {% if not object.good.is_document_available %}
+                            No document available
+                        {% endif %}
+                    {% endif %}
                 </td>
             </tr>
         </tbody>
