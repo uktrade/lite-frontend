@@ -20,11 +20,13 @@
 				</a>
 			{% endif %}
 			<div class="lite-!-display-inline lite-buttons-row {% if current_advice_level != 'team' %}app-advice__disabled-buttons{% endif %}">
-				<div data-enable-on-checkboxes="#form-team-advice-container" class="lite-buttons-row lite-!-display-inline">
-					<button id="button-give-team-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-						{% lcs 'advice.TeamAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
-					</button>
-				</div>
+				{% if current_advice_level %}
+					<div data-enable-on-checkboxes="#form-team-advice-container" class="lite-buttons-row lite-!-display-inline">
+						<button id="button-give-team-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
+							{% lcs 'advice.TeamAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+						</button>
+					</div>
+				{% endif %}
 				<button form="form-team-advice" id="button-clear-team-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
 					{% lcs 'advice.TeamAdvicePage.CLEAR_ADVICE_BUTTON' %}
 				</button>
