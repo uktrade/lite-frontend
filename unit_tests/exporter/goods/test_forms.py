@@ -55,25 +55,20 @@ def test_serialize_good_on_app_data(value, serialized):
     data = {
         "good_id": "some-uuid",
         "value": value,
-        "quantity": value,
     }
     expected = {
         "good_id": "some-uuid",
         "value": serialized,
-        "quantity": serialized,
     }
-    assert serialize_good_on_app_data(data) == expected
+    response = serialize_good_on_app_data(data)
+    actual = {}
+    actual["good_id"] = response["good_id"]
+    actual["value"] = response["value"]
+    assert actual == expected
 
 
 @pytest.mark.parametrize(
-    "value, serialized",
-    [
-        ("2,300.00", "2300.00"),
-        ("2,3,,,,,00.00", "2300.00"),
-        ("23,444200", "23444200"),
-        ("foo", "foo"),  # this will be caught by serializer on the api and return an error
-        ("84.34.111", "84.34.111"),  # this too
-    ],
+    "value, serialized", [("2,300.00", "2300.00"), ("2,3,,,,,00.00", "2300.00"), ("23,444200", "23444200"),],
 )
 def test_serialize_good_on_app_data_no_value_key(value, serialized):
 
@@ -85,7 +80,12 @@ def test_serialize_good_on_app_data_no_value_key(value, serialized):
         "good_id": "some-uuid",
         "quantity": serialized,
     }
-    assert serialize_good_on_app_data(data) == expected
+    response = serialize_good_on_app_data(data)
+    actual = {}
+    actual["good_id"] = response["good_id"]
+    actual["quantity"] = response["quantity"]
+    # there is no quantity now so we don't expect to be serialized
+    assert actual != expected
 
 
 @pytest.fixture
@@ -112,11 +112,12 @@ def pv_gradings(mock_pv_gradings, rf, client):
         ),
         (
             {"is_firearms_core": True, "draft_pk": "123", "is_firearm": True},
-            8,
+            9,
             [
                 {"qindex": 1, "name": "type"},
-                {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 2, "name": "is_sporting_shotgun"},
+                {"qindex": 2, "name": "number_of_items"},
+                {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "year_of_manufacture"},
                 {"qindex": 2, "name": "is_replica"},
@@ -175,5 +176,24 @@ def test_goods_check_document_sensitivity_form():
     assert len(form.questions) == 1
     assert form.title == "Is the document rated above OFFICIAL-SENSITIVE?"
     assert form.questions[0].name == "is_document_sensitive"
+    assert len(form.buttons) == 1
+    assert form.buttons[0].value == "Save and continue"
+
+
+def test_goods_firearms_number_of_items_form():
+    form = forms.firearms_number_of_items("firearms")
+    assert len(form.questions) == 3
+    assert form.title == "Number of items"
+    assert len(form.buttons) == 1
+    assert form.buttons[0].value == "Save and continue"
+
+
+def test_goods_firearms_capture_serial_numbers_form():
+    number_of_items = 5
+    form = forms.firearms_capture_serial_numbers(number_of_items)
+    assert len(form.questions) == 4
+    # number of input fields + label
+    assert len(form.questions[3].components) == (number_of_items + 1)
+    assert form.title == "Enter the serial numbers for this product"
     assert len(form.buttons) == 1
     assert form.buttons[0].value == "Save and continue"

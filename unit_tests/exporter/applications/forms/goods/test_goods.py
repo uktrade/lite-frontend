@@ -53,6 +53,7 @@ def good_ammo(good_template):
             "section_certificate_number": None,
             "type": {"key": "ammunition", "value": "Ammunition"},
             "year_of_manufacture": 2019,
+            "number_of_items": 3,
         },
     }
 
@@ -76,6 +77,7 @@ def good_shotgun(good_template):
             "section_certificate_number": None,
             "type": {"key": "firearms", "value": "Firearms"},
             "year_of_manufacture": 2020,
+            "number_of_items": 3,
         },
     }
 
@@ -99,6 +101,7 @@ def good_gun_barrel(good_template):
             "section_certificate_number": None,
             "type": {"key": "components_for_firearms", "value": "Components for firearms"},
             "year_of_manufacture": 2020,
+            "number_of_items": 3,
         },
     }
 
@@ -127,7 +130,7 @@ def test_good_on_application_form_ammunition(default_request, good_ammo, mock_un
         request=default_request, good=good_ammo, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
-    assert len(form.questions) == 8
+    assert len(form.questions) == 6
     assert form.questions[-2].title == goods.firearm_proof_mark_field().title
     assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
 
@@ -137,7 +140,7 @@ def test_good_on_application_form_firearm(default_request, good_shotgun, mock_un
         request=default_request, good=good_shotgun, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
-    assert len(form.questions) == 8
+    assert len(form.questions) == 6
     assert form.questions[-2].title == goods.firearm_proof_mark_field().title
     assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
 
@@ -147,7 +150,7 @@ def test_good_on_application_form_firearm_component(default_request, good_gun_ba
         request=default_request, good=good_gun_barrel, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
-    assert len(form.questions) == 8
+    assert len(form.questions) == 6
     assert form.questions[-2].options[0].components[0].title == goods.firearm_proof_mark_field().title
     assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
 
@@ -157,5 +160,5 @@ def test_good_on_application_form_not_firearm(default_request, good_widget, mock
         request=default_request, good=good_widget, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
-    assert len(form.questions) == 6
+    assert len(form.questions) == 4
     assert form.questions[-1].title != goods.firearm_proof_mark_field().title

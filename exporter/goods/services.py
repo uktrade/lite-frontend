@@ -119,7 +119,6 @@ def add_firearm_details_to_data(json):
         serial_numbers = []
         for i in range(number_of_items):
             serial_numbers.append(json.get(f"serial_number_input_{i}", ""))
-            del json[f"serial_number_input_{i}"]
         firearm_details["serial_numbers"] = serial_numbers
     else:
         firearm_details["serial_numbers"] = []

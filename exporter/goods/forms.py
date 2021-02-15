@@ -626,7 +626,7 @@ def firearms_capture_serial_numbers(number_of_items):
     questions = [
         HiddenField("capture_serial_numbers_step", True),
         HiddenField("number_of_items", number_of_items),
-        Group(components=[Label(text=f"Number of items: {number_of_items}")]),
+        Label(text=f"Number of items: {number_of_items}"),
     ]
 
     input_fields = [
@@ -637,7 +637,7 @@ def firearms_capture_serial_numbers(number_of_items):
         for i in range(number_of_items)
     ]
 
-    questions.append(Group(components=[Label(text="")] + input_fields))
+    questions.append(Group(components=[Label(id="serial_numbers", text=" ")] + input_fields))
 
     return Form(
         title="Enter the serial numbers for this product",

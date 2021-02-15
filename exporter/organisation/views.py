@@ -68,7 +68,7 @@ class AbstractOrganisationUpload(TemplateView):
     document_type = None
 
     def get(self, request, **kwargs):
-        form = self.form_function(back_url=reverse("organisation:details"))
+        form = self.form_function(back_url=reverse("organisation:details"))  # noqa
         return form_page(request, form)
 
     def handle_s3_upload(self):

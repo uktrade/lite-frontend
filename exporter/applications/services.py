@@ -127,7 +127,7 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
         post_data = remove_prefix(json, "good_on_app_")
     else:
         post_data = json
-    for key in {"value", "quantity"} & set(post_data.keys()):
+    for key in {"value"} & set(post_data.keys()):
         if "," in post_data[key]:
             post_data[key] = post_data[key].replace(",", "")
 
@@ -137,13 +137,12 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
     post_data = services.add_firearm_details_to_data(post_data)
 
     # Adding new good to the application
-    if not preexisting:
+    if not preexisting and good:
         post_data["firearm_details"]["number_of_items"] = good["firearm_details"]["number_of_items"]
         if good["firearm_details"]["has_identification_markings"] is True:
             post_data["firearm_details"]["serial_numbers"] = good["firearm_details"]["serial_numbers"]
         else:
             post_data["firearm_details"]["serial_numbers"] = list()
-    print(f"===== POST data: {post_data}")
 
     return post_data
 
