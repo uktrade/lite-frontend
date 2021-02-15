@@ -51,9 +51,8 @@ def good_on_application_form_group(
         firearm_type = good["firearm_details"]["type"]["key"]
 
     is_firearm_core = firearm_type and firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES
-    show_rfd_question = not has_valid_rfd_certificate(application)
+    show_rfd_question = is_firearm_core and not has_valid_rfd_certificate(application)
 
-    # show_rfd_question = True
     show_firearm_act_confirmation = is_preexisting and is_firearm_core
     return components.FormGroup(
         [

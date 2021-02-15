@@ -15,7 +15,7 @@ from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend.organisation import Tabs
 from lite_forms.helpers import conditional
 from exporter.organisation.roles.services import get_user_permissions
-
+from exporter.goods.forms import attach_firearm_dealer_certificate_form
 from exporter.organisation import forms
 from exporter.organisation.services import post_document_on_organisation, get_document_on_organisation
 from core.auth.views import LoginRequiredMixin
@@ -116,7 +116,7 @@ class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
 
 
 class UploadFirearmsCertificate(AbstractOrganisationUpload):
-    form_function = staticmethod(forms.attach_firearm_dealer_certificate_form)
+    form_function = staticmethod(attach_firearm_dealer_certificate_form)
     document_type = "rfd-certificate"
 
 

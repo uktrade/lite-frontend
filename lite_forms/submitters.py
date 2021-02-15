@@ -80,6 +80,7 @@ def submit_paged_form(  # noqa
     :param additional_context: Adds additional items to context for form
     :return: The next form page to display
     """
+
     if additional_context is None:
         additional_context = {}
     data, nested_data = _prepare_data(request, inject_data)

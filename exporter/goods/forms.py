@@ -712,7 +712,7 @@ def firearms_act_confirmation_form():
 
 def upload_firearms_act_certificate_form(section, filename, back_link):
     return Form(
-        title=f"Upload your Firearms Act 1968 {section} certificate",
+        title=f"Attach your Firearms Act 1968 {section} certificate",
         description="The file must be smaller than 50MB",
         questions=[
             HiddenField("firearms_certificate_uploaded", False),
@@ -804,12 +804,14 @@ def identification_markings_form(draft_pk=None, good_id=None):
 
 def attach_firearm_dealer_certificate_form(back_url):
     return Form(
-        title="Upload your registered firearms dealer certificate",
+        title="Attach your registered firearms dealer certificate",
         description="The file must be smaller than 50MB",
         questions=[
             FileUpload(),
             TextInput(name="reference_code", title="Certificate number",),
-            DateInput(prefix="expiry_date_", title="Expiry date", description="For example 12 3 2021"),
+            DateInput(
+                prefix="expiry_date_", name="expiry_date", title="Expiry date", description="For example 12 3 2021"
+            ),
         ],
         back_link=BackLink("Back", back_url),
     )
