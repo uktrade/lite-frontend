@@ -134,6 +134,44 @@
 				{% endif %}
 			</dd>
 		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Registered firearms dealer
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{% if orgasation_documents.rfd_certificate %}
+					Yes
+					<div class="govuk-hint">{{ orgasation_documents.rfd_certificate.reference_code }}</div>
+					<div class="govuk-hint">{{ orgasation_documents.rfd_certificate.expiry_date }}</div>
+				{% else %}
+					No
+				{% endif %}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if orgasation_documents.rfd_certificate %}
+					<a target="_blank" href="{% url 'cases:document' queue_pk='00000000-0000-0000-0000-000000000001' pk='00000000-0000-0000-0000-000000000001' file_pk=orgasation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">View certificate</a>
+				{% endif %}
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Authorised to export products under section 5 of Firearms Act 1968
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{% if orgasation_documents.section_five_certificate %}
+					Yes
+					<div class="govuk-hint">{{ orgasation_documents.section_five_certificate.reference_code }}</div>
+					<div class="govuk-hint">{{ orgasation_documents.section_five_certificate.expiry_date }}</div>
+				{% else %}
+					No
+				{% endif %}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				{% if orgasation_documents.section_five_certificate %}
+					<a target="_blank" href="{% url 'cases:document' queue_pk='00000000-0000-0000-0000-000000000001' pk='00000000-0000-0000-0000-000000000001' file_pk=orgasation_documents.section_five_certificate.document.id %}" class="govuk-link--no-visited-state">View certificate</a>
+				{% endif %}
+			</dd>
+		</div>
 	</dl>
 
 	{% if activity %}
