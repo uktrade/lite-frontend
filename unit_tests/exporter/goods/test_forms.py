@@ -203,7 +203,8 @@ def test_has_valid_section_five_certificate_empty():
     actual = forms.has_valid_section_five_certificate({"organisation": {"documents": []}})
 
     assert actual is False
-=======
+
+
 def test_goods_check_document_available_form():
     form = forms.check_document_available_form("back")
     assert len(form.questions) == 1

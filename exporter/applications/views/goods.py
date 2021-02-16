@@ -61,6 +61,23 @@ from core.auth.views import LoginRequiredMixin
 SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate_details"
 
 
+class SectionDocumentMixin:
+    @cached_property
+    def application(self):
+        application_id = str(self.kwargs["pk"])
+        return get_application(self.request, application_id)
+
+    def get_section_document(self):
+        documents = {item["document_type"]: item for item in self.application["organisation"]["documents"]}
+        firearm_section = self.good["firearm_details"]["firearms_act_section"]
+        if firearm_section == "firearms_act_section1":
+            return documents["section-one-certificate"]
+        elif firearm_section == "firearms_act_section2":
+            return documents["section-two-certificate"]
+        elif firearm_section == "firearms_act_section5":
+            return documents["section-five-certificate"]
+
+
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
 
     template_name = "applications/goods/index.html"
@@ -468,11 +485,7 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         )
 
 
-class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
-    @cached_property
-    def application(self):
-        return get_application(self.request, self.object_pk)
-
+class AddGoodToApplication(LoginRequiredMixin, SectionDocumentMixin, MultiFormView):
     @cached_property
     def good(self):
         good, _ = get_good(self.request, self.good_pk)
@@ -522,20 +535,17 @@ class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
 
             if not is_firearm_certificate_needed(application=self.application, selected_section=selected_section):
                 firearm_details = self.good["firearm_details"]
-
-                if firearm_details.get("section_certificate_date_of_expiry"):
-                    expiry_date = datetime.strptime(firearm_details["section_certificate_date_of_expiry"], "%Y-%m-%d")
-                else:
-                    expiry_date = None
+                document = self.get_section_document()
+                expiry_date = datetime.strptime(document["expiry_date"], "%d %B %Y")
                 self.request.POST = self.request.POST.copy()
                 self.request.POST.update(
                     {
                         "section_certificate_missing": firearm_details["section_certificate_missing"],
                         "section_certificate_missing_reason": firearm_details["section_certificate_missing_reason"],
                         "section_certificate_number": firearm_details["section_certificate_number"],
-                        "section_certificate_date_of_expiryday": expiry_date.strftime("%d") if expiry_date else "",
-                        "section_certificate_date_of_expirymonth": expiry_date.strftime("%m") if expiry_date else "",
-                        "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y") if expiry_date else "",
+                        "section_certificate_date_of_expiryday": expiry_date.strftime("%d"),
+                        "section_certificate_date_of_expirymonth": expiry_date.strftime("%m"),
+                        "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y"),
                         "firearms_certificate_uploaded": bool(
                             firearm_details.get("section_certificate_missing_reason")
                         ),
@@ -579,13 +589,8 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
         return render(request, "applications/goods/goods-detail-summary.html", context)
 
 
-class AddGoodsSummary(LoginRequiredMixin, TemplateView):
+class AddGoodsSummary(LoginRequiredMixin, SectionDocumentMixin, TemplateView):
     template_name = "applications/goods/add-good-detail-summary.html"
-
-    @cached_property
-    def application(self):
-        application_id = str(self.kwargs["pk"])
-        return get_application(self.request, application_id)
 
     @cached_property
     def good(self):
@@ -606,16 +611,6 @@ class AddGoodsSummary(LoginRequiredMixin, TemplateView):
             section_document=self.get_section_document(),
             **kwargs,
         )
-
-    def get_section_document(self):
-        documents = {item["document_type"]: item for item in self.application["organisation"]["documents"]}
-        firearm_section = self.good["firearm_details"]["firearms_act_section"]
-        if firearm_section == "firearms_act_section1":
-            return documents["section-one-certificate"]
-        elif firearm_section == "firearms_act_section2":
-            return documents["section-two-certificate"]
-        elif firearm_section == "firearms_act_section5":
-            return documents["section-five-certificate"]
 
 
 def is_firearm_certificate_needed(application, selected_section):

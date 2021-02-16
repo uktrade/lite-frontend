@@ -44,7 +44,6 @@ def post_goods(request, json):
 
     if data.status_code == HTTPStatus.OK:
         data.json().get("good"), data.status_code
-
     return data.json(), data.status_code
 
 
