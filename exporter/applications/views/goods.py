@@ -542,7 +542,7 @@ class AddGoodToApplication(LoginRequiredMixin, SectionDocumentMixin, MultiFormVi
                     {
                         "section_certificate_missing": firearm_details["section_certificate_missing"],
                         "section_certificate_missing_reason": firearm_details["section_certificate_missing_reason"],
-                        "section_certificate_number": firearm_details["section_certificate_number"],
+                        "section_certificate_number": document["reference_code"],
                         "section_certificate_date_of_expiryday": expiry_date.strftime("%d"),
                         "section_certificate_date_of_expirymonth": expiry_date.strftime("%m"),
                         "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y"),
