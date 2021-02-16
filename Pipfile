@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 allure-pytest = "~=2.6"
 allure-python-commons = "~=2.6"
-bandit = "~=1.6"
+bandit = "==1.6.2"
 black = "==19.10b0"
 directory-sso-api-client = "~=6.3"
 envparse = "~=0.2"
