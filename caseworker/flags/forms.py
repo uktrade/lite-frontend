@@ -145,6 +145,7 @@ def get_clc_entry_groups_and_nodes(entries):
 
     for item in entries:
         if not item["parent_id"] and not item.get("children"):
+            nodes.append({"rating": item["rating"], "text": item["text"]})
             groups.append({"rating": item["rating"], "text": item["text"]})
 
         if item["parent_id"] and item.get("children"):

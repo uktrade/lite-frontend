@@ -119,7 +119,12 @@
                     <tr class="govuk-table__row app-table__row">
                         <th scope="row" class="govuk-table__header">Document</th>
                         <td class="govuk-table__cell">
-                            {{ object.good.missing_document_reason.value }}
+                            {% if object.good.is_document_sensitive %}
+                                Document is above OFFICIAL-SENSITIVE
+                            {% endif %}
+                            {% if not object.good.is_document_available %}
+                                No document available
+                            {% endif %}
                             {% for document in object.good.documents %}
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
                                 {% if not forloop.last %}, {% endif %}

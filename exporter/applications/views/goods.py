@@ -30,6 +30,7 @@ from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, FIREARM_AMMUN
 from core.helpers import convert_dict_to_query_params
 from exporter.core.helpers import str_to_bool
 from exporter.goods.forms import (
+    check_document_available_form,
     document_grading_form,
     attach_documents_form,
     add_good_form_group,
@@ -42,12 +43,15 @@ from exporter.goods.services import (
     get_good,
     post_goods,
     post_good_documents,
+    get_good_document_availability,
+    post_good_document_availability,
+    get_good_document_sensitivity,
     post_good_document_sensitivity,
     validate_good,
 )
 
 from exporter.applications.helpers.date_fields import format_date
-from lite_forms.components import FiltersBar, TextInput
+from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
@@ -373,17 +377,53 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         return redirect(success_url)
 
 
-class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
+class CheckDocumentAvailability(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.draft_pk = kwargs["pk"]
         self.object_pk = kwargs["good_pk"]
         back_link = reverse("applications:add_good_summary", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
-        self.form = document_grading_form(request, self.object_pk, back_url=back_link)
-        self.action = post_good_document_sensitivity
+        self.data, _ = get_good_document_availability(request, self.object_pk)
+        self.form = check_document_available_form(back_link)
+        self.action = post_good_document_availability
+
+    def get_data(self):
+        value = self.data["good"].get("is_document_available")
+        if value is not None:
+            value = "yes" if value else "no"
+        return {"is_document_available": value}
 
     def get_success_url(self):
         good = self.get_validated_data()["good"]
-        if good["missing_document_reason"]:
+        if good["is_document_available"]:
+            url = "applications:document_grading"
+        else:
+            url = "applications:add_good_to_application"
+        return (
+            reverse_lazy(url, kwargs={"pk": self.draft_pk, "good_pk": self.object_pk})
+            + f"?preexisting={self.request.GET.get('preexisting', False)}"
+        )
+
+
+class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
+    def init(self, request, **kwargs):
+        self.draft_pk = kwargs["pk"]
+        self.object_pk = kwargs["good_pk"]
+        back_link = reverse(
+            "applications:check_document_availability", kwargs={"pk": self.draft_pk, "good_pk": self.object_pk}
+        )
+        self.data, _ = get_good_document_sensitivity(request, self.object_pk)
+        self.form = document_grading_form(back_link)
+        self.action = post_good_document_sensitivity
+
+    def get_data(self):
+        value = self.data["good"].get("is_document_sensitive")
+        if value is not None:
+            value = "yes" if value else "no"
+        return {"is_document_sensitive": value}
+
+    def get_success_url(self):
+        good = self.get_validated_data()["good"]
+        if good["is_document_sensitive"]:
             url = "applications:add_good_to_application"
         else:
             url = "applications:attach_documents"
@@ -398,7 +438,9 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
-        back_link = reverse_lazy("applications:add_good_to_application", kwargs={"pk": draft_id, "good_pk": good_id})
+        back_link = BackLink(
+            "Back", reverse("applications:document_grading", kwargs={"pk": draft_id, "good_pk": good_id})
+        )
         form = attach_documents_form(back_link)
         return form_page(request, form, extra_data={"good_id": good_id})
 
@@ -407,10 +449,14 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
 
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
-        data, error = add_document_data(request)
+        back_link = BackLink(
+            "Back", reverse("applications:document_grading", kwargs={"pk": draft_id, "good_pk": good_id})
+        )
 
+        data, error = add_document_data(request)
         if error:
-            return error_page(request, error)
+            form = attach_documents_form(back_link)
+            return form_page(request, form, errors={"file": ["Select a document"]})
 
         data, status_code = post_good_documents(request, good_id, data)
         if status_code != HTTPStatus.CREATED:

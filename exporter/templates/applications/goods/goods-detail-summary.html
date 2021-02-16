@@ -312,17 +312,34 @@
 					<dt class="govuk-summary-list__key">
 						{% lcs "goods.GoodsDetailSummary.DOCUMENTS" %}
 					</dt>
-
-					{% if good.good.missing_document_reason %}
+					{% if good.good.documents %}
 						<dd class="govuk-summary-list__value">
-							{{ good.good.missing_document_reason.value }}
+							{% if good.good.documents|length > 1 %}
+								<ol class="govuk-list govuk-list--number">
+									{% for document in good.good.documents %}
+									<li>
+										<a {% if document.safe == True %}href="{% url 'goods:document' pk=good.good.id file_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a><br>
+										<span class="govuk-hint"> {{ document.description }} </span>
+									</li>
+									{% endfor %}
+								</ol>
+							{% else %}
+								{% with document=good.good.documents.0 %}
+									<a {% if document.safe == True %}href="{% url 'goods:document' pk=good.good.id file_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a><br>
+									<span class="govuk-hint"> {{ document.description }} </span>
+								{% endwith %}
+							{% endif %}
 						</dd>
 					{% else %}
-						<dd class="govuk-summary-list__value">
-							{% for document in good.good.documents %}
-								<a {% if document.safe == True %}href="{% url 'goods:document' pk=good.good.id file_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a><br>
-							{% endfor %}
-						</dd>
+						{% if good.good.is_document_sensitive %}
+							<dd class="govuk-summary-list__value">
+								Document is above OFFICIAL-SENSITIVE
+							</dd>
+						{% elif not good.good.is_document_available %}
+							<dd class="govuk-summary-list__value">
+								No document available
+							</dd>
+						{% endif %}
 					{% endif %}
 				</div>
 			</dl>

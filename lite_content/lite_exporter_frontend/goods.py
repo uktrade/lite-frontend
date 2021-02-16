@@ -102,21 +102,23 @@ class GoodPage:
             IDENTIFICATION_MARKINGS = "Identification markings"
 
 
-class DocumentSensitivityForm:
-    TITLE = "Do you have a document for the product and is the document rated OFFICIAL-SENSITIVE or below?"
+class DocumentAvailabilityForm:
+    TITLE = "Do you have a document that shows what your product is and what it’s designed to do?"
     DESCRIPTION = (
-        "Documentation should be specifications, datasheets, sales brochures, drawings or anything else that fully "
-        "details what the product is and what it's designed to do."
+        "This could be a specification, datasheet, sales brochure, drawing or anything else that fully "
+        "details what the product is and what it's designed for."
     )
+
+
+class DocumentSensitivityForm:
+    TITLE = "Is the document rated above OFFICIAL-SENSITIVE?"
     ECJU_HELPLINE = (
         "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
         "this document.\n\n You can continue with the application "
         "without attaching a document.\n\n**ECJU helpline**\n 020 7215 4594\n "
-        "[Find out about call charges](https://www.gov.uk/call-charges)"
+        "[Find out about call charges (opens in new tab)](https://www.gov.uk/call-charges)"
     )
-    SUBMIT_BUTTON = "Continue"
-    BACK_BUTTON = "Back to product"
-    LABEL = "Missing document reason"
+    SUBMIT_BUTTON = "Save and continue"
 
     class Options:
         YES = "Yes"
@@ -354,7 +356,7 @@ class AttachDocumentForm:
         "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
         "\n\nThe file must be smaller than 50MB."
     )
-    BUTTON = "Save"
+    BUTTON = "Save and continue"
     BACK_FORM_LINK = "Back"
     BACK_GOOD_LINK = "Back to product"
 
