@@ -243,11 +243,9 @@
 																	{% else %}
 																		No
 																	{% endif %}
-																	{% if organisation_documents.rfd_certificate.document.safe == True %}
-																		<div>
-																			<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.rfd_certificate.document.name }}</a>
-																		</div>
-																	{% endif %}
+																	<div>
+																		<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.rfd_certificate.document.name }}</a>
+																	</div>
 																</td>
 															</tr>
 															{% if organisation_documents.rfd_certificate %}
@@ -288,23 +286,12 @@
 																</td>
 															</tr>
 
-															{% if organisation_documents.rfd_certificate %}
+															{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
 																<tr class="govuk-table__row app-table__row">
 																	<th scope="row" class="govuk-table__header">Firearm Act certificate number</th>
 																	<td class="govuk-table__cell">
-
-																		{% if firearm_details.firearms_act_section == "firearms_act_section1" %}
-																			{{ organisation_documents.section_one_certificate.reference_code }}
-																			<div class="govuk-hint">{{ organisation_documents.section_one_certificate.expiry_date }}</div>
-																		{% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
-																			{{ organisation_documents.section_two_certificate.reference_code }}
-																			<div class="govuk-hint">{{ organisation_documents.section_two_certificate.expiry_date }}</div>
-																		{% elif firearm_details.firearms_act_section == "firearms_act_section5" %}
-																			{{ organisation_documents.section_five_certificate.reference_code }}
-																			<div class="govuk-hint">{{ organisation_documents.section_five_certificate.expiry_date }}</div>
-																		{% endif %}
-
-
+																			{{ firearm_details.section_certificate_number }}
+																			<span class="govuk-hint">{{ firearm_details.section_certificate_date_of_expiry|date_display }}</span>
 																	</td>
 																</tr>
 															{% endif %}

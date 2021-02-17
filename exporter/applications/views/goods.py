@@ -58,9 +58,6 @@ from lite_forms.views import SingleFormView, MultiFormView
 from core.auth.views import LoginRequiredMixin
 
 
-SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate_details"
-
-
 class SectionDocumentMixin:
     @cached_property
     def application(self):
@@ -69,7 +66,9 @@ class SectionDocumentMixin:
 
     def get_section_document(self):
         documents = {item["document_type"]: item for item in self.application["organisation"]["documents"]}
-        firearm_section = self.good["firearm_details"]["firearms_act_section"]
+        firearm_section = (
+            self.request.POST.get("firearms_act_section") or self.good["firearm_details"]["firearms_act_section"]
+        )
         if firearm_section == "firearms_act_section1":
             return documents["section-one-certificate"]
         elif firearm_section == "firearms_act_section2":
@@ -145,11 +144,33 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
         return render(request, "applications/goods/preexisting.html", context)
 
 
-from s3chunkuploader.file_handler import s3_client, S3FileUploadHandler
+class RegisteredFirearmDealersMixin:
+    SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate_details"
+
+    def cache_rfd_certificate_details(self):
+        file = self.request.FILES.get("file")
+        if not file:
+            return
+        self.request.session[self.SESSION_KEY_RFD_CERTIFICATE] = {
+            "name": getattr(file, "original_name", file.name),
+            "s3_key": file.name,
+            "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
+            "document_on_organisation": {
+                "expiry_date": format_date(self.request.POST, "expiry_date_"),
+                "reference_code": self.request.POST["reference_code"],
+                "document_type": "rfd-certificate",
+            },
+        }
+
+    def post_success_step(self):
+        data = self.request.session.pop(self.SESSION_KEY_RFD_CERTIFICATE, None)
+        if data:
+            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=data,)
+            assert status_code == HTTPStatus.CREATED
 
 
 @method_decorator(csrf_exempt, "dispatch")
-class AddGood(LoginRequiredMixin, MultiFormView):
+class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
     STEP_ARE_YOU_RFD = 8
     STEP_RDF_CERTIFICATE_UPLOAD = 9
 
@@ -236,12 +257,6 @@ class AddGood(LoginRequiredMixin, MultiFormView):
 
                 request.session[firearms_data_id] = session_data
 
-    def post_success_step(self):
-        data = self.request.session.pop(SESSION_KEY_RFD_CERTIFICATE, None)
-        if data:
-            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=data,)
-            assert status_code == HTTPStatus.CREATED
-
     @property
     def action(self):
         if self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
@@ -250,21 +265,6 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             if not self.show_section_upload_form:
                 return post_goods
         return self.validate_step
-
-    def cache_rfd_certificate_details(self):
-        file = self.request.FILES.get("file")
-        if not file:
-            return
-        self.request.session[SESSION_KEY_RFD_CERTIFICATE] = {
-            "name": getattr(file, "original_name", file.name),
-            "s3_key": file.name,
-            "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-            "document_on_organisation": {
-                "expiry_date": format_date(self.request.POST, "expiry_date_"),
-                "reference_code": self.request.POST["reference_code"],
-                "document_type": "rfd-certificate",
-            },
-        }
 
     def handle_s3_upload(self):
         self.request.upload_handlers.insert(0, S3FileUploadHandler(self.request))
@@ -485,11 +485,22 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         )
 
 
-class AddGoodToApplication(LoginRequiredMixin, SectionDocumentMixin, MultiFormView):
+class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, SectionDocumentMixin, MultiFormView):
+    STEP_RDF_CERTIFICATE_UPLOAD = 4
+
     @cached_property
     def good(self):
         good, _ = get_good(self.request, self.good_pk)
         return good
+
+    @property
+    def form_pk(self):
+        return int(self.request.POST["form_pk"])
+
+    @property
+    def number_of_forms(self):
+        # we require the form index of the last form in the group, not the total number
+        return len(self.forms.get_forms()) - 1
 
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
@@ -508,49 +519,53 @@ class AddGoodToApplication(LoginRequiredMixin, SectionDocumentMixin, MultiFormVi
             relevant_firearm_act_section=request.POST.get("firearm_act_product_is_coverd_by"),
             back_url=reverse("applications:preexisting_good", kwargs={"pk": self.good_pk}),
         )
-        self.action = validate_good_on_application
+        self._action = validate_good_on_application
         self.success_url = reverse_lazy(
             "applications:attach-firearms-certificate-existing-good",
             kwargs={"pk": self.object_pk, "good_pk": self.good_pk},
         )
 
+    @property
+    def action(self):
+        if self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
+            self.cache_rfd_certificate_details()
+        return self._action
+
     def on_submission(self, request, **kwargs):
         show_section_upload_form = False
-        if request.POST.get("is_covered_by_firearm_act_section_one_two_or_five"):
+        if request.POST.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
             show_section_upload_form = is_firearm_certificate_needed(
                 application=self.application, selected_section=request.POST["firearms_act_section"]
             )
         # we require the form index of the last form in the group, not the total number
-        number_of_forms = len(self.forms.get_forms()) - 1
-        if int(self.request.POST.get("form_pk")) == number_of_forms:
+        if self.form_pk == self.number_of_forms:
             if show_section_upload_form:
                 firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.object_pk}_{self.good_pk}"
                 request.session[firearms_data_id] = self.request.POST.copy()
             else:
-                self.action = post_good_on_application
+                self._action = post_good_on_application
                 self.success_url = reverse("applications:goods", kwargs={"pk": self.object_pk})
 
             # if firearm section 5 is selected and the organization already has a valid section 5 then use saved details
-            selected_section = self.request.POST.get("firearms_act_section")
+            details = self.good["firearm_details"]
+            section = self.request.POST.get("firearms_act_section") or details["firearms_act_section"]
 
-            if not is_firearm_certificate_needed(application=self.application, selected_section=selected_section):
-                firearm_details = self.good["firearm_details"]
-                document = self.get_section_document()
-                expiry_date = datetime.strptime(document["expiry_date"], "%d %B %Y")
-                self.request.POST = self.request.POST.copy()
-                self.request.POST.update(
-                    {
-                        "section_certificate_missing": firearm_details["section_certificate_missing"],
-                        "section_certificate_missing_reason": firearm_details["section_certificate_missing_reason"],
-                        "section_certificate_number": document["reference_code"],
-                        "section_certificate_date_of_expiryday": expiry_date.strftime("%d"),
-                        "section_certificate_date_of_expirymonth": expiry_date.strftime("%m"),
-                        "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y"),
-                        "firearms_certificate_uploaded": bool(
-                            firearm_details.get("section_certificate_missing_reason")
-                        ),
-                    }
-                )
+            if not is_firearm_certificate_needed(application=self.application, selected_section=section):
+                if section == "firearms_act_section5":
+                    document = self.get_section_document()
+                    expiry_date = datetime.strptime(document["expiry_date"], "%d %B %Y")
+                    self.request.POST = self.request.POST.copy()
+                    self.request.POST.update(
+                        {
+                            "section_certificate_missing": details["section_certificate_missing"],
+                            "section_certificate_missing_reason": details["section_certificate_missing_reason"],
+                            "section_certificate_number": document["reference_code"],
+                            "section_certificate_date_of_expiryday": expiry_date.strftime("%d"),
+                            "section_certificate_date_of_expirymonth": expiry_date.strftime("%m"),
+                            "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y"),
+                            "firearms_certificate_uploaded": bool(details.get("section_certificate_missing_reason")),
+                        }
+                    )
 
 
 class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):
@@ -580,11 +595,15 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
+        documents = {
+            item["document_type"].replace("-", "_"): item for item in application["organisation"].get("documents", [])
+        }
 
         context = {
             "application_id": application_id,
             "goods": application["goods"],
             "application_status_draft": application["status"]["key"] in ["draft", APPLICANT_EDITING],
+            "organisation_documents": documents,
         }
         return render(request, "applications/goods/goods-detail-summary.html", context)
 

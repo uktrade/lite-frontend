@@ -81,7 +81,7 @@ class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
 class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
     document_type = None
 
-    def form_function(self):
+    def form_function(self, back_url):
         raise NotImplementedError
 
     def get(self, request, **kwargs):

@@ -120,8 +120,8 @@ class OrganisationDetails(LoginRequiredMixin, OrganisationView):
 
     def get_additional_context(self):
         context = super().get_additional_context()
-        documents = {item['document_type'].replace('-', '_'): item for item in self.organisation['documents']}
-        return {**context, "orgasation_documents": documents }
+        documents = {item["document_type"].replace("-", "_"): item for item in self.organisation["documents"]}
+        return {**context, "orgasation_documents": documents}
 
 
 class OrganisationReview(LoginRequiredMixin, SingleFormView):

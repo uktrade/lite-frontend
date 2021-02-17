@@ -88,6 +88,7 @@ def data_open_case():
                 "name": "aggregate proactive architectures",
                 "organisation": {
                     "id": "9bc26604-35ee-4383-9f58-74f8cab67443",
+                    "documents": [],
                     "primary_site": {
                         "id": "81a8b5ca-aaa1-4c7d-91c3-627109acfb2d",
                         "name": "Headquarters",
@@ -342,6 +343,7 @@ def data_standard_case():
                 "name": "444",
                 "organisation": {
                     "id": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",
+                    "documents": [],
                     "primary_site": {
                         "id": "c86d3df2-5f48-40cd-a720-e76322df71a9",
                         "name": "Rich org",

@@ -338,7 +338,7 @@ def pv_details_form(request):
 
 def add_good_form_group(
     request,
-    application,
+    application: dict = None,
     is_pv_graded: bool = None,
     is_software_technology: bool = None,
     is_firearm: bool = None,
@@ -348,10 +348,20 @@ def add_good_form_group(
     draft_pk: str = None,
     base_form_back_link: str = None,
 ):
+    application = application or {}
+
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
 
     show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
-    show_rfd_question = is_firearms_core and not has_valid_rfd_certificate(application)
+
+    is_preexisting = str_to_bool(request.GET.get("preexisting", False))
+    # when adding to product list then always show RFD question if not yet have a valid RFD certificate
+    # when adding to application then show RFD question if has expired RFD and not show if they do not have one yet
+    if is_preexisting:
+        show_rfd_question = is_firearms_core and has_expired_rfd_certificate(application)
+    else:
+        # import pdb; pdb.set_trace()
+        show_rfd_question = is_firearms_core and not has_valid_rfd_certificate(application)
 
     return FormGroup(
         [
@@ -829,19 +839,30 @@ def is_registered_firearm_dealer_field(back_url):
         )
     ]
     return Form(
-        title="Are you a registered firearms dealer?", questions=questions, back_link=BackLink("Back", back_url),
+        title="Are you a registered firearms dealer?",
+        questions=questions,
+        back_link=BackLink("Back", back_url),
+        default_button_name="Save and continue",
     )
 
 
+def has_expired_rfd_certificate(application):
+    document = get_rfd_certificate(application)
+    return bool(document) and document["is_expired"]
+
+
 def has_valid_rfd_certificate(application):
-    documents = {item["document_type"]: item for item in application["organisation"].get("documents", [])}
-    if "rfd-certificate" in documents:
-        return not documents["rfd-certificate"]["is_expired"]
-    return False
+    document = get_rfd_certificate(application)
+    return bool(document) and not document["is_expired"]
+
+
+def get_rfd_certificate(application):
+    documents = {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
+    return documents.get("rfd-certificate")
 
 
 def has_valid_section_five_certificate(application):
-    documents = {item["document_type"]: item for item in application["organisation"].get("documents", [])}
+    documents = {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
     if "section-five-certificate" in documents:
         return not documents["section-five-certificate"]["is_expired"]
     return False

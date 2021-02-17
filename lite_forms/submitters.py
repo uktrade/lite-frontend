@@ -97,7 +97,6 @@ def submit_paged_form(  # noqa
         return form_with_hidden_fields(
             request, data, post_data, form=previous_form, return_data=None, additional_context=additional_context
         )
-
     if object_pk:
         validated_data, _ = action(request, object_pk, nested_data)
     else:
