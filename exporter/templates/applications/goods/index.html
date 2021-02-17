@@ -69,7 +69,7 @@
 							</td>
 						{% else %}
 							<td class="govuk-table__cell">
-								{{ good_on_application.firearm_details.number_of_items }} Number of articles
+								{{ good_on_application.quantity|intcomma }} items
 							</td>
 							<td class="govuk-table__cell">
 								£{{ good_on_application.value|intcomma }}

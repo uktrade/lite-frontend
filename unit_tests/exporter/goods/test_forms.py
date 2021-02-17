@@ -55,21 +55,25 @@ def test_serialize_good_on_app_data(value, serialized):
     data = {
         "good_id": "some-uuid",
         "value": value,
+        "quantity": value,
     }
     expected = {
         "good_id": "some-uuid",
         "value": serialized,
+        "quantity": serialized,
     }
-    response = serialize_good_on_app_data(data)
-    actual = {}
-    actual["good_id"] = response["good_id"]
-    actual["value"] = response["value"]
-    assert actual == expected
+    assert serialize_good_on_app_data(data) == expected
 
 
 @pytest.mark.parametrize(
-    "value, serialized", [("2,300.00", "2300.00"), ("2,3,,,,,00.00", "2300.00"), ("23,444200", "23444200"),],
-)
+    "value, serialized",
+    [
+        ("2,300.00", "2300.00"),
+        ("2,3,,,,,00.00", "2300.00"),
+        ("23,444200", "23444200"),
+        ("foo", "foo"),  # this will be caught by serializer on the api and return an error
+        ("84.34.111", "84.34.111"),  # this too
+    ],)
 def test_serialize_good_on_app_data_no_value_key(value, serialized):
 
     data = {
@@ -80,12 +84,7 @@ def test_serialize_good_on_app_data_no_value_key(value, serialized):
         "good_id": "some-uuid",
         "quantity": serialized,
     }
-    response = serialize_good_on_app_data(data)
-    actual = {}
-    actual["good_id"] = response["good_id"]
-    actual["quantity"] = response["quantity"]
-    # there is no quantity now so we don't expect to be serialized
-    assert actual != expected
+    assert serialize_good_on_app_data(data) == expected
 
 
 @pytest.fixture

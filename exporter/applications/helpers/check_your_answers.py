@@ -1,5 +1,6 @@
 from _decimal import Decimal
 
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
@@ -17,7 +18,7 @@ from exporter.core.constants import (
     APPLICATION_TYPE_STRINGS,
 )
 from core.constants import GoodsTypeCategory
-from core.builtins.custom_tags import default_na, friendly_boolean, date_display, get_address
+from core.builtins.custom_tags import default_na, friendly_boolean, pluralise_unit, date_display, get_address
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties
@@ -231,9 +232,9 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False):
         if is_exhibition:
             item["Product type"] = good_on_application["other_item_type"] or good_on_application["item_type"]
         else:
-            # unit_name = pluralise_unit(good_on_application["unit"]["value"], good_on_application["quantity"])
+            unit_name = pluralise_unit(good_on_application["unit"]["value"], good_on_application["quantity"])
             item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
-            # item["Quantity"] = f"{intcomma(good_on_application['quantity'])} {unit_name}"
+            item["Quantity"] = f"{intcomma(good_on_application['quantity'])} {unit_name}"
             item["Value"] = f"£{good_on_application['value']}"
         converted.append(item)
     return converted

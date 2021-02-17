@@ -41,6 +41,8 @@ from lite_forms.components import (
     Heading,
     HelpSection,
     Checkboxes,
+    GroupWithLabel,
+    DetailComponent,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
@@ -312,6 +314,7 @@ def pv_details_form(request):
         questions=[
             Heading("PV grading", HeadingStyle.M),
             Group(
+                id="pv-gradings-group",
                 components=[
                     TextInput(title=GoodGradingForm.PREFIX, name="prefix", optional=True),
                     Select(
@@ -631,13 +634,14 @@ def firearms_capture_serial_numbers(number_of_items):
 
     input_fields = [
         Group(
+            id="serial_number_input_field_group",
             components=[Label(text=f"{i+1}"), TextInput(name=f"serial_number_input_{i}")],
-            classes=["lite-app-bar__controls"],
+            classes=["lite-input-with-label"],
         )
         for i in range(number_of_items)
     ]
 
-    questions.append(Group(components=[Label(id="serial_numbers", text=" ")] + input_fields))
+    questions.append(GroupWithLabel(id="serial_numbers", components=input_fields))
 
     return Form(
         title="Enter the serial numbers for this product",

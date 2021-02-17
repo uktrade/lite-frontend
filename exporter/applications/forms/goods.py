@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 
 from exporter.core.constants import EXHIBITION, PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
-from exporter.core.services import get_item_types
+from exporter.core.services import get_units, get_item_types
 from exporter.goods.helpers import good_summary
 from exporter.goods.forms import (
     firearms_number_of_items,
@@ -18,6 +18,7 @@ from lite_forms.components import (
     Form,
     HiddenField,
     Select,
+    QuantityInput,
     CurrencyInput,
     RadioButtons,
     Option,
@@ -72,9 +73,20 @@ def unit_quantity_value(request, good, sub_case_type, application_id):
     if sub_case_type["key"] == EXHIBITION:
         return exhibition_item_type(request, good.get("id"), application_id)
     else:
-        questions = [
+        initial_questions = [
             good_summary(good),
             HiddenField(name="good_id", value=good.get("id")),
+            Select(
+                title=AddGoodToApplicationForm.Units.TITLE,
+                description="<noscript>" + AddGoodToApplicationForm.Units.DESCRIPTION + "</noscript>",
+                name="unit",
+                options=get_units(request),
+            ),
+            QuantityInput(
+                title=AddGoodToApplicationForm.Quantity.TITLE,
+                description=AddGoodToApplicationForm.Quantity.DESCRIPTION,
+                name="quantity",
+            ),
             CurrencyInput(
                 title=AddGoodToApplicationForm.VALUE.TITLE,
                 description=AddGoodToApplicationForm.VALUE.DESCRIPTION,
@@ -92,13 +104,27 @@ def unit_quantity_value(request, good, sub_case_type, application_id):
             ),
         ]
 
+        questions = []
         if good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
             firearm_type = good["firearm_details"]["type"]["key"]
+
+            # for these types we capture quantity as number of items and
+            # units default to number of articles
+            if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:
+                for question in initial_questions:
+                    if hasattr(question, "name") and question.name in ["quantity", "unit"]:
+                        continue
+                    questions.append(question)
+            else:
+                questions = initial_questions
+
             if firearm_type in ["ammunition", "firearms"]:
                 questions.append(firearm_proof_mark_field())
             elif firearm_type == "components_for_firearms":
                 questions.append(does_firearm_component_require_proof_marks_field())
             questions.append(firearm_is_deactivated_field())
+        else:
+            questions = initial_questions
 
         return Form(
             title=AddGoodToApplicationForm.TITLE,

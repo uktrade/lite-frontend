@@ -52,3 +52,26 @@
 		display: block;
 	}
 }
+
+
+.lite-input-with-label {
+	display: grid;
+	grid-template-columns: 0.1fr auto;
+	align-items: center;
+
+	& > * {
+		margin-bottom: 0;
+		display: inline-block;
+		white-space: nowrap;
+	}
+
+	@include govuk-media-query($until: tablet) {
+		display: block;
+	}
+}
+
+.lite-input-with-label .govuk-body {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+

@@ -79,9 +79,6 @@ def add_identification_marking_details(firearm_details, json):
         firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
         firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
         del json["no_identification_markings_details"]
-    # elif firearm_details and "has_identification_markings" not in firearm_details:
-    #     firearm_details["has_identification_markings"] = False
-    #     firearm_details["no_identification_markings_details"] = "n/a"
 
     return firearm_details
 

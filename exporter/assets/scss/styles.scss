@@ -15,7 +15,7 @@ $govuk-font-url-function: 'get_govuk_font_asset_url';
 
 
 @import "node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
-@import "core/assets/scss/all"; // LITE Design System
+@import "core/assets/styles/all"; // LITE Design System
 @import "components/all"; // Local assets
 @import "overrides/all";
 

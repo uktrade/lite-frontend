@@ -54,6 +54,23 @@ def remove_unused_errors(errors, form: Form):
             cleaned_errors[component.name[:-2]] = errors.get(component.name[:-2])
         elif hasattr(component, "name") and errors.get(component.name):
             cleaned_errors[component.name] = errors.get(component.name)
+        elif hasattr(component, "input_type") and component.input_type == "group" and errors.get(component.id):
+            # update label class to show as error
+            label = component.components[0]
+            if hasattr(label, "text"):
+                label.text = errors.get(component.id)[0]
+                if not label.classes:
+                    label.classes = ["govuk-error-message"]
+                else:
+                    label.classes.extend(["govuk-error-message"])
+
+            # update group classes to show as error
+            if not component.classes:
+                component.classes = ["govuk-form-group--error", "govuk-error-message"]
+            else:
+                component.classes.extend(["govuk-form-group--error", "govuk-error-message"])
+
+            cleaned_errors[component.id] = errors.get(component.id)
 
     return cleaned_errors
 
@@ -175,6 +192,8 @@ def get_all_form_components(form: Form):
     components = []
     for component in form.questions:
         if component and hasattr(component, "name"):
+            components.append(component)
+        if component and hasattr(component, "input_type") and component.input_type == "group":
             components.append(component)
 
         if getattr(component, "options", None):

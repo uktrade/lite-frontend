@@ -11,6 +11,7 @@ from exporter.applications.helpers.date_fields import (
     format_date,
     create_formatted_date_from_components,
 )
+from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.goods import services
 
 from exporter.core.helpers import remove_prefix, add_validate_only_to_data, str_to_bool
@@ -127,7 +128,7 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
         post_data = remove_prefix(json, "good_on_app_")
     else:
         post_data = json
-    for key in {"value"} & set(post_data.keys()):
+    for key in {"value", "quantity"} & set(post_data.keys()):
         if "," in post_data[key]:
             post_data[key] = post_data[key].replace(",", "")
 
@@ -143,6 +144,17 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
             post_data["firearm_details"]["serial_numbers"] = good["firearm_details"]["serial_numbers"]
         else:
             post_data["firearm_details"]["serial_numbers"] = list()
+
+        if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
+            post_data["quantity"] = good["firearm_details"]["number_of_items"]
+            post_data["unit"] = "NAR"   # number of articles
+        else:
+            post_data["firearm_details"]["number_of_items"] = post_data["quantity"]
+
+    if preexisting and good:
+        if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
+            post_data["quantity"] = post_data["firearm_details"]["number_of_items"]
+            post_data["unit"] = "NAR"   # number of articles
 
     return post_data
 

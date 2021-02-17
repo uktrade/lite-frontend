@@ -108,6 +108,29 @@ class Label:
         self.input_type = "label"
 
 
+class EmptyLabel:
+    def __init__(
+        self, id: str = None, classes: Optional[List] = None,
+    ):
+        from lite_forms.helpers import convert_to_markdown
+
+        self.id = id
+        self.text = ""
+        self.classes = classes
+        self.input_type = "label"
+
+
+class GroupWithLabel(_Component):
+    def __init__(
+        self, text: str = None, id: str = None, components: Optional[List] = None, classes: Optional[List] = None,
+    ):
+
+        self.id = id
+        self.components = [EmptyLabel()] + components
+        self.classes = classes
+        self.input_type = "group"
+
+
 class Form:
     def __init__(
         self,
@@ -414,8 +437,9 @@ class Group:
     Groups components together inside of a div
     """
 
-    def __init__(self, components, classes=None):
+    def __init__(self, id, components, classes=None):
         self.input_type = "group"
+        self.id = id
         self.components = components
         self.classes = classes
 
