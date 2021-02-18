@@ -48,7 +48,7 @@ class OrganisationView(TemplateView):
                 conditional(can_administer_roles, Tab("roles", Tabs.ROLES, reverse_lazy("organisation:roles:roles"))),
                 Tab("details", Tabs.DETAILS, reverse_lazy("organisation:details")),
             ],
-            "documents": {item["document_type"].replace("-", "_"): item for item in self.organisation["documents"]},
+            "documents": {item["document_type"].replace("-", "_"): item for item in self.organisation.get("documents", [])},
             **self.get_additional_context(),
         }
         return render(request, f"organisation/{self.template_name}.html", context)

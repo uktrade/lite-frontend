@@ -147,124 +147,211 @@
 							{{ good.good.firearm_details.type.value|default_na }}
 						</dd>
 					</div>
+					{% with firearm_core_types="firearms ammunition components_for_firearms components_for_ammunition" %}
+					{% if good.firearm_details and good.firearm_details.type.key in firearm_core_types.split %}
 
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodsDetailSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ good.good.firearm_details.year_of_manufacture|default_na }}
-						</dd>
-					</div>
-
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodsDetailSummary.FirearmDetails.CALIBRE" %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ good.good.firearm_details.calibre|default_na }}
-						</dd>
-					</div>
-
-
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodsDetailSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{% with covered_by_firearms_act=good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five section=good.good.firearm_details.firearms_act_section %}
-							{% if covered_by_firearms_act == "Yes" %}
-								{{ covered_by_firearms_act }}
-								<span class="govuk-hint govuk-!-margin-0">
-									{% if section == "firearms_act_section1" %}
-										Section 1
-									{% elif section == "firearms_act_section2" %}
-										Section 2
-									{% endif %}
-								</span>
-								{% if not good.good.firearm_details.section_certificate_missing %}
-									<span class="govuk-hint govuk-!-margin-0">
-										Expires {{ good.good.firearm_details.section_certificate_date_of_expiry|date_display }}
-									</span>
-									<span class="govuk-hint govuk-!-margin-0">
-										Reference {{ good.good.firearm_details.section_certificate_number }}
-									</span>
-								{% endif %}
-							{% elif covered_by_firearms_act == "No" %}
-								No
-							{% elif covered_by_firearms_act == "Unsure" %}
-								I don't know
-							{% endif %}
-						{% endwith %}
-						</dd>
-					</div>
-					{% if good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
-						<div class="govuk-summary-list__row">
-							<dt class="govuk-summary-list__key">Document</dt>
-							<dd class="govuk-summary-list__value">
-								{% if good.good.firearm_details.section_certificate_missing %}
-									No
-									<span class="govuk-hint govuk-!-margin-0">
-										{{ good.good.firearm_details.section_certificate_missing_reason }}
-									</span>
-								{% else %}
-									Yes
-									{% for document in good.good_application_documents %}
-										<span class="govuk-hint govuk-!-margin-0">
-											<a {% if document.safe == True %}href="{% url 'applications:good-on-application-document' pk=application_id good_pk=good.good.id doc_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
-										</span>
-									{% endfor %}
-								{% endif %}
-							</dd>
-						</div>
-					{% endif %}
-
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Number of items
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ good.firearm_details.number_of_items}}
-						</dd>
-					</div>
-
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodsDetailSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{% if good.firearm_details.has_identification_markings is not None %}
-								{{ good.firearm_details.has_identification_markings|friendly_boolean }}
-								<span class="govuk-hint">
-									{% if good.firearm_details.has_identification_markings is False %}
-										{{ good.firearm_details.no_identification_markings_details|default_na }}
-									{% endif %}
-								</span>
-							{% endif %}
-						</dd>
-					</div>
-
-					{% if good.firearm_details.has_identification_markings is True %}
 						<div class="govuk-summary-list__row">
 							<dt class="govuk-summary-list__key">
-								Serial numbers
+								{% lcs "goods.GoodsDetailSummary.FirearmDetails.YEAR_OF_MANUFACTURE" %}
 							</dt>
 							<dd class="govuk-summary-list__value">
-								<details class="govuk-details" data-module="govuk-details">
-									<summary class="govuk-details__summary">
-									  <span class="govuk-details__summary-text">
-										View serial numbers
-									  </span>
-									</summary>
-									<div class="govuk-details__text">
-										{% for item in good.firearm_details.serial_numbers %}
-										{{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
+								{{ good.good.firearm_details.year_of_manufacture|default_na }}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodsDetailSummary.FirearmDetails.CALIBRE" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.good.firearm_details.calibre|default_na }}
+							</dd>
+						</div>
+
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodsDetailSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% with covered_by_firearms_act=good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five section=good.good.firearm_details.firearms_act_section %}
+								{% if covered_by_firearms_act == "Yes" %}
+									{{ covered_by_firearms_act }}
+									<span class="govuk-hint govuk-!-margin-0">
+										{% if section == "firearms_act_section1" %}
+											Section 1
+										{% elif section == "firearms_act_section2" %}
+											Section 2
+										{% endif %}
+									</span>
+									{% if not good.good.firearm_details.section_certificate_missing %}
+										<span class="govuk-hint govuk-!-margin-0">
+											Expires {{ good.good.firearm_details.section_certificate_date_of_expiry|date_display }}
+										</span>
+										<span class="govuk-hint govuk-!-margin-0">
+											Reference {{ good.good.firearm_details.section_certificate_number }}
+										</span>
+									{% endif %}
+								{% elif covered_by_firearms_act == "No" %}
+									No
+								{% elif covered_by_firearms_act == "Unsure" %}
+									I don't know
+								{% endif %}
+							{% endwith %}
+							</dd>
+						</div>
+						{% if good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">Document</dt>
+								<dd class="govuk-summary-list__value">
+									{% if good.good.firearm_details.section_certificate_missing %}
+										No
+										<span class="govuk-hint govuk-!-margin-0">
+											{{ good.good.firearm_details.section_certificate_missing_reason }}
+										</span>
+									{% else %}
+										Yes
+										{% for document in good.good_application_documents %}
+											<span class="govuk-hint govuk-!-margin-0">
+												<a {% if document.safe == True %}href="{% url 'applications:good-on-application-document' pk=application_id good_pk=good.good.id doc_pk=document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+											</span>
 										{% endfor %}
-									</div>
-							    </details>
+									{% endif %}
+								</dd>
+							</div>
+						{% endif %}
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Number of items
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.firearm_details.number_of_items}}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodsDetailSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if good.firearm_details.has_identification_markings is not None %}
+									{{ good.firearm_details.has_identification_markings|friendly_boolean }}
+									<span class="govuk-hint">
+										{% if good.firearm_details.has_identification_markings is False %}
+											{{ good.firearm_details.no_identification_markings_details|default_na }}
+										{% endif %}
+									</span>
+								{% endif %}
+							</dd>
+						</div>
+
+						{% if good.firearm_details.has_identification_markings is True %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									Serial numbers
+								</dt>
+								<dd class="govuk-summary-list__value">
+									<details class="govuk-details" data-module="govuk-details">
+										<summary class="govuk-details__summary">
+										<span class="govuk-details__summary-text">
+											View serial numbers
+										</span>
+										</summary>
+										<div class="govuk-details__text">
+											{% for item in good.firearm_details.serial_numbers %}
+											{{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
+											{% endfor %}
+										</div>
+									</details>
+								</dd>
+							</div>
+						{% endif %}
+					{% endif %}
+					{% endwith %}
+
+					{% if good.firearm_details and good.firearm_details.type.key == "firearms_accessory" %}
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'goods.GoodsDetailSummary.MILITARY' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.good.is_military_use.value }}
+								{% if good.good.modified_military_use_details %}
+									<span class="govuk-hint"> {{ good.good.modified_military_use_details }} </span>
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'goods.GoodsDetailSummary.COMPONENT' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.good.is_component.value|default_na }}
+								{% if good.good.component_details %}
+									<span class="govuk-hint"> {{ good.good.component_details }} </span>
+								{% endif %}
+							</dd>
+						</div>
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'goods.GoodsDetailSummary.DESIGNED_FOR_INFORMATION_SECURITY' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if good.good.uses_information_security is not None %}
+									{{ good.good.uses_information_security|friendly_boolean }}
+								{% else %}
+									{{ good.good.uses_information_security|default_na }}
+								{% endif %}
+								{% if good.good.information_security_details %}
+									<span class="govuk-hint"> {{ good.good.information_security_details }} </span>
+								{% endif %}
 							</dd>
 						</div>
 					{% endif %}
+					{% if good.firearm_details.type.key == "software_related_to_firearms" or good.firearm_details.type.key == "technology_related_to_firearms" %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs "goods.GoodsDetailSummary.PURPOSE_SOFTWARE_TECHNOLOGY" %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.good.software_or_technology_details|default_na }}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'goods.GoodsDetailSummary.MILITARY' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ good.good.is_military_use.value }}
+								{% if good.good.modified_military_use_details %}
+									<span class="govuk-hint"> {{ good.good.modified_military_use_details }} </span>
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								{% lcs 'goods.GoodsDetailSummary.DESIGNED_FOR_INFORMATION_SECURITY' %}
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if good.good.uses_information_security is not None %}
+									{{ good.good.uses_information_security|friendly_boolean }}
+								{% else %}
+									{{ good.good.uses_information_security|default_na }}
+								{% endif %}
+								{% if good.good.information_security_details %}
+									<span class="govuk-hint"> {{ good.good.information_security_details }} </span>
+								{% endif %}
+							</dd>
+						</div>
+
+					{% endif %}
+
+
 				{% endif %}
 
 				<div class="govuk-summary-list__row">

@@ -89,3 +89,52 @@ from exporter.core.objects import Application
 )
 def test_get_end_use_details_status(application, expected):
     assert custom_tags.get_end_use_details_status(application) == expected
+
+
+@pytest.mark.parametrize(
+    "good_on_app,quantity_display",
+    [
+        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": None}, "0 items"),
+        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 0}, "0 items"),
+        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 1}, "1 item"),
+        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 5}, "5 items"),
+        ({"firearm_details": {"type": {"key": "ammunition"}}, "quantity": 1}, "1 item"),
+        ({"firearm_details": {"type": {"key": "components_for_firearms"}}, "quantity": 5}, "5 items"),
+        (
+            {
+                "firearm_details": {"type": {"key": "software_related_to_firearms"}},
+                "quantity": 1,
+                "unit": {"key": "NAR", "value": "Number of articles"},
+            },
+            "1 item",
+        ),
+        (
+            {
+                "firearm_details": {"type": {"key": "software_related_to_firearms"}},
+                "quantity": 9,
+                "unit": {"key": "NAR", "value": "Number of articles"},
+            },
+            "9 items",
+        ),
+        (
+            {
+                "firearm_details": {"type": {"key": "firearms_accessory"}},
+                "quantity": 9.0,
+                "unit": {"key": "KGM", "value": "Kilogram(s)"},
+            },
+            "9.0 Kilogram(s)",
+        ),
+        (
+            {
+                "firearm_details": {"type": {"key": "firearms_accessory"}},
+                "quantity": 9,
+                "unit": {"key": "ITG", "value": "Intangible"},
+            },
+            "9 Intangible",
+        ),
+    ],
+)
+def test_pluralise_quantity(good_on_app, quantity_display):
+    good_on_app["good"] = {"item_category": {"key": "group2_firearms"}}
+    actual = custom_tags.pluralise_quantity(good_on_app)
+    assert actual == quantity_display

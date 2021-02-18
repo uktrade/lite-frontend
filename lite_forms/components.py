@@ -123,7 +123,7 @@ class GroupWithLabel(_Component):
     def __init__(
         self, text: str = None, id: str = None, components: Optional[List] = None, classes: Optional[List] = None,
     ):
-        super().__init__(text, id, classes)
+        super().__init__(text, classes)
         self.id = id
         self.components = [EmptyLabel()] + components
         self.classes = classes

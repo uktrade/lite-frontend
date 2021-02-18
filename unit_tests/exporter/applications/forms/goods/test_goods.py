@@ -160,5 +160,5 @@ def test_good_on_application_form_not_firearm(default_request, good_widget, mock
         request=default_request, good=good_widget, sub_case_type=sub_case_type_siel, application_id=application_id,
     )
 
-    assert len(form.questions) == 4
+    assert len(form.questions) == 6
     assert form.questions[-1].title != goods.firearm_proof_mark_field().title

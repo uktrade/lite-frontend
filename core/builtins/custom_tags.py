@@ -25,6 +25,8 @@ from exporter.core.constants import (
     NOT_STARTED,
     DONE,
     IN_PROGRESS,
+    PRODUCT_CATEGORY_FIREARM,
+    FIREARM_AMMUNITION_COMPONENT_TYPES,
 )
 from exporter.applications.constants import F680
 
@@ -664,6 +666,37 @@ def units_pluralise(unit: str, quantity: str):
             unit = unit + "s"
 
     return unit
+
+
+def format_quantity_units(quantity):
+    unit_suffix = "item"
+    quantity = int(quantity) if quantity is not None else 0
+    if quantity == 0 or quantity > 1:
+        unit_suffix = "items"
+
+    return f"{quantity} {unit_suffix}"
+
+
+@register.filter
+def pluralise_quantity(good_on_app):
+    """
+    Pluralise goods quantity
+    """
+    quantity_str = ""
+
+    if good_on_app["good"]["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
+        quantity = good_on_app.get("quantity", 0)
+        if good_on_app["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
+            # because these are number of articles
+            return format_quantity_units(quantity)
+        elif good_on_app.get("unit"):
+            if good_on_app["unit"]["key"] == "NAR":
+                return format_quantity_units(quantity)
+            return f"{quantity} {good_on_app['unit']['value']}"
+        else:
+            return f"{quantity} items"
+
+    return quantity_str
 
 
 @register.filter(name="times")
