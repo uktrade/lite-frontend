@@ -740,6 +740,13 @@ def final_advice_open(context, decision, api_test_client):  # noqa
     )
 
 
+@when(parsers.parse('I select product category "{product_category}"'))  # noqa
+def select_product_category(driver, product_category):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_product_category(product_category)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select product type "{product_type}"'))  # noqa
 def select_product_type(driver, product_type):  # noqa
     good_details_page = AddGoodDetails(driver)
@@ -749,7 +756,7 @@ def select_product_type(driver, product_type):  # noqa
 
 @when(
     parsers.parse(
-        'I select "{has_markings}" for serial number of other identification marking with details as "{details}"'
+        'I select "{has_markings}" for serial number or other identification markings with details as "{details}"'
     )
 )  # noqa
 def specify_serial_number_of_other_identification_details(driver, has_markings, details):  # noqa
@@ -758,10 +765,24 @@ def specify_serial_number_of_other_identification_details(driver, has_markings, 
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I select sporting shotgun status as "{status}"'))  # noqa
+@when(parsers.parse('I select sporting shotgun status as "{status}"'))
 def select_sporting_gun_status(driver, status):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_sporting_gun_status(status)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I specify number of items as "{number_of_items}"'))
+def specify_number_of_items(driver, number_of_items):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_number_of_items(number_of_items)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{number_of_items}" serial numbers as "{serial_numbers}"'))
+def enter_serial_numbers(driver, number_of_items, serial_numbers):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_serial_numbers(int(number_of_items), serial_numbers.split(","))
     functions.click_submit(driver)
 
 
@@ -904,6 +925,18 @@ def summary_screen_for_product_type(driver, product_type_value, name, proceed): 
 
     if proceed == "continue":
         driver.find_element_by_link_text("Save and continue").click()
+
+
+@when(parsers.parse('I enter product details with value "{value}" and deactivated "{status}" and Save'))  # noqa
+def i_enter_product_details_and_value(driver, value, status):  # noqa
+    details_page = StandardApplicationGoodDetails(driver)
+    details_page.enter_value(value)
+    details_page.check_is_good_incorporated_false()
+    # this step is not applicable if we are adding an existing good to the application
+    if status != "N/A":
+        details_page.set_deactivated_status(status)
+
+    functions.click_submit(driver)
 
 
 @when(

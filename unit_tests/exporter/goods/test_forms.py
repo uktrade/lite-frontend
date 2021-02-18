@@ -73,7 +73,8 @@ def test_serialize_good_on_app_data(value, serialized):
         ("23,444200", "23444200"),
         ("foo", "foo"),  # this will be caught by serializer on the api and return an error
         ("84.34.111", "84.34.111"),  # this too
-    ],)
+    ],
+)
 def test_serialize_good_on_app_data_no_value_key(value, serialized):
 
     data = {

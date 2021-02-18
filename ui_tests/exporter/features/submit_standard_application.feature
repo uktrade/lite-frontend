@@ -251,15 +251,18 @@ Feature: I want to indicate the standard licence I want
     And I add product to application
 
 
-  @LTD_398_Add_a_new_firearm_product @regression
+  @firearms @LTD_398_Add_a_new_firearm_product @regression
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     When I click on the "goods" section
     And I choose to add a new product
+    And I select product category "firearms"
     And I select product type "firearm"
-    And I select "Yes" for serial number of other identification marking with details as "serial number FR8654-Z"
     And I select sporting shotgun status as "Yes"
+    And I specify number of items as "4"
+    And I select "Yes" for serial number or other identification markings with details as " "
+    And I enter "4" serial numbers as "serial1,serial2,serial3,serial4"
     And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter firearm year of manufacture as "2020"
     And I select firearm replica status as "Yes" with description "More details about the replica"
@@ -269,21 +272,25 @@ Feature: I want to indicate the standard licence I want
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
     And I enter certificate number as "FR2468/1234/1" with expiry date "12-10-2030"
     And I see summary screen for "Firearms" product with name "Rifle" and "continue"
-    And I confirm I can upload a document
+    And I select "Yes" to document available question
+    And I select "No" to document is above official sensitive question
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
-    And I enter product details with unit of measurement "Number of articles", quantity "5", value "20,000" and deactivated "No" and Save
+    And I enter product details with value "20,000" and deactivated "No" and Save
     Then the product with name "Rifle" is added to the application
 
 
-  @LTD_375_Add_a_new_firearm_product_not_covered_by_firearms_act @regression
+  @firearms @LTD_375_Add_a_new_firearm_product_ammunition_component @regression
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application that is not covered by Firearms Act
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     When I click on the "goods" section
     And I choose to add a new product
+    And I select product category "firearms"
     And I select product type "component_for_ammunition"
-    And I select "Yes" for serial number of other identification marking with details as "serial number FR8654-Z"
     And I select sporting shotgun status as "Yes"
+    And I specify number of items as "3"
+    And I select "Yes" for serial number or other identification markings with details as " "
+    And I enter "3" serial numbers as "serial1,serial2,serial3"
     And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter calibre as "0.22"
     And I specify firearms act sections apply as "Yes"
@@ -291,57 +298,63 @@ Feature: I want to indicate the standard licence I want
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
     And I enter certificate number as "FR2468/1234/1" with expiry date "12-10-2030"
     And I see summary screen for "Components for ammunition" product with name "Rifle" and "continue"
-    And I confirm I can upload a document
+    And I select "Yes" to document available question
+    And I select "No" to document is above official sensitive question
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
-    And I enter product details with unit of measurement "Number of articles", quantity "5", value "20,000" and deactivated "No" and Save
+    And I enter product details with value "20,000" and deactivated "No" and Save
     Then the product with name "Rifle" is added to the application
 
 
-  @LTD_398_Add_a_new_firearm_accessory @regression
+  @firearms @LTD_398_Add_a_new_firearm_accessory @regression
   Scenario: Add a new Firearm product of type firearms accesory to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     When I click on the "goods" section
     And I choose to add a new product
+    And I select product category "firearms"
     And I select product type "firearm_accessory"
     And I enter good name as "firearm accessory" description as "firearm accessory" part number "FR-123-ACC" controlled "True" control code "ML1a" and graded "no"
     And I specify military use details as "yes_designed"
     And I specify component details as "yes_designed"
     And I specify product employs information security features as "Yes"
     And I see summary screen for "Accessory of a firearm" product with name "firearm accessory" and "continue"
-    And I confirm I can upload a document
+    And I select "Yes" to document available question
+    And I select "No" to document is above official sensitive question
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with unit of measurement "Number of articles", quantity "9", value "25,000" and deactivated "No" and Save
     Then the product with name "firearm accessory" is added to the application
 
 
-  @LTD_398_Add_a_new_software_related_to_firearm_product @regression
+  @firearms @LTD_398_Add_a_new_software_related_to_firearm_product @regression
   Scenario: Add a new Software relating to a Firearm product to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     When I click on the "goods" section
     And I choose to add a new product
+    And I select product category "firearms"
     And I select product type "software_for_firearm"
     And I enter good name as "Firearms software" description as "Test software for firearms" part number "FR-123-ACC" controlled "True" control code "ML1a" and graded "no"
     And I specify the "software" product purpose as "For product diagnostics"
     And I specify military use details as "yes_designed"
     And I specify product employs information security features as "Yes"
     And I see summary screen for "Software relating to a firearm" product with name "Firearms software" and "continue"
-    And I confirm I can upload a document
-    And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
+    And I select "No" to document available question
     And I enter product details with unit of measurement "Number of articles", quantity "25", value "50,000" and deactivated "No" and Save
     Then the product with name "Firearms software" is added to the application
 
 
-  @LTD_398_Add_a_new_firearm_product_and_check_edit @regression
+  @firearms @LTD_398_Add_a_new_firearm_product_and_check_edit @regression
   Scenario: Add a new Firearm product and check if we can edit fields from summary screen
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     When I click on the "goods" section
     And I choose to add a new product
+    And I select product category "firearms"
     And I select product type "firearm"
-    And I select "Yes" for serial number of other identification marking with details as "serial number FR8654-Z"
     And I select sporting shotgun status as "No"
+    And I specify number of items as "3"
+    And I select "Yes" for serial number or other identification markings with details as "serial number FR8654-Z"
+    And I enter "3" serial numbers as "serial1,serial2,serial3"
     And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter firearm year of manufacture as "2020"
     And I select firearm replica status as "No" with description "not required"

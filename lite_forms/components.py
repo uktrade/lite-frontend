@@ -112,7 +112,6 @@ class EmptyLabel:
     def __init__(
         self, id: str = None, classes: Optional[List] = None,
     ):
-        from lite_forms.helpers import convert_to_markdown
 
         self.id = id
         self.text = ""
@@ -124,7 +123,7 @@ class GroupWithLabel(_Component):
     def __init__(
         self, text: str = None, id: str = None, components: Optional[List] = None, classes: Optional[List] = None,
     ):
-
+        super().__init__(text, id, classes)
         self.id = id
         self.components = [EmptyLabel()] + components
         self.classes = classes

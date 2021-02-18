@@ -147,14 +147,14 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
 
         if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
             post_data["quantity"] = good["firearm_details"]["number_of_items"]
-            post_data["unit"] = "NAR"   # number of articles
+            post_data["unit"] = "NAR"  # number of articles
         else:
             post_data["firearm_details"]["number_of_items"] = post_data["quantity"]
 
     if preexisting and good:
         if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
             post_data["quantity"] = post_data["firearm_details"]["number_of_items"]
-            post_data["unit"] = "NAR"   # number of articles
+            post_data["unit"] = "NAR"  # number of articles
 
     return post_data
 

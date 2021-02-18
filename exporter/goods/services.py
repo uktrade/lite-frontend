@@ -74,11 +74,32 @@ def add_section_certificate_details(firearm_details, json):
 
 
 def add_identification_marking_details(firearm_details, json):
+    if "number_of_items_step" in json:
+        try:
+            firearm_details["number_of_items"] = int(json.get("number_of_items"))
+        except ValueError:
+            firearm_details["number_of_items"] = 0
+    elif firearm_details and "number_of_items" not in firearm_details:
+        firearm_details["number_of_items"] = 0
+
     if "identification_markings_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
         firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
         firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
         del json["no_identification_markings_details"]
+
+    if "capture_serial_numbers_step" in json:
+        try:
+            number_of_items = int(json.get("number_of_items"))
+        except ValueError:
+            number_of_items = 0
+
+        serial_numbers = []
+        for i in range(number_of_items):
+            serial_numbers.append(json.get(f"serial_number_input_{i}", ""))
+        firearm_details["serial_numbers"] = serial_numbers
+    else:
+        firearm_details["serial_numbers"] = []
 
     return firearm_details
 
@@ -99,26 +120,7 @@ def add_firearm_details_to_data(json):
     elif firearm_details and "is_sporting_shotgun" not in firearm_details:
         firearm_details["is_sporting_shotgun"] = False
 
-    if "number_of_items_step" in json:
-        try:
-            firearm_details["number_of_items"] = int(json.get("number_of_items"))
-        except ValueError:
-            firearm_details["number_of_items"] = 0
-    elif firearm_details and "number_of_items" not in firearm_details:
-        firearm_details["number_of_items"] = 0
-
-    if "capture_serial_numbers_step" in json:
-        try:
-            number_of_items = int(json.get("number_of_items"))
-        except ValueError:
-            number_of_items = 0
-
-        serial_numbers = []
-        for i in range(number_of_items):
-            serial_numbers.append(json.get(f"serial_number_input_{i}", ""))
-        firearm_details["serial_numbers"] = serial_numbers
-    else:
-        firearm_details["serial_numbers"] = []
+    firearm_details = add_identification_marking_details(firearm_details, json)
 
     if "firearm_year_of_manufacture_step" in json:
         firearms_year_of_manufacture = json.pop("year_of_manufacture")
@@ -141,8 +143,6 @@ def add_firearm_details_to_data(json):
         firearm_details["calibre"] = firearm_calibre
 
     firearm_details = add_section_certificate_details(firearm_details, json)
-
-    firearm_details = add_identification_marking_details(firearm_details, json)
 
     for name in [
         "date_of_deactivation",

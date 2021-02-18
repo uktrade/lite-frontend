@@ -74,13 +74,14 @@ class AddGoodDetails(BasePage):
     FIREARMS_IDENTIFICATION_MARKINGS_NO_ID = FIREARMS_IDENTIFICATION_MARKINGS_PREFIX + "False"
     FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "identification_markings_details"
     FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "no_identification_markings_details"
+    FIREARMS_NUMBER_OF_ITEMS = "number_of_items"
 
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
 
     def select_product_category(self, category):
         # Accept categories "one", "two", "three-software", "three-technology" and match with an id accordingly
-        if category == "two":
+        if category == "firearms":
             self.driver.find_element_by_id(self.GROUP2_FIREARMS_ID).click()
         if category == "three-software":
             self.driver.find_element_by_id(self.GROUP3_SOFTWARE_ID).click()
@@ -93,11 +94,31 @@ class AddGoodDetails(BasePage):
         has_markings = self.true_or_false(has_markings)
         markings_id = f"has_identification_markings-{has_markings}"
         self.driver.find_element_by_id(markings_id).click()
-        self.enter_related_field_details("identification_markings_details", details)
+        if has_markings is False:
+            self.enter_related_field_details("identification_markings_details", details)
 
     def select_sporting_gun_status(self, status):
         status = self.true_or_false(status)
         self.driver.find_element_by_id(f"is_sporting_shotgun-{status}").click()
+
+    def enter_number_of_items(self, number_of_items):
+        element = self.driver.find_element_by_id(self.FIREARMS_NUMBER_OF_ITEMS)
+        element.clear()
+        element.send_keys(number_of_items)
+
+    def enter_serial_numbers(self, number_of_items, serial_numbers):
+        for index, serial_number in enumerate(serial_numbers):
+            element = self.driver.find_element_by_id(f"serial_number_input_{index}")
+            element.clear()
+            element.send_keys(serial_number)
+
+    def set_product_document_availability(self, choice):
+        choice = choice.lower()
+        self.driver.find_element_by_id(f"is_document_available-{choice}").click()
+
+    def set_product_document_sensitive(self, choice):
+        choice = choice.lower()
+        self.driver.find_element_by_id(f"is_document_sensitive-{choice}").click()
 
     def select_is_product_for_military_use(self, option):
         # yes_designed, yes_modified and no
