@@ -132,44 +132,6 @@
 																			<th scope="row" class="govuk-table__header">Calibre</th>
 																			<td class="govuk-table__cell">{{ firearm_details.calibre }}</td>
 																	</tr>
-																	<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Firearms Act 1968</th>
-																			<td class="govuk-table__cell">
-																					{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
-																						{% if firearm_details.firearms_act_section == "firearms_act_section1" %}
-																							Section 1
-																						{% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
-																							Section 2
-																						{% endif %}
-
-																						{% for document in good_on_application_documents.documents %}
-																							<span class="govuk-hint">
-																								<a {% if document.safe == True %}href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=document.id %}"
-																									{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
-																							</span>
-																						{% endfor %}
-																					{% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "No" %}
-																						No
-																					{% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
-																						I don't know
-																					{% endif %}
-																			</td>
-																	</tr>
-																	{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five and firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
-																		<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Certificate number</th>
-																			<td class="govuk-table__cell">
-																				{% if not firearm_details.section_certificate_missing %}
-																					{{ firearm_details.section_certificate_number }}
-																					<span class="govuk-hint"> Expires {{ firearm_details.section_certificate_date_of_expiry|date_display }} </span>
-																				{% else %}
-																					No
-																					<span class="govuk-hint"> {{ firearm_details.section_certificate_missing_reason }} </span>
-																				{% endif %}
-																			</td>
-																		</tr>
-																	{% endif %}
-
 
 																	<tr class="govuk-table__row app-table__row">
 																			<th scope="row" class="govuk-table__header">Serial numbers</th>
@@ -254,20 +216,84 @@
 																			<th scope="row" class="govuk-table__header">Deactivated</th>
 																			<td class="govuk-table__cell">
 																					{% if firearm_details.is_deactivated %}
-																							Yes, {{ firearm_details.date_of_deactivation }}
+																						Yes, {{ firearm_details.date_of_deactivation }}
+																					{% else %}
+																						No
 																					{% endif %}
 																			</td>
 																	</tr>
-																	<tr class="govuk-table__row app-table__row">
-																			<th scope="row" class="govuk-table__header">Proof house standard</th>
-																			<td class="govuk-table__cell">
+																	{% if firearm_details.is_deactivated %}
+																		<tr class="govuk-table__row app-table__row">
+																				<th scope="row" class="govuk-table__header">Proof house standard</th>
+																				<td class="govuk-table__cell">
 																					{% if firearm_details.deactivation_standard %}
 																							Yes, {{ firearm_details.deactivation_standard }}
 																					{% else %}
 																							No, {{ firearm_details.deactivation_standard_other }}
 																					{% endif %}
-																			</td>
-																	</tr>
+																				</td>
+																		</tr>
+																	{% endif %}
+															{% endif %}
+															<tr class="govuk-table__row app-table__row">
+																<th scope="row" class="govuk-table__header">Registered firearms dealer</th>
+																<td class="govuk-table__cell">
+																	{% if organisation_documents.rfd_certificate %}
+																		Yes
+																	{% else %}
+																		No
+																	{% endif %}
+																	<div>
+																		<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.rfd_certificate.document.name }}</a>
+																	</div>
+																</td>
+															</tr>
+															{% if organisation_documents.rfd_certificate %}
+																<tr class="govuk-table__row app-table__row">
+																	<th scope="row" class="govuk-table__header">RFD certificate number</th>
+																	<td class="govuk-table__cell">
+																		{{ organisation_documents.rfd_certificate.reference_code }}
+																		<div class="govuk-hint">{{ organisation_documents.rfd_certificate.expiry_date }}</div>
+																	</td>
+																</tr>
+															{% endif %}
+
+															<tr class="govuk-table__row app-table__row">
+																<th scope="row" class="govuk-table__header">Covered by Firearms Act 1968</th>
+																<td class="govuk-table__cell">
+																	{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+																		{% if firearm_details.firearms_act_section == "firearms_act_section1" %}
+																			Section 1
+																			<div>
+																				<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_one_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_one_certificate.document.name }}</a>
+																			</div>
+																		{% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
+																			Section 2
+																			<div>
+																				<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_two_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_two_certificate.document.name }}</a>
+																			</div>
+																		{% elif firearm_details.firearms_act_section == "firearms_act_section5" %}
+																			Section 5
+																			<div>
+																				<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_five_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_five_certificate.document.name }}</a>
+																			</div>
+																		{% endif %}
+																	{% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "No" %}
+																		No
+																	{% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
+																		I don't know
+																	{% endif %}
+																</td>
+															</tr>
+
+															{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+																<tr class="govuk-table__row app-table__row">
+																	<th scope="row" class="govuk-table__header">Firearm Act certificate number</th>
+																	<td class="govuk-table__cell">
+																			{{ firearm_details.section_certificate_number }}
+																			<span class="govuk-hint">{{ firearm_details.section_certificate_date_of_expiry|date_display }}</span>
+																	</td>
+																</tr>
 															{% endif %}
 
 													{% endif %}

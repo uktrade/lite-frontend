@@ -100,21 +100,18 @@
             <dd class="govuk-summary-list__value">
                 {% if documents.rfd_certificate %}
                     {{ documents.rfd_certificate.is_expired|yesno:'No,Yes' }}
-                    <p>{{ documents.rfd_certificate.reference_code }}</p>
-                    <p>{{ documents.rfd_certificate.is_expired|yesno:'Expired,Expires'}} {{ documents.rfd_certificate.expiry_date }}</p>
+                    <div class="govuk-hint govuk-!-margin-bottom-0 govuk-hint govuk-!-margin-top-2">{{ documents.rfd_certificate.reference_code }}</div>
+                    <div class="govuk-hint">{{ documents.rfd_certificate.is_expired|yesno:'Expired,Expires'}} {{ documents.rfd_certificate.expiry_date }}</div>
                 {% else %}
                     No
                 {% endif %}
             </dd>
-            <dt class="govuk-summary-list__actions">
-                {% if documents.rfd_certificate %}
-                <div>
-                    <a href="#" class="govuk-link govuk-link--no-visited-state">View certificate</a>
-                </div>
+            <dt class="certificate-action">
+                    {% if documents.rfd_certificate %}
+                <a href="{% url 'organisation:document' pk=documents.rfd_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank">View certificate</a>
+                </br>
                 {% endif %}
-                <div>
-                    <a href="{% url 'organisation:upload-firearms-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.rfd_certificate|yesno:'Replace,Upload'}} certificate</a>
-                </div>
+                <a href="{% url 'organisation:upload-firearms-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.rfd_certificate|yesno:'Replace,Upload'}} certificate</a>
             </dt>
         </div>
         <div class="govuk-summary-list__row">
@@ -122,21 +119,18 @@
             <dd class="govuk-summary-list__value">
                 {% if documents.section_five_certificate %}
                     {{ documents.section_five_certificate.is_expired|yesno:'No,Yes' }}
-                    <p>{{ documents.section_five_certificate.reference_code }}</p>
-                    <p>{{ documents.section_five_certificate.is_expired|yesno:'Expired,Expires'}} {{ documents.section_five_certificate.expiry_date }}</p>
+                    <div class="govuk-hint govuk-!-margin-bottom-0 govuk-!-margin-top-2">{{ documents.section_five_certificate.reference_code }}</div>
+                    <div class="govuk-hint">{{ documents.section_five_certificate.is_expired|yesno:'Expired,Expires'}} {{ documents.section_five_certificate.expiry_date }}</div>
                 {% else %}
                     No
                 {% endif %}
             </dd>
-            <dt class="govuk-summary-list__actions">
+            <dt class="certificate-action">
                 {% if documents.section_five_certificate %}
-                    <div>
-                        <a href="#" class="govuk-link govuk-link--no-visited-state">View certificate</a>
-                    </div>
+                    <a href="{% url 'organisation:document' pk=documents.section_five_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank">View certificate</a>
+                    </br>
                 {% endif %}
-                <div>
-                    <a href="{% url 'organisation:upload-section-five-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.section_five_certificate|yesno:'Replace,Upload'}} certificate</a>
-                </div>
+                <a href="{% url 'organisation:upload-section-five-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.section_five_certificate|yesno:'Replace,Upload'}} certificate</a>
             </dt>
         </div>
 

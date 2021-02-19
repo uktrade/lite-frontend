@@ -1,9 +1,11 @@
+from datetime import datetime
 from http import HTTPStatus
 
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
@@ -18,6 +20,7 @@ from exporter.applications.services import (
     add_document_data,
     validate_good_on_application,
     post_application_document,
+    post_additional_document,
     delete_application_document_data,
     get_application_documents,
     get_application_document,
@@ -33,6 +36,7 @@ from exporter.goods.forms import (
     add_good_form_group,
     upload_firearms_act_certificate_form,
     build_firearm_back_link_create,
+    has_valid_section_five_certificate,
 )
 from exporter.goods.services import (
     get_goods,
@@ -45,11 +49,32 @@ from exporter.goods.services import (
     post_good_document_sensitivity,
     validate_good,
 )
+
+from exporter.applications.helpers.date_fields import format_date
 from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
+
+
+class SectionDocumentMixin:
+    @cached_property
+    def application(self):
+        application_id = str(self.kwargs["pk"])
+        return get_application(self.request, application_id)
+
+    def get_section_document(self):
+        documents = {item["document_type"]: item for item in self.application["organisation"]["documents"]}
+        firearm_section = (
+            self.request.POST.get("firearms_act_section") or self.good["firearm_details"]["firearms_act_section"]
+        )
+        if firearm_section == "firearms_act_section1":
+            return documents["section-one-certificate"]
+        elif firearm_section == "firearms_act_section2":
+            return documents["section-two-certificate"]
+        elif firearm_section == "firearms_act_section5":
+            return documents["section-five-certificate"]
 
 
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
@@ -119,11 +144,74 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
         return render(request, "applications/goods/preexisting.html", context)
 
 
-class AddGood(LoginRequiredMixin, MultiFormView):
+class RegisteredFirearmDealersMixin:
+    SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate_details"
+
+    def cache_rfd_certificate_details(self):
+        file = self.request.FILES.get("file")
+        if not file:
+            return
+        self.request.session[self.SESSION_KEY_RFD_CERTIFICATE] = {
+            "name": getattr(file, "original_name", file.name),
+            "s3_key": file.name,
+            "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
+            "document_on_organisation": {
+                "expiry_date": format_date(self.request.POST, "expiry_date_"),
+                "reference_code": self.request.POST["reference_code"],
+                "document_type": "rfd-certificate",
+            },
+        }
+
+    def post_success_step(self):
+        data = self.request.session.pop(self.SESSION_KEY_RFD_CERTIFICATE, None)
+        if data:
+            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=data,)
+            assert status_code == HTTPStatus.CREATED
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
+    STEP_ARE_YOU_RFD = 8
+    STEP_RDF_CERTIFICATE_UPLOAD = 9
+
+    def dispatch(self, *args, **kwargs):
+        self.handle_s3_upload()
+        return super().dispatch(*args, **kwargs)
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    @property
+    def form_pk(self):
+        return int(self.request.POST["form_pk"])
+
+    @property
+    def number_of_forms(self):
+        # we require the form index of the last form in the group, not the total number
+        return len(self.forms.get_forms()) - 1
+
+    def validate_step(self, request, nested_data):
+        errors = {}
+        if self.form_pk == self.STEP_ARE_YOU_RFD:
+            if "is_registered_firearm_dealer" not in request.POST:
+                errors["is_registered_firearm_dealer"] = ["Select yes if you are a registered firearms dealer"]
+
+        elif self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
+            if not self.request.FILES.get("file"):
+                errors["file"] = ["Select certificate file to upload"]
+            if not self.request.POST.get("reference_code"):
+                errors["reference_code"] = ["Enter the certificate number"]
+            if not format_date(self.request.POST, "expiry_date_"):
+                errors["expiry_date"] = ["Enter the certificate expiry date and include a day, month and year"]
+
+        if errors:
+            return {"errors": errors}, None
+        return validate_good(request, nested_data)
+
     def init(self, request, **kwargs):
         self.draft_pk = str(kwargs["pk"])
-        self.forms = add_good_form_group(request, draft_pk=self.draft_pk)
-        self.action = validate_good
+        self.forms = add_good_form_group(request=request, draft_pk=self.draft_pk, application=self.application,)
         self.show_section_upload_form = False
 
     def on_submission(self, request, **kwargs):
@@ -141,28 +229,25 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         firearm_act_status = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", "")
         selected_section = copied_request.get("firearms_act_section", "")
 
-        self.covered_by_firearms_act = firearm_act_status == "Yes"
-        self.certificate_not_required = firearm_act_status == "No" or firearm_act_status == "Unsure"
-        self.show_section_upload_form = self.covered_by_firearms_act and (
-            selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
-        )
+        if firearm_act_status == "Yes":
+            self.show_section_upload_form = is_firearm_certificate_needed(
+                application=self.application, selected_section=selected_section
+            )
 
         self.forms = add_good_form_group(
-            request,
-            is_pv_graded,
-            is_software_technology,
-            is_firearm,
-            is_firearms_core,
-            is_firearms_accessory,
-            is_firearms_software_tech,
+            request=request,
+            is_pv_graded=is_pv_graded,
+            is_software_technology=is_software_technology,
+            is_firearm=is_firearm,
+            is_firearms_core=is_firearms_core,
+            is_firearms_accessory=is_firearms_accessory,
+            is_firearms_software_tech=is_firearms_software_tech,
             draft_pk=self.draft_pk,
             base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
+            application=self.application,
         )
 
-        # we require the form index of the last form in the group, not the total number
-        number_of_forms = len(self.forms.get_forms()) - 1
-
-        if int(self.request.POST.get("form_pk")) == number_of_forms:
+        if self.form_pk == self.number_of_forms:
             if self.show_section_upload_form:
                 firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.draft_pk}"
                 session_data = copied_request.dict()
@@ -172,10 +257,17 @@ class AddGood(LoginRequiredMixin, MultiFormView):
 
                 request.session[firearms_data_id] = session_data
 
-            elif self.certificate_not_required:
-                self.action = post_goods
-            else:
-                self.action = post_goods
+    @property
+    def action(self):
+        if self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
+            self.cache_rfd_certificate_details()
+        if self.form_pk == self.number_of_forms:
+            if not self.show_section_upload_form:
+                return post_goods
+        return self.validate_step
+
+    def handle_s3_upload(self):
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(self.request))
 
     def get_success_url(self):
         if self.show_section_upload_form:
@@ -205,6 +297,8 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
             self.selected_section = "Section 1"
         elif post_data["firearms_act_section"] == "firearms_act_section2":
             self.selected_section = "Section 2"
+        elif post_data["firearms_act_section"] == "firearms_act_section5":
+            self.selected_section = "Section 5"
 
         return super().dispatch(request, **kwargs)
 
@@ -248,7 +342,6 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         back_link = build_firearm_back_link_create(
             form_url=reverse("applications:new_good", kwargs={"pk": kwargs["pk"]}), form_data=old_post,
         )
-
         if self.good_pk:
             response, status_code = post_good_on_application(request, self.draft_pk, data)
             if status_code != HTTPStatus.CREATED:
@@ -277,6 +370,16 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
             )
 
         if certificate_available and new_file_selected:
+            document_types = {
+                "Section 1": "section-one-certificate",
+                "Section 2": "section-two-certificate",
+                "Section 5": "section-five-certificate",
+            }
+            doc_data["document_on_organisation"] = {
+                "expiry_date": format_date(request.POST, "section_certificate_date_of_expiry"),
+                "reference_code": request.POST["section_certificate_number"],
+                "document_type": document_types[self.selected_section],
+            }
             data, status_code = post_application_document(request, self.draft_pk, self.good_pk, doc_data)
             if status_code != HTTPStatus.CREATED:
                 return error_page(request, data["errors"]["file"])
@@ -285,7 +388,7 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
 
         self.certificate_filename = ""
         del request.session[self.firearms_data_id]
-        del request.session[file_upload_key]
+        request.session.pop(file_upload_key, None)
         request.session.modified = True
 
         return redirect(success_url)
@@ -382,40 +485,87 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         )
 
 
-class AddGoodToApplication(LoginRequiredMixin, MultiFormView):
+class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, SectionDocumentMixin, MultiFormView):
+    STEP_RDF_CERTIFICATE_UPLOAD = 4
+
+    @cached_property
+    def good(self):
+        good, _ = get_good(self.request, self.good_pk)
+        return good
+
+    @property
+    def form_pk(self):
+        return int(self.request.POST["form_pk"])
+
+    @property
+    def number_of_forms(self):
+        # we require the form index of the last form in the group, not the total number
+        return len(self.forms.get_forms()) - 1
+
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.good_pk = kwargs["good_pk"]
-        application = get_application(self.request, self.object_pk)
-        good, _ = get_good(request, self.good_pk)
 
-        sub_case_type = application["case_type"]["sub_type"]
+        sub_case_type = self.application["case_type"]["sub_type"]
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
-
         self.forms = good_on_application_form_group(
-            request, is_preexisting=is_preexisting, good=good, sub_case_type=sub_case_type, draft_pk=self.object_pk
+            request=request,
+            is_preexisting=is_preexisting,
+            good=self.good,
+            sub_case_type=sub_case_type,
+            draft_pk=self.object_pk,
+            application=self.application,
+            show_attach_rfd=str_to_bool(request.POST.get("is_registered_firearm_dealer")),
+            relevant_firearm_act_section=request.POST.get("firearm_act_product_is_coverd_by"),
+            back_url=reverse("applications:preexisting_good", kwargs={"pk": self.good_pk}),
         )
-
-        self.action = validate_good_on_application
+        self._action = validate_good_on_application
         self.success_url = reverse_lazy(
             "applications:attach-firearms-certificate-existing-good",
             kwargs={"pk": self.object_pk, "good_pk": self.good_pk},
         )
 
+    @property
+    def action(self):
+        if self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
+            self.cache_rfd_certificate_details()
+        return self._action
+
     def on_submission(self, request, **kwargs):
-        selected_section = request.POST.get("firearms_act_section")
-        show_section_upload_form = request.POST.get("is_covered_by_firearm_act_section_one_two_or_five", False) and (
-            selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
-        )
+        show_section_upload_form = False
+        if request.POST.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+            show_section_upload_form = is_firearm_certificate_needed(
+                application=self.application, selected_section=request.POST["firearms_act_section"]
+            )
         # we require the form index of the last form in the group, not the total number
-        number_of_forms = len(self.forms.get_forms()) - 1
-        if int(self.request.POST.get("form_pk")) == number_of_forms:
+        if self.form_pk == self.number_of_forms:
             if show_section_upload_form:
                 firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.object_pk}_{self.good_pk}"
                 request.session[firearms_data_id] = self.request.POST.copy()
             else:
-                self.action = post_good_on_application
+                self._action = post_good_on_application
                 self.success_url = reverse("applications:goods", kwargs={"pk": self.object_pk})
+
+            # if firearm section 5 is selected and the organization already has a valid section 5 then use saved details
+            details = self.good["firearm_details"]
+            section = self.request.POST.get("firearms_act_section") or details["firearms_act_section"]
+
+            if not is_firearm_certificate_needed(application=self.application, selected_section=section):
+                if section == "firearms_act_section5":
+                    document = self.get_section_document()
+                    expiry_date = datetime.strptime(document["expiry_date"], "%d %B %Y")
+                    self.request.POST = self.request.POST.copy()
+                    self.request.POST.update(
+                        {
+                            "section_certificate_missing": details["section_certificate_missing"],
+                            "section_certificate_missing_reason": details["section_certificate_missing_reason"],
+                            "section_certificate_number": document["reference_code"],
+                            "section_certificate_date_of_expiryday": expiry_date.strftime("%d"),
+                            "section_certificate_date_of_expirymonth": expiry_date.strftime("%m"),
+                            "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y"),
+                            "firearms_certificate_uploaded": bool(details.get("section_certificate_missing_reason")),
+                        }
+                    )
 
 
 class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):
@@ -445,28 +595,45 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
+        documents = {
+            item["document_type"].replace("-", "_"): item for item in application["organisation"].get("documents", [])
+        }
 
         context = {
             "application_id": application_id,
             "goods": application["goods"],
             "application_status_draft": application["status"]["key"] in ["draft", APPLICANT_EDITING],
+            "organisation_documents": documents,
         }
         return render(request, "applications/goods/goods-detail-summary.html", context)
 
 
-class AddGoodsSummary(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        application_id = str(kwargs["pk"])
-        good_id = str(kwargs["good_pk"])
-        good = get_good(request, good_id, full_detail=True)[0]
+class AddGoodsSummary(LoginRequiredMixin, SectionDocumentMixin, TemplateView):
+    template_name = "applications/goods/add-good-detail-summary.html"
 
-        good_application_documents, status = get_application_documents(request, application_id, good_id)  # noqa
+    @cached_property
+    def good(self):
+        good_id = str(self.kwargs["good_pk"])
+        return get_good(self.request, good_id, full_detail=True)[0]
 
-        context = {
-            "good": good,
-            "application_id": application_id,
-            "good_id": good_id,
-            "good_application_documents": good_application_documents["documents"],
-        }
+    def get_context_data(self, **kwargs):
+        application_id = str(self.kwargs["pk"])
+        good_id = str(self.kwargs["good_pk"])
 
-        return render(request, "applications/goods/add-good-detail-summary.html", context)
+        good_application_documents, _ = get_application_documents(self.request, application_id, good_id)
+
+        return super().get_context_data(
+            good=self.good,
+            application_id=application_id,
+            good_id=good_id,
+            good_application_documents=good_application_documents["documents"],
+            section_document=self.get_section_document(),
+            **kwargs,
+        )
+
+
+def is_firearm_certificate_needed(application, selected_section):
+    firearm_sections = ["firearms_act_section1", "firearms_act_section2"]
+    if not has_valid_section_five_certificate(application):
+        firearm_sections.append("firearms_act_section5")
+    return selected_section in firearm_sections

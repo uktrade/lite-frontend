@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 
+from exporter.core.helpers import str_to_bool
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
@@ -337,6 +338,7 @@ def pv_details_form(request):
 
 def add_good_form_group(
     request,
+    application: dict = None,
     is_pv_graded: bool = None,
     is_software_technology: bool = None,
     is_firearm: bool = None,
@@ -346,7 +348,21 @@ def add_good_form_group(
     draft_pk: str = None,
     base_form_back_link: str = None,
 ):
+    application = application or {}
+
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
+
+    show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
+
+    is_preexisting = str_to_bool(request.GET.get("preexisting", False))
+    # when adding to product list then always show RFD question if not yet have a valid RFD certificate
+    # when adding to application then show RFD question if has expired RFD and not show if they do not have one yet
+    if is_preexisting:
+        show_rfd_question = is_firearms_core and has_expired_rfd_certificate(application)
+    else:
+        # import pdb; pdb.set_trace()
+        show_rfd_question = is_firearms_core and not has_valid_rfd_certificate(application)
+
     return FormGroup(
         [
             conditional(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS, product_category_form(request)),
@@ -363,26 +379,13 @@ def add_good_form_group(
             conditional(is_firearm and bool(draft_pk), firearm_year_of_manufacture_details_form()),
             conditional(is_firearm, firearm_replica_form(request.POST.get("type"))),
             conditional(is_firearms_core, firearm_calibre_details_form()),
+            conditional(show_rfd_question, is_registered_firearm_dealer_field(base_form_back_link)),
+            conditional(show_attach_rfd, attach_firearm_dealer_certificate_form(base_form_back_link)),
             conditional(is_firearms_core and bool(draft_pk), firearms_act_confirmation_form()),
             conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_uses_information_security(request)),
-        ]
-    )
-
-
-def add_firearm_good_form_group(request, is_pv_graded: bool = None, draft_pk: str = None):
-    control_list_entries = get_control_list_entries(request, convert_to_options=True)
-    return FormGroup(
-        [
-            add_goods_questions(control_list_entries, draft_pk),
-            conditional(is_pv_graded, pv_details_form(request)),
-            group_two_product_type_form(),
-            firearm_year_of_manufacture_details_form(),
-            firearm_calibre_details_form(),
-            firearms_act_confirmation_form(),
-            identification_markings_form(),
         ]
     )
 
@@ -706,6 +709,7 @@ def firearms_act_confirmation_form():
                                 options=[
                                     Option(key="firearms_act_section1", value="Section 1"),
                                     Option(key="firearms_act_section2", value="Section 2"),
+                                    Option(key="firearms_act_section5", value="Section 5"),
                                 ],
                             )
                         ],
@@ -721,7 +725,7 @@ def firearms_act_confirmation_form():
 
 def upload_firearms_act_certificate_form(section, filename, back_link):
     return Form(
-        title=f"Upload your Firearms Act 1968 {section} certificate",
+        title=f"Attach your Firearms Act 1968 {section} certificate",
         description="The file must be smaller than 50MB",
         questions=[
             HiddenField("firearms_certificate_uploaded", False),
@@ -809,3 +813,56 @@ def identification_markings_form(draft_pk=None, good_id=None):
         questions=questions,
         default_button_name="Save and continue",
     )
+
+
+def attach_firearm_dealer_certificate_form(back_url):
+    return Form(
+        title="Attach your registered firearms dealer certificate",
+        description="The file must be smaller than 50MB",
+        questions=[
+            FileUpload(),
+            TextInput(name="reference_code", title="Certificate number",),
+            DateInput(
+                prefix="expiry_date_", name="expiry_date", title="Expiry date", description="For example 12 3 2021"
+            ),
+        ],
+        back_link=BackLink("Back", back_url),
+    )
+
+
+def is_registered_firearm_dealer_field(back_url):
+    questions = [
+        RadioButtons(
+            title="",
+            name="is_registered_firearm_dealer",
+            options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
+        )
+    ]
+    return Form(
+        title="Are you a registered firearms dealer?",
+        questions=questions,
+        back_link=BackLink("Back", back_url),
+        default_button_name="Save and continue",
+    )
+
+
+def has_expired_rfd_certificate(application):
+    document = get_rfd_certificate(application)
+    return bool(document) and document["is_expired"]
+
+
+def has_valid_rfd_certificate(application):
+    document = get_rfd_certificate(application)
+    return bool(document) and not document["is_expired"]
+
+
+def get_rfd_certificate(application):
+    documents = {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
+    return documents.get("rfd-certificate")
+
+
+def has_valid_section_five_certificate(application):
+    documents = {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
+    if "section-five-certificate" in documents:
+        return not documents["section-five-certificate"]["is_expired"]
+    return False

@@ -124,7 +124,11 @@ def default_request(rf, client):
 
 def test_good_on_application_form_ammunition(default_request, good_ammo, mock_units):
     form = goods.unit_quantity_value(
-        request=default_request, good=good_ammo, sub_case_type=sub_case_type_siel, application_id=application_id,
+        request=default_request,
+        good=good_ammo,
+        sub_case_type=sub_case_type_siel,
+        application_id=application_id,
+        back_url="/the/url/",
     )
 
     assert len(form.questions) == 8
@@ -134,7 +138,11 @@ def test_good_on_application_form_ammunition(default_request, good_ammo, mock_un
 
 def test_good_on_application_form_firearm(default_request, good_shotgun, mock_units):
     form = goods.unit_quantity_value(
-        request=default_request, good=good_shotgun, sub_case_type=sub_case_type_siel, application_id=application_id,
+        request=default_request,
+        good=good_shotgun,
+        sub_case_type=sub_case_type_siel,
+        application_id=application_id,
+        back_url="/the/url/",
     )
 
     assert len(form.questions) == 8
@@ -144,7 +152,11 @@ def test_good_on_application_form_firearm(default_request, good_shotgun, mock_un
 
 def test_good_on_application_form_firearm_component(default_request, good_gun_barrel, mock_units):
     form = goods.unit_quantity_value(
-        request=default_request, good=good_gun_barrel, sub_case_type=sub_case_type_siel, application_id=application_id,
+        request=default_request,
+        good=good_gun_barrel,
+        sub_case_type=sub_case_type_siel,
+        application_id=application_id,
+        back_url="/the/url/",
     )
 
     assert len(form.questions) == 8
@@ -154,7 +166,11 @@ def test_good_on_application_form_firearm_component(default_request, good_gun_ba
 
 def test_good_on_application_form_not_firearm(default_request, good_widget, mock_units):
     form = goods.unit_quantity_value(
-        request=default_request, good=good_widget, sub_case_type=sub_case_type_siel, application_id=application_id,
+        request=default_request,
+        good=good_widget,
+        sub_case_type=sub_case_type_siel,
+        application_id=application_id,
+        back_url="/the/url/",
     )
 
     assert len(form.questions) == 6

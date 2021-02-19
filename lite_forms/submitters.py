@@ -80,9 +80,9 @@ def submit_paged_form(  # noqa
     :param additional_context: Adds additional items to context for form
     :return: The next form page to display
     """
+
     if additional_context is None:
         additional_context = {}
-
     data, nested_data = _prepare_data(request, inject_data)
 
     form_pk = request.POST.get("form_pk")
@@ -97,7 +97,6 @@ def submit_paged_form(  # noqa
         return form_with_hidden_fields(
             request, data, post_data, form=previous_form, return_data=None, additional_context=additional_context
         )
-
     if object_pk:
         validated_data, _ = action(request, object_pk, nested_data)
     else:

@@ -147,11 +147,18 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
     def get_context_data(self, **kwargs):
         # if the good was reviewed at application level then use that as source of truth, otherwise use the export
         # control characteristics from the canonical good level
+        documents = {
+            item["document_type"].replace("-", "_"): item
+            for item in self.case["data"]["organisation"].get("documents", [])
+        }
+
         if self.object["is_good_controlled"] is not None:
             control_list_entries = self.object["control_list_entries"]
         else:
             control_list_entries = self.object["good"]["control_list_entries"]
-        return super().get_context_data(object_control_list_entries=control_list_entries, **kwargs)
+        return super().get_context_data(
+            object_control_list_entries=control_list_entries, organisation_documents=documents, **kwargs
+        )
 
 
 class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
@@ -210,12 +217,17 @@ class GoodDetails(LoginRequiredMixin, FormView):
         goa_documents = get_good_on_application_documents(
             self.request, self.object["application"], self.object["good"]["id"]
         )
+        case = get_case(self.request, self.kwargs["pk"])
+        organisation_documents = {
+            item["document_type"].replace("-", "_"): item for item in case.organisation["documents"]
+        }
         return super().get_context_data(
             good_on_application=self.object,
             good_on_application_documents=goa_documents,
-            case=get_case(self.request, self.kwargs["pk"]),
+            case=case,
             other_cases=self.other_cases,
             # for pagination
             data={"total_pages": self.other_cases["count"] // form.page_size} if self.other_cases else {},
+            organisation_documents=organisation_documents,
             **kwargs,
         )

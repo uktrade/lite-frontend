@@ -7,7 +7,9 @@
     "build_exporter": "parcel build ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
     "build_caseworker": "parcel build ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/",
     "watch_exporter": "parcel watch ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
-    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/"
+    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/",
+    "build_exporter_css": "parcel build exporter/assets/scss/styles.scss --out-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker_css": "parcel build caseworker/assets/scss/styles.scss  --out-dir caseworker/assets/built --public-url /assets/"
   },
   "engines": {
     "node": ">=12.16.1"
