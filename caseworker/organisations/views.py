@@ -118,6 +118,11 @@ class OrganisationView(TemplateView):
 class OrganisationDetails(LoginRequiredMixin, OrganisationView):
     template_name = "details"
 
+    def get_additional_context(self):
+        context = super().get_additional_context()
+        documents = {item["document_type"].replace("-", "_"): item for item in self.organisation["documents"]}
+        return {**context, "orgasation_documents": documents}
+
 
 class OrganisationReview(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):

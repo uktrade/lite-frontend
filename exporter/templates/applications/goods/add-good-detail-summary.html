@@ -266,15 +266,26 @@
 										Section 1
 									{% elif section == "firearms_act_section2" %}
 										Section 2
+									{% elif section == "firearms_act_section5" %}
+										Section 5
 									{% endif %}
 								</span>
 								{% if not good.firearm_details.section_certificate_missing %}
-									<span class="govuk-hint govuk-!-margin-0">
-										Expires {{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
-									</span>
-									<span class="govuk-hint govuk-!-margin-0">
-										Reference {{ good.firearm_details.section_certificate_number }}
-									</span>
+									{% if section == "firearms_act_section5" %}
+										<span class="govuk-hint govuk-!-margin-0">
+											Expires {{ section_document.expiry_date }}
+										</span>
+										<span class="govuk-hint govuk-!-margin-0">
+											Reference {{ section_document.reference_code }}
+										</span>
+									{% else %}
+										<span class="govuk-hint govuk-!-margin-0">
+											Expires {{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
+										</span>
+										<span class="govuk-hint govuk-!-margin-0">
+											Reference {{ good.firearm_details.section_certificate_number }}
+										</span>
+									{% endif %}
 								{% endif %}
 							{% elif covered_by_firearms_act == "No" %}
 								No

@@ -367,3 +367,10 @@ def check_product_document_available(driver, choice):
     good_details_page = AddGoodDetails(driver)
     good_details_page.set_product_document_sensitive(choice)
     functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{choice}" to registered firearms dealer question'))
+def check_product_document_available(driver, choice):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.set_registered_firearms_dealer(choice)
+    functions.click_submit(driver)

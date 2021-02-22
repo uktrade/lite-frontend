@@ -267,6 +267,7 @@ Feature: I want to indicate the standard licence I want
     And I enter firearm year of manufacture as "2020"
     And I select firearm replica status as "Yes" with description "More details about the replica"
     And I enter calibre as "0.22"
+    And I select "No" to registered firearms dealer question
     And I specify firearms act sections apply as "Yes"
     And I select firearms act section "2"
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
@@ -293,6 +294,7 @@ Feature: I want to indicate the standard licence I want
     And I enter "3" serial numbers as "serial1,serial2,serial3"
     And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter calibre as "0.22"
+    And I select "No" to registered firearms dealer question
     And I specify firearms act sections apply as "Yes"
     And I select firearms act section "2"
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
@@ -359,6 +361,7 @@ Feature: I want to indicate the standard licence I want
     And I enter firearm year of manufacture as "2020"
     And I select firearm replica status as "No" with description "not required"
     And I enter calibre as "0.22"
+    And I select "No" to registered firearms dealer question
     And I specify firearms act sections apply as "Yes"
     And I select firearms act section "1"
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"

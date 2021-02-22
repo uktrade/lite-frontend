@@ -5,10 +5,13 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
+from exporter.applications.helpers.date_fields import format_date
+from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.applications.services import (
     get_application_ecju_queries,
     get_case_notes,
@@ -20,8 +23,9 @@ from exporter.applications.services import (
     post_application_document,
     get_application_documents,
     fetch_and_delete_previous_application_documents,
+    get_application,
 )
-from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
+from exporter.applications.views.goods import is_firearm_certificate_needed
 from exporter.goods.forms import (
     attach_documents_form,
     delete_good_form,
@@ -190,7 +194,6 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
 class AddGood(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = add_good_form_group(request)
-        self.action = validate_good
 
     def on_submission(self, request, **kwargs):
         copied_request = request.POST.copy()
@@ -214,14 +217,16 @@ class AddGood(LoginRequiredMixin, MultiFormView):
             base_form_back_link=reverse("goods:goods"),
         )
 
+    def get_success_url(self):
+        return reverse("goods:check_document_availability", kwargs={"pk": self.get_validated_data()["good"]["id"]})
+
+    @property
+    def action(self):
         # we require the form index of the last form in the group, not the total number
         number_of_forms = len(self.forms.get_forms()) - 1
-
         if int(self.request.POST.get("form_pk")) == number_of_forms:
-            self.action = post_goods
-
-    def get_success_url(self):
-        return reverse_lazy("goods:check_document_availability", kwargs={"pk": self.get_validated_data()["good"]["id"]})
+            return post_goods
+        return validate_good
 
 
 class GoodSoftwareTechnology(LoginRequiredMixin, SingleFormView):
@@ -634,6 +639,10 @@ class EditCalibre(LoginRequiredMixin, SingleFormView):
 class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
     application_id = None
 
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
     def init(self, request, **kwargs):
         if "good_pk" in kwargs:
             # coming from the application
@@ -657,9 +666,10 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         updated_data = self.get_validated_data()["good"]["firearm_details"]
-        covered_by_firearms_act = updated_data.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes"
-        section_selected = updated_data.get("firearms_act_section")
-        show_upload_form = covered_by_firearms_act and section_selected
+
+        show_upload_form = is_firearm_certificate_needed(
+            application=self.application, selected_section=updated_data.get("firearms_act_section")
+        )
 
         if self.draft_pk:
             return reverse(
@@ -706,6 +716,8 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             self.selected_section = "Section 1"
         elif self.data["firearms_act_section"] == "firearms_act_section2":
             self.selected_section = "Section 2"
+        elif self.data["firearms_act_section"] == "firearms_act_section5":
+            self.selected_section = "Section 5"
 
         self.certificate_filename = ""
         if not self.data["section_certificate_missing"]:
@@ -773,6 +785,18 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
 
         if certificate_available and new_file_selected:
             fetch_and_delete_previous_application_documents(request, kwargs["pk"], kwargs["good_pk"])
+
+            document_types = {
+                "Section 1": "section-one-certificate",
+                "Section 2": "section-two-certificate",
+                "Section 5": "section-five-certificate",
+            }
+
+            doc_data["document_on_organisation"] = {
+                "expiry_date": format_date(request.POST, "section_certificate_date_of_expiry"),
+                "reference_code": request.POST["section_certificate_number"],
+                "document_type": document_types[self.selected_section],
+            }
 
             data, status_code = post_application_document(request, kwargs["pk"], kwargs["good_pk"], doc_data)
             if status_code != HTTPStatus.CREATED:

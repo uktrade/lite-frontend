@@ -1,11 +1,12 @@
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
+from django.conf import settings
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, RedirectView
-from django.urls import reverse
 
 from exporter.applications.helpers.date_fields import format_date
 from exporter.core.constants import Permissions
@@ -14,11 +15,12 @@ from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend.organisation import Tabs
 from lite_forms.helpers import conditional
 from exporter.organisation.roles.services import get_user_permissions
-
+from exporter.goods.forms import attach_firearm_dealer_certificate_form
 from exporter.organisation import forms
-from exporter.organisation.services import post_organisation_documents
+from exporter.organisation.services import post_document_on_organisation, get_document_on_organisation
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import form_page
+from s3chunkuploader.file_handler import s3_client
 
 
 class OrganisationView(TemplateView):
@@ -37,6 +39,7 @@ class OrganisationView(TemplateView):
         can_administer_sites = Permissions.ADMINISTER_SITES in user_permissions
         can_administer_roles = Permissions.EXPORTER_ADMINISTER_ROLES in user_permissions
 
+        documents = {item["document_type"].replace("-", "_"): item for item in self.organisation.get("documents", [])}
         context = {
             "organisation": self.organisation,
             "can_administer_sites": can_administer_sites,
@@ -48,7 +51,7 @@ class OrganisationView(TemplateView):
                 conditional(can_administer_roles, Tab("roles", Tabs.ROLES, reverse_lazy("organisation:roles:roles"))),
                 Tab("details", Tabs.DETAILS, reverse_lazy("organisation:details")),
             ],
-            "documents": {item["document_type"].replace("-", "_"): item for item in self.organisation.get("documents", [])},
+            "documents": documents,
             **self.get_additional_context(),
         }
         return render(request, f"organisation/{self.template_name}.html", context)
@@ -62,13 +65,28 @@ class Details(LoginRequiredMixin, OrganisationView):
     template_name = "details/index"
 
 
+class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, pk):
+        organisation_id = str(self.request.session["organisation"])
+        response = get_document_on_organisation(request=self.request, organisation_id=organisation_id, document_id=pk)
+        document_on_organisation = response.json()
+        signed_url = s3_client().generate_presigned_url(
+            "get_object",
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": document_on_organisation["document"]["s3_key"]},
+            ExpiresIn=15,
+        )
+        return signed_url
+
+
 @method_decorator(csrf_exempt, "dispatch")
-class AbstractOrganisationUpload(TemplateView):
-    form_function = None
+class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
     document_type = None
 
+    def form_function(self, back_url):
+        raise NotImplementedError
+
     def get(self, request, **kwargs):
-        form = self.form_function(back_url=reverse("organisation:details"))  # noqa
+        form = self.form_function(back_url=reverse("organisation:details"))  # pylint: disable=E1102
         return form_page(request, form)
 
     def handle_s3_upload(self):
@@ -93,13 +111,13 @@ class AbstractOrganisationUpload(TemplateView):
                 "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
             }
 
-        post_organisation_documents(request=request, organisation_id=organisation_id, data=data)
+        post_document_on_organisation(request=request, organisation_id=organisation_id, data=data)
 
         return redirect(reverse("organisation:details"))
 
 
 class UploadFirearmsCertificate(AbstractOrganisationUpload):
-    form_function = staticmethod(forms.attach_firearm_dealer_certificate_form)
+    form_function = staticmethod(attach_firearm_dealer_certificate_form)
     document_type = "rfd-certificate"
 
 

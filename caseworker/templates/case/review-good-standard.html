@@ -104,6 +104,8 @@
                                             Section 1
                                         {% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
                                             Section 2
+                                        {% elif firearm_details.firearms_act_section == "firearms_act_section5" %}
+                                            Section 5
                                         {% endif %}
 
                                         {% for document in good_on_application_documents.documents %}
@@ -120,6 +122,7 @@
 
                                 </td>
                             </tr>
+
                             {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Certificate number</th>
@@ -134,6 +137,23 @@
                                     </td>
                                 </tr>
                             {% endif %}
+
+                            {% if firearm_details %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Registered firearms dealer</th>
+                                    <td class="govuk-table__cell">
+                                        {% if organisation_documents.rfd_certificate %}
+                                            {{ organisation_documents.rfd_certificate.reference_code }}
+                                            <span class="govuk-hint govuk-!-margin-0">
+                                                Expires {{ organisation_documents.rfd_certificate.expiry_date }}
+                                            </span>
+                                        {% else %}
+                                            No
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
 
                             <tr class="govuk-table__row app-table__row">
                                 <th scope="row" class="govuk-table__header">Number of items</th>

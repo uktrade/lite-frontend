@@ -102,17 +102,18 @@ def pv_gradings(mock_pv_gradings, rf, client):
     [
         (
             {"is_firearms_core": True},
-            4,
+            5,
             [
                 {"qindex": 1, "name": "type"},
                 {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 0, "name": "name"},
-                {"qindex": 1, "name": "calibre"},
+                {"qindex": 0, "name": "firearm_calibre_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
             ],
         ),
         (
             {"is_firearms_core": True, "draft_pk": "123", "is_firearm": True},
-            9,
+            10,
             [
                 {"qindex": 1, "name": "type"},
                 {"qindex": 2, "name": "is_sporting_shotgun"},
@@ -121,7 +122,8 @@ def pv_gradings(mock_pv_gradings, rf, client):
                 {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "year_of_manufacture"},
                 {"qindex": 2, "name": "is_replica"},
-                {"qindex": 1, "name": "calibre"},
+                {"qindex": 0, "name": "firearm_calibre_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
                 {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
@@ -160,6 +162,50 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
 
     for i, q in enumerate(question_checks):
         assert form_parts[i].questions[q["qindex"]].name == q["name"]
+
+
+def test_has_valid_rfd_certificate_is_expired():
+    actual = forms.has_valid_rfd_certificate(
+        {"organisation": {"documents": [{"document_type": "rfd-certificate", "is_expired": True}]}}
+    )
+
+    assert actual is False
+
+
+def test_has_valid_rfd_certificate_not_expired():
+    actual = forms.has_valid_rfd_certificate(
+        {"organisation": {"documents": [{"document_type": "rfd-certificate", "is_expired": False}]}}
+    )
+
+    assert actual is True
+
+
+def test_has_valid_rfd_certificate_empty():
+    actual = forms.has_valid_rfd_certificate({"organisation": {"documents": []}})
+
+    assert actual is False
+
+
+def test_has_valid_section_five_certificate_is_expired():
+    actual = forms.has_valid_section_five_certificate(
+        {"organisation": {"documents": [{"document_type": "section-five-certificate", "is_expired": True}]}}
+    )
+
+    assert actual is False
+
+
+def test_has_valid_section_five_certificate_not_expired():
+    actual = forms.has_valid_section_five_certificate(
+        {"organisation": {"documents": [{"document_type": "section-five-certificate", "is_expired": False}]}}
+    )
+
+    assert actual is True
+
+
+def test_has_valid_section_five_certificate_empty():
+    actual = forms.has_valid_section_five_certificate({"organisation": {"documents": []}})
+
+    assert actual is False
 
 
 def test_goods_check_document_available_form():

@@ -169,20 +169,31 @@
 						</div>
 
 
-						<div class="govuk-summary-list__row">
-							<dt class="govuk-summary-list__key">
-								{% lcs "goods.GoodsDetailSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
-							</dt>
-							<dd class="govuk-summary-list__value">
-								{% with covered_by_firearms_act=good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five section=good.good.firearm_details.firearms_act_section %}
-								{% if covered_by_firearms_act == "Yes" %}
-									{{ covered_by_firearms_act }}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% lcs "goods.GoodsDetailSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+
+							{% with covered_by_firearms_act=good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five section=good.firearm_details.firearms_act_section %}
+
+							{% if covered_by_firearms_act == "Yes" %}
+								{{ covered_by_firearms_act }}
+								<span class="govuk-hint govuk-!-margin-0">
+									{% if section == "firearms_act_section1" %}
+										Section 1
+									{% elif section == "firearms_act_section2" %}
+										Section 2
+									{% elif section == "firearms_act_section5" %}
+										Section 5
+									{% endif %}
+								</span>
+								{% if not good.firearm_details.section_certificate_missing %}
 									<span class="govuk-hint govuk-!-margin-0">
-										{% if section == "firearms_act_section1" %}
-											Section 1
-										{% elif section == "firearms_act_section2" %}
-											Section 2
-										{% endif %}
+										Expires {{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
+									</span>
+									<span class="govuk-hint govuk-!-margin-0">
+										Reference {{ good.firearm_details.section_certificate_number }}
 									</span>
 									{% if not good.good.firearm_details.section_certificate_missing %}
 										<span class="govuk-hint govuk-!-margin-0">
@@ -200,6 +211,27 @@
 							{% endwith %}
 							</dd>
 						</div>
+						{% if good.firearm_details %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Registered firearms dealer
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if organisation_documents.rfd_certificate %}
+									<div>Yes</div>
+									<span class="govuk-hint govuk-!-margin-0">
+										Expires {{ organisation_documents.rfd_certificate.expiry_date }}
+									</span>
+									<span class="govuk-hint govuk-!-margin-0">
+										Reference {{ organisation_documents.rfd_certificate.reference_code }}
+									</span>
+					                <a href="{% url 'organisation:document' pk=organisation_documents.rfd_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank">{{ organisation_documents.rfd_certificate.document.name }}</a>
+								{% else %}
+									No
+								{% endif %}
+							</dd>
+						</div>
+						{% endif %}
 						{% if good.good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
 							<div class="govuk-summary-list__row">
 								<dt class="govuk-summary-list__key">Document</dt>

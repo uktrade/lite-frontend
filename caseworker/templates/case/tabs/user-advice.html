@@ -19,11 +19,13 @@
 					List view
 				</a>
 			{% endif %}
-			<div data-enable-on-checkboxes="#form-user-advice-container" class="lite-!-display-inline lite-buttons-row {% if current_advice_level != 'user' %}app-advice__disabled-buttons{% endif %}">
-				<button id="button-give-user-advice" type="submit" class="govuk-button" data-module="govuk-button">
-					{% lcs 'advice.UserAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
-				</button>
-			</div>
+			{% if current_advice_level %}
+				<div data-enable-on-checkboxes="#form-user-advice-container" class="lite-!-display-inline lite-buttons-row {% if current_advice_level != 'user' %}app-advice__disabled-buttons{% endif %}">
+					<button id="button-give-user-advice" type="submit" class="govuk-button" data-module="govuk-button">
+						{% lcs 'advice.UserAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+					</button>
+				</div>
+			{% endif %}
 		</div>
 		<div class="{% if current_advice_level != 'user' or not case.advice|filter_advice_by_level:'user' %}app-advice__disabled-buttons{% endif %}">
 			<button form="form-user-advice" id="button-combine-user-advice" type="submit" class="govuk-button" data-module="govuk-button">

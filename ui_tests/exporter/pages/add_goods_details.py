@@ -120,6 +120,10 @@ class AddGoodDetails(BasePage):
         choice = choice.lower()
         self.driver.find_element_by_id(f"is_document_sensitive-{choice}").click()
 
+    def set_registered_firearms_dealer(self, choice):
+        choice = "True" if choice == "Yes" else "False"
+        self.driver.find_element_by_id(f"is_registered_firearm_dealer-{choice}").click()
+
     def select_is_product_for_military_use(self, option):
         # yes_designed, yes_modified and no
         if option == "yes_designed":
