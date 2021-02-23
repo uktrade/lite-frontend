@@ -20,6 +20,7 @@ from exporter.organisation import forms
 from exporter.organisation.services import post_document_on_organisation, get_document_on_organisation
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import form_page
+from s3chunkuploader.file_handler import s3_client
 
 
 class OrganisationView(TemplateView):
