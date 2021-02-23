@@ -69,7 +69,7 @@
 							</td>
 						{% else %}
 							<td class="govuk-table__cell">
-								{{ good_on_application.quantity|intcomma }} {{ good_on_application.unit.value|units_pluralise:good_on_application.quantity }}
+								{{ good_on_application|pluralise_quantity }}
 							</td>
 							<td class="govuk-table__cell">
 								£{{ good_on_application.value|intcomma }}

@@ -31,6 +31,8 @@ from exporter.goods.forms import (
     delete_good_form,
     check_document_available_form,
     document_grading_form,
+    firearms_capture_serial_numbers,
+    firearms_number_of_items,
     raise_a_goods_query,
     add_good_form_group,
     edit_good_detail_form,
@@ -825,6 +827,35 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
+class EditNumberofItems(LoginRequiredMixin, SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        self.form = firearms_number_of_items(self.data["type"]["key"])
+        self.action = edit_good_firearm_details
+
+    def get_success_url(self):
+        if self.draft_pk:
+            return reverse(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
+            )
+        elif self.application_id and self.object_pk:
+            return reverse(
+                "applications:identification_markings", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+            )
+        elif self.object_pk:
+            return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+
+
 class EditIdentificationMarkings(LoginRequiredMixin, SingleFormView):
     application_id = None
 
@@ -838,6 +869,41 @@ class EditIdentificationMarkings(LoginRequiredMixin, SingleFormView):
         self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         self.form = identification_markings_form()
+        self.action = edit_good_firearm_details
+
+    def get_success_url(self):
+        if self.draft_pk:
+            return reverse(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
+            )
+        elif self.application_id and self.object_pk:
+            has_identification_markings = self._validated_data["good"]["firearm_details"]["has_identification_markings"]
+            if has_identification_markings is True:
+                return reverse(
+                    "applications:serial_numbers", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
+            else:
+                return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
+        elif self.object_pk:
+            return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+
+
+class EditSerialNumbers(LoginRequiredMixin, SingleFormView):
+    application_id = None
+
+    def init(self, request, **kwargs):
+        if "good_pk" in kwargs:
+            # coming from the application
+            self.object_pk = str(kwargs["good_pk"])
+            self.application_id = str(kwargs["pk"])
+        else:
+            self.object_pk = str(kwargs["pk"])
+        self.draft_pk = str(kwargs.get("draft_pk", ""))
+        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
+        for index, item in enumerate(self.data["serial_numbers"]):
+            self.data[f"serial_number_input_{index}"] = item
+        self.form = firearms_capture_serial_numbers(self.data["number_of_items"])
         self.action = edit_good_firearm_details
 
     def get_success_url(self):

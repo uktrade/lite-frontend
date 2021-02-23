@@ -40,7 +40,7 @@ def build_organisation_with_user(exporter, type, name):
             "name": "Headquarters",
             "address": {
                 "address_line_1": "42 Question Road",
-                "postcode": "Islington",
+                "postcode": "BC1 2DE",
                 "city": "London",
                 "region": "London",
                 "country": "GB",

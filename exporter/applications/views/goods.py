@@ -229,6 +229,15 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
         firearm_act_status = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", "")
         selected_section = copied_request.get("firearms_act_section", "")
 
+        self.covered_by_firearms_act = firearm_act_status == "Yes"
+        self.certificate_not_required = firearm_act_status == "No" or firearm_act_status == "Unsure"
+        self.show_section_upload_form = self.covered_by_firearms_act and (
+            selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
+        )
+        show_serial_numbers_form = True
+        if copied_request.get("has_identification_markings") == "False":
+            show_serial_numbers_form = False
+
         if firearm_act_status == "Yes":
             self.show_section_upload_form = is_firearm_certificate_needed(
                 application=self.application, selected_section=selected_section
@@ -245,6 +254,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             draft_pk=self.draft_pk,
             base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
             application=self.application,
+            show_serial_numbers_form=show_serial_numbers_form,
         )
 
         if self.form_pk == self.number_of_forms:
@@ -505,19 +515,21 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.good_pk = kwargs["good_pk"]
+        self.application = get_application(self.request, self.object_pk)
 
-        sub_case_type = self.application["case_type"]["sub_type"]
+        self.sub_case_type = self.application["case_type"]["sub_type"]
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
         self.forms = good_on_application_form_group(
             request=request,
             is_preexisting=is_preexisting,
             good=self.good,
-            sub_case_type=sub_case_type,
+            sub_case_type=self.sub_case_type,
             draft_pk=self.object_pk,
             application=self.application,
             show_attach_rfd=str_to_bool(request.POST.get("is_registered_firearm_dealer")),
             relevant_firearm_act_section=request.POST.get("firearm_act_product_is_coverd_by"),
             back_url=reverse("applications:preexisting_good", kwargs={"pk": self.good_pk}),
+            show_serial_numbers_form=True,
         )
         self._action = validate_good_on_application
         self.success_url = reverse_lazy(
@@ -532,11 +544,38 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         return self._action
 
     def on_submission(self, request, **kwargs):
+        is_preexisting = str_to_bool(request.GET.get("preexisting", True))
+        copied_request = request.POST.copy()
+        show_attach_rfd = str_to_bool(copied_request.get("is_registered_firearm_dealer"))
+        relevant_firearm_act_section = copied_request.get("firearm_act_product_is_coverd_by")
+        back_url = reverse("applications:preexisting_good", kwargs={"pk": self.good_pk})
+
+        number_of_items = copied_request.get("number_of_items")
+        self.good["firearm_details"]["number_of_items"] = number_of_items
+
         show_section_upload_form = False
-        if request.POST.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+        if copied_request.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
             show_section_upload_form = is_firearm_certificate_needed(
-                application=self.application, selected_section=request.POST["firearms_act_section"]
+                application=self.application, selected_section=copied_request["firearms_act_section"]
             )
+
+        show_serial_numbers_form = True
+        if copied_request.get("has_identification_markings") == "False":
+            show_serial_numbers_form = False
+
+        self.forms = good_on_application_form_group(
+            request,
+            is_preexisting,
+            self.good,
+            self.sub_case_type,
+            self.object_pk,
+            self.application,
+            show_attach_rfd,
+            relevant_firearm_act_section,
+            back_url,
+            show_serial_numbers_form,
+        )
+
         # we require the form index of the last form in the group, not the total number
         if self.form_pk == self.number_of_forms:
             if show_section_upload_form:

@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 
 from core.builtins.custom_tags import default_na
+from exporter.core.constants import PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.core.helpers import convert_control_list_entries
 from lite_forms.components import Summary
 
@@ -9,14 +10,19 @@ def good_summary(good):
     if not good:
         return
 
-    return Summary(
-        values={
-            "Name": good["description"] if not good["name"] else good["name"],
-            "Control list entries": convert_control_list_entries(good["control_list_entries"]),
-            "Part number": default_na(good["part_number"]),
-        },
-        classes=["govuk-summary-list--no-border"],
-    )
+    values = {
+        "Name": good["description"] if not good["name"] else good["name"],
+        "Control list entries": convert_control_list_entries(good["control_list_entries"]),
+        "Part number": default_na(good["part_number"]),
+    }
+
+    if good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
+        firearm_type = good["firearm_details"]["type"]["key"]
+
+        if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:
+            values["Number of items"] = str(good["firearm_details"].get("number_of_items"))
+
+    return Summary(values=values, classes=["govuk-summary-list--no-border"],)
 
 
 COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP = {

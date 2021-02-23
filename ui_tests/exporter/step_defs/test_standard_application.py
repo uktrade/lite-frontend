@@ -11,6 +11,7 @@ from ui_tests.exporter.conftest import (
     answer_firearms_question,
 )
 from ui_tests.exporter.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
+from ui_tests.exporter.pages.add_goods_details import AddGoodDetails
 from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
 from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
 from ui_tests.exporter.pages.location_type_page import LocationTypeFormPage
@@ -351,4 +352,25 @@ def eu_military_end_use_details(driver, choice):  # noqa
         end_use_details.answer_is_eu_military(True)
     else:
         end_use_details.answer_is_eu_military(False)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{choice}" to document available question'))
+def check_product_document_available(driver, choice):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.set_product_document_availability(choice)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{choice}" to document is above official sensitive question'))
+def check_product_document_available(driver, choice):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.set_product_document_sensitive(choice)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{choice}" to registered firearms dealer question'))
+def check_product_document_available(driver, choice):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.set_registered_firearms_dealer(choice)
     functions.click_submit(driver)
