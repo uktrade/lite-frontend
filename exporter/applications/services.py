@@ -138,23 +138,25 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
     post_data = services.add_firearm_details_to_data(post_data)
 
     # Adding new good to the application
-    if not preexisting and good:
-        post_data["firearm_details"]["number_of_items"] = good["firearm_details"]["number_of_items"]
-        if good["firearm_details"]["has_identification_markings"] is True:
-            post_data["firearm_details"]["serial_numbers"] = good["firearm_details"]["serial_numbers"]
-        else:
-            post_data["firearm_details"]["serial_numbers"] = list()
+    firearm_details = post_data.get("firearm_details")
+    if firearm_details:
+        if not preexisting and good:
+            firearm_details["number_of_items"] = good["firearm_details"]["number_of_items"]
+            if good["firearm_details"]["has_identification_markings"] is True:
+                firearm_details["serial_numbers"] = good["firearm_details"]["serial_numbers"]
+            else:
+                firearm_details["serial_numbers"] = list()
 
-        if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
-            post_data["quantity"] = good["firearm_details"]["number_of_items"]
-            post_data["unit"] = "NAR"  # number of articles
-        else:
-            post_data["firearm_details"]["number_of_items"] = post_data["quantity"]
+            if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
+                post_data["quantity"] = good["firearm_details"]["number_of_items"]
+                post_data["unit"] = "NAR"  # number of articles
+            else:
+                firearm_details["number_of_items"] = post_data["quantity"]
 
-    if preexisting and good:
-        if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
-            post_data["quantity"] = post_data["firearm_details"]["number_of_items"]
-            post_data["unit"] = "NAR"  # number of articles
+        if preexisting and good:
+            if good["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
+                post_data["quantity"] = firearm_details["number_of_items"]
+                post_data["unit"] = "NAR"  # number of articles
 
     return post_data
 

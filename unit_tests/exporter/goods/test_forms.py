@@ -2,6 +2,7 @@ import pytest
 import requests
 from django.test import override_settings
 
+from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from lite_forms.components import HelpSection
 
 from exporter.core.services import get_pv_gradings
@@ -154,11 +155,11 @@ def pv_gradings(mock_pv_gradings, rf, client):
 @override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=True)
 def test_core_firearm_product_form_group(rf, client, params, num_forms, question_checks):
     """ Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
-    data = {"product_type_step": True, "type": "firearms"}
+    data = {"product_type_step": True, "type": "firearms", "item_category": PRODUCT_CATEGORY_FIREARM}
     kwargs = {"is_pv_graded": False, **params}
     request = post_request(rf, client, data=data)
     form_parts = forms.add_good_form_group(request, **kwargs).forms
-    assert len(form_parts) == int(num_forms)
+    assert len(form_parts) == int(num_forms), list(map(str, form_parts))
 
     for i, q in enumerate(question_checks):
         assert form_parts[i].questions[q["qindex"]].name == q["name"]
