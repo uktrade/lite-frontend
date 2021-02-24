@@ -178,3 +178,22 @@ def test_good_on_application_form_not_firearm(default_request, good_widget, mock
 
     assert len(form.questions) == 6
     assert form.questions[-1].title != goods.firearm_proof_mark_field().title
+
+
+def test_good_on_application_form_group_good_without_number_of_items(default_request, good_ammo):
+    application = {}
+    del good_ammo["firearm_details"]["number_of_items"]
+    form_group = goods.good_on_application_form_group(
+        request=default_request,
+        is_preexisting=True,
+        good=good_ammo,
+        sub_case_type=sub_case_type_siel,
+        draft_pk=None,
+        application=application,
+        show_attach_rfd=False,
+        relevant_firearm_act_section=None,
+        back_url="",
+        show_serial_numbers_form=True,
+    )
+
+    assert len(form_group.forms) == 7

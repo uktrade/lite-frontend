@@ -53,7 +53,8 @@ def good_on_application_form_group(
     number_of_items = None
     if good.get("firearm_details"):
         firearm_type = good["firearm_details"]["type"]["key"]
-        number_of_items = good["firearm_details"]["number_of_items"]
+        if "number_of_items" in good["firearm_details"]:
+            number_of_items = good["firearm_details"]["number_of_items"]
 
     is_firearm_core = firearm_type and firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES
     show_rfd_question = is_firearm_core and not has_valid_rfd_certificate(application)
