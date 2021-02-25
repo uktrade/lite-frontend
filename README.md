@@ -1,6 +1,8 @@
 # lite-frontend
 
 [![circle-ci-image]][circle-ci]
+[![coverage-image]][coverage]
+
 
 **Frontend for LITE - the Department for International Trade (DIT)**
 
@@ -86,5 +88,7 @@ make run_unit_tests
 https://github.com/uktrade?q=lite
 https://github.com/uktrade?q=spire
 
-[circle-ci-image]: https://circleci.com/gh/uktrade/lite-frontend/tree/develop.svg?style=svg
-[circle-ci]: https://circleci.com/gh/uktrade/lite-frontend/tree/develop
+[circle-ci-image]: https://circleci.com/gh/uktrade/lite-frontend/tree/master.svg?style=svg
+[circle-ci]: https://circleci.com/gh/uktrade/lite-frontend/tree/master
+[coverage-image]: https://api.codeclimate.com/v1/badges/7bb724ad7dc3c9be3733/test_coverage
+[coverage]: https://codeclimate.com/github/uktrade/lite-frontend/test_coverage
