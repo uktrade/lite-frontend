@@ -350,13 +350,13 @@ def add_good_form_group(
     show_serial_numbers_form: bool = False,
     draft_pk: str = None,
     base_form_back_link: str = None,
+    is_rfd: bool = False,
 ):
     application = application or {}
 
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
 
     show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
-
     is_preexisting = str_to_bool(request.GET.get("preexisting", False))
     # when adding to product list then always show RFD question if not yet have a valid RFD certificate
     # when adding to application then show RFD question if has expired RFD and not show if they do not have one yet
@@ -388,7 +388,7 @@ def add_good_form_group(
             conditional(is_firearms_core, firearm_calibre_details_form()),
             conditional(show_rfd_question, is_registered_firearm_dealer_field(base_form_back_link)),
             conditional(show_attach_rfd, attach_firearm_dealer_certificate_form(base_form_back_link)),
-            conditional(is_firearms_core and bool(draft_pk), firearms_act_confirmation_form()),
+            conditional(is_firearms_core and bool(draft_pk), firearms_act_confirmation_form(is_rfd)),
             conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
             conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
@@ -714,9 +714,42 @@ def format_list_item(link, name, description):
     return "<br>" + "<li>" + linkify(link, name=name,) + f"&nbsp;&nbsp;{description}" + "</li>"
 
 
-def firearms_act_confirmation_form():
+def firearms_act_confirmation_form(is_rfd):
+
+    if is_rfd:
+        # RFD certificate covers sections 1 and 2 hence only ask for section 5
+        section1_list_item = ""
+        section2_list_item = ""
+        title = "Is the product covered by section 5 of the Firearms Act 1968?"
+        sections_title = "What does section 5 cover?"
+        section_options = []
+    else:
+        title = CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE
+        sections_title = "What do these sections cover?"
+        section1_list_item = format_list_item(
+            CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE_LINK,
+            CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE,
+            "  is a broad category covering most types of firearm and ammunition, including rifles and high powered air weapons.",
+        )
+        section2_list_item = format_list_item(
+            CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO_LINK,
+            CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO,
+            "  covers most types of shotgun.",
+        )
+        section_options = [
+            RadioButtons(
+                title="Select section",
+                name="firearms_act_section",
+                options=[
+                    Option(key="firearms_act_section1", value="Section 1"),
+                    Option(key="firearms_act_section2", value="Section 2"),
+                    Option(key="firearms_act_section5", value="Section 5"),
+                ],
+            )
+        ]
+
     return Form(
-        title=CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE,
+        title=title,
         default_button_name="Save and continue",
         questions=[
             HiddenField("section_certificate_step", True),
@@ -724,20 +757,12 @@ def firearms_act_confirmation_form():
                 "<br>"
                 + "<details class='govuk-details' data-module='govuk-details'>"
                 + "<summary class='govuk-details__summary'>"
-                + "    <span class='govuk-details__summary-text'>What do the sections cover?</span>"
+                + f"    <span class='govuk-details__summary-text'>{sections_title}</span>"
                 + "</summary>"
-                + "<div>"
-                + " <ol class='govuk-list govuk-!-padding-left-8'>"
-                + format_list_item(
-                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE_LINK,
-                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_ONE,
-                    "  is a broad category covering most types of firearm and ammunition, including rifles and high powered air weapons.",
-                )
-                + format_list_item(
-                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO_LINK,
-                    CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_TWO,
-                    "  covers most types of shotgun.",
-                )
+                + "<div class='govuk-details__text govuk-!-padding-top-0'>"
+                + " <ol class='govuk-list'>"
+                + section1_list_item
+                + section2_list_item
                 + format_list_item(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE_LINK,
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.SECTION_FIVE,
@@ -755,17 +780,7 @@ def firearms_act_confirmation_form():
                     Option(
                         key="Yes",
                         value=CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
-                        components=[
-                            RadioButtons(
-                                title="Select section",
-                                name="firearms_act_section",
-                                options=[
-                                    Option(key="firearms_act_section1", value="Section 1"),
-                                    Option(key="firearms_act_section2", value="Section 2"),
-                                    Option(key="firearms_act_section5", value="Section 5"),
-                                ],
-                            )
-                        ],
+                        components=section_options,
                     ),
                     Option(key="No", value=CreateGoodForm.FirearmGood.FirearmsActCertificate.NO),
                     Option(key="Unsure", value=CreateGoodForm.FirearmGood.FirearmsActCertificate.DONT_KNOW),

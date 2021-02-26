@@ -36,6 +36,7 @@ from exporter.goods.forms import (
     add_good_form_group,
     upload_firearms_act_certificate_form,
     build_firearm_back_link_create,
+    has_valid_rfd_certificate,
     has_valid_section_five_certificate,
 )
 from exporter.goods.services import (
@@ -53,6 +54,7 @@ from exporter.goods.services import (
 from exporter.applications.helpers.date_fields import format_date
 from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
+from lite_forms.helpers import get_form_by_pk
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
@@ -172,7 +174,7 @@ class RegisteredFirearmDealersMixin:
 @method_decorator(csrf_exempt, "dispatch")
 class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
     STEP_ARE_YOU_RFD = 8
-    STEP_RDF_CERTIFICATE_UPLOAD = 9
+    STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
 
     def dispatch(self, *args, **kwargs):
         self.handle_s3_upload()
@@ -193,11 +195,12 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
 
     def validate_step(self, request, nested_data):
         errors = {}
+        current = get_form_by_pk(self.form_pk, self.forms)
         if self.form_pk == self.STEP_ARE_YOU_RFD:
             if "is_registered_firearm_dealer" not in request.POST:
                 errors["is_registered_firearm_dealer"] = ["Select yes if you are a registered firearms dealer"]
 
-        elif self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
+        elif current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
             if not self.request.FILES.get("file"):
                 errors["file"] = ["Select certificate file to upload"]
             if not self.request.POST.get("reference_code"):
@@ -226,14 +229,18 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             "technology_related_to_firearms",
         ]
 
+        is_rfd = copied_request.get("is_registered_firearm_dealer") == "True" or has_valid_rfd_certificate(
+            self.application
+        )
+
         firearm_act_status = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", "")
         selected_section = copied_request.get("firearms_act_section", "")
 
         self.covered_by_firearms_act = firearm_act_status == "Yes"
         self.certificate_not_required = firearm_act_status == "No" or firearm_act_status == "Unsure"
-        self.show_section_upload_form = self.covered_by_firearms_act and (
-            selected_section == "firearms_act_section1" or selected_section == "firearms_act_section2"
-        )
+        if is_rfd and self.covered_by_firearms_act:
+            selected_section = "firearms_act_section5"
+
         show_serial_numbers_form = True
         if copied_request.get("has_identification_markings") == "False":
             show_serial_numbers_form = False
@@ -255,6 +262,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
             application=self.application,
             show_serial_numbers_form=show_serial_numbers_form,
+            is_rfd=is_rfd,
         )
 
         if self.form_pk == self.number_of_forms:
@@ -265,11 +273,15 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
                     session_data["control_list_entries"] = copied_request.getlist("control_list_entries[]")
                     del session_data["control_list_entries[]"]
 
+                if "firearms_act_section" not in session_data:
+                    session_data["firearms_act_section"] = selected_section
+
                 request.session[firearms_data_id] = session_data
 
     @property
     def action(self):
-        if self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
+        current = get_form_by_pk(self.form_pk, self.forms)
+        if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
             self.cache_rfd_certificate_details()
         if self.form_pk == self.number_of_forms:
             if not self.show_section_upload_form:
@@ -495,8 +507,13 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         )
 
 
+@method_decorator(csrf_exempt, "dispatch")
 class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, SectionDocumentMixin, MultiFormView):
-    STEP_RDF_CERTIFICATE_UPLOAD = 4
+    STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
+
+    def dispatch(self, *args, **kwargs):
+        self.handle_s3_upload()
+        return super().dispatch(*args, **kwargs)
 
     @cached_property
     def good(self):
@@ -519,6 +536,9 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
 
         self.sub_case_type = self.application["case_type"]["sub_type"]
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
+        show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
+        is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
+
         self.forms = good_on_application_form_group(
             request=request,
             is_preexisting=is_preexisting,
@@ -526,10 +546,11 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
             sub_case_type=self.sub_case_type,
             draft_pk=self.object_pk,
             application=self.application,
-            show_attach_rfd=str_to_bool(request.POST.get("is_registered_firearm_dealer")),
+            show_attach_rfd=show_attach_rfd,
             relevant_firearm_act_section=request.POST.get("firearm_act_product_is_coverd_by"),
             back_url=reverse("applications:preexisting_good", kwargs={"pk": self.good_pk}),
             show_serial_numbers_form=True,
+            is_rfd=is_rfd,
         )
         self._action = validate_good_on_application
         self.success_url = reverse_lazy(
@@ -539,9 +560,13 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
 
     @property
     def action(self):
-        if self.form_pk == self.STEP_RDF_CERTIFICATE_UPLOAD:
+        current = get_form_by_pk(self.form_pk, self.forms)
+        if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
             self.cache_rfd_certificate_details()
         return self._action
+
+    def handle_s3_upload(self):
+        self.request.upload_handlers.insert(0, S3FileUploadHandler(self.request))
 
     def on_submission(self, request, **kwargs):
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
@@ -553,10 +578,15 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         number_of_items = copied_request.get("number_of_items")
         self.good["firearm_details"]["number_of_items"] = number_of_items
 
+        is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
+        selected_section = copied_request.get("firearms_act_section")
+        if is_rfd and copied_request.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+            selected_section = "firearms_act_section5"
+
         show_section_upload_form = False
         if copied_request.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
             show_section_upload_form = is_firearm_certificate_needed(
-                application=self.application, selected_section=copied_request["firearms_act_section"]
+                application=self.application, selected_section=selected_section
             )
 
         show_serial_numbers_form = True
@@ -574,13 +604,19 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
             relevant_firearm_act_section,
             back_url,
             show_serial_numbers_form,
+            is_rfd,
         )
 
         # we require the form index of the last form in the group, not the total number
         if self.form_pk == self.number_of_forms:
             if show_section_upload_form:
                 firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.object_pk}_{self.good_pk}"
-                request.session[firearms_data_id] = self.request.POST.copy()
+
+                session_data = self.request.POST.copy().dict()
+                if "firearms_act_section" not in session_data:
+                    session_data["firearms_act_section"] = selected_section
+
+                request.session[firearms_data_id] = session_data
             else:
                 self._action = post_good_on_application
                 self.success_url = reverse("applications:goods", kwargs={"pk": self.object_pk})
@@ -658,6 +694,8 @@ class AddGoodsSummary(LoginRequiredMixin, SectionDocumentMixin, TemplateView):
     def get_context_data(self, **kwargs):
         application_id = str(self.kwargs["pk"])
         good_id = str(self.kwargs["good_pk"])
+        application = get_application(self.request, application_id)
+        is_rfd = has_valid_rfd_certificate(application)
 
         good_application_documents, _ = get_application_documents(self.request, application_id, good_id)
 
@@ -665,6 +703,7 @@ class AddGoodsSummary(LoginRequiredMixin, SectionDocumentMixin, TemplateView):
             good=self.good,
             application_id=application_id,
             good_id=good_id,
+            is_rfd=is_rfd,
             good_application_documents=good_application_documents["documents"],
             section_document=self.get_section_document(),
             **kwargs,

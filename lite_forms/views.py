@@ -156,6 +156,12 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
+    def get_form(self, form_pk):
+        forms = self.forms.get_forms()
+        if len(forms) < (form_pk + 1):
+            raise AttributeError("Form index exceeds the number of forms in the form group")
+        return forms[form_pk]
+
     def on_submission(self, request, **kwargs):
         return
 

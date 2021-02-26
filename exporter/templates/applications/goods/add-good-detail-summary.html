@@ -320,8 +320,10 @@
 							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							{% if good.status.key == 'draft' %}
-								<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearms_act_certificate' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+							{% if not is_rfd %}
+								{% if good.status.key == 'draft' %}
+										<a id="change-firearms-act-details" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearms_act_certificate' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}</span></a>
+									{% endif %}
 							{% endif %}
 						</dd>
 					</div>
