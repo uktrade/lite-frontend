@@ -354,6 +354,7 @@ def add_good_form_group(
     application = application or {}
 
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
+    is_category_firearms = request.POST.get("item_category") == PRODUCT_CATEGORY_FIREARM
 
     show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
 
@@ -369,8 +370,7 @@ def add_good_form_group(
         [
             conditional(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS, product_category_form(request)),
             conditional(
-                request.POST.get("item_category") == PRODUCT_CATEGORY_FIREARM
-                or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
+                is_category_firearms or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
                 group_two_product_type_form(back_link=base_form_back_link),
             ),
             conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
@@ -380,6 +380,8 @@ def add_good_form_group(
                 is_firearms_core and draft_pk and show_serial_numbers_form,
                 firearms_capture_serial_numbers(request.POST.get("number_of_items", 0)),
             ),
+            conditional(not is_category_firearms, product_military_use_form(request)),
+            conditional(not is_category_firearms, product_uses_information_security(request)),
             add_goods_questions(control_list_entries, draft_pk),
             conditional(is_pv_graded, pv_details_form(request)),
             # only ask if adding to a draft application

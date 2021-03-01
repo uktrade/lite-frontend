@@ -146,6 +146,7 @@ class MultiFormView(FormView):
 
     forms: FormGroup = None
     additional_context: dict = {}
+    hide_unused_errors = True
 
     def get_forms(self):
         if not self.forms:
@@ -184,6 +185,7 @@ class MultiFormView(FormView):
             object_pk=self.get_object_pk(),
             inject_data=self.get_data(),
             additional_context=self.additional_context,
+            hide_unused_errors=self.hide_unused_errors,
         )
         # If there are more forms to go through, continue
         if response:

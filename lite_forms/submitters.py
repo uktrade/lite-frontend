@@ -68,7 +68,13 @@ def _prepare_data(request, inject_data):
 
 
 def submit_paged_form(  # noqa
-    request, form_group: FormGroup, action: Callable, object_pk=None, inject_data=None, additional_context: dict = None,
+    request,
+    form_group: FormGroup,
+    action: Callable,
+    object_pk=None,
+    inject_data=None,
+    additional_context: dict = None,
+    hide_unused_errors=True,
 ):
     """
     Function to handle the submission of the data from one form in a sequence of forms (a FormGroup).
@@ -107,7 +113,8 @@ def submit_paged_form(  # noqa
 
     if errors:
         errors = flatten_data(errors)
-        errors = remove_unused_errors(errors, current_form)
+        if hide_unused_errors:
+            errors = remove_unused_errors(errors, current_form)
 
     if errors:
         for key, value in data.items():
