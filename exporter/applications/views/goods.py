@@ -68,9 +68,13 @@ class SectionDocumentMixin:
 
     def get_section_document(self):
         documents = {item["document_type"]: item for item in self.application["organisation"]["documents"]}
-        firearm_section = (
-            self.request.POST.get("firearms_act_section") or self.good["firearm_details"]["firearms_act_section"]
-        )
+        good_firearms_details = self.good.get("firearm_details")
+
+        good_firearms_details_act_section = None
+        if good_firearms_details:
+            good_firearms_details_act_section = good_firearms_details.get("firearms_act_section")
+
+        firearm_section = self.request.POST.get("firearms_act_section") or good_firearms_details_act_section
         if firearm_section == "firearms_act_section1":
             return documents["section-one-certificate"]
         elif firearm_section == "firearms_act_section2":
@@ -285,6 +289,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             self.cache_rfd_certificate_details()
         if self.form_pk == self.number_of_forms:
             if not self.show_section_upload_form:
+                self.hide_unused_errors = False
                 return post_goods
         return self.validate_step
 
@@ -576,7 +581,8 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         back_url = reverse("applications:preexisting_good", kwargs={"pk": self.good_pk})
 
         number_of_items = copied_request.get("number_of_items")
-        self.good["firearm_details"]["number_of_items"] = number_of_items
+        if "firearms_details" in self.good:
+            self.good["firearm_details"]["number_of_items"] = number_of_items
 
         is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
         selected_section = copied_request.get("firearms_act_section")
@@ -623,7 +629,9 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
 
             # if firearm section 5 is selected and the organization already has a valid section 5 then use saved details
             details = self.good["firearm_details"]
-            section = self.request.POST.get("firearms_act_section") or details["firearms_act_section"]
+            section = None
+            if details:
+                section = self.request.POST.get("firearms_act_section") or details["firearms_act_section"]
 
             if not is_firearm_certificate_needed(application=self.application, selected_section=section):
                 if section == "firearms_act_section5":
