@@ -33,6 +33,7 @@ from exporter.goods.forms import (
     document_grading_form,
     firearms_capture_serial_numbers,
     firearms_number_of_items,
+    has_valid_rfd_certificate,
     raise_a_goods_query,
     add_good_form_group,
     edit_good_detail_form,
@@ -652,7 +653,8 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
             self.object_pk = str(kwargs["pk"])
         self.draft_pk = str(kwargs.get("draft_pk", ""))
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
-        self.form = firearms_act_confirmation_form()
+        is_rfd = has_valid_rfd_certificate(self.application)
+        self.form = firearms_act_confirmation_form(is_rfd)
         self.action = edit_good_firearm_details
 
     def get_data(self):

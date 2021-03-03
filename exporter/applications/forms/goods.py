@@ -46,6 +46,7 @@ def good_on_application_form_group(
     relevant_firearm_act_section,
     back_url,
     show_serial_numbers_form,
+    is_rfd,
 ):
     # is_preexisting are only asked if user is adding a preexisting good from their product list
     # but not if the good being added to the application is a new good created as part of this same flow
@@ -74,7 +75,7 @@ def good_on_application_form_group(
             ),
             conditional(is_preexisting and show_rfd_question, is_registered_firearm_dealer_field(back_url)),
             conditional(is_preexisting and show_attach_rfd, attach_firearm_dealer_certificate_form(back_url)),
-            conditional(show_firearm_act_confirmation, firearms_act_confirmation_form()),
+            conditional(show_firearm_act_confirmation, firearms_act_confirmation_form(is_rfd)),
         ]
     )
 
