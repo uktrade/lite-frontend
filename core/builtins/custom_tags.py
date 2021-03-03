@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 
 from django import template
 from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
@@ -682,19 +683,27 @@ def pluralise_quantity(good_on_app):
     """
     Pluralise goods quantity
     """
-    quantity_str = ""
+    quantity = good_on_app.get("quantity", 0)
+    unit = good_on_app.get("unit", {}).get("key")
 
-    if good_on_app["good"]["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
-        quantity = good_on_app.get("quantity", 0)
-        if good_on_app["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES:
+    if good_on_app.get("good", {}).get("item_category", {}).get("key") == PRODUCT_CATEGORY_FIREARM:
+        if (
+            "firearm_details" in good_on_app
+            and good_on_app["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES
+        ):
             # because these are number of articles
             return format_quantity_units(quantity)
-        elif good_on_app.get("unit"):
-            if good_on_app["unit"]["key"] == "NAR":
+        elif unit:
+            if unit == "NAR":
                 return format_quantity_units(quantity)
             return f"{quantity} {good_on_app['unit']['value']}"
         else:
             return f"{quantity} items"
+    else:
+        if unit and unit != "NAR":
+            quantity_str = f"{intcomma(quantity)} {units_pluralise(unit, intcomma(quantity))}"
+        else:
+            quantity_str = f"{format_quantity_units(quantity)}"
 
     return quantity_str
 

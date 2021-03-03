@@ -94,6 +94,10 @@ def test_get_end_use_details_status(application, expected):
 @pytest.mark.parametrize(
     "good_on_app,quantity_display",
     [
+        ({"quantity": 0, "unit": {"key": "NAR"}}, "0 items"),
+        ({"quantity": 1, "unit": {"key": "NAR"}}, "1 item"),
+        ({"quantity": 0, "unit": {"key": "MTG"}}, "0 MTG"),
+        ({"quantity": 1, "unit": {"key": "MTG"}}, "1 MTG"),
         ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": None}, "0 items"),
         ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 0}, "0 items"),
         ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 1}, "1 item"),
@@ -135,6 +139,7 @@ def test_get_end_use_details_status(application, expected):
     ],
 )
 def test_pluralise_quantity(good_on_app, quantity_display):
-    good_on_app["good"] = {"item_category": {"key": "group2_firearms"}}
+    if "firearm_details" in good_on_app:
+        good_on_app["good"] = {"item_category": {"key": "group2_firearms"}}
     actual = custom_tags.pluralise_quantity(good_on_app)
     assert actual == quantity_display
