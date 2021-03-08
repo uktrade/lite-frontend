@@ -3,6 +3,8 @@ from django.urls import reverse_lazy
 from caseworker.cases.services import get_case_types
 from caseworker.core.services import get_countries, get_control_list_entries
 from caseworker.flags.services import get_goods_flags, get_destination_flags, get_cases_flags
+from caseworker.flags.enums import FlagPermissions
+
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.flags import CreateFlagForm, EditFlagForm, SetFlagsForm
 from lite_content.lite_internal_frontend.strings import FlaggingRules
@@ -79,8 +81,22 @@ def add_flag_form():
                 name="blocks_approval",
                 title=CreateFlagForm.BlocksApproval.TITLE,
                 options=[
-                    Option(True, CreateFlagForm.BlocksApproval.YES),
-                    Option(False, CreateFlagForm.BlocksApproval.NO),
+                    Option(
+                        key=True,
+                        value=CreateFlagForm.BlocksApproval.YES,
+                        components=[
+                            RadioButtons(
+                                name="removable_by",
+                                title="Who can remove this flag?",
+                                options=[
+                                    Option(FlagPermissions.DEFAULT, FlagPermissions.DEFAULT),
+                                    Option(FlagPermissions.AUTHORISED_COUNTERSIGNER, FlagPermissions.AUTHORISED_COUNTERSIGNER),
+                                    Option(FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER, FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER),
+                                ],
+                            )
+                        ],
+                    ),
+                    Option(key=False, value=CreateFlagForm.BlocksApproval.NO),
                 ],
                 classes=["govuk-radios--inline"],
             ),
@@ -121,7 +137,24 @@ def edit_flag_form():
             RadioButtons(
                 name="blocks_approval",
                 title=EditFlagForm.BlocksApproval.TITLE,
-                options=[Option(True, EditFlagForm.BlocksApproval.YES), Option(False, EditFlagForm.BlocksApproval.NO),],
+                options=[
+                    Option(
+                        key=True,
+                        value=EditFlagForm.BlocksApproval.YES,
+                        components=[
+                            RadioButtons(
+                                name="removable_by",
+                                title="Who can remove this flag?",
+                                options=[
+                                    Option(FlagPermissions.DEFAULT, FlagPermissions.DEFAULT),
+                                    Option(FlagPermissions.AUTHORISED_COUNTERSIGNER, FlagPermissions.AUTHORISED_COUNTERSIGNER),
+                                    Option(FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER, FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER),
+                                ],
+                            )
+                        ],
+                    ),
+                    Option(False, EditFlagForm.BlocksApproval.NO)
+                ],
             ),
         ],
         back_link=BackLink(EditFlagForm.BACK_LINK, reverse_lazy("flags:flags")),
@@ -295,7 +328,12 @@ def set_flags_form(flags, level, show_case_header=False, show_sidebar=False):
         description=getattr(SetFlagsForm, level).DESCRIPTION,
         questions=[
             Filter(placeholder=getattr(SetFlagsForm, level).FILTER),
-            Checkboxes(name="flags[]", options=flags, filterable=True),
+            Checkboxes(
+                name="flags[]",
+                options=flags,
+                filterable=True,
+                disabled_hint="You do not have permission to remove this flag.",
+            ),
             DetailComponent(
                 title=getattr(SetFlagsForm, level).Note.TITLE,
                 components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
@@ -303,6 +341,7 @@ def set_flags_form(flags, level, show_case_header=False, show_sidebar=False):
         ],
         default_button_name=getattr(SetFlagsForm, level).SUBMIT_BUTTON,
         container="case" if show_case_header else "two-pane",
+        javascript_imports={"/javascripts/flags-permission-hints.js"},
     )
 
     if show_sidebar:
