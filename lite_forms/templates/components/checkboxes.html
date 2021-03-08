@@ -8,10 +8,23 @@
     <div class="govuk-checkboxes {% for class in component.classes %}{{ class }} {% endfor %}">
         {% for item in component.options %}
             <div class="govuk-checkboxes__item">
-                <input {% if item.auto_check and data|key_in_array:item.key %}checked{% endif %} class="govuk-checkboxes__input" data-attribute="{{ item.data_attribute }}" id="{% if item.id %}{{ item.id }}{% else %}{{ item.value|replace_spaces }}{% endif %}" name="{{ component.name }}" type="checkbox" value="{{ item.key }}">
+							{# Since disabled boolean inputs are submitted as false we need to add true values as hidden fields #}
+							{% if item.auto_check and data|key_in_array:item.key and item.cannot_remove or item.disabled %}
+								<input type="hidden" name="{{ component.name }}" value="{{ item.key }}">
+							{% endif %}
+                <input
+									{% if item.auto_check and data|key_in_array:item.key and item.cannot_remove or item.disabled %}disabled{% endif %}
+									{% if item.auto_check and data|key_in_array:item.key %}checked{% endif %}
+									class="govuk-checkboxes__input"
+									data-attribute="{{ item.data_attribute }}"
+									id="{% if item.id %}{{ item.id }}{% else %}{{ item.value|replace_spaces }}{% endif %}"
+									name="{{ component.name }}"
+									type="checkbox"
+									value="{{ item.key }}">
                 <label class="govuk-label govuk-checkboxes__label" for="{% if item.id %}{{ item.id }}{% else %}{{ item.value|replace_spaces }}{% endif %}">
                     <span class="{% for class in item.classes %}{{ class }} {% endfor %}">{{ item.value }}</span>
                 </label>
+								{% if item.auto_check and data|key_in_array:item.key and item.cannot_remove or item.disabled %}{{ component.disabled_hint }}{% endif %}
                 {% if item.description %}
                     <label class="govuk-hint govuk-checkboxes__hint">
                         {{ item.description|safe }}
