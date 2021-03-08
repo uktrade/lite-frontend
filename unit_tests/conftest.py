@@ -44,6 +44,7 @@ def data_open_case():
                     "colour": "default",
                     "label": None,
                     "priority": 0,
+                    "removable_by": "Anyone",
                 },
                 {
                     "id": "00000000-0000-0000-0000-000000000014",
@@ -51,6 +52,7 @@ def data_open_case():
                     "colour": "default",
                     "label": None,
                     "priority": 0,
+                    "removable_by": "Anyone",
                 },
             ],
             "queues": ["0149b643-d38a-4d1a-b259-7f73ff4f7b97"],
@@ -66,6 +68,7 @@ def data_open_case():
                     "colour": "blue",
                     "priority": 0,
                     "level": "Destination",
+                    "removable_by": "Anyone",
                 },
                 {"name": "Enforcement Check Req", "label": None, "colour": "default", "priority": 0, "level": "Case"},
                 {"name": "Firearms", "label": None, "colour": "default", "priority": 0, "level": "Case"},
@@ -75,6 +78,7 @@ def data_open_case():
                     "colour": "pink",
                     "priority": 0,
                     "level": "Organisation",
+                    "removable_by": "Anyone",
                 },
             ],
             "case_officer": None,
@@ -122,6 +126,7 @@ def data_open_case():
                             "colour": "pink",
                             "label": "Test label",
                             "priority": 0,
+                            "removable_by": "Anyone",
                         }
                     ],
                     "status": {"key": "active", "value": "Active"},
@@ -236,6 +241,7 @@ def data_open_case():
                                 "name": "Item not verified",
                                 "colour": "default",
                                 "label": None,
+                                "removable_by": "Anyone",
                             }
                         ],
                         "comment": None,
@@ -288,6 +294,7 @@ def data_open_case():
                                         "name": "Destination20200629144727",
                                         "label": "Test label",
                                         "id": "a25d23e5-e0e0-4245-a611-d546edb140f8",
+                                        "removable_by": "Anyone",
                                     }
                                 ],
                             },
@@ -322,6 +329,7 @@ def data_standard_case():
                     "colour": "default",
                     "label": None,
                     "priority": 0,
+                    "removable_by": "Anyone",
                 }
             ],
             "queues": ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956"],
@@ -330,7 +338,7 @@ def data_standard_case():
             "has_advice": {"user": False, "my_user": False, "team": False, "my_team": False, "final": False,},
             "advice": [],
             "all_flags": [
-                {"name": "Enforcement Check Req", "label": None, "colour": "default", "priority": 0, "level": "Case",}
+                {"name": "Enforcement Check Req", "label": None, "colour": "default", "priority": 0, "level": "Case", "removable_by": "Anyone",}
             ],
             "case_officer": None,
             "audit_notification": None,

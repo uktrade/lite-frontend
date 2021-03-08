@@ -457,6 +457,7 @@ def data_organisation():
                 "colour": "yellow",
                 "label": "Yellow",
                 "priority": 0,
+                "removable_by": "Anyone",
             },
             {
                 "id": "739be3dd-eecc-4303-b4c5-5eadf2476b8c",
@@ -464,6 +465,7 @@ def data_organisation():
                 "colour": "red",
                 "label": "Label",
                 "priority": 0,
+                "removable_by": "Anyone",
             },
         ],
         "status": {"key": "active", "value": "Active"},
@@ -689,6 +691,7 @@ def mock_blocking_flags(requests_mock):
             "status": "Active",
             "priority": 0,
             "blocks_approval": True,
+            "removable_by": "Anyone",
             "team": {"id": "00000000-0000-0000-0000-000000000001", "name": "Admin"},
         }
     ]
