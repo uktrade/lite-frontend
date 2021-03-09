@@ -338,7 +338,14 @@ def data_standard_case():
             "has_advice": {"user": False, "my_user": False, "team": False, "my_team": False, "final": False,},
             "advice": [],
             "all_flags": [
-                {"name": "Enforcement Check Req", "label": None, "colour": "default", "priority": 0, "level": "Case", "removable_by": "Anyone",}
+                {
+                    "name": "Enforcement Check Req",
+                    "label": None,
+                    "colour": "default",
+                    "priority": 0,
+                    "level": "Case",
+                    "removable_by": "Anyone",
+                }
             ],
             "case_officer": None,
             "audit_notification": None,

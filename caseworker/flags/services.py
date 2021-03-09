@@ -35,7 +35,8 @@ def _get_team_flags(level, request, convert_to_options=False, include_deactivate
         {
             "cannot_remove": (
                 flag["removable_by"] != FlagPermissions.DEFAULT
-                and FlagPermissions.PERMISSIONS_MAPPING[flag["removable_by"]].value not in user["user"]["role"]["permissions"]
+                and FlagPermissions.PERMISSIONS_MAPPING[flag["removable_by"]].value
+                not in user["user"]["role"]["permissions"]
             ),
             **flag,
         }

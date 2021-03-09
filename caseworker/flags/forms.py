@@ -90,8 +90,14 @@ def add_flag_form():
                                 title="Who can remove this flag?",
                                 options=[
                                     Option(FlagPermissions.DEFAULT, FlagPermissions.DEFAULT),
-                                    Option(FlagPermissions.AUTHORISED_COUNTERSIGNER, FlagPermissions.AUTHORISED_COUNTERSIGNER),
-                                    Option(FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER, FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER),
+                                    Option(
+                                        FlagPermissions.AUTHORISED_COUNTERSIGNER,
+                                        FlagPermissions.AUTHORISED_COUNTERSIGNER,
+                                    ),
+                                    Option(
+                                        FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER,
+                                        FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER,
+                                    ),
                                 ],
                             )
                         ],
@@ -147,13 +153,19 @@ def edit_flag_form():
                                 title="Who can remove this flag?",
                                 options=[
                                     Option(FlagPermissions.DEFAULT, FlagPermissions.DEFAULT),
-                                    Option(FlagPermissions.AUTHORISED_COUNTERSIGNER, FlagPermissions.AUTHORISED_COUNTERSIGNER),
-                                    Option(FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER, FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER),
+                                    Option(
+                                        FlagPermissions.AUTHORISED_COUNTERSIGNER,
+                                        FlagPermissions.AUTHORISED_COUNTERSIGNER,
+                                    ),
+                                    Option(
+                                        FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER,
+                                        FlagPermissions.HEAD_OF_LICENSING_UNIT_COUNTERSIGNER,
+                                    ),
                                 ],
                             )
                         ],
                     ),
-                    Option(False, EditFlagForm.BlocksApproval.NO)
+                    Option(False, EditFlagForm.BlocksApproval.NO),
                 ],
             ),
         ],
