@@ -82,7 +82,8 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons):
                         ),
                         components=[
                             Group(
-                                [
+                                id="refuse-advice-group",
+                                components=[
                                     Checkboxes(
                                         title=conditional(
                                             key == "1", advice.GiveOrChangeAdvicePage.DENIAL_REASONS_TITLE
@@ -93,7 +94,7 @@ def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons):
                                     )
                                     for key in denial_reasons.keys()
                                 ],
-                                ["app-advice__checkboxes"],
+                                classes=["app-advice__checkboxes"],
                             )
                         ],
                     ),
