@@ -23,6 +23,19 @@ def get_flags(
     return data.json()
 
 
+def _add_flag_permissions(data, permissions):
+    return [
+        {
+            "cannot_remove": (
+                flag["removable_by"] != FlagPermissions.DEFAULT
+                and FlagPermissions.PERMISSIONS_MAPPING[flag["removable_by"]].value not in permissions
+            ),
+            **flag,
+        }
+        for flag in data
+    ]
+
+
 def _get_team_flags(level, request, convert_to_options=False, include_deactivated=False):
     user, _ = get_gov_user(request)
     team_pk = user["user"]["team"]["id"]
@@ -31,17 +44,7 @@ def _get_team_flags(level, request, convert_to_options=False, include_deactivate
         f"/flags/?level={level}&team={team_pk}&include_deactivated={include_deactivated}&disable_pagination=True",
     ).json()
 
-    flags = [
-        {
-            "cannot_remove": (
-                flag["removable_by"] != FlagPermissions.DEFAULT
-                and FlagPermissions.PERMISSIONS_MAPPING[flag["removable_by"]].value
-                not in user["user"]["role"]["permissions"]
-            ),
-            **flag,
-        }
-        for flag in data
-    ]
+    flags = _add_flag_permissions(data, user["user"]["role"]["permissions"])
 
     if convert_to_options:
         return [
