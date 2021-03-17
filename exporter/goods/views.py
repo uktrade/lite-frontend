@@ -4,11 +4,8 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
-from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from exporter.applications.helpers.date_fields import format_date
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
@@ -695,7 +692,6 @@ class EditFirearmActDetails(LoginRequiredMixin, SingleFormView):
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
     application_id = None
 
@@ -748,9 +744,7 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
                 "section_certificate_missing_reason": self.data.get("section_certificate_missing_reason"),
             }
 
-    @csrf_exempt
     def post(self, request, **kwargs):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
         self.init(request, **kwargs)
         doc_data = {}
         new_file_selected = False
@@ -1010,7 +1004,6 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
         return reverse_lazy(url, kwargs=kwargs)
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AttachDocuments(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return_to_good_page = request.GET.get("goodpage", "no")
@@ -1044,14 +1037,12 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         form = attach_documents_form(back_link)
         return form_page(request, form, extra_data=extra_data)
 
-    @csrf_exempt
     def post(self, request, **kwargs):
         draft_pk = str(kwargs.get("draft_pk", ""))
         good_id = str(kwargs["pk"])
         back_link = BackLink(
             AttachDocumentForm.BACK_FORM_LINK, reverse("goods:check_document_sensitivity", kwargs={"pk": good_id}),
         )
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
 
         good, _ = get_good(request, good_id)
         data, error = add_document_data(request)

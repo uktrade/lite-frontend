@@ -6,7 +6,6 @@ from django.urls import reverse
 from core import client
 
 
-@mock.patch("exporter.organisation.views.UploadFirearmsCertificate.handle_s3_upload", mock.Mock)
 def test_upload_firearm_registered_dealer_certificate(authorized_client, requests_mock):
     requests_mock.post(client._build_absolute_uri(f"/organisations/1/documents/"))
 
@@ -31,7 +30,6 @@ def test_upload_firearm_registered_dealer_certificate(authorized_client, request
     }
 
 
-@mock.patch("exporter.organisation.views.UploadSectionFiveCertificate.handle_s3_upload", mock.Mock)
 def test_upload_firearm_section_five_certificate(authorized_client, requests_mock):
     requests_mock.post(client._build_absolute_uri(f"/organisations/1/documents/"))
 

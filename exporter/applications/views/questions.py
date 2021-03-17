@@ -2,8 +2,6 @@ import json
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
 from exporter.applications.constants import F680
 from exporter.applications.forms.questions import questions_forms
@@ -38,7 +36,6 @@ def questions_action(request, pk, data):
     return put_application(request, pk, data)
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AdditionalInformationFormView(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])

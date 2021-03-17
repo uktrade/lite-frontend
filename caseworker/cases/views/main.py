@@ -4,10 +4,8 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import s3_client, S3FileUploadHandler
+from s3chunkuploader.file_handler import s3_client
 
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.additional_contacts import add_additional_contact_form
@@ -258,7 +256,6 @@ class AddAnAdditionalContact(SingleFormView):
         )
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AttachDocuments(TemplateView):
     def get(self, request, **kwargs):
         case_id = str(kwargs["pk"])
@@ -270,9 +267,7 @@ class AttachDocuments(TemplateView):
 
         return form_page(request, form, extra_data={"case_id": case_id, "case": case})
 
-    @csrf_exempt
     def post(self, request, **kwargs):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
         case_id = str(kwargs["pk"])
         data = []
 

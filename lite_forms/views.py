@@ -4,8 +4,6 @@ from typing import List
 
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import S3FileUploadHandler
 
@@ -206,7 +204,7 @@ class MultiFormView(FormView):
 
 class FormS3FileUploadHandler(S3FileUploadHandler):
     def __init__(self, form_pks: List, *args, **kwargs):
-        super(FormS3FileUploadHandler, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.form_pks = form_pks
 
     def new_file(self, *args, **kwargs):
@@ -359,12 +357,6 @@ class SummaryListFormView(FormView):
     def post(self, request, **kwargs):
         return self._post(request, **kwargs)
 
-    csrf_protected_method = method_decorator(csrf_protect)
-
-    @csrf_protected_method
-    def post_with_protection(self, request, **kwargs):
-        return self._post(request, **kwargs)
-
     def get_next_form_page(self, form_pk, action, request, post_errors):
         form = copy.deepcopy(next(form for form in self.get_forms().forms if str(form.pk) == form_pk))
 
@@ -425,7 +417,6 @@ class SummaryListFormView(FormView):
 
         return redirect(request.path)
 
-    @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
         forms = [4]
         self.request.upload_handlers.insert(0, FormS3FileUploadHandler(forms, request))
