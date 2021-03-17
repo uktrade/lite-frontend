@@ -1,6 +1,4 @@
 from django.urls import reverse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
 from exporter.applications.forms.temporary_export_details import temporary_export_details_form
 from exporter.applications.helpers.date_fields import split_date_into_components, create_formatted_date_from_components
@@ -12,7 +10,6 @@ from lite_forms.views import SummaryListFormView
 from core.auth.views import LoginRequiredMixin
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class TemporaryExportDetails(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         self.success_url = reverse("applications:task_list", kwargs={"pk": kwargs["pk"]}) + "#temporary_export_details"

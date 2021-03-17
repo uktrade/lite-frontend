@@ -1,11 +1,7 @@
-from s3chunkuploader.file_handler import S3FileUploadHandler
-
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, RedirectView
 
 from exporter.applications.helpers.date_fields import format_date
@@ -78,7 +74,6 @@ class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
         return signed_url
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
     document_type = None
 
@@ -89,13 +84,7 @@ class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
         form = self.form_function(back_url=reverse("organisation:details"))  # pylint: disable=E1102
         return form_page(request, form)
 
-    def handle_s3_upload(self):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(self.request))
-
-    @csrf_exempt
     def post(self, request, **kwargs):
-        self.handle_s3_upload()
-
         organisation_id = str(request.session["organisation"])
         data = {
             "expiry_date": format_date(request.POST, "expiry_date_"),

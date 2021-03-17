@@ -2,10 +2,7 @@ from http import HTTPStatus
 
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from exporter.applications.services import add_document_data, download_document_from_s3
 from exporter.ecju_queries.forms import (
@@ -175,7 +172,6 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
             return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_GENERIC_ERROR)
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class UploadDocuments(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.case_pk = kwargs["case_pk"]
@@ -210,10 +206,7 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
             extra_data={"case_id": self.case_pk, "ecju_query_id": self.query_pk, "object_type": self.object_type},
         )
 
-    @csrf_exempt
     def post(self, request, **kwargs):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
-
         data, error = add_document_data(request)
         if error:
             return error_page(request, error)

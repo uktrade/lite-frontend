@@ -4,11 +4,8 @@ from http import HTTPStatus
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
-from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
@@ -175,7 +172,6 @@ class RegisteredFirearmDealersMixin:
             assert status_code == HTTPStatus.CREATED
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
     STEP_ARE_YOU_RFD = 8
     STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
@@ -293,9 +289,6 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
                 return post_goods
         return self.validate_step
 
-    def handle_s3_upload(self):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(self.request))
-
     def get_success_url(self):
         if self.show_section_upload_form:
             return reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
@@ -306,7 +299,6 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             )
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, **kwargs):
         self.draft_pk = str(kwargs["pk"])
@@ -337,9 +329,7 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         form = upload_firearms_act_certificate_form(section=self.selected_section, filename="", back_link=back_link)
         return form_page(request, form)
 
-    @csrf_exempt
     def post(self, request, **kwargs):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
         certificate_available = request.POST.get("section_certificate_missing", False) is False
 
         doc_data = {}
@@ -477,7 +467,6 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
         )
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AttachDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         good_id = str(kwargs["good_pk"])
@@ -489,8 +478,6 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         return form_page(request, form, extra_data={"good_id": good_id})
 
     def post(self, request, **kwargs):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(request))
-
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
         back_link = BackLink(
@@ -512,7 +499,6 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         )
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, SectionDocumentMixin, MultiFormView):
     STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
 
@@ -569,9 +555,6 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
             self.cache_rfd_certificate_details()
         return self._action
-
-    def handle_s3_upload(self):
-        self.request.upload_handlers.insert(0, S3FileUploadHandler(self.request))
 
     def on_submission(self, request, **kwargs):
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))

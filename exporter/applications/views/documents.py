@@ -5,10 +5,8 @@ from inspect import signature
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse, NoReverseMatch
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import s3_client, S3FileUploadHandler
+from s3chunkuploader.file_handler import s3_client
 
 from caseworker.cases.services import get_document
 from exporter.applications.forms.documents import attach_document_form, delete_document_confirmation_form
@@ -51,14 +49,12 @@ def get_delete_confirmation_page(path, pk):
     )
 
 
-@method_decorator(csrf_exempt, "dispatch")
 class AttachDocuments(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         form = get_upload_page(request.path, draft_id)
         return form_page(request, form, extra_data={"draft_id": draft_id})
 
-    @csrf_exempt
     def post(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
@@ -66,7 +62,6 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         form = get_upload_page(request.path, draft_id, is_permanent_application=is_permanent_application)
 
         try:
-            request.upload_handlers.insert(0, S3FileUploadHandler(request))
             files = request.FILES
         except Exception:  # noqa
             return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
