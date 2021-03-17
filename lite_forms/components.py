@@ -303,6 +303,7 @@ class Checkboxes(_Component):
         classes: Optional[List] = None,
         empty_notice: str = "No items",
         show_select_links: bool = False,
+        disabled_hint: str = "",
         filterable: bool = False,
         import_custom_js: list = None,
     ):
@@ -316,6 +317,7 @@ class Checkboxes(_Component):
             classes=classes,
         )
         self.options = options
+        self.disabled_hint = disabled_hint
         self.empty_notice = empty_notice
         self.show_select_links = show_select_links
         self.input_type = "checkboxes"
@@ -412,6 +414,7 @@ class Option:
         more_information: str = None,
         tag: str = None,
         disabled: bool = False,
+        cannot_remove: bool = False,
         id=None,
     ):
         from lite_forms.helpers import convert_to_markdown
@@ -428,6 +431,7 @@ class Option:
         self.more_information = more_information
         self.tag = tag
         self.disabled = disabled
+        self.cannot_remove = cannot_remove
         self.id = id
 
 
