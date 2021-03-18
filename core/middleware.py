@@ -6,6 +6,7 @@ from s3chunkuploader.file_handler import UploadFailed
 from django.conf import settings
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.utils.cache import add_never_cache_headers
 
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
@@ -60,3 +61,18 @@ class RequestsSessionMiddleware:
         # in a significant performance increase
         request.requests_session = requests.Session()
         return self.get_response(request)
+
+
+class NoCacheMiddlware:
+    """Tell the browser to not cache the pages, because otherwise information that should be kept private can be
+    viewed by anyone with access to the files in the browser's cache directory.
+
+    """
+
+    def __init__(self, get_response=None):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        add_never_cache_headers(response)
+        return response

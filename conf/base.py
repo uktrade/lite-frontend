@@ -60,6 +60,7 @@ MIDDLEWARE = [
     "core.auth.middleware.AuthbrokerClientMiddleware",
     "core.middleware.UploadFailedMiddleware",
     "core.middleware.RequestsSessionMiddleware",
+    "core.middleware.NoCacheMiddlware",
 ]
 
 FEATURE_CSP_MIDDLEWARE_ENABLED = env.bool("FEATURE_CSP_MIDDLEWARE_ENABLED", True)

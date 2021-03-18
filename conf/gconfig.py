@@ -1,5 +1,10 @@
 import os
 
+import gunicorn
+
+
+gunicorn.SERVER_SOFTWARE = "intentionally-undisclosed-lite-frontend"
+
 PORT = os.environ.get("PORT", 8080)
 bind = "0.0.0.0:{PORT}".format(PORT=PORT)
 workers = 4
