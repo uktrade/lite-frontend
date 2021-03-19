@@ -1,7 +1,7 @@
 import 'url-search-params-polyfill'
 import 'fetch-polyfill'
-
-import Lightpick from 'lightpick.js'
+import autoComplete from '@tarekraafat/autocomplete.js'
+import Lightpick from './lightpick.js'
 
 
 (function() {
