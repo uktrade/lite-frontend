@@ -1,3 +1,9 @@
+import 'url-search-params-polyfill'
+import 'fetch-polyfill'
+import autoComplete from '@tarekraafat/autocomplete.js'
+import Lightpick from './lightpick.js'
+
+
 (function() {
   var inputElement = document.getElementById("id_search_string")
   var pageInputElement = document.getElementById('id_page')
@@ -174,5 +180,4 @@
   })
 
   listenToPaginationClick()
-
-})()
+ })()

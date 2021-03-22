@@ -1,3 +1,9 @@
+import 'url-search-params-polyfill'
+import 'fetch-polyfill'
+import autoComplete from '@tarekraafat/autocomplete.js'
+import Tokenfield from 'tokenfield'
+
+
 (function() {
   var inputElementId = "report_summary"
   var inputElement = document.getElementById(inputElementId)
