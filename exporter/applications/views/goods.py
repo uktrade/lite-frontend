@@ -176,10 +176,6 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
     STEP_ARE_YOU_RFD = 8
     STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
 
-    def dispatch(self, *args, **kwargs):
-        self.handle_s3_upload()
-        return super().dispatch(*args, **kwargs)
-
     @cached_property
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
@@ -501,10 +497,6 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
 
 class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, SectionDocumentMixin, MultiFormView):
     STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
-
-    def dispatch(self, *args, **kwargs):
-        self.handle_s3_upload()
-        return super().dispatch(*args, **kwargs)
 
     @cached_property
     def good(self):

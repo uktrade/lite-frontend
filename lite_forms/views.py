@@ -5,7 +5,6 @@ from typing import List
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import S3FileUploadHandler
 
 from lite_forms.components import FormGroup, Form
 from lite_forms.generators import form_page
@@ -202,33 +201,6 @@ class MultiFormView(FormView):
         return redirect(self.get_success_url())
 
 
-class FormS3FileUploadHandler(S3FileUploadHandler):
-    def __init__(self, form_pks: List, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_pks = form_pks
-
-    def new_file(self, *args, **kwargs):
-        if not int(dict(self.request.GET)["form_pk"][0]) in self.form_pks:
-            return
-        super().new_file(*args, **kwargs)
-
-    def receive_data_chunk(self, raw_data, start):
-        """
-        Receive a single file chunk from the browser
-        and add it to the executor
-        """
-        super().receive_data_chunk(raw_data, start)
-
-    def file_complete(self, file_size):
-        """
-        Triggered when the last chuck of the file is received and handled.
-        """
-        return super().file_complete(file_size)
-
-    def abort(self, exception):
-        super().abort(exception)
-
-
 class SummaryListFormView(FormView):
     """
     Multi form group with a summary list at the end of the flow.
@@ -418,15 +390,9 @@ class SummaryListFormView(FormView):
         return redirect(request.path)
 
     def dispatch(self, request, *args, **kwargs):
-        forms = [4]
-        self.request.upload_handlers.insert(0, FormS3FileUploadHandler(forms, request))
-
         if request.method.lower() in self.http_method_names:
             if request.method.lower() == "post":
-                if request.POST.get("form_pk") and int(request.POST.get("form_pk")) in forms:
-                    return self.post(request, **kwargs)
-                else:
-                    return self.post_with_protection(request, **kwargs)
+                return self.post(request, **kwargs)
             else:
                 return self.get(request, **kwargs)
 
