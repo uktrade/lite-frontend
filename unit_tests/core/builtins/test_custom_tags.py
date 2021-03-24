@@ -1,6 +1,6 @@
 import pytest
-
 from core.builtins import custom_tags
+from core.builtins.custom_tags import highlight_text
 from exporter.core import constants
 from exporter.core.objects import Application
 
@@ -143,3 +143,18 @@ def test_pluralise_quantity(good_on_app, quantity_display):
         good_on_app["good"] = {"item_category": {"key": "group2_firearms"}}
     actual = custom_tags.pluralise_quantity(good_on_app)
     assert actual == quantity_display
+
+
+@pytest.mark.parametrize(
+    "input,term,expected",
+    [
+        ("abc", "notmatch", "abc"),
+        ("abc", "bc", 'a<mark class="lite-highlight">bc</mark>'),
+        ("<script>", "notmatch", "&lt;script&gt;"),
+        ("<script>", "pt", '&lt;scri<mark class="lite-highlight">pt</mark>&gt;'),
+        ("<mark>hello", "mark", '&lt;<mark class="lite-highlight">mark</mark>&gt;hello'),
+        ("abbbba", "a", '<mark class="lite-highlight">a</mark>bbbb<mark class="lite-highlight">a</mark>'),
+    ],
+)
+def test_highlight_text_sanitization(input, term, expected):
+    assert expected == highlight_text(input, term)

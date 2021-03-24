@@ -5,8 +5,8 @@ import json
 from importlib import import_module
 import re
 from collections import Counter, OrderedDict
-from html import escape
 
+import bleach
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 
@@ -15,7 +15,8 @@ from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import localtime
-from django.utils.safestring import mark_safe
+from django.utils.html import escape
+from django.utils.safestring import mark_safe, SafeString
 
 from exporter.core.constants import (
     DATE_FORMAT,
@@ -278,8 +279,9 @@ def dummy_link(name=None):
 
 @register.filter
 @stringfilter
-@mark_safe
 def highlight_text(value: str, term: str) -> str:
+    value = escape(value)
+
     def insert_str(string, str_to_insert, string_index):
         return string[:string_index] + str_to_insert + string[string_index:]
 
@@ -299,7 +301,7 @@ def highlight_text(value: str, term: str) -> str:
         value = insert_str(value, mark_start, index)
         value = insert_str(value, mark_end, index + len(mark_start) + len(term))
 
-    return value
+    return SafeString(bleach.clean(value, tags=["mark"], attributes={"mark": ["class"]}))  # nosec
 
 
 @register.filter()
