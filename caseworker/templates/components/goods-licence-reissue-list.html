@@ -22,7 +22,13 @@
 					{{ good.description }}
 				</td>
 				<td class="govuk-table__cell">
-					<p class="govuk-body govuk-!-font-weight-bold">{{ good.advice.type.value }}</p>
+					<p class="govuk-body govuk-!-font-weight-bold">
+						{% if good.advice.type.key == 'proviso' %}
+							Approve with proviso
+						{% else %}
+							{{ good.advice.type.value }}
+						{% endif %}
+					</p>
 					<p>{{ good.advice.text }}<br></p>
 					{% if good.advice.proviso %}
 						<p>{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PROVISO_TEXT' %}</p>
