@@ -47,8 +47,8 @@ class GiveOrChangeAdvicePage:
 
     class RadioButtons:
         DESCRIPTION = "If you choose to refuse the licence, you must provide a reason for this decision"
-        GRANT = "Grant the licence"
-        PROVISO = "Add a proviso"
+        GRANT = "Approve"
+        PROVISO = "Approve with proviso"
         NLR = "Tell the applicant they do not need a licence"
         NOT_APPLICABLE = "Not applicable"
         REJECT = "Reject the licence"

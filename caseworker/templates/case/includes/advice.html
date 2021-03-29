@@ -11,7 +11,13 @@
 					{% if not current_advice_level|not_equals:level %}
 						<button id="button-select-all-{{ advice.id }}" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 					{% endif %}
-					<label for="button-select-all-{{ advice.id }}">{{ advice.type.value }}</label>
+					<label for="button-select-all-{{ advice.id }}">
+						{% if advice.type.key == 'proviso' %}
+							Approve with proviso
+						{% else %}
+							{{ advice.type.value }}
+						{% endif %}
+					</label>
 				</h2>
 
 				<div class="app-grouped-advice__content">
