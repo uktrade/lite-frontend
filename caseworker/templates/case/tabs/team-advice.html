@@ -19,23 +19,25 @@
 					List view
 				</a>
 			{% endif %}
-			<div class="lite-!-display-inline lite-buttons-row {% if current_advice_level != 'team' %}app-advice__disabled-buttons{% endif %}">
+			<div class="lite-!-display-inline lite-buttons-row {% if 'team' not in current_advice_level %}app-advice__disabled-buttons{% endif %}">
 				{% if current_advice_level %}
 					<div data-enable-on-checkboxes="#form-team-advice-container" class="lite-buttons-row lite-!-display-inline">
 						<button id="button-give-team-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
-							{% lcs 'advice.TeamAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+							Give or change advice
 						</button>
 					</div>
 				{% endif %}
-				<button form="form-team-advice" id="button-clear-team-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
-					{% lcs 'advice.TeamAdvicePage.CLEAR_ADVICE_BUTTON' %}
-				</button>
+				<div data-enable-on-checkboxes="#form-team-advice-container" class="lite-buttons-row lite-!-display-inline">
+					<button form="form-team-advice" id="button-clear-team-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+						Clear advice
+					</button>
+				</div>
 			</div>
 		</div>
 
-		<div class="{% if current_advice_level != 'team' %}app-advice__disabled-buttons{% endif %}">
+		<div class="{% if not case.advice|filter_advice_by_team_id:current_user.team.id %}app-advice__disabled-buttons{% endif %}">
 			<a class="govuk-button" href="{% url 'cases:coalesce_team_advice' queue.id case.id %}{{ CURRENT_PATH_ONLY_PARAMS }}" id="button-combine-team-advice">
-				{% lcs 'advice.TeamAdvicePage.CONTINUE_BUTTON' %}
+				Combine all into final decision
 				<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
 					<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
 				</svg>

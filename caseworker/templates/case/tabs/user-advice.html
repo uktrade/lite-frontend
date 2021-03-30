@@ -19,17 +19,15 @@
 					List view
 				</a>
 			{% endif %}
-			{% if current_advice_level %}
-				<div data-enable-on-checkboxes="#form-user-advice-container" class="lite-!-display-inline lite-buttons-row {% if current_advice_level != 'user' %}app-advice__disabled-buttons{% endif %}">
+				<div data-enable-on-checkboxes="#form-user-advice-container" class="lite-!-display-inline lite-buttons-row">
 					<button id="button-give-user-advice" type="submit" class="govuk-button" data-module="govuk-button">
-						{% lcs 'advice.UserAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}
+						Give or change advice
 					</button>
 				</div>
-			{% endif %}
 		</div>
-		<div class="{% if current_advice_level != 'user' or not case.advice|filter_advice_by_level:'user' %}app-advice__disabled-buttons{% endif %}">
+		<div class="{% if not case.advice|filter_advice_by_user_id:current_user.id %}app-advice__disabled-buttons{% endif %}">
 			<button form="form-user-advice" id="button-combine-user-advice" type="submit" class="govuk-button" data-module="govuk-button">
-				{% lcs 'advice.UserAdvicePage.CONTINUE_BUTTON' %}
+				Combine all into team advice
 				<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
 					<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
 				</svg>
