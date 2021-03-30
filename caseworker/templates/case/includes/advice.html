@@ -25,12 +25,12 @@
 						<div class="app-grouped-advice__summary-list">
 							{% if advice.type.key == 'proviso' %}
 								<div class="app-grouped-advice__summary-list-item">
-									<p>{% lcs 'advice.AdvicePage.PROVISO' %}</p>
+									<p>Proviso</p>
 									<p data-max-length="300">{{ advice.proviso|linebreaksbr }}</p>
 								</div>
 							{% elif advice.type.key == 'refuse' %}
 								<div class="app-grouped-advice__summary-list-item">
-									<p>{% lcs 'advice.AdvicePage.DENIAL_REASONS' %}</p>
+									<p>Denial reasons</p>
 									<ol class="app-grouped-advice__summary-list-items">
 										{% for denial_reason in advice.denial_reasons %}
 											<li>{{ denial_reason }}{% if not forloop.last %}, {% endif %}</li>
@@ -39,12 +39,12 @@
 								</div>
 							{% endif %}
 							<div class="app-grouped-advice__summary-list-item">
-								<p>{% lcs 'advice.AdvicePage.TEXT' %}</p>
+								<p>Reason</p>
 								<p data-max-length="400">{{ advice.text|linebreaksbr }}</p>
 							</div>
 							{% if advice.note %}
 								<div class="app-grouped-advice__summary-list-item">
-									<p>{% lcs 'advice.AdvicePage.NOTE' %}</p>
+									<p>Note</p>
 									<p data-max-length="400">{{ advice.note|linebreaksbr }}</p>
 								</div>
 							{% endif %}
