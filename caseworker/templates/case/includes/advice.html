@@ -1,14 +1,19 @@
 {% if not request.GET|get:'grouped-advice-view' == 'True' %}
 	<div>
-		{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level hide_status=True %}
-		{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level hide_status=True %}
+		{% if level in current_advice_level %}
+			{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level show_checkboxes=True hide_status=True %}
+			{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level show_checkboxes=True hide_status=True %}
+		{% else %}
+			{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level show_checkboxes=False hide_status=True %}
+			{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level show_checkboxes=False hide_status=True %}
+		{% endif %}
 	</div>
 {% else %}
 	<div>
 		{% for advice in case.advice|filter_advice_by_level:level|distinct_advice:case|values %}
 			<div class="app-grouped-advice app-grouped-advice--{{ advice.type.key }}">
 				<h2 class="app-grouped-advice__heading">
-					{% if not current_advice_level|not_equals:level %}
+					{% if advice.user.id == current_user.id or advice.team.id == current_user.team.id %}
 						<button id="button-select-all-{{ advice.id }}" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 					{% endif %}
 					<label for="button-select-all-{{ advice.id }}">

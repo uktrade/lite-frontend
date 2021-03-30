@@ -1,11 +1,24 @@
 import datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import TemplateView
+
 from s3chunkuploader.file_handler import s3_client
+
+from core.auth.views import LoginRequiredMixin
+from core.builtins.custom_tags import filter_advice_by_level
+
+from lite_content.lite_internal_frontend import cases
+from lite_content.lite_internal_frontend.cases import DoneWithCaseOnQueueForm, Manage
+
+from lite_forms.components import FiltersBar, TextInput
+from lite_forms.generators import error_page, form_page
+from lite_forms.helpers import conditional
+from lite_forms.views import SingleFormView
 
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.additional_contacts import add_additional_contact_form
@@ -17,7 +30,7 @@ from caseworker.cases.forms.move_case import move_case_form
 from caseworker.cases.forms.next_review_date import set_next_review_date_form
 from caseworker.cases.forms.reissue_ogl_form import reissue_ogl_confirmation_form
 from caseworker.cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
-from caseworker.cases.helpers.advice import get_advice_additional_context
+import caseworker.cases.helpers.advice as advice_helpers
 from caseworker.cases.helpers.case import CaseView, Tabs, Slices
 from caseworker.cases.services import (
     get_case,
@@ -32,24 +45,54 @@ from caseworker.cases.services import (
     put_application_status,
     put_next_review_date,
     reissue_ogl,
+    post_case_documents,
+    get_document,
+    get_blocking_flags,
 )
-from caseworker.cases.services import post_case_documents, get_document
 from caseworker.compliance.services import get_compliance_licences
-from core.auth.views import LoginRequiredMixin
-from django.conf import settings
-from caseworker.core.services import get_permissible_statuses
-from lite_content.lite_internal_frontend import cases
-from lite_content.lite_internal_frontend.cases import DoneWithCaseOnQueueForm, Manage
-from lite_forms.components import FiltersBar, TextInput
-from lite_forms.generators import error_page, form_page
-from lite_forms.helpers import conditional
-from lite_forms.views import SingleFormView
-from caseworker.queues.services import put_queue_single_case_assignment, get_queue
-from caseworker.users.services import get_gov_user_from_form_selection
+from caseworker.core.services import get_status_properties, get_permissible_statuses
+from caseworker.core.constants import Permission
 from caseworker.external_data.services import search_denials
+from caseworker.queues.services import put_queue_single_case_assignment, get_queue
+from caseworker.teams.services import get_teams
+from caseworker.users.services import get_gov_user_from_form_selection
 
 
 class CaseDetail(CaseView):
+    def get_advice_additional_context(self):
+        status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
+        current_advice_level = ["user"]
+        blocking_flags = get_blocking_flags(self.request, self.case["id"])
+
+        if filter_advice_by_level(self.case["advice"], "team"):
+            current_advice_level += ["team"]
+
+            if Permission.MANAGE_TEAM_ADVICE.value not in self.permissions:
+                current_advice_level = []
+
+        if filter_advice_by_level(
+            self.case["advice"], "final"
+        ) and advice_helpers.check_user_permitted_to_give_final_advice(
+            self.case.data["case_type"]["sub_type"]["key"], self.permissions
+        ):
+            current_advice_level += ["final"]
+
+        if (
+            not advice_helpers.can_user_create_and_edit_advice(self.case, self.permissions)
+            or status_props["is_terminal"]
+        ):
+            current_advice_level = []
+
+        return {
+            "is_user_team": True,
+            "teams": get_teams(self.request),
+            "current_advice_level": current_advice_level,
+            "can_give_user_advice": True,
+            "can_combine_user_advice_into_team_advice": False,
+            "can_finalise": advice_helpers.can_advice_be_finalised(self.case) and not blocking_flags,
+            "blocking_flags": blocking_flags,
+        }
+
     def get_open_application(self):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
@@ -70,9 +113,7 @@ class CaseDetail(CaseView):
             conditional(self.case.data["export_type"]["key"] == "temporary", Slices.TEMPORARY_EXPORT_DETAILS),
         ]
 
-        self.additional_context = {
-            **get_advice_additional_context(self.request, self.case, self.permissions),
-        }
+        self.additional_context = {**self.get_advice_additional_context()}
 
     def get_standard_application(self):
         self.tabs = self.get_tabs()
@@ -89,7 +130,7 @@ class CaseDetail(CaseView):
             Slices.ROUTE_OF_GOODS,
             Slices.SUPPORTING_DOCUMENTS,
         ]
-        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
+        self.additional_context = self.get_advice_additional_context()
 
     def get_hmrc_application(self):
         self.slices = [
@@ -99,7 +140,7 @@ class CaseDetail(CaseView):
             Slices.LOCATIONS,
             Slices.SUPPORTING_DOCUMENTS,
         ]
-        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
+        self.additional_context = self.get_advice_additional_context()
 
     def get_exhibition_clearance_application(self):
         self.tabs = self.get_tabs()
@@ -111,14 +152,14 @@ class CaseDetail(CaseView):
             Slices.LOCATIONS,
             Slices.SUPPORTING_DOCUMENTS,
         ]
-        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
+        self.additional_context = self.get_advice_additional_context()
 
     def get_gifting_clearance_application(self):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
         self.tabs.append(Tabs.ADVICE)
         self.slices = [Slices.GOODS, Slices.DESTINATIONS, Slices.LOCATIONS, Slices.SUPPORTING_DOCUMENTS]
-        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
+        self.additional_context = self.get_advice_additional_context()
 
     def get_f680_clearance_application(self):
         self.tabs = self.get_tabs()
@@ -131,7 +172,7 @@ class CaseDetail(CaseView):
             Slices.END_USE_DETAILS,
             Slices.SUPPORTING_DOCUMENTS,
         ]
-        self.additional_context = get_advice_additional_context(self.request, self.case, self.permissions)
+        self.additional_context = self.get_advice_additional_context()
 
     def get_end_user_advisory_query(self):
         self.slices = [Slices.END_USER_DETAILS]
