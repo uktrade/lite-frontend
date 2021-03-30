@@ -28,7 +28,7 @@
 		{% if goods.0.good %}
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					{% if not hide_checkboxes %}
+					{% if show_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
 							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
@@ -54,7 +54,7 @@
 			<tbody class="govuk-table__body">
 				{% for good in goods %}
 					<tr class="govuk-table__row">
-						{% if not hide_checkboxes %}
+						{% if show_checkboxes %}
 							<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
 								<div>
 									<input class="govuk-checkboxes__input" type="checkbox" name="goods" value="{{ good.good.id }}" id="{{ good.id }}">
@@ -137,7 +137,7 @@
 		{% else %}
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
-					{% if not hide_checkboxes %}
+					{% if show_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
 							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
@@ -156,7 +156,7 @@
 			<tbody class="govuk-table__body">
 				{% for good in goods %}
 					<tr class="govuk-table__row">
-						{% if not hide_checkboxes %}
+						{% if show_checkboxes %}
 							<td class="govuk-table__cell govuk-table__cell--checkbox {% if show_advice %}lite-!-no-border{% endif %}">
 								<div>
 									<input class="govuk-checkboxes__input" type="checkbox" name="goods_types" value="{{ good.id }}" id="{{ good.id }}">
