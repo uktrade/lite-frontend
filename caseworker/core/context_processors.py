@@ -26,8 +26,10 @@ def current_queue(request):
 
 
 def current_user(request):
-    user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
-    return {**user}
+    if "lite_api_user_id" in request.session:
+        user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
+        return user
+    return None
 
 
 def export_vars(request):
