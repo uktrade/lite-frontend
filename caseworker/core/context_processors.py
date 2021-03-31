@@ -29,7 +29,7 @@ def current_user(request):
     if "lite_api_user_id" in request.session:
         user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
         return user
-    return None
+    return {}
 
 
 def export_vars(request):
