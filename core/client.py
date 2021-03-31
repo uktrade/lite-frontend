@@ -4,6 +4,7 @@ import json
 from django.core.cache import cache
 from mohawk import Sender
 from mohawk.exc import AlreadyProcessed
+import sentry_sdk
 
 from django.conf import settings
 
@@ -60,6 +61,7 @@ def _seen_nonce(access_key_id, nonce, timestamp):
 
 def verify_hawk_response(response, sender):
     if "server-authorization" not in response.headers:
+        sentry_sdk.set_context("response", {"content": response.content})
         raise RuntimeError("Missing server_authorization header. Probable API HAWK auth failure")
 
     sender.accept_response(
