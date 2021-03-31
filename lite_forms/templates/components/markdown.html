@@ -26,7 +26,7 @@
 {% block javascript %}
 	<script type="text/javascript" src="{% static 'javascripts/highlight-tags.js' %}"></script>
 
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 		$('#{{ name }}').highlightWithinTextarea({
 			highlight: [
 				{
@@ -41,7 +41,7 @@
 		});
 	</script>
 
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 		function getInputSelection(el) {
 		    var start = 0, end = 0, normalizedValue, range,
 		        textInputRange, len, endRange;
@@ -131,4 +131,3 @@
 		$('#{{ name }}').highlightWithinTextarea('update');
 	</script>
 {% endblock %}
-

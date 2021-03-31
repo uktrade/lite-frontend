@@ -3,7 +3,7 @@
 	<p class="govuk-hint govuk-!-margin-bottom-1">We'll send an email to:</p>
 	<p class="govuk-body-l"></p>
 </div>
-<script type="text/javascript">
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 	function tryShowEmailField(object) {
 		if ($(object).val().trim().length != 0) {
 			$("#email-pane-{{ name|prefix_dots }} .govuk-body-l").text($(object).val())
