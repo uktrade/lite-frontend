@@ -41,7 +41,7 @@ def select_addressee_form():
 def edit_document_text_form(kwargs, post_url):
     return Form(
         title=GenerateDocumentsPage.EditTextForm.HEADING,
-        questions=[TextArea(name="text", extras={"max_length": 5000}),],
+        questions=[TextArea(name="text"),],
         default_button_name=GenerateDocumentsPage.EditTextForm.BUTTON,
         post_url=reverse_lazy(post_url, kwargs=kwargs),
         helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],

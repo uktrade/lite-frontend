@@ -234,8 +234,12 @@ class Finalise(LoginRequiredMixin, TemplateView):
             else:
                 goods = self._get_goods(request, str(kwargs["pk"]), case_type)
                 form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
-
-            return form_page(request, form, data=form_data, extra_data={"case": case})
+            return form_page(
+                request,
+                form,
+                data=form_data,
+                extra_data={"case": case, "has_proviso": any([item == "proviso" for item in items])},
+            )
         else:
             return form_page(
                 request,

@@ -13,59 +13,69 @@
 	</thead>
 	<tbody class="govuk-table__body">
 		{% for good in data %}
-			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">
-					{% if good.is_good_controlled is not None %}
-						{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
-					{% else %}
-						{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
-					{% endif %}
-				</td>
-				<td class="govuk-table__cell">
-					{{ good.good.description }}
-				</td>
-				<td class="govuk-table__cell">
-					<p class="govuk-body govuk-!-font-weight-bold">{{ good.advice.type.value }}</p>
-					<p>{{ good.advice.text }}<br></p>
-					{% if good.advice.proviso %}
-						<p>{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PROVISO_TEXT' %}</p>
-						{{ good.advice.proviso }}
-					{% endif %}
-				</td>
-				<td class="govuk-table__cell">
-					<input
-						class="govuk-input js-update-total-value"
-						id="quantity-{{ good.id }}"
-						type="text"
-						name="quantity-{{ good.id }}"
-						value="{{ good.quantity }}"
-						data-applied-for-quantity="{{ good.quantity }}"
-						data-applied-for-value="{{ good.value }}"
-						data-output-element-id="value-{{ good.id }}"
-					/>
-					<br>
-					<span class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %}{{ good.quantity|intcomma }} {{ good.unit.value }}</span>
-				</td>
-				<td class="govuk-table__cell">
-					<div class="lite-currency-input">
-						<div class="lite-currency-input__symbol {% if error %}lite-currency--error{% endif %}" aria-hidden="true">£</div>
+			{% if good.advice.type.key == 'approve' and has_proviso %}
+				{# "approve with proviso" takes priority over "approve" #}
+			{% else %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">
+						{% if good.is_good_controlled is not None %}
+							{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+						{% else %}
+							{% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell">
+						{{ good.good.description }}
+					</td>
+					<td class="govuk-table__cell">
+						<p class="govuk-body govuk-!-font-weight-bold">
+							{% if good.advice.type.key == 'proviso' %}
+								Approve with proviso
+							{% else %}
+								{{ good.advice.type.value }}
+							{% endif %}
+						</p>
+						<p>{{ good.advice.text }}<br></p>
+						{% if good.advice.proviso %}
+							<p>{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PROVISO_TEXT' %}</p>
+							{{ good.advice.proviso }}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell">
 						<input
-							class="govuk-input"
-							id="value-{{ good.id }}"
+							class="govuk-input js-update-total-value"
+							id="quantity-{{ good.id }}"
 							type="text"
-							name="value-{{ good.id }}"
-							value="{{ good.value }}"
+							name="quantity-{{ good.id }}"
+							value="{{ good.quantity }}"
+							data-applied-for-quantity="{{ good.quantity }}"
+							data-applied-for-value="{{ good.value }}"
+							data-output-element-id="value-{{ good.id }}"
 						/>
-					</div>
-					<span class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %}£{{ good.value|intcomma }}
-					{% if good.value and good.quantity %}
-						{% with value_per_item=good.value|divide:good.quantity %}
-							{% if value_per_item %}(£{{ value_per_item|floatformat:2|intcomma }} per unit){% endif %}
-						{% endwith %}
-					{% endif %}
-					</span>
-				</td>
-			</tr>
+						<br>
+						<span class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %}{{ good.quantity|intcomma }} {{ good.unit.value }}</span>
+					</td>
+					<td class="govuk-table__cell">
+						<div class="lite-currency-input">
+							<div class="lite-currency-input__symbol {% if error %}lite-currency--error{% endif %}" aria-hidden="true">£</div>
+							<input
+								class="govuk-input"
+								id="value-{{ good.id }}"
+								type="text"
+								name="value-{{ good.id }}"
+								value="{{ good.value }}"
+							/>
+						</div>
+						<span class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %}£{{ good.value|intcomma }}
+						{% if good.value and good.quantity %}
+							{% with value_per_item=good.value|divide:good.quantity %}
+								{% if value_per_item %}(£{{ value_per_item|floatformat:2|intcomma }} per unit){% endif %}
+							{% endwith %}
+						{% endif %}
+						</span>
+					</td>
+				</tr>
+			{% endif %}
 		{% endfor %}
 	</tbody>
 </table>
