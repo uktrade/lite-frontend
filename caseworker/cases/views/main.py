@@ -87,8 +87,6 @@ class CaseDetail(CaseView):
             "is_user_team": True,
             "teams": get_teams(self.request),
             "current_advice_level": current_advice_level,
-            "can_give_user_advice": True,
-            "can_combine_user_advice_into_team_advice": False,
             "can_finalise": advice_helpers.can_advice_be_finalised(self.case) and not blocking_flags,
             "blocking_flags": blocking_flags,
         }
