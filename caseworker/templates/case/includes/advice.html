@@ -1,11 +1,11 @@
 {% if not request.GET|get:'grouped-advice-view' == 'True' %}
 	<div>
 		{% if level in current_advice_level %}
-			{% include 'case/slices/goods.html' with show_controls=False show_advice=True level=level show_checkboxes=True hide_status=True %}
-			{% include 'case/slices/destinations.html' with show_controls=False show_advice=True level=level show_checkboxes=True hide_status=True %}
+			{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=False hide_status=True %}
+			{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=False hide_status=True %}
 		{% else %}
-			{% include 'case/slices/goods.html' with show_controls=False show_advice=True level=level show_checkboxes=False hide_status=True %}
-			{% include 'case/slices/destinations.html' with show_controls=False show_advice=True level=level show_checkboxes=False hide_status=True %}
+			{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=True hide_status=True %}
+			{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=True hide_status=True %}
 		{% endif %}
 	</div>
 {% else %}

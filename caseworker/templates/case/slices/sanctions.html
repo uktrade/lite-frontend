@@ -1,7 +1,7 @@
 {% with sanction_matches=case.data.sanction_matches %}
     {% if sanction_matches %}
         <h2 class="govuk-heading-m">Sanction matches</h2>
-        {% if show_controls %}
+        {% if not hide_controls %}
         <form method="get" data-enable-on-checkboxes="#table-sanction-matches">
             {% csrf_token %}
             <div class="lite-buttons-row">
@@ -14,7 +14,7 @@
             <table id="table-sanction-matches" class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        {% if show_checkboxes %}
+                        {% if not hide_checkboxes %}
                         <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
                             <button id="link-select-all-sanction-matches" type="button" name="button" class="lite-button-checkbox"
                                 title="Select all/Deselect all"></button>
@@ -29,7 +29,7 @@
                 <tbody class="govuk-table__body">
                     {% for match in sanction_matches %}
                         <tr class="govuk-table__row">
-                            {% if show_checkboxes %}
+                            {% if not hide_checkboxes %}
                             <td class="govuk-table__cell govuk-table__cell--checkbox">
                                 <div>
                                     <input class="govuk-checkboxes__input" type="checkbox" name="objects"
@@ -55,7 +55,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-        {% if show_controls %}
+        {% if not hide_controls %}
         </form>
         {% endif %}
     {% endif %}

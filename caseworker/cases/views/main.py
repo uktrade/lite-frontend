@@ -110,7 +110,7 @@ class CaseDetail(CaseView):
             conditional(self.case.data["export_type"]["key"] == "temporary", Slices.TEMPORARY_EXPORT_DETAILS),
         ]
 
-        self.additional_context = {**self.get_advice_additional_context()}
+        self.additional_context = self.get_advice_additional_context()
 
     def get_standard_application(self):
         self.tabs = self.get_tabs()
