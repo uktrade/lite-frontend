@@ -2,7 +2,7 @@
 	{% if destinations %}
 		<h2 class="govuk-heading-m">{{ destinations|length }} destination{{ destinations|pluralize }}</h2>
 
-		{% if not hide_controls %}
+		{% if show_controls %}
 
 			<form action="{% url 'cases:assign_flags' queue.id case.id %}" method="get" data-enable-on-checkboxes="#table-destinations">
 				<div class="lite-buttons-row">
@@ -174,7 +174,7 @@
 			{% endif %}
 		</table>
 
-		{% if not hide_controls %}
+		{% if show_controls %}
 			</form>
 		{% endif %}
 	{% endif %}

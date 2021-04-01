@@ -17,7 +17,7 @@
         </div>
 
         <div class="govuk-grid-column-full">
-            {% if not hide_controls %}
+            {% if show_controls %}
             <form method="post" data-enable-on-checkboxes="#table-denials">
                 {% csrf_token %}
                 <div class="lite-buttons-row">
@@ -79,7 +79,7 @@
                 <div>No matching denials</div>
             {% endif %}
 
-            {% if not hide_controls %}
+            {% if show_controls %}
             </form>
             {% endif %}
         </div>

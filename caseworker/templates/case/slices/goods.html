@@ -3,7 +3,7 @@
 {% with goods=goods|default:case.goods %}
 	<h2 class="govuk-heading-m">{{ case.goods|length }} good{{ case.goods|pluralize }}</h2>
 
-	{% if not hide_controls %}
+	{% if show_controls %}
 		<form method="get">
 			<div class="lite-buttons-row" data-enable-on-checkboxes="#table-goods">
 				{% if 'REVIEW_GOODS' in permissions and not is_terminal %}
@@ -219,7 +219,7 @@
 		<p class="govuk-body lite-!-margin-top--3 govuk-!-font-weight-bold">Total value: £{{ goods|goods_value|intcomma }}</p>
 	{% endif %}
 
-	{% if not hide_controls %}
+	{% if show_controls %}
 		</form>
 	{% endif %}
 {% endwith %}

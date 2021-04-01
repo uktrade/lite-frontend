@@ -1,7 +1,7 @@
 {% with sanction_matches=case.data.sanction_matches %}
     {% if sanction_matches %}
         <h2 class="govuk-heading-m">Sanction matches</h2>
-        {% if not hide_controls %}
+        {% if show_controls %}
         <form method="get" data-enable-on-checkboxes="#table-sanction-matches">
             {% csrf_token %}
             <div class="lite-buttons-row">
@@ -55,7 +55,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-        {% if not hide_controls %}
+        {% if show_controls %}
         </form>
         {% endif %}
     {% endif %}
