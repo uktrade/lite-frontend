@@ -103,6 +103,30 @@
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
+				{% if organisation.type.key == 'commercial' %}
+					Organisation phone number
+				{% else %}
+					Phone number
+				{% endif %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.primary_site.address.phone_number }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Website
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.primary_site.address.website|default_na }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
 				{% lcs 'organisations.OrganisationPage.Details.SummaryList.TYPE' %}
 			</dt>
 			<dd class="govuk-summary-list__value">

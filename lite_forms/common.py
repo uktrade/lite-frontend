@@ -6,13 +6,17 @@ def country_question(countries, prefix="address."):
     return AutocompleteInput(title="Country", name=prefix + "country", options=countries)
 
 
-def address_questions(countries, prefix="address."):
+def address_questions(countries, is_commercial, prefix="address."):
+    phone_number_label = "Organisation phone number" if is_commercial else "Phone number"
+    name = f"{prefix}phone_number"
     return [
         TextInput(title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",),
         TextInput(title="", accessible_description="line 2 of 2", name=prefix + "address_line_2",),
         TextInput(title="Town or city", name=prefix + "city"),
         TextInput(title="County or state", name=prefix + "region"),
         TextInput(title="Postcode", name=prefix + "postcode"),
+        TextInput(title=phone_number_label, name=prefix + "phone_number", description="For international numbers include the country code"),
+        TextInput(title="Website address", name=prefix + "website", optional=True),
         conditional(countries, country_question(countries, prefix)),
     ]
 
