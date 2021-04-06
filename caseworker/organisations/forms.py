@@ -168,7 +168,7 @@ def create_default_site_form(request, is_commercial, in_uk):
             *conditional(
                 in_uk,
                 address_questions(None, is_commercial, "site.address."),
-                foreign_address_questions(get_countries(request, True, ["GB"]), "site.address."),
+                foreign_address_questions(is_commercial, get_countries(request, True, ["GB"]), "site.address."),
             ),
         ],
         default_button_name=strings.CONTINUE,

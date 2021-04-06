@@ -21,9 +21,12 @@ def address_questions(countries, is_commercial, prefix="address."):
     ]
 
 
-def foreign_address_questions(countries, prefix="address."):
+def foreign_address_questions(is_commercial, countries, prefix="address."):
+    phone_number_label = "Organisation phone number" if is_commercial else "Phone number"
     return [
         TextArea(title="Address", name=prefix + "address", classes=["govuk-input--width-20"], rows=6),
+        TextInput(title=phone_number_label, name=prefix + "phone_number", description="For international numbers include the country code"),
+        TextInput(title="Website address", name=prefix + "website", optional=True),
         conditional(countries, country_question(countries, prefix)),
     ]
 
