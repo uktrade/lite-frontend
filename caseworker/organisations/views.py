@@ -203,14 +203,14 @@ class EditOrganisationAddress(LoginRequiredMixin, SingleFormView):
         data = flatten_data(self.data)
         return {
             **flatten_data(self.data),
-            "country": self.organisation["primary_site"]["address"]["country"]["id"]
+            "primary_site.address.country": self.organisation["primary_site"]["address"]["country"]["id"]
         }
 
     def get_form(self):
         print(self.data)
         is_commercial = self.organisation["type"]["key"] == "commercial"
         in_uk = self.organisation["primary_site"]["address"]["country"]["id"] == "GB"
-        countries = get_countries(self.request, True, ["GB"])
+        countries = get_countries(self.request, True, [])
 
         user_permissions = get_user_permissions(self.request)
         can_edit_address = Permission.MANAGE_ORGANISATIONS.value in user_permissions
