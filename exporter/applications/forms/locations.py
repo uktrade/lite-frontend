@@ -74,7 +74,7 @@ def add_external_location(request):
             )
         ],
         default_button_name=strings.CONTINUE,
-        back_link=BackLink(url=request.GET.get("return_to_link")),
+        back_link=BackLink(url=request.GET.get("return_to")),
     )
 
 
@@ -106,7 +106,7 @@ def location_type_form(request, application_type=None):
             ),
         ],
         default_button_name=LocationTypeForm.CONTINUE,
-        back_link=BackLink(url=request.GET.get("return_to_link")),
+        back_link=BackLink(url=request.GET.get("return_to")),
     )
 
 

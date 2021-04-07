@@ -88,7 +88,7 @@ class EditGoodsLocation(LoginRequiredMixin, SingleFormView):
         if choice == Locations.EXTERNAL:
             return (
                 reverse_lazy("applications:select_add_external_location", kwargs={"pk": self.object_pk})
-                + "?return_to_link="
+                + "?return_to="
                 + self.request.get_full_path()
             )
         elif choice == Locations.ORGANISATION:
@@ -108,7 +108,7 @@ class SelectAddExternalLocation(LoginRequiredMixin, SingleFormView):
         if choice == "new":
             return (
                 reverse_lazy("applications:add_external_location", kwargs={"pk": self.object_pk})
-                + "?return_to_link="
+                + "?return_to="
                 + self.request.get_full_path()
             )
         else:
