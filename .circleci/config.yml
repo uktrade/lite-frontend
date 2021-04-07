@@ -103,7 +103,7 @@ commands:
       alias:
         type: string
     steps:
-      - run: 
+      - run:
           name: Run unit tests
           command: |
             pipenv run pytest --cov=.  --cov-report xml --cov-config=.coveragerc
@@ -159,7 +159,7 @@ jobs:
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: example.caseworker.env
-      PYTEST_ADDOPTS: unit_tests/caseworker --capture=no --nomigrations
+      PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - setup_code
