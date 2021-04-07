@@ -12,9 +12,8 @@
 		$(document).ready(function() {
 	{% endif %}
 			var selectElement = document.querySelector('#{{ component.name|prefix_dots }}');
-
 			accessibleAutocomplete.enhanceSelectElement({
-				defaultValue: '{{ component.initial }}',
+				defaultValue: selectElement.value || '{{ component.initial }}',
 				displayMenu: 'overlay',
 				selectElement: selectElement,
 				cssNamespace: 'lite-autocomplete',
