@@ -1,5 +1,9 @@
 from lite_forms.components import TextInput, AutocompleteInput, TextArea, TokenBar
 from lite_forms.helpers import conditional
+from lite_forms.components import (
+    Form,
+    TextInput,
+)
 
 
 def country_question(countries, prefix="address."):
@@ -15,7 +19,11 @@ def address_questions(countries, is_commercial, prefix="address."):
         TextInput(title="Town or city", name=prefix + "city"),
         TextInput(title="County or state", name=prefix + "region"),
         TextInput(title="Postcode", name=prefix + "postcode"),
-        TextInput(title=phone_number_label, name=prefix + "phone_number", description="For international numbers include the country code"),
+        TextInput(
+            title=phone_number_label,
+            name=prefix + "phone_number",
+            description="For international numbers include the country code",
+        ),
         TextInput(title="Website address", name=prefix + "website", optional=True),
         conditional(countries, country_question(countries, prefix)),
     ]
@@ -25,10 +33,47 @@ def foreign_address_questions(is_commercial, countries, prefix="address."):
     phone_number_label = "Organisation phone number" if is_commercial else "Phone number"
     return [
         TextArea(title="Address", name=prefix + "address", classes=["govuk-input--width-20"], rows=6),
-        TextInput(title=phone_number_label, name=prefix + "phone_number", description="For international numbers include the country code"),
+        TextInput(
+            title=phone_number_label,
+            name=prefix + "phone_number",
+            description="For international numbers include the country code",
+        ),
         TextInput(title="Website address", name=prefix + "website", optional=True),
         conditional(countries, country_question(countries, prefix)),
     ]
+
+
+def edit_address_questions(is_commercial, in_uk, countries, prefix="primary_site.address."):
+    phone_number_label = "Organisation phone number" if is_commercial else "Phone number"
+
+    if in_uk:
+        questions = [
+            TextInput(
+                title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",
+            ),
+            TextInput(title="", accessible_description="line 2 of 2", name=prefix + "address_line_2",),
+            TextInput(title="Town or city", name=prefix + "city"),
+            TextInput(title="County or state", name=prefix + "region"),
+            TextInput(title="Postcode", name=prefix + "postcode"),
+        ]
+    else:
+        questions = [
+            TextArea(title="Address", name=prefix + "address", classes=["govuk-input--width-20"], rows=6),
+        ]
+
+    return Form(
+        title="Edit default site for this exporter",
+        questions=questions
+        + [
+            TextInput(
+                title=phone_number_label,
+                name=prefix + "phone_number",
+                description="For international numbers include the country code",
+            ),
+            TextInput(title="Website address", name=prefix + "website", optional=True),
+            AutocompleteInput(title="Country", name="primary_site.address.country", options=countries)
+        ],
+    )
 
 
 def control_list_entries_question(

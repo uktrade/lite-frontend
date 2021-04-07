@@ -113,6 +113,7 @@
 				{{ organisation.primary_site.address.phone_number }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit-address' organisation.id %}#phone_number">{% lcs 'generic.CHANGE' %}</a>
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
@@ -123,6 +124,7 @@
 				{{ organisation.primary_site.address.website|default_na }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit-address' organisation.id %}#website">{% lcs 'generic.CHANGE' %}</a>
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">

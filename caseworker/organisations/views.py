@@ -5,10 +5,12 @@ from django.views.generic import TemplateView
 from caseworker.core.constants import Permission
 from core.helpers import convert_dict_to_query_params
 from caseworker.core.objects import Tab
-from caseworker.core.services import get_user_permissions, get_menu_notifications
+from caseworker.core.services import get_user_permissions, get_menu_notifications, get_countries
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage, OrganisationPage
 from lite_forms.components import FiltersBar, TextInput, Select, Option, HiddenField
+from lite_forms.common import edit_address_questions
+from lite_forms.helpers import flatten_data
 from lite_forms.views import MultiFormView, SingleFormView
 from caseworker.organisations.forms import (
     register_organisation_forms,
@@ -187,3 +189,30 @@ class EditOrganisation(LoginRequiredMixin, SingleFormView):
         form = edit_commercial_form if self.data["type"]["key"] == "commercial" else edit_individual_form
 
         return form(self.data, permission_to_edit_org_name, are_fields_optional)
+
+
+class EditOrganisationAddress(LoginRequiredMixin, SingleFormView):
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        self.organisation = get_organisation(request, str(self.object_pk))
+        self.data = self.organisation
+        self.action = put_organisation
+        self.success_url = reverse_lazy("organisations:organisation", kwargs={"pk": self.object_pk})
+
+    def get_data(self):
+        data = flatten_data(self.data)
+        return {
+            **flatten_data(self.data),
+            "country": self.organisation["primary_site"]["address"]["country"]["id"]
+        }
+
+    def get_form(self):
+        print(self.data)
+        is_commercial = self.organisation["type"]["key"] == "commercial"
+        in_uk = self.organisation["primary_site"]["address"]["country"]["id"] == "GB"
+        countries = get_countries(self.request, True, ["GB"])
+
+        user_permissions = get_user_permissions(self.request)
+        can_edit_address = Permission.MANAGE_ORGANISATIONS.value in user_permissions
+
+        return edit_address_questions(is_commercial, in_uk, countries)
