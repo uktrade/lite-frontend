@@ -63,7 +63,7 @@ class RequestsSessionMiddleware:
         return self.get_response(request)
 
 
-class NoCacheMiddlware:
+class NoCacheMiddleware:
     """Tell the browser to not cache the pages, because otherwise information that should be kept private can be
     viewed by anyone with access to the files in the browser's cache directory.
 
