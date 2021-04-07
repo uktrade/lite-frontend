@@ -2,11 +2,14 @@ import time
 
 import requests
 from s3chunkuploader.file_handler import UploadFailed
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.utils.cache import add_never_cache_headers
+from rest_framework.response import Response
+from rest_framework import status
 
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
@@ -63,7 +66,7 @@ class RequestsSessionMiddleware:
         return self.get_response(request)
 
 
-class NoCacheMiddlware:
+class NoCacheMiddleware:
     """Tell the browser to not cache the pages, because otherwise information that should be kept private can be
     viewed by anyone with access to the files in the browser's cache directory.
 
@@ -75,4 +78,26 @@ class NoCacheMiddlware:
     def __call__(self, request):
         response = self.get_response(request)
         add_never_cache_headers(response)
+        return response
+
+
+class ValidateReturnToMiddleware:
+    """We are using return_to parameter to override the backlink in the
+    application journey. We need to validate if the return_to parameter is
+    (1) a valid URL and (2) a relative URL.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return_to = request.GET.get("return_to", None)
+        if return_to is not None:
+            try:
+                url = urlparse(return_to)
+            except ValueError as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            if url.netloc != "" or url.scheme != "" or return_to.startswith("//"):
+                return Response({"error": "Invalid return_to parameter"}, status=status.HTTP_400_BAD_REQUEST)
+        response = self.get_response(request)
         return response
