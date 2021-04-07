@@ -132,7 +132,7 @@ class RegisterAnOrganisation(SummaryListFormView):
             else register_an_individual_group(request, location)
         )
         self.action = register_commercial_organisation if _type == "commercial" else register_private_individual
-        self.hide_components = ["site.address.address_line_2"]
+        self.hide_components = ["primary_site.address.address_line_2"]
         self.additional_context = {"user_in_limbo": True}
 
         if not request.authbroker_client.authorized:
@@ -141,15 +141,17 @@ class RegisterAnOrganisation(SummaryListFormView):
             raise Http404
 
     def prettify_data(self, data):
-        if "site.address.country" in data and data["site.address.country"]:
-            data["site.address.country"] = get_country(self.request, data["site.address.country"])["name"]
-        if "site.foreign_address.country" in data and data["site.foreign_address.country"]:
-            data["site.foreign_address.country"] = get_country(self.request, data["site.foreign_address.country"])[
+        if "primary_site.address.country" in data and data["primary_site.address.country"]:
+            data["primary_site.address.country"] = get_country(self.request, data["primary_site.address.country"])[
                 "name"
             ]
-        if "site.address.address_line_2" in data and data["site.address.address_line_2"]:
-            data["site.address.address_line_1"] = (
-                data["site.address.address_line_1"] + "\n" + data["site.address.address_line_2"]
+        if "primary_site.foreign_address.country" in data and data["primary_site.foreign_address.country"]:
+            data["primary_site.foreign_address.country"] = get_country(
+                self.request, data["primary_site.foreign_address.country"]
+            )["name"]
+        if "primary_site.address.address_line_2" in data and data["primary_site.address.address_line_2"]:
+            data["primary_site.address.address_line_1"] = (
+                data["primary_site.address.address_line_1"] + "\n" + data["primary_site.address.address_line_2"]
             )
         return data
 

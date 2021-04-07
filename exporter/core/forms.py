@@ -127,12 +127,12 @@ def site_form(request, is_commercial, location):
             TextInput(
                 title=RegisterAnOrganisation.Headquarters.NAME,
                 description=RegisterAnOrganisation.Headquarters.NAME_DESCRIPTION,
-                name="site.name",
+                name="primary_site.name",
             ),
             *conditional(
                 is_in_uk,
-                address_questions(None, is_commercial, "site.address."),
-                foreign_address_questions(is_commercial, get_countries(request, True, ["GB"]), "site.address."),
+                address_questions(None, is_commercial, "primary_site.address."),
+                foreign_address_questions(is_commercial, get_countries(request, True, ["GB"]), "primary_site.address."),
             ),
         ],
         default_button_name=generic.CONTINUE,

@@ -1,9 +1,7 @@
-from lite_forms.components import TextInput, AutocompleteInput, TextArea, TokenBar
+from lite_forms.components import Form, Heading, TextInput, AutocompleteInput, TextArea, TokenBar
 from lite_forms.helpers import conditional
-from lite_forms.components import (
-    Form,
-    TextInput,
-)
+from lite_forms.styles import HeadingStyle
+from lite_content.lite_internal_frontend.organisations import RegisterAnOrganisation
 
 
 def country_question(countries, prefix="address."):
@@ -12,7 +10,6 @@ def country_question(countries, prefix="address."):
 
 def address_questions(countries, is_commercial, prefix="address."):
     phone_number_label = "Organisation phone number" if is_commercial else "Phone number"
-    name = f"{prefix}phone_number"
     return [
         TextInput(title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",),
         TextInput(title="", accessible_description="line 2 of 2", name=prefix + "address_line_2",),
@@ -48,6 +45,8 @@ def edit_address_questions(is_commercial, in_uk, countries, prefix="primary_site
 
     if in_uk:
         questions = [
+            TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="primary_site.name"),
+            Heading(RegisterAnOrganisation.WhereIsTheExporterBased.TITLE, HeadingStyle.M),
             TextInput(
                 title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",
             ),
@@ -71,7 +70,7 @@ def edit_address_questions(is_commercial, in_uk, countries, prefix="primary_site
                 description="For international numbers include the country code",
             ),
             TextInput(title="Website address", name=prefix + "website", optional=True),
-            AutocompleteInput(title="Country", name="primary_site.address.country", options=countries)
+            conditional(not in_uk, AutocompleteInput(title="Country", name=prefix + "country", options=countries)),
         ],
     )
 

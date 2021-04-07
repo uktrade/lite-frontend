@@ -163,12 +163,12 @@ def create_default_site_form(request, is_commercial, in_uk):
     return Form(
         title=RegisterAnOrganisation.CREATE_DEFAULT_SITE,
         questions=[
-            TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="site.name"),
+            TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="primary_site.name"),
             Heading(RegisterAnOrganisation.WhereIsTheExporterBased.TITLE, HeadingStyle.M),
             *conditional(
                 in_uk,
-                address_questions(None, is_commercial, "site.address."),
-                foreign_address_questions(is_commercial, get_countries(request, True, ["GB"]), "site.address."),
+                address_questions(None, is_commercial, "primary_site.address."),
+                foreign_address_questions(is_commercial, get_countries(request, True, ["GB"]), "primary_site.address."),
             ),
         ],
         default_button_name=strings.CONTINUE,
@@ -195,9 +195,9 @@ def register_hmrc_organisation_forms():
                 questions=[
                     HiddenField(name="type", value="hmrc"),
                     TextInput(title="Name of HMRC organisation", name="name"),
-                    TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="site.name"),
+                    TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="primary_site.name"),
                     Heading("Where are they based?", HeadingStyle.M),
-                    *address_questions(None, "site.address."),
+                    *address_questions(None, "primary_site.address."),
                 ],
                 default_button_name="Continue",
             ),

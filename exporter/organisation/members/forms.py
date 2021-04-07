@@ -16,7 +16,7 @@ def add_user_form(request):
                 title="Contact phone number",
                 name="phone_number",
                 optional=True,
-                description="We’ll only this number to call about applications",
+                description="We’ll only use this number to call about applications",
             ),
             Select(
                 name="role",

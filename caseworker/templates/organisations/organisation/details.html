@@ -99,7 +99,9 @@
 					{% endif %}
 				</span>
 			</dd>
-			<dd class="govuk-summary-list__actions"></dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit-address' organisation.id %}#primary_site">{% lcs 'generic.CHANGE' %}</a>
+			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">

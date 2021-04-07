@@ -200,19 +200,13 @@ class EditOrganisationAddress(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("organisations:organisation", kwargs={"pk": self.object_pk})
 
     def get_data(self):
-        data = flatten_data(self.data)
         return {
             **flatten_data(self.data),
-            "primary_site.address.country": self.organisation["primary_site"]["address"]["country"]["id"]
+            "primary_site.address.country": self.organisation["primary_site"]["address"]["country"]["id"],
         }
 
     def get_form(self):
-        print(self.data)
         is_commercial = self.organisation["type"]["key"] == "commercial"
         in_uk = self.organisation["primary_site"]["address"]["country"]["id"] == "GB"
-        countries = get_countries(self.request, True, [])
-
-        user_permissions = get_user_permissions(self.request)
-        can_edit_address = Permission.MANAGE_ORGANISATIONS.value in user_permissions
-
+        countries = get_countries(self.request, True, ["GB"])
         return edit_address_questions(is_commercial, in_uk, countries)

@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from core import client
 from lite_content.lite_internal_frontend.organisations import RegisterAnOrganisation
+from lite_forms.helpers import nest_data
 
 
 def get_organisations(request, params):
@@ -33,6 +34,8 @@ def post_hmrc_organisations(request, json):
 def put_organisation(request, pk, json):
     if "status" in json:
         del json["status"]
+
+    json = nest_data(json)
     data = client.put(request, f"/organisations/{pk}/", json)
     return data.json(), data.status_code
 
