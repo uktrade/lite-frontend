@@ -12,6 +12,12 @@ def add_user_form(request):
         title=strings.users.AddUserForm.USER_ADD_TITLE,
         questions=[
             TextInput(title=strings.users.AddUserForm.USER_EMAIL_QUESTION, name="email"),
+            TextInput(
+                title="Contact phone number",
+                name="phone_number",
+                optional=True,
+                description="We’ll only this number to call about applications",
+            ),
             Select(
                 name="role",
                 options=get_roles(request, request.session["organisation"], True),

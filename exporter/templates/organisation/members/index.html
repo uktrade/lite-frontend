@@ -14,6 +14,7 @@
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_NAME" %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_EMAIL" %}</th>
+				<th class="govuk-table__header" scope="col">Contact number</th>
 				<th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_ROLE" %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs "users.UsersPage.USER_STATUS" %}</th>
 				<th class="govuk-table__header" scope="col"></th>
@@ -32,6 +33,7 @@
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell" id="{{ user.email }}">{{ user.email }}</td>
+					<td class="govuk-table__cell" id="{{ user.email }}">{{ user.phone_number }}</td>
 					<td class="govuk-table__cell">{{ user.role_name }}</td>
 					<td class="govuk-table__cell">{{ user.status }}</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">

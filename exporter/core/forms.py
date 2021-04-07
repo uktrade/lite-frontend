@@ -104,14 +104,14 @@ def register_triage():
     )
 
 
-def site_form(request, is_individual, location):
+def site_form(request, is_commercial, location):
     from exporter.core.views import RegisterAnOrganisationTriage
 
     is_in_uk = location == RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM
 
     return Form(
         title=conditional(
-            not is_individual,
+            is_commercial,
             conditional(
                 is_in_uk, RegisterAnOrganisation.Headquarters.TITLE, RegisterAnOrganisation.Headquarters.TITLE_FOREIGN,
             ),
@@ -131,8 +131,8 @@ def site_form(request, is_individual, location):
             ),
             *conditional(
                 is_in_uk,
-                address_questions(None, "site.address."),
-                foreign_address_questions(get_countries(request, True, ["GB"]), "site.address."),
+                address_questions(None, is_commercial, "site.address."),
+                foreign_address_questions(is_commercial, get_countries(request, True, ["GB"]), "site.address."),
             ),
         ],
         default_button_name=generic.CONTINUE,
@@ -188,7 +188,7 @@ def register_a_commercial_organisation_group(request, location):
                 ],
                 default_button_name=generic.CONTINUE,
             ),
-            site_form(request, False, location),
+            site_form(request, True, location),
         ]
     )
 
@@ -228,6 +228,6 @@ def register_an_individual_group(request, location):
                 ],
                 default_button_name=generic.CONTINUE,
             ),
-            site_form(request, True, location),
+            site_form(request, False, location),
         ]
     )

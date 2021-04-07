@@ -88,6 +88,23 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
+                Phone number
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ organisation.primary_site.address.phone_number }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Website
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ organisation.primary_site.address.website }}
+            </dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
                 {% lcs 'organisation.Details.TYPE' %}
             </dt>
             <dd class="govuk-summary-list__value">
