@@ -86,7 +86,9 @@ class CaseDetail(CaseView):
         return {
             "teams": get_teams(self.request),
             "current_advice_level": current_advice_level,
-            "can_finalise": "final" in current_advice_level and advice_helpers.can_advice_be_finalised(self.case) and not blocking_flags,
+            "can_finalise": "final" in current_advice_level
+            and advice_helpers.can_advice_be_finalised(self.case)
+            and not blocking_flags,
             "blocking_flags": blocking_flags,
         }
 
