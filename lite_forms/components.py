@@ -488,26 +488,6 @@ class FileUpload(_Component):
         self.input_type = "file_upload"
 
 
-class MultiFileUpload(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(
-            name=name,
-            title=title,
-            description=description,
-            accessible_description=accessible_description,
-            optional=optional,
-            classes=classes,
-        )
-        self.input_type = "multi_file_upload"
-
 
 class TextArea(_Component):
     def __init__(
