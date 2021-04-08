@@ -13,7 +13,7 @@
 		{% for advice in case.advice|filter_advice_by_level:level|distinct_advice:case|values %}
 			<div class="app-grouped-advice app-grouped-advice--{{ advice.type.key }}">
 				<h2 class="app-grouped-advice__heading">
-					{% if advice.user.id == current_user.id or advice.team.id == current_user.team.id %}
+					{% if advice.id == 'no_advice' or advice.user.id == current_user.id or advice.team.id == current_user.team.id %}
 						<button id="button-select-all-{{ advice.id }}" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 					{% endif %}
 					<label for="button-select-all-{{ advice.id }}">
