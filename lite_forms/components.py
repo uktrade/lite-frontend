@@ -476,6 +476,7 @@ class FileUpload(_Component):
         accessible_description: str = None,
         optional: bool = False,
         classes: Optional[List] = None,
+        accept: Optional[List] = None,
     ):
         super().__init__(
             name=name,
@@ -486,7 +487,18 @@ class FileUpload(_Component):
             classes=classes,
         )
         self.input_type = "file_upload"
-
+        self.accept = accept or (
+            # Default file-types supported by LITE are pdf, doc, docx,
+            # rtf, jpeg, png and tiff
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/rtf",
+            "text/plain",
+            "image/jpeg",
+            "image/png",
+            "image/tiff",
+        )
 
 
 class TextArea(_Component):
