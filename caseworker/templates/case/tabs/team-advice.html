@@ -26,10 +26,12 @@
 							Give or change advice
 						</button>
 					</div>
+					<span class="{% if not case.advice|filter_advice_by_team_id:current_user.team.id %}app-advice__disabled-buttons{% endif %}">
+						<button form="form-team-advice" id="button-clear-team-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
+							Clear advice
+						</button>
+					</span>
 				{% endif %}
-				<button form="form-team-advice" id="button-clear-team-advice" name="action" value="delete" type="submit" class="govuk-button" data-module="govuk-button">
-					Clear advice
-				</button>
 			</div>
 		</div>
 

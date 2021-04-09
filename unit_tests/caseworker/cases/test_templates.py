@@ -109,14 +109,8 @@ def test_advice_section_user_can_combine_advice_from_own_team(data_standard_case
     context["case"].advice = [dummy_advice]
     context["current_user"] = jane_doe
     context["current_advice_level"] = ["user"]
-    case_id = context["case"]["id"]
-    queue_id = context["queue"]["id"]
 
-    request = rf.get(f"/queues/{queue_id}/cases/{case_id}/user-advice/?grouped-advice-view=True")
-    request.session = client.session
-    request.requests_session = requests.Session()
-
-    html = render_to_string("case/tabs/user-advice.html", context=context, request=request)
+    html = render_to_string("case/tabs/user-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
     assert "app-advice__disabled-buttons" not in soup.find(id="button-combine-user-advice").parent["class"]
 
@@ -130,13 +124,39 @@ def test_advice_section_user_cannot_combine_advice_from_other_team(data_standard
     context["case"].advice = [advice_1]
     context["current_user"] = jane_doe
     context["current_advice_level"] = ["user"]
-    case_id = context["case"]["id"]
-    queue_id = context["queue"]["id"]
 
-    request = rf.get(f"/queues/{queue_id}/cases/{case_id}/user-advice/?grouped-advice-view=True")
-    request.session = client.session
-    request.requests_session = requests.Session()
-
-    html = render_to_string("case/tabs/user-advice.html", context=context, request=request)
+    html = render_to_string("case/tabs/user-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
     assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent["class"]
+
+
+def test_advice_section_user_can_clear_advice_from_own_team(data_standard_case, rf, client):
+    context = {}
+    context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
+    case = {**data_standard_case}
+    context["case"] = Case(case["case"])
+    team_advice = {**dummy_advice}
+    team_advice["level"] = "team"
+    context["case"].advice = [dummy_advice]
+    context["current_user"] = jane_doe
+    context["current_advice_level"] = ["user", "team"]
+
+    html = render_to_string("case/tabs/team-advice.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+    assert "app-advice__disabled-buttons" not in soup.find(id="button-clear-team-advice").parent["class"]
+
+
+def test_advice_section_user_cannot_clear_advice_from_other_team(data_standard_case, rf, client):
+    context = {}
+    context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
+    case = {**data_standard_case}
+    context["case"] = Case(case["case"])
+    team_advice = {**dummy_advice}
+    team_advice["level"] = "team"
+    context["case"].advice = [dummy_advice]
+    context["current_user"] = john_smith
+    context["current_advice_level"] = ["user", "team"]
+
+    html = render_to_string("case/tabs/team-advice.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+    assert "app-advice__disabled-buttons" in soup.find(id="button-clear-team-advice").parent["class"]
