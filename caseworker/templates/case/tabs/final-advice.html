@@ -20,7 +20,7 @@
 				</a>
 			{% endif %}
 			<div class="lite-!-display-inline lite-buttons-row {% if 'final' not in current_advice_level %}app-advice__disabled-buttons{% endif %}">
-				{% if current_advice_level %}
+				{% if 'final' in current_advice_level %}
 					<div data-enable-on-checkboxes="#form-final-advice-container" class="lite-buttons-row lite-!-display-inline">
 						<button id="button-give-final-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
 							{% lcs 'advice.FinalAdvicePage.GIVE_CHANGE_ADVICE_BUTTON' %}

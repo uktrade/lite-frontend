@@ -17,6 +17,15 @@ john_smith = {
     "status": "Active",
     "team": team1,
 }
+john_doe = {
+    "email": "john.doe@example.com",
+    "first_name": "John",
+    "id": "63c74ddd-c119-48cc-8696-d196218ca583",
+    "last_name": "Doe",
+    "role_name": "Super User",
+    "status": "Active",
+    "team": team1,
+}
 jane_doe = {
     "email": "jane.doe@example.com",
     "first_name": "Jane",
@@ -26,9 +35,37 @@ jane_doe = {
     "status": "Active",
     "team": team2,
 }
+jane_smith = {
+    "email": "jane.smith@example.com",
+    "first_name": "Jane",
+    "id": "24afb1dc-fa1e-40d1-a716-840585c85ebc",
+    "last_name": "Smith",
+    "role_name": "Super User",
+    "status": "Active",
+    "team": team2,
+}
+dummy_advice = {
+    "id": "f4f3476f-9849-49d1-973e-62b185085a64",
+    "text": "",
+    "note": "",
+    "type": {"key": "approve", "value": "Approve"},
+    "level": "user",
+    "proviso": None,
+    "denial_reasons": [],
+    "footnote": None,
+    "user": jane_smith,
+    "created_at": "2021-03-18T11:27:56.625251Z",
+    "good": None,
+    "goods_type": None,
+    "country": None,
+    "end_user": "633178cd-83ec-4773-8829-c19065912565",
+    "ultimate_end_user": None,
+    "consignee": None,
+    "third_party": None,
+}
 
 
-def test_no_user_advice_checkboxes_visible_no_combine_button(data_standard_case):
+def test_advice_section_no_user_advice_checkboxes_visible_no_combine_button(data_standard_case):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
     case = {**data_standard_case}
@@ -42,15 +79,17 @@ def test_no_user_advice_checkboxes_visible_no_combine_button(data_standard_case)
     assert soup.find(id="link-select-all-destinations")
 
 
-def test_no_user_advice_checkboxes_visible_no_combine_button_grouped_view(data_standard_case, rf, client):
+def test_advice_section_no_user_advice_checkboxes_visible_no_combine_button_grouped_view(
+    data_standard_case, rf, client
+):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
     case = {**data_standard_case}
     context["case"] = Case(case["case"])
     context["current_user"] = jane_doe
     context["current_advice_level"] = ["user"]
-    case_id = context["case"].id
-    queue_id = context["queue"].id
+    case_id = context["case"]["id"]
+    queue_id = context["queue"]["id"]
 
     request = rf.get(f"/queues/{queue_id}/cases/{case_id}/user-advice/?grouped-advice-view=True")
     request.session = client.session
@@ -60,3 +99,44 @@ def test_no_user_advice_checkboxes_visible_no_combine_button_grouped_view(data_s
     soup = BeautifulSoup(html, "html.parser")
     assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent["class"]
     assert soup.find(id="button-select-all-no_advice")
+
+
+def test_advice_section_user_can_combine_advice_from_own_team(data_standard_case, rf, client):
+    context = {}
+    context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
+    case = {**data_standard_case}
+    context["case"] = Case(case["case"])
+    context["case"].advice = [dummy_advice]
+    context["current_user"] = jane_doe
+    context["current_advice_level"] = ["user"]
+    case_id = context["case"]["id"]
+    queue_id = context["queue"]["id"]
+
+    request = rf.get(f"/queues/{queue_id}/cases/{case_id}/user-advice/?grouped-advice-view=True")
+    request.session = client.session
+    request.requests_session = requests.Session()
+
+    html = render_to_string("case/tabs/user-advice.html", context=context, request=request)
+    soup = BeautifulSoup(html, "html.parser")
+    assert "app-advice__disabled-buttons" not in soup.find(id="button-combine-user-advice").parent["class"]
+
+
+def test_advice_section_user_cannot_combine_advice_from_other_team(data_standard_case, rf, client):
+    context = {}
+    context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
+    advice_1 = {**dummy_advice, "user": john_smith}
+    case = {**data_standard_case}
+    context["case"] = Case(case["case"])
+    context["case"].advice = [advice_1]
+    context["current_user"] = jane_doe
+    context["current_advice_level"] = ["user"]
+    case_id = context["case"]["id"]
+    queue_id = context["queue"]["id"]
+
+    request = rf.get(f"/queues/{queue_id}/cases/{case_id}/user-advice/?grouped-advice-view=True")
+    request.session = client.session
+    request.requests_session = requests.Session()
+
+    html = render_to_string("case/tabs/user-advice.html", context=context, request=request)
+    soup = BeautifulSoup(html, "html.parser")
+    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent["class"]
