@@ -41,27 +41,28 @@
         }
     });
 
-	$(document).ready(function(){
-	    $(window).on('dragenter', function(){
-	        $(this).preventDefault();
-	    });
-		$('.lite-file-upload').bind('dragover', function(){
-	        $(this).addClass('lite-file-upload--drag-over');
-	    });
-	    $('.lite-file-upload').bind('dragleave', function(){
-	        $(this).removeClass('lite-file-upload--drag-over');
-	    });
-	});
+		$(document).ready(function (e) {
+			$(window).on('dragenter', function (event) {
+				event.preventDefault();
+			});
+			$('.lite-file-upload').bind('dragover', function () {
+				$(this).addClass('lite-file-upload--drag-over');
+			});
+			$('.lite-file-upload').bind('dragleave', function () {
+				$(this).removeClass('lite-file-upload--drag-over');
+			});
 
-	$(".lite-file-upload").on("dragover drop", function(e) {
-	    e.preventDefault();
-	}).on("drop", function(e) {
-	    $("input[type='file']").prop("files", e.originalEvent.dataTransfer.files)
-        $('.lite-file-upload').removeClass('lite-file-upload--drag-over');
-	});
+			$(".lite-file-upload").on("dragover drop", function (event) {
+				event.preventDefault();
+			}).on("drop", function (event) {
+				$("input[type='file']").prop("files", event.originalEvent.dataTransfer.files);
+				$("input[type=file]").trigger('change');
+				$('.lite-file-upload').removeClass('lite-file-upload--drag-over');
+			});
 
-    $( "input[type=file]" ).change(function() {
-        fileName = $( this ).val().split('\\').pop();
-        $( "input[type=file]" ).next().html(fileName + "<br><span class='lite-file-upload__or-label'>Drag and drop your document here or <span class='lite-file-upload__link'>click to browse</span> to replace it</span>");
-    });
+			$("input[type=file]").change(function () {
+				fileName = $(this).val().split('\\').pop();
+				$("input[type=file]").next().html(fileName + "<br><span class='lite-file-upload__or-label'>Drag and drop your document here or <span class='lite-file-upload__link'>click to browse</span> to replace it</span>");
+			});
+		});
 </script>
