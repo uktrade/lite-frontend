@@ -1,8 +1,13 @@
+import tippy from 'tippy.js';
+
+export default function initMenuTooltips() {
 
 $("#link-menu").removeAttr("href");
 
 // deliberately written in vanilla JS not jquery
 const menu = document.getElementById('lite-menu');
+if (!menu) return;
+
 menu.style.display = 'block';
 
 tippy("#link-menu", {
@@ -28,3 +33,4 @@ tippy('.app-flag--label', {
 		return reference.getAttribute('data-label');
 	},
 });
+};

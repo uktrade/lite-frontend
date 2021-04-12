@@ -39,10 +39,8 @@
 
 	<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/govuk-opengraph-image.png' %}">
 
-	{# TODO: eventually this should all be migrated into main.js file #}
 	{% block head_common_javascript %}
-	<script src="{% static 'javascripts/jquery.min.js' %}"></script>
-	<script src="{% static 'javascripts/helpers.js' %}"></script>
+		<script nonce="{{ request.csp_nonce }}" src="{% static 'head.js' %}"></script>
 	{% endblock %}
 
 	{% block head %}{% endblock %}
@@ -139,19 +137,8 @@
 
 	{# TODO: eventually this should all be migrated into main.js file #}
 	{% block body_common_javascript %}
-	<script src="{% static 'javascripts/govuk.js' %}"></script>
-	<script src="{% static 'javascripts/popper.js' %}"></script>
-	<script src="{% static 'javascripts/tippy.js' %}"></script>
-	<script src="{% static 'javascripts/modal.js' %}"></script>
-	<script src="{% static 'javascripts/definitions.js' %}"></script>
-	<script src="{% static 'javascripts/snackbar-hide.js' %}"></script>
-	<script src="{% static 'javascripts/checkboxes.js' %}"></script>
-	<script src="{% static 'javascripts/back-link.js' %}"></script>
-	<script src="{% static 'javascripts/menu-tooltips.js' %}"></script>
+		<script nonce="{{ request.csp_nonce }}" src="{% static 'main.js' %}"></script>
 
-	<script nonce="{{ request.csp_nonce }}">
-		window.GOVUKFrontend.initAll()
-	</script>
 	{% endblock %}
 
 	{% block javascript %}{% endblock %}

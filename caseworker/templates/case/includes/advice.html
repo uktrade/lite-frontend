@@ -67,7 +67,7 @@
 		{% endfor %}
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 		$(".app-grouped-advice__heading .lite-button-checkbox").unbind('click').click(function() {
 			var $container = $(this).parent().parent();
 
