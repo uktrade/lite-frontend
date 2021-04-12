@@ -176,3 +176,5 @@ LITECommon.Modal = {
 		});
 	}
 };
+
+export default LITECommon.Modal;

@@ -23,3 +23,5 @@ function disableLink(link) {
 		.attr('aria-disabled', true)
 		.attr('tabindex', '-1');
 }
+
+export {enableButton, disableButton, enableLink, disableLink}
