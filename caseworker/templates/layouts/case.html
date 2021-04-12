@@ -192,7 +192,7 @@
 {% endblock %}
 
 {% block javascript %}
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 		$(".app-case-header__candy__popup").show();
 
 		const popupCenter = ({url, title, w, h}) => {

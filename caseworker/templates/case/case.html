@@ -15,7 +15,7 @@
 		{% endif %}
 	{% endfor %}
 
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 		$(".app-case-tab-bar .lite-tabs__tab").click(function() {
 			$(".lite-tabs__tab-parent").removeClass("lite-tabs__tab-parent--selected");
 			$(".lite-tabs__tab-group--visible").removeClass("lite-tabs__tab-group--visible");
