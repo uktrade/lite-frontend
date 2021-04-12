@@ -99,7 +99,35 @@
 					{% endif %}
 				</span>
 			</dd>
-			<dd class="govuk-summary-list__actions"></dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit-address' organisation.id %}#primary_site">{% lcs 'generic.CHANGE' %}</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				{% if organisation.type.key == 'commercial' %}
+					Organisation phone number
+				{% else %}
+					Phone number
+				{% endif %}
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.phone_number }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit-address' organisation.id %}#phone_number">{% lcs 'generic.CHANGE' %}</a>
+			</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">
+				Website
+			</dt>
+			<dd class="govuk-summary-list__value">
+				{{ organisation.website|default_na }}
+			</dd>
+			<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisations:edit-address' organisation.id %}#website">{% lcs 'generic.CHANGE' %}</a>
+			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
