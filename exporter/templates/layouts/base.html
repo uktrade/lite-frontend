@@ -23,7 +23,7 @@
 		<link href="https://www.google-analytics.com" rel="preconnect" crossorigin>
 		<link href="https://www.googletagmanager.com" rel="preconnect" crossorigin>
 
-		<link href="{% static 'built/styles.css' %}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'main.css' %}" rel="stylesheet" type="text/css" />
 
 		<script nonce="{{ request.csp_nonce }}">
 			(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -35,8 +35,7 @@
 
 		<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/govuk-opengraph-image.png' %}">
 
-		<script src="{% static 'javascripts/jquery.min.js' %}"></script>
-		<script src="{% static 'javascripts/helpers.js' %}"></script>
+		<script nonce="{{ request.csp_nonce }}" src="{% static 'main.js' %}"></script>
 		{% block head %}{% endblock %}
 	</head>
 	<body class="govuk-template__body ">
@@ -120,16 +119,6 @@
 				</div>
 			</footer>
 		{% endblock %}
-
-		<script src="{% static 'javascripts/govuk.js' %}"></script>
-		<script src="{% static 'javascripts/modal.js' %}"></script>
-		<script src="{% static 'javascripts/definitions.js' %}"></script>
-		<script src="{% static 'javascripts/back-link.js' %}"></script>
-		<script src="{% static 'javascripts/mark.js' %}"></script>
-
-		<script nonce="{{ request.csp_nonce }}">
-			window.GOVUKFrontend.initAll()
-		</script>
 
 		{% block javascript %}
 		{% endblock %}
