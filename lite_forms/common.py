@@ -40,12 +40,12 @@ def foreign_address_questions(is_individual, countries, prefix="address."):
     ]
 
 
-def edit_address_questions(is_commercial, in_uk, countries, prefix="site.address."):
+def edit_address_questions_form(is_commercial, in_uk, countries, prefix="site.address."):
     phone_number_label = "Organisation phone number" if is_commercial else "Phone number"
 
     if in_uk:
         questions = [
-            TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="primary_site.name"),
+            TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="site.name"),
             Heading(RegisterAnOrganisation.WhereIsTheExporterBased.TITLE, HeadingStyle.M),
             TextInput(
                 title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",
@@ -57,7 +57,7 @@ def edit_address_questions(is_commercial, in_uk, countries, prefix="site.address
         ]
     else:
         questions = [
-            TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="primary_site.name"),
+            TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="site.name"),
             Heading(RegisterAnOrganisation.WhereIsTheExporterBased.TITLE, HeadingStyle.M),
             TextArea(title="Address", name=prefix + "address", classes=["govuk-input--width-20"], rows=6),
         ]
@@ -71,7 +71,7 @@ def edit_address_questions(is_commercial, in_uk, countries, prefix="site.address
                 name="phone_number",
                 description="For international numbers include the country code",
             ),
-            TextInput(title="Website address", name="website", optional=True),
+            TextInput(title="Website", name="website", optional=True),
             conditional(not in_uk, AutocompleteInput(title="Country", name=prefix + "country", options=countries)),
         ],
     )
