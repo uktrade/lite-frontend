@@ -476,6 +476,7 @@ class FileUpload(_Component):
         accessible_description: str = None,
         optional: bool = False,
         classes: Optional[List] = None,
+        accept: Optional[List] = None,
     ):
         super().__init__(
             name=name,
@@ -486,27 +487,18 @@ class FileUpload(_Component):
             classes=classes,
         )
         self.input_type = "file_upload"
-
-
-class MultiFileUpload(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(
-            name=name,
-            title=title,
-            description=description,
-            accessible_description=accessible_description,
-            optional=optional,
-            classes=classes,
+        self.accept = accept or (
+            # Default file-types supported by LITE are pdf, doc, docx,
+            # rtf, jpeg, png and tiff
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/rtf",
+            "text/plain",
+            "image/jpeg",
+            "image/png",
+            "image/tiff",
         )
-        self.input_type = "multi_file_upload"
 
 
 class TextArea(_Component):
