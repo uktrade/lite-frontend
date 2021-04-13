@@ -1,5 +1,8 @@
 from unittest import TestCase
 
+from bs4 import BeautifulSoup
+from django.template.loader import render_to_string
+
 from lite_forms.components import (
     Form,
     DetailComponent,
@@ -14,6 +17,7 @@ from lite_forms.components import (
     HiddenField,
     NumberInput,
     RadioButtons,
+    FileUpload,
 )
 from lite_forms.helpers import (
     nest_data,
@@ -214,3 +218,23 @@ class SingleQuestionFormAccessibilityTest(TestCase):
     def test_multiple_user_inputs_no_title_label(self):
         form = Form(questions=[TextInput("abc"), NumberInput("def"),])
         self.assertIsNone(form.single_form_element)
+
+
+class FileUploadTest(TestCase):
+    def test_file_upload_accept_props(self):
+        """Test that vanilla FileUpload component is rendered with the right accept props.
+        """
+        form = Form("test-file-upload", "A form to test file upload component", [FileUpload()])
+        html = render_to_string("form.html", {"page": form})
+        soup = BeautifulSoup(html, "html.parser")
+        accept = soup.find(id="file")["accept"].split(",")
+        assert accept == [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/rtf",
+            "text/plain",
+            "image/jpeg",
+            "image/png",
+            "image/tiff",
+        ]
