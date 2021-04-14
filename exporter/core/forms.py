@@ -131,8 +131,8 @@ def site_form(request, is_individual, location):
             ),
             *conditional(
                 is_in_uk,
-                address_questions(None, "site.address."),
-                foreign_address_questions(get_countries(request, True, ["GB"]), "site.address."),
+                address_questions(None, is_individual, "site.address."),
+                foreign_address_questions(is_individual, get_countries(request, True, ["GB"]), "site.address."),
             ),
         ],
         default_button_name=generic.CONTINUE,

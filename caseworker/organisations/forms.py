@@ -86,7 +86,7 @@ def register_organisation_forms(request):
                 default_button_name=strings.CONTINUE,
             ),
             conditional(is_individual, register_individual_form(in_uk), register_commercial_form(in_uk)),
-            create_default_site_form(request, in_uk),
+            create_default_site_form(request, is_individual, in_uk),
             conditional(not is_individual, create_admin_user_form(),),
         ],
         show_progress_indicators=True,
@@ -158,7 +158,7 @@ def register_commercial_form(in_uk):
     )
 
 
-def create_default_site_form(request, in_uk):
+def create_default_site_form(request, is_individual, in_uk):
     return Form(
         title=RegisterAnOrganisation.CREATE_DEFAULT_SITE,
         questions=[
@@ -166,8 +166,8 @@ def create_default_site_form(request, in_uk):
             Heading(RegisterAnOrganisation.WhereIsTheExporterBased.TITLE, HeadingStyle.M),
             *conditional(
                 in_uk,
-                address_questions(None, "site.address."),
-                foreign_address_questions(get_countries(request, True, ["GB"]), "site.address."),
+                address_questions(None, is_individual, "site.address."),
+                foreign_address_questions(is_individual, get_countries(request, True, ["GB"]), "site.address."),
             ),
         ],
         default_button_name=strings.CONTINUE,
@@ -177,7 +177,10 @@ def create_default_site_form(request, in_uk):
 def create_admin_user_form():
     return Form(
         title="Create an admin user for this organisation",
-        questions=[TextInput(title=RegisterAnOrganisation.EMAIL, name="user.email"),],
+        questions=[
+            TextInput(title=RegisterAnOrganisation.EMAIL, name="user.email"),
+            TextInput(title="Contact phone number", name="user.phone_number", optional=True),
+        ],
         default_button_name="Submit",
         helpers=[HelpSection("Help", RegisterAnOrganisation.DEFAULT_USER)],
     )

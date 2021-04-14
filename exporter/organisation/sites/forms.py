@@ -24,6 +24,7 @@ from exporter.organisation.sites.services import get_sites, filter_sites_in_the_
 
 
 def new_site_forms(request):
+    is_individual = request.POST.get("type") == "individual"
     in_uk = request.POST.get("location", "").lower() == "united_kingdom"
     sites = []
     if request.POST.get("address.postcode"):
@@ -68,7 +69,9 @@ def new_site_forms(request):
                         HeadingStyle.M,
                     ),
                     *conditional(
-                        in_uk, address_questions(None), foreign_address_questions(get_countries(request, True, ["GB"])),
+                        in_uk,
+                        address_questions(None, is_individual),
+                        foreign_address_questions(is_individual, get_countries(request, True, ["GB"])),
                     ),
                     HiddenField("validate_only", True),
                 ],
