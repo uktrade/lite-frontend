@@ -64,11 +64,11 @@ class CaseDetail(CaseView):
         current_advice_level = ["user"]
         blocking_flags = get_blocking_flags(self.request, self.case["id"])
 
-        if filter_advice_by_level(self.case["advice"], "team"):
+        if (
+            filter_advice_by_level(self.case["advice"], "team")
+            and Permission.MANAGE_TEAM_ADVICE.value in self.permissions
+        ):
             current_advice_level += ["team"]
-
-            if Permission.MANAGE_TEAM_ADVICE.value not in self.permissions:
-                current_advice_level = []
 
         if filter_advice_by_level(
             self.case["advice"], "final"
