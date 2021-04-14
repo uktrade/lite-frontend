@@ -663,3 +663,9 @@ def data_good_on_application(data_standard_case):
             },
         ],
     }
+
+
+@pytest.fixture
+def mock_get_countries(requests_mock):
+    url = client._build_absolute_uri("/static/countries/")
+    yield requests_mock.get(url=url, json={"countries": []})
