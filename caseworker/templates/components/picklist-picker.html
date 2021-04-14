@@ -42,8 +42,8 @@
 
 	</div>
 {% endif %}
-
-<script>
+{% block javascript %}
+<script nonce="{{ request.csp_nonce }}">
 	var removePicklistItemElements = document.getElementsByClassName('js-remove-picklist-item')
 	for (var i=0; i < removePicklistItemElements.length; i++) {
 		removePicklistItemElements.item(i).addEventListener('click', function(event) {
@@ -169,3 +169,4 @@
 		LITECommon.Modal.closeAllModals();
 	}
 </script>
+{% endblock %}

@@ -4,13 +4,12 @@
   "description": "Combined repo for LITE exporter and caseworker frontends",
   "private": true,
   "scripts": {
-    "build_exporter": "parcel build ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
-    "build_exporter_css": "parcel build exporter/assets/scss/styles.scss --out-dir exporter/assets/built --public-url /assets/",
-    "build_caseworker": "parcel build ./caseworker/assets/javascripts/main.js ./caseworker/assets/javascripts/search-cases.js ./caseworker/assets/javascripts/review-good.js ./caseworker/assets/javascripts/search-products.js --out-dir caseworker/assets/built --public-url /assets/",
-    "build_caseworker_css": "parcel build caseworker/assets/scss/styles.scss  --out-dir caseworker/assets/built --public-url /assets/",
-    "watch_exporter": "parcel watch ./exporter/assets/javascripts/main.js --out-dir exporter/assets/built --public-url /assets/",
-    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/main.js --out-dir caseworker/assets/built --public-url /assets/"
-    
+    "build_exporter": "parcel build ./exporter/assets/javascripts/{main,head}.js --out-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker": "parcel build ./caseworker/assets/javascripts/{main,head}.js ./caseworker/assets/javascripts/search-cases.js ./caseworker/assets/javascripts/review-good.js ./caseworker/assets/javascripts/search-products.js --out-dir caseworker/assets/built --public-url /assets/",
+    "watch_exporter": "parcel watch ./exporter/assets/javascripts/{main,head}.js --out-dir exporter/assets/built --public-url /assets/",
+    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head}.js --out-dir caseworker/assets/built --public-url /assets/",
+    "watch": "npm-run-all --parallel watch_exporter watch_caseworker",
+    "build": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker"
   },
   "engines": {
     "node": ">=12.16.1"
@@ -25,26 +24,28 @@
     "url": "https://github.com/uktrade/lite-frontend/issues"
   },
   "homepage": "https://github.com/uktrade/lite-frontend#readme",
+  "browserslist": "> 0.25%, not dead",
   "devDependencies": {
     "@popperjs/core": "^2.4.4",
+    "@tarekraafat/autocomplete.js": "^8.3.2",
     "accessible-autocomplete": "^2.0.3",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
+    "fetch-polyfill": "^0.8.2",
     "govuk-frontend": "^3.9.0",
     "highlight-within-textarea": "^2.0.5",
     "jquery": "^3.5.1",
     "lightpick": "^1.6.2",
     "mark.js": "^8.11.1",
-    "parcel-bundler": "^1.12.4",
+    "moment": "^2.29.1",
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.12.5",
     "sass": "^1.26.11",
     "sass-lint": "^1.13.1",
     "sortablejs": "^1.11.2-alpha.3",
     "tippy.js": "^6.2.6",
     "tokenfield": "^1.4.4",
     "tributejs": "^5.1.3",
-    "@tarekraafat/autocomplete.js": "^8.3.2",
-    "fetch-polyfill": "^0.8.2",
-    "moment": "^2.29.1",
     "url-search-params-polyfill": "^8.1.0"
   },
   "dependencies": {}

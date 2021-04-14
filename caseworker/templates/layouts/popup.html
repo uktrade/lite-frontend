@@ -7,7 +7,7 @@
 		<meta charset="utf-8" />
 		<title>Good</title>
 		<link href="{% static 'built/styles.css' %}" rel="stylesheet" type="text/css" />
-		<script src="{% static 'javascripts/jquery.min.js' %}"></script>
+		<script nonce="{{ request.csp_nonce }}" src="{% static 'main.js' %}"></script>
 	</head>
 	<body class="app-popup">
 		<main role="main">
@@ -15,7 +15,5 @@
 				{% block body %}{% endblock %}
 			</div>
 		</main>
-		<script src="{% static 'javascripts/jquery.min.js' %}"></script>
-		<script src="{% static 'javascripts/definitions.js' %}"></script>
 	</body>
 </html>
