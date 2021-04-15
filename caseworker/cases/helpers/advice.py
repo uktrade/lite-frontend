@@ -4,11 +4,8 @@ from collections import OrderedDict
 from typing import List, Dict
 
 from caseworker.cases.objects import Case
-from caseworker.cases.services import get_blocking_flags
 from caseworker.core.constants import APPLICATION_CASE_TYPES, Permission, CLEARANCE_CASE_TYPES, AdviceType
 from core.builtins.custom_tags import filter_advice_by_level, filter_advice_by_id, filter_advice_by_user
-from caseworker.core.services import get_status_properties
-from caseworker.teams.services import get_teams
 
 SINGULAR_ENTITIES = ["end_user", "consignee"]
 PLURAL_ENTITIES = ["ultimate_end_user", "third_party", "country", "good", "goods_type"]
@@ -53,34 +50,6 @@ def get_param_goods(request, case: Case):
                 return_values.append(good)
 
     return return_values
-
-
-def get_advice_additional_context(request, case, permissions):
-    status_props, _ = get_status_properties(request, case.data["status"]["key"])
-    current_advice_level = "user"
-    blocking_flags = get_blocking_flags(request, case["id"])
-
-    if filter_advice_by_level(case["advice"], "team"):
-        current_advice_level = "team"
-
-        if Permission.MANAGE_TEAM_ADVICE.value not in permissions:
-            current_advice_level = None
-
-    if filter_advice_by_level(case["advice"], "final") and _check_user_permitted_to_give_final_advice(
-        case.data["case_type"]["sub_type"]["key"], permissions
-    ):
-        current_advice_level = "final"
-
-    if not _can_user_create_and_edit_advice(case, permissions) or status_props["is_terminal"]:
-        current_advice_level = None
-
-    return {
-        "is_user_team": True,
-        "teams": get_teams(request),
-        "current_advice_level": current_advice_level,
-        "can_finalise": current_advice_level == "final" and can_advice_be_finalised(case) and not blocking_flags,
-        "blocking_flags": blocking_flags,
-    }
 
 
 def same_value(dicts, key):
@@ -159,7 +128,7 @@ def flatten_advice_data(request, case: Case, items: List[Dict], level):
     return filtered_advice[0]
 
 
-def _check_user_permitted_to_give_final_advice(case_type, permissions):
+def check_user_permitted_to_give_final_advice(case_type, permissions):
     """ Check if the user is permitted to give final advice on the case based on their
     permissions and the case type. """
     if case_type in APPLICATION_CASE_TYPES and Permission.MANAGE_LICENCE_FINAL_ADVICE.value in permissions:
@@ -179,7 +148,7 @@ def can_advice_be_finalised(case):
     return True
 
 
-def _can_user_create_and_edit_advice(case, permissions):
+def can_user_create_and_edit_advice(case, permissions):
     """Check that the user can create and edit advice. """
     return Permission.MANAGE_TEAM_CONFIRM_OWN_ADVICE.value in permissions or (
         Permission.MANAGE_TEAM_ADVICE.value in permissions and not case.get("has_advice").get("my_user")

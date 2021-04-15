@@ -63,7 +63,7 @@
 </div>
 
 <script src="{% static 'javascripts/modal.js' %}"></script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 	$("#tab-contents > div").hide();
 	$("#tab-contents > div:first-of-type").show();
 

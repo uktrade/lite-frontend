@@ -52,6 +52,7 @@ def apply_for_standard_application(api_test_client, context):
             "sub_type": "government",
             "website": fake.uri(),
             "type": "end_user",
+            "signatory_name_euu": fake.name(),
         },
         ultimate_end_user={
             "name": fake.name(),

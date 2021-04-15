@@ -2,7 +2,7 @@
 	{% include 'components/node.html' with data=data|key_value:component.name tree_data=component.data component=component %}
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
 	function updateCheckboxes($checkbox) {
 		$checkbox.parents(".lite-tree-view__root").each(function() {
 			var $summary = $(this).find("> .lite-tree-view__summary .govuk-checkboxes__input");
@@ -41,4 +41,3 @@
 
 	updateCheckboxes($(".lite-tree-view__root:first-of-type .lite-tree-view__summary:first-of-type .govuk-checkboxes__input:first-of-type"));
 </script>
-

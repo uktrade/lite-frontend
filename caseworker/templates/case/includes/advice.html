@@ -1,23 +1,32 @@
 {% if not request.GET|get:'grouped-advice-view' == 'True' %}
 	<div>
-		{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level hide_status=True %}
-		{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=current_advice_level|not_equals:level hide_status=True %}
+		{% if level in current_advice_level %}
+			{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=False hide_status=True %}
+			{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=False hide_status=True %}
+		{% else %}
+			{% include 'case/slices/goods.html' with hide_controls=True show_advice=True level=level hide_checkboxes=True hide_status=True %}
+			{% include 'case/slices/destinations.html' with hide_controls=True show_advice=True level=level hide_checkboxes=True hide_status=True %}
+		{% endif %}
 	</div>
 {% else %}
 	<div>
 		{% for advice in case.advice|filter_advice_by_level:level|distinct_advice:case|values %}
 			<div class="app-grouped-advice app-grouped-advice--{{ advice.type.key }}">
 				<h2 class="app-grouped-advice__heading">
-					{% if not current_advice_level|not_equals:level %}
-						<button id="button-select-all-{{ advice.id }}" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
-					{% endif %}
-					<label for="button-select-all-{{ advice.id }}">
-						{% if advice.type.key == 'proviso' %}
-							Approve with proviso
-						{% else %}
-							{{ advice.type.value }}
+					{% if level in current_advice_level %}
+						{% if advice.id == 'no_advice' or advice.user.id == current_user.id or advice.team.id == current_user.team.id %}
+							<button id="button-select-all-{{ advice.id }}" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+							<label for="button-select-all-{{ advice.id }}">
+								{% if advice.type.key == 'proviso' %}
+									Approve with proviso
+								{% else %}
+									{{ advice.type.value }}
+								{% endif %}
+							</label>
 						{% endif %}
-					</label>
+					{% else %}
+						{{ advice.type.value }}
+					{% endif %}
 				</h2>
 
 				<div class="app-grouped-advice__content">
@@ -25,12 +34,12 @@
 						<div class="app-grouped-advice__summary-list">
 							{% if advice.type.key == 'proviso' %}
 								<div class="app-grouped-advice__summary-list-item">
-									<p>{% lcs 'advice.AdvicePage.PROVISO' %}</p>
+									<p>Proviso</p>
 									<p data-max-length="300">{{ advice.proviso|linebreaksbr }}</p>
 								</div>
 							{% elif advice.type.key == 'refuse' %}
 								<div class="app-grouped-advice__summary-list-item">
-									<p>{% lcs 'advice.AdvicePage.DENIAL_REASONS' %}</p>
+									<p>Denial reasons</p>
 									<ol class="app-grouped-advice__summary-list-items">
 										{% for denial_reason in advice.denial_reasons %}
 											<li>{{ denial_reason }}{% if not forloop.last %}, {% endif %}</li>
@@ -39,12 +48,12 @@
 								</div>
 							{% endif %}
 							<div class="app-grouped-advice__summary-list-item">
-								<p>{% lcs 'advice.AdvicePage.TEXT' %}</p>
+								<p>Reason</p>
 								<p data-max-length="400">{{ advice.text|linebreaksbr }}</p>
 							</div>
 							{% if advice.note %}
 								<div class="app-grouped-advice__summary-list-item">
-									<p>{% lcs 'advice.AdvicePage.NOTE' %}</p>
+									<p>Note</p>
 									<p data-max-length="400">{{ advice.note|linebreaksbr }}</p>
 								</div>
 							{% endif %}
@@ -53,13 +62,13 @@
 
 					{% if advice.goods|length %}
 						<div>
-							{% include 'case/slices/goods.html' with goods=advice.goods hide_controls=True hide_status=True %}
+							{% include 'case/slices/goods.html' with goods=advice.goods show_controls=False hide_status=True %}
 						</div>
 					{% endif %}
 
 					{% if advice.destinations|length %}
 						<div>
-							{% include 'case/slices/destinations.html' with destinations=advice.destinations hide_controls=True hide_status=True %}
+							{% include 'case/slices/destinations.html' with destinations=advice.destinations show_controls=False hide_status=True %}
 						</div>
 					{% endif %}
 				</div>

@@ -31,6 +31,7 @@ TEMPLATES = [
                 "caseworker.core.context_processors.current_queue",
                 "caseworker.core.context_processors.export_vars",
                 "caseworker.core.context_processors.lite_menu",
+                "caseworker.core.context_processors.current_user",
             ],
             "builtins": ["core.builtins.custom_tags"],
         },

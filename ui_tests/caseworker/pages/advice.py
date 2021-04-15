@@ -27,8 +27,7 @@ class BaseAdvicePage(BasePage):
 
     def is_advice_button_enabled(self):
         try:
-            self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID).click()
-            return True
+            return self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID).is_enabled()
         except WebDriverException:
             return False
 

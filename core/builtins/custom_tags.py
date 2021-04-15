@@ -527,6 +527,16 @@ def filter_advice_by_level(advice, level):
 
 
 @register.filter()
+def filter_advice_by_user_id(advice, user_id):
+    return [advice for advice in advice if advice["user"]["id"] == user_id]
+
+
+@register.filter()
+def filter_advice_by_team_id(advice, team_id):
+    return [advice for advice in advice if advice["user"]["team"]["id"] == team_id]
+
+
+@register.filter()
 def sentence_case(text):
     return capfirst(text).replace("_", " ")
 

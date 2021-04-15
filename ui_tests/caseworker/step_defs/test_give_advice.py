@@ -94,10 +94,14 @@ def check_advice_checkboxes_are_not_present(driver):
 
 @then("the give or change advice button is not present")
 def check_give_advice_button_is_not_present(driver):
+
+    user_advice_page = UserAdvicePage(driver)
+    team_advice_page = TeamAdvicePage(driver)
+    final_advice_page = FinalAdvicePage(driver)
     driver.implicitly_wait(0)
-    assert not UserAdvicePage(driver).is_advice_button_enabled()
-    assert not TeamAdvicePage(driver).is_advice_button_enabled()
-    assert not FinalAdvicePage(driver).is_advice_button_enabled()
+    assert not user_advice_page.is_advice_button_enabled()
+    assert not team_advice_page.is_advice_button_enabled()
+    assert not final_advice_page.is_advice_button_enabled()
     driver.implicitly_wait(60)
 
 

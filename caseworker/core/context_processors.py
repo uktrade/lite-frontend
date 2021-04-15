@@ -12,6 +12,7 @@ from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.helpers import conditional
 from caseworker.queues.services import get_queue
+from caseworker.users.services import get_gov_user
 
 
 def current_queue(request):
@@ -22,6 +23,14 @@ def current_queue(request):
         return {"queue": queue}
 
     return {}
+
+
+def current_user(request):
+    current_user = None
+    if "lite_api_user_id" in request.session:
+        user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
+        current_user = user.get("user", None)
+    return {"current_user": current_user}
 
 
 def export_vars(request):
