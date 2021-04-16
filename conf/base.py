@@ -64,6 +64,9 @@ MIDDLEWARE = [
     "core.middleware.ValidateReturnToMiddleware",
 ]
 
+if not DEBUG:
+    MIDDLEWARE += ["core.middleware.AuthBrokerTokenIntrospectionMiddleware"]
+
 FEATURE_CSP_MIDDLEWARE_ENABLED = env.bool("FEATURE_CSP_MIDDLEWARE_ENABLED", True)
 
 if FEATURE_CSP_MIDDLEWARE_ENABLED:
@@ -255,3 +258,5 @@ if FEATURE_DEBUG_TOOLBAR_ON:
 
     index = MIDDLEWARE.index("django.middleware.gzip.GZipMiddleware")
     MIDDLEWARE.insert(index + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")
+
+AUTHBROKER_TOKEN_INTROSPECTION_TTL = env.int("AUTHBROKER_TOKEN_INTROSPECTION_TTL", default=60 * 5)
