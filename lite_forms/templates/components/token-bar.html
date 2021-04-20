@@ -16,6 +16,7 @@
 			addItemOnBlur: true,
 			filterSetItems: false,
 			addItemsOnPaste: true,
+			keepItemsOrder: false,
 			minChars: 1,
 			itemName: '{{ component.name }}',
 			setItems: [{% for option in value|unique_list %}{id: '{{ option.key|default:option }}', name: '{{ option.value|default:option }}', classes: [{% for class in option.classes %}'{{ class }}', {% endfor %}]},, {% endfor %}]

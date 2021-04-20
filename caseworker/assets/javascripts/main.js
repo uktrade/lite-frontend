@@ -16,6 +16,7 @@ import './snackbar-hide.js';
 import initMenuTooltips from './menu-tooltips.js'
 import initQueuesMenu from './queues-menu.js';
 import initFlagListExpanders from './flag-expanders.js';
+import initReviewGood from './review-good.js';
 
 // vendor styles
 import 'tippy.js/dist/tippy.css';
@@ -31,4 +32,5 @@ $(document).ready(function() {
 	initMenuTooltips();
 	initQueuesMenu();
 	initFlagListExpanders();
+	initReviewGood();
 });
