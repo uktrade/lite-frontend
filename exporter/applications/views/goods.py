@@ -556,7 +556,7 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         back_url = reverse("applications:preexisting_good", kwargs={"pk": self.good_pk})
 
         number_of_items = copied_request.get("number_of_items")
-        if "firearm_details" in self.good:
+        if self.good.get("firearm_details"):
             self.good["firearm_details"]["number_of_items"] = number_of_items
 
         is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
