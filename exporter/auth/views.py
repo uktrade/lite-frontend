@@ -24,6 +24,7 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
         self.request.session["last_name"] = data["last_name"]
         self.request.session["user_token"] = data["token"]
         self.request.session["lite_api_user_id"] = data["lite_api_user_id"]
+        self.request.session["email"] = self.user_profile["email"]
         return redirect(self.get_success_url())
 
     def get_success_url(self):
