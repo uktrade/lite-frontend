@@ -203,7 +203,7 @@ def test_good_on_application_form_group_good_without_number_of_items(default_req
         is_rfd=False,
     )
 
-    assert len(form_group.forms) == 7
+    assert len(form_group.forms) == 6
 
 
 def test_good_on_application_form_group_user_is_rfd(default_request, good_ammo):
@@ -226,4 +226,4 @@ def test_good_on_application_form_group_user_is_rfd(default_request, good_ammo):
         is_rfd=True,
     )
 
-    assert len(form_group.forms) == 8
+    assert len(form_group.forms) == 7
