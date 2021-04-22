@@ -950,6 +950,7 @@ def authorized_client_factory(client: Client, settings):
         session["last_name"] = user["last_name"]
         session["default_queue"] = user["default_queue"]["id"]
         session["lite_api_user_id"] = user["id"]
+        session["email"] = user["email"]
         session[settings.TOKEN_SESSION_KEY] = {
             "access_token": "mock_access_token",
             "expires_in": 36000,
