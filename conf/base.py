@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     "health_check.cache",
     "health_check.storage",
     "core.api",
+    "crispy_forms",
+    "crispy_forms_gds",
+    "core.feedback",
 ]
 
 MIDDLEWARE = [
@@ -260,3 +263,8 @@ if FEATURE_DEBUG_TOOLBAR_ON:
     MIDDLEWARE.insert(index + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 AUTHBROKER_TOKEN_INTROSPECTION_TTL = env.int("AUTHBROKER_TOKEN_INTROSPECTION_TTL", default=60 * 5)
+
+# Gov.uk Notify
+NOTIFY_KEY = env.str("NOTIFY_KEY", default="notify-test")
+NOTIFY_FEEDBACK_TEMPLATE_ID = env.str("NOTIFY_FEEDBACK_TEMPLATE_ID")
+NOTIFY_FEEDBACK_EMAIL = env.str("NOTIFY_FEEDBACK_EMAIL")
