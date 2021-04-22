@@ -1,0 +1,21 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+{% load static from staticfiles %}
+{% block title %}Feedback{% endblock %}
+{% block back_link %}{% endblock %}
+{% block body %}
+<div>
+    <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+        <h1 class="govuk-heading-l">Leave feedback</h1>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+            <form method="post" enctype="multipart/form-data" novalidate="novalidate">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="govuk-button">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

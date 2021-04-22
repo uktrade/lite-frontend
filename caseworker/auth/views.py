@@ -18,6 +18,7 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
         self.request.session["default_queue"] = data["default_queue"]
         self.request.session["user_token"] = data["token"]
         self.request.session["lite_api_user_id"] = data["lite_api_user_id"]
+        self.request.session["email"] = self.user_profile["email"]
         self.request.session.save()
         return redirect(settings.LOGIN_REDIRECT_URL)
 

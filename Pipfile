@@ -57,6 +57,7 @@ crispy-forms-gds = "~=0.2"
 django-health-check = "~=3.14.3"
 django-allow-cidr = "~=0.3"
 django-redis = "~=4.12"
+notifications-python-client = "~=6.0"
 
 [requires]
 python_version = "3.7"
