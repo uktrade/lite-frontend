@@ -59,7 +59,7 @@ def good_on_application_form_group(
     is_firearm = None
 
     is_category_firearms = (
-        request.POST.get("item_category", good.get("item_category", {}).get("key")) == PRODUCT_CATEGORY_FIREARM
+        request.POST.get("item_category", good.get("item_category", {}).get("key")) == constants.PRODUCT_CATEGORY_FIREARM
     )
 
     if good.get("firearm_details"):
