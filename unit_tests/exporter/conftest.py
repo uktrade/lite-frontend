@@ -40,6 +40,7 @@ def authorized_client_factory(client: Client, settings):
         session["last_name"] = user["last_name"]
         session["user_token"] = user["token"]
         session["lite_api_user_id"] = user["lite_api_user_id"]
+        session["email"] = user["email"]
         session["organisation"] = "1"
         session[settings.TOKEN_SESSION_KEY] = {
             "access_token": "mock_access_token",
