@@ -344,9 +344,9 @@ def add_good_form_group(
     is_pv_graded: bool = None,
     is_software_technology: bool = None,
     is_firearm: bool = None,
-    is_firearms_core: bool = None,
+    is_firearm_ammunition_or_component: bool = None,
     is_firearms_accessory: bool = None,
-    is_firearms_software_tech: bool = None,
+    is_firearms_software_or_tech: bool = None,
     show_serial_numbers_form: bool = False,
     draft_pk: str = None,
     base_form_back_link: str = None,
@@ -362,9 +362,9 @@ def add_good_form_group(
     # when adding to product list then always show RFD question if not yet have a valid RFD certificate
     # when adding to application then show RFD question if has expired RFD and not show if they do not have one yet
     if is_preexisting:
-        show_rfd_question = is_firearms_core and has_expired_rfd_certificate(application)
+        show_rfd_question = is_firearm_ammunition_or_component and has_expired_rfd_certificate(application)
     else:
-        show_rfd_question = is_firearms_core and not has_valid_rfd_certificate(application)
+        show_rfd_question = is_firearm_ammunition_or_component and not has_valid_rfd_certificate(application)
 
     return FormGroup(
         [
@@ -373,11 +373,13 @@ def add_good_form_group(
                 is_category_firearms or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
                 group_two_product_type_form(back_link=base_form_back_link),
             ),
-            conditional(is_firearms_core, firearms_sporting_shotgun_form(request.POST.get("type"))),
-            conditional(is_firearms_core and draft_pk, firearms_number_of_items(request.POST.get("type"))),
-            conditional(is_firearms_core and draft_pk, identification_markings_form()),
+            conditional(is_firearm_ammunition_or_component, firearms_sporting_shotgun_form(request.POST.get("type"))),
             conditional(
-                is_firearms_core and draft_pk and show_serial_numbers_form,
+                is_firearm_ammunition_or_component and draft_pk, firearms_number_of_items(request.POST.get("type"))
+            ),
+            conditional(is_firearm_ammunition_or_component and draft_pk, identification_markings_form()),
+            conditional(
+                is_firearm_ammunition_or_component and draft_pk and show_serial_numbers_form,
                 firearms_capture_serial_numbers(request.POST.get("number_of_items", 0)),
             ),
             conditional(not is_category_firearms, product_military_use_form(request)),
@@ -387,14 +389,18 @@ def add_good_form_group(
             # only ask if adding to a draft application
             conditional(is_firearm and bool(draft_pk), firearm_year_of_manufacture_details_form()),
             conditional(is_firearm, firearm_replica_form(request.POST.get("type"))),
-            conditional(is_firearms_core, firearm_calibre_details_form()),
+            conditional(is_firearm_ammunition_or_component, firearm_calibre_details_form()),
             conditional(show_rfd_question, is_registered_firearm_dealer_field(base_form_back_link)),
             conditional(show_attach_rfd, attach_firearm_dealer_certificate_form(base_form_back_link)),
-            conditional(is_firearms_core and bool(draft_pk), firearms_act_confirmation_form(is_rfd)),
-            conditional(is_firearms_software_tech, software_technology_details_form(request, request.POST.get("type"))),
-            conditional(is_firearms_accessory or is_firearms_software_tech, product_military_use_form(request)),
+            conditional(is_firearm_ammunition_or_component and bool(draft_pk), firearms_act_confirmation_form(is_rfd)),
+            conditional(
+                is_firearms_software_or_tech, software_technology_details_form(request, request.POST.get("type"))
+            ),
+            conditional(is_firearms_accessory or is_firearms_software_or_tech, product_military_use_form(request)),
             conditional(is_firearms_accessory, product_component_form(request)),
-            conditional(is_firearms_accessory or is_firearms_software_tech, product_uses_information_security(request)),
+            conditional(
+                is_firearms_accessory or is_firearms_software_or_tech, product_uses_information_security(request)
+            ),
         ]
     )
 

@@ -7,6 +7,7 @@ from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
 from exporter.core import decorators
+from exporter.core import constants
 from core.builtins.custom_tags import default_na
 from exporter.organisation.roles.services import get_user_permissions
 
@@ -133,3 +134,11 @@ def convert_control_list_entries(control_list_entries):
             )
         )
     )
+
+
+def get_firearms_subcategory(type):
+    is_firearm = type == constants.FIREARMS
+    is_firearm_ammunition_or_component = type in constants.FIREARM_AMMUNITION_COMPONENT_TYPES
+    is_firearms_accessory = type == constants.FIREARMS_ACCESSORY
+    is_firearms_software_or_tech = type in constants.FIREARMS_SOFTWARE_TECH
+    return is_firearm, is_firearm_ammunition_or_component, is_firearms_accessory, is_firearms_software_or_tech

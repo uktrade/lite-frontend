@@ -102,7 +102,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
     "params, num_forms, question_checks",
     [
         (
-            {"is_firearms_core": True},
+            {"is_firearm_ammunition_or_component": True},
             5,
             [
                 {"qindex": 1, "name": "type"},
@@ -113,7 +113,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
             ],
         ),
         (
-            {"is_firearms_core": True, "draft_pk": "123", "is_firearm": True},
+            {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": True},
             10,
             [
                 {"qindex": 1, "name": "type"},
@@ -140,7 +140,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
             ],
         ),
         (
-            {"is_firearms_software_tech": True},
+            {"is_firearms_software_or_tech": True},
             5,
             [
                 {"qindex": 1, "name": "type"},
