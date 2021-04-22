@@ -58,10 +58,6 @@ def good_on_application_form_group(
     number_of_items = None
     is_firearm = None
 
-    is_category_firearms = (
-        request.POST.get("item_category", good.get("item_category", {}).get("key")) == constants.PRODUCT_CATEGORY_FIREARM
-    )
-
     if good.get("firearm_details"):
         firearm_type = good["firearm_details"]["type"]["key"]
         if "number_of_items" in good["firearm_details"]:
@@ -78,7 +74,7 @@ def good_on_application_form_group(
                 is_preexisting and is_firearm_ammunition_or_component and show_serial_numbers_form,
                 firearms_capture_serial_numbers(number_of_items),
             ),
-            conditional(is_preexisting and is_category_firearms, firearm_year_of_manufacture_details_form()),
+            conditional(is_preexisting and is_firearm, firearm_year_of_manufacture_details_form()),
             unit_quantity_value(
                 request=request, good=good, sub_case_type=sub_case_type, application_id=draft_pk, back_url=back_url
             ),
