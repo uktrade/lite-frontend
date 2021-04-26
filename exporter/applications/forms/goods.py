@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.core.constants import EXHIBITION, PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
+from exporter.core import constants
 from exporter.core.services import get_units, get_item_types
 from exporter.goods.helpers import good_summary
 from exporter.goods.forms import (
@@ -44,6 +44,10 @@ def good_on_application_form_group(
     application,
     show_attach_rfd,
     relevant_firearm_act_section,
+    is_firearm,
+    is_firearm_ammunition_or_component,
+    is_firearms_accessory,
+    is_firearms_software_or_tech,
     back_url,
     show_serial_numbers_form,
     is_rfd,
@@ -52,28 +56,25 @@ def good_on_application_form_group(
     # but not if the good being added to the application is a new good created as part of this same flow
     firearm_type = None
     number_of_items = None
+    is_firearm = None
 
-    is_category_firearms = (
-        request.POST.get("item_category", good.get("item_category", {}).get("key")) == PRODUCT_CATEGORY_FIREARM
-    )
     if good.get("firearm_details"):
         firearm_type = good["firearm_details"]["type"]["key"]
         if "number_of_items" in good["firearm_details"]:
             number_of_items = good["firearm_details"]["number_of_items"]
 
-    is_firearm_core = firearm_type and firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES
-    show_rfd_question = is_firearm_core and not has_valid_rfd_certificate(application)
+    show_rfd_question = is_firearm_ammunition_or_component and not has_valid_rfd_certificate(application)
 
-    show_firearm_act_confirmation = is_preexisting and is_firearm_core
+    show_firearm_act_confirmation = is_preexisting and is_firearm_ammunition_or_component
     return components.FormGroup(
         [
-            conditional(is_preexisting and is_firearm_core, firearms_number_of_items(firearm_type)),
-            conditional(is_preexisting and is_firearm_core, identification_markings_form(draft_pk)),
+            conditional(is_preexisting and is_firearm_ammunition_or_component, firearms_number_of_items(firearm_type)),
+            conditional(is_preexisting and is_firearm_ammunition_or_component, identification_markings_form(draft_pk)),
             conditional(
-                is_preexisting and is_firearm_core and show_serial_numbers_form,
+                is_preexisting and is_firearm_ammunition_or_component and show_serial_numbers_form,
                 firearms_capture_serial_numbers(number_of_items),
             ),
-            conditional(is_preexisting and is_category_firearms, firearm_year_of_manufacture_details_form()),
+            conditional(is_preexisting and is_firearm, firearm_year_of_manufacture_details_form()),
             unit_quantity_value(
                 request=request, good=good, sub_case_type=sub_case_type, application_id=draft_pk, back_url=back_url
             ),
@@ -85,7 +86,7 @@ def good_on_application_form_group(
 
 
 def unit_quantity_value(request, good, sub_case_type, application_id, back_url):
-    if sub_case_type["key"] == EXHIBITION:
+    if sub_case_type["key"] == constants.EXHIBITION:
         return exhibition_item_type(request, good.get("id"), application_id)
     else:
         initial_questions = [
@@ -120,12 +121,12 @@ def unit_quantity_value(request, good, sub_case_type, application_id, back_url):
         ]
 
         questions = []
-        if good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
+        if good["item_category"]["key"] == constants.PRODUCT_CATEGORY_FIREARM:
             firearm_type = good["firearm_details"]["type"]["key"]
 
             # for these types we capture quantity as number of items and
             # units default to number of articles
-            if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:
+            if firearm_type in constants.FIREARM_AMMUNITION_COMPONENT_TYPES:
                 for question in initial_questions:
                     if hasattr(question, "name") and question.name in ["quantity", "unit"]:
                         continue

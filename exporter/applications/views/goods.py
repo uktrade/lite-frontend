@@ -23,7 +23,8 @@ from exporter.applications.services import (
     get_application_document,
     download_document_from_s3,
 )
-from exporter.core.constants import EXHIBITION, APPLICANT_EDITING, FIREARM_AMMUNITION_COMPONENT_TYPES
+from exporter.core import constants
+from exporter.core.helpers import get_firearms_subcategory
 from core.helpers import convert_dict_to_query_params
 from exporter.core.helpers import str_to_bool
 from exporter.goods.forms import (
@@ -88,7 +89,7 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
         application = get_application(self.request, kwargs["pk"])
         goods = get_application_goods(self.request, kwargs["pk"])
         includes_firearms = any(["firearm_details" in good.keys() for good in goods])
-        is_exhibition = application["case_type"]["sub_type"]["key"] == EXHIBITION
+        is_exhibition = application["case_type"]["sub_type"]["key"] == constants.EXHIBITION
         return super().get_context_data(
             goods=goods,
             application=application,
@@ -217,13 +218,13 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "") == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        is_firearm = copied_request.get("type") == "firearms"
-        is_firearms_core = copied_request.get("type") in FIREARM_AMMUNITION_COMPONENT_TYPES
-        is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
-        is_firearms_software_tech = copied_request.get("type") in [
-            "software_related_to_firearms",
-            "technology_related_to_firearms",
-        ]
+
+        (
+            is_firearm,
+            is_firearm_ammunition_or_component,
+            is_firearms_accessory,
+            is_firearms_software_or_tech,
+        ) = get_firearms_subcategory(copied_request.get("type"))
 
         is_rfd = copied_request.get("is_registered_firearm_dealer") == "True" or has_valid_rfd_certificate(
             self.application
@@ -251,9 +252,9 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             is_pv_graded=is_pv_graded,
             is_software_technology=is_software_technology,
             is_firearm=is_firearm,
-            is_firearms_core=is_firearms_core,
+            is_firearm_ammunition_or_component=is_firearm_ammunition_or_component,
             is_firearms_accessory=is_firearms_accessory,
-            is_firearms_software_tech=is_firearms_software_tech,
+            is_firearms_software_or_tech=is_firearms_software_or_tech,
             draft_pk=self.draft_pk,
             base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
             application=self.application,
@@ -521,6 +522,12 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
         show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
         is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
+        (
+            is_firearm,
+            is_firearm_ammunition_or_component,
+            is_firearms_accessory,
+            is_firearms_software_or_tech,
+        ) = get_firearms_subcategory(self.good.get("type"))
 
         self.forms = good_on_application_form_group(
             request=request,
@@ -531,7 +538,11 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
             application=self.application,
             show_attach_rfd=show_attach_rfd,
             relevant_firearm_act_section=request.POST.get("firearm_act_product_is_coverd_by"),
-            back_url=reverse("applications:preexisting_good", kwargs={"pk": self.good_pk}),
+            is_firearm=is_firearm,
+            is_firearm_ammunition_or_component=is_firearm_ammunition_or_component,
+            is_firearms_accessory=is_firearms_accessory,
+            is_firearms_software_or_tech=is_firearms_software_or_tech,
+            back_url=reverse("applications:preexisting_good", kwargs={"pk": self.object_pk}),
             show_serial_numbers_form=True,
             is_rfd=is_rfd,
         )
@@ -556,7 +567,7 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         back_url = reverse("applications:preexisting_good", kwargs={"pk": self.good_pk})
 
         number_of_items = copied_request.get("number_of_items")
-        if "firearm_details" in self.good:
+        if self.good.get("firearm_details"):
             self.good["firearm_details"]["number_of_items"] = number_of_items
 
         is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
@@ -574,6 +585,13 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         if copied_request.get("has_identification_markings") == "False":
             show_serial_numbers_form = False
 
+        (
+            is_firearm,
+            is_firearm_ammunition_or_component,
+            is_firearms_accessory,
+            is_firearms_software_or_tech,
+        ) = get_firearms_subcategory(copied_request.get("type"))
+
         self.forms = good_on_application_form_group(
             request,
             is_preexisting,
@@ -583,9 +601,13 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
             self.application,
             show_attach_rfd,
             relevant_firearm_act_section,
-            back_url,
-            show_serial_numbers_form,
-            is_rfd,
+            is_firearm=is_firearm,
+            is_firearm_ammunition_or_component=is_firearm_ammunition_or_component,
+            is_firearms_accessory=is_firearms_accessory,
+            is_firearms_software_or_tech=is_firearms_software_or_tech,
+            back_url=back_url,
+            show_serial_numbers_form=show_serial_numbers_form,
+            is_rfd=is_rfd,
         )
 
         # we require the form index of the last form in the group, not the total number
@@ -660,7 +682,7 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
         context = {
             "application_id": application_id,
             "goods": application["goods"],
-            "application_status_draft": application["status"]["key"] in ["draft", APPLICANT_EDITING],
+            "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
         }
         return render(request, "applications/goods/goods-detail-summary.html", context)

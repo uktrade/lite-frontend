@@ -107,9 +107,24 @@ class LocationType:
 
 
 PRODUCT_CATEGORY_FIREARM = "group2_firearms"
+FIREARMS = "firearms"
+FIREARMS_ACCESSORY = "firearms_accessory"
 FIREARM_AMMUNITION_COMPONENT_TYPES = [
     "firearms",
     "ammunition",
     "components_for_firearms",
     "components_for_ammunition",
+]
+FIREARMS_SOFTWARE_TECH = [
+    "software_related_to_firearms",
+    "technology_related_to_firearms",
+]
+FIREARMS_ALL_TYPES = [
+    "firearms",
+    "ammunition",
+    "components_for_firearms",
+    "components_for_ammunition",
+    "firearms_accessory",
+    "software_related_to_firearms",
+    "technology_related_to_firearms",
 ]

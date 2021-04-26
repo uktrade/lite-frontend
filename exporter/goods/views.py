@@ -9,6 +9,7 @@ from django.views.generic import TemplateView
 
 from exporter.applications.helpers.date_fields import format_date
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
+from exporter.core.helpers import get_firearms_subcategory
 from exporter.applications.services import (
     get_application_ecju_queries,
     get_case_notes,
@@ -197,21 +198,20 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         copied_request = request.POST.copy()
         is_pv_graded = copied_request.get("is_pv_graded", "").lower() == "yes"
         is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-        is_firearm = copied_request.get("type") == "firearms"
-        is_firearms_core = copied_request.get("type") in FIREARM_AMMUNITION_COMPONENT_TYPES
-        is_firearms_accessory = copied_request.get("type") == "firearms_accessory"
-        is_firearms_software_tech = copied_request.get("type") in [
-            "software_related_to_firearms",
-            "technology_related_to_firearms",
-        ]
+        (
+            is_firearm,
+            is_firearm_ammunition_or_component,
+            is_firearms_accessory,
+            is_firearms_software_or_tech,
+        ) = get_firearms_subcategory(copied_request.get("type"))
         self.forms = add_good_form_group(
             request,
             is_pv_graded,
             is_software_technology,
             is_firearm,
-            is_firearms_core,
+            is_firearm_ammunition_or_component,
             is_firearms_accessory,
-            is_firearms_software_tech,
+            is_firearms_software_or_tech,
             base_form_back_link=reverse("goods:goods"),
         )
 

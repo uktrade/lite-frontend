@@ -102,7 +102,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
     "params, num_forms, question_checks",
     [
         (
-            {"is_firearms_core": True},
+            {"is_firearm_ammunition_or_component": True},
             5,
             [
                 {"qindex": 1, "name": "type"},
@@ -113,7 +113,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
             ],
         ),
         (
-            {"is_firearms_core": True, "draft_pk": "123", "is_firearm": True},
+            {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": True},
             10,
             [
                 {"qindex": 1, "name": "type"},
@@ -124,6 +124,20 @@ def pv_gradings(mock_pv_gradings, rf, client):
                 {"qindex": 1, "name": "year_of_manufacture"},
                 {"qindex": 2, "name": "is_replica"},
                 {"qindex": 0, "name": "firearm_calibre_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
+                {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
+            ],
+        ),
+        (
+            {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": False},
+            8,
+            [
+                {"qindex": 1, "name": "type"},
+                {"qindex": 2, "name": "is_sporting_shotgun"},
+                {"qindex": 2, "name": "number_of_items"},
+                {"qindex": 1, "name": "has_identification_markings"},
+                {"qindex": 0, "name": "name"},
+                {"qindex": 1, "name": "calibre"},
                 {"qindex": 0, "name": "is_registered_firearm_dealer"},
                 {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
@@ -140,7 +154,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
             ],
         ),
         (
-            {"is_firearms_software_tech": True},
+            {"is_firearms_software_or_tech": True},
             5,
             [
                 {"qindex": 1, "name": "type"},

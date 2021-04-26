@@ -194,12 +194,16 @@ def test_good_on_application_form_group_good_without_number_of_items(default_req
         application=application,
         show_attach_rfd=False,
         relevant_firearm_act_section=None,
+        is_firearm=False,
+        is_firearm_ammunition_or_component=True,
+        is_firearms_accessory=False,
+        is_firearms_software_or_tech=False,
         back_url="",
         show_serial_numbers_form=True,
         is_rfd=False,
     )
 
-    assert len(form_group.forms) == 7
+    assert len(form_group.forms) == 6
 
 
 def test_good_on_application_form_group_user_is_rfd(default_request, good_ammo):
@@ -213,9 +217,13 @@ def test_good_on_application_form_group_user_is_rfd(default_request, good_ammo):
         application=application,
         show_attach_rfd=True,
         relevant_firearm_act_section=None,
+        is_firearm=False,
+        is_firearm_ammunition_or_component=True,
+        is_firearms_accessory=False,
+        is_firearms_software_or_tech=False,
         back_url="",
         show_serial_numbers_form=True,
         is_rfd=True,
     )
 
-    assert len(form_group.forms) == 8
+    assert len(form_group.forms) == 7
