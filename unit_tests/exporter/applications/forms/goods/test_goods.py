@@ -136,7 +136,7 @@ def test_good_on_application_form_ammunition(default_request, good_ammo, mock_un
     )
 
     assert len(form.questions) == 6
-    question_titles = [getattr(q, 'title', None) for q in form.questions]
+    question_titles = [getattr(q, "title", None) for q in form.questions]
     assert goods.firearm_proof_mark_field().title in question_titles
     assert goods.firearm_is_deactivated_field().title in question_titles
 
@@ -151,7 +151,7 @@ def test_good_on_application_form_firearm(default_request, good_shotgun, mock_un
     )
 
     assert len(form.questions) == 6
-    question_titles = [getattr(q, 'title', None) for q in form.questions]
+    question_titles = [getattr(q, "title", None) for q in form.questions]
     assert goods.firearm_proof_mark_field().title in question_titles
     assert goods.firearm_is_deactivated_field().title in question_titles
 
