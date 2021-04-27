@@ -90,7 +90,7 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
     request.authbroker_client.token = {"access_token": "test"}
-    request.session = {"lite_api_user_id": "test-user"}
+    request.session = mock.Mock()
     get_response = mock.Mock(return_value=Response())
     # Set up mock SSO response
     response = RResponse()
@@ -113,7 +113,7 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, error, rf):
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
     request.authbroker_client.token = {"access_token": "test"}
-    request.session = {"lite_api_user_id": "test-user"}
+    request.session = mock.Mock()
     get_response = mock.Mock(return_value=Response())
     # Set up mock SSO response
     request.authbroker_client.get = mock.Mock(side_effect=error())
