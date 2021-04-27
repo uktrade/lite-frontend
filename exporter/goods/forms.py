@@ -355,7 +355,7 @@ def add_good_form_group(
     application = application or {}
 
     control_list_entries = get_control_list_entries(request, convert_to_options=True)
-    is_category_firearms = request.POST.get("item_category") == PRODUCT_CATEGORY_FIREARM
+    is_category_firearms = request.POST.get("item_category") == PRODUCT_CATEGORY_FIREARM or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
 
     show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
     is_preexisting = str_to_bool(request.GET.get("preexisting", False))
@@ -370,7 +370,7 @@ def add_good_form_group(
         [
             conditional(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS, product_category_form(request)),
             conditional(
-                is_category_firearms or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
+                is_category_firearms,
                 group_two_product_type_form(back_link=base_form_back_link),
             ),
             conditional(is_firearm_ammunition_or_component, firearms_sporting_shotgun_form(request.POST.get("type"))),
