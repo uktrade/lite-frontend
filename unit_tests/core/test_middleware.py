@@ -26,14 +26,14 @@ def test_no_cache_middleware(rf):
         ("?return_to=hello/", status.HTTP_200_OK),
         ("?return_to=/hello", status.HTTP_200_OK),
         ("?return_to=/hello/", status.HTTP_200_OK),
-        ("?return_to=http://example.com", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=http://example.com/", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=https://example.com/", status.HTTP_400_BAD_REQUEST),
-        ('?return_to=javascript:alert("hello!")', status.HTTP_400_BAD_REQUEST),
+        ("?return_to=http://example.com", status.HTTP_403_FORBIDDEN),
+        ("?return_to=http://example.com/", status.HTTP_403_FORBIDDEN),
+        ("?return_to=https://example.com/", status.HTTP_403_FORBIDDEN),
+        ('?return_to=javascript:alert("hello!")', status.HTTP_403_FORBIDDEN),
         # Protocol-relative URL
-        ("?return_to=////example.com", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=///example.com", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=//example.com", status.HTTP_400_BAD_REQUEST),
+        ("?return_to=////example.com", status.HTTP_403_FORBIDDEN),
+        ("?return_to=///example.com", status.HTTP_403_FORBIDDEN),
+        ("?return_to=//example.com", status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_validate_return_to_middleware(rf, url, response_code):
