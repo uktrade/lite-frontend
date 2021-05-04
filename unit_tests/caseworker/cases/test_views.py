@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
 from django.urls import reverse
 
@@ -361,12 +362,10 @@ def test_good_on_application_detail_clc_entries(
 
     assert response.status_code == 200
 
-    response_html = response.content.decode("utf-8")
-    assert "Control list entries" in response_html
-    assert ("ML1" in response_html) == True
-    assert ("ML2" in response_html) == True
-    assert ("ML4" in response_html) == False
-    assert ("ML5" in response_html) == False
+    soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
+    text = soup.find("th", text="Control list entries").find_next_sibling("td").text
+    clc_entries = text.replace("\n", "").replace("\t", "")
+    assert clc_entries == "ML1, ML2"
 
     data_good_on_application["is_good_controlled"] = None
     data_good_on_application["control_list_entries"] = []
@@ -378,9 +377,25 @@ def test_good_on_application_detail_clc_entries(
 
     assert response.status_code == 200
 
-    response_html = response.content.decode("utf-8")
-    assert "Control list entries" in response_html
-    assert ("ML1" in response_html) == False
-    assert ("ML2" in response_html) == False
-    assert ("ML4" in response_html) == True
-    assert ("ML5" in response_html) == True
+    soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
+    text = soup.find("th", text="Control list entries").find_next_sibling("td").text
+    clc_entries = text.replace("\n", "").replace("\t", "")
+    assert clc_entries == "ML4, ML5"
+
+
+def test_good_on_application_detail_security_graded_check(
+    authorized_client, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+):
+    for expected_value in ["no", "yes"]:
+        data_good_on_application["good"]["is_pv_graded"] = expected_value
+        # given I access good on application details for a good with control list entries and a part number
+        url = reverse(
+            "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
+        )
+        response = authorized_client.get(url)
+
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
+        text = soup.find("th", text="Security graded").find_next_sibling("td").text
+        security_grading = text.replace("\n", "").replace("\t", "")
+        assert security_grading == expected_value.capitalize()

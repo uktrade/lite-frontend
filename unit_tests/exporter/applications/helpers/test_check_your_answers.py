@@ -6,6 +6,7 @@ def test_convert_goods_on_application_no_answers(data_good_on_application):
     # given the canonical good does not have is_good_controlled set
     data_good_on_application["is_good_controlled"] = None
     data_good_on_application["good"]["is_good_controlled"] = None
+    data_good_on_application["good"]["control_list_entries"] = []
     actual = check_your_answers.convert_goods_on_application([data_good_on_application])
 
     # then the differences in export characteristics are highlighted
@@ -15,6 +16,8 @@ def test_convert_goods_on_application_no_answers(data_good_on_application):
 
 
 def test_convert_goods_on_application_application_level_control_list_entries(data_good_on_application):
+    data_good_on_application["good"]["control_list_entries"] = []
+
     # given the canonical good and good in application have different export control characteristics
     # when the shape is generated
     actual = check_your_answers.convert_goods_on_application([data_good_on_application])
@@ -49,6 +52,7 @@ def test_convert_goods_on_application_application_level_control_list_entries_sam
 def test_convert_goods_on_application_good_level_control_list_entries(data_good_on_application):
     # given the good has not been reviewed at application levcle
     data_good_on_application["is_good_controlled"] = None
+    data_good_on_application["good"]["control_list_entries"] = []
 
     # when the shape is generated
     actual = check_your_answers.convert_goods_on_application([data_good_on_application])
