@@ -70,9 +70,9 @@ class CaseDetail(CaseView):
         ):
             current_advice_level += ["team"]
 
-        if filter_advice_by_level(
-            self.case["advice"], "final"
-        ) and advice_helpers.check_user_permitted_to_give_final_advice(
+        final_advice = filter_advice_by_level(self.case["advice"], "final")
+
+        if final_advice and advice_helpers.check_user_permitted_to_give_final_advice(
             self.case.data["case_type"]["sub_type"]["key"], self.permissions
         ):
             current_advice_level += ["final"]
@@ -83,12 +83,21 @@ class CaseDetail(CaseView):
         ):
             current_advice_level = []
 
+        advice_types = set([f["type"]["key"] for f in final_advice])
+
+        if advice_types == {"approve", "proviso"}:
+            conflicting_advice = False
+        else:
+            conflicting_advice = len(advice_types) > 1
+
         return {
+            "conflicting_advice": conflicting_advice,
             "teams": get_teams(self.request),
             "current_advice_level": current_advice_level,
             "can_finalise": "final" in current_advice_level
             and advice_helpers.can_advice_be_finalised(self.case)
-            and not blocking_flags,
+            and not blocking_flags
+            and not conflicting_advice,
             "blocking_flags": blocking_flags,
         }
 

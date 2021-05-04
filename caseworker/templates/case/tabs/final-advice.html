@@ -46,6 +46,18 @@
 		</div>
 	</div>
 
+	{% if conflicting_advice %}
+		<div class="govuk-warning-text govuk-!-margin-0" id="warning-text-blocking-flags">
+			<span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+			<strong class="govuk-warning-text__text">
+				<span class="govuk-warning-text__assistive">{% lcs 'advice.FinalAdvicePage.WarningBanner.HIDDEN_ACCESSIBILITY_TEXT' %}</span>
+				<p class="govuk-!-margin-top-0 govuk-!-margin-bottom-3">
+					This application contains conflicting advice and cannot be finalised.
+				</p>
+			</strong>
+		</div>
+	{% endif %}
+
 	{% if blocking_flags %}
 		<div class="govuk-warning-text govuk-!-margin-0" id="warning-text-blocking-flags">
 			<span class="govuk-warning-text__icon" aria-hidden="true">!</span>
