@@ -522,12 +522,13 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
         is_preexisting = str_to_bool(request.GET.get("preexisting", True))
         show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
         is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
+        firearm_product_type = self.good["firearm_details"]["type"]["key"]
         (
             is_firearm,
             is_firearm_ammunition_or_component,
             is_firearms_accessory,
             is_firearms_software_or_tech,
-        ) = get_firearms_subcategory(self.good.get("type"))
+        ) = get_firearms_subcategory(firearm_product_type)
 
         self.forms = good_on_application_form_group(
             request=request,
