@@ -278,6 +278,7 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
     # given I access good on application details for a good with neither part number of control list entries
     data_good_on_application["good"]["part_number"] = ""
     data_good_on_application["control_list_entries"] = []
+    data_good_on_application["good"]["control_list_entries"] = []
     url = reverse(
         "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
     )
@@ -330,3 +331,56 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
     assert response.status_code == 200
+
+
+def test_good_on_application_detail_clc_entries(
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_search,
+    data_good_on_application,
+    data_standard_case,
+):
+    """
+    Test that ensures correct Control list entries are displayed in Product detail page
+    Control list entries are in two places in GoodOnApplication instance and before a good
+    is reviewed they could be different.
+    if is_good_controlled is None, then it is not yet reviewed by the Case officer so we
+    display the entries from the good.
+    if is_good_controlled is not None (either Yes or No) then it means the good is reviewed
+    and the Case officer applied the correct CLC entry so display from good_on_application
+    """
+    data_good_on_application["audit_trail"] = []
+    # given I access good on application details for a good with control list entries and a part number
+    url = reverse(
+        "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
+    )
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    response_html = response.content.decode("utf-8")
+    assert "Control list entries" in response_html
+    assert ("ML1" in response_html) == True
+    assert ("ML2" in response_html) == True
+    assert ("ML4" in response_html) == False
+    assert ("ML5" in response_html) == False
+
+    data_good_on_application["is_good_controlled"] = None
+    data_good_on_application["control_list_entries"] = []
+    # given I access good on application details for a good with control list entries and a part number
+    url = reverse(
+        "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
+    )
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    response_html = response.content.decode("utf-8")
+    assert "Control list entries" in response_html
+    assert ("ML1" in response_html) == False
+    assert ("ML2" in response_html) == False
+    assert ("ML4" in response_html) == True
+    assert ("ML5" in response_html) == True

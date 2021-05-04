@@ -597,7 +597,10 @@ def data_good_on_application(data_standard_case):
             "id": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
             "description": "444",
             "part_number": "44",
-            "control_list_entries": [],
+            "control_list_entries": [
+                {"rating": "ML4", "text": "Rifle for research and development..."},
+                {"rating": "ML5", "text": "Smart ammunition..."},
+            ],
             "comment": None,
             "is_good_controlled": {"key": "False", "value": "No"},
             "report_summary": "",
