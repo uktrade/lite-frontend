@@ -1,4 +1,6 @@
 from enum import Enum
+
+from django.conf import settings
 from typing import List, Optional, Dict, Set
 
 from lite_forms.styles import ButtonStyle
@@ -487,18 +489,7 @@ class FileUpload(_Component):
             classes=classes,
         )
         self.input_type = "file_upload"
-        self.accept = accept or (
-            # Default file-types supported by LITE are pdf, doc, docx,
-            # rtf, jpeg, png and tiff
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/rtf",
-            "text/plain",
-            "image/jpeg",
-            "image/png",
-            "image/tiff",
-        )
+        self.accept = accept or settings.ACCEPTED_FILE_UPLOAD_MIME_TYPES
 
 
 class TextArea(_Component):

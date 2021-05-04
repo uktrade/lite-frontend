@@ -234,6 +234,7 @@ class FileUploadTest(TestCase):
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/rtf",
             "text/plain",
+            "text/csv",
             "image/jpeg",
             "image/png",
             "image/tiff",
