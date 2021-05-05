@@ -120,6 +120,7 @@ def unit_quantity_value(request, good, sub_case_type, application_id, back_url):
         ]
 
         questions = []
+
         if good["item_category"]["key"] == constants.PRODUCT_CATEGORY_FIREARM:
             firearm_type = good["firearm_details"]["type"]["key"]
 
@@ -133,11 +134,15 @@ def unit_quantity_value(request, good, sub_case_type, application_id, back_url):
             else:
                 questions = initial_questions
 
-            if firearm_type in ["ammunition", "firearms"]:
-                questions.append(firearm_proof_mark_field())
-            elif firearm_type == "components_for_firearms":
-                questions.append(does_firearm_component_require_proof_marks_field())
-            questions.append(firearm_is_deactivated_field())
+            if firearm_type in constants.FIREARM_AMMUNITION_COMPONENT_TYPES:
+                questions.append(firearm_is_deactivated_field())
+
+                if firearm_type in constants.FIREARM_OR_AMMUNITION:
+                    questions.append(firearm_proof_mark_field())
+
+                elif firearm_type == constants.FIREARM_COMPONENT:
+                    questions.append(does_firearm_component_require_proof_marks_field())
+
         else:
             questions = initial_questions
 
