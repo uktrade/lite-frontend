@@ -154,6 +154,8 @@ ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
         "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/rtf",
+        "application/xml",
+        "text/xml",
         "text/plain",
         "text/csv",
         "image/jpeg",

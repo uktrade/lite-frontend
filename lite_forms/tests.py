@@ -233,6 +233,8 @@ class FileUploadTest(TestCase):
             "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/rtf",
+            "application/xml",
+            "text/xml",
             "text/plain",
             "text/csv",
             "image/jpeg",
