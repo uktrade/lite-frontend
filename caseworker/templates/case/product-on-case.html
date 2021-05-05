@@ -88,7 +88,15 @@
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Licensable</th>
-															<td class="govuk-table__cell">{{ good_on_application.good.is_good_controlled.value }}</td>
+															<td class="govuk-table__cell">
+																	{# when the product is reviewed by an internal user this value is set #}
+																	{% if good_on_application.is_good_controlled is not None %}
+																		{{ good_on_application.is_good_controlled.value }}
+																	{# otherwise we use the value the exporter user has given #}
+																	{% else %}
+																		{{ good_on_application.good.is_good_controlled.value }}
+																	{% endif %}
+															</td>
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Control list entries</th>
