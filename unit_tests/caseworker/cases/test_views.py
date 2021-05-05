@@ -360,7 +360,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         [proviso, proviso, True, False],
         [refuse, refuse, True, False],
         [conflicting, conflicting, False, False],
-    )
+    ),
 )
 def test_case_conflicting_advice(
     advice_1_type,
@@ -373,7 +373,9 @@ def test_case_conflicting_advice(
     mock_all_standard_case_data,
     data_standard_case,
 ):
-    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"], "tab": "final-advice"})
+    url = reverse(
+        "cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"], "tab": "final-advice"}
+    )
 
     blocking_flags_url = client._build_absolute_uri("/flags/")
     requests_mock.get(url=blocking_flags_url, json=[])

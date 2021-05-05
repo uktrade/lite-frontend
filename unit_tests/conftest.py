@@ -602,7 +602,7 @@ def data_standard_case():
                             "is_revoked": "",
                             "is_revoked_comment": "",
                         },
-                        "category": "Partial"
+                        "category": "Partial",
                     },
                     {
                         "id": "c8175133-d0ae-4c59-9c6a-190a2ed7f5e7",
@@ -623,9 +623,9 @@ def data_standard_case():
                             "is_revoked": "",
                             "is_revoked_comment": "",
                         },
-                        "category": "Exact"
+                        "category": "Exact",
                     },
-                ]
+                ],
             },
             "next_review_date": None,
             "licences": [],
