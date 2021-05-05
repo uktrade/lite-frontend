@@ -1,9 +1,28 @@
-from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
+from bs4 import BeautifulSoup
+
 from django.urls import reverse
 
 import pytest
 
 from core import client
+
+
+team1 = {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None}
+
+approve = {"key": "approve", "value": "Approve"}
+proviso = {"key": "proviso", "value": "Approve with proviso"}
+refuse = {"key": "refuse", "value": "Refuse"}
+conflicting = {"key": "conflicting", "value": "Conflicting"}
+
+john_smith = {
+    "email": "john.smith@example.com",
+    "first_name": "John",
+    "id": "63c74ddd-c119-48cc-8696-d196218ca583",
+    "last_name": "Smith",
+    "role_name": "Super User",
+    "status": "Active",
+    "team": team1,
+}
 
 
 @pytest.fixture(autouse=True)
@@ -325,8 +344,97 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     )
 
     url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
-    data = {"objects": ["1", "2", "3"]}
 
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
     assert response.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "advice_1_type,advice_2_type,can_finalise,show_warning",
+    (
+        [approve, refuse, False, True],
+        [approve, conflicting, False, True],
+        [approve, proviso, True, False],
+        [approve, approve, True, False],
+        [proviso, proviso, True, False],
+        [refuse, refuse, True, False],
+        [conflicting, conflicting, False, False],
+    )
+)
+def test_case_conflicting_advice(
+    advice_1_type,
+    advice_2_type,
+    can_finalise,
+    show_warning,
+    requests_mock,
+    authorized_client,
+    queue_pk,
+    mock_all_standard_case_data,
+    data_standard_case,
+):
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"], "tab": "final-advice"})
+
+    blocking_flags_url = client._build_absolute_uri("/flags/")
+    requests_mock.get(url=blocking_flags_url, json=[])
+
+    mock_case = {**data_standard_case}
+
+    advice_1 = {
+        "id": "8993476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": advice_1_type,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": "633178cd-83ec-4773-8829-c19065912565",
+        "goods_type": None,
+        "country": None,
+        "end_user": None,
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+    advice_2 = {
+        "id": "0093476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": advice_2_type,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": None,
+        "goods_type": None,
+        "country": None,
+        "end_user": "783178cd-83ec-4773-8829-c19065912565",
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+
+    mock_case["case"]["advice"] = [advice_1, advice_2]
+
+    requests_mock.get(url=url, json=mock_case)
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    if can_finalise:
+        assert "app-advice__disabled-buttons" not in soup.find(id="button-finalise").parent["class"]
+    else:
+        assert "app-advice__disabled-buttons" in soup.find(id="button-finalise").parent["class"]
+
+    if show_warning:
+        assert "This application contains conflicting advice and cannot be finalised." in str(response.content)
+    else:
+        assert "This application contains conflicting advice and cannot be finalised." not in str(response.content)
