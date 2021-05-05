@@ -26,14 +26,14 @@ def test_no_cache_middleware(rf):
         ("?return_to=hello/", status.HTTP_200_OK),
         ("?return_to=/hello", status.HTTP_200_OK),
         ("?return_to=/hello/", status.HTTP_200_OK),
-        ("?return_to=http://example.com", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=http://example.com/", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=https://example.com/", status.HTTP_400_BAD_REQUEST),
-        ('?return_to=javascript:alert("hello!")', status.HTTP_400_BAD_REQUEST),
+        ("?return_to=http://example.com", status.HTTP_403_FORBIDDEN),
+        ("?return_to=http://example.com/", status.HTTP_403_FORBIDDEN),
+        ("?return_to=https://example.com/", status.HTTP_403_FORBIDDEN),
+        ('?return_to=javascript:alert("hello!")', status.HTTP_403_FORBIDDEN),
         # Protocol-relative URL
-        ("?return_to=////example.com", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=///example.com", status.HTTP_400_BAD_REQUEST),
-        ("?return_to=//example.com", status.HTTP_400_BAD_REQUEST),
+        ("?return_to=////example.com", status.HTTP_403_FORBIDDEN),
+        ("?return_to=///example.com", status.HTTP_403_FORBIDDEN),
+        ("?return_to=//example.com", status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_validate_return_to_middleware(rf, url, response_code):
@@ -90,7 +90,7 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
     request.authbroker_client.token = {"access_token": "test"}
-    request.session = {"lite_api_user_id": "test-user"}
+    request.session = mock.Mock()
     get_response = mock.Mock(return_value=Response())
     # Set up mock SSO response
     response = RResponse()
@@ -113,7 +113,7 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, error, rf):
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
     request.authbroker_client.token = {"access_token": "test"}
-    request.session = {"lite_api_user_id": "test-user"}
+    request.session = mock.Mock()
     get_response = mock.Mock(return_value=Response())
     # Set up mock SSO response
     request.authbroker_client.get = mock.Mock(side_effect=error())

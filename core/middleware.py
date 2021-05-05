@@ -11,8 +11,7 @@ from django.core.cache import cache
 from django.shortcuts import redirect
 from django.utils.cache import add_never_cache_headers
 from oauthlib.oauth2 import OAuth2Error
-from rest_framework.response import Response
-from rest_framework import status
+from django.http import HttpResponseForbidden
 from requests.exceptions import RequestException
 
 from lite_content.lite_internal_frontend.strings import cases
@@ -101,9 +100,9 @@ class ValidateReturnToMiddleware:
             try:
                 url = urlparse(return_to)
             except ValueError as e:
-                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                return HttpResponseForbidden(str(e))
             if url.netloc != "" or url.scheme != "" or return_to.startswith("//"):
-                return Response({"error": "Invalid return_to parameter"}, status=status.HTTP_400_BAD_REQUEST)
+                return HttpResponseForbidden("Invalid return_to parameter")
         response = self.get_response(request)
         return response
 
@@ -140,5 +139,6 @@ class AuthBrokerTokenIntrospectionMiddleware:
             logger.error(
                 "Introspecting with SSO failed for user %s: %s", request.session.get("lite_api_user_id"), str(e),
             )
+            request.session.flush()
             return redirect(settings.LOGOUT_URL)
         return self.get_response(request)

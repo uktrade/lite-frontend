@@ -77,8 +77,6 @@ def add_identification_marking_details(firearm_details, json):
             firearm_details["number_of_items"] = int(json.get("number_of_items"))
         except ValueError:
             firearm_details["number_of_items"] = 0
-    elif firearm_details and "number_of_items" not in firearm_details:
-        firearm_details["number_of_items"] = 0
 
     if "identification_markings_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields

@@ -56,7 +56,6 @@ def good_on_application_form_group(
     # but not if the good being added to the application is a new good created as part of this same flow
     firearm_type = None
     number_of_items = None
-    is_firearm = None
 
     if good.get("firearm_details"):
         firearm_type = good["firearm_details"]["type"]["key"]
