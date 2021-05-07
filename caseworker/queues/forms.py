@@ -61,12 +61,7 @@ def edit_queue_form(request, queue_id):
 
 class EnforcementXMLImportForm(forms.Form):
 
-    file = forms.FileField(
-        label="Upload a file",
-        widget=forms.FileInput(
-            attrs={'accept': "text/xml"}
-        )
-    )
+    file = forms.FileField(label="Upload a file", widget=forms.FileInput(attrs={"accept": "text/xml"}))
 
     # the CreateView expects `instance` to be passed in here
     def __init__(self, instance, *args, **kwargs):

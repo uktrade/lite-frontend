@@ -37,7 +37,7 @@ def mock_enforcement_xml_upload(requests_mock):
 @pytest.fixture
 def mock_enforcement_xml_validation_error(requests_mock):
     url = client._build_absolute_uri(f"/cases/enforcement-check/{queue_pk}/")
-    data = {'errors': {'file': ['Invalid XML format received']}}
+    data = {"errors": {"file": ["Invalid XML format received"]}}
     yield requests_mock.post(url=url, status_code=400, json=data)
 
 
@@ -64,4 +64,4 @@ def test_upload_enforcement_xml_invalid_file(authorized_client, mock_enforcement
     response = authorized_client.post(url, data, format="multipart")
 
     assert response.status_code == 200
-    assert response.context_data["form"].errors == {'file': ['Invalid XML format received']}
+    assert response.context_data["form"].errors == {"file": ["Invalid XML format received"]}
