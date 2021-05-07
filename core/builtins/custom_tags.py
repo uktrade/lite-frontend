@@ -700,7 +700,7 @@ def pluralise_quantity(good_on_app):
 
     if good_on_app.get("good", {}).get("item_category", {}).get("key") == PRODUCT_CATEGORY_FIREARM:
         if (
-            "firearm_details" in good_on_app
+            good_on_app.get("firearm_details") is not None
             and good_on_app["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES
         ):
             # because these are number of articles
