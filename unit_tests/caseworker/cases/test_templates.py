@@ -290,3 +290,68 @@ def test_advice_section_user_can_finalise(data_standard_case, rf, client):
     html = render_to_string("case/tabs/final-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
     assert "app-advice__disabled-buttons" not in soup.find(id="button-finalise").parent["class"]
+
+
+def test_good_on_application_detail_unverified_product(
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_search,
+    data_good_on_application,
+    data_standard_case,
+):
+    # given the product is not yet reviewed
+    good_on_application = {**data_good_on_application}
+    good_on_application["is_good_controlled"] = None
+
+    # and the exporter told us the good is controlled
+    good_on_application["good"]["is_good_controlled"] = {"key": "True", "value": "Yes"}
+
+    context = {
+        "good_on_application": good_on_application,
+        "good_on_application_documents": [],
+        "case": Case(data_standard_case["case"]),
+        "other_cases": [],
+        "data": {},
+        "organisation_documents": {},
+        "queue": {"id": "00000000-0000-0000-0000-000000000001"}
+    }
+    # then we show the is_good_controlled value that the exporter originally gave
+    html = render_to_string("case/product-on-case.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+    assert "Yes" in soup.find(id="is-licensable-value").text
+
+
+def test_good_on_application_detail_verified_product(
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_search,
+    data_good_on_application,
+    data_standard_case,
+):
+    # given the product has been reviewed
+    good_on_application = {**data_good_on_application}
+    good_on_application["is_good_controlled"] = {"key": "False", "value": "No"}
+
+    # and the exporter told us the good is controlled
+    good_on_application["good"]["is_good_controlled"] = {"key": "True", "value": "Yes"}
+
+    context = {
+        "good_on_application": good_on_application,
+        "good_on_application_documents": [],
+        "case": Case(data_standard_case["case"]),
+        "other_cases": [],
+        "data": {},
+        "organisation_documents": {},
+        "queue": {"id": "00000000-0000-0000-0000-000000000001"}
+    }
+
+    # then we show the is_good_controlled value that the reviewer gave
+    html = render_to_string("case/product-on-case.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+    assert "No" in soup.find(id="is-licensable-value").text

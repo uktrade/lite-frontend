@@ -88,7 +88,7 @@
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Licensable</th>
-															<td class="govuk-table__cell">
+															<td class="govuk-table__cell" id="is-licensable-value">
 																	{# when the product is reviewed by an internal user this value is set #}
 																	{% if good_on_application.is_good_controlled is not None %}
 																		{{ good_on_application.is_good_controlled.value }}
