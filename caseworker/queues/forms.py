@@ -1,4 +1,7 @@
+from django import forms
 from django.urls import reverse_lazy
+
+from storages.backends.s3boto3 import S3Boto3StorageFile
 
 from lite_content.lite_internal_frontend.queues import AddQueueForm, EditQueueForm
 from lite_forms.components import Form, TextInput, BackLink, Select
@@ -54,3 +57,24 @@ def edit_queue_form(request, queue_id):
         ],
         back_link=BackLink(EditQueueForm.BACK, reverse_lazy("queues:manage")),
     )
+
+
+class EnforcementXMLImportForm(forms.Form):
+
+    file = forms.FileField(label="Upload a file", widget=forms.FileInput(attrs={"accept": "text/xml"}))
+
+    # the CreateView expects `instance` to be passed in here
+    def __init__(self, instance, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def clean_file(self):
+        value = self.cleaned_data["file"]
+        if isinstance(value, S3Boto3StorageFile):
+            s3_obj = value.obj.get()["Body"]
+            return s3_obj.read().decode("utf-8")
+
+        return value.read().decode("utf-8")
+
+    def save(self):
+        # the CreateView expects this method
+        pass

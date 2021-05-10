@@ -1,12 +1,13 @@
 from http import HTTPStatus
 
-from django.contrib import messages
+from django.views.generic.edit import CreateView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 from django.utils.functional import cached_property
 
-from lite_content.lite_internal_frontend.cases import CasesListPage, UploadEnforcementXML, Manage
+from lite_content.lite_internal_frontend.cases import CasesListPage, Manage
 from lite_forms.components import TextInput, FiltersBar
 from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
@@ -14,7 +15,6 @@ from lite_forms.views import SingleFormView
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.cases.forms.assign_users import assign_users_form
-from caseworker.cases.forms.attach_documents import upload_document_form
 from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
@@ -24,7 +24,7 @@ from caseworker.core.constants import (
     SLA_RADIUS,
 )
 from caseworker.core.services import get_user_permissions
-from caseworker.queues.forms import new_queue_form, edit_queue_form
+from caseworker.queues import forms
 from caseworker.queues.services import (
     get_queues,
     post_queues,
@@ -122,7 +122,7 @@ class QueuesList(LoginRequiredMixin, TemplateView):
 
 class AddQueue(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
-        self.form = new_queue_form(request)
+        self.form = forms.new_queue_form(request)
         self.action = post_queues
         self.success_url = reverse_lazy("queues:manage")
 
@@ -131,7 +131,7 @@ class EditQueue(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_queue(request, self.object_pk)
-        self.form = edit_queue_form(request, self.object_pk)
+        self.form = forms.edit_queue_form(request, self.object_pk)
         self.action = put_queue
         self.success_url = reverse_lazy("queues:manage")
 
@@ -172,12 +172,20 @@ class EnforcementXMLExport(LoginRequiredMixin, TemplateView):
             return data
 
 
-class EnforcementXMLImport(LoginRequiredMixin, SingleFormView):
-    def init(self, request, pk):
-        self.object_pk = str(pk)
-        self.form = upload_document_form(self.object_pk)
-        self.action = post_enforcement_xml
+class EnforcementXMLImport(LoginRequiredMixin, CreateView, SuccessMessageMixin):
+    template_name = "queues/enforcement-xml-import.html"
+    form_class = forms.EnforcementXMLImportForm
+    success_message = "Enforcement XML imported successfully"
+
+    def form_valid(self, form):
+        response = post_enforcement_xml(request=self.request, queue_pk=self.kwargs["pk"], json=form.cleaned_data)
+        if not response.ok:
+            for key, errors in response.json()["errors"].items():
+                for error in errors:
+                    form.add_error(key, error)
+            return self.form_invalid(form)
+        else:
+            return super().form_valid(form)
 
     def get_success_url(self):
-        messages.success(self.request, UploadEnforcementXML.SUCCESS_BANNER)
-        return reverse_lazy("queues:enforcement_xml_import", kwargs={"pk": self.object_pk})
+        return self.request.get_full_path()

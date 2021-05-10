@@ -1,0 +1,23 @@
+{% extends 'layouts/base.html' %}
+
+{% load static from staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}Upload the enforcement XML{% endblock %}
+
+{% block back_link %}
+	{% url 'core:index' as home %}
+	<a href="{{ back_link|default:home }}" id="back-link" class="govuk-back-link">Back to queue</a>
+{% endblock %}
+
+{% block body %}
+<div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+    <h1 class="govuk-heading-l">Upload the enforcement XML</h1>
+</div>
+
+<form enctype="multipart/form-data" method="post" novalidate>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="govuk-button" data-module="govuk-button" data-prevent-double-click="true">Upload and continue</button>
+</form>
+{% endblock %}
