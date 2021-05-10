@@ -10,4 +10,9 @@
 	<p class="govuk-body">
 		Contact <a class="govuk-link" href="mailto:">support</a> for help.
 	</p>
+	{% if request.META.HTTP_X_B3_TRACEID %}
+	<p class="govuk-body">
+		<strong>Request ID:</strong> {{ request.META.HTTP_X_B3_TRACEID }}
+	</p>
+	{% endif %}
 {% endblock %}
