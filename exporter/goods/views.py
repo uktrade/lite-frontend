@@ -206,12 +206,12 @@ class AddGood(LoginRequiredMixin, MultiFormView):
         ) = get_firearms_subcategory(copied_request.get("type"))
         self.forms = add_good_form_group(
             request,
-            is_pv_graded,
-            is_software_technology,
-            is_firearm,
-            is_firearm_ammunition_or_component,
-            is_firearms_accessory,
-            is_firearms_software_or_tech,
+            is_pv_graded=is_pv_graded,
+            is_software_technology=is_software_technology,
+            is_firearm=is_firearm,
+            is_firearm_ammunition_or_component=is_firearm_ammunition_or_component,
+            is_firearms_accessory=is_firearms_accessory,
+            is_firearms_software_or_tech=is_firearms_software_or_tech,
             base_form_back_link=reverse("goods:goods"),
         )
 

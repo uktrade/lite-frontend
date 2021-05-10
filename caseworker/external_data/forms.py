@@ -1,5 +1,7 @@
 from django import forms
 
+from storages.backends.s3boto3 import S3Boto3StorageFile
+
 
 class DenialUploadForm(forms.Form):
 
@@ -11,6 +13,10 @@ class DenialUploadForm(forms.Form):
 
     def clean_csv_file(self):
         value = self.cleaned_data["csv_file"]
+        if isinstance(value, S3Boto3StorageFile):
+            s3_obj = value.obj.get()["Body"]
+            return s3_obj.read().decode("utf-8")
+
         return value.read().decode("utf-8")
 
     def save(self):

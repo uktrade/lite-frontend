@@ -88,7 +88,15 @@
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Licensable</th>
-															<td class="govuk-table__cell">{{ good_on_application.is_good_controlled|yesno|title }}</td>
+															<td class="govuk-table__cell" id="is-licensable-value">
+																	{# when the product is reviewed by an internal user this value is set #}
+																	{% if good_on_application.is_good_controlled is not None %}
+																		{{ good_on_application.is_good_controlled.value }}
+																	{# otherwise we use the value the exporter user has given #}
+																	{% else %}
+																		{{ good_on_application.good.is_good_controlled.value }}
+																	{% endif %}
+															</td>
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Control list entries</th>
@@ -175,7 +183,7 @@
 																						{{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
 																						{% endfor %}
 																					</div>
-																				</details>																																
+																				</details>
 																			</td>
 																		</tr>
 																	{% endif %}
@@ -277,12 +285,14 @@
 																<td class="govuk-table__cell">
 																	{% if organisation_documents.rfd_certificate %}
 																		Yes
-																		<div>
-																			<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.rfd_certificate.document.name }}</a>
-																		</div>
 																	{% else %}
 																		No
 																	{% endif %}
+																	<div>
+																		{% if organisation_documents.rfd_certificate %}
+																			<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=organisation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.rfd_certificate.document.name }}</a>
+																		{% endif %}
+																	</div>
 																</td>
 															</tr>
 															{% if organisation_documents.rfd_certificate %}

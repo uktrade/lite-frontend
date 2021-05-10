@@ -144,7 +144,25 @@ S3_DOWNLOAD_LINK_EXPIRY_SECONDS = 180
 STREAMING_CHUNK_SIZE = 8192
 S3_MIN_PART_SIZE = 5 * 1024 * 1024
 MAX_UPLOAD_SIZE = 50 * 1024 * 1024
-FILE_UPLOAD_HANDLERS = env.list("FILE_UPLOAD_HANDLERS", default=["s3chunkuploader.file_handler.S3FileUploadHandler"])
+FILE_UPLOAD_HANDLERS = env.list("FILE_UPLOAD_HANDLERS", default=["core.file_handler.SafeS3FileUploadHandler"])
+ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
+    "ACCEPTED_FILE_UPLOAD_MIME_TYPES",
+    default=(
+        # Default file-types supported by LITE are pdf, doc, docx,
+        # rtf, jpeg, png and tiff
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/rtf",
+        "application/xml",
+        "text/xml",
+        "text/plain",
+        "text/csv",
+        "image/jpeg",
+        "image/png",
+        "image/tiff",
+    ),
+)
 
 # AWS
 VCAP_SERVICES = env.json("VCAP_SERVICES", {})

@@ -169,10 +169,96 @@ def pv_gradings(mock_pv_gradings, rf, client):
 @override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=True)
 def test_core_firearm_product_form_group(rf, client, params, num_forms, question_checks):
     """ Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
-    data = {"product_type_step": True, "type": "firearms", "item_category": PRODUCT_CATEGORY_FIREARM}
     kwargs = {"is_pv_graded": False, **params}
-    request = post_request(rf, client, data=data)
+    request = post_request(rf, client, data={})
     form_parts = forms.add_good_form_group(request, **kwargs).forms
+    assert len(set(form_parts)) == len(form_parts)
+    assert len(form_parts) == int(num_forms), list(map(str, form_parts))
+
+    for i, q in enumerate(question_checks):
+        assert form_parts[i].questions[q["qindex"]].name == q["name"]
+
+
+@pytest.mark.parametrize(
+    "params, num_forms, question_checks",
+    [
+        (
+            {"is_firearm_ammunition_or_component": True},
+            6,
+            [
+                {"qindex": 0, "name": "item_category"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 2, "name": "is_sporting_shotgun"},
+                {"qindex": 0, "name": "name"},
+                {"qindex": 0, "name": "firearm_calibre_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
+            ],
+        ),
+        (
+            {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": True},
+            11,
+            [
+                {"qindex": 0, "name": "item_category"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 2, "name": "is_sporting_shotgun"},
+                {"qindex": 2, "name": "number_of_items"},
+                {"qindex": 1, "name": "has_identification_markings"},
+                {"qindex": 0, "name": "name"},
+                {"qindex": 1, "name": "year_of_manufacture"},
+                {"qindex": 2, "name": "is_replica"},
+                {"qindex": 0, "name": "firearm_calibre_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
+                {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
+            ],
+        ),
+        (
+            {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": False},
+            9,
+            [
+                {"qindex": 0, "name": "item_category"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 2, "name": "is_sporting_shotgun"},
+                {"qindex": 2, "name": "number_of_items"},
+                {"qindex": 1, "name": "has_identification_markings"},
+                {"qindex": 0, "name": "name"},
+                {"qindex": 1, "name": "calibre"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
+                {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
+            ],
+        ),
+        (
+            {"is_firearms_accessory": True},
+            6,
+            [
+                {"qindex": 0, "name": "item_category"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 0, "name": "name"},
+                {"qindex": 1, "name": "is_military_use"},
+                {"qindex": 1, "name": "is_component"},
+                {"qindex": 1, "name": "uses_information_security"},
+            ],
+        ),
+        (
+            {"is_firearms_software_or_tech": True},
+            6,
+            [
+                {"qindex": 0, "name": "item_category"},
+                {"qindex": 1, "name": "type"},
+                {"qindex": 0, "name": "name"},
+                {"qindex": 1, "name": "software_or_technology_details"},
+                {"qindex": 1, "name": "is_military_use"},
+                {"qindex": 1, "name": "uses_information_security"},
+            ],
+        ),
+    ],
+)
+@override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=False)
+def test_core_firearm_product_form_group_firearms_feature_off(rf, client, params, num_forms, question_checks):
+    """ Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
+    kwargs = {"is_pv_graded": False, **params}
+    request = post_request(rf, client, data={"item_category": PRODUCT_CATEGORY_FIREARM})
+    form_parts = forms.add_good_form_group(request, **kwargs).forms
+    assert len(set(form_parts)) == len(form_parts)
     assert len(form_parts) == int(num_forms), list(map(str, form_parts))
 
     for i, q in enumerate(question_checks):

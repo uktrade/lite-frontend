@@ -136,8 +136,9 @@ def test_good_on_application_form_ammunition(default_request, good_ammo, mock_un
     )
 
     assert len(form.questions) == 6
-    assert form.questions[-2].title == goods.firearm_proof_mark_field().title
-    assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
+    question_titles = [getattr(q, "title", None) for q in form.questions]
+    assert goods.firearm_proof_mark_field().title in question_titles
+    assert goods.firearm_is_deactivated_field().title in question_titles
 
 
 def test_good_on_application_form_firearm(default_request, good_shotgun, mock_units):
@@ -150,8 +151,9 @@ def test_good_on_application_form_firearm(default_request, good_shotgun, mock_un
     )
 
     assert len(form.questions) == 6
-    assert form.questions[-2].title == goods.firearm_proof_mark_field().title
-    assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
+    question_titles = [getattr(q, "title", None) for q in form.questions]
+    assert goods.firearm_proof_mark_field().title in question_titles
+    assert goods.firearm_is_deactivated_field().title in question_titles
 
 
 def test_good_on_application_form_firearm_component(default_request, good_gun_barrel, mock_units):
@@ -164,8 +166,8 @@ def test_good_on_application_form_firearm_component(default_request, good_gun_ba
     )
 
     assert len(form.questions) == 6
-    assert form.questions[-2].options[0].components[0].title == goods.firearm_proof_mark_field().title
-    assert form.questions[-1].title == goods.firearm_is_deactivated_field().title
+    assert form.questions[-1].options[0].components[0].title == goods.firearm_proof_mark_field().title
+    assert form.questions[-2].title == goods.firearm_is_deactivated_field().title
 
 
 def test_good_on_application_form_not_firearm(default_request, good_widget, mock_units):

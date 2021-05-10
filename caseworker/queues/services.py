@@ -3,10 +3,8 @@ from urllib import parse
 
 from django.http import HttpResponse
 
-from caseworker.core.constants import ENFORCEMENT_XML_MAX_FILE_SIZE
 from core import client
 from core.helpers import convert_parameters_to_query_params
-from lite_content.lite_internal_frontend.cases import UploadEnforcementXML
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
@@ -110,18 +108,5 @@ def get_enforcement_xml(request, queue_pk):
 
 
 def post_enforcement_xml(request, queue_pk, json):
-    if len(request.FILES) == 0:
-        return {"errors": {"file": [UploadEnforcementXML.Errors.NO_FILE]}}, HTTPStatus.BAD_REQUEST
-    if len(request.FILES) != 1:
-        return {"errors": {"file": [UploadEnforcementXML.Errors.MULTIPLE_FILES]}}, HTTPStatus.BAD_REQUEST
-    if request.FILES["file"].size > ENFORCEMENT_XML_MAX_FILE_SIZE:
-        return {"errors": {"file": [UploadEnforcementXML.Errors.FILE_TOO_LARGE]}}, HTTPStatus.BAD_REQUEST
-
-    try:
-        file = request.FILES.pop("file")[0]
-        file_format = {"file": file.read().decode("utf-8")}
-    except Exception:  # noqa
-        return {"errors": {"file": [UploadEnforcementXML.Errors.FILE_READ]}}, HTTPStatus.BAD_REQUEST
-
-    data = client.post(request, f"/cases/enforcement-check/{queue_pk}", file_format)
-    return data.json(), data.status_code
+    response = client.post(request, f"/cases/enforcement-check/{queue_pk}", json)
+    return response
