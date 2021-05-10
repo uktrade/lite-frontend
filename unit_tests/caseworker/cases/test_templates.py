@@ -316,7 +316,7 @@ def test_good_on_application_detail_unverified_product(
         "other_cases": [],
         "data": {},
         "organisation_documents": {},
-        "queue": {"id": "00000000-0000-0000-0000-000000000001"}
+        "queue": {"id": "00000000-0000-0000-0000-000000000001"},
     }
     # then we show the is_good_controlled value that the exporter originally gave
     html = render_to_string("case/product-on-case.html", context)
@@ -348,7 +348,7 @@ def test_good_on_application_detail_verified_product(
         "other_cases": [],
         "data": {},
         "organisation_documents": {},
-        "queue": {"id": "00000000-0000-0000-0000-000000000001"}
+        "queue": {"id": "00000000-0000-0000-0000-000000000001"},
     }
 
     # then we show the is_good_controlled value that the reviewer gave
