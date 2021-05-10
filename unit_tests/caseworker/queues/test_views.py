@@ -44,7 +44,7 @@ def mock_enforcement_xml_validation_error(requests_mock):
 def test_upload_enforcement_xml_valid_file(authorized_client, mock_enforcement_xml_upload, settings):
     url = reverse("queues:enforcement_xml_import", kwargs={"pk": queue_pk})
 
-    file_path = os.path.join(settings.BASE_DIR, "caseworker/queues/example.xml")
+    file_path = os.path.join(settings.BASE_DIR, "unit_tests/caseworker/queues/example.xml")
     data = {"file": open(file_path, "rb")}
 
     response = authorized_client.post(url, data, format="multipart")
@@ -58,7 +58,7 @@ def test_upload_enforcement_xml_valid_file(authorized_client, mock_enforcement_x
 def test_upload_enforcement_xml_invalid_file(authorized_client, mock_enforcement_xml_validation_error, settings):
     url = reverse("queues:enforcement_xml_import", kwargs={"pk": queue_pk})
 
-    file_path = os.path.join(settings.BASE_DIR, "caseworker/queues/example.xml")
+    file_path = os.path.join(settings.BASE_DIR, "unit_tests/caseworker/queues/example.xml")
     data = {"file": open(file_path, "rb")}
 
     response = authorized_client.post(url, data, format="multipart")
