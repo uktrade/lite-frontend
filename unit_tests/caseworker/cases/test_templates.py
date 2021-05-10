@@ -1,3 +1,4 @@
+import pytest
 import requests
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
@@ -355,3 +356,37 @@ def test_good_on_application_detail_verified_product(
     html = render_to_string("case/product-on-case.html", context)
     soup = BeautifulSoup(html, "html.parser")
     assert "No" in soup.find(id="is-licensable-value").text
+
+
+@pytest.mark.parametrize(
+    "quantity,unit",
+    [
+        (256, {"key": "NAR", "value": "items"}),
+        (1, {"key": "NAR", "value": "item"}),
+        (123.45, {"key": "GRM", "value": "Gram(s)"}),
+        (128.64, {"key": "KGM", "value": "Kilogram(s)"}),
+        (1150.32, {"key": "MTK", "value": "Square metre(s)"}),
+        (100.00, {"key": "MTR", "value": "Metre(s)"}),
+        (2500.25, {"key": "LTR", "value": "Litre(s)"}),
+        (123.45, {"key": "MTQ", "value": "Cubic metre(s)"}),
+        (99, {"key": "ITG", "value": "Intangible"}),
+    ],
+)
+def test_good_on_application_display_quantity(data_good_on_application, quantity, unit):
+    good_on_application = {**data_good_on_application}
+    good_on_application["good"]["item_category"] = {"key": "group2_firearms", "value": "Firearms"}
+    good_on_application["quantity"] = quantity
+    good_on_application["unit"] = unit
+
+    context = {
+        "queue": {"id": "00000000-0000-0000-0000-000000000001"},
+        "case": {"id": "8fb76bed-fd45-4293-95b8-eda9468aa254", "goods": []},
+        "goods": [good_on_application],
+    }
+
+    expected_quantity = f"{quantity} {unit['value']}"
+
+    html = render_to_string("case/slices/goods.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+    actual_quantity = soup.find(id="quantity-value").text
+    assert expected_quantity == actual_quantity
