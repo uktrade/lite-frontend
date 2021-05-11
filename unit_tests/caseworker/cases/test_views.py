@@ -1,3 +1,4 @@
+from copy import deepcopy
 from bs4 import BeautifulSoup
 
 from django.urls import reverse
@@ -6,8 +7,6 @@ import pytest
 
 from core import client
 
-
-team1 = {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None}
 
 approve = {"key": "approve", "value": "Approve"}
 proviso = {"key": "proviso", "value": "Approve with proviso"}
@@ -21,7 +20,7 @@ john_smith = {
     "last_name": "Smith",
     "role_name": "Super User",
     "status": "Active",
-    "team": team1,
+    "team": {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None},
 }
 
 
@@ -351,20 +350,23 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
 
 
 @pytest.mark.parametrize(
-    "advice_1_type,advice_2_type,can_finalise,show_warning",
+    "product_1_advice,product_2_advice,end_user_advice,can_finalise,show_warning",
     (
-        [approve, refuse, False, True],
-        [approve, conflicting, False, True],
-        [approve, proviso, True, False],
-        [approve, approve, True, False],
-        [proviso, proviso, True, False],
-        [refuse, refuse, True, False],
-        [conflicting, conflicting, False, False],
+        (
+            [approve, refuse], refuse, approve, False, True
+        ),
+        (
+            [approve, proviso], refuse, approve, True, False
+        ),
+        (
+            [approve, refuse], approve, approve, False, True
+        ),
     ),
 )
 def test_case_conflicting_advice(
-    advice_1_type,
-    advice_2_type,
+    product_1_advice,
+    product_2_advice,
+    end_user_advice,
     can_finalise,
     show_warning,
     requests_mock,
@@ -382,18 +384,27 @@ def test_case_conflicting_advice(
 
     mock_case = {**data_standard_case}
 
-    advice_1 = {
+    product_1_id = "8b730c06-ab4e-401c-aeb0-32b3c92e912c"
+    product_2_id = "880178cd-83ec-4773-8829-c19065912565"
+    end_user_id = "95d3ea36-6ab9-41ea-a744-7284d17b9cc5"
+
+    product_2 = deepcopy(mock_case["case"]["data"]["goods"][0])
+    product_2["good"]["id"] = product_2_id
+    product_2["good"]["id"] = product_2_id
+    mock_case["case"]["data"]["goods"].append(product_2)
+
+    product_1_advice_1 = {
         "id": "8993476f-9849-49d1-973e-62b185085a64",
         "text": "",
         "note": "",
-        "type": advice_1_type,
+        "type": product_1_advice[0],
         "level": "final",
         "proviso": None,
         "denial_reasons": [],
         "footnote": None,
         "user": john_smith,
         "created_at": "2021-03-18T11:27:56.625251Z",
-        "good": "633178cd-83ec-4773-8829-c19065912565",
+        "good": product_1_id,
         "goods_type": None,
         "country": None,
         "end_user": None,
@@ -401,11 +412,33 @@ def test_case_conflicting_advice(
         "consignee": None,
         "third_party": None,
     }
-    advice_2 = {
+    product_1_advice_2 = {**product_1_advice_1}
+    product_1_advice_2["type"] = product_1_advice[1]
+
+    product_2_advice = {
+        "id": "8993476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": product_2_advice,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": product_2_id,
+        "goods_type": None,
+        "country": None,
+        "end_user": None,
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+    end_user_advice = {
         "id": "0093476f-9849-49d1-973e-62b185085a64",
         "text": "",
         "note": "",
-        "type": advice_2_type,
+        "type": end_user_advice,
         "level": "final",
         "proviso": None,
         "denial_reasons": [],
@@ -415,13 +448,13 @@ def test_case_conflicting_advice(
         "good": None,
         "goods_type": None,
         "country": None,
-        "end_user": "783178cd-83ec-4773-8829-c19065912565",
+        "end_user": end_user_id,
         "ultimate_end_user": None,
         "consignee": None,
         "third_party": None,
     }
 
-    mock_case["case"]["advice"] = [advice_1, advice_2]
+    mock_case["case"]["advice"] = [product_1_advice_1, product_1_advice_2, product_2_advice, end_user_advice]
 
     requests_mock.get(url=url, json=mock_case)
 
