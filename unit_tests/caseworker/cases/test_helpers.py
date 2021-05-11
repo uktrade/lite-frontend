@@ -83,27 +83,13 @@ def test_flatten_goods_data_open_application(data_open_case, rf):
 @pytest.mark.parametrize(
     "product_1_advice,product_2_advice,is_conflicting",
     (
-        (
-            [approve, refuse], refuse, True
-        ),
-        (
-            [approve, proviso], refuse, False
-        ),
-        (
-            [approve], refuse, False
-        ),
-        (
-            [approve], approve, False
-        ),
-        (
-            [refuse], approve, False
-        ),
-        (
-            [conflicting], approve, True
-        ),
-        (
-            [conflicting], refuse, True
-        ),
+        ([approve, refuse], refuse, True),
+        ([approve, proviso], refuse, False),
+        ([approve], refuse, False),
+        ([approve], approve, False),
+        ([refuse], approve, False),
+        ([conflicting], approve, True),
+        ([conflicting], refuse, True),
     ),
 )
 def test_case_goods_has_conflicting_advice(product_1_advice, product_2_advice, is_conflicting):
@@ -123,15 +109,11 @@ def test_case_goods_has_conflicting_advice(product_1_advice, product_2_advice, i
 
     product_1 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {
-            "id": product_1_id,
-        },
+        "good": {"id": product_1_id,},
     }
     product_2 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {
-            "id": product_2_id,
-        },
+        "good": {"id": product_2_id,},
     }
 
     goods = [product_1, product_2]
@@ -151,21 +133,11 @@ def test_case_goods_has_conflicting_advice(product_1_advice, product_2_advice, i
 @pytest.mark.parametrize(
     "advice_types,has_at_least_one_approval",
     (
-        (
-            [approve, refuse, refuse], True
-        ),
-        (
-            [approve, proviso, approve], True
-        ),
-        (
-            [refuse, proviso, refuse], True
-        ),
-        (
-            [refuse, refuse, refuse], False
-        ),
-        (
-            [refuse, conflicting, refuse], False
-        ),
+        ([approve, refuse, refuse], True),
+        ([approve, proviso, approve], True),
+        ([refuse, proviso, refuse], True),
+        ([refuse, refuse, refuse], False),
+        ([refuse, conflicting, refuse], False),
     ),
 )
 def test_goods_list_has_at_least_one_approval(advice_types, has_at_least_one_approval):
@@ -191,21 +163,15 @@ def test_goods_list_has_at_least_one_approval(advice_types, has_at_least_one_app
 
     product_1 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {
-            "id": product_1_id,
-        },
+        "good": {"id": product_1_id,},
     }
     product_2 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {
-            "id": product_2_id,
-        },
+        "good": {"id": product_2_id,},
     }
     product_3 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {
-            "id": product_3_id,
-        },
+        "good": {"id": product_3_id,},
     }
 
     goods = [product_1, product_2, product_3]
@@ -234,21 +200,11 @@ end_user_advice["end_user"] = "foo"
 @pytest.mark.parametrize(
     "advice_list,target,exp_length",
     (
-        (
-            [product_advice, product_advice, product_advice], "good", 3
-        ),
-        (
-            [country_advice, product_advice, product_advice], "good", 2
-        ),
-        (
-            [country_advice, product_advice, product_advice], "country", 1
-        ),
-        (
-            [country_advice, product_advice, end_user_advice], "country", 1
-        ),
-        (
-            [country_advice, product_advice, end_user_advice], "end_user", 1
-        ),
+        ([product_advice, product_advice, product_advice], "good", 3),
+        ([country_advice, product_advice, product_advice], "good", 2),
+        ([country_advice, product_advice, product_advice], "country", 1),
+        ([country_advice, product_advice, end_user_advice], "country", 1),
+        ([country_advice, product_advice, end_user_advice], "end_user", 1),
     ),
 )
 def test_filter_advice_by_target(advice_list, target, exp_length):

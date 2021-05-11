@@ -352,15 +352,9 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
 @pytest.mark.parametrize(
     "product_1_advice,product_2_advice,end_user_advice,can_finalise,show_warning",
     (
-        (
-            [approve, refuse], refuse, approve, False, True
-        ),
-        (
-            [approve, proviso], refuse, approve, True, False
-        ),
-        (
-            [approve, refuse], approve, approve, False, True
-        ),
+        ([approve, refuse], refuse, approve, False, True),
+        ([approve, proviso], refuse, approve, True, False),
+        ([approve, refuse], approve, approve, False, True),
     ),
 )
 def test_case_conflicting_advice(

@@ -91,7 +91,9 @@ class CaseDetail(CaseView):
         # no approvals on any goods = cannot finalise
 
         conflicting_goods_advice = advice_helpers.case_goods_has_conflicting_advice(self.case.goods, final_goods_advice)
-        goods_list_has_at_least_one_approval = advice_helpers.goods_list_has_at_least_one_approval(self.case.goods, final_goods_advice)
+        goods_list_has_at_least_one_approval = advice_helpers.goods_list_has_at_least_one_approval(
+            self.case.goods, final_goods_advice
+        )
 
         advice_types = set([f["type"]["key"] for f in other_advice])
 
