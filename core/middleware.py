@@ -142,3 +142,15 @@ class AuthBrokerTokenIntrospectionMiddleware:
             request.session.flush()
             return redirect(settings.LOGOUT_URL)
         return self.get_response(request)
+
+
+class XRobotsTagMiddleware:
+    """Adds X-Robots-Tag"""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response["X-Robots-Tag"] = ",".join(["noindex", "nofollow"])
+        return response
