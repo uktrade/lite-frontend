@@ -100,7 +100,7 @@
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Control list entries</th>
-															<td class="govuk-table__cell">
+															<td id="control-list-entries-value" class="govuk-table__cell">
 																{% if good_on_application.is_good_controlled is None %}
 																	{% for control_list_entry in good_on_application.good.control_list_entries %}
 																			{{ control_list_entry.rating }}
@@ -116,7 +116,7 @@
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Security graded</th>
-															<td class="govuk-table__cell">
+															<td id="security-graded-value" class="govuk-table__cell">
 																	{{ good_on_application.good.is_pv_graded|title }}
 																	{% if good_on_application.good.grading_comment %}
 																			- {{ good_on_application.good.grading_comment }}

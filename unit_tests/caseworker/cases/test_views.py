@@ -363,8 +363,8 @@ def test_good_on_application_detail_clc_entries(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
-    text = soup.find("th", text="Control list entries").find_next_sibling("td").text
-    clc_entries = text.replace("\n", "").replace("\t", "")
+    clc_entries = soup.find(id="control-list-entries-value").text
+    clc_entries = clc_entries.replace("\n", "").replace("\t", "")
     assert clc_entries == "ML1, ML2"
 
     data_good_on_application["is_good_controlled"] = None
@@ -378,8 +378,8 @@ def test_good_on_application_detail_clc_entries(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
-    text = soup.find("th", text="Control list entries").find_next_sibling("td").text
-    clc_entries = text.replace("\n", "").replace("\t", "")
+    clc_entries = soup.find(id="control-list-entries-value").text
+    clc_entries = clc_entries.replace("\n", "").replace("\t", "")
     assert clc_entries == "ML4, ML5"
 
 
@@ -396,6 +396,6 @@ def test_good_on_application_detail_security_graded_check(
 
         assert response.status_code == 200
         soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
-        text = soup.find("th", text="Security graded").find_next_sibling("td").text
-        security_grading = text.replace("\n", "").replace("\t", "")
+        security_grading = soup.find(id="security-graded-value").text
+        security_grading = security_grading.replace("\n", "").replace("\t", "")
         assert security_grading == expected_value.capitalize()
