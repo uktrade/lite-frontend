@@ -201,3 +201,48 @@ def convert_advice_item_to_base64(advice_item):
 def order_grouped_advice(grouped_advice):
     order = ["conflicting", "approve", "proviso", "no_licence_required", "not_applicable", "refuse", "no_advice"]
     return OrderedDict(sorted(grouped_advice.items(), key=lambda t: order.index(t[1]["type"]["key"])))
+
+
+def filter_advice_by_target(advice_list, target):
+    # filters a list of advice by the type of item it is for eg good, goods_type, country etc
+    filtered = []
+
+    for advice in advice_list:
+        if advice.get(target) is not None:
+            filtered.append(advice)
+
+    return filtered
+
+
+def case_goods_has_conflicting_advice(goods, advice_list):
+    # go through each product. check for conflicting advice
+    for good_on_application in goods:
+        # find advice belonging to the good
+        product_advice = [a for a in advice_list if a["good"] == good_on_application["good"]["id"]]
+        advice_types = set([a["type"]["key"] for a in product_advice])
+
+        if "conflicting" in advice_types:
+            return True
+
+        # if the good only has one type of advice, skip it
+        if len(product_advice) in [0, 1]:
+            continue
+
+        if advice_types != {"approve", "proviso"}:
+            return True
+
+    return False
+
+
+def goods_list_has_at_least_one_approval(goods, advice_list):
+    # go through each product. check for approvals/provisos
+    for good_on_application in goods:
+        # find advice belonging to the good
+        product_advice = [a for a in advice_list if a["good"] == good_on_application["good"]["id"]]
+
+        advice_types = set([a["type"]["key"] for a in product_advice])
+
+        if "approve" in advice_types or "proviso" in advice_types:
+            return True
+
+    return False
