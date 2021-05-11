@@ -1,5 +1,6 @@
-from copy import deepcopy
 from bs4 import BeautifulSoup
+from copy import deepcopy
+from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
 
 from django.urls import reverse
 
@@ -296,6 +297,7 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
     # given I access good on application details for a good with neither part number of control list entries
     data_good_on_application["good"]["part_number"] = ""
     data_good_on_application["control_list_entries"] = []
+    data_good_on_application["good"]["control_list_entries"] = []
     url = reverse(
         "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
     )
@@ -347,6 +349,71 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
     assert response.status_code == 200
+
+
+def test_good_on_application_detail_clc_entries(
+    authorized_client,
+    mock_application_search,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_search,
+    data_good_on_application,
+    data_standard_case,
+):
+    """
+    Test that ensures correct Control list entries are displayed in Product detail page
+    Control list entries are in two places in GoodOnApplication instance and before a good
+    is reviewed they could be different.
+    if is_good_controlled is None, then it is not yet reviewed by the Case officer so we
+    display the entries from the good.
+    if is_good_controlled is not None (either Yes or No) then it means the good is reviewed
+    and the Case officer applied the correct CLC entry so display from good_on_application
+    """
+    data_good_on_application["audit_trail"] = []
+    # given I access good on application details for a good with control list entries and a part number
+    url = reverse(
+        "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
+    )
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
+    clc_entries = soup.find(id="control-list-entries-value").text
+    clc_entries = clc_entries.replace("\n", "").replace("\t", "")
+    assert clc_entries == "ML1, ML2"
+
+    data_good_on_application["is_good_controlled"] = None
+    data_good_on_application["control_list_entries"] = []
+    # given I access good on application details for a good with control list entries and a part number
+    url = reverse(
+        "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
+    )
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
+    clc_entries = soup.find(id="control-list-entries-value").text
+    clc_entries = clc_entries.replace("\n", "").replace("\t", "")
+    assert clc_entries == "ML4, ML5"
+
+
+def test_good_on_application_detail_security_graded_check(
+    authorized_client, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+):
+    for expected_value in ["no", "yes"]:
+        data_good_on_application["good"]["is_pv_graded"] = expected_value
+        # given I access good on application details for a good with control list entries and a part number
+        url = reverse(
+            "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
+        )
+        response = authorized_client.get(url)
+
+        assert response.status_code == 200
+        soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
+        security_grading = soup.find(id="security-graded-value").text
+        security_grading = security_grading.replace("\n", "").replace("\t", "")
+        assert security_grading == expected_value.capitalize()
 
 
 @pytest.mark.parametrize(

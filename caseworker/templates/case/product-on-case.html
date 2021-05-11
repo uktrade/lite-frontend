@@ -100,17 +100,24 @@
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Control list entries</th>
-															<td class="govuk-table__cell">
-																	{% for control_list_entry in good_on_application.control_list_entries %}
+															<td id="control-list-entries-value" class="govuk-table__cell">
+																{% if good_on_application.is_good_controlled is None %}
+																	{% for control_list_entry in good_on_application.good.control_list_entries %}
 																			{{ control_list_entry.rating }}
 																			{% if not forloop.last %}, {% endif %}
 																	{% endfor %}
+																{% else %}
+																	{% for control_list_entry in good_on_application.control_list_entries %}
+																		{{ control_list_entry.rating }}
+																		{% if not forloop.last %}, {% endif %}
+																	{% endfor %}
+															{% endif %}
 															</td>
 													</tr>
 													<tr class="govuk-table__row app-table__row">
 															<th scope="row" class="govuk-table__header">Security graded</th>
-															<td class="govuk-table__cell">
-																	{{ good_on_application.good.is_pv_graded|yesno|title }}
+															<td id="security-graded-value" class="govuk-table__cell">
+																	{{ good_on_application.good.is_pv_graded|title }}
 																	{% if good_on_application.good.grading_comment %}
 																			- {{ good_on_application.good.grading_comment }}
 																	{% endif %}
@@ -128,7 +135,7 @@
 																		<th scope="row" class="govuk-table__header">Replica firearm</th>
 																		<td class="govuk-table__cell">
 																			{% if firearm_details.is_replica is not None %}
-																				{{ firearm_details.is_replica|friendly_boolean }}, {{ firearm_details.replica_description }}
+																				{{ firearm_details.is_replica|friendly_boolean }} {% if firearm_details.replica_description %}, {{ firearm_details.replica_description }} {% endif %}
 																			{% else %}
 																				N/A
 																			{% endif %}
