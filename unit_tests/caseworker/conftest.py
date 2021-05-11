@@ -4,12 +4,10 @@ import pytest
 
 from urllib import parse
 
-from django.conf import settings
 from django.test import Client
 
 from core import client
 from core.helpers import convert_value_to_query_param
-
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
@@ -401,6 +399,18 @@ def mock_case(
 
 
 @pytest.fixture
+def mock_all_standard_case_data(
+    mock_standard_case_ecju_queries,
+    mock_standard_case_assigned_queues,
+    mock_standard_case_documents,
+    mock_standard_case_additional_documents,
+    mock_standard_case_activity_filters,
+    mock_get_standard_case_activity,
+):
+    yield
+
+
+@pytest.fixture
 def data_queue():
     return {
         "id": "00000000-0000-0000-0000-000000000001",
@@ -580,8 +590,24 @@ def mock_case_ecju_queries(requests_mock):
 
 
 @pytest.fixture
+def mock_standard_case_ecju_queries(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/")
+    data = {"ecju_queries": []}
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
 def mock_case_assigned_queues(requests_mock):
     url = client._build_absolute_uri(f"/cases/{application_id}/assigned-queues/")
+    data = {"queues": []}
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
+def mock_standard_case_assigned_queues(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/assigned-queues/")
     data = {"queues": []}
     requests_mock.get(url=url, json=data)
     yield data
@@ -612,6 +638,30 @@ def mock_case_documents(requests_mock):
 
 
 @pytest.fixture
+def mock_standard_case_documents(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/documents/")
+    data = {
+        "documents": [
+            {
+                "id": "c58f84b2-6925-4aee-9888-c3115e2fdc26",
+                "name": "Application Form - 2020-08-03 12:52:37.977275+00:00.pdf",
+                "type": {"key": "AUTO_GENERATED", "value": "Auto Generated"},
+                "metadata_id": "c58f84b2-6925-4aee-9888-c3115e2fdc26",
+                "user": None,
+                "size": None,
+                "case": standard_case_pk,
+                "created_at": "2020-08-03T12:52:37.977338Z",
+                "safe": True,
+                "description": None,
+                "visible_to_exporter": False,
+            }
+        ]
+    }
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
 def mock_case_additional_documents(requests_mock):
     url = client._build_absolute_uri(f"/cases/{application_id}/additional-contacts/")
     data = []
@@ -620,8 +670,41 @@ def mock_case_additional_documents(requests_mock):
 
 
 @pytest.fixture
+def mock_standard_case_additional_documents(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/additional-contacts/")
+    data = []
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
 def mock_case_activity_system_user(requests_mock):
     url = client._build_absolute_uri(f"/cases/{application_id}/activity/")
+    data = {
+        "activity": [
+            {
+                "id": "1eaa6494-1fd3-4613-8a92-39b02d889fa9",
+                "created_at": "2020-08-03T12:52:38.239382Z",
+                "user": {"first_name": "LITE", "last_name": "system"},
+                "text": "moved the case to queue 20200629162022.",
+                "additional_text": "",
+            },
+            {
+                "id": "ba08e46b-0278-40ff-87a2-8be2600fad49",
+                "created_at": "2020-08-03T12:52:37.740574Z",
+                "user": {"first_name": "Automated", "last_name": "Test"},
+                "text": "updated the status to: Submitted.",
+                "additional_text": "",
+            },
+        ]
+    }
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
+def mock_standard_case_activity_system_user(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/")
     data = {
         "activity": [
             {
@@ -660,6 +743,27 @@ def mock_teams(requests_mock):
 @pytest.fixture
 def mock_case_activity_filters(requests_mock):
     url = client._build_absolute_uri(f"/cases/{application_id}/activity/filters/")
+    data = {
+        "filters": {
+            "activity_types": [
+                {"key": "move_case", "value": "Move case"},
+                {"key": "updated_status", "value": "Updated status"},
+            ],
+            "teams": [],
+            "user_types": [{"key": "internal", "value": "Internal"}, {"key": "exporter", "value": "Exporter"}],
+            "users": [
+                {"key": "73402567-751c-41d7-9aa6-8061f1663db7", "value": "Automated Test"},
+                {"key": "00000000-0000-0000-0000-000000000001", "value": "LITE system"},
+            ],
+        }
+    }
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
+def mock_standard_case_activity_filters(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/filters/")
     data = {
         "filters": {
             "activity_types": [
@@ -931,6 +1035,13 @@ def mock_get_organisation(requests_mock, data_organisation, organisation_pk):
 @pytest.fixture(autouse=True)
 def mock_get_activity(requests_mock, open_case_pk, stub_case_activity):
     url = f"/cases/{open_case_pk}/activity/"
+    url = client._build_absolute_uri(url)
+    yield requests_mock.get(url=url, json=stub_case_activity)
+
+
+@pytest.fixture()
+def mock_get_standard_case_activity(requests_mock, standard_case_pk, stub_case_activity):
+    url = f"/cases/{standard_case_pk}/activity/"
     url = client._build_absolute_uri(url)
     yield requests_mock.get(url=url, json=stub_case_activity)
 

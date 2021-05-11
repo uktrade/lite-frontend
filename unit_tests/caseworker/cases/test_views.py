@@ -1,10 +1,28 @@
 from bs4 import BeautifulSoup
+from copy import deepcopy
 from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
+
 from django.urls import reverse
 
 import pytest
 
 from core import client
+
+
+approve = {"key": "approve", "value": "Approve"}
+proviso = {"key": "proviso", "value": "Approve with proviso"}
+refuse = {"key": "refuse", "value": "Refuse"}
+conflicting = {"key": "conflicting", "value": "Conflicting"}
+
+john_smith = {
+    "email": "john.smith@example.com",
+    "first_name": "John",
+    "id": "63c74ddd-c119-48cc-8696-d196218ca583",
+    "last_name": "Smith",
+    "role_name": "Super User",
+    "status": "Active",
+    "team": {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None},
+}
 
 
 @pytest.fixture(autouse=True)
@@ -327,7 +345,6 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     )
 
     url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
-    data = {"objects": ["1", "2", "3"]}
 
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
@@ -358,10 +375,9 @@ def test_good_on_application_detail_clc_entries(
     url = reverse(
         "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
     )
+
     response = authorized_client.get(url)
-
     assert response.status_code == 200
-
     soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
     clc_entries = soup.find(id="control-list-entries-value").text
     clc_entries = clc_entries.replace("\n", "").replace("\t", "")
@@ -373,10 +389,9 @@ def test_good_on_application_detail_clc_entries(
     url = reverse(
         "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
     )
+
     response = authorized_client.get(url)
-
     assert response.status_code == 200
-
     soup = BeautifulSoup(response.content.decode("utf-8"), "html.parser")
     clc_entries = soup.find(id="control-list-entries-value").text
     clc_entries = clc_entries.replace("\n", "").replace("\t", "")
@@ -399,3 +414,123 @@ def test_good_on_application_detail_security_graded_check(
         security_grading = soup.find(id="security-graded-value").text
         security_grading = security_grading.replace("\n", "").replace("\t", "")
         assert security_grading == expected_value.capitalize()
+
+
+@pytest.mark.parametrize(
+    "product_1_advice,product_2_advice,end_user_advice,can_finalise,show_warning",
+    (
+        ([approve, refuse], refuse, approve, False, True),
+        ([approve, proviso], refuse, approve, True, False),
+        ([approve, refuse], approve, approve, False, True),
+    ),
+)
+def test_case_conflicting_advice(
+    product_1_advice,
+    product_2_advice,
+    end_user_advice,
+    can_finalise,
+    show_warning,
+    requests_mock,
+    authorized_client,
+    queue_pk,
+    mock_all_standard_case_data,
+    data_standard_case,
+):
+    url = reverse(
+        "cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"], "tab": "final-advice"}
+    )
+
+    blocking_flags_url = client._build_absolute_uri("/flags/")
+    requests_mock.get(url=blocking_flags_url, json=[])
+
+    mock_case = {**data_standard_case}
+
+    product_1_id = "8b730c06-ab4e-401c-aeb0-32b3c92e912c"
+    product_2_id = "880178cd-83ec-4773-8829-c19065912565"
+    end_user_id = "95d3ea36-6ab9-41ea-a744-7284d17b9cc5"
+
+    product_2 = deepcopy(mock_case["case"]["data"]["goods"][0])
+    product_2["good"]["id"] = product_2_id
+    product_2["good"]["id"] = product_2_id
+    mock_case["case"]["data"]["goods"].append(product_2)
+
+    product_1_advice_1 = {
+        "id": "8993476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": product_1_advice[0],
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": product_1_id,
+        "goods_type": None,
+        "country": None,
+        "end_user": None,
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+    product_1_advice_2 = {**product_1_advice_1}
+    product_1_advice_2["type"] = product_1_advice[1]
+
+    product_2_advice = {
+        "id": "8993476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": product_2_advice,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": product_2_id,
+        "goods_type": None,
+        "country": None,
+        "end_user": None,
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+    end_user_advice = {
+        "id": "0093476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": end_user_advice,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": None,
+        "goods_type": None,
+        "country": None,
+        "end_user": end_user_id,
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+
+    mock_case["case"]["advice"] = [product_1_advice_1, product_1_advice_2, product_2_advice, end_user_advice]
+
+    requests_mock.get(url=url, json=mock_case)
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    if can_finalise:
+        assert "app-advice__disabled-buttons" not in soup.find(id="button-finalise").parent["class"]
+    else:
+        assert "app-advice__disabled-buttons" in soup.find(id="button-finalise").parent["class"]
+
+    if show_warning:
+        assert "This application contains conflicting advice and cannot be finalised." in str(response.content)
+    else:
+        assert "This application contains conflicting advice and cannot be finalised." not in str(response.content)

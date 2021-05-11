@@ -70,9 +70,9 @@ class CaseDetail(CaseView):
         ):
             current_advice_level += ["team"]
 
-        if filter_advice_by_level(
-            self.case["advice"], "final"
-        ) and advice_helpers.check_user_permitted_to_give_final_advice(
+        final_advice = filter_advice_by_level(self.case["advice"], "final")
+
+        if final_advice and advice_helpers.check_user_permitted_to_give_final_advice(
             self.case.data["case_type"]["sub_type"]["key"], self.permissions
         ):
             current_advice_level += ["final"]
@@ -83,12 +83,36 @@ class CaseDetail(CaseView):
         ):
             current_advice_level = []
 
+        final_goods_advice = advice_helpers.filter_advice_by_target(final_advice, "good")
+        other_advice = [a for a in final_advice if a not in final_goods_advice]
+
+        # approve/refuse on same product = cannot finalise
+        # approve refuse on different products in same application = can still finalise
+        # no approvals on any goods = cannot finalise
+
+        conflicting_goods_advice = advice_helpers.case_goods_has_conflicting_advice(self.case.goods, final_goods_advice)
+        goods_list_has_at_least_one_approval = advice_helpers.goods_list_has_at_least_one_approval(
+            self.case.goods, final_goods_advice
+        )
+
+        advice_types = set([f["type"]["key"] for f in other_advice])
+
+        if advice_types == {"approve", "proviso"}:
+            conflicting_other_advice = False
+        else:
+            conflicting_other_advice = len(advice_types) > 1
+
+        conflicting_advice = conflicting_goods_advice or conflicting_other_advice
+
         return {
+            "conflicting_advice": conflicting_advice,
             "teams": get_teams(self.request),
             "current_advice_level": current_advice_level,
             "can_finalise": "final" in current_advice_level
             and advice_helpers.can_advice_be_finalised(self.case)
-            and not blocking_flags,
+            and not blocking_flags
+            and not conflicting_advice
+            and goods_list_has_at_least_one_approval,
             "blocking_flags": blocking_flags,
         }
 
