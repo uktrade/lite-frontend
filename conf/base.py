@@ -65,6 +65,7 @@ MIDDLEWARE = [
     "core.middleware.RequestsSessionMiddleware",
     "core.middleware.NoCacheMiddleware",
     "core.middleware.ValidateReturnToMiddleware",
+    "core.middleware.XRobotsTagMiddleware",
 ]
 
 if not DEBUG:

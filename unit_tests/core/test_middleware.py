@@ -123,3 +123,15 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, error, rf):
     instance = middleware.AuthBrokerTokenIntrospectionMiddleware(get_response)
     response = instance(request)
     assert response.status_code == status.HTTP_302_FOUND
+
+
+def test_x_robots_tag_middleware(rf):
+    # Set up mock request and response
+    request = rf.get("/")
+    get_response = mock.Mock(return_value=Response())
+    # Instantiate and call the middleware
+    instance = middleware.XRobotsTagMiddleware(get_response)
+    # We should get a 200 and the token should be cached
+    response = instance(request)
+    assert response.status_code == status.HTTP_200_OK
+    assert response._headers.get("x-robots-tag", "") == ("X-Robots-Tag", "noindex,nofollow")
