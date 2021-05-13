@@ -25,6 +25,7 @@
 
 		<link href="{% static 'main.css' %}" rel="stylesheet" type="text/css" />
 
+		{% if GOOGLE_ANALYTICS_KEY %}
 		<script nonce="{{ request.csp_nonce }}">
 			(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -32,6 +33,7 @@
 			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 			})(window,document,'script','dataLayer','{{ GOOGLE_ANALYTICS_KEY }}');
 		</script>
+		{% endif %}
 
 		<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/govuk-opengraph-image.png' %}">
 
@@ -39,8 +41,10 @@
 		{% block head %}{% endblock %}
 	</head>
 	<body class="govuk-template__body ">
+		{% if GOOGLE_ANALYTICS_KEY %}
 		<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ GOOGLE_ANALYTICS_KEY }}"
 		height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+		{% endif %}
 
 		<script nonce="{{ request.csp_nonce }}">
 			document.body.className = (
