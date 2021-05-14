@@ -152,6 +152,7 @@ class CaseDetail(CaseView):
             Slices.END_USE_DETAILS,
             Slices.ROUTE_OF_GOODS,
             Slices.SUPPORTING_DOCUMENTS,
+            Slices.FREEDOM_OF_INFORMATION,
         ]
         self.additional_context = self.get_advice_additional_context()
 

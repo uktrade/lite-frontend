@@ -1,0 +1,19 @@
+<table class="govuk-table" id="route-of-goods">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.FreedomOfInformation.DESCRIPTION_COLUMN' %}</th>
+			<th class="govuk-table__header">{% lcs 'cases.ApplicationPage.FreedomOfInformation.ANSWER_COLUMN' %}</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-!-font-weight-bold">
+				The disclosure of information on this application form would be harmful to my/our interests
+			</td>
+			<td class="govuk-table__cell">
+				<p class="govuk-body govuk-!-margin-0">{{ case.data.agreed_to_foi|friendly_boolean }}</p>
+				<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-1" data-max-length="200">{{ case.data.foi_reason|default:"" }}</p>
+			</td>
+		</tr>
+	</tbody>
+</table>

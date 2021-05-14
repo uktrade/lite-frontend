@@ -417,6 +417,10 @@ class ApplicationPage:
         ANSWER_COLUMN = "Answer"
         SHIPPED_TITLE = "Shipped waybill or lading"
 
+    class FreedomOfInformation:
+        DESCRIPTION_COLUMN = "Description"
+        ANSWER_COLUMN = "Answer"
+
     class Details:
         DETAILS = "Exhibition details"
 
