@@ -534,3 +534,88 @@ def test_case_conflicting_advice(
         assert "This application contains conflicting advice and cannot be finalised." in str(response.content)
     else:
         assert "This application contains conflicting advice and cannot be finalised." not in str(response.content)
+
+
+def test_case_refusal_advice(
+    requests_mock, authorized_client, queue_pk, mock_all_standard_case_data, data_standard_case,
+):
+    url = reverse(
+        "cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"], "tab": "final-advice"}
+    )
+
+    blocking_flags_url = client._build_absolute_uri("/flags/")
+    requests_mock.get(url=blocking_flags_url, json=[])
+
+    mock_case = {**data_standard_case}
+
+    advice_1 = {
+        "id": "8993476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": refuse,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+        "goods_type": None,
+        "country": None,
+        "end_user": None,
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+    advice_2 = {
+        "id": "8993476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": refuse,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": "880178cd-83ec-4773-8829-c19065912565",
+        "goods_type": None,
+        "country": "0093476f-9849-49d1-973e-62b185085a64",
+        "end_user": None,
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+    advice_3 = {
+        "id": "0093476f-9849-49d1-973e-62b185085a64",
+        "text": "",
+        "note": "",
+        "type": refuse,
+        "level": "final",
+        "proviso": None,
+        "denial_reasons": [],
+        "footnote": None,
+        "user": john_smith,
+        "created_at": "2021-03-18T11:27:56.625251Z",
+        "good": None,
+        "goods_type": None,
+        "country": None,
+        "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+        "ultimate_end_user": None,
+        "consignee": None,
+        "third_party": None,
+    }
+
+    mock_case["case"]["advice"] = [advice_1, advice_2, advice_3]
+
+    requests_mock.get(url=url, json=mock_case)
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert "app-advice__disabled-buttons" not in soup.find(id="button-finalise").parent["class"]
+
+    assert "This application contains conflicting advice and cannot be finalised." not in str(response.content)
