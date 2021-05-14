@@ -67,6 +67,7 @@ class Slices:
     OPEN_LICENCE_RETURNS = Slice("open-licence-returns", cases.OpenLicenceReturns.TITLE)
     COMPLIANCE_VISITS = Slice("compliance-visits", "Visit reports")
     COMPLIANCE_VISIT_DETAILS = Slice("compliance-visit-details")
+    FREEDOM_OF_INFORMATION = Slice("freedom-of-information", "Freedom of Information")
 
 
 class CaseView(TemplateView):

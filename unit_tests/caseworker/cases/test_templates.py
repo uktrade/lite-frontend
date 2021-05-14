@@ -390,3 +390,20 @@ def test_good_on_application_display_quantity(data_good_on_application, quantity
     soup = BeautifulSoup(html, "html.parser")
     actual_quantity = soup.find(id="quantity-value").text
     assert expected_quantity == actual_quantity
+
+
+@pytest.mark.parametrize(
+    "agreed_to_foi,foi_reason", [("Yes", "internal details"), ("No", ""),],
+)
+def test_foi_details_on_summary_page(data_standard_case, agreed_to_foi, foi_reason):
+    case = data_standard_case["case"]
+    case["data"]["agreed_to_foi"] = agreed_to_foi
+    case["data"]["foi_reason"] = foi_reason
+    context = {"case": case}
+
+    html = render_to_string("case/slices/freedom-of-information.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+    actual_foi_value = soup.find(id="agreed-to-foi-value").text
+    actual_foi_reason_value = soup.find(id="foi-reason-value").text
+    assert agreed_to_foi == actual_foi_value
+    assert foi_reason == actual_foi_reason_value

@@ -1,29 +1,37 @@
 class Declaration:
     BACK = "Back to check your answers"
     TITLE = "Declaration"
-    PARAGRAPH_ONE = (
-        "It’s an offence to make any statement or furnish any document or information which, "
-        "to your knowledge, is false in a material particular; or recklessly make any statement or "
-        "furnish any document or information which is false in a material particular. "
-    )
-    PARAGRAPH_TWO = (
-        "A licensee must comply with the licence conditions even, where relevant, after completing the "
-        "activity authorised by the licence. Failure to do so is an offence. "
-    )
-    PARAGRAPH_THREE = (
-        "By completing and submitting this application, you agree that information provided by you, "
-        "or any individual authorised to do so on behalf of your company or organisation, may be passed "
-        "to international organisations or other governments in accordance with commitments entered "
-        "into by Her Majesty's Government. "
-    )
-    PARAGRAPH_FOUR = (
-        "Furthermore, any information you provide in this application may be made public under the "
-        "Freedom of Information Act (FOIA) 2000. If you consider that the disclosure of any such "
-        "information would be harmful to your interests please tick the box and provide a full "
-        "explanation below. Please note that while the Export Control Joint Unit (ECJU) will take "
-        "your views into account we cannot guarantee that the information will not be disclosed in "
-        "compliance with FOIA. "
-    )
+    PARAGRAPH_ONE = """
+        It is an offence to make any statement or furnish any document or information which
+        to your knowledge is false in a material particular; or recklessly make any statement
+        or furnish any document or information which is false in a material particular for the
+        purpose of obtaining a licence.
+        """
+    PARAGRAPH_TWO = """
+        A licensee must comply with the licence conditions even, where relevant, after completing
+        the activity authorised by the licence. Failure to do so is an offence.
+        """
+    PARAGRAPH_THREE = """
+        By completing and submitting this application, you agree that information provided on LITE
+        by you, or any individual authorised to use LITE on behalf of your company or organisation,
+        may be passed to international organisations or other Governments in accordance with
+        commitments entered into by Her Majesty's Government.
+        """
+    PARAGRAPH_FOUR = """
+        Furthermore, any information you provide in this application may be made public under the
+        Freedom of Information Act (FoIA) 2000. If you consider that the disclosure of any such
+        information would be harmful to your interests please tick the box and provide a full explanation
+        below. Please note that while the ECO will take your views into account we cannot guarantee
+        that the information will not be disclosed in compliance with FoIA.
+        """
+    FOI_MORE_ADVICE = """
+        For more advice on the FoIA and how public bodies assess requests they receive, please refer
+        to <a href="https://ico.org.uk/">guidance published by the Information Commissioner's Office (ICO)</a>.
+    """
+    FOI_GUIDANCE = """
+        Further guidance, including detailed information about the exemptions, is available
+        on <a href="https://ico.org.uk/">the 'Freedom of Information' pages of the ICO's website</a>.
+    """
     BUTTON_TITLE = "Accept and submit"
     RADIO_TITLE = "Please confirm that you’ve read the terms and conditions of the licence for which you are applying."
     AGREE_TO_DECLARATION = "I have read and agreed to the terms and conditions of the licence I am applying for"
@@ -34,6 +42,10 @@ class FOI:
     AGREE_TO_FOI = "Yes"
     DISAGREE_TO_FOI = "No"
     FOI_REASON = "Please explain why you do not agree to FOI"
+    INFORMATION_DISCLOSURE_TITLE = (
+        "The disclosure of information on this application form would be harmful to my/our interests"
+    )
+    INFORMATION_DISCLOSURE_DETAILS = "Please explain why such disclosure of information would be harmful"
 
 
 class TermsAndConditions:
