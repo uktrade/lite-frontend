@@ -104,15 +104,21 @@ class CaseDetail(CaseView):
 
         conflicting_advice = conflicting_goods_advice or conflicting_other_advice
 
+        refuse_all = set([f["type"]["key"] for f in final_advice]) == {"refuse"}
+
+        can_finalise = (
+            "final" in current_advice_level
+            and advice_helpers.can_advice_be_finalised(self.case)
+            and not blocking_flags
+            and not conflicting_advice
+            and goods_list_has_at_least_one_approval
+        ) or refuse_all
+
         return {
             "conflicting_advice": conflicting_advice,
             "teams": get_teams(self.request),
             "current_advice_level": current_advice_level,
-            "can_finalise": "final" in current_advice_level
-            and advice_helpers.can_advice_be_finalised(self.case)
-            and not blocking_flags
-            and not conflicting_advice
-            and goods_list_has_at_least_one_approval,
+            "can_finalise": can_finalise,
             "blocking_flags": blocking_flags,
         }
 
