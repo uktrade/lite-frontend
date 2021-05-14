@@ -11,8 +11,8 @@
 				The disclosure of information on this application form would be harmful to my/our interests
 			</td>
 			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-0">{{ case.data.agreed_to_foi|friendly_boolean }}</p>
-				<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-1" data-max-length="200">{{ case.data.foi_reason|default:"" }}</p>
+				<p id="agreed-to-foi-value" class="govuk-body govuk-!-margin-0">{{ case.data.agreed_to_foi|friendly_boolean }}</p>
+				<p id="foi-reason-value" class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-1" data-max-length="200">{{ case.data.foi_reason|default:"" }}</p>
 			</td>
 		</tr>
 	</tbody>
