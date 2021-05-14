@@ -174,47 +174,32 @@ def declaration_form(application_id):
             Label(strings.declaration.LicenceConditions.GeneralNotes.PARAGRAPH_TWO),
             Label(strings.declaration.LicenceConditions.GeneralNotes.PARAGRAPH_THREE),
             # Declaration
-            Label("<b>" + strings.declaration.Declaration.TITLE + "</b>"),
-            Label(
-                strings.declaration.Declaration.PARAGRAPH_ONE
-                + "<br><br>"
-                + strings.declaration.Declaration.PARAGRAPH_TWO
-                + "<br><br>"
-                + strings.declaration.Declaration.PARAGRAPH_THREE
-                + "<br><br>"
-                + strings.declaration.Declaration.PARAGRAPH_FOUR
-            ),
-            # User input
-            RadioButtons(
-                name="agreed_to_foi",
-                title=strings.declaration.FOI.TITLE,
-                options=[
-                    Option(key=True, value=strings.declaration.FOI.AGREE_TO_FOI,),
-                    Option(
-                        key=False,
-                        value=strings.declaration.FOI.DISAGREE_TO_FOI,
-                        components=[
-                            TextArea(title=strings.declaration.FOI.FOI_REASON, name="foi_reason", optional=False,),
-                        ],
-                    ),
-                ],
-                classes=["govuk-radios--inline"],
-            ),
+            Label("<strong>" + strings.declaration.Declaration.TITLE + "</strong>"),
+            Label(strings.declaration.Declaration.PARAGRAPH_ONE),
+            Label(strings.declaration.Declaration.PARAGRAPH_TWO),
+            Label(strings.declaration.Declaration.PARAGRAPH_THREE),
+            Label(strings.declaration.Declaration.PARAGRAPH_FOUR),
             Checkboxes(
-                name="agreed_to_declaration",
-                title=strings.declaration.Declaration.RADIO_TITLE,
-                options=[
-                    Option(
-                        "True",
-                        strings.declaration.Declaration.AGREE_TO_DECLARATION,
-                        data_attribute="agreed_to_declaration",
-                    )
-                ],
+                name="agreed_to_foi",
+                options=[Option(key="True", value=strings.declaration.FOI.INFORMATION_DISCLOSURE_TITLE,),],
                 classes=["govuk-checkboxes--small"],
+            ),
+            TextArea(title=strings.declaration.FOI.INFORMATION_DISCLOSURE_DETAILS, name="foi_reason",),
+            Label(strings.declaration.Declaration.FOI_MORE_ADVICE),
+            Label(strings.declaration.Declaration.FOI_GUIDANCE),
+            TextInput(
+                title="Confirm that you agree to the above by typing 'I AGREE' in this box",
+                name="agreed_to_declaration_text",
+            ),
+            Label(
+                """Please note, your application must be checked thoroughly and only say 'I agree' if you are content
+                that the ELA is accurate. It may not be possible to make changes to the application after
+                it has been submitted and if so, you may have to reapply."""
             ),
         ],
         default_button_name=strings.declaration.Declaration.BUTTON_TITLE,
         back_link=BackLink(
             strings.declaration.Declaration.BACK, reverse_lazy("applications:summary", kwargs={"pk": application_id}),
         ),
+        javascript_imports={"/javascripts/declaration.js"},
     )
