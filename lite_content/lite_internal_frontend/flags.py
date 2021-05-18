@@ -46,8 +46,8 @@ class CreateFlagForm:
         TITLE = "Priority"
         DESCRIPTION = "This relates to the ordering of the flag. 0 is the highest."
 
-    class BlocksApproval:
-        TITLE = "Blocks application approval"
+    class BlocksFinalising:
+        TITLE = "Blocks application finalising"
         YES = "Yes"
         NO = "No"
 
@@ -74,8 +74,8 @@ class EditFlagForm:
         TITLE = "Priority"
         DESCRIPTION = "This relates to the ordering of the flag. 0 is the highest."
 
-    class BlocksApproval:
-        TITLE = "Blocks application approval"
+    class BlocksFinalising:
+        TITLE = "Blocks application finalising"
         YES = "Yes"
         NO = "No"
 
