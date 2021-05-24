@@ -1,4 +1,5 @@
 import datetime
+from logging import getLogger
 
 from django.conf import settings
 from django.contrib import messages
@@ -58,6 +59,9 @@ from caseworker.teams.services import get_teams
 from caseworker.users.services import get_gov_user_from_form_selection
 
 
+logger = getLogger(__name__)
+
+
 class CaseDetail(CaseView):
     def get_advice_additional_context(self):
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
@@ -104,12 +108,21 @@ class CaseDetail(CaseView):
 
         conflicting_advice = conflicting_goods_advice or conflicting_other_advice
 
+        if blocking_flags:
+            logger.debug("Cannot finalise because of blocking_flags: %s", blocking_flags)
+            return {
+                "conflicting_advice": conflicting_advice,
+                "teams": get_teams(self.request),
+                "current_advice_level": current_advice_level,
+                "can_finalise": False,
+                "blocking_flags": blocking_flags,
+            }
+
         refuse_all = set([f["type"]["key"] for f in final_advice]) == {"refuse"}
 
         can_finalise = (
             "final" in current_advice_level
             and advice_helpers.can_advice_be_finalised(self.case)
-            and not blocking_flags
             and not conflicting_advice
             and goods_list_has_at_least_one_approval
         ) or refuse_all
