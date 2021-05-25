@@ -79,11 +79,11 @@ def add_flag_form():
             ),
             RadioButtons(
                 name="blocks_approval",
-                title=CreateFlagForm.BlocksApproval.TITLE,
+                title=CreateFlagForm.BlocksFinalising.TITLE,
                 options=[
                     Option(
                         key=True,
-                        value=CreateFlagForm.BlocksApproval.YES,
+                        value=CreateFlagForm.BlocksFinalising.YES,
                         components=[
                             RadioButtons(
                                 name="removable_by",
@@ -102,7 +102,7 @@ def add_flag_form():
                             )
                         ],
                     ),
-                    Option(key=False, value=CreateFlagForm.BlocksApproval.NO),
+                    Option(key=False, value=CreateFlagForm.BlocksFinalising.NO),
                 ],
                 classes=["govuk-radios--inline"],
             ),
@@ -142,11 +142,11 @@ def edit_flag_form():
             ),
             RadioButtons(
                 name="blocks_approval",
-                title=EditFlagForm.BlocksApproval.TITLE,
+                title=EditFlagForm.BlocksFinalising.TITLE,
                 options=[
                     Option(
                         key=True,
-                        value=EditFlagForm.BlocksApproval.YES,
+                        value=EditFlagForm.BlocksFinalising.YES,
                         components=[
                             RadioButtons(
                                 name="removable_by",
@@ -165,7 +165,7 @@ def edit_flag_form():
                             )
                         ],
                     ),
-                    Option(False, EditFlagForm.BlocksApproval.NO),
+                    Option(False, EditFlagForm.BlocksFinalising.NO),
                 ],
             ),
         ],
