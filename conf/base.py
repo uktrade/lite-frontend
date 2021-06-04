@@ -3,6 +3,7 @@ import os
 from environ import Env
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from django_log_formatter_ecs import ECSFormatter
 
 from django.urls import reverse_lazy
 
@@ -177,13 +178,14 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "json": {
-            "class": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": "(asctime)(levelname)(message)(filename)(lineno)(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)",  # noqa
-        },
+        "simple": {"format": "{asctime} {levelname} {message}", "style": "{"},
+        "ecs_formatter": {"()": ECSFormatter},
     },
-    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "json",},},
-    "loggers": {"": {"handlers": ["console"], "level": env.str("LOG_LEVEL", "INFO")},},
+    "handlers": {
+        "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
+        "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
+    },
+    "root": {"handlers": ["stdout", "ecs"], "level": env.str("LOG_LEVEL", "info").upper()},
 }
 
 # Enable security features in hosted environments
@@ -209,17 +211,6 @@ CSP_SCRIPT_SRC = env.tuple("CSP_SCRIPT_SRC", default=("'self'",))
 CSP_FONT_SRC = env.tuple("CSP_FONT_SRC", default=("'self'",))
 CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", False)
 CSP_INCLUDE_NONCE_IN = env.tuple("CSP_INCLUDE_NONCE_IN", default=("script-src",))
-
-# Application Performance Monitoring
-if env.str("ELASTIC_APM_SERVER_URL", ""):
-    ELASTIC_APM = {
-        "SERVICE_NAME": env.str("ELASTIC_APM_SERVICE_NAME", "lite-internal-frontend"),
-        "SECRET_TOKEN": env.str("ELASTIC_APM_SECRET_TOKEN"),
-        "SERVER_URL": env.str("ELASTIC_APM_SERVER_URL"),
-        "ENVIRONMENT": env.str("SENTRY_ENVIRONMENT"),
-        "DEBUG": DEBUG,
-    }
-    INSTALLED_APPS.append("elasticapm.contrib.django")
 
 if DEBUG:
     import pkg_resources
