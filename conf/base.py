@@ -3,6 +3,7 @@ import os
 from environ import Env
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from django_log_formatter_ecs import ECSFormatter
 
 from django.urls import reverse_lazy
 
@@ -177,13 +178,14 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "json": {
-            "class": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": "(asctime)(levelname)(message)(filename)(lineno)(threadName)(name)(thread)(created)(process)(processName)(relativeCreated)(module)(funcName)(levelno)(msecs)(pathname)",  # noqa
-        },
+        "simple": {"format": "{asctime} {levelname} {message}", "style": "{"},
+        "ecs_formatter": {"()": ECSFormatter},
     },
-    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "json",},},
-    "loggers": {"": {"handlers": ["console"], "level": env.str("LOG_LEVEL", "INFO")},},
+    "handlers": {
+        "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
+        "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
+    },
+    "root": {"handlers": ["stdout", "ecs"], "level": env("LOG_LEVEL").upper()},
 }
 
 # Enable security features in hosted environments
