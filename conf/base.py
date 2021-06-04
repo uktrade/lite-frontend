@@ -212,17 +212,6 @@ CSP_FONT_SRC = env.tuple("CSP_FONT_SRC", default=("'self'",))
 CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", False)
 CSP_INCLUDE_NONCE_IN = env.tuple("CSP_INCLUDE_NONCE_IN", default=("script-src",))
 
-# Application Performance Monitoring
-if env.str("ELASTIC_APM_SERVER_URL", ""):
-    ELASTIC_APM = {
-        "SERVICE_NAME": env.str("ELASTIC_APM_SERVICE_NAME", "lite-internal-frontend"),
-        "SECRET_TOKEN": env.str("ELASTIC_APM_SECRET_TOKEN"),
-        "SERVER_URL": env.str("ELASTIC_APM_SERVER_URL"),
-        "ENVIRONMENT": env.str("SENTRY_ENVIRONMENT"),
-        "DEBUG": DEBUG,
-    }
-    INSTALLED_APPS.append("elasticapm.contrib.django")
-
 if DEBUG:
     import pkg_resources
 
