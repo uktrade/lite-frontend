@@ -185,7 +185,7 @@ LOGGING = {
         "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
         "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
     },
-    "root": {"handlers": ["stdout", "ecs"], "level": env("LOG_LEVEL").upper()},
+    "root": {"handlers": ["stdout", "ecs"], "level": env.str("LOG_LEVEL", "info").upper()},
 }
 
 # Enable security features in hosted environments
