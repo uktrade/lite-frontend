@@ -59,6 +59,7 @@ django-allow-cidr = "~=0.3"
 django-redis = "~=4.12"
 notifications-python-client = "~=6.0"
 python-magic = "~=0.4"
+django-log-formatter-ecs = "==0.0.5"
 
 [requires]
 python_version = "3.7"
