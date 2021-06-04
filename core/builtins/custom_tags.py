@@ -903,3 +903,47 @@ def divide(value, other):
         return float(value) / float(other)
     except (ValueError, ZeroDivisionError, TypeError):
         return None
+
+
+@register.filter
+def firearms_act_details(good):
+    """
+    Returns the Firearms Act Section5 details to be rendered on the product detail page.
+
+    When a product that is covered under section5 is being added we ask the user to upload
+    the certificate. When another product under section5 is added we skip the upload as the
+    system remembers it - because of this the product detail page unable to show the certificate
+    details in this case. API exposes organisation documents which are used in this case to
+    display the certificate details (certificate number, expiry date etc).
+    This doesn't consider section 1/2 because Organisation's RFD covers these sections.
+    """
+    section = ""
+    expiry_date = ""
+    reference = ""
+    details = {"section": section, "expiry_date": expiry_date, "reference": reference}
+
+    firearm_details = good.get("firearm_details", None)
+    if not firearm_details:
+        return details
+
+    firearms_act_section = firearm_details.get("firearms_act_section", "")
+    if firearms_act_section == "firearms_act_section5":
+        section = "Section 5"
+
+    if not firearm_details["section_certificate_missing"] and firearm_details["section_certificate_date_of_expiry"]:
+        expiry_date = firearm_details["section_certificate_date_of_expiry"]
+        reference = firearm_details["section_certificate_number"]
+    else:
+        if firearms_act_section == "firearms_act_section5":
+            section5_cert = [
+                doc for doc in good["organisation_documents"] if doc["document_type"] == "section-five-certificate"
+            ]
+            if section5_cert:
+                expiry_date = section5_cert[0]["expiry_date"]
+                reference = section5_cert[0]["reference_code"]
+
+    details["section"] = section
+    details["expiry_date"] = expiry_date
+    details["reference"] = reference
+
+    return details

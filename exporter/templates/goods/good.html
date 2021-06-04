@@ -392,32 +392,23 @@
 
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							{% lcs "goods.GoodPage.Table.FirearmDetails.COVERED_BY_THE_FIREARMS_ACT_1968" %}
+							Firearms Act 1968 Section 5
 						</dt>
-						<dd class="govuk-summary-list__value">
-							{% with covered_by_firearms_act=good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five section=good.firearm_details.firearms_act_section %}
-							{% if covered_by_firearms_act == "Yes" %}
-								{{ covered_by_firearms_act }}
-								<span class="govuk-hint govuk-!-margin-0">
-									{% if section == "firearms_act_section1" %}
-										Section 1
-									{% elif section == "firearms_act_section2" %}
-										Section 2
-									{% endif %}
-								</span>
-								{% if not good.firearm_details.section_certificate_missing %}
-									<span class="govuk-hint govuk-!-margin-0">
-										Expires {{ good.firearm_details.section_certificate_date_of_expiry|date_display }}
+						<dd id="covered-by-firearms-act-value" class="govuk-summary-list__value">
+							{% with covered_by_firearms_act=good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five details=good|firearms_act_details %}
+								{% if covered_by_firearms_act == "Yes" %}
+									{{ covered_by_firearms_act }}
+									<span id="firearms-act-certificate-expiry-date-value" class="govuk-hint govuk-!-margin-0">
+										Expires {{ details.expiry_date|date_display }}
 									</span>
-									<span class="govuk-hint govuk-!-margin-0">
-										Reference {{ good.firearm_details.section_certificate_number }}
+									<span id="firearms-act-certificate-number-value" class="govuk-hint govuk-!-margin-0">
+										Reference {{ details.reference }}
 									</span>
+								{% elif covered_by_firearms_act == "No" %}
+									No
+								{% elif covered_by_firearms_act == "Unsure" %}
+									I don't know
 								{% endif %}
-							{% elif covered_by_firearms_act == "No" %}
-								No
-							{% elif covered_by_firearms_act == "Unsure" %}
-								I don't know
-							{% endif %}
 							{% endwith %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
