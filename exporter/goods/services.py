@@ -114,6 +114,11 @@ def add_firearm_details_to_data(json):
     elif firearm_details and "is_sporting_shotgun" not in firearm_details:
         firearm_details["is_sporting_shotgun"] = False
 
+    if "registered_firearm_dealer_step" in json:
+        firearm_details["is_registered_firearm_dealer"] = json.get("is_registered_firearm_dealer")
+    elif firearm_details and "is_registered_firearm_dealer" not in firearm_details:
+        firearm_details["is_registered_firearm_dealer"] = False
+
     firearm_details = add_identification_marking_details(firearm_details, json)
 
     if "firearm_year_of_manufacture_step" in json:

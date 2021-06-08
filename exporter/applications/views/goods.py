@@ -193,11 +193,8 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
     def validate_step(self, request, nested_data):
         errors = {}
         current = get_form_by_pk(self.form_pk, self.forms)
-        if self.form_pk == self.STEP_ARE_YOU_RFD:
-            if "is_registered_firearm_dealer" not in request.POST:
-                errors["is_registered_firearm_dealer"] = ["Select yes if you are a registered firearms dealer"]
 
-        elif current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
+        if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
             if not self.request.FILES.get("file"):
                 errors["file"] = ["Select certificate file to upload"]
             if not self.request.POST.get("reference_code"):

@@ -897,6 +897,7 @@ def attach_firearm_dealer_certificate_form(back_url):
 
 def is_registered_firearm_dealer_field(back_url):
     questions = [
+        HiddenField("registered_firearm_dealer_step", True),
         RadioButtons(
             title="",
             name="is_registered_firearm_dealer",
