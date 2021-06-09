@@ -4,7 +4,7 @@ Feature: I want to register an organisation
   I want to register an organisation
   So that I can export my products in the future
 
-  @LT_1024_register_an_organisation @regression
+  @skip @LT_1024_register_an_organisation @regression
   Scenario: Register a commercial organisation
     Given I am not logged in
     And I register but I don't belong to an organisation
@@ -13,7 +13,7 @@ Feature: I want to register an organisation
     Then I should see a success page
 
 
-  @LT_1024_register_an_individual_organisation @regression
+  @skip @LT_1024_register_an_individual_organisation @regression
   Scenario: Register a individual organisation
     Given I am not logged in
     And I register but I don't belong to an organisation

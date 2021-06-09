@@ -1,7 +1,7 @@
 @licences @all
 Feature: I want to be able to view licences as an exporter user
 
-  @LT_1254_view_licences_standard @regression
+  @skip @LT_1254_view_licences_standard @regression
   Scenario: View my standard application licences
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
@@ -14,7 +14,7 @@ Feature: I want to be able to view licences as an exporter user
     Then I see all the typical licence details
     And I see my standard application licence details
 
-  @LT_1254_view_licences_open @regression
+  @skip @LT_1254_view_licences_open @regression
   Scenario: View my open application licences
     Given I go to exporter homepage and choose Test Org
     And I create an open application via api
@@ -27,7 +27,7 @@ Feature: I want to be able to view licences as an exporter user
     Then I see all the typical licence details
     And I see my open application licence details
 
-  @LT_1254_view_licences_mod @regression
+  @skip @LT_1254_view_licences_mod @regression
   Scenario: View my mod application licences
     Given I go to exporter homepage and choose Test Org
     And an Exhibition Clearance is created
@@ -40,7 +40,7 @@ Feature: I want to be able to view licences as an exporter user
     Then I see all the typical licence details
     And I see my exhibition application licence details
 
-  @LT_2692_view_nlrs @regression
+  @skip @LT_2692_view_nlrs @regression
   Scenario: View my nlr documents
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api

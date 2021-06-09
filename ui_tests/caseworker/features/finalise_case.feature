@@ -4,7 +4,7 @@ Feature: I want to finalise a case
   I want to be prompted to generate the right documents for the appropriate decision
   So that this can be communicated back to the exporter and they can download and view their licence or clearance
 
-  @LT_2035_generate_documents_and_licence_approve @LT_1401_reissue @regression
+  @skip @LT_2035_generate_documents_and_licence_approve @skip @LT_1401_reissue @regression
   Scenario: Finalise and approve a case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -51,7 +51,7 @@ Feature: I want to finalise a case
     When I go to the documents tab
     Then The generated decision document is visible
 
-  @LT_2035_generate_documents_and_licence_refuse @regression
+  @skip @LT_2035_generate_documents_and_licence_refuse @regression
   Scenario: Finalise and refuse a case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -76,7 +76,7 @@ Feature: I want to finalise a case
     When I go to the documents tab
     Then The generated decision document is visible
 
-  @LT_2757_finalise_and_approve_open_application @regression
+  @skip @LT_2757_finalise_and_approve_open_application @regression
   Scenario: Finalise and approve an open application case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
@@ -102,7 +102,7 @@ Feature: I want to finalise a case
     When I go to the documents tab
     Then The generated decision document is visible
 
-  @LT_2757_finalise_and_refuse_open_application @regression
+  @skip @LT_2757_finalise_and_refuse_open_application @regression
   Scenario: Finalise and refuse an open application case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

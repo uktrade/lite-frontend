@@ -4,7 +4,7 @@ Feature: I want to add a company to LITE
   I want to add a new company to LITE
   So that the new company can make applications
 
-  @LT_934_register_commercial_organisation @regression
+  @skip @LT_934_register_commercial_organisation @regression
   Scenario: Registering a commercial organisation
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
@@ -15,7 +15,7 @@ Feature: I want to add a company to LITE
     Then organisation is edited
     And the "updated" organisation appears in the audit trail
 
-  @LT_1417_register_individual_organisation @regression
+  @skip @LT_1417_register_individual_organisation @regression
   Scenario: Registering an individual
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
@@ -24,7 +24,7 @@ Feature: I want to add a company to LITE
     When I click the organisation
     Then the "created" organisation appears in the audit trail
 
-  @LT_1008_register_hmrc_organisation @regression
+  @skip @LT_1008_register_hmrc_organisation @regression
   Scenario: Registering an HMRC organisation
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
@@ -34,7 +34,7 @@ Feature: I want to add a company to LITE
     When I click the organisation
     Then the "created" organisation appears in the audit trail
 
-  @LT_1105_review_and_approve_an_organisation @regression
+  @skip @LT_1105_review_and_approve_an_organisation @regression
   Scenario: Review and approve an organisation
     Given I sign in to SSO or am signed into SSO
     And an anonymous user applies for an organisation
@@ -56,7 +56,7 @@ Feature: I want to add a company to LITE
     And I click review
     Then I should be warned that this organisation matches an existing one
 
-  @LT_1105_review_and_reject_an_organisation @regression
+  @skip @LT_1105_review_and_reject_an_organisation @regression
   Scenario: Review and reject an organisation
     Given I sign in to SSO or am signed into SSO
     And an anonymous user applies for an organisation

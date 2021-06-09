@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   run_ui_tests:
     type: boolean
-    default: false
+    default: true
   run_unit_tests:
     type: boolean
     default: true
