@@ -4,19 +4,9 @@ Feature: I want to register an organisation
   I want to register an organisation
   So that I can export my products in the future
 
-  @skip @LT_1024_register_an_organisation @regression
-  Scenario: Register a commercial organisation
-    Given I am not logged in
-    And I register but I don't belong to an organisation
-    When I sign as user without an organisation registered
-    And I register a new commercial organisation
-    Then I should see a success page
 
-
-  @skip @LT_1024_register_an_individual_organisation @regression
-  Scenario: Register a individual organisation
-    Given I am not logged in
-    And I register but I don't belong to an organisation
-    When I sign as user without an organisation registered
-    And I register a new individual organisation
-    Then I should see a success page
+  Scenario: Register a commercial organisation that is based in UK
+    Given I am not signed into LITE but signed into GREAT SSO
+    When I sign in as user without an organisation registered
+    And I enter my information from steps 1-4 to register a commercial organisation
+    Then the organisation is registered successfully
