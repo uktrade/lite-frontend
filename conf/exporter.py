@@ -29,7 +29,7 @@ TEMPLATES = [
 
 
 LOGIN_REDIRECT_URL = reverse_lazy("core:home")
-LOGOUT_URL = f"{AUTHBROKER_URL}sso/accounts/logout/?next="
+LOGOUT_URL = f"{AUTHBROKER_URL}/sso/accounts/logout/?next="
 AUTHBROKER_SCOPE = "profile"
 AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/authorize/")
 AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/token/")
