@@ -1,7 +1,7 @@
 @internal @all
 Feature: Go to each item in the menu
 
-  @smoke @menu
+  @skip @smoke @menu
   Scenario: Go to each item in the menu
     Given I sign in to SSO or am signed into SSO
     And I go to internal homepage

@@ -4,7 +4,7 @@ Feature: I want to indicate the open licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
-  @LT_1114 @submit_open_application @LT_1092_search @regression
+  @skip @LT_1114 @submit_open_application @skip @LT_1092_search @regression
   Scenario: Submit open application for an export licence of the military type
     Given I go to exporter homepage and choose Test Org
     When I create an open application for an export licence of the "military" licence type
@@ -52,7 +52,7 @@ Feature: I want to indicate the open licence I want
     And I click on applications
     Then I see submitted application
 
-  @LT_1758_open_temporary_application_with_temporary_export_details @regression
+  @skip @LT_1758_open_temporary_application_with_temporary_export_details @regression
   Scenario: Submit temporary open application
     Given I go to exporter homepage and choose Test Org
     When I create an open application of a "temporary" export type
@@ -104,7 +104,7 @@ Feature: I want to indicate the open licence I want
     And I click on applications
     Then I see submitted application
 
-  @LT_1230_open_application_export_licence_media_type @regression
+  @skip @LT_1230_open_application_export_licence_media_type @regression
   Scenario: Submit open application for an export licence of the media type
     Given I go to exporter homepage and choose Test Org
     When I create an open application for an export licence of the "media" licence type
@@ -142,7 +142,7 @@ Feature: I want to indicate the open licence I want
     Then I see submitted application
 
 
-  @LT_2061_open_application_export_licence_cryptographic_type @regression
+  @skip @LT_2061_open_application_export_licence_cryptographic_type @regression
   Scenario: Submit open application for an export licence of the cryptographic type
     Given I go to exporter homepage and choose Test Org
     When I create an open application for an export licence of the "cryptographic" licence type
@@ -160,7 +160,7 @@ Feature: I want to indicate the open licence I want
     And I click on applications
     Then I see submitted application
 
-  @LT_1270_open_application_export_licence_uk_continental_shelf @regression
+  @skip @LT_1270_open_application_export_licence_uk_continental_shelf @regression
   Scenario: Submit open application for an export licence to the UK Continental Shelf
     Given I go to exporter homepage and choose Test Org
     When I create an open application for an export licence of the "uk_continental_shelf" licence type

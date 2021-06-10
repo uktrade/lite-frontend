@@ -1,7 +1,7 @@
 @all
 Feature: Add a HMRC query
 
-  @regression @HMRC
+  @skip @regression @HMRC
   Scenario: Add a HMRC query
     Given I sign in to SSO or am signed into SSO
     And I create HMRC query

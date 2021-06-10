@@ -4,7 +4,7 @@ Feature: I want to manage my organisation's members
   I want to manage my members
   So that an application/query can be managed by only active members of staff and new members of staff can be added and their details can be kept up to date
 
-  @LT_1177 @add_and_edit_member @regression
+  @skip @LT_1177 @add_and_edit_member @regression
   Scenario: Add user, deactivate, then reactivate
     Given I go to exporter homepage and choose Test Org
     When I click on the manage my organisation link

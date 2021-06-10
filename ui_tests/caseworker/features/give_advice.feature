@@ -4,7 +4,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
-  @LT_1376 @regression @LT_1760
+  @skip @LT_1376 @regression @skip @LT_1760
   Scenario: Give proviso advice
     Given I sign in to SSO or am signed into SSO
     And an Exhibition Clearance is created
@@ -29,7 +29,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I choose to 'proviso' the licence
     Then I see the fields pre-populated with the proviso and advice picklist items
 
-  @LT_1115_grant @regression
+  @skip @LT_1115_grant @regression
   Scenario: Give approval advice
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -53,7 +53,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I finalise the advice
     Then today's date and duration is filled in
 
-  @LT_966_refusal_flags @regression
+  @skip @LT_966_refusal_flags @regression
   Scenario: Give refusal advice
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -73,7 +73,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to application previously created
     Then I see refusal flag is attached
 
-  @LT_920_cannot_give_advice_terminal_case @regression
+  @skip @LT_920_cannot_give_advice_terminal_case @regression
   Scenario: Cannot give advice on a case in terminal state
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
