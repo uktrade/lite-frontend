@@ -28,6 +28,8 @@ def _get_headers(request, sender=None, content_type=None):
     if "user_token" in request.session:
         headers[settings.LITE_API_AUTH_HEADER_NAME] = request.session["user_token"]
     headers["ORGANISATION-ID"] = request.session.get("organisation", "None")
+    headers["x-b3-traceid"] = request.headers.get("x-b3-traceid")
+    headers["x-b3-spanid"] = request.headers.get("x-b3-spanid")
     return headers
 
 
