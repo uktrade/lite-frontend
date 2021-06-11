@@ -108,7 +108,7 @@ def add_firearm_details_to_data(request, json):
             "expiry_date": format_date(json, "expiry_date_"),
             "reference_code": json["reference_code"],
             "document_type": "rfd-certificate",
-            "document": request.session.get("rfd_certificate", None)
+            "document": request.session.get("rfd_certificate", None),
         }
 
     if "product_type_step" in json:

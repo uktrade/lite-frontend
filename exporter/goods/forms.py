@@ -903,7 +903,7 @@ def is_registered_firearm_dealer_field(back_url):
             title="",
             name="is_registered_firearm_dealer",
             options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
-        )
+        ),
     ]
     return Form(
         title="Are you a registered firearms dealer?",
