@@ -57,6 +57,12 @@ from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
 
+SECTION_CERTIFICATE_MAPPING = {
+    "firearms_act_section1": "section-one-certificate",
+    "firearms_act_section2": "section-two-certificate",
+    "firearms_act_section5": "section-five-certificate",
+}
+
 
 class SectionDocumentMixin:
     @cached_property
@@ -73,12 +79,8 @@ class SectionDocumentMixin:
             good_firearms_details_act_section = good_firearms_details.get("firearms_act_section")
 
         firearm_section = self.request.POST.get("firearms_act_section") or good_firearms_details_act_section
-        if firearm_section == "firearms_act_section1":
-            return documents["section-one-certificate"]
-        elif firearm_section == "firearms_act_section2":
-            return documents["section-two-certificate"]
-        elif firearm_section == "firearms_act_section5":
-            return documents["section-five-certificate"]
+        if firearm_section:
+            return documents.get(SECTION_CERTIFICATE_MAPPING[firearm_section])
 
 
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
@@ -149,21 +151,16 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
 
 
 class RegisteredFirearmDealersMixin:
-    SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate_details"
+    SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate"
 
-    def cache_rfd_certificate_details(self):
-        file = self.request.FILES.get("file")
+    def cache_rfd_certificate(self):
+        file = self.request.FILES.get("document")
         if not file:
             return
         self.request.session[self.SESSION_KEY_RFD_CERTIFICATE] = {
             "name": getattr(file, "original_name", file.name),
             "s3_key": file.name,
             "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-            "document_on_organisation": {
-                "expiry_date": format_date(self.request.POST, "expiry_date_"),
-                "reference_code": self.request.POST["reference_code"],
-                "document_type": "rfd-certificate",
-            },
         }
 
     def post_success_step(self):
@@ -191,19 +188,6 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
         return len(self.forms.get_forms()) - 1
 
     def validate_step(self, request, nested_data):
-        errors = {}
-        current = get_form_by_pk(self.form_pk, self.forms)
-
-        if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
-            if not self.request.FILES.get("file"):
-                errors["file"] = ["Select certificate file to upload"]
-            if not self.request.POST.get("reference_code"):
-                errors["reference_code"] = ["Enter the certificate number"]
-            if not format_date(self.request.POST, "expiry_date_"):
-                errors["expiry_date"] = ["Enter the certificate expiry date and include a day, month and year"]
-
-        if errors:
-            return {"errors": errors}, None
         return validate_good(request, nested_data)
 
     def init(self, request, **kwargs):
@@ -276,7 +260,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
     def action(self):
         current = get_form_by_pk(self.form_pk, self.forms)
         if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
-            self.cache_rfd_certificate_details()
+            self.cache_rfd_certificate()
         if self.form_pk == self.number_of_forms:
             if not self.show_section_upload_form:
                 self.hide_unused_errors = False

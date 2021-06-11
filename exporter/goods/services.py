@@ -38,12 +38,10 @@ def post_goods(request, json):
             }
 
     if "item_category" in json and json["item_category"] == "group2_firearms":
-        add_firearm_details_to_data(json)
+        add_firearm_details_to_data(request, json)
 
     data = client.post(request, "/goods/", json)
 
-    if data.status_code == HTTPStatus.OK:
-        data.json().get("good"), data.status_code
     return data.json(), data.status_code
 
 
@@ -98,12 +96,21 @@ def add_identification_marking_details(firearm_details, json):
     return firearm_details
 
 
-def add_firearm_details_to_data(json):
+def add_firearm_details_to_data(request, json):
     """
     Return a firearm_details dictionary to be used when creating/editing a group 2 firearm good
     Mutable - items in firearm_details are removed from the original json (duplicates)
     """
     firearm_details = {}
+
+    if "firearms_dealer_certificate_step" in json:
+        firearm_details["document_on_organisation"] = {
+            "expiry_date": format_date(json, "expiry_date_"),
+            "reference_code": json["reference_code"],
+            "document_type": "rfd-certificate",
+            "document": request.session.get("rfd_certificate", None)
+        }
+
     if "product_type_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
         firearm_details["type"] = json.get("type")
@@ -179,7 +186,7 @@ def edit_good_details(request, pk, json):
 
 
 def edit_good_firearm_details(request, pk, json):
-    add_firearm_details_to_data(json)
+    add_firearm_details_to_data(request, json)
     return edit_good_details(request, pk, json)
 
 

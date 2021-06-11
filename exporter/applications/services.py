@@ -118,12 +118,12 @@ def post_good_on_application(request, pk, json):
     preexisting = str_to_bool(request.GET.get("preexisting"))
     if json.get("good_id"):
         good, _ = services.get_good(request, json["good_id"])
-    post_data = serialize_good_on_app_data(json, good, preexisting)
+    post_data = serialize_good_on_app_data(request, json, good, preexisting)
     response = client.post(request, f"/applications/{pk}/goods/", post_data)
     return response.json(), response.status_code
 
 
-def serialize_good_on_app_data(json, good=None, preexisting=False):
+def serialize_good_on_app_data(request, json, good=None, preexisting=False):
     if json.get("good_on_app_value") or json.get("good_on_app_value") == "":
         post_data = remove_prefix(json, "good_on_app_")
     else:
@@ -135,7 +135,7 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
     if json.get("date_of_deactivationday"):
         post_data["date_of_deactivation"] = format_date(post_data, "date_of_deactivation")
 
-    post_data = services.add_firearm_details_to_data(post_data)
+    post_data = services.add_firearm_details_to_data(request, post_data)
 
     # Adding new good to the application
     firearm_details = post_data.get("firearm_details")
