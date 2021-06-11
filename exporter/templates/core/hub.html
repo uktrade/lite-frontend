@@ -84,18 +84,20 @@
 				</a>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.MANAGE_PRODUCTS' %}</p>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.PRODUCTS_INCLUDE' %}</p>
-				<ol class="govuk-list govuk-!-font-size-16">
-					<li>
-						<a href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
-							{% lcs 'hub.Tiles.ProductList.CLC_LINK' %}
-						</a>
-					</li>
-					<li>
-						<a href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
-							{% lcs 'hub.Tiles.ProductList.GRADING_LINK' %}
-						</a>
-					</li>
-				</ol>
+				{% if FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING %}
+					<ol class="govuk-list govuk-!-font-size-16">
+						<li>
+							<a id="clc_query_link_value" href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
+								{% lcs 'hub.Tiles.ProductList.CLC_LINK' %}
+							</a>
+						</li>
+						<li>
+							<a id="pv_grading_link_value" href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
+								{% lcs 'hub.Tiles.ProductList.GRADING_LINK' %}
+							</a>
+						</li>
+					</ol>
+				{% endif %}
 			</div>
 
 			{# End user query tile #}
