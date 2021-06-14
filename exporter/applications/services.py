@@ -11,7 +11,7 @@ from exporter.applications.helpers.date_fields import (
     create_formatted_date_from_components,
 )
 from exporter.goods import services
-from exporter.helpers.serializers import serialize_good_on_app_data
+from exporter.applications.helpers.serializers import serialize_good_on_app_data
 
 from exporter.core.helpers import add_validate_only_to_data, str_to_bool
 from core.helpers import convert_parameters_to_query_params
