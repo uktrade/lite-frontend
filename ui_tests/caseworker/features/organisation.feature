@@ -34,27 +34,21 @@ Feature: I want to add a company to LITE
     When I click the organisation
     Then the "created" organisation appears in the audit trail
 
-  @skip @LT_1105_review_and_approve_an_organisation @regression
+  @LTD-915-Review-approve-organisation
   Scenario: Review and approve an organisation
     Given I sign in to SSO or am signed into SSO
     And an anonymous user applies for an organisation
-    When I go to organisations
-    And I go to the in review tab
-    Then the organisation previously created is in the list
-    When I click the organisation
-    And I click review
-    Then I should see a summary of organisation details
-    When I approve the organisation
+    When I navigate to organisations
+    And I click on In review tab
+    Then I should see details of organisation previously created
+    When I click on the organisation and click Review
+    Then I should see a summary and option to approve or reject organisation
+    When I select approve and Save
     Then the organisation should be set to "Active"
     And the "activated" organisation appears in the audit trail
-    When I go to organisations
-    And I go to the active tab
-    Then the organisation previously created is in the list
-    # Check user gets a warning if a matching organisation exists
-    When an organisation matching the existing organisation is created
-    And I go to the organisation
-    And I click review
-    Then I should be warned that this organisation matches an existing one
+    When I navigate to organisations
+    And I click on Active tab
+    Then I should see details of organisation previously created
 
   @skip @LT_1105_review_and_reject_an_organisation @regression
   Scenario: Review and reject an organisation
