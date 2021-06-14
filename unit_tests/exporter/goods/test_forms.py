@@ -42,6 +42,10 @@ def test_add_goods_questions_feature_flag_off(settings):
     assert form.questions[4].options[-1].components == []
 
 
+class DummyRequest:
+    session = {"rfd_certificate": None}
+
+
 @pytest.mark.parametrize(
     "value, serialized",
     [
@@ -53,6 +57,7 @@ def test_add_goods_questions_feature_flag_off(settings):
     ],
 )
 def test_serialize_good_on_app_data(value, serialized):
+    request = DummyRequest()
     data = {
         "good_id": "some-uuid",
         "value": value,
@@ -63,7 +68,7 @@ def test_serialize_good_on_app_data(value, serialized):
         "value": serialized,
         "quantity": serialized,
     }
-    assert serialize_good_on_app_data(data) == expected
+    assert serialize_good_on_app_data(request, data) == expected
 
 
 @pytest.mark.parametrize(
@@ -77,7 +82,7 @@ def test_serialize_good_on_app_data(value, serialized):
     ],
 )
 def test_serialize_good_on_app_data_no_value_key(value, serialized):
-
+    request = DummyRequest()
     data = {
         "good_id": "some-uuid",
         "quantity": value,
@@ -86,7 +91,7 @@ def test_serialize_good_on_app_data_no_value_key(value, serialized):
         "good_id": "some-uuid",
         "quantity": serialized,
     }
-    assert serialize_good_on_app_data(data) == expected
+    assert serialize_good_on_app_data(request, data) == expected
 
 
 @pytest.fixture
