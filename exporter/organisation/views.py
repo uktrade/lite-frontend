@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from exporter.applications.helpers.date_fields import format_date
+from core.helpers import format_date
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation

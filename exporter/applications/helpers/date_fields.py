@@ -1,17 +1,5 @@
 import re
-
-
-def format_date(data, date_field):
-    year = data.get(date_field + "year", "")
-    month = data.get(date_field + "month", "")
-    day = data.get(date_field + "day", "")
-    if not year or not month or not day:
-        return None
-    if len(month) == 1:
-        month = "0" + month
-    if len(day) == 1:
-        day = "0" + day
-    return f"{year}-{month}-{day}"
+from core.helpers import format_date
 
 
 def format_date_fields(data):

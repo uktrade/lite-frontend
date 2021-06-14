@@ -8,14 +8,13 @@ from django.conf import settings
 from core import client
 from exporter.applications.helpers.date_fields import (
     format_date_fields,
-    format_date,
     create_formatted_date_from_components,
 )
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.goods import services
 
 from exporter.core.helpers import remove_prefix, add_validate_only_to_data, str_to_bool
-from core.helpers import convert_parameters_to_query_params
+from core.helpers import convert_parameters_to_query_params, format_date
 from exporter.core.objects import Application
 
 

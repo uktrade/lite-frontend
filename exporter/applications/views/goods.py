@@ -49,7 +49,7 @@ from exporter.goods.services import (
     validate_good,
 )
 
-from exporter.applications.helpers.date_fields import format_date
+from core.helpers import format_date
 from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import get_form_by_pk
