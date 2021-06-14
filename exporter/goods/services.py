@@ -66,8 +66,6 @@ def add_section_certificate_details(firearm_details, json):
             firearm_details["section_certificate_missing_reason"] = json.get("section_certificate_missing_reason", "")
             firearm_details["section_certificate_number"] = ""
 
-    return firearm_details
-
 
 def add_identification_marking_details(firearm_details, json):
     if "number_of_items_step" in json:
@@ -93,7 +91,62 @@ def add_identification_marking_details(firearm_details, json):
             serial_numbers.append(json.get(f"serial_number_input_{i}", ""))
         firearm_details["serial_numbers"] = serial_numbers
 
-    return firearm_details
+
+def add_rfd_certificate_details(firearm_details, json, request):
+    if "firearms_dealer_certificate_step" in json:
+        firearm_details["document_on_organisation"] = {
+            "expiry_date": format_date(json, "expiry_date_"),
+            "reference_code": json["reference_code"],
+            "document_type": "rfd-certificate",
+            "document": request.session.get("rfd_certificate", None),
+        }
+
+
+def add_rfd_details(firearm_details, json):
+    if "registered_firearm_dealer_step" in json:
+        firearm_details["is_registered_firearm_dealer"] = json.get("is_registered_firearm_dealer")
+    elif firearm_details and "is_registered_firearm_dealer" not in firearm_details:
+        firearm_details["is_registered_firearm_dealer"] = False
+
+
+def add_sporting_shotgun_details(firearm_details, json):
+    if "sporting_shotgun_step" in json:
+        firearm_details["type"] = json.get("type")
+        firearm_details["is_sporting_shotgun"] = json.get("is_sporting_shotgun")
+    elif firearm_details and "is_sporting_shotgun" not in firearm_details:
+        firearm_details["is_sporting_shotgun"] = False
+
+
+def add_year_of_manufacture_details(firearm_details, json):
+    if "firearm_year_of_manufacture_step" in json:
+        firearms_year_of_manufacture = json.pop("year_of_manufacture")
+        if firearms_year_of_manufacture == "":
+            firearms_year_of_manufacture = None
+        firearm_details["year_of_manufacture"] = firearms_year_of_manufacture
+    elif firearm_details and "year_of_manufacture" not in firearm_details:
+        firearm_details["year_of_manufacture"] = 0
+
+
+def add_replica_details(firearm_details, json):
+    if "is_replica_step" in json:
+        firearm_details["type"] = json.get("type")
+        firearm_details["is_replica"] = json.get("is_replica")
+        firearm_details["replica_description"] = json.get("replica_description", "")
+        del json["replica_description"]
+
+
+def add_calibre_details(firearm_details, json):
+    if "firearm_calibre_step" in json:
+        firearm_calibre = json.pop("calibre")
+        if firearm_calibre == "":
+            firearm_calibre = None
+        firearm_details["calibre"] = firearm_calibre
+
+
+def add_product_type(firearm_details, json):
+    if "product_type_step" in json:
+        # parent component doesnt get sent when empty unlike the remaining form fields
+        firearm_details["type"] = json.get("type")
 
 
 def add_firearm_details_to_data(request, json):
@@ -103,52 +156,23 @@ def add_firearm_details_to_data(request, json):
     """
     firearm_details = {}
 
-    if "firearms_dealer_certificate_step" in json:
-        firearm_details["document_on_organisation"] = {
-            "expiry_date": format_date(json, "expiry_date_"),
-            "reference_code": json["reference_code"],
-            "document_type": "rfd-certificate",
-            "document": request.session.get("rfd_certificate", None),
-        }
+    add_product_type(firearm_details, json)
 
-    if "product_type_step" in json:
-        # parent component doesnt get sent when empty unlike the remaining form fields
-        firearm_details["type"] = json.get("type")
+    add_rfd_certificate_details(firearm_details, json, request)
 
-    if "sporting_shotgun_step" in json:
-        firearm_details["type"] = json.get("type")
-        firearm_details["is_sporting_shotgun"] = json.get("is_sporting_shotgun")
-    elif firearm_details and "is_sporting_shotgun" not in firearm_details:
-        firearm_details["is_sporting_shotgun"] = False
+    add_sporting_shotgun_details(firearm_details, json)
 
-    if "registered_firearm_dealer_step" in json:
-        firearm_details["is_registered_firearm_dealer"] = json.get("is_registered_firearm_dealer")
-    elif firearm_details and "is_registered_firearm_dealer" not in firearm_details:
-        firearm_details["is_registered_firearm_dealer"] = False
+    add_rfd_details(firearm_details, json)
 
-    firearm_details = add_identification_marking_details(firearm_details, json)
+    add_identification_marking_details(firearm_details, json)
 
-    if "firearm_year_of_manufacture_step" in json:
-        firearms_year_of_manufacture = json.pop("year_of_manufacture")
-        if firearms_year_of_manufacture == "":
-            firearms_year_of_manufacture = None
-        firearm_details["year_of_manufacture"] = firearms_year_of_manufacture
-    elif firearm_details and "year_of_manufacture" not in firearm_details:
-        firearm_details["year_of_manufacture"] = 0
+    add_year_of_manufacture_details(firearm_details, json)
 
-    if "is_replica_step" in json:
-        firearm_details["type"] = json.get("type")
-        firearm_details["is_replica"] = json.get("is_replica")
-        firearm_details["replica_description"] = json.get("replica_description", "")
-        del json["replica_description"]
+    add_replica_details(firearm_details, json)
 
-    if "firearm_calibre_step" in json:
-        firearm_calibre = json.pop("calibre")
-        if firearm_calibre == "":
-            firearm_calibre = None
-        firearm_details["calibre"] = firearm_calibre
+    add_calibre_details(firearm_details, json)
 
-    firearm_details = add_section_certificate_details(firearm_details, json)
+    add_section_certificate_details(firearm_details, json)
 
     for name in [
         "date_of_deactivation",
