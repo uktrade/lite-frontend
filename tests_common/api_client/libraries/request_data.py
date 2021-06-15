@@ -49,9 +49,7 @@ def build_organisation_with_user(exporter, type, name):
     }
 
 
-def build_organisation(name, type, address):
-    eori_number = "GB" + "".join([str(random.randint(0, 9)) for _ in range(12)])
-    registration_number = "".join([str(random.randint(0, 9)) for _ in range(8)])
+def build_organisation(name, type, address, eori_number, registration_number):
     return {
         "name": name,
         "type": type,

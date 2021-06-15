@@ -1,6 +1,7 @@
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given, parsers
 
+from ui_tests.exporter.fixtures.register_organisation import get_eori_number, get_registration_number
 from ui_tests.caseworker.pages.header_page import HeaderPage
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.organisation_page import OrganisationPage
@@ -124,8 +125,14 @@ def click_edit(driver, context):
 
 
 @given("an anonymous user applies for an organisation")
-def in_review_organisation(context, api_test_client):
-    data = build_organisation(f"Org-{get_current_date_time()}", "commercial", "Address-" + get_current_date_time())
+def in_review_organisation(context, api_test_client, get_eori_number, get_registration_number):
+    data = build_organisation(
+        f"Org-{get_current_date_time()}",
+        "commercial",
+        "Address-" + get_current_date_time(),
+        get_eori_number,
+        get_registration_number,
+    )
     response = api_test_client.organisations.anonymous_user_create_org(data)
     context.organisation_id = response["id"]
     context.organisation_name = response["name"]

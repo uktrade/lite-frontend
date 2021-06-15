@@ -1,4 +1,5 @@
 from pytest import fixture
+from random import randint
 
 from tests_common.tools.utils import Timer
 
@@ -18,3 +19,13 @@ def register_organisation(context, api_test_client):
 def register_organisation_for_switching_organisation(context, api_test_client):
     api_test_client.organisations.setup_org_for_switching_organisations()
     context.org_name_for_switching_organisations = api_test_client.context["org_name_for_switching_organisations"]
+
+
+@fixture(scope="function")
+def get_eori_number():
+    return "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])
+
+
+@fixture(scope="function")
+def get_registration_number():
+    return "".join([str(randint(0, 9)) for _ in range(8)])

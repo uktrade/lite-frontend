@@ -34,7 +34,6 @@ Feature: I want to add a company to LITE
     When I click the organisation
     Then the "created" organisation appears in the audit trail
 
-  @LTD-915-Review-approve-organisation
   Scenario: Review and approve an organisation
     Given I sign in to SSO or am signed into SSO
     And an anonymous user applies for an organisation

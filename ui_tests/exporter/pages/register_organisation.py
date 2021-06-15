@@ -51,8 +51,7 @@ class RegisterOrganisation(BasePage):
     def click_inside_of_uk_location(self):
         self.driver.find_element_by_id(self.INSIDE_OF_UK_RADIO_ID).click()
 
-    def enter_random_eori_number(self):
-        eori_number = "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])
+    def enter_random_eori_number(self, eori_number):
         self.driver.find_element_by_id(self.EORI_ID).send_keys(eori_number)
 
     def enter_random_sic_number(self):
