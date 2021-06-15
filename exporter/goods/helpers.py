@@ -110,9 +110,8 @@ def add_section_certificate_details(firearm_details, json):
         certificate_missing = json.get("section_certificate_missing", False)
         if not certificate_missing:
             firearm_details["section_certificate_number"] = json.get("section_certificate_number")
-            formatted_section_certificate_date = format_date(json, "section_certificate_date_of_expiry")
-            firearm_details["section_certificate_date_of_expiry"] = (
-                formatted_section_certificate_date if formatted_section_certificate_date != "--" else None
+            firearm_details["section_certificate_date_of_expiry"] = format_date(
+                json, "section_certificate_date_of_expiry"
             )
             firearm_details["section_certificate_missing"] = False
             firearm_details["section_certificate_missing_reason"] = ""
