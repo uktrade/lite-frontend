@@ -1,11 +1,19 @@
 from random import randint
 
 from faker import Faker
+from faker.providers.phone_number import Provider
 
 from tests_common import functions
 from ui_tests.exporter.pages.BasePage import BasePage
 
-fake = Faker()
+
+class UKPhoneNumberProvider(Provider):
+    def uk_phone_number(self):
+        return "+441234567890"
+
+
+fake = Faker("en_GB")
+fake.add_provider(UKPhoneNumberProvider)
 
 
 class RegisterOrganisation(BasePage):
@@ -24,6 +32,7 @@ class RegisterOrganisation(BasePage):
     SITE_REGION_ID = "site.address.region"
     SITE_POSTCODE_ID = "site.address.postcode"
     SITE_COUNTRY_ID = "site.address.country"
+    SITE_PHONE_NUMBER_ID = "phone_number"
     OUTSIDE_OF_UK_RADIO_ID = "location-abroad"
     INSIDE_OF_UK_RADIO_ID = "location-united_kingdom"
 
@@ -43,7 +52,8 @@ class RegisterOrganisation(BasePage):
         self.driver.find_element_by_id(self.INSIDE_OF_UK_RADIO_ID).click()
 
     def enter_random_eori_number(self):
-        self.driver.find_element_by_id(self.EORI_ID).send_keys(randint(10000, 99999))
+        eori_number = "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])
+        self.driver.find_element_by_id(self.EORI_ID).send_keys(eori_number)
 
     def enter_random_sic_number(self):
         self.driver.find_element_by_id(self.SIC_ID).send_keys(randint(10000, 99999))
@@ -58,8 +68,9 @@ class RegisterOrganisation(BasePage):
         self.driver.find_element_by_id(self.SITE_NAME_ID).send_keys(fake.secondary_address())
         self.driver.find_element_by_id(self.SITE_ADDRESS_LINE_1_ID).send_keys(fake.street_address())
         self.driver.find_element_by_id(self.SITE_CITY_ID).send_keys(fake.city())
-        self.driver.find_element_by_id(self.SITE_REGION_ID).send_keys(fake.state())
+        self.driver.find_element_by_id(self.SITE_REGION_ID).send_keys(fake.county())
         self.driver.find_element_by_id(self.SITE_POSTCODE_ID).send_keys(fake.postcode())
+        self.driver.find_element_by_id(self.SITE_PHONE_NUMBER_ID).send_keys(fake.uk_phone_number())
 
     def enter_random_site_with_country_and_address_box(self):
         self.driver.find_element_by_id(self.SITE_NAME_ID).send_keys(fake.secondary_address())

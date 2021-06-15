@@ -8,10 +8,10 @@
 
 {% block body %}
 	<div class="govuk-panel govuk-panel--confirmation {% if animated %}lite-panel--confirmation{% endif %} {% if request.GET.animate %}lite-spinner{% endif %}">
-		<h1 class="govuk-panel__title">
+		<h1 id="registration-confirmation-value" class="govuk-panel__title">
 			{{ title }}
 		</h1>
-		<div class="govuk-panel__body">
+		<div id="application-processing-message-value" class="govuk-panel__body">
 			{{ secondary_title|markdown }}
 		</div>
         {% if animated %}
