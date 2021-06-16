@@ -70,6 +70,10 @@ from tests_common.fixtures.driver import driver  # noqa
 from tests_common.fixtures.urls import exporter_url, api_url  # noqa
 from tests_common.tools.wait import wait_for_download_button_on_exporter_main_content
 
+from ui_tests.exporter.pages.start_page import StartPage
+from ui_tests.exporter.pages.great_signin_page import GreatSigninPage
+
+
 strict_gherkin = False
 fake = Faker()
 
@@ -94,8 +98,14 @@ def i_click_edit_application(driver):  # noqa
     ApplicationPage(driver).click_edit_application_link()
 
 
-@given("I go to exporter homepage and choose Test Org")  # noqa
-def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, context):  # noqa
+@given("I signin and go to exporter homepage and choose Test Org")  # noqa
+def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, context, exporter_info):  # noqa
+    driver.get(exporter_url)
+    StartPage(driver).try_click_sign_in_button()
+
+    if "login" in driver.current_url:
+        GreatSigninPage(driver).sign_in(exporter_info["email"], exporter_info["password"])
+
     if "pick-organisation" in driver.current_url:
         no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
         Shared(driver).click_on_radio_buttons(no)
@@ -105,6 +115,14 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
         no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
         Shared(driver).click_on_radio_buttons(no)
         functions.click_submit(driver)
+
+
+@then("I logout")  # noqa
+def i_logout(driver, exporter_url):  # noqa
+    driver.get(exporter_url.rstrip("/") + "/auth/logout")
+    if "accounts/logout" in driver.current_url:
+        driver.find_element_by_css_selector("[action='/sso/accounts/logout/'] button").click()
+        driver.get(exporter_url)
 
 
 @when("I go to exporter homepage")  # noqa

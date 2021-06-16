@@ -10,3 +10,4 @@ Feature: I want to register an organisation
     When I sign in as user without an organisation registered
     And I enter my information from steps 1-4 to register a commercial organisation
     Then the organisation is registered successfully
+    And I logout
