@@ -37,6 +37,7 @@ scenarios(
     "../features/goods.feature",
     "../features/submit_standard_application.feature",
     "../features/edit_standard_application.feature",
+    "../features/siel_firearm_application.feature",
     strict_gherkin=False,
 )
 

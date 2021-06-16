@@ -1,6 +1,12 @@
-Feature: I want to indicate the standard licence I want
+Feature: I want to be able to submit SIEL firearm applications
   As a logged in exporter
-  I want to submit SIEL applications involving firearms products
+  I want to be able to submit SIEL firearm applications
+
+  Scenario: Initiate an application for a SIEL firearm
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "temporary" export type
+    Then I see the application overview
+    And I logout
 
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
