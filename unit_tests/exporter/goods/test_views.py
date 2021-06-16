@@ -1,6 +1,9 @@
 import pytest
+
+from django.conf import settings
 from django.template import Context, Template
 from django.urls import reverse
+from tempfile import NamedTemporaryFile
 from unittest import mock
 
 from core import client
@@ -74,3 +77,154 @@ def test_get_good_detail_doesnot_contain_application_specific_details(authorized
     assert ("Controlled" in response_html) == True
     assert ("Year of manufacture" in response_html) == False
     assert ("Identification markings" in response_html) == False
+
+
+def test_edit_grading_doesnot_raise_goods_query(authorized_client, requests_mock, good):
+    good["is_document_available"] = True
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
+
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/documents/"), json={})
+    requests_mock.get(
+        client._build_absolute_uri(
+            "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/?pk=e0a485d0-156e-4152-bec9-4798c9f2871e&full_detail=False"
+        ),
+        json={"good": good},
+    )
+    requests_mock.get(client._build_absolute_uri("/static/private-venture-gradings/"), json={"pv_gradings": []})
+    requests_mock.put(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.post(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/edit-grading"), json={})
+
+    # ensure we don't raise query
+    data = {"is_pv_graded": "grading_required"}
+    url = reverse("goods:edit_grading", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"})
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"
+
+    # ensure existing behaviour is not modified
+    good["is_pv_graded"]["key"] = "grading_required"
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = True
+
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.get(
+        client._build_absolute_uri(
+            "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/?pk=e0a485d0-156e-4152-bec9-4798c9f2871e&full_detail=False"
+        ),
+        json={"good": good},
+    )
+    requests_mock.put(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+
+    data = {"is_pv_graded": "grading_required"}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/raise-good-query/"
+
+
+def test_document_available_doesnot_raise_goods_query(authorized_client, requests_mock, good):
+    good["is_document_available"] = "no"
+    good["is_pv_graded"]["key"] = "grading_required"
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
+
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/documents/"), json={})
+    requests_mock.get(
+        client._build_absolute_uri(
+            "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/?pk=e0a485d0-156e-4152-bec9-4798c9f2871e&full_detail=False"
+        ),
+        json={"good": good},
+    )
+    requests_mock.get(client._build_absolute_uri("/static/private-venture-gradings/"), json={"pv_gradings": []})
+    requests_mock.put(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.post(
+        client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/document-availability"),
+        json={"good": good},
+    )
+
+    # ensure we don't raise query
+    data = {"is_document_available": "no"}
+    url = reverse("goods:check_document_availability", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"})
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"
+
+    # ensure existing behaviour is not modified
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = True
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/raise-good-query/"
+
+
+def test_document_grading_doesnot_raise_goods_query(authorized_client, requests_mock, good):
+    good["is_document_available"] = True
+    good["is_pv_graded"]["key"] = "grading_required"
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
+
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/documents/"), json={})
+    requests_mock.get(
+        client._build_absolute_uri(
+            "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/?pk=e0a485d0-156e-4152-bec9-4798c9f2871e&full_detail=False"
+        ),
+        json={"good": good},
+    )
+    requests_mock.get(client._build_absolute_uri("/static/private-venture-gradings/"), json={"pv_gradings": []})
+    requests_mock.put(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.post(
+        client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/document-sensitivity"),
+        json={"good": good},
+    )
+
+    # ensure we don't raise query
+    data = {"is_document_sensitive": "yes"}
+    url = reverse("goods:check_document_sensitivity", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"})
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"
+
+    # ensure existing behaviour is not modified
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = True
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/raise-good-query/"
+
+
+@mock.patch("exporter.applications.services")
+def test_attach_documents_doesnot_raise_goods_query(mock_services, authorized_client, requests_mock, good):
+    good["is_document_available"] = True
+    good["is_pv_graded"]["key"] = "grading_required"
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
+
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/documents/"), json={})
+    requests_mock.get(
+        client._build_absolute_uri(
+            "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/?pk=e0a485d0-156e-4152-bec9-4798c9f2871e&full_detail=False"
+        ),
+        json={"good": good},
+    )
+    requests_mock.get(client._build_absolute_uri("/static/private-venture-gradings/"), json={"pv_gradings": []})
+    requests_mock.put(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.post(
+        client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/attach"), json={"good": good}
+    )
+    requests_mock.post(
+        client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/documents"), json={}, status_code=201
+    )
+
+    # ensure we don't raise query
+    data = {"is_document_sensitive": "yes"}
+    url = reverse("goods:attach_documents", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"})
+    with NamedTemporaryFile(delete=True) as temp_file:
+        files = {"file": temp_file}
+        response = authorized_client.post(url, data=files)
+        assert response.status_code == 302
+        assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"
+
+    # ensure existing behaviour is not modified
+    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = True
+    with NamedTemporaryFile(delete=True) as temp_file:
+        files = {"file": temp_file}
+        response = authorized_client.post(url, data=files)
+        assert response.status_code == 302
+        assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/raise-good-query/"

@@ -484,7 +484,7 @@ class EditGrading(LoginRequiredMixin, SingleFormView):
             )
         elif not good.get("documents") and not good.get("is_document_available"):
             return reverse_lazy("goods:add_document", kwargs={"pk": self.object_pk})
-        elif raise_a_clc_query or raise_a_pv_query:
+        elif settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING and (raise_a_clc_query or raise_a_pv_query):
             return reverse_lazy("goods:raise_goods_query", kwargs={"pk": self.object_pk})
         else:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
@@ -947,10 +947,10 @@ class CheckDocumentAvailable(LoginRequiredMixin, SingleFormView):
             raise_a_clc_query = good["is_good_controlled"] is None
             raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
-            if not (raise_a_clc_query or raise_a_pv_query):
-                url = "goods:good"
-            else:
+            if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING and (raise_a_clc_query or raise_a_pv_query):
                 url = "goods:raise_goods_query"
+            else:
+                url = "goods:good"
         else:
             url = "goods:check_document_sensitivity"
 
@@ -985,16 +985,16 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
             raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
             if self.draft_pk:
-                if not (raise_a_clc_query or raise_a_pv_query):
+                if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING and (raise_a_clc_query or raise_a_pv_query):
+                    url = "goods:raise_goods_query_add_application"
+                else:
                     kwargs["type"] = "application"
                     url = "goods:good_detail_application"
-                else:
-                    url = "goods:raise_goods_query_add_application"
             else:
-                if not (raise_a_clc_query or raise_a_pv_query):
-                    url = "goods:good"
-                else:
+                if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING and (raise_a_clc_query or raise_a_pv_query):
                     url = "goods:raise_goods_query"
+                else:
+                    url = "goods:good"
         else:
             if self.draft_pk:
                 url = "goods:attach_documents_add_application"
@@ -1058,22 +1058,22 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
 
         if draft_pk:
-            if not (raise_a_clc_query or raise_a_pv_query):
+            if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING and (raise_a_clc_query or raise_a_pv_query):
+                return redirect(
+                    reverse("goods:raise_goods_query_add_application", kwargs={"pk": good_id, "draft_pk": draft_pk})
+                )
+            else:
                 return redirect(
                     reverse(
                         "goods:good_detail_application",
                         kwargs={"pk": good_id, "type": "application", "draft_pk": draft_pk},
                     )
                 )
-            else:
-                return redirect(
-                    reverse("goods:raise_goods_query_add_application", kwargs={"pk": good_id, "draft_pk": draft_pk})
-                )
         else:
-            if not (raise_a_clc_query or raise_a_pv_query):
-                return redirect(reverse("goods:good", kwargs={"pk": good_id}))
-            else:
+            if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING and (raise_a_clc_query or raise_a_pv_query):
                 return redirect(reverse("goods:raise_goods_query", kwargs={"pk": good_id}))
+            else:
+                return redirect(reverse("goods:good", kwargs={"pk": good_id}))
 
 
 class Document(LoginRequiredMixin, TemplateView):
