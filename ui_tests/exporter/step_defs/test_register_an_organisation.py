@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from pytest_bdd import scenarios, then, given, when
 
+from ui_tests.exporter.fixtures.register_organisation import get_eori_number
 from ui_tests.exporter.pages.great_signin_page import GreatSigninPage
 from ui_tests.exporter.pages.register_organisation import RegisterOrganisation
 from ui_tests.exporter.pages.start_page import StartPage
@@ -18,7 +19,7 @@ def new_log_in(context):
 
 
 @when("I enter my information from steps 1-4 to register a commercial organisation")
-def register_commercial(driver):
+def register_commercial(driver, get_eori_number):
     register = RegisterOrganisation(driver)
     register.click_create_an_account_button()
     register.select_commercial_or_individual_organisation("commercial")
@@ -26,7 +27,7 @@ def register_commercial(driver):
     register.click_inside_of_uk_location()
     functions.click_submit(driver)
     register.enter_random_company_name()
-    register.enter_random_eori_number()
+    register.enter_random_eori_number(get_eori_number)
     register.enter_random_sic_number()
     register.enter_random_vat_number()
     register.enter_random_registration_number()

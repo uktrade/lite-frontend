@@ -1,6 +1,8 @@
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given, parsers
 
+from ui_tests.exporter.fixtures.register_organisation import get_eori_number, get_registration_number
+from ui_tests.caseworker.pages.header_page import HeaderPage
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.organisation_page import OrganisationPage
 from ui_tests.caseworker.pages.organisations_form_page import OrganisationsFormPage
@@ -103,14 +105,17 @@ def assert_flag_is_assigned(driver, context):
     assert Shared(driver).is_flag_applied(context.flag_name), "Flag " + context.flag_name + " is not applied"
 
 
-@when("I go to organisations")
-def i_go_to_organisations(driver, internal_url, context):
-    driver.get(internal_url.rstrip("/") + "/organisations")
+@when("I navigate to organisations")
+def i_go_to_organisations(driver):
+    header = HeaderPage(driver)
+    header.click_lite_menu()
+    header.click_organisations()
 
 
-@when("I click the organisation")
+@when("I click on the organisation and click Review")
 def click_organisation(driver, context):
     OrganisationsPage(driver).click_organisation(context.organisation_name)
+    OrganisationPage(driver).click_review_organisation()
 
 
 @when("I edit the organisation")
@@ -120,8 +125,14 @@ def click_edit(driver, context):
 
 
 @given("an anonymous user applies for an organisation")
-def in_review_organisation(context, api_test_client):
-    data = build_organisation(f"Org-{get_current_date_time()}", "commercial", "Address-" + get_current_date_time())
+def in_review_organisation(context, api_test_client, get_eori_number, get_registration_number):
+    data = build_organisation(
+        f"Org-{get_current_date_time()}",
+        "commercial",
+        "Address-" + get_current_date_time(),
+        get_eori_number,
+        get_registration_number,
+    )
     response = api_test_client.organisations.anonymous_user_create_org(data)
     context.organisation_id = response["id"]
     context.organisation_name = response["name"]
@@ -133,17 +144,17 @@ def in_review_organisation(context, api_test_client):
     context.organisation_address = data["site"]["address"]["address_line_1"]
 
 
-@when("I go to the in review tab")
-def in_review_tab(driver):
+@when("I click on In review tab")
+def click_in_review_tab(driver):
     OrganisationsPage(driver).go_to_in_review_tab()
 
 
-@when("I go to the active tab")
-def in_review_tab(driver):
+@when("I click on Active tab")
+def click_active_tab(driver):
     OrganisationsPage(driver).go_to_active_tab()
 
 
-@then("the organisation previously created is in the list")
+@then("I should see details of organisation previously created")
 def organisation_in_list(driver, context):
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
     assert driver.find_element_by_id(context.organisation_id).is_displayed()
@@ -154,7 +165,7 @@ def click_review(driver):
     OrganisationPage(driver).click_review_organisation()
 
 
-@then("I should see a summary of organisation details")
+@then("I should see a summary and option to approve or reject organisation")
 def organisation_summary(driver, context):
     summary = OrganisationPage(driver).get_organisation_summary()
     assert context.organisation_name in summary
@@ -165,8 +176,11 @@ def organisation_summary(driver, context):
     assert context.organisation_registration in summary
     assert context.organisation_address in summary
 
+    assert driver.find_element_by_id("status-active").is_enabled()
+    assert driver.find_element_by_id("status-rejected").is_enabled()
 
-@when("I approve the organisation")
+
+@when("I select approve and Save")
 def approve_organisation(driver):
     OrganisationPage(driver).select_approve_organisation()
     click_submit(driver)

@@ -49,14 +49,16 @@ def build_organisation_with_user(exporter, type, name):
     }
 
 
-def build_organisation(name, type, address):
+def build_organisation(name, type, address, eori_number, registration_number):
     return {
         "name": name,
         "type": type,
-        "eori_number": "1234567890AAA",
+        "eori_number": eori_number,
         "sic_number": "12345",
         "vat_number": "GB123456789",
-        "registration_number": "09876543",
+        "registration_number": registration_number,
+        "phone_number": "+441234567890",
+        "website": "http://www.example-org.com",
         "user": {"email": "name@example.com"},
         "site": {"name": "site", "address": {"address_line_1": address}},
     }
