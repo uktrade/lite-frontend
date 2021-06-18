@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
-from django.utils.safestring import mark_safe
 
 from exporter.core.helpers import str_to_bool
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
@@ -40,7 +39,6 @@ from lite_forms.components import (
     Breadcrumbs,
     FormGroup,
     Heading,
-    HelpSection,
     Checkboxes,
     GroupWithLabel,
 )
@@ -226,34 +224,6 @@ def add_goods_questions(control_list_entries, application_pk=None):
         Option(key="no", value="No, it doesn't need one"),
     ]
 
-    if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
-        if not application_pk:
-            controlled_spire = HelpSection(
-                description=mark_safe(  # nosec
-                    f"Use <a href='{settings.SPIRE_URL}'>SPIRE</a> to raise a control list classification (CLC) query"
-                ),
-                title="",
-            )
-            pv_graded_spire = HelpSection(
-                description=mark_safe(  # nosec
-                    f"Use <a href='{settings.SPIRE_URL}'>SPIRE</a> to apply for a private venture (PV) grading",
-                ),
-                title="",
-            )
-            if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING:
-                is_good_controlled_options.append(Option(key=None, value="I don't know", components=[controlled_spire]))
-                is_pv_graded_options.append(
-                    Option(key="grading_required", value="No, it needs one", components=[pv_graded_spire],)
-                )
-    else:
-        if not application_pk:
-            if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING:
-                is_good_controlled_options.append(
-                    Option(key=None, value="I don't know, raise a control list classification (CLC) query")
-                )
-                is_pv_graded_options.append(
-                    Option(key="grading_required", value="No, it needs one, apply for a private venture (PV) grading")
-                )
     return Form(
         title=conditional(application_pk, "Add a product to your application", "Add a product to your product list"),
         questions=[

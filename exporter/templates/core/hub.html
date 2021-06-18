@@ -78,26 +78,12 @@
 
 		<section class="app-tiles">
 			{# Product list tile #}
-			<div class="app-tile">
+			<div class="app-tile" id="product-list-tile">
 				<a href="{% url 'goods:goods' %}" class="app-tile__heading" id="link-products">
 					{% lcs 'hub.Tiles.GOODS' %}{% if notifications.notifications.goods %}<span class="lite-notification-bubble" id="product-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.goods }}</span><span class="govuk-visually-hidden"> notifications)</span>{% endif %}
 				</a>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.MANAGE_PRODUCTS' %}</p>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.PRODUCTS_INCLUDE' %}</p>
-				{% if FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING %}
-					<ol class="govuk-list govuk-!-font-size-16">
-						<li>
-							<a id="clc_query_link_value" href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
-								{% lcs 'hub.Tiles.ProductList.CLC_LINK' %}
-							</a>
-						</li>
-						<li>
-							<a id="pv_grading_link_value" href="{% url 'goods:add' %}" class="govuk-link govuk-link--no-visited-state">
-								{% lcs 'hub.Tiles.ProductList.GRADING_LINK' %}
-							</a>
-						</li>
-					</ol>
-				{% endif %}
 			</div>
 
 			{# End user query tile #}

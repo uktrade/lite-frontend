@@ -24,45 +24,11 @@ def post_request(rf, client, data=None):
     return request
 
 
-def test_add_goods_questions_feature_flag_on(settings):
-    settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = True
-    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = True
-
-    form = forms.add_goods_questions(control_list_entries=[])
-
-    assert form.questions[3].options[-1].components[0].__class__ == HelpSection
-    assert form.questions[4].options[-1].components[0].__class__ == HelpSection
-    assert len(form.questions[3].options) == 3
-    assert len(form.questions[4].options) == 3
-    assert form.questions[3].options[-1].key == None
-    assert form.questions[3].options[-1].value == "I don't know"
-    assert form.questions[4].options[-1].key == "grading_required"
-    assert form.questions[4].options[-1].value == "No, it needs one"
-
-    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
+def test_add_goods_questions_feature_flag():
     form = forms.add_goods_questions(control_list_entries=[])
     assert len(form.questions[3].options) == 2
     assert form.questions[3].options[-1].key == False
     assert form.questions[3].options[-1].value == "No"
-    assert len(form.questions[4].options) == 2
-    assert form.questions[4].options[-1].key == "no"
-    assert form.questions[4].options[-1].value == "No, it doesn't need one"
-
-
-def test_add_goods_questions_feature_flag_off(settings):
-    settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = False
-    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = True
-
-    form = forms.add_goods_questions(control_list_entries=[])
-
-    assert form.questions[3].options[-1].components == []
-    assert form.questions[4].options[-1].components == []
-    assert len(form.questions[4].options) == 3
-    assert form.questions[4].options[-1].key == "grading_required"
-    assert form.questions[4].options[-1].value == "No, it needs one, apply for a private venture (PV) grading"
-
-    settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
-    form = forms.add_goods_questions(control_list_entries=[])
     assert len(form.questions[4].options) == 2
     assert form.questions[4].options[-1].key == "no"
     assert form.questions[4].options[-1].value == "No, it doesn't need one"
