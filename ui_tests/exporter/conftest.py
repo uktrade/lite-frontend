@@ -90,7 +90,12 @@ def open_application_exists(apply_for_open_application):  # noqa
 
 @when("I go to application previously created")  # noqa
 def click_on_an_application(driver, exporter_url, context):  # noqa
-    driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)
+    driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id + "/task-list/")
+
+
+@when("I click on the application just created")  # noqa
+def click_on_application_just_created(driver, context):  # noqa
+    driver.find_element_by_link_text(context.app_name).click()
 
 
 @when("I click edit application")  # noqa
@@ -297,6 +302,12 @@ def select_the_site_at_position(driver, no):  # noqa
 def click_my_application_link(driver):  # noqa
     exporter_hub = ExporterHubPage(driver)
     exporter_hub.click_applications()
+
+
+@when("I click on draft tab for applications")  # noqa
+def click_draft_tab(driver):  # noqa
+    applications_page = ApplicationPage(driver)
+    applications_page.click_draft_applications_tab()
 
 
 @when("I click on goods link")  # noqa

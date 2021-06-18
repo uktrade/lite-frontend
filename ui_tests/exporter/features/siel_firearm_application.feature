@@ -8,6 +8,14 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the application overview
     And I logout
 
+  Scenario: Open a SIEL application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I click on applications
+    And I click on draft tab for applications
+    And I click on the application just created
+    Then I see the application overview
+    And I logout
+
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type

@@ -244,7 +244,7 @@ def i_see_the_application_overview(driver, context):  # noqa
     element = TaskListPage(driver).get_text_of_lite_task_list_items()
     assert context.app_name in element
 
-    app_id = driver.current_url[-36:]
+    app_id = driver.current_url.split("/")[-3]
     context.app_id = app_id
 
 
