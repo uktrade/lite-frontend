@@ -24,22 +24,14 @@ def post_request(rf, client, data=None):
     return request
 
 
-def test_add_goods_questions_feature_flag_on(settings):
-    settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = True
-
+def test_add_goods_questions_feature_flag():
     form = forms.add_goods_questions(control_list_entries=[])
-
-    assert form.questions[3].options[-1].components[0].__class__ == HelpSection
-    assert form.questions[4].options[-1].components[0].__class__ == HelpSection
-
-
-def test_add_goods_questions_feature_flag_off(settings):
-    settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = False
-
-    form = forms.add_goods_questions(control_list_entries=[])
-
-    assert form.questions[3].options[-1].components == []
-    assert form.questions[4].options[-1].components == []
+    assert len(form.questions[3].options) == 2
+    assert form.questions[3].options[-1].key == False
+    assert form.questions[3].options[-1].value == "No"
+    assert len(form.questions[4].options) == 2
+    assert form.questions[4].options[-1].key == "no"
+    assert form.questions[4].options[-1].value == "No, it doesn't need one"
 
 
 @pytest.mark.parametrize(

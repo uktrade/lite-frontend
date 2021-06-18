@@ -1,7 +1,6 @@
 import pytest
-from django.template import Context, Template
+
 from django.urls import reverse
-from unittest import mock
 
 from core import client
 
