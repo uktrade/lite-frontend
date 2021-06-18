@@ -240,21 +240,17 @@ def add_goods_questions(control_list_entries, application_pk=None):
                 ),
                 title="",
             )
-            is_good_controlled_options.append(Option(key=None, value="I don't know", components=[controlled_spire]))
             if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING:
+                is_good_controlled_options.append(Option(key=None, value="I don't know", components=[controlled_spire]))
                 is_pv_graded_options.append(
-                    Option(
-                        key="grading_required",
-                        value="No, it needs one",
-                        components=[pv_graded_spire],
-                    )
+                    Option(key="grading_required", value="No, it needs one", components=[pv_graded_spire],)
                 )
     else:
         if not application_pk:
-            is_good_controlled_options.append(
-                Option(key=None, value="I don't know, raise a control list classification (CLC) query")
-            )
             if settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING:
+                is_good_controlled_options.append(
+                    Option(key=None, value="I don't know, raise a control list classification (CLC) query")
+                )
                 is_pv_graded_options.append(
                     Option(key="grading_required", value="No, it needs one, apply for a private venture (PV) grading")
                 )

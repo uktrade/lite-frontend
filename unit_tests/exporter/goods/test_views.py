@@ -81,6 +81,7 @@ def test_get_good_detail_doesnot_contain_application_specific_details(authorized
 
 def test_edit_grading_doesnot_raise_goods_query(authorized_client, requests_mock, good):
     good["is_document_available"] = True
+    good["is_good_controlled"] = None
     settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
 
     requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
@@ -123,6 +124,7 @@ def test_edit_grading_doesnot_raise_goods_query(authorized_client, requests_mock
 
 def test_document_available_doesnot_raise_goods_query(authorized_client, requests_mock, good):
     good["is_document_available"] = "no"
+    good["is_good_controlled"] = None
     good["is_pv_graded"]["key"] = "grading_required"
     settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
 
@@ -157,6 +159,7 @@ def test_document_available_doesnot_raise_goods_query(authorized_client, request
 
 def test_document_grading_doesnot_raise_goods_query(authorized_client, requests_mock, good):
     good["is_document_available"] = True
+    good["is_good_controlled"] = None
     good["is_pv_graded"]["key"] = "grading_required"
     settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
 
@@ -192,6 +195,7 @@ def test_document_grading_doesnot_raise_goods_query(authorized_client, requests_
 @mock.patch("exporter.applications.services")
 def test_attach_documents_doesnot_raise_goods_query(mock_services, authorized_client, requests_mock, good):
     good["is_document_available"] = True
+    good["is_good_controlled"] = None
     good["is_pv_graded"]["key"] = "grading_required"
     settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = False
 
