@@ -8,7 +8,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the application overview
     And I logout
 
-  Scenario: Edit and open a SIEL application
+  Scenario: Open a SIEL application
     Given I signin and go to exporter homepage and choose Test Org
     When I click on applications
     And I click on draft tab for applications
