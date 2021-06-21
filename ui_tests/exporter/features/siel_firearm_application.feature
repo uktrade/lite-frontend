@@ -70,3 +70,17 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
     And the section "Route of goods" is now saved
     And I logout
+
+
+  Scenario: Enter details for the Location section in the application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    When I click on the "Locations" section
+    And I select "organisation" for where my goods are located
+    And I select the site at position "1"
+    And I click continue
+    And I click the back link
+    Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
+    And the section "Locations" is now saved
+    And I logout

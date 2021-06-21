@@ -249,14 +249,14 @@ def i_see_the_application_overview(driver, context):  # noqa
 
 
 @when(parsers.parse('I am on the application overview page entitled "{title}"'))  # noqa
-def i_see_the_application_overview(driver, title):  # noqa
+def i_am_on_application_overview_with_title(driver, title):  # noqa
     heading = driver.find_element_by_xpath("//h1").text
     assert heading == title
 
 
 @then(parsers.parse('I should be taken to the application overview page entitled "{title}"'))  # noqa
 def taken_to_application_overview_page(driver, title):
-    i_see_the_application_overview(driver, title)
+    i_am_on_application_overview_with_title(driver, title)
 
 
 @when("I delete the application")  # noqa

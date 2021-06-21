@@ -263,7 +263,7 @@ def route_of_goods(driver, choice):  # noqa
     else:
         route_of_goods.answer_route_of_goods_question(False)
 
-    driver.find_element_by_css_selector("button[type='submit']").click()
+    functions.click_submit(driver)
 
 
 @when(parsers.parse("I save and continue on the summary page"))  # noqa
