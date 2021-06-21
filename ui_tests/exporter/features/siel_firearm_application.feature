@@ -19,7 +19,7 @@ Feature: I want to be able to submit SIEL firearm applications
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
-    When I click on the "goods" section
+    When I click on the "Products" section
     And I choose to add a new product
     And I select product category "firearms"
     And I select product type "firearm"
@@ -42,4 +42,15 @@ Feature: I want to be able to submit SIEL firearm applications
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with value "20,000" and deactivated "No" and Save
     Then the product with name "Rifle" is added to the application
+    And I logout
+
+
+  Scenario: Enter details for the Route of goods section in the application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    When I click on the "Route of goods" section
+    And I answer "Yes" for shipping air waybill or lading and Save
+    Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
+    And the section "Route of goods" is now saved
     And I logout

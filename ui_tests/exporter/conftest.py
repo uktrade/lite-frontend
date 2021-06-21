@@ -203,9 +203,19 @@ def add_new_party(driver, type, name, website, address, country, context):  # no
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I click on the "{section}" section'))  # noqa
-def go_to_task_list_section(driver, section):  # noqa
-    TaskListPage(driver).click_on_task_list_section(section)
+@when(parsers.parse('I click on the "{section_name}" section'))  # noqa
+def go_to_task_list_section(driver, section_name):  # noqa
+    section = driver.find_element_by_link_text(section_name)
+    section_id = section.get_attribute("id")
+    TaskListPage(driver).click_on_task_list_section(section_id)
+
+
+@then(parsers.parse('the section "{section_name}" is now saved'))  # noqa
+def verify_section_is_saved(driver, section_name):  # noqa
+    section = driver.find_element_by_link_text(section_name)
+    section_id = section.get_attribute("id")
+    saved_status_element = driver.find_element_by_id(f"{section_id}-status")
+    assert saved_status_element.text == "SAVED"
 
 
 @when(parsers.parse("I provide details of the intended end use of the products"))  # noqa
@@ -245,13 +255,15 @@ def suspected_wmd_end_use_details(driver, choice):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading'))  # noqa
+@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading and Save'))  # noqa
 def route_of_goods(driver, choice):  # noqa
     route_of_goods = RouteOfGoodsFormPage(driver)
     if choice == "No":
         route_of_goods.answer_route_of_goods_question(True, "Not shipped air waybill.")
     else:
         route_of_goods.answer_route_of_goods_question(False)
+
+    driver.find_element_by_css_selector("button[type='submit']").click()
 
 
 @when(parsers.parse("I save and continue on the summary page"))  # noqa

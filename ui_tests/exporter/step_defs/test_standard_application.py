@@ -248,6 +248,17 @@ def i_see_the_application_overview(driver, context):  # noqa
     context.app_id = app_id
 
 
+@when(parsers.parse('I am on the application overview page entitled "{title}"'))  # noqa
+def i_see_the_application_overview(driver, title):  # noqa
+    heading = driver.find_element_by_xpath("//h1").text
+    assert heading == title
+
+
+@then(parsers.parse('I should be taken to the application overview page entitled "{title}"'))  # noqa
+def taken_to_application_overview_page(driver, title):
+    i_see_the_application_overview(driver, title)
+
+
 @when("I delete the application")  # noqa
 def i_delete_the_application(driver):  # noqa
     apply = ApplyForALicencePage(driver)
