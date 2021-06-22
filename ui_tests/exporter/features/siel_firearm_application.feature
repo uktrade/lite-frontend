@@ -16,6 +16,18 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the application overview
     And I logout
 
+  Scenario: Temporary export details
+    Given I signin and go to exporter homepage and choose Test Org
+    When I click on applications
+    And I click on draft tab for applications
+    And I click on the application just created
+    And I click on "Temporary export details"
+    And I provide details of why my export is temporary
+    And I answer "Yes" for whether the products remain under my direct control
+    And I enter the date "01", "01", "2030" when the products will return to the UK
+    Then I see the temporary export detail summary
+    And I logout
+
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
