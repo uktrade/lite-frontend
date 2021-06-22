@@ -51,6 +51,7 @@ from tests_common.fixtures.urls import internal_url, sso_sign_in_url, api_url  #
 import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
+from tests_common.helpers import applications
 
 
 @when("I go to the internal homepage")  # noqa
@@ -76,6 +77,37 @@ def click_on_created_application(driver, context, internal_url):  # noqa
 @given("I create standard application or standard application has been previously created")  # noqa
 def create_app(driver, apply_for_standard_application):  # noqa
     pass
+
+
+@given(
+    "I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
+    target_fixture="create_application",
+)
+def create_application(
+    api_test_client,  # noqa
+    context,  # noqa
+    name,
+    product,
+    clc_rating,
+    end_user_name,
+    end_user_address,
+    consignee_name,
+    consignee_address,
+    country,
+    end_use,
+):
+    app_data = {
+        "name": name,
+        "product": product,
+        "clc_rating": clc_rating,
+        "end_user_name": end_user_name,
+        "end_user_address": end_user_address,
+        "consignee_name": consignee_name,
+        "consignee_address": consignee_address,
+        "country": country,
+        "end_use": end_use,
+    }
+    applications.create_standard_application(api_test_client, context, app_data)
 
 
 @given("I create open application or open application has been previously created")  # noqa
@@ -143,7 +175,7 @@ def see_queue_in_queue_list(driver, context):  # noqa
     assert driver.find_element_by_id(context.case_id).is_displayed()
 
 
-@when("I show filters")  # noqa
+@when("I click on show filters")
 def i_show_filters(driver):  # noqa
     Shared(driver).try_open_filters()
 

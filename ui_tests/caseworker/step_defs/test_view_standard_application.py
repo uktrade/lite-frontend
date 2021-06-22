@@ -2,7 +2,8 @@ import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.case_page import CasePage
-from pytest_bdd import then, scenarios, when, given
+from pytest_bdd import then, scenarios, when, given, parsers
+from tests_common import functions
 
 scenarios("../features/view_standard_application.feature", strict_gherkin=False)
 
@@ -66,3 +67,40 @@ def i_see_inactive_party(driver, context):
 
     for destination in destinations:
         assert destination["name"] in destinations_table_text
+
+
+@when(parsers.parse('I filter by application type "{application_type}"'))
+def filter_by_application_type(driver, application_type):
+    CaseListPage(driver).select_filter_case_type_from_dropdown(application_type)
+    functions.click_apply_filters(driver)
+
+
+@then(parsers.parse('I should see the product name as "{product_name}" with product rating as "{clc_rating}"'))
+def filter_by_application_type(driver, product_name, clc_rating):
+    product_table = driver.find_element_by_id("table-goods")
+    name_element = product_table.find_element_by_xpath("//tbody/tr/td[3]")
+    rating_element = product_table.find_element_by_xpath("//tbody/tr/td[6]")
+    assert name_element.text == product_name
+    assert rating_element.text == clc_rating
+
+
+@then(parsers.parse('the "{party_type}" name is "{name}", address is "{address}", country is "{country}"'))
+def filter_by_application_type(driver, party_type, name, address, country):
+    destinations = driver.find_element_by_id("table-destinations")
+    party_index = {"End user": 1, "Consignee": 2}
+    index = party_index.get(party_type, 1)
+    party = destinations.find_element_by_xpath(f".//tbody/tr[{index}]")
+    party_type_text = party.find_element_by_xpath(".//th").text
+    party_name = party.find_element_by_xpath(".//td[2]").text
+    party_address = party.find_element_by_xpath(".//td[3]").text
+
+    assert party_type_text == party_type
+    assert party_name == name
+    assert party_address == f"{address}, {country}"
+
+
+@then(parsers.parse('the intended end use details should be "{end_use_expected}"'))
+def filter_by_application_type(driver, end_use_expected):
+    end_use_table = driver.find_element_by_id("slice-end-use-details")
+    end_use_text = end_use_table.find_element_by_xpath(".//tbody/tr[1]/td[3]").text
+    assert end_use_text == end_use_expected
