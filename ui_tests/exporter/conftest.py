@@ -264,7 +264,7 @@ def save_continue_summary_list(driver):  # noqa
 @when("I provide details of why my export is temporary")  # noqa
 def enter_temporary_export_details(driver):  # noqa
     temporary_export_details = TemporaryExportDetailsFormPage(driver)
-    temporary_export_details.answer_temp_export_details(fake.sentence(nb_words=30))
+    temporary_export_details.answer_temp_export_details("Lorem ipsum")
     functions.click_submit(driver)
 
 
@@ -1031,3 +1031,19 @@ def edit_good_details_in_application(driver, field_name, updated_value):  # noqa
 
     updated_field_value, _ = summary_page.get_field_details(field_name)
     assert updated_field_value == updated_value
+
+
+@when(parsers.parse('I click on "{link_text}"'))  # noqa
+def click_link_with_text(driver, link_text):  # noqa
+    driver.find_element_by_link_text(link_text).click()
+
+
+@then("I see the temporary export detail summary")  # noqa
+def i_see_temporary_export_detail_summary(driver):  # noqa
+    heading = driver.find_element_by_tag_name("h1").text
+    assert heading == "Temporary export details summary list"
+    elements = driver.find_elements_by_tag_name("dd")
+    assert elements[0].text == "Lorem ipsum"
+    assert elements[2].text == "Yes"
+    assert elements[4].text == "2030-01-01"
+    functions.click_finish_button(driver)
