@@ -857,7 +857,8 @@ def attach_firearm_dealer_certificate_form(back_url):
         title="Attach your registered firearms dealer certificate",
         description="The file must be smaller than 50MB",
         questions=[
-            FileUpload(),
+            HiddenField("firearms_dealer_certificate_step", True),
+            FileUpload(name="document"),
             TextInput(name="reference_code", title="Certificate number",),
             DateInput(
                 prefix="expiry_date_", name="expiry_date", title="Expiry date", description="For example 12 3 2021"
@@ -869,11 +870,12 @@ def attach_firearm_dealer_certificate_form(back_url):
 
 def is_registered_firearm_dealer_field(back_url):
     questions = [
+        HiddenField("registered_firearm_dealer_step", True),
         RadioButtons(
             title="",
             name="is_registered_firearm_dealer",
             options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
-        )
+        ),
     ]
     return Form(
         title="Are you a registered firearms dealer?",
