@@ -7,6 +7,7 @@ class AddEndUserPages(BasePage):
     INPUT_ADDRESS_ID = "address"
     INPUT_COUNTRY_ID = "country"
     INPUT_WEBSITE_ID = "website"
+    INPUT_SIGNATORY_NAME_ID = "signatory_name_euu"
 
     LINK_SHOW_FILTER_ID = "show-filters-link"
     INPUT_FILTER_NAME_ID = "name"
@@ -14,7 +15,6 @@ class AddEndUserPages(BasePage):
     INPUT_FILTER_COUNTRY_ID = "country"
     BUTTON_SUBMIT_FILTER_ID = "button-apply-filters"
 
-    INPUT_PARTY_TYPE_ID_PARTIAL = "sub_type-"
     INPUT_CREATE_NEW_OR_COPY_ID = "copy_existing"
     LINK_COPY_EXISTING_ID = "copy"
 
@@ -55,8 +55,8 @@ class AddEndUserPages(BasePage):
     def get_country(self):
         return self.driver.find_element_by_id(self.INPUT_COUNTRY_ID).get_attribute("value")
 
-    def select_type(self, string):
-        self.driver.find_element_by_id(self.INPUT_PARTY_TYPE_ID_PARTIAL + string).click()
+    def select_type(self, option):
+        self.driver.find_element_by_css_selector(f"*[value='{option.lower()}']").click()
 
     def click_copy_existing_button(self):
         self.driver.find_element_by_id(self.LINK_COPY_EXISTING_ID).click()
@@ -75,3 +75,9 @@ class AddEndUserPages(BasePage):
 
     def submit_filter(self):
         self.driver.find_element_by_id(self.BUTTON_SUBMIT_FILTER_ID).click()
+
+    def choose_reuse_existing_party(self, option):
+        self.driver.find_element_by_css_selector(f"*[value='{option.lower()}']").click()
+
+    def enter_signatory_name(self, name):
+        self.driver.find_element_by_id(self.INPUT_SIGNATORY_NAME_ID).send_keys(name)
