@@ -28,6 +28,21 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the temporary export detail summary
     And I logout
 
+  Scenario: Enter details for the end user section in the application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    And I click on the "End user" section
+    And I answer "No" for whether I want to reuse an existing party
+    And I select "government" as the type of end user
+    And I enter the "Foo Bar" as end user name
+    And I click submit
+    And I enter "Test Address" and "Belgium" for end user address
+    And I enter "Test signatory" for signatory name
+    And I upload file "file_for_upload.pdf" with description "Test"
+    Then I see the end user summary
+    And I logout
+
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type

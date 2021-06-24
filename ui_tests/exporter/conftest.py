@@ -1059,3 +1059,51 @@ def i_see_temporary_export_detail_summary(driver):  # noqa
     assert elements[2].text == "Yes"
     assert elements[4].text == "2030-01-01"
     functions.click_finish_button(driver)
+
+
+@when(parsers.parse('I answer "{option}" for whether I want to reuse an existing party'))  # noqa
+def reuse_existing_party(driver, option):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.choose_reuse_existing_party(option)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{end_user_type}" as the type of end user'))  # noqa
+def select_end_user_type(driver, end_user_type):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.select_type(end_user_type)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter the "{end_user_name}" as end user name'))  # noqa
+def enter_end_user_name(driver, end_user_name):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.enter_name(end_user_name)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{address}" and "{country}" for end user address'))  # noqa
+def enter_end_user_address(driver, address, country):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.enter_address(address)
+    add_end_user_page.enter_country(country)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{sig_name}" for signatory name'))  # noqa
+def enter_sig_name(driver, sig_name):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.enter_signatory_name(sig_name)
+    functions.click_submit(driver)
+
+
+@then("I see the end user summary")  # noqa
+def i_see_end_user_summary(driver):  # noqa
+    heading = driver.find_element_by_tag_name("h1").text
+    assert heading == "End user"
+    elements = driver.find_elements_by_tag_name("dd")
+    assert elements[0].text == "Foo Bar"
+    assert elements[1].text == "Government"
+    assert elements[2].text == "Test Address, Belgium"
+    assert elements[3].text == "N/A"
+    assert elements[4].text == "Test signatory"
