@@ -110,6 +110,7 @@ what those values should be):
 * AWS_REGION
 * TEST_SSO_EMAIL
 * TEST_SSO_PASSWORD
+* TEST_SSO_NAME (for the caseworker)
 * DIRECTORY_SSO_API_CLIENT_BASE_URL
 * DIRECTORY_SSO_API_CLIENT_API_KEY
 * NOTIFY_KEY
@@ -127,10 +128,10 @@ command - see https://github.com/uktrade/lite-api). If the email was `fake@fake.
 command would be (run against the lite-api virtual environment):
 
 ```bash
-EXPORTER_USERS='[{"email"=>"fake@fake.com"}]' ./manage.py seedexporterusers
+INTERNAL_USERS='[{"email"=>"fake@fake.com"}]' ./manage.py seedinternalusers
 ```
 
-Finally, to run a UI test on the command line (the exporter **login_test**):
+Finally, to run a UI test on the command line (will run any exporter test tagged with `@login_test`):
 
 ```bash
 PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "login_test" ui_tests/exporter
