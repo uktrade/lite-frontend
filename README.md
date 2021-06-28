@@ -92,3 +92,47 @@ https://github.com/uktrade?q=spire
 [circle-ci]: https://circleci.com/gh/uktrade/lite-frontend/tree/master
 [coverage-image]: https://api.codeclimate.com/v1/badges/7bb724ad7dc3c9be3733/test_coverage
 [coverage]: https://codeclimate.com/github/uktrade/lite-frontend/test_coverage
+
+## UI tests
+
+The UI tests (a.k.a. end-to-end tests, e2e tests, browser tests or functional tests) require some local configuration
+changes before they can run. As mentioned above, you need to run `make run_caseworker` and `make run_exporter`.
+These copy the `example.caseworker.env` and `example.exporter.env` files to `caseworker.env` and `exporter.env`
+respectively. In each file, the following variables need to have different values (see development team members for
+what those values should be):
+
+* AUTHBROKER_CLIENT_ID
+* AUTHBROKER_CLIENT_SECRET
+* AUTHBROKER_URL
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_ACCESS_KEY 
+* AWS_STORAGE_BUCKET_NAME
+* AWS_REGION
+* TEST_SSO_EMAIL
+* TEST_SSO_PASSWORD
+* TEST_SSO_NAME (for the caseworker)
+* DIRECTORY_SSO_API_CLIENT_BASE_URL
+* DIRECTORY_SSO_API_CLIENT_API_KEY
+* NOTIFY_KEY
+* NOTIFY_FEEDBACK_TEMPLATE_ID
+* NOTIFY_FEEDBACK_EMAIL
+
+Before running the UI tests, make sure you have the following services running with corresponding ports:
+
+* lite-api (port=**8100**)
+* casework (port=**8200**)
+* exporter (port=**8300**)
+
+You will also need to seed the lite-api database with the TEST_SSO_EMAIL (as well as running **seedall** 
+command - see https://github.com/uktrade/lite-api). If the email was `fake@fake.com` the 
+command would be (run against the lite-api virtual environment):
+
+```bash
+INTERNAL_USERS='[{"email"=>"fake@fake.com"}]' ./manage.py seedinternalusers
+```
+
+Finally, to run a UI test on the command line (will run any exporter test tagged with `@login_test`):
+
+```bash
+PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "login_test" ui_tests/exporter
+```
