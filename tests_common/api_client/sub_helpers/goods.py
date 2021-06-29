@@ -23,13 +23,18 @@ class Goods:
         ).json()["results"]
 
     def add_good_to_draft(self, draft_id, good):
-        good = good or self.request_data["add_good"]
-        good["good_id"] = self.api_client.context["good_id"]
+        if not good.get("good_id"):
+            data = self.request_data["good"]
+            item = self.post_good(data)
+            self.api_client.add_to_context("good_id", item["id"])
+            good["good_id"] = item["id"]
+
+        good_on_app = good or self.request_data["add_good"]
         self.api_client.make_request(
             method="POST",
             url="/applications/" + draft_id + "/goods/",
             headers=self.api_client.exporter_headers,
-            body=good,
+            body=good_on_app,
         )
 
     def add_good(self, good=None):

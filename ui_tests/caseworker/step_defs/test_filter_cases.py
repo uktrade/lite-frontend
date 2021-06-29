@@ -34,12 +34,6 @@ def no_cases_shown(driver):
     assert QueuesPages(driver).is_no_cases_notice_displayed(), "There are cases shown in the newly created queue."
 
 
-@when(parsers.parse('filter case type has been changed to "{case_type}"'))  # noqa
-def filter_status_change(driver, context, case_type):  # noqa
-    CaseListPage(driver).select_filter_case_type_from_dropdown(case_type)
-    functions.click_apply_filters(driver)
-
-
 @when("I click filter to show cases with open team ecju queries")  # noqa
 def filter_by_ecju(driver, context):  # noqa
     CaseListPage(driver).click_checkbox_to_show_team_ecju_query_and_hidden_cases()

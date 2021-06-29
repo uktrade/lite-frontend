@@ -40,8 +40,6 @@ def build_test_helper(api_client):
         test_helper.api_client.auth_exporter_user()
         test_helper.api_client.headers_initialised = True
 
-    test_helper.goods.add_good()
-
     return test_helper
 
 

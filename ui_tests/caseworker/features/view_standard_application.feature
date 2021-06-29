@@ -4,6 +4,24 @@ Feature: I want to view the case details of a case
   I want to view the details on a case
   So that I can make review the case before making any decisions
 
+  Scenario: Gov user can see case details
+    Given I sign in to SSO or am signed into SSO
+    And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And the status is set to "submitted"
+    When I go to the case list page
+    And I click on show filters
+    And I filter by application type "Standard Individual Export Licence"
+    Then I should see my case in the cases list
+    When I go to application previously created
+    Then I should see the product name as "Rifle" with product rating as "PL9002"
+    And the "Consignee" name is "Automated Consignee", address is "1234, Trade centre", country is "Belgium"
+    And the "End user" name is "Automated End user", address is "1234, High street", country is "Belgium"
+
+    Examples:
+    | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+
+
   @skip @LT_1042_can_see_all_parties @regression
   Scenario: Gov user can see all parties on the case
     Given I sign in to SSO or am signed into SSO
