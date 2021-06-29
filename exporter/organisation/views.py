@@ -92,7 +92,7 @@ class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
             "document_type": self.document_type,
         }
 
-        file = request.FILES.get("file")
+        file = request.FILES.get("document")
         if file:
             data["document"] = {
                 "name": getattr(file, "original_name", file.name),
@@ -105,7 +105,7 @@ class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
         if "errors" in response.json():
             form = self.form_function(back_url=reverse("organisation:details"))
             errors = response.json()["errors"]
-            return form_page(request, form, errors=errors)
+            return form_page(request, form, data=request.POST, errors=errors)
 
         return redirect(reverse("organisation:details"))
 
