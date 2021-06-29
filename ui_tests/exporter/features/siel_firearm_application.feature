@@ -43,6 +43,16 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the end user summary
     And I logout
 
+  Scenario: Enter consignee details in the application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    And I click on the "Consignee" section
+    And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
+    And I upload a file "file_for_doc_upload_test_1.txt"
+    Then download link is present
+    And I logout
+
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
