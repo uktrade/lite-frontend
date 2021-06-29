@@ -203,9 +203,19 @@ def add_new_party(driver, type, name, website, address, country, context):  # no
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I click on the "{section}" section'))  # noqa
-def go_to_task_list_section(driver, section):  # noqa
-    TaskListPage(driver).click_on_task_list_section(section)
+@when(parsers.parse('I click on the "{section_name}" section'))  # noqa
+def go_to_task_list_section(driver, section_name):  # noqa
+    section = driver.find_element_by_link_text(section_name)
+    section_id = section.get_attribute("id")
+    TaskListPage(driver).click_on_task_list_section(section_id)
+
+
+@then(parsers.parse('the section "{section_name}" is now saved'))  # noqa
+def verify_section_is_saved(driver, section_name):  # noqa
+    section = driver.find_element_by_link_text(section_name)
+    section_id = section.get_attribute("id")
+    saved_status_element = driver.find_element_by_id(f"{section_id}-status")
+    assert saved_status_element.text == "SAVED"
 
 
 @when(parsers.parse("I provide details of the intended end use of the products"))  # noqa
@@ -245,13 +255,15 @@ def suspected_wmd_end_use_details(driver, choice):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading'))  # noqa
+@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading and Save'))  # noqa
 def route_of_goods(driver, choice):  # noqa
     route_of_goods = RouteOfGoodsFormPage(driver)
     if choice == "No":
         route_of_goods.answer_route_of_goods_question(True, "Not shipped air waybill.")
     else:
         route_of_goods.answer_route_of_goods_question(False)
+
+    functions.click_submit(driver)
 
 
 @when(parsers.parse("I save and continue on the summary page"))  # noqa
@@ -1047,3 +1059,51 @@ def i_see_temporary_export_detail_summary(driver):  # noqa
     assert elements[2].text == "Yes"
     assert elements[4].text == "2030-01-01"
     functions.click_finish_button(driver)
+
+
+@when(parsers.parse('I answer "{option}" for whether I want to reuse an existing party'))  # noqa
+def reuse_existing_party(driver, option):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.choose_reuse_existing_party(option)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{end_user_type}" as the type of end user'))  # noqa
+def select_end_user_type(driver, end_user_type):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.select_type(end_user_type)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter the "{end_user_name}" as end user name'))  # noqa
+def enter_end_user_name(driver, end_user_name):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.enter_name(end_user_name)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{address}" and "{country}" for end user address'))  # noqa
+def enter_end_user_address(driver, address, country):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.enter_address(address)
+    add_end_user_page.enter_country(country)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{sig_name}" for signatory name'))  # noqa
+def enter_sig_name(driver, sig_name):  # noqa
+    add_end_user_page = AddEndUserPages(driver)
+    add_end_user_page.enter_signatory_name(sig_name)
+    functions.click_submit(driver)
+
+
+@then("I see the end user summary")  # noqa
+def i_see_end_user_summary(driver):  # noqa
+    heading = driver.find_element_by_tag_name("h1").text
+    assert heading == "End user"
+    elements = driver.find_elements_by_tag_name("dd")
+    assert elements[0].text == "Foo Bar"
+    assert elements[1].text == "Government"
+    assert elements[2].text == "Test Address, Belgium"
+    assert elements[3].text == "N/A"
+    assert elements[4].text == "Test signatory"
