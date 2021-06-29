@@ -69,21 +69,6 @@ def i_see_inactive_party(driver, context):
         assert destination["name"] in destinations_table_text
 
 
-@when(parsers.parse('I filter by application type "{application_type}"'))
-def filter_by_application_type(driver, application_type):
-    CaseListPage(driver).select_filter_case_type_from_dropdown(application_type)
-    functions.click_apply_filters(driver)
-
-
-@then(parsers.parse('I should see the product name as "{product_name}" with product rating as "{clc_rating}"'))
-def filter_by_application_type(driver, product_name, clc_rating):
-    product_table = driver.find_element_by_id("table-goods")
-    name_element = product_table.find_element_by_xpath("//tbody/tr/td[3]")
-    rating_element = product_table.find_element_by_xpath("//tbody/tr/td[6]")
-    assert name_element.text == product_name
-    assert rating_element.text == clc_rating
-
-
 @then(parsers.parse('the "{party_type}" name is "{name}", address is "{address}", country is "{country}"'))
 def filter_by_application_type(driver, party_type, name, address, country):
     destinations = driver.find_element_by_id("table-destinations")
