@@ -28,6 +28,22 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the temporary export detail summary
     And I logout
 
+  @an_exporter_test
+  Scenario: Enter consignee details in the application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    And I click on the "Consignee" section
+    And I answer "No" for whether I want to reuse an existing party
+    And I select "government" as the type of consignee
+    And I enter the "Foo Bar" as the consignee name
+    And I click submit
+    And I enter "Test Address" and "Belgium" for consignee address
+    And I enter "Test signatory" for signatory name
+    And I upload file "file_for_upload.pdf" with description "Test"
+    Then I see the consignee summary
+    And I logout
+
   Scenario: Enter details for the end user section in the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -41,16 +57,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I enter "Test signatory" for signatory name
     And I upload file "file_for_upload.pdf" with description "Test"
     Then I see the end user summary
-    And I logout
-
-  Scenario: Enter consignee details in the application
-    Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
-    And I am on the application overview page entitled "Standard Individual Export Licence"
-    And I click on the "Consignee" section
-    And I add a party of sub_type: "government", name: "Mr Smith", website: "https://www.smith.com", address: "London" and country "Ukraine"
-    And I upload a file "file_for_doc_upload_test_1.txt"
-    Then download link is present
     And I logout
 
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
