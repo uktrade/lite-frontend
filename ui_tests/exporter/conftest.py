@@ -1068,10 +1068,24 @@ def reuse_existing_party(driver, option):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select "{consignee_type}" as the type of consignee'))  # noqa
+def select_consignee_type(driver, consignee_type):  # noqa
+    consignee_page = AddEndUserPages(driver)
+    consignee_page.select_type(consignee_type)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select "{end_user_type}" as the type of end user'))  # noqa
 def select_end_user_type(driver, end_user_type):  # noqa
     add_end_user_page = AddEndUserPages(driver)
     add_end_user_page.select_type(end_user_type)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter the "{consignee_name}" as the consignee name'))  # noqa
+def enter_consignee_name(driver, consignee_name):  # noqa
+    consignee_page = AddEndUserPages(driver)
+    consignee_page.enter_name(consignee_name)
     functions.click_submit(driver)
 
 
@@ -1087,6 +1101,14 @@ def enter_end_user_address(driver, address, country):  # noqa
     add_end_user_page = AddEndUserPages(driver)
     add_end_user_page.enter_address(address)
     add_end_user_page.enter_country(country)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{address}" and "{country}" for consignee address'))  # noqa
+def enter_consignee_address(driver, address, country):  # noqa
+    add_consignee_page = AddEndUserPages(driver)
+    add_consignee_page.enter_address(address)
+    add_consignee_page.enter_country(country)
     functions.click_submit(driver)
 
 
@@ -1107,3 +1129,14 @@ def i_see_end_user_summary(driver):  # noqa
     assert elements[2].text == "Test Address, Belgium"
     assert elements[3].text == "N/A"
     assert elements[4].text == "Test signatory"
+
+
+@then("I see the consignee summary")  # noqa
+def i_see_consignee_summary(driver):  # noqa
+    heading = driver.find_element_by_tag_name("h1").text
+    assert heading == "Consignee"
+    elements = driver.find_elements_by_tag_name("dd")
+    assert elements[0].text == "Foo Bar"
+    assert elements[1].text == "Government"
+    assert elements[2].text == "Test Address, Belgium"
+    assert elements[3].text == "N/A"
