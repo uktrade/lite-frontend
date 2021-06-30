@@ -1102,8 +1102,8 @@ def enter_end_user_address(driver, address, country):  # noqa
     add_end_user_page.enter_address(address)
     add_end_user_page.enter_country(country)
     functions.click_submit(driver)
-    
-    
+
+
 @when(parsers.parse('I enter "{address}" and "{country}" for consignee address'))  # noqa
 def enter_consignee_address(driver, address, country):  # noqa
     add_consignee_page = AddEndUserPages(driver)
