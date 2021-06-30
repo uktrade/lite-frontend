@@ -1140,4 +1140,3 @@ def i_see_consignee_summary(driver):  # noqa
     assert elements[1].text == "Government"
     assert elements[2].text == "Test Address, Belgium"
     assert elements[3].text == "N/A"
-    assert elements[4].text == "Test signatory"
