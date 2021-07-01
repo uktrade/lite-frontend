@@ -78,7 +78,7 @@ def add_flag_form():
                 name="priority", title=CreateFlagForm.Priority.TITLE, description=CreateFlagForm.Priority.DESCRIPTION
             ),
             RadioButtons(
-                name="blocks_approval",
+                name="blocks_finalising",
                 title=CreateFlagForm.BlocksFinalising.TITLE,
                 options=[
                     Option(
@@ -141,7 +141,7 @@ def edit_flag_form():
                 name="priority", title=EditFlagForm.Priority.TITLE, description=EditFlagForm.Priority.DESCRIPTION
             ),
             RadioButtons(
-                name="blocks_approval",
+                name="blocks_finalising",
                 title=EditFlagForm.BlocksFinalising.TITLE,
                 options=[
                     Option(

@@ -13,8 +13,8 @@ from tests_common import functions
 scenarios("../features/flags.feature", strict_gherkin=False)
 
 
-@when(parsers.parse('I add a new flag with blocking approval set to "{blocks_approval}"'))
-def add_flag(driver, context, blocks_approval):
+@when(parsers.parse('I add a new flag with blocking approval set to "{blocks_finalising}"'))
+def add_flag(driver, context, blocks_finalising):
     add_edit_flag_page = AddEditFlagPage(driver)
     context.flag_name = f"UAE {utils.get_formatted_date_time_d_h_m_s()}"[:24]
 
@@ -25,7 +25,7 @@ def add_flag(driver, context, blocks_approval):
     add_edit_flag_page.select_colour("orange")
     add_edit_flag_page.enter_label("Easy to Find")
     add_edit_flag_page.enter_priority(0)
-    add_edit_flag_page.enter_blocking_approval(blocks_approval)
+    add_edit_flag_page.enter_blocking_approval(blocks_finalising)
 
     Shared(driver).click_submit()
 
