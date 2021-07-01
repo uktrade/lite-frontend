@@ -794,7 +794,7 @@ def mock_blocking_flags(requests_mock):
             "label": None,
             "status": "Active",
             "priority": 0,
-            "blocks_approval": True,
+            "blocks_finalising": True,
             "removable_by": "Anyone",
             "team": {"id": "00000000-0000-0000-0000-000000000001", "name": "Admin"},
         }

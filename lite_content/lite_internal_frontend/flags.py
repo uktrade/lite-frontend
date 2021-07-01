@@ -12,7 +12,7 @@ class FlagsList:
         LEVEL = "Level"
         LABEL = "Label"
         PRIORITY = "Priority"
-        BLOCKS_APPROVAL = "Blocks Approval"
+        BLOCKS_FINALISING = "Blocks Finalising"
         STATUS = "Status"
         ACTIONS = "Actions"
         REACTIVATE = "Reactivate"

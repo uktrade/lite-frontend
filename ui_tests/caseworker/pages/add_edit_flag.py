@@ -10,7 +10,7 @@ class AddEditFlagPage(BasePage):
     RADIOBUTTTON_COLOUR_ID_PREFIX = "colour-"
     INPUT_LABEL_ID = "label"
     INPUT_PRIORITY_ID = "priority"
-    INPUT_BLOCKING_APPROVAL_PARTIAL_ID = "blocks_approval-"
+    INPUT_BLOCKING_APPROVAL_PARTIAL_ID = "blocks_finalising-"
 
     def enter_name(self, name):
         self.driver.find_element_by_id(self.INPUT_NAME_ID).clear()
@@ -30,5 +30,5 @@ class AddEditFlagPage(BasePage):
         self.driver.find_element_by_id(self.INPUT_PRIORITY_ID).clear()
         self.driver.find_element_by_id(self.INPUT_PRIORITY_ID).send_keys(priority)
 
-    def enter_blocking_approval(self, blocks_approval: str):
-        self.driver.find_element_by_id(self.INPUT_BLOCKING_APPROVAL_PARTIAL_ID + blocks_approval).click()
+    def enter_blocking_approval(self, blocks_finalising: str):
+        self.driver.find_element_by_id(self.INPUT_BLOCKING_APPROVAL_PARTIAL_ID + blocks_finalising).click()

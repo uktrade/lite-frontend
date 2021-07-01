@@ -356,7 +356,7 @@ def reissue_ogl(request, pk, json):
 
 
 def get_blocking_flags(request, case_pk):
-    url = f"/flags/?case={case_pk}&status={FlagStatus.ACTIVE.value}&blocks_approval=True&disable_pagination=True"
+    url = f"/flags/?case={case_pk}&status={FlagStatus.ACTIVE.value}&blocks_finalising=True&disable_pagination=True"
     data = client.get(request, url)
     return data.json()
 

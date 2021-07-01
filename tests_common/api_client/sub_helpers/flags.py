@@ -4,12 +4,12 @@ class Flags:
         self.api_client = api_client
         self.request_data = request_data
 
-    def add_flag(self, flag_name, level, blocks_approval=False):
+    def add_flag(self, flag_name, level, blocks_finalising=False):
         self.api_client.context["flag_name"] = flag_name
         data = self.request_data["flag"]
         data["name"] = flag_name
         data["level"] = level
-        data["blocks_approval"] = blocks_approval
+        data["blocks_finalising"] = blocks_finalising
         flag = self.api_client.make_request(
             method="POST", url="/flags/", headers=self.api_client.gov_headers, body=data,
         ).json()

@@ -11,7 +11,7 @@ def get_flag_of_level(flags, level):
                 if item["level"] == level
                 and item["status"] == "Active"
                 and item["team"]["name"] == "Admin"
-                and item["blocks_approval"] is not True
+                and item["blocks_finalising"] is not True
             ]
         ),
         None,
