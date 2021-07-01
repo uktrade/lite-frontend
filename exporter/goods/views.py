@@ -7,8 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
-from core.helpers import format_date
-
+from exporter.applications.helpers.date_fields import format_date
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.core.helpers import get_firearms_subcategory
 from exporter.applications.services import (

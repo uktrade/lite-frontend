@@ -1,7 +1,7 @@
 from caseworker.cases.objects import Case
 from core import client
 
-from core.helpers import format_date
+from caseworker.core.helpers import format_date
 from caseworker.flags.enums import FlagStatus
 from core.helpers import convert_parameters_to_query_params
 

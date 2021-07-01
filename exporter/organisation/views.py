@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
 
-from core.helpers import format_date
+from exporter.applications.helpers.date_fields import format_date
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
@@ -100,12 +100,7 @@ class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
                 "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
             }
 
-        response = post_document_on_organisation(request=request, organisation_id=organisation_id, data=data)
-
-        if "errors" in response.json():
-            form = self.form_function(back_url=reverse("organisation:details"))
-            errors = response.json()["errors"]
-            return form_page(request, form, errors=errors)
+        post_document_on_organisation(request=request, organisation_id=organisation_id, data=data)
 
         return redirect(reverse("organisation:details"))
 
