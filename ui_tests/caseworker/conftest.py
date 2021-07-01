@@ -5,7 +5,7 @@ import time
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.goods_queries_pages import StandardGoodsReviewPages, OpenGoodsReviewPages
-
+from ui_tests.caseworker.pages.teams_pages import TeamsPages
 from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.fixtures.env import environment  # noqa
 from ui_tests.caseworker.fixtures.add_a_flag import (  # noqa
@@ -110,6 +110,15 @@ def create_application(
     applications.create_standard_application(api_test_client, context, app_data)
 
 
+@then(parsers.parse('I should see the product name as "{product_name}" with product rating as "{clc_rating}"'))
+def check_product_name_and_rating(driver, product_name, clc_rating):  # noqa
+    product_table = driver.find_element_by_id("table-goods")
+    name_element = product_table.find_element_by_xpath("//tbody/tr/td[3]")
+    rating_element = product_table.find_element_by_xpath("//tbody/tr/td[6]")
+    assert name_element.text == product_name
+    assert rating_element.text == clc_rating
+
+
 @given("I create open application or open application has been previously created")  # noqa
 def create_open_app(driver, apply_for_open_application):  # noqa
     pass
@@ -180,6 +189,12 @@ def i_show_filters(driver):  # noqa
     Shared(driver).try_open_filters()
 
 
+@when(parsers.parse('I filter by application type "{application_type}"'))
+def filter_by_application_type(driver, application_type):  # noqa
+    CaseListPage(driver).select_filter_case_type_from_dropdown(application_type)
+    functions.click_apply_filters(driver)
+
+
 @when("I go to users")  # noqa
 def go_to_users(driver, sso_sign_in, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/users/")
@@ -193,6 +208,31 @@ def create_clc_query(driver, apply_for_clc_query, context):  # noqa
 @when("I go to the case list page")  # noqa
 def case_list_page(driver, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/")
+
+
+@when("I go to my profile page")  # noqa
+def get_profile_page(driver):  # noqa
+    driver.find_element_by_id("link-profile").click()
+
+
+@when(parsers.parse('I change my team to "{team}" and default queue to "{queue}"'))  # noqa
+def go_to_team_edit_page(driver, team, queue):  # noqa
+    # we should already be on the profile page
+    driver.find_element_by_id("link-edit-team").click()
+    teams_page = TeamsPages(driver)
+    teams_page.select_team_from_dropdown(team)
+    teams_page.select_default_queue_from_dropdown(queue)
+    functions.click_submit(driver)
+
+
+@when("I go to my case list")  # noqa
+def get_my_case_list(driver):  # noqa
+    """
+    Clicks on the menu and selects Cases
+    Depending on team, default queue the list of cases will be different
+    """
+    driver.find_element_by_id("link-menu").click()
+    driver.find_element_by_link_text("Cases").click()
 
 
 @then("I should see my case in the cases list")  # noqa
