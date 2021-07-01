@@ -34,10 +34,6 @@ def test_add_goods_questions_feature_flag():
     assert form.questions[4].options[-1].value == "No, it doesn't need one"
 
 
-class DummyRequest:
-    session = {"rfd_certificate": None}
-
-
 @pytest.mark.parametrize(
     "value, serialized",
     [
@@ -49,7 +45,6 @@ class DummyRequest:
     ],
 )
 def test_serialize_good_on_app_data(value, serialized):
-    request = DummyRequest()
     data = {
         "good_id": "some-uuid",
         "value": value,
@@ -60,7 +55,7 @@ def test_serialize_good_on_app_data(value, serialized):
         "value": serialized,
         "quantity": serialized,
     }
-    assert serialize_good_on_app_data(request, data) == expected
+    assert serialize_good_on_app_data(data) == expected
 
 
 @pytest.mark.parametrize(
@@ -74,7 +69,7 @@ def test_serialize_good_on_app_data(value, serialized):
     ],
 )
 def test_serialize_good_on_app_data_no_value_key(value, serialized):
-    request = DummyRequest()
+
     data = {
         "good_id": "some-uuid",
         "quantity": value,
@@ -83,7 +78,7 @@ def test_serialize_good_on_app_data_no_value_key(value, serialized):
         "good_id": "some-uuid",
         "quantity": serialized,
     }
-    assert serialize_good_on_app_data(request, data) == expected
+    assert serialize_good_on_app_data(data) == expected
 
 
 @pytest.fixture
@@ -106,7 +101,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
                 {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 0, "name": "name"},
                 {"qindex": 0, "name": "firearm_calibre_step"},
-                {"qindex": 0, "name": "registered_firearm_dealer_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
             ],
         ),
         (
@@ -121,7 +116,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
                 {"qindex": 1, "name": "year_of_manufacture"},
                 {"qindex": 2, "name": "is_replica"},
                 {"qindex": 0, "name": "firearm_calibre_step"},
-                {"qindex": 0, "name": "registered_firearm_dealer_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
                 {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
@@ -135,7 +130,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
                 {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "calibre"},
-                {"qindex": 0, "name": "registered_firearm_dealer_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
                 {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
@@ -188,7 +183,7 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
                 {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 0, "name": "name"},
                 {"qindex": 0, "name": "firearm_calibre_step"},
-                {"qindex": 0, "name": "registered_firearm_dealer_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
             ],
         ),
         (
@@ -204,7 +199,7 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
                 {"qindex": 1, "name": "year_of_manufacture"},
                 {"qindex": 2, "name": "is_replica"},
                 {"qindex": 0, "name": "firearm_calibre_step"},
-                {"qindex": 0, "name": "registered_firearm_dealer_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
                 {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),
@@ -219,7 +214,7 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
                 {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 0, "name": "name"},
                 {"qindex": 1, "name": "calibre"},
-                {"qindex": 0, "name": "registered_firearm_dealer_step"},
+                {"qindex": 0, "name": "is_registered_firearm_dealer"},
                 {"qindex": 2, "name": "is_covered_by_firearm_act_section_one_two_or_five"},
             ],
         ),

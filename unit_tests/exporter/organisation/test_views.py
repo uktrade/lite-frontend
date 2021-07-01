@@ -7,7 +7,7 @@ from core import client
 
 
 def test_upload_firearm_registered_dealer_certificate(authorized_client, requests_mock):
-    requests_mock.post(client._build_absolute_uri(f"/organisations/1/documents/"), json={})
+    requests_mock.post(client._build_absolute_uri(f"/organisations/1/documents/"))
 
     url = reverse("organisation:upload-firearms-certificate")
     data = {
@@ -31,7 +31,7 @@ def test_upload_firearm_registered_dealer_certificate(authorized_client, request
 
 
 def test_upload_firearm_section_five_certificate(authorized_client, requests_mock):
-    requests_mock.post(client._build_absolute_uri(f"/organisations/1/documents/"), json={})
+    requests_mock.post(client._build_absolute_uri(f"/organisations/1/documents/"))
 
     url = reverse("organisation:upload-section-five-certificate")
     data = {
