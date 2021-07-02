@@ -125,3 +125,14 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
     And the section "Locations" is now saved
     And I logout
+
+  Scenario: Submit Application
+    Given I signin and go to exporter homepage and choose Test Org
+    And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And I navigate to application summary
+    Then I see the application summary
+    And I logout
+
+    Examples:
+     | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+     | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
