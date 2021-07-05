@@ -99,29 +99,44 @@ The UI tests (a.k.a. end-to-end tests, e2e tests, browser tests or functional te
 changes before they can run. As mentioned above, you need to run `make run_caseworker` and `make run_exporter`.
 These copy the `example.caseworker.env` and `example.exporter.env` files to `caseworker.env` and `exporter.env`
 respectively. In each file, the following variables need to have different values (see development team members for
-what those values should be):
+what those values should be or just try looking in Vault):
 
-* AUTHBROKER_CLIENT_ID
+* AUTHBROKER_CLIENT_ID 
 * AUTHBROKER_CLIENT_SECRET
-* AUTHBROKER_URL
+* AUTHBROKER_URL - should be https://sso.trade.uat.uktrade.io for caseworker but https://great.uat.uktrade.digital
+  for the exporter
 * AWS_ACCESS_KEY_ID
-* AWS_SECRET_ACCESS_KEY 
+* AWS_SECRET_ACCESS_KEY
 * AWS_STORAGE_BUCKET_NAME
 * AWS_REGION
 * TEST_SSO_EMAIL
 * TEST_SSO_PASSWORD
 * TEST_SSO_NAME (for the caseworker)
-* DIRECTORY_SSO_API_CLIENT_BASE_URL
-* DIRECTORY_SSO_API_CLIENT_API_KEY
 * NOTIFY_KEY
 * NOTIFY_FEEDBACK_TEMPLATE_ID
 * NOTIFY_FEEDBACK_EMAIL
+* ENVIRONMENT - set to "local" if the tests are targeting the local caseworker 
+  and exporter. If not set the UI tests will try talking to devdata
+* DIRECTORY_SSO_API_CLIENT_BASE_URL - Needed by the UI tests but not the caseworker or exporter, available
+  in Vault
+* DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
+  in Vault
 
 Before running the UI tests, make sure you have the following services running with corresponding ports:
 
 * lite-api (port=**8100**)
 * casework (port=**8200**)
 * exporter (port=**8300**)
+
+An example for how to run the above service:
+
+```bash
+cd lite-api
+PIPENV_DOTENV_LOCATION=.env pipenv run python ./manage.py runserver 8100
+cd ../lite-frontend
+PIPENV_DOTENV_LOCATION=caseworker.env pipenv run python ./manage.py runserver 8200
+PIPENV_DOTENV_LOCATION=exporter.env pipenv run python ./manage.py runserver 8300
+```
 
 You will also need to seed the lite-api database with the TEST_SSO_EMAIL (as well as running **seedall** 
 command - see https://github.com/uktrade/lite-api). If the email was `fake@fake.com` the 
@@ -131,8 +146,9 @@ command would be (run against the lite-api virtual environment):
 INTERNAL_USERS='[{"email"=>"fake@fake.com"}]' ./manage.py seedinternalusers
 ```
 
-Finally, to run a UI test on the command line (will run any exporter test tagged with `@login_test`):
+Finally, to run a UI test on the command line (will run an exporter and caseworker test tagged with `@run_this_test`):
 
 ```bash
-PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "login_test" ui_tests/exporter
+PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/exporter
+PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/caseworker/
 ```

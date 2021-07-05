@@ -13,6 +13,17 @@ def select_product_for_review(driver):
     ApplicationPage(driver).click_review_goods()
 
 
+@then("I click on Notes and timeline")
+def click_on_notes_and_timeline(driver):
+    ApplicationPage(driver).click_on_notes_and_timeline()
+
+
+@then(parsers.parse('I add a case note "{case_note_text}" and click Post note'))
+def add_case_note(driver, case_note_text):
+    ApplicationPage(driver).enter_case_note(case_note_text)
+    ApplicationPage(driver).click_post_note_btn()
+
+
 @then("the control list is present on the case page")
 def check_control_list_code(driver, context):
     goods = CasePage(driver).get_goods_text()

@@ -127,6 +127,9 @@ class ApplicationPage(BasePage):
     def click_review_goods(self):
         self.driver.find_element_by_id(self.BUTTON_REVIEW_GOODS_ID).click()
 
+    def click_on_notes_and_timeline(self):
+        self.driver.find_element_by_id(self.CASE_NOTES_AND_ACTIVITY_TAB).click()
+
     def click_edit_good_flags(self):
         edit_goods_btn = self.driver.find_element_by_id(self.EDIT_GOODS_FLAGS)
         edit_goods_btn.click()
