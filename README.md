@@ -147,9 +147,9 @@ command would be (run against the lite-api virtual environment):
 INTERNAL_USERS='[{"email"=>"fake@fake.com"}]' ./manage.py seedinternalusers
 ```
 
-Finally, to run a UI test on the command line (will run an exporter and caseworker test tagged with `@login_test`):
+Finally, to run a UI test on the command line (will run an exporter and caseworker test tagged with `@run_this_test`):
 
 ```bash
-PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "login_test" ui_tests/exporter
-PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "review_test" ui_tests/caseworker/
+PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/exporter
+PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/caseworker/
 ```
