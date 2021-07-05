@@ -99,8 +99,7 @@ The UI tests (a.k.a. end-to-end tests, e2e tests, browser tests or functional te
 changes before they can run. As mentioned above, you need to run `make run_caseworker` and `make run_exporter`.
 These copy the `example.caseworker.env` and `example.exporter.env` files to `caseworker.env` and `exporter.env`
 respectively. In each file, the following variables need to have different values (see development team members for
-what those values should be or just try looking in lite-internal-frontend/devdata or 
-lite-exporter-frontend/devdata in Vault):
+what those values should be or just try looking in Vault):
 
 * AUTHBROKER_CLIENT_ID 
 * AUTHBROKER_CLIENT_SECRET
@@ -121,7 +120,7 @@ lite-exporter-frontend/devdata in Vault):
 * DIRECTORY_SSO_API_CLIENT_BASE_URL - Needed by the UI tests but not the caseworker or exporter,
   should be "https://directory-sso-uat.london.cloudapps.digital"
 * DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
-  in https://vault.ci.uktrade.digital/ui/vault/secrets/dit%2Flite/list/lite-internal-frontend/ui_automation_tests/
+  in Vault
 
 Before running the UI tests, make sure you have the following services running with corresponding ports:
 

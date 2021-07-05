@@ -27,13 +27,12 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
     | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
-
   Scenario: Gov user can add case note
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to my profile page
-    And I change my team to "team2" and default queue to "Open cases"
+    And I change my team to "TAU" and default queue to "Open cases"
     And I go to my case list
     And I click on show filters
     And I filter by application type "Standard Individual Export Licence"
