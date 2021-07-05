@@ -120,8 +120,10 @@ lite-exporter-frontend/devdata in Vault):
 * NOTIFY_FEEDBACK_EMAIL
 * ENVIRONMENT - set to "local" if the tests are targeting the local caseworker 
   and exporter. If not set the UI tests will try talking to devdata
-* DIRECTORY_SSO_API_CLIENT_BASE_URL - Needed by the UI tests but not the caseworker or exporter
-* DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter
+* DIRECTORY_SSO_API_CLIENT_BASE_URL - Needed by the UI tests but not the caseworker or exporter,
+  should be "https://directory-sso-uat.london.cloudapps.digital"
+* DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
+  in https://vault.ci.uktrade.digital/ui/vault/secrets/dit%2Flite/list/lite-internal-frontend/ui_automation_tests/
 
 Before running the UI tests, make sure you have the following services running with corresponding ports:
 
