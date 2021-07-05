@@ -108,7 +108,7 @@ lite-exporter-frontend/devdata in Vault):
   for the exporter
 * AWS_ACCESS_KEY_ID
 * AWS_SECRET_ACCESS_KEY
-* AWS_STORAGE_BUCKET_NAM
+* AWS_STORAGE_BUCKET_NAME
 * AWS_REGION
 * TEST_SSO_EMAIL
 * TEST_SSO_PASSWORD
