@@ -27,7 +27,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
     | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
-  @a_caseworker_test
+
   Scenario: Gov user can add case note
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
@@ -40,6 +40,9 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     Then I should see my case in the cases list
     When I go to application previously created
     Then I should see the product name as "Rifle" with product rating as "PL9002"
+    And I click on Notes and timeline
+    And I add a case note "Automated Test_Add a case note" and click Post note
+    Then I should see "Automated Test_Add a case note" appear in the timeline
 
     Examples:
     | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

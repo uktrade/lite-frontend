@@ -119,6 +119,11 @@ def check_product_name_and_rating(driver, product_name, clc_rating):  # noqa
     assert rating_element.text == clc_rating
 
 
+@then(parsers.parse('I should see "{timeline_text}" appear in the timeline'))
+def check_timeline(driver, timeline_text):  # noqa
+    assert timeline_text in Shared(driver).get_audit_trail_text()
+
+
 @given("I create open application or open application has been previously created")  # noqa
 def create_open_app(driver, apply_for_open_application):  # noqa
     pass
