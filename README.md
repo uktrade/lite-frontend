@@ -113,8 +113,6 @@ lite-exporter-frontend/devdata in Vault):
 * TEST_SSO_EMAIL
 * TEST_SSO_PASSWORD
 * TEST_SSO_NAME (for the caseworker)
-* DIRECTORY_SSO_API_CLIENT_BASE_URL - needed by the tests but not the frontend itself. Should be https://directory-sso-uat.london.cloudapps.digital
-* DIRECTORY_SSO_API_CLIENT_API_KEY
 * NOTIFY_KEY
 * NOTIFY_FEEDBACK_TEMPLATE_ID
 * NOTIFY_FEEDBACK_EMAIL
