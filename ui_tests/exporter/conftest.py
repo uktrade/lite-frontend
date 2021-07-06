@@ -1193,7 +1193,7 @@ def i_see_application_summary(driver, clc_rating, end_use, end_user_name, consig
 
 @when("I agree to declaration")
 def i_agree(driver):  # noqa
-    driver.find_element_by_id("agreed_to_declaration_text").send_keys('I AGREE')
+    driver.find_element_by_id("agreed_to_declaration_text").send_keys("I AGREE")
     functions.click_submit(driver)
 
 
