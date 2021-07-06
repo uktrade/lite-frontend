@@ -131,6 +131,8 @@ Feature: I want to be able to submit SIEL firearm applications
     And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I navigate to application summary
     Then I see the application summary with <clc_rating>,<end_use>,<end_user_name>,<consignee_name>
+    When I agree to the declaration
+    Then the application is submitted
     And I logout
 
     Examples:
