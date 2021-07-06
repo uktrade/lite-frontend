@@ -1174,6 +1174,42 @@ def create_application(
     applications.create_standard_application(api_test_client, context, app_data, submit=False)
 
 
+@given(
+    "I submit an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
+    target_fixture="submit_application",
+)
+def submit_application(
+    api_test_client,  # noqa
+    context,  # noqa
+    name,
+    product,
+    clc_rating,
+    end_user_name,
+    end_user_address,
+    consignee_name,
+    consignee_address,
+    country,
+    end_use,
+):
+    app_data = {
+        "name": name,
+        "product": product,
+        "clc_rating": clc_rating,
+        "end_user_name": end_user_name,
+        "end_user_address": end_user_address,
+        "consignee_name": consignee_name,
+        "consignee_address": consignee_address,
+        "country": country,
+        "end_use": end_use,
+    }
+    applications.create_standard_application(api_test_client, context, app_data, submit=True)
+
+
+@given("I create an ecju query")
+def create_ecju_query(api_test_client, context):  # noqa
+    api_test_client.ecju_queries.add_ecju_query(context.case_id)
+
+
 @given("I navigate to application summary")
 def navigate_to_application(driver, exporter_url, context):  # noqa
     driver.get(f"{exporter_url}applications/{context.app_id}/task-list")
