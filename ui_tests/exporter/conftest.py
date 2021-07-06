@@ -1,4 +1,3 @@
-from conf import exporter
 import os
 
 from django.utils import timezone
@@ -1176,16 +1175,16 @@ def create_application(
 
 
 @given("I navigate to application summary")
-def navigate_to_application(driver, exporter_url, context):
+def navigate_to_application(driver, exporter_url, context):  # noqa
     driver.get(f"{exporter_url}applications/{context.app_id}/task-list")
     functions.click_submit(driver)
 
 
-@then("I see the application summary")
-def i_see_application_summary(driver):
+@then("I see the application summary with <clc_rating>,<end_use>,<end_user_name>,<consignee_name>")
+def i_see_application_summary(driver, clc_rating, end_use, end_user_name, consignee_name):  # noqa
     tds = driver.find_elements_by_tag_name("td")
     dds = driver.find_elements_by_tag_name("dd")
-    assert tds[4].text == "PL9002"
-    assert tds[10].text == "Research and development"
-    assert dds[6].text == "Automated End user"
-    assert dds[12].text == "Automated Consignee"
+    assert tds[4].text == clc_rating
+    assert tds[10].text == end_use
+    assert dds[6].text == end_user_name
+    assert dds[12].text == consignee_name
