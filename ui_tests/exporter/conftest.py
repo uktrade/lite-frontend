@@ -72,6 +72,7 @@ from tests_common.tools.wait import wait_for_download_button_on_exporter_main_co
 
 from ui_tests.exporter.pages.start_page import StartPage
 from ui_tests.exporter.pages.great_signin_page import GreatSigninPage
+from tests_common.helpers import applications
 
 
 strict_gherkin = False
@@ -1140,3 +1141,50 @@ def i_see_consignee_summary(driver):  # noqa
     assert elements[1].text == "Government"
     assert elements[2].text == "Test Address, Belgium"
     assert elements[3].text == "N/A"
+
+
+@given(
+    "I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
+    target_fixture="create_application",
+)
+def create_application(
+    api_test_client,  # noqa
+    context,  # noqa
+    name,
+    product,
+    clc_rating,
+    end_user_name,
+    end_user_address,
+    consignee_name,
+    consignee_address,
+    country,
+    end_use,
+):
+    app_data = {
+        "name": name,
+        "product": product,
+        "clc_rating": clc_rating,
+        "end_user_name": end_user_name,
+        "end_user_address": end_user_address,
+        "consignee_name": consignee_name,
+        "consignee_address": consignee_address,
+        "country": country,
+        "end_use": end_use,
+    }
+    applications.create_standard_application(api_test_client, context, app_data, submit=False)
+
+
+@given("I navigate to application summary")
+def navigate_to_application(driver, exporter_url, context):  # noqa
+    driver.get(f"{exporter_url}applications/{context.app_id}/task-list")
+    functions.click_submit(driver)
+
+
+@then("I see the application summary with <clc_rating>,<end_use>,<end_user_name>,<consignee_name>")
+def i_see_application_summary(driver, clc_rating, end_use, end_user_name, consignee_name):  # noqa
+    tds = driver.find_elements_by_tag_name("td")
+    dds = driver.find_elements_by_tag_name("dd")
+    assert tds[4].text == clc_rating
+    assert tds[10].text == end_use
+    assert dds[6].text == end_user_name
+    assert dds[12].text == consignee_name
