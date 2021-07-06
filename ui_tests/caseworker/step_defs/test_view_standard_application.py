@@ -1,3 +1,5 @@
+from datetime import date
+
 import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
@@ -89,3 +91,11 @@ def filter_by_application_type(driver, end_use_expected):
     end_use_table = driver.find_element_by_id("slice-end-use-details")
     end_use_text = end_use_table.find_element_by_xpath(".//tbody/tr[1]/td[3]").text
     assert end_use_text == end_use_expected
+
+
+@then("I should see a link to download the document")
+def i_see_link_to_download_document(driver):
+    docs = driver.find_elements_by_class_name("app-documents__item")
+    assert len(docs) == 1
+    link = docs[0].find_element_by_class_name("app-documents__item-details")
+    assert link.text.startswith(f"Application Form - {date.today().isoformat()}")
