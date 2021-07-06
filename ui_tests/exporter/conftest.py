@@ -1188,3 +1188,16 @@ def i_see_application_summary(driver, clc_rating, end_use, end_user_name, consig
     assert tds[10].text == end_use
     assert dds[6].text == end_user_name
     assert dds[12].text == consignee_name
+    functions.click_submit(driver)
+
+
+@when("I agree to declaration")
+def i_agree(driver):  # noqa
+    driver.find_element_by_id("agreed_to_declaration_text").send_keys('I AGREE')
+    functions.click_submit(driver)
+
+
+@then("Application is submitted")
+def application_submitted(driver, context):  # noqa
+    assert driver.find_element_by_tag("h1").text == "Application submitted"
+    assert driver.fine_element_by_id("application-processing-message-value").text == f"ECJU reference {context.app_id}"
