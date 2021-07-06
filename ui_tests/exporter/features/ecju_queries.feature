@@ -3,7 +3,6 @@ Feature: As a logged in exporter
 I want to see when there are ECJU queries (RFIs) relating to my applications, queries and licences and be able to respond
 So that I can quickly identify where action is required by me and respond to any queries
 
-  @an_exporter_test
   Scenario: view and respond to a ecju query in an application
     Given I signin and go to exporter homepage and choose Test Org
     And I submit an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
