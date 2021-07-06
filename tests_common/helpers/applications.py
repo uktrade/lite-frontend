@@ -4,7 +4,7 @@ from faker import Faker
 fake = Faker()
 
 
-def create_standard_application(api_test_client, context, app_data):
+def create_standard_application(api_test_client, context, app_data, submit=True):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
 
     data = api_test_client.api_client.request_data["good"]
@@ -78,6 +78,11 @@ def create_standard_application(api_test_client, context, app_data):
         },
         route_of_goods={"is_shipped_waybill_or_lading": True},
     )
+
+    if not submit:
+        context.app_id = api_test_client.context["draft_id"]
+        return
+
     data = api_test_client.applications.submit_application(draft_id)
     context.app_id = api_test_client.context["application_id"]
     context.case_id = api_test_client.context["application_id"]
