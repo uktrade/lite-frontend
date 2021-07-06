@@ -5,10 +5,9 @@ So that I can quickly identify where action is required by me and respond to any
 
   @an_exporter_test
   Scenario: view and respond to a ecju query in an application
-    Given I sign in to SSO or am signed into SSO
-    Given I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
-    Given I create an ecju query with the words "a query"
     Given I signin and go to exporter homepage and choose Test Org
+    And I submit an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And I create an ecju query
     When I go to the recently created application with ecju query
     And I click the ECJU Queries tab
     And I click to respond to the ecju query
