@@ -1224,3 +1224,15 @@ def i_see_application_summary(driver, clc_rating, end_use, end_user_name, consig
     assert tds[10].text == end_use
     assert dds[6].text == end_user_name
     assert dds[12].text == consignee_name
+    functions.click_submit(driver)
+
+
+@when("I agree to the declaration")
+def i_agree(driver):  # noqa
+    driver.find_element_by_id("agreed_to_declaration_text").send_keys("I AGREE")
+    functions.click_submit(driver)
+
+
+@then("the application is submitted")
+def application_submitted(driver, context):  # noqa
+    assert driver.find_element_by_tag_name("h1").text == "Application submitted"
