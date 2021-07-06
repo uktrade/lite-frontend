@@ -194,6 +194,13 @@ def i_show_filters(driver):  # noqa
     Shared(driver).try_open_filters()
 
 
+@when(parsers.parse('I click on "{tab_name}" tab'))
+def i_click_on_case_details_tab(driver, tab_name):  # noqa
+    tabs = driver.find_element_by_class_name("lite-tabs")
+    target = tabs.find_element_by_link_text(tab_name)
+    target.click()
+
+
 @when(parsers.parse('I filter by application type "{application_type}"'))
 def filter_by_application_type(driver, application_type):  # noqa
     CaseListPage(driver).select_filter_case_type_from_dropdown(application_type)
