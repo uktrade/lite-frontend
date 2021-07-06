@@ -1206,7 +1206,7 @@ def submit_application(
 
 
 @given("I create an ecju query")
-def create_ecju_query(api_test_client, context):
+def create_ecju_query(api_test_client, context):  # noqa
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
 
 
