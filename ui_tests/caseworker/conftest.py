@@ -238,6 +238,13 @@ def get_my_case_list(driver):  # noqa
 
 @then("I should see my case in the cases list")  # noqa
 def case_in_cases_list(driver, context):  # noqa
+    case_page = CaseListPage(driver)
+    functions.try_open_filters(driver)
+    case_page.click_clear_filters_button()
+    case_page = CaseListPage(driver)
+    functions.try_open_filters(driver)
+    case_page.filter_by_case_reference(context.reference_code)
+    functions.click_apply_filters(driver)
     context.case_row = CaseListPage(driver).get_case_row(context.case_id)
     assert context.reference_code in context.case_row.text
 

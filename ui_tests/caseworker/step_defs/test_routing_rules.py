@@ -133,7 +133,7 @@ def done_button_on_page(driver):
     assert driver.find_element_by_id("button-done")
 
 
-@then('the case should have been removed from my default queue')
+@then("the case should have been removed from my default queue")
 def case_removed_from_queue(driver, context):
     soup = BeautifulSoup(driver.page_source, "html.parser")
     assert not soup.find(id=f"case-{context.case_id}")
