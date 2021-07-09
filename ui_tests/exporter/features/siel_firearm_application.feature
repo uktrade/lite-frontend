@@ -76,7 +76,7 @@ Feature: I want to be able to submit SIEL firearm applications
     And I specify firearms act sections apply as "Yes"
     And I select firearms act section "2"
     And I upload firearms certificate file "file_for_doc_upload_test_1.txt"
-    And I enter certificate number as "FR2468/1234/1" with expiry date "12-10-2030"
+    And I enter certificate number as "FR2468/1234/1" with expiry date "12-10-2025"
     And I see summary screen for "Firearms" product with name "Rifle" and "continue"
     And I select "Yes" to document available question
     And I select "No" to document is above official sensitive question
