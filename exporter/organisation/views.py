@@ -10,6 +10,7 @@ from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend.organisation import Tabs
 from lite_forms.helpers import conditional
+from exporter.core.validators import validate_expiry_date
 from exporter.organisation.roles.services import get_user_permissions
 from exporter.goods.forms import attach_firearm_dealer_certificate_form
 from exporter.organisation import forms
@@ -91,6 +92,11 @@ class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
             "reference_code": self.request.POST["reference_code"],
             "document_type": self.document_type,
         }
+
+        errors = validate_expiry_date(request, "expiry_date_")
+        if errors:
+            form = self.form_function(back_url=reverse("organisation:details"))
+            return form_page(request, form, data=request.POST, errors={"expiry_date": errors})
 
         file = request.FILES.get("file")
         if file:
