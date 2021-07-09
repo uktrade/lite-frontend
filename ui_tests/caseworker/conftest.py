@@ -124,7 +124,8 @@ def create_open_app(driver, apply_for_open_application):  # noqa
     pass
 
 
-@when("I click continue")  # noqa
+@when("I click continue")
+@when("I click submit")
 def i_click_continue(driver):  # noqa
     Shared(driver).click_submit()
     # handle case when scenario clicks submit in consecutive steps: there is a race condition resulting in the same

@@ -1,6 +1,8 @@
+from bs4 import BeautifulSoup
 from pytest_bdd import when, then, scenarios, parsers
 from caseworker.core.constants import SystemTeamsID
 from ui_tests.caseworker.pages.case_page import CasePage
+from ui_tests.caseworker.pages.teams_pages import TeamsPages
 
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.routing_rules_pages import RoutingRulesPage
@@ -109,3 +111,29 @@ def filter_by_routing_rule_queue(driver, context):
 @when("I add a flag at level Case")  # noqa
 def add_a_case_flag(driver, add_case_flag):  # noqa
     pass
+
+
+@when(parsers.parse('I change my default queue to "{queue}"'))  # noqa
+def go_to_team_edit_page(driver, team, queue):  # noqa
+    # we should already be on the profile page
+    driver.find_element_by_id("link-edit-team").click()
+    teams_page = TeamsPages(driver)
+    teams_page.select_team_from_dropdown(team)
+    teams_page.select_default_queue_from_dropdown(queue)
+    functions.click_submit(driver)
+
+
+@when("I click on the application previously created")
+def click_on_case(driver, context):
+    driver.find_element_by_id(f"case-{context.case_id}").click()
+
+
+@then('I should see the button "I\'m done"')
+def done_button_on_page(driver):
+    assert driver.find_element_by_id("button-done")
+
+
+@then('the case should have been removed from my default queue')
+def case_removed_from_queue(driver, context):
+    soup = BeautifulSoup(driver.page_source, "html.parser")
+    assert not soup.find(id=f"case-{context.case_id}")
