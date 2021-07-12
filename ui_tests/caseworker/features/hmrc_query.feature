@@ -1,6 +1,16 @@
 @all
 Feature: Add a HMRC query
 
+  @a_caseworker_test
+  Scenario: Send data to HMRC
+    Given I sign in to SSO or am signed into SSO
+    And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And the status is set to "submitted"
+
+  Examples:
+  | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+  | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and devel
+
   @skip @regression @HMRC
   Scenario: Add a HMRC query
     Given I sign in to SSO or am signed into SSO
