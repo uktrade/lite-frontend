@@ -19,6 +19,9 @@ def driver(request, api_client):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
+    prefs = {"download.default_directory": "/tmp"}
+    chrome_options.add_experimental_option("prefs", prefs)
+
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     driver.implicitly_wait(20)
     driver.get("about:blank")

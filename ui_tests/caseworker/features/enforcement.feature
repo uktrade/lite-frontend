@@ -4,13 +4,26 @@ Feature: I want to export and import XML for enforcement checking
   I want to download the entities for all application cases on a queue in XML format
   So that I can upload it to an entity checking system to look for a match
 
-  @skip @LT_1309_enforcement_check_export_xml @regression
-  Scenario: Export all cases on a work queue for an enforcement check
+  Scenario: Export cases on a work queue that need enforcement check
     Given I sign in to SSO or am signed into SSO
-    And I create open application or open application has been previously created
-    And a queue has been created
-    And case has been moved to new Queue
-    When I go to my work queue
-    Then I should see my case in the cases list
+    And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And the status is set to "submitted"
+    When I go to application previously created
+    And I assign the case to "Enforcement Unit Cases to Review" queue
+    When I go to my profile page
+    And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"
+    And I go to my case list
     When I click export enforcement xml
-    Then the enforcement check is audited
+    Then the file "enforcement_check.xml" is downloaded
+    And the downloaded file should include "CONSIGNEE" "COUNTRY" as "Belgium"
+    And the downloaded file should include "CONSIGNEE" "PD_SURNAME" as "Automated Consignee"
+    And the downloaded file should include "CONSIGNEE" "ADDRESS1" as "1234, Trade centre"
+    And the downloaded file should include "END_USER" "COUNTRY" as "Belgium"
+    And the downloaded file should include "END_USER" "PD_SURNAME" as "Automated End user"
+    And the downloaded file should include "END_USER" "ADDRESS1" as "1234, High street"
+    And I go to application previously created
+    And I remove the case from "Enforcement Unit Cases to Review" queue
+
+    Examples:
+    | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |

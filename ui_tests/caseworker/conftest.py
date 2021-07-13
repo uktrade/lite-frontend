@@ -69,6 +69,7 @@ def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
 
 
+@then("I go to application previously created")  # noqa
 @when("I go to application previously created")  # noqa
 def click_on_created_application(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
@@ -606,3 +607,38 @@ def licence_audit(driver, context, internal_url):  # noqa
     second_audit = ApplicationPage(driver).get_text_of_audit_trail_item(1)
     assert context.licence_duration in second_audit
     assert context.licence_start_date in second_audit
+
+
+def select_queue(driver, queue_name, check):  # noqa
+    # selects the queue from the list of checkboxes and checks/unchecks
+    # depending on the input state
+    queues = driver.find_elements_by_class_name("govuk-checkboxes__item")
+    target_queue = None
+    for item in queues:
+        label = item.find_element_by_xpath(".//label")
+        if label.text == queue_name:
+            target_queue = item
+            break
+
+    assert target_queue is not None
+    queue_checkbox = target_queue.find_element_by_xpath(".//input")
+    if check:
+        if not queue_checkbox.is_selected():
+            queue_checkbox.click()
+    else:
+        if queue_checkbox.is_selected():
+            queue_checkbox.click()
+
+
+@when(parsers.parse('I assign the case to "{queue}" queue'))  # noqa
+def case_assigned_to_queue(driver, queue):  # noqa
+    driver.find_element_by_id("link-change-queues").click()
+    select_queue(driver, queue, True)
+    functions.click_submit(driver)
+
+
+@then(parsers.parse('I remove the case from "{queue}" queue'))  # noqa
+def case_removed_from_queue(driver, queue):  # noqa
+    driver.find_element_by_id("link-change-queues").click()
+    select_queue(driver, queue, False)
+    functions.click_submit(driver)
