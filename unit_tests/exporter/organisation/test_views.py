@@ -1,4 +1,6 @@
+import pytest
 from unittest import mock
+from datetime import date
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -15,7 +17,7 @@ def test_upload_firearm_registered_dealer_certificate(authorized_client, request
         "reference_code": "1234",
         "expiry_date_day": 1,
         "expiry_date_month": 1,
-        "expiry_date_year": 3333,
+        "expiry_date_year": 2025,
     }
 
     response = authorized_client.post(url, data)
@@ -23,11 +25,34 @@ def test_upload_firearm_registered_dealer_certificate(authorized_client, request
     assert response.status_code == 302
     assert response.url == reverse("organisation:details")
     assert requests_mock.request_history[0].json() == {
-        "expiry_date": "3333-01-01",
+        "expiry_date": "2025-01-01",
         "document_type": "rfd-certificate",
         "reference_code": "1234",
         "document": {"name": "file.txt", "s3_key": mock.ANY, "size": 0,},
     }
+
+
+@pytest.mark.parametrize(
+    "expiry_date,error",
+    (
+        ("2020-01-01", ["Expiry date must be in the future"]),  # Past
+        ("2050-01-01", ["Expiry date is too far in the future"]),  # Too far in the future
+    ),
+)
+def test_upload_firearm_registered_dealer_certificate_error(authorized_client, expiry_date, error):
+    url = reverse("organisation:upload-firearms-certificate")
+    expiry_date = date.fromisoformat(expiry_date)
+    data = {
+        "file": SimpleUploadedFile("file.txt", b"abc", content_type="text/plain"),
+        "reference_code": "1234",
+        "expiry_date_day": expiry_date.day,
+        "expiry_date_month": expiry_date.month,
+        "expiry_date_year": expiry_date.year,
+    }
+    response = authorized_client.post(url, data)
+
+    assert response.status_code == 200
+    assert response.context["errors"]["expiry_date"] == error
 
 
 def test_upload_firearm_section_five_certificate(authorized_client, requests_mock):
@@ -39,7 +64,7 @@ def test_upload_firearm_section_five_certificate(authorized_client, requests_moc
         "reference_code": "1234",
         "expiry_date_day": 1,
         "expiry_date_month": 1,
-        "expiry_date_year": 3333,
+        "expiry_date_year": 2025,
     }
 
     response = authorized_client.post(url, data)
@@ -47,11 +72,34 @@ def test_upload_firearm_section_five_certificate(authorized_client, requests_moc
     assert response.status_code == 302
     assert response.url == reverse("organisation:details")
     assert requests_mock.request_history[0].json() == {
-        "expiry_date": "3333-01-01",
+        "expiry_date": "2025-01-01",
         "document_type": "section-five-certificate",
         "reference_code": "1234",
-        "document": {"name": "file.txt", "s3_key": mock.ANY, "size": 0,},
+        "document": {"name": "file.txt", "s3_key": mock.ANY, "size": 0},
     }
+
+
+@pytest.mark.parametrize(
+    "expiry_date,error",
+    (
+        ("2020-01-01", ["Expiry date must be in the future"]),  # Past
+        ("2050-01-01", ["Expiry date is too far in the future"]),  # Too far in the future
+    ),
+)
+def test_upload_firearm_section_five_certificate_error(authorized_client, expiry_date, error):
+    url = reverse("organisation:upload-section-five-certificate")
+    expiry_date = date.fromisoformat(expiry_date)
+    data = {
+        "file": SimpleUploadedFile("file.txt", b"abc", content_type="text/plain"),
+        "reference_code": "1234",
+        "expiry_date_day": expiry_date.day,
+        "expiry_date_month": expiry_date.month,
+        "expiry_date_year": expiry_date.year,
+    }
+    response = authorized_client.post(url, data)
+
+    assert response.status_code == 200
+    assert response.context["errors"]["expiry_date"] == error
 
 
 @mock.patch("exporter.organisation.views.s3_client")

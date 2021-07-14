@@ -50,6 +50,7 @@ from exporter.goods.services import (
 )
 
 from exporter.applications.helpers.date_fields import format_date
+from exporter.core.validators import validate_expiry_date
 from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import get_form_by_pk
@@ -202,8 +203,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
                 errors["file"] = ["Select certificate file to upload"]
             if not self.request.POST.get("reference_code"):
                 errors["reference_code"] = ["Enter the certificate number"]
-            if not format_date(self.request.POST, "expiry_date_"):
-                errors["expiry_date"] = ["Enter the certificate expiry date and include a day, month and year"]
+            errors["expiry_date"] = validate_expiry_date(request, "expiry_date_")
 
         if errors:
             return {"errors": errors}, None
@@ -356,6 +356,14 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         back_link = build_firearm_back_link_create(
             form_url=reverse("applications:new_good", kwargs={"pk": kwargs["pk"]}), form_data=old_post,
         )
+
+        errors = validate_expiry_date(request, "section_certificate_date_of_expiry")
+        if errors:
+            form = upload_firearms_act_certificate_form(
+                section="section", filename=self.certificate_filename, back_link=back_link,
+            )
+            return form_page(request, form, data=data, errors={"section_certificate_date_of_expiry": errors})
+
         if self.good_pk:
             response, status_code = post_good_on_application(request, self.draft_pk, data)
             if status_code != HTTPStatus.CREATED:
