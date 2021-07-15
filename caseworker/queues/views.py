@@ -172,7 +172,7 @@ class EnforcementXMLExport(LoginRequiredMixin, TemplateView):
             return data
 
 
-class EnforcementXMLImport(LoginRequiredMixin, CreateView, SuccessMessageMixin):
+class EnforcementXMLImport(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "queues/enforcement-xml-import.html"
     form_class = forms.EnforcementXMLImportForm
     success_message = "Enforcement XML imported successfully"
