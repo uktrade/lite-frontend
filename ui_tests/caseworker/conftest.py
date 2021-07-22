@@ -5,6 +5,7 @@ import time
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.goods_queries_pages import StandardGoodsReviewPages, OpenGoodsReviewPages
+from ui_tests.caseworker.pages.queues_pages import QueuesPages
 from ui_tests.caseworker.pages.teams_pages import TeamsPages
 from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.fixtures.env import environment  # noqa
@@ -277,6 +278,21 @@ def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance): 
 def combine_all_advice(driver):  # noqa
     TeamAdvicePage(driver).click_combine_advice()
 
+@when("I remove Enforcement Check Req")  # noqa
+def remove_enforcement(driver):  # noqa
+    CasePage(driver).change_tab(CaseTabs.FINAL_ADVICE)
+    FinalAdvicePage(driver).click_edit_flags()
+    FinalAdvicePage(driver).click_enforcement_check_box()
+    FinalAdvicePage(driver).click_set_flags()
+
+@when("I give advice")  # noqa
+def give_advice(driver):  # noqa
+    CasePage(driver).change_tab(CaseTabs.USER_ADVICE)
+    UserAdvicePage(driver).click_grouped_view_checkboxes("proviso")
+    UserAdvicePage(driver).click_give_advice()
+    UserAdvicePage(driver).click_approve()
+    UserAdvicePage(driver).click_no_footnote_required()
+    UserAdvicePage(driver).click_submit_advice()
 
 @when("I finalise the advice")  # noqa
 def finalise(driver):  # noqa
@@ -567,14 +583,13 @@ def approve_open_application_objects(context, api_test_client, decision):  # noq
             "type": context.advice_type,
             "text": text,
             "note": note,
-            "goods_type": context.goods_type["id"],
             "footnote_required": footnote_required,
         },
         {
             "type": context.advice_type,
             "text": text,
             "note": note,
-            "country": context.country["code"],
+            "country": context.country,
             "footnote_required": footnote_required,
         },
     ]

@@ -7,11 +7,33 @@ from ui_tests.caseworker.pages.BasePage import BasePage
 class BaseAdvicePage(BasePage):
     TABLE_GOODS_ID = None
     TABLE_DESTINATIONS_ID = None
-    BUTTON_GIVE_ADVICE_ID = None
+    ALL_GOODS_CHECKBOX_ID = "link-select-all-goods"
+    BUTTON_GIVE_ADVICE_ID = "button-give-user-advice"
     BUTTON_GROUPED_VIEW_ID = "button-grouped-view"
+    APPROVE_OPTION_ID = "type-approve"
+    NO_FOOTNOTE_OPTION_ID = "footnote_required-False"
+    SUBMIT_ADVICE_ID = "button-Submit advice"
+
+    def click_good(self):
+        # Resort to using javascript to click the button because the element is "hidden"
+        # element = self.driver.find_element_by_id(self.ALL_GOODS_CHECKBOX_ID)
+        # self.driver.execute_script("arguments[0].click();", element)
+        self.driver.find_element_by_name("goods").click()
 
     def click_give_advice(self):
-        self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID).click()
+        # element = self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID)
+        # self.driver.execute_script("disabled = false;", element)
+        # element.submit()
+        self.driver.find_element_by_id("form-user-advice-container").submit()
+
+    def click_approve(self):
+        self.driver.find_element_by_id(self.APPROVE_OPTION_ID).click()
+
+    def click_no_footnote_required(self):
+        self.driver.find_element_by_id(self.NO_FOOTNOTE_OPTION_ID).click()
+
+    def click_submit_advice(self):
+        self.driver.find_element_by_id(self.SUBMIT_ADVICE_ID).click()
 
     def click_grouped_view_button(self):
         self.driver.find_element_by_id(self.BUTTON_GROUPED_VIEW_ID).click()
@@ -69,6 +91,9 @@ class FinalAdvicePage(BaseAdvicePage):
     BUTTON_CLEAR_ADVICE_ID = "button-clear-final-advice"
     BUTTON_FINALISE_ID = "button-finalise"
     BLOCKING_FLAGS_WARNING_ID = "warning-text-blocking-flags"
+    EDIT_FLAGS_ID = "link-change-flags"
+    ENFORCEMENT_CHECK_ID = "Enforcement-Check-Req"
+    SET_FLAGS_ID = "button-Set flags"
 
     def can_finalise(self):
         return "govuk-button--disabled" in self.driver.find_element_by_id(self.BUTTON_FINALISE_ID).get_attribute(
@@ -83,3 +108,12 @@ class FinalAdvicePage(BaseAdvicePage):
 
     def click_clear_advice(self):
         self.driver.find_element_by_id(self.BUTTON_CLEAR_ADVICE_ID).click()
+
+    def click_edit_flags(self):
+        self.driver.find_element_by_id(self.EDIT_FLAGS_ID).click()
+
+    def click_enforcement_check_box(self):
+        self.driver.find_element_by_id(self.ENFORCEMENT_CHECK_ID).click()
+
+    def click_set_flags(self):
+        self.driver.find_element_by_id(self.SET_FLAGS_ID).click()

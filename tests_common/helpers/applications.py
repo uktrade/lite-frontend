@@ -87,3 +87,5 @@ def create_standard_application(api_test_client, context, app_data, submit=True)
     context.app_id = api_test_client.context["application_id"]
     context.case_id = api_test_client.context["application_id"]
     context.reference_code = api_test_client.context["reference_code"]
+    context.country = app_data["country"]
+    context.good = data["application"]["goods"][0]
