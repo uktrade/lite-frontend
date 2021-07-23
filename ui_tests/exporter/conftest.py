@@ -732,6 +732,11 @@ def finalise_case_with_nlr_decision(context, api_test_client):  # noqa
     api_test_client.cases.finalise_licence(context.case_id, save_licence=False)
 
 
+@given("I put the test user in the admin team")
+def put_test_user_in_admin_team(api_test_client):  # noqa
+    api_test_client.gov_users.put_test_user_in_admin_team()
+
+
 @given(
     parsers.parse('I create a licence for my application with "{decision}" decision document and good decisions')
 )  # noqa

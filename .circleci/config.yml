@@ -16,6 +16,7 @@ parameters:
 common_env_vars: &common_env_vars
   ENVIRONMENT: << pipeline.parameters.environment >>
   LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
+  LITE_HMRC_URL: https://lite-hmrc-<< pipeline.parameters.environment >>.london.cloudapps.digital
   PIPENV_VENV_IN_PROJECT: true
 
 ###############################################################################
