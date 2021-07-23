@@ -288,7 +288,7 @@ def remove_enforcement(driver):  # noqa
 @when("I give advice")  # noqa
 def give_advice(driver):  # noqa
     CasePage(driver).change_tab(CaseTabs.USER_ADVICE)
-    UserAdvicePage(driver).click_grouped_view_checkboxes("proviso")
+    UserAdvicePage(driver).click_good()
     UserAdvicePage(driver).click_give_advice()
     UserAdvicePage(driver).click_approve()
     UserAdvicePage(driver).click_no_footnote_required()

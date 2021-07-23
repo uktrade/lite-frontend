@@ -1,4 +1,7 @@
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 from tests_common import selectors
 from ui_tests.caseworker.pages.BasePage import BasePage
@@ -18,7 +21,11 @@ class BaseAdvicePage(BasePage):
         # Resort to using javascript to click the button because the element is "hidden"
         # element = self.driver.find_element_by_id(self.ALL_GOODS_CHECKBOX_ID)
         # self.driver.execute_script("arguments[0].click();", element)
-        self.driver.find_element_by_name("goods").click()
+        wait = WebDriverWait(self.driver, 10)
+        # wait.until(EC.element_to_be_clickable((By.NAME, "goods")))
+        # self.driver.find_element_by_name("goods").click()
+        self.driver.execute_script("arguments[0].click();", self.driver.find_element_by_name("goods"))
+        # wait.until(EC.element_to_be_selected((By.NAME, "goods")))
 
     def click_give_advice(self):
         # element = self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID)
