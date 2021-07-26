@@ -1,3 +1,6 @@
+import textwrap
+from datetime import datetime, timedelta
+
 import requests
 from pytest_bdd import scenarios, given, when, then
 
@@ -38,21 +41,41 @@ def set_all_emails_to_reply_sent():
 def send_now():
     put("/mail/send-licence-updates-to-hmrc/")
 
-
-expected_mail_body = r"""3\trader\\1234567890AAA\20210723\20230723\Archway Communications\Headquarters\42 Question Road\\London\Greater London\SW1A 0AA
-4\country\GB\\D
-5\foreignTrader\Steven Juarez\08199 Amy Estates Suite 975, Texas,\75694\\\\\GB
-6\restrictions\Provisos may apply please see licence
-7\line\1\\\\\Rifle\Q\\057\\1234.0\\\\\\
-8\end\licence\7
-9\fileTrailer\1
-"""
+FOREIGN_TRADER_ADDR_LINE_MAX_LEN = 35
+FOREIGN_TRADER_NUM_ADDR_LINES = 5
+def create_hmrc_formatted_address(addr_line):
+    addr_line = addr_line.replace("\n", " ").replace("\r", " ")
+    addr_lines = textwrap.wrap(addr_line, width=FOREIGN_TRADER_ADDR_LINE_MAX_LEN, break_long_words=False)
+    if len(addr_lines) > FOREIGN_TRADER_NUM_ADDR_LINES:
+        addr_lines = addr_lines[:FOREIGN_TRADER_NUM_ADDR_LINES]
+    lines = {}
+    for index, line in enumerate(addr_lines, start=1):
+        lines[index] = line
+    hmrc_formatted = f"{lines[1]}\\{lines.get(2,'')}\\{lines.get(3,'')}\\{lines.get(4,'')}\\{lines.get(5,'')}\\"
+    return hmrc_formatted
 
 
 @then("I confirm a license has been sent to HMRC")
-def confirm_license_has_been_sent():
+def confirm_license_has_been_sent(context):
     body = get_smtp_body().replace("\r", "")
-    # Remove the first and second line as it contains data that changes every time
-    body = "\n".join(body.split("\n")[2:])
+    ymdhm_timestamp = body.split("\n")[0].split("\\")[5]
+    run_number = body.split("\n")[0].split("\\")[6]
+    good_name = context.goods[0]['good']['name']
+    now = datetime.now()
+    today_ymd = now.strftime("%Y%m%d")
+    two_years_time_ymd = (now + timedelta(days=730)).strftime("%Y%m%d")
+    reference_code = context.reference_code
+    reference_code_part = "".join(context.reference_code.split("/")[1:])
+    end_user_name = context.end_user['name']
+    end_user_address = create_hmrc_formatted_address(context.end_user['address'])
+    expected_mail_body = fr"""1\fileHeader\SPIRE\CHIEF\licenceData\{ymdhm_timestamp}\{run_number}\N
+2\licence\{reference_code_part}\insert\{reference_code}\SIE\E\{today_ymd}\{two_years_time_ymd}
+3\trader\\1234567890AAA\{today_ymd}\{two_years_time_ymd}\Archway Communications\Headquarters\42 Question Road\\London\Greater London\SW1A 0AA
+4\country\GB\\D
+5\foreignTrader\{end_user_name}\{end_user_address}\GB
+6\restrictions\Provisos may apply please see licence
+7\line\1\\\\\{good_name}\Q\\057\\1234.0\\\\\\
+8\end\licence\7
+9\fileTrailer\1"""
     print(body)
     assert body.replace("\r", "") == expected_mail_body  # nosec
