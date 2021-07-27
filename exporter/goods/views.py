@@ -123,7 +123,7 @@ class GoodsDetailEmpty(LoginRequiredMixin, TemplateView):
         return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
 
 
-class GoodsDetail(LoginRequiredMixin, TemplateView):
+class GoodsDetail(TemplateView, LoginRequiredMixin):
     good_id = None
     good = None
     view_type = None

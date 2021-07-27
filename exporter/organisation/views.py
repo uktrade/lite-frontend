@@ -62,7 +62,7 @@ class Details(LoginRequiredMixin, OrganisationView):
     template_name = "details/index"
 
 
-class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
+class DocumentOnOrganisation(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, pk):
         organisation_id = str(self.request.session["organisation"])
         response = get_document_on_organisation(request=self.request, organisation_id=organisation_id, document_id=pk)
@@ -75,7 +75,7 @@ class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
         return signed_url
 
 
-class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
+class AbstractOrganisationUpload(TemplateView, LoginRequiredMixin):
     document_type = None
 
     def form_function(self, back_url):
