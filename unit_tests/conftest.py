@@ -1,5 +1,6 @@
 import pytest
 
+from django.conf import settings
 from core import client
 
 
@@ -24,6 +25,29 @@ def mock_control_list_entries(requests_mock, data_control_list_entries):
 def mock_pv_gradings(requests_mock):
     url = client._build_absolute_uri("/static/private-venture-gradings/")
     yield requests_mock.get(url=url, json={"pv_gradings": []})
+
+
+@pytest.fixture(autouse=True)
+def mock_exporter_sso_auth(requests_mock):
+    url = settings.AUTHBROKER_PROFILE_URL
+    data = {
+        "email": "john.smith@example.com",
+    }
+    yield requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture(autouse=True)
+def mock_exporter_auth(requests_mock):
+    url = f"{settings.LITE_API_URL}/users/authenticate/"
+    data = {
+        "first_name": "John",
+        "last_name": "Smith",
+        "email": "john.smith@example.com",
+        "user_token": "foo",
+        "token": "foo",
+        "lite_api_user_id": "00000000-0000-0000-0000-000000000001",
+    }
+    yield requests_mock.post(url=url, json=data)
 
 
 @pytest.fixture
