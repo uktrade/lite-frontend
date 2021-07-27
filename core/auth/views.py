@@ -106,19 +106,12 @@ class LoginRequiredMixin:
     def auth_exporter_user(self, *args, **kwargs):
         data, status_code = authenticate_exporter_user(self.request, self.user_profile)
 
+        # api only returns either 400 or 401 here
         if status_code == 400:
             return error_page(self.request, data["errors"])
 
         elif status_code == 401:
             return redirect("core:register_an_organisation_triage")
-
-        elif status_code == 403:
-            return error_page(
-                self.request,
-                title=strings.Authentication.UserDoesNotExist.TITLE,
-                description=strings.Authentication.UserDoesNotExist.DESCRIPTION,
-                show_back_link=False,
-            )
 
         elif status_code != 200:
             return error_page(self.request, show_back_link=False)
