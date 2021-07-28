@@ -88,7 +88,7 @@ class OrganisationView(TemplateView):
     def get_additional_context(self):
         return self.additional_context
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.organisation_id = kwargs["pk"]
         self.organisation = get_organisation(request, self.organisation_id)
 

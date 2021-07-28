@@ -13,7 +13,7 @@ from caseworker.cases.services import get_case
 
 
 class MatchingDenials(LoginRequiredMixin, View):
-    def post(self, request, **kwargs):
+    def post(self, request, *args, **kwargs):
         data = []
         for match_id in request.POST.getlist("objects", []):
             data.append({"application": str(kwargs["pk"]), "denial": match_id, "category": kwargs["category"]})
@@ -23,7 +23,7 @@ class MatchingDenials(LoginRequiredMixin, View):
 
 
 class RemoveMatchingDenials(LoginRequiredMixin, View):
-    def post(self, request, **kwargs):
+    def post(self, request, *args, **kwargs):
         data = {}
         data["objects"] = request.POST.getlist("objects", [])
         response = client.delete(request, f"/applications/{kwargs['pk']}/denial-matches/", data)

@@ -99,7 +99,7 @@ class SingleFormView(FormView):
         if self.success_message:
             messages.success(self.request, self.success_message)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         override_return = self.init(request, **kwargs)  # noqa
         if override_return:
             if isinstance(override_return, str):
@@ -107,7 +107,7 @@ class SingleFormView(FormView):
             return override_return
         return form_page(request, self.get_form(), data=self.get_data(), extra_data=self.context)
 
-    def post(self, request, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.init(request, **kwargs)
         data = self.on_submission(request, **kwargs)
 
@@ -167,14 +167,14 @@ class MultiFormView(FormView):
         if self.success_message:
             messages.success(self.request, self.success_message)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.init(request, **kwargs)
         form = self.get_forms().forms[0]
         return form_page(
             request, form, data=self.get_data(), extra_data={"form_pk": form.pk, **self.additional_context}
         )
 
-    def post(self, request, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.init(request, **kwargs)
         submission = self.on_submission(request, **kwargs)  # noqa
 
