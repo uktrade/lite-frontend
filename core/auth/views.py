@@ -103,23 +103,6 @@ class LoginRequiredMixin:
         save_internal_user_info_to_session(self.request.session, data, self.user_profile)
         return super().dispatch(self.request, *args, **kwargs)
 
-    def auth_exporter_user(self, *args, **kwargs):
-        data, status_code = authenticate_exporter_user(self.request, self.user_profile)
-
-        # api only returns either 400 or 401 here
-        if status_code == 400:
-            return error_page(self.request, data["errors"])
-
-        elif status_code == 401:
-            return redirect("core:register_an_organisation_triage")
-
-        elif status_code != 200:
-            return error_page(self.request, show_back_link=False)
-
-        # success
-        save_exporter_user_info_to_session(self.request.session, data, self.user_profile)
-        return super().dispatch(self.request, *args, **kwargs)
-
     def dispatch(self, request, *args, **kwargs):
         # is user logged in to SSO?
         if not self.request.authbroker_client.authorized:
@@ -128,5 +111,4 @@ class LoginRequiredMixin:
         if settings.SERVICE_NAME == "lite-internal-frontend":
             return self.auth_internal_user(self, *args, **kwargs)
 
-        elif settings.SERVICE_NAME == "lite-exporter-frontend":
-            return self.auth_exporter_user(self, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
