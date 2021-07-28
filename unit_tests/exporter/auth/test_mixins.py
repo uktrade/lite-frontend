@@ -8,7 +8,6 @@ from core.auth.views import LoginRequiredMixin
 
 
 def test_login_redirect_no_sso_auth(client, rf):
-
     class TestView(LoginRequiredMixin, TemplateView):
         template_name = "core/start.html"
 
@@ -22,7 +21,6 @@ def test_login_redirect_no_sso_auth(client, rf):
 
 
 def test_login_redirect_logged_in(client, rf):
-
     class TestView(LoginRequiredMixin, TemplateView):
         template_name = "core/start.html"
 

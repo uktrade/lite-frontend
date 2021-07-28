@@ -46,16 +46,14 @@ def mock_post_caseworker_sso_auth(requests_mock):
 @pytest.fixture(autouse=True)
 def mock_get_gov_user(requests_mock, data_open_case):
     url = client._build_absolute_uri("/gov-users/d355428a-64cb-4347-853b-afcacee15d93/")
-    data = {
-    }
+    data = {}
     yield requests_mock.get(url=url, json=data)
 
 
 @pytest.fixture(autouse=True)
 def mock_get_queue(requests_mock, data_open_case):
     url = client._build_absolute_uri("/queues/00000000-0000-0000-0000-000000000001/")
-    data = {
-    }
+    data = {}
     yield requests_mock.get(url=url, json=data)
 
 

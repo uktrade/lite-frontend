@@ -1,4 +1,3 @@
-
 def save_internal_user_info_to_session(session, data, user_profile):
     session["first_name"] = user_profile["first_name"]
     session["last_name"] = user_profile["last_name"]

@@ -13,8 +13,7 @@ from lite_content.lite_internal_frontend import strings
 from lite_forms.generators import error_page
 
 from caseworker.auth.services import authenticate_gov_user
-from exporter.auth.services import authenticate_exporter_user
-from caseworker.auth.helpers import save_internal_user_info_to_session, save_exporter_user_info_to_session
+from caseworker.auth.helpers import save_internal_user_info_to_session
 
 from core.auth.utils import get_profile
 
