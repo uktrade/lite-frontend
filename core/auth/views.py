@@ -62,10 +62,6 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
 
 class LoginRequiredMixin:
-    """
-    Redirects to the appropriate login according to which service this repo is running as.
-    """
-
     @property
     def user_profile(self):
         return get_profile(self.request.authbroker_client)
