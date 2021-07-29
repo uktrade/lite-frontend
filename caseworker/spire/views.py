@@ -3,11 +3,10 @@ from django.shortcuts import redirect
 from django.views.generic import FormView, TemplateView, View
 
 from caseworker.spire import forms, helpers
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
-from core.auth.views import LoginRequiredMixin
 
-
-class SpireLicenseSearch(LoginRequiredMixin, FormView):
+class SpireLicenseSearch(CaseworkerLoginRequiredMixin, FormView):
     form_class = forms.SpireLicenseSearchForm
     template_name = "spire/licence-search.html"
 
@@ -33,7 +32,7 @@ class SpireLicenseSearch(LoginRequiredMixin, FormView):
         return context
 
 
-class SpireApplicationSearch(LoginRequiredMixin, FormView):
+class SpireApplicationSearch(CaseworkerLoginRequiredMixin, FormView):
     form_class = forms.SpireApplicationSearchForm
     template_name = "spire/application-search.html"
 
@@ -59,7 +58,7 @@ class SpireApplicationSearch(LoginRequiredMixin, FormView):
         return context
 
 
-class SpireLicenceDetail(LoginRequiredMixin, TemplateView):
+class SpireLicenceDetail(CaseworkerLoginRequiredMixin, TemplateView):
     template_name = "spire/licence.html"
 
     def get_context_data(self, **kwargs):
@@ -68,7 +67,7 @@ class SpireLicenceDetail(LoginRequiredMixin, TemplateView):
         return super().get_context_data(licence=response.json(), **kwargs)
 
 
-class SpireApplicationDetail(LoginRequiredMixin, TemplateView):
+class SpireApplicationDetail(CaseworkerLoginRequiredMixin, TemplateView):
     template_name = "spire/application.html"
 
     def get_context_data(self, **kwargs):
@@ -77,7 +76,7 @@ class SpireApplicationDetail(LoginRequiredMixin, TemplateView):
         return super().get_context_data(application=response.json(), **kwargs)
 
 
-class SpireApplicationDocumentDetail(LoginRequiredMixin, View):
+class SpireApplicationDocumentDetail(CaseworkerLoginRequiredMixin, View):
     def get(self, request, **kwargs):
         response = helpers.spire_client.get_file_version(self.kwargs["id"])
         response.raise_for_status()

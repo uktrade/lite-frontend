@@ -6,8 +6,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, CreateView
 
-from core.auth.views import LoginRequiredMixin
-
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
 from caseworker.external_data import forms, services
 
 
@@ -15,7 +14,7 @@ with open(settings.BASE_DIR + "/caseworker/external_data/example.csv", "rb") as 
     base_64_csv = base64.b64encode(f.read()).decode()
 
 
-class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class DenialUploadView(CaseworkerLoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "external_data/denial-upload.html"
     form_class = forms.DenialUploadForm
     success_message = "Denials created successfully"
@@ -35,7 +34,7 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return self.request.get_full_path()
 
 
-class DenialDetailView(LoginRequiredMixin, TemplateView):
+class DenialDetailView(CaseworkerLoginRequiredMixin, TemplateView):
     template_name = "external_data/denial-detail.html"
 
     def get_context_data(self, **kwargs):
@@ -45,7 +44,7 @@ class DenialDetailView(LoginRequiredMixin, TemplateView):
         return super().get_context_data(denial=denial, queue_id=queue_id, case_id=case_id, **kwargs)
 
 
-class DenialRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class DenialRevokeView(CaseworkerLoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "external_data/denial-revoke.html"
     success_message = "Denial successfully revoked"
     form_class = forms.DenialRevoke

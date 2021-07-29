@@ -12,7 +12,6 @@ from caseworker.cases.helpers.advice import get_param_goods, get_param_destinati
 from caseworker.cases.services import put_flag_assignments, get_case
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import get_params_if_exist
-from core.helpers import convert_dict_to_query_params
 from caseworker.core.services import get_countries, get_user_permissions
 from caseworker.flags.enums import FlagLevel, FlagStatus
 from caseworker.flags.forms import (
@@ -37,19 +36,22 @@ from caseworker.flags.services import (
     get_destination_flags,
 )
 from caseworker.flags.services import get_flags, post_flags, get_flag, update_flag
-from lite_content.lite_internal_frontend import strings, flags
-from lite_content.lite_internal_frontend.flags import UpdateFlag, SetFlagsForm
-from lite_forms.components import Option, FiltersBar, Select, Checkboxes, TextInput, BackLink
-from lite_forms.generators import form_page
-from lite_forms.views import MultiFormView, SingleFormView
 from caseworker.organisations.services import get_organisation
 from caseworker.teams.services import get_teams
 from caseworker.users.services import get_gov_user
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
-from core.auth.views import LoginRequiredMixin
+from core.helpers import convert_dict_to_query_params
+
+from lite_content.lite_internal_frontend import strings, flags
+from lite_content.lite_internal_frontend.flags import UpdateFlag, SetFlagsForm
+
+from lite_forms.views import MultiFormView, SingleFormView
+from lite_forms.components import Option, FiltersBar, Select, Checkboxes, TextInput, BackLink
+from lite_forms.generators import form_page
 
 
-class FlagsList(LoginRequiredMixin, TemplateView):
+class FlagsList(CaseworkerLoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         params = request.GET.copy()
         params["status"] = params.get("status", FlagStatus.ACTIVE.value)
@@ -79,7 +81,7 @@ class FlagsList(LoginRequiredMixin, TemplateView):
         return render(request, "flags/index.html", context)
 
 
-class AddFlag(LoginRequiredMixin, SingleFormView):
+class AddFlag(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.form = add_flag_form()
         self.action = post_flags
@@ -88,7 +90,7 @@ class AddFlag(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse("flags:flags")
 
 
-class EditFlag(LoginRequiredMixin, SingleFormView):
+class EditFlag(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         flag = get_flag(request, self.object_pk)
@@ -98,7 +100,7 @@ class EditFlag(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse("flags:flags")
 
 
-class ChangeFlagStatus(LoginRequiredMixin, TemplateView):
+class ChangeFlagStatus(CaseworkerLoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         status = kwargs["status"]
         description = ""
@@ -131,7 +133,7 @@ class ChangeFlagStatus(LoginRequiredMixin, TemplateView):
         return redirect(reverse_lazy("flags:flags"))
 
 
-class ManageFlagRules(LoginRequiredMixin, TemplateView):
+class ManageFlagRules(CaseworkerLoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
@@ -171,7 +173,7 @@ class ManageFlagRules(LoginRequiredMixin, TemplateView):
         return render(request, "flags/flagging-rules-list.html", context)
 
 
-class CreateFlagRules(LoginRequiredMixin, MultiFormView):
+class CreateFlagRules(CaseworkerLoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
@@ -182,7 +184,7 @@ class CreateFlagRules(LoginRequiredMixin, MultiFormView):
         self.success_url = reverse_lazy("flags:flagging_rules")
 
 
-class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
+class EditFlaggingRules(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
@@ -230,7 +232,7 @@ class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
         return copied_request
 
 
-class ChangeFlaggingRuleStatus(LoginRequiredMixin, SingleFormView):
+class ChangeFlaggingRuleStatus(CaseworkerLoginRequiredMixin, SingleFormView):
     success_url = reverse_lazy("flags:flagging_rules")
 
     def init(self, request, **kwargs):
@@ -298,7 +300,7 @@ def perform_action(level, request, pk, json):
     return put_flag_assignments(request, data)
 
 
-class AssignFlags(LoginRequiredMixin, SingleFormView):
+class AssignFlags(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.level = self.get_level()

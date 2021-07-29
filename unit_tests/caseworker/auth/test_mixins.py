@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from unittest import mock
 from django.views.generic.base import View
-from core.auth.views import LoginRequiredMixin
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
 
 def test_login_redirect(client):
@@ -16,7 +16,7 @@ def test_login_redirect_no_gov_user(mock_post, client, rf):
     data.status_code = 403
     mock_post.return_value = data
 
-    class TestView(LoginRequiredMixin, View):
+    class TestView(CaseworkerLoginRequiredMixin, View):
         pass
 
     request = rf.get("/")
@@ -44,7 +44,7 @@ def test_login_redirect_some_other_error(mock_post, client, rf):
     data.status_code = 500
     mock_post.return_value = data
 
-    class TestView(LoginRequiredMixin, View):
+    class TestView(CaseworkerLoginRequiredMixin, View):
         pass
 
     request = rf.get("/")
