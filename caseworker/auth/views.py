@@ -27,3 +27,30 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             description=strings.Authentication.UserDoesNotExist.DESCRIPTION,
             show_back_link=False,
         )
+
+
+class CaseworkerLoginRequiredMixin(auth_views.LoginRequiredMixin):
+    def auth_internal_user(self, *args, **kwargs):
+        data, status_code = authenticate_gov_user(self.request, self.user_profile)
+
+        if status_code == 403:
+            return error_page(
+                self.request,
+                title=strings.Authentication.UserDoesNotExist.TITLE,
+                description=strings.Authentication.UserDoesNotExist.DESCRIPTION,
+                show_back_link=False,
+            )
+
+        elif status_code != 200:
+            return error_page(self.request, show_back_link=False)
+
+        # success
+        save_internal_user_info_to_session(self.request.session, data, self.user_profile)
+        return super().dispatch(self.request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        # is user logged in to SSO?
+        if not self.request.authbroker_client.authorized:
+            return self.redirect_to_login()
+
+        return self.auth_internal_user(self, *args, **kwargs)
