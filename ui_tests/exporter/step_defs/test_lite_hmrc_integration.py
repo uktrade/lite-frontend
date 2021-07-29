@@ -30,6 +30,6 @@ def send_now():
 
 @then("I confirm a license has been sent to HMRC")
 def confirm_license_has_been_sent(context):
-    encoded_reference_code = quote(context.reference_code, safe='')
+    encoded_reference_code = quote(context.reference_code, safe="")
     license = get(f"/mail/license/?id={encoded_reference_code}")
     assert "reply_pending" == license["status"]
