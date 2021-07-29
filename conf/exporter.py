@@ -8,7 +8,9 @@ from conf.base import *
 
 ROOT_URLCONF = "exporter.urls"
 
-INSTALLED_APPS += ["exporter.core"]
+INSTALLED_APPS += [
+    "exporter.core",
+]
 
 TEMPLATES = [
     {
