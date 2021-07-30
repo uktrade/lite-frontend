@@ -58,7 +58,12 @@ class UploadFirearmsCertificateForm(forms.Form):
     reference_code = forms.CharField(
         label="Certificate number", error_messages={"required": "Enter the certificate number"},
     )
-    expiry_date = DateInputField(label="Expiry date", help_text="For example 12 3 2021", require_all_fields=False)
+    expiry_date = DateInputField(
+        label="Expiry date",
+        help_text="For example 12 3 2021",
+        require_all_fields=False,
+        validators=[validate_expiry_date],
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
