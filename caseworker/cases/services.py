@@ -277,7 +277,9 @@ def get_flags_for_team_of_level(request, level, team_id, include_system_flags=Fa
         + "&disable_pagination=True&include_flagging_rules=True",
     )
     response.raise_for_status()
-    return response.json()
+
+    # Remove system flags from selection while creating routing rules
+    return [flag for flag in response.json() if flag["team"]["id"] != "00000000-0000-0000-0000-000000000001"]
 
 
 def put_flag_assignments(request, json):
