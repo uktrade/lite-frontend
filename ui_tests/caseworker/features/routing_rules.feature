@@ -37,7 +37,6 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I filter by my routing rule queue
     Then I see the routing rule in the list as "Deactivated" and tier "1"
 
-    @workflow
     Scenario: Move case along in workflow
       Given I sign in to SSO or am signed into SSO
       And I create standard application or standard application has been previously created
