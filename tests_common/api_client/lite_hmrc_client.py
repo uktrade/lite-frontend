@@ -37,6 +37,7 @@ class ApiClient:
             url=url,
             method=method,
             seen_nonce=lambda x, y, z: False,
+            always_hash_content=False,
         )
 
     @staticmethod
