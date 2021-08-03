@@ -1,3 +1,6 @@
+from caseworker.flags.enums import FlagLevel
+
+
 class Flags:
     def __init__(self, api_client, request_data, **kwargs):
         super().__init__(**kwargs)
@@ -23,11 +26,7 @@ class Flags:
         return flags
 
     def assign_case_flags(self, case_pk, flags):
-        data = {
-            "level": "Cases",
-            "objects": [case_pk],
-            "flags": flags,
-        }
+        data = {"level": FlagLevel.CASES, "objects": [case_pk], "flags": flags}
         self.api_client.make_request(
             method="PUT", url="/flags/assign/", headers=self.api_client.gov_headers, body=data,
         )

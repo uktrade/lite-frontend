@@ -99,3 +99,7 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
         "DEBUG": DEBUG,
     }
     INSTALLED_APPS.append("elasticapm.contrib.django")
+
+LITE_HMRC_URL = env.str("LITE_HMRC_URL", "")
+LITE_HMRC_HAWK_AUTHENTICATION_ENABLED = env.bool("LITE_HMRC_HAWK_AUTHENTICATION_ENABLED", False)
+LITE_HMRC_HAWK_KEY = env.str("LITE_HMRC_HAWK_KEY", "")
