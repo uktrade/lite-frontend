@@ -3,6 +3,7 @@ Feature: I want to be able to view licences as an exporter user
 
   Scenario: View my standard application licences
     Given I signin and go to exporter homepage and choose Test Org
+    And I put the test user in the admin group
     And I create a standard application via api
     And I remove the flags
     And I create "approve" final advice
