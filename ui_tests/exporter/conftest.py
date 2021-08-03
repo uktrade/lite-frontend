@@ -728,7 +728,7 @@ def finalise_case_with_nlr_decision(context, api_test_client):  # noqa
 
 
 @given("I put the test user in the admin team")
-def put_test_user_in_admin_team(api_test_client):
+def put_test_user_in_admin_team(api_test_client):  # noqa
     api_test_client.gov_users.put_test_user_in_admin_team()
 
 
