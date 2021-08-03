@@ -15,10 +15,8 @@ class ApiClient:
         if not url.endswith("/") and "?" not in url:
             url = url + "/"
 
-        content_type = "text/plain" if method == "DELETE" else "application/json"
-
         if settings.LITE_HMRC_HAWK_AUTHENTICATION_ENABLED:
-            sender = self._get_hawk_sender(url, method, content_type)
+            sender = self._get_hawk_sender(url, method)
             response = self.session.request(method, url)
             self._verify_api_response(response, sender)
         else:
@@ -29,7 +27,7 @@ class ApiClient:
         return response
 
     @staticmethod
-    def _get_hawk_sender(url, method, content_type):
+    def _get_hawk_sender(url, method):
         return Sender(
             credentials={
                 "id": "LITE_HMRC_INTEGRATION_HAWK_KEY",
@@ -38,7 +36,6 @@ class ApiClient:
             },
             url=url,
             method=method,
-            content_type=content_type,
             seen_nonce=lambda x, y, z: False,
         )
 
