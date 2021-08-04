@@ -144,80 +144,7 @@ commands:
 ###############################################################################
 
 jobs:
-  lint:
-    working_directory: ~/repo
-    docker:
-      - <<: *image_python
-    steps:
-      - setup_code
-      - lint
 
-  caseworker_unit_test:
-    working_directory: ~/repo
-    docker:
-      - <<: *image_python
-      - <<: *image_redis
-    environment:
-      <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: example.caseworker.env
-      PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
-      FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
-    steps:
-      - setup_code
-      - setup_code_climate
-      - unit_tests:
-          alias: caseworker
-
-  exporter_unit_test:
-    working_directory: ~/repo
-    docker:
-      - <<: *image_python
-      - <<: *image_redis
-    environment:
-      <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: example.exporter.env
-      PYTEST_ADDOPTS: unit_tests/exporter unit_tests/core --capture=no --nomigrations
-      FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
-    steps:
-      - setup_code
-      - setup_code_climate
-      - unit_tests:
-          alias: exporter
-
-  upload_coverage:
-    working_directory: ~/repo
-    docker:
-      - <<: *image_python
-    steps:
-      - attach_workspace:
-          at: ~/repo/tmp
-      - setup_code_climate
-      - run:
-          name: Upload coverage results to Code Climate
-          command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
-            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
-
-  caseworker_ui_test:
-    # has to be machine executor as the VPN does not work in docker executor
-    machine:
-      image: ubuntu-1604:201903-01
-      docker_layer_caching: true
-    environment:
-      <<: *common_env_vars
-      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
-      DJANGO_SETTINGS_MODULE: conf.caseworker
-      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations
-    steps:
-      - run: sudo apt-get update
-      - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: pyenv global 3.7.0
-      - run: pip install pipenv
-      - setup_code
-      - vpn_install
-      - vpn_connect
-      - ui_tests
-      - vpn_disconnect
 
   exporter_ui_test:
     machine:
@@ -227,7 +154,7 @@ jobs:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
       DJANGO_SETTINGS_MODULE: conf.exporter
-      PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations
+      PYTEST_ADDOPTS: -m "an_exporter_test" ui_tests/exporter --capture=no --nomigrations
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
@@ -241,18 +168,8 @@ jobs:
 
 workflows:
   version: 2
-  unit_test:
-    when: << pipeline.parameters.run_unit_tests >>
-    jobs:
-      - lint
-      - caseworker_unit_test
-      - exporter_unit_test
-      - upload_coverage:
-          requires:
-           - caseworker_unit_test
-           - exporter_unit_test
+
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
-      - caseworker_ui_test
       - exporter_ui_test
