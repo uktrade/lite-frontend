@@ -1,9 +1,9 @@
 @licences @all
 Feature: I want to be able to view licences as an exporter user
 
-  @skip @LT_1254_view_licences_standard @regression
   Scenario: View my standard application licences
-    Given I go to exporter homepage and choose Test Org
+    Given I signin and go to exporter homepage and choose Test Org
+    And I put the test user in the admin team
     And I create a standard application via api
     And I remove the flags
     And I create "approve" final advice
