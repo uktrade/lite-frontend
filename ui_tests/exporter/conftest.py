@@ -683,6 +683,11 @@ def i_remove_all_flags(context, api_test_client):  # noqa
     api_test_client.flags.assign_case_flags(context.case_id, [])
 
 
+@given("I put the test user in the admin team")
+def put_test_user_in_admin_team(api_test_client):  # noqa
+    api_test_client.gov_users.put_test_user_in_admin_team()
+
+
 @given(parsers.parse('I create a licence for my application with "{decision}" decision document'))  # noqa
 def create_licence(context, decision, api_test_client):  # noqa
     document_template = api_test_client.document_templates.add_template(
