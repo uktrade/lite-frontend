@@ -1,6 +1,6 @@
 Feature: I want to know that licence data goes to and comes from HMRC via email
 
-  @an_exporter_test
+  @skip
   Scenario: Check that licence data has gotten to HMRC via email
     Given I set all emails in lite-hmrc to reply-sent
     And I signin and go to exporter homepage and choose Test Org
