@@ -6,8 +6,17 @@ from django.test import Client
 from core import client
 
 
-@pytest.fixture
-def mock_exporter_user(requests_mock):
+@pytest.fixture(autouse=True)
+def mock_exporter_sso_auth(requests_mock):
+    url = settings.AUTHBROKER_PROFILE_URL
+    data = {
+        "email": "john.smith@example.com",
+    }
+    yield requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture(autouse=True)
+def mock_exporter_user_get(requests_mock):
     url = client._build_absolute_uri("/users/authenticate/")
     data = {
         "user": {
@@ -20,8 +29,25 @@ def mock_exporter_user(requests_mock):
             "lite_api_user_id": "d355428a-64cb-4347-853b-afcacee15d93",
         }
     }
-
     requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture(autouse=True)
+def mock_exporter_user(requests_mock):
+    url = client._build_absolute_uri("/users/authenticate/")
+    data = {
+        "user": {
+            "first_name": "John",
+            "last_name": "Smith",
+            "email": "john.smith@example.com",
+            "user_token": "foo",
+            "token": "foo",
+            "lite_api_user_id": "00000000-0000-0000-0000-000000000001",
+        }
+    }
+
+    requests_mock.post(url=url, json={})
     yield data
 
 

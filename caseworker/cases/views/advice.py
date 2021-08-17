@@ -40,16 +40,17 @@ from caseworker.cases.services import (
     post_good_countries_decisions,
     get_open_licence_decision,
 )
-from core.builtins.custom_tags import filter_advice_by_level
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
 from caseworker.core.services import get_denial_reasons
+
+from core.builtins.custom_tags import filter_advice_by_level
+
 from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import SingleFormView
 
-from core.auth.views import LoginRequiredMixin
 
-
-class GiveAdvice(LoginRequiredMixin, SingleFormView):
+class GiveAdvice(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.case = get_case(request, self.object_pk)
@@ -100,7 +101,7 @@ class GiveAdvice(LoginRequiredMixin, SingleFormView):
             return post_final_case_advice
 
 
-class CoalesceUserAdvice(LoginRequiredMixin, TemplateView):
+class CoalesceUserAdvice(CaseworkerLoginRequiredMixin, TemplateView):
     """
     Group all of a user's team's user level advice in a team advice for the user's team
     """
@@ -116,7 +117,7 @@ class CoalesceUserAdvice(LoginRequiredMixin, TemplateView):
         )
 
 
-class ClearTeamAdvice(LoginRequiredMixin, TemplateView):
+class ClearTeamAdvice(CaseworkerLoginRequiredMixin, TemplateView):
     """
     Clear the user's team's team level advice
     """
@@ -136,7 +137,7 @@ class ClearTeamAdvice(LoginRequiredMixin, TemplateView):
             )
 
 
-class CoalesceTeamAdvice(LoginRequiredMixin, TemplateView):
+class CoalesceTeamAdvice(CaseworkerLoginRequiredMixin, TemplateView):
     """
     Group all team's advice into final advice
     """
@@ -152,7 +153,7 @@ class CoalesceTeamAdvice(LoginRequiredMixin, TemplateView):
         )
 
 
-class ClearFinalAdvice(LoginRequiredMixin, TemplateView):
+class ClearFinalAdvice(CaseworkerLoginRequiredMixin, TemplateView):
     """
     Clear final advice
     """
@@ -182,7 +183,7 @@ def create_mapping(goods):
     return return_dict
 
 
-class FinaliseGoodsCountries(LoginRequiredMixin, SingleFormView):
+class FinaliseGoodsCountries(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.context = {
@@ -195,7 +196,7 @@ class FinaliseGoodsCountries(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
 
 
-class Finalise(LoginRequiredMixin, TemplateView):
+class Finalise(CaseworkerLoginRequiredMixin, TemplateView):
     """
     Finalise a case and change the case status to finalised
     """
@@ -275,7 +276,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
         )
 
 
-class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
+class FinaliseGenerateDocuments(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)

@@ -89,6 +89,8 @@ CACHES = {
     }
 }
 
+SERVICE_NAME = "lite-exporter-frontend"
+
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):
     ELASTIC_APM = {

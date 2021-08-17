@@ -5,15 +5,15 @@ from django.views.generic import View
 from django.views.generic.edit import FormView
 
 from core import client
-from core.auth.views import LoginRequiredMixin
-from caseworker.cases.forms import external_data as forms
 
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
+from caseworker.cases.forms import external_data as forms
 from caseworker.external_data.services import revoke_sanction
 from caseworker.cases.services import get_case
 
 
-class MatchingDenials(LoginRequiredMixin, View):
-    def post(self, request, **kwargs):
+class MatchingDenials(CaseworkerLoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
         data = []
         for match_id in request.POST.getlist("objects", []):
             data.append({"application": str(kwargs["pk"]), "denial": match_id, "category": kwargs["category"]})
@@ -22,8 +22,8 @@ class MatchingDenials(LoginRequiredMixin, View):
         return redirect(reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]}))
 
 
-class RemoveMatchingDenials(LoginRequiredMixin, View):
-    def post(self, request, **kwargs):
+class RemoveMatchingDenials(CaseworkerLoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
         data = {}
         data["objects"] = request.POST.getlist("objects", [])
         response = client.delete(request, f"/applications/{kwargs['pk']}/denial-matches/", data)
@@ -31,7 +31,7 @@ class RemoveMatchingDenials(LoginRequiredMixin, View):
         return redirect(reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]}))
 
 
-class SanctionRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class SanctionRevokeView(CaseworkerLoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "external_data/sanction-revoke.html"
     success_message = "Sanction match successfully removed"
     form_class = forms.SanctionRevoke

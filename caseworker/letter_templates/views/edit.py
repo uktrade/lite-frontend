@@ -2,11 +2,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from caseworker.cases.services import get_case_types, get_decisions
 from lite_forms.components import Option
 from lite_forms.generators import form_page
 from lite_forms.submitters import submit_single_form
 
+from caseworker.cases.services import get_case_types, get_decisions
 from caseworker.letter_templates.forms import edit_letter_template
 from caseworker.letter_templates.services import (
     get_letter_template,
@@ -14,11 +14,10 @@ from caseworker.letter_templates.services import (
     get_letter_paragraphs,
 )
 from caseworker.picklists.services import get_picklists_for_input
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
-from core.auth.views import LoginRequiredMixin
 
-
-class EditTemplate(LoginRequiredMixin, TemplateView):
+class EditTemplate(CaseworkerLoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         letter_template = get_letter_template(request, str(kwargs["pk"]))[0]["template"]
         letter_template_case_types = letter_template.pop("case_types") or []
@@ -66,7 +65,7 @@ class EditTemplate(LoginRequiredMixin, TemplateView):
         return redirect(reverse("letter_templates:letter_template", kwargs={"pk": letter_template_id}))
 
 
-class EditParagraphs(LoginRequiredMixin, TemplateView):
+class EditParagraphs(CaseworkerLoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         letter_template = get_letter_template(request, str(kwargs["pk"]))[0]["template"]
         letter_paragraphs = get_letter_paragraphs(request, letter_template["letter_paragraphs"])

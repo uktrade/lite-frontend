@@ -17,6 +17,7 @@ common_env_vars: &common_env_vars
   ENVIRONMENT: << pipeline.parameters.environment >>
   LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
   PIPENV_VENV_IN_PROJECT: true
+  OAUTHLIB_INSECURE_TRANSPORT: 1
 
 ###############################################################################
 # Images

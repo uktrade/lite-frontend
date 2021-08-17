@@ -5,13 +5,13 @@ from caseworker.cases.forms.respond_to_good_query import respond_to_clc_query_fo
 from caseworker.cases.services import get_case, put_goods_query_clc, put_goods_query_pv_grading
 from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
+from caseworker.auth.views import CaseworkerLoginRequiredMixin
+
 from lite_content.lite_internal_frontend.cases import CLCReviewGoods, PVGradingForm
 from lite_forms.views import SingleFormView
 
-from core.auth.views import LoginRequiredMixin
 
-
-class RespondCLCQuery(LoginRequiredMixin, SingleFormView):
+class RespondCLCQuery(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
@@ -25,7 +25,7 @@ class RespondCLCQuery(LoginRequiredMixin, SingleFormView):
             return redirect(reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk}))
 
 
-class RespondPVGradingQuery(LoginRequiredMixin, SingleFormView):
+class RespondPVGradingQuery(CaseworkerLoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
