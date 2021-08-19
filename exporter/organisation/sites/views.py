@@ -1,13 +1,26 @@
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
+from django.shortcuts import redirect
+
+from formtools.wizard.views import SessionWizardView, NamedUrlSessionWizardView
 
 from exporter.core.helpers import str_to_bool
-from exporter.core.services import get_organisation
+from exporter.core.services import get_organisation, get_countries
 from lite_forms.views import MultiFormView, SingleFormView
 from exporter.organisation.sites.forms import new_site_forms, edit_site_name_form, site_records_location
 from exporter.organisation.sites.services import get_site, post_sites, update_site, get_sites
 from exporter.organisation.views import OrganisationView
+from exporter.organisation.sites import forms as site_forms
+
+from core.auth.views import LoginRequiredMixin
+
+
+LOCATION = "location"
+UK_ADDRESS = "uk_address"
+INTERNATIONAL_ADDRESS = "international_address"
+CONFIRM = "confirm"
+ASSIGN_USERS = "assign_users"
 
 
 class Sites(OrganisationView):
@@ -17,21 +30,46 @@ class Sites(OrganisationView):
         return {"sites": get_sites(self.request, self.organisation_id, get_total_users=True)}
 
 
-class NewSite(MultiFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = request.session["organisation"]
-        self.forms = new_site_forms(request)
-        self.action = post_sites
+def show_international_site_form(wizard):
+    # try to get the cleaned data of location step
+    cleaned_data = wizard.get_cleaned_data_for_step(LOCATION) or {}
+    # if the user selected abroad, show the international form
+    return cleaned_data.get("location") == "abroad"
 
-    def on_submission(self, request, **kwargs):
-        # Take the user out of the journey if they say no to continuing with a site
-        # that has a postcode which already exists
-        if request.POST.get("are_you_sure") != "None" and str_to_bool(request.POST.get("are_you_sure", True)) is False:
-            return reverse("organisation:sites:sites")
 
-    def get_success_url(self):
-        pk = self.get_validated_data()["site"]["id"]
-        return reverse("organisation:sites:site", kwargs={"pk": pk})
+def show_domestic_site_form(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(LOCATION) or {}
+    # if the user selected united_kingdom, show the uk form
+    return cleaned_data.get("location") == "united_kingdom"
+
+
+def show_add_site_confirmation_form(wizard):
+    # check if a site has already been added with the same postcode
+    cleaned_data = wizard.get_cleaned_data_for_step(UK_ADDRESS) or {}
+    postcode = cleaned_data.get("postcode")
+    if not postcode:
+        return False
+    existing_sites = get_sites(wizard.request, wizard.request.session["organisation"], postcode=postcode)
+    return len(existing_sites) > 0
+
+
+class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
+    template_name = "core/form-wizard.html"
+    form_list = [
+        (LOCATION, site_forms.NewSiteLocationForm),
+        (UK_ADDRESS, site_forms.NewSiteUKAddressForm),
+        (INTERNATIONAL_ADDRESS, site_forms.NewSiteInternationalAddressForm),
+        (CONFIRM, site_forms.NewSiteConfirmForm),
+        (ASSIGN_USERS, site_forms.NewSiteAssignUsersForm),
+    ]
+
+    def get_form_kwargs(self, step):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        if step == CONFIRM:
+            if self.storage.get_step_data("uk_address"):
+                kwargs["postcode"] = self.storage.get_step_data("uk_address").get("uk_address-postcode")
+        return kwargs
 
 
 class ViewSite(TemplateView):
