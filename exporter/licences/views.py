@@ -41,7 +41,7 @@ class AbstractListView(LoginRequiredMixin, TemplateView):
         params.pop("licence_type", None)
         return params
 
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.page = int(self.request.GET.get("page", 1))
         return super().get(*args, **kwargs)
 
@@ -117,7 +117,8 @@ class ListOpenGeneralLicences(AbstractListView):
 
 
 class Licence(LoginRequiredMixin, TemplateView):
-    def get(self, request, pk):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs["pk"]
         licence, status_code = get_licence(request, pk)
         if status_code == HTTPStatus.NOT_FOUND:
             return Http404

@@ -112,7 +112,8 @@ class DownloadDocument(LoginRequiredMixin, TemplateView):
 
 
 class DownloadGeneratedDocument(LoginRequiredMixin, TemplateView):
-    def get(self, request, case_pk, document_pk):
+    def get(self, request, *args, **kwargs):
+        document_pk = kwargs["document_pk"]
         document, _ = get_document(request, pk=document_pk)
         client = s3_client()
         signed_url = client.generate_presigned_url(

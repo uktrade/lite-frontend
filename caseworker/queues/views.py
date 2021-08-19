@@ -160,8 +160,8 @@ class CaseAssignments(CaseworkerLoginRequiredMixin, SingleFormView):
 
 
 class EnforcementXMLExport(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, pk):
-        data, status_code = get_enforcement_xml(request, pk)
+    def get(self, request, *args, **kwargs):
+        data, status_code = get_enforcement_xml(request, kwargs["pk"])
 
         if status_code == HTTPStatus.NO_CONTENT:
             return error_page(request, CasesListPage.EnforcementXML.Export.NO_CASES)

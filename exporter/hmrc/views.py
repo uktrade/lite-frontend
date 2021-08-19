@@ -55,7 +55,7 @@ class SelectAnOrganisation(LoginRequiredMixin, TemplateView):
 
 
 class ReferenceName(LoginRequiredMixin, TemplateView):
-    def get(self, request, org_id):
+    def get(self, request, *args, **kwargs):
         return form_page(request, reference_name_form())
 
     def post(self, request, org_id):

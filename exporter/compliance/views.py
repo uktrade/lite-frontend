@@ -33,7 +33,9 @@ class ComplianceSiteList(LoginRequiredMixin, TemplateView):
 
 
 class ComplianceSiteDetails(LoginRequiredMixin, TemplateView):
-    def get(self, request, pk, tab, **kwargs):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs["pk"]
+        tab = kwargs["tab"]
         data = get_compliance_detail(request, pk)
         data["tab"] = tab
         if tab == "case-notes":
@@ -65,7 +67,10 @@ class ComplianceSiteDetails(LoginRequiredMixin, TemplateView):
 
 
 class ComplianceVisitDetails(LoginRequiredMixin, TemplateView):
-    def get(self, request, site_case_id, pk, tab, **kwargs):
+    def get(self, request, *args, **kwargs):
+        site_case_id = kwargs["site_case_id"]
+        pk = kwargs["pk"]
+        tab = kwargs["tab"]
         data = get_case_visit_report(request, pk)
         data["tab"] = tab
         data["site_case_id"] = site_case_id
@@ -85,7 +90,8 @@ class AnnualReturnsList(LoginRequiredMixin, TemplateView):
 
 
 class AnnualReturnsDownload(LoginRequiredMixin, TemplateView):
-    def get(self, request, pk):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs["pk"]
         return get_open_licence_return_download(request, pk)
 
 
