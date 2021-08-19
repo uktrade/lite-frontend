@@ -8,7 +8,17 @@ app_name = "sites"
 
 urlpatterns = [
     path("", views.Sites.as_view(), name="sites"),
-    path("new/", views.NewSite.as_view(), name="new"),
+    path(
+        "new/",
+        views.NewSiteWizardView.as_view(
+            condition_dict={
+                views.UK_ADDRESS: views.show_domestic_site_form,
+                views.INTERNATIONAL_ADDRESS: views.show_international_site_form,
+                views.CONFIRM: views.show_add_site_confirmation_form,
+            }
+        ),
+        name="new",
+    ),
     path("<uuid:pk>/", views.ViewSite.as_view(), name="site"),
     path("<uuid:pk>/edit-name/", views.EditSiteName.as_view(), name="edit_name"),
     path(

@@ -1,4 +1,8 @@
 from django.urls import reverse_lazy
+from django import forms
+
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Submit, Layout, HTML
 
 from exporter.core.constants import Permissions
 from exporter.core.services import get_countries, get_organisation_users
@@ -20,7 +24,148 @@ from lite_forms.components import (
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
+from core.forms import widgets
 from exporter.organisation.sites.services import get_sites, filter_sites_in_the_uk
+
+
+class NewSiteLocationForm(forms.Form):
+    location = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=[
+            ("united_kingdom", AddSiteForm.WhereIsYourSiteBased.IN_THE_UK),
+            ("abroad", AddSiteForm.WhereIsYourSiteBased.OUTSIDE_THE_UK),
+        ],
+    )
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["back_link_url"] = reverse_lazy("organisation:sites:sites")
+        return context
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(AddSiteForm.WhereIsYourSiteBased.TITLE),
+            HTML.p(AddSiteForm.WhereIsYourSiteBased.DESCRIPTION),
+            "location",
+            Submit("submit", "Continue"),
+        )
+
+
+class NewSiteUKAddressForm(forms.Form):
+    name = forms.CharField(label=AddSiteForm.Details.NAME)
+    address_line_1 = forms.CharField(label="Building and street")
+    address_line_2 = forms.CharField(label="")
+    city = forms.CharField(label="Town or city")
+    region = forms.CharField(label="County or state")
+    postcode = forms.CharField(label="Postcode")
+    phone_number = forms.CharField(label="Phone number", help_text="For international numbers include the country code")
+    website = forms.CharField(label="Website")
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(AddSiteForm.Details.TITLE),
+            HTML.p(AddSiteForm.Details.DESCRIPTION),
+            "name",
+            HTML.h2(AddSiteForm.Details.ADDRESS_HEADER_UK),
+            "address_line_1",
+            "address_line_2",
+            "city",
+            "region",
+            "postcode",
+            "phone_number",
+            "website",
+            Submit("submit", "Continue"),
+        )
+
+
+class NewSiteInternationalAddressForm(forms.Form):
+    name = forms.CharField(label=AddSiteForm.Details.NAME)
+    address = forms.CharField(
+        label="Address", widget=forms.Textarea(attrs={"class": "govuk-input--width-20", "rows": 6}), required=False
+    )
+    phone_number = forms.CharField(
+        label="Phone number", help_text="For international numbers include the country code", required=False
+    )
+    website = forms.CharField(label="Website", required=False)
+    country = forms.ChoiceField(
+        choices=[], widget=widgets.Autocomplete(attrs={"id": "country-autocomplete"})
+    )  # populated in __init__
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        countries = get_countries(self.request, False, ["GB"])
+        country_choices = [("", "Select a country")] + [(country["id"], country["name"]) for country in countries]
+        self.declared_fields["country"].choices = country_choices
+
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(AddSiteForm.Details.TITLE),
+            HTML.p(AddSiteForm.Details.DESCRIPTION),
+            "name",
+            HTML.h2(AddSiteForm.Details.ADDRESS_HEADER_ABROAD),
+            "address",
+            "phone_number",
+            "website",
+            "country",
+            Submit("submit", "Continue"),
+        )
+
+    # def clean(self):
+    #     TODO: send to api for validation here
+    #     cleaned_data = super().clean()
+    #     post_sites()
+
+
+class NewSiteConfirmForm(forms.Form):
+    are_you_sure = forms.ChoiceField(
+        label=AddSiteForm.Postcode.CONTROL_TITLE,
+        choices=[(True, AddSiteForm.Postcode.YES), (False, AddSiteForm.Postcode.NO)],
+        widget=forms.RadioSelect(),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        postcode = kwargs.pop("postcode")
+        existing_sites = get_sites(self.request, self.request.session["organisation"], postcode=postcode)
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(AddSiteForm.Postcode.TITLE),
+            HTML.p(AddSiteForm.Postcode.DESCRIPTION.format(", ".join(site["name"] for site in existing_sites))),
+            "are_you_sure",
+            Submit("submit", "Continue"),
+            # TODO: if user selects No don't submit anything and redirect back to the sites page
+        )
+
+
+class NewSiteAssignUsersForm(forms.Form):
+    users = forms.MultipleChoiceField(label="", choices=[], widget=forms.CheckboxSelectMultiple(),)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        users_choices = get_organisation_users(
+            self.request,
+            self.request.session["organisation"],
+            {"disable_pagination": True, "exclude_permission": Permissions.ADMINISTER_SITES},
+            True,
+        )
+        self.declared_fields["users"].choices = users_choices
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(AddSiteForm.AssignUsers.TITLE),
+            HTML.p(AddSiteForm.AssignUsers.DESCRIPTION),
+            # TODO: add filters
+            "users" if users_choices else HTML.warning("No items"),
+            Submit("submit", "Continue"),
+        )
 
 
 def new_site_forms(request):
