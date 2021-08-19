@@ -28,7 +28,7 @@ class OrganisationView(TemplateView):
     def get_additional_context(self):
         return self.additional_context
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.organisation_id = str(request.session["organisation"])
         self.organisation = get_organisation(request, self.organisation_id)
 
@@ -81,7 +81,7 @@ class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
     def form_function(self, back_url):
         raise NotImplementedError
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         form = self.form_function(back_url=reverse("organisation:details"))  # pylint: disable=E1102
         return form_page(request, form)
 

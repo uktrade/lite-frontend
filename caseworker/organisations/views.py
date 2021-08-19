@@ -43,7 +43,7 @@ class OrganisationList(CaseworkerLoginRequiredMixin, TemplateView):
     Show all organisations.
     """
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         search_term = request.GET.get("search_term", "").strip()
         org_type = request.GET.get("org_type", "").strip()
 

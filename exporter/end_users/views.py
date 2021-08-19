@@ -24,7 +24,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 class EndUsersList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         params = convert_parameters_to_query_params(
             {"page": request.GET.get("page", 1), "name": request.GET.get("name")}
         )
@@ -80,7 +80,7 @@ class CopyAdvisory(LoginRequiredMixin, TemplateView):
 
         return super(CopyAdvisory, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return form_page(request, self.forms.forms[0], data=self.data)
 
     def post(self, request, **kwargs):
@@ -102,7 +102,7 @@ class ApplyForAnAdvisory(LoginRequiredMixin, TemplateView):
 
         return super(ApplyForAnAdvisory, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return form_page(request, self.forms.forms[0])
 
     def post(self, request, **kwargs):
@@ -134,7 +134,7 @@ class EndUserDetail(LoginRequiredMixin, TemplateView):
 
         return super(EndUserDetail, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         context = {
             "case_id": self.case_id,
             "end_user_advisory": self.end_user_advisory,

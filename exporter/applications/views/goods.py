@@ -102,7 +102,7 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
 
 
 class ExistingGoodsList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         List of existing goods (add-preexisting)
         """
@@ -318,7 +318,7 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
 
         return super().dispatch(request, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         back_link = build_firearm_back_link_create(
             form_url=reverse("applications:new_good", kwargs={"pk": kwargs["pk"]}),
             form_data=request.session.get(self.firearms_data_id, {}),
@@ -473,7 +473,7 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
 
 
 class AttachDocument(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         good_id = str(kwargs["good_pk"])
         draft_id = str(kwargs["pk"])
         back_link = BackLink(
@@ -658,7 +658,7 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
 
 
 class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         pk = str(kwargs["pk"])
         good_pk = str(kwargs["good_pk"])
         doc_pk = str(kwargs["doc_pk"])
@@ -668,7 +668,7 @@ class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):
 
 
 class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         good_on_application_id = str(kwargs["good_on_application_pk"])
 
@@ -681,7 +681,7 @@ class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
 
 
 class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
         documents = {

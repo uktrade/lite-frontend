@@ -5,7 +5,7 @@ from caseworker.queues.services import get_cases_search_data
 
 
 class Cases(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Endpoint to enable access to the API /cases/ endpoint
         """

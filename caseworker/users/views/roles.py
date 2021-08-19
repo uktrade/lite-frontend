@@ -13,7 +13,7 @@ from caseworker.users.services import get_roles, get_permissions, get_role, put_
 
 
 class Roles(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         roles, _ = get_roles(request)
         all_permissions = get_permissions(request)
         permissions = get_user_permissions(request)

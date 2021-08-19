@@ -341,7 +341,7 @@ class AddAnAdditionalContact(SingleFormView):
 
 
 class AttachDocuments(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         case_id = str(kwargs["pk"])
         case = get_case(request, case_id)
 
@@ -380,7 +380,7 @@ class AttachDocuments(TemplateView):
 
 
 class Document(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         document, _ = get_document(request, pk=kwargs["file_pk"])
         client = s3_client()
         signed_url = client.generate_presigned_url(

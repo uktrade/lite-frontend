@@ -13,7 +13,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 class EndUser(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
         is_permanent_app = is_application_export_type_permanent(application)

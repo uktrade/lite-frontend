@@ -52,7 +52,7 @@ from lite_forms.generators import form_page
 
 
 class FlagsList(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         params = request.GET.copy()
         params["status"] = params.get("status", FlagStatus.ACTIVE.value)
         data = get_flags(request, **params)
@@ -101,7 +101,7 @@ class EditFlag(CaseworkerLoginRequiredMixin, SingleFormView):
 
 
 class ChangeFlagStatus(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         status = kwargs["status"]
         description = ""
 
@@ -134,7 +134,7 @@ class ChangeFlagStatus(CaseworkerLoginRequiredMixin, TemplateView):
 
 
 class ManageFlagRules(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
 

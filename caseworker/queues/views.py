@@ -102,7 +102,7 @@ class Cases(CaseworkerLoginRequiredMixin, TemplateView):
 
 
 class QueuesList(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         page = request.GET.get("page", 1)
         name = request.GET.get("name")
         queues = get_queues(request, page=page, disable_pagination=False, name=name)

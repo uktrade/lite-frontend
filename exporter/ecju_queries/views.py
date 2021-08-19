@@ -74,7 +74,7 @@ class RespondToQuery(LoginRequiredMixin, TemplateView):
 
         return super(RespondToQuery, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Will get a text area form for the user to respond to the ecju_query
         """
@@ -197,7 +197,7 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.back_link = BackLink(ecju_queries.UploadDocumentForm.BACK_FORM_LINK, self.success_url)
         form = upload_documents_form(self.back_link)
         return form_page(
@@ -219,7 +219,7 @@ class UploadDocuments(LoginRequiredMixin, TemplateView):
 
 
 class QueryDocument(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.object_type = kwargs["object_type"]
         self.case_pk = str(kwargs["case_pk"])
         self.query_pk = str(kwargs["query_pk"])
@@ -255,7 +255,7 @@ class QueryDocumentDelete(LoginRequiredMixin, TemplateView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         document = get_ecju_query_document(request, self.case_pk, self.query_pk, self.doc_pk)
         context = {
             "object_type": self.object_type,

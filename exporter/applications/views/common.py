@@ -55,7 +55,7 @@ from core.helpers import convert_dict_to_query_params
 
 
 class ApplicationsList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
         organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
@@ -97,7 +97,7 @@ class DeleteApplication(LoginRequiredMixin, SingleFormView):
 
 
 class ApplicationEditType(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         data = get_application(request, application_id)
 
@@ -127,7 +127,7 @@ class ApplicationEditType(LoginRequiredMixin, TemplateView):
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application = get_application(request, kwargs["pk"])
         return get_application_task_list(request, application)
 
@@ -163,7 +163,7 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
         return super(ApplicationDetail, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         status_props, _ = get_status_properties(request, self.application["status"]["key"])
 
         context = {
@@ -218,7 +218,7 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
 
         return super(ApplicationSummary, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
 
         context = {
             "case_id": self.application_id,
@@ -267,7 +267,7 @@ class SurrenderApplication(LoginRequiredMixin, SingleFormView):
 
 
 class Notes(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
         notes = get_case_notes(request, application_id)["case_notes"]
@@ -292,7 +292,7 @@ class Notes(LoginRequiredMixin, TemplateView):
 
 
 class CheckYourAnswers(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = kwargs["pk"]
         application = get_application(request, application_id)
 
@@ -301,7 +301,7 @@ class CheckYourAnswers(LoginRequiredMixin, TemplateView):
 
 
 class Submit(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = kwargs["pk"]
         application = get_application(request, application_id)
 
@@ -312,7 +312,7 @@ class Submit(LoginRequiredMixin, TemplateView):
 
 
 class ApplicationSubmitSuccessPage(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Display application submit success page
         This page is accessed one of two ways:

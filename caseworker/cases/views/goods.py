@@ -72,7 +72,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
             self.storage.extra_data[self.CACHE_KEY_CONTROL_LIST_ENTRIES] = control_list_entries
         return self.storage.extra_data[self.CACHE_KEY_CONTROL_LIST_ENTRIES]
 
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         # hack to make the form_list as long as the number of selected goods
         if self.object_name in self.request.GET:
             self.storage.extra_data[self.object_name] = self.request.GET.getlist(self.object_name)

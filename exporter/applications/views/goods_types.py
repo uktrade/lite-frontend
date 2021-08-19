@@ -20,7 +20,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 class GoodsTypeList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
         are_goods_noneditable = None
@@ -51,7 +51,7 @@ class GoodsTypeAdd(LoginRequiredMixin, SingleFormView):
 
 
 class GoodsTypeRemove(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         good_type_id = str(kwargs["goods_type_pk"])
 

@@ -20,7 +20,7 @@ from caseworker.users.services import (
 
 
 class UsersList(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         params = {
             "page": int(self.request.GET.get("page", 1)),
             "email": self.request.GET.get("email", ""),
@@ -64,7 +64,7 @@ class AddUser(SingleFormView):
 
 
 class ViewUser(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         data, _ = get_gov_user(request, str(kwargs["pk"]))
         request_user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
         super_user = is_super_user(request_user)
@@ -82,7 +82,7 @@ class ViewUser(TemplateView):
 
 
 class ViewProfile(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return redirect(reverse_lazy("users:user", kwargs={"pk": request.session["lite_api_user_id"]}))
 
 
@@ -106,7 +106,7 @@ class EditUser(SingleFormView):
 
 
 class ChangeUserStatus(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         status = kwargs["status"]
         description = ""
 

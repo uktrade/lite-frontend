@@ -50,7 +50,7 @@ def get_delete_confirmation_page(path, pk):
 
 
 class AttachDocuments(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         draft_id = str(kwargs["pk"])
         form = get_upload_page(request.path, draft_id)
         return form_page(request, form, extra_data={"draft_id": draft_id})
@@ -95,7 +95,7 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
 
 
 class DownloadDocument(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         draft_id = str(kwargs["pk"])
         action = document_switch(request.path)["download"]
 
@@ -124,7 +124,7 @@ class DownloadGeneratedDocument(LoginRequiredMixin, TemplateView):
 
 
 class DeleteDocument(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return form_page(request, get_delete_confirmation_page(request.path, str(kwargs["pk"])))
 
     def post(self, request, **kwargs):

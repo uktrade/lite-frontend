@@ -77,7 +77,7 @@ class SpireApplicationDetail(CaseworkerLoginRequiredMixin, TemplateView):
 
 
 class SpireApplicationDocumentDetail(CaseworkerLoginRequiredMixin, View):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         response = helpers.spire_client.get_file_version(self.kwargs["id"])
         response.raise_for_status()
         parsed = response.json()

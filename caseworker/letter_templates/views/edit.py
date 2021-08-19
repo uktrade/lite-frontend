@@ -18,7 +18,7 @@ from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
 
 class EditTemplate(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         letter_template = get_letter_template(request, str(kwargs["pk"]))[0]["template"]
         letter_template_case_types = letter_template.pop("case_types") or []
         letter_template_decisions = letter_template.pop("decisions") or []
@@ -66,7 +66,7 @@ class EditTemplate(CaseworkerLoginRequiredMixin, TemplateView):
 
 
 class EditParagraphs(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         letter_template = get_letter_template(request, str(kwargs["pk"]))[0]["template"]
         letter_paragraphs = get_letter_paragraphs(request, letter_template["letter_paragraphs"])
         letter_paragraphs = self.sort_letter_paragraphs(letter_paragraphs, letter_template["letter_paragraphs"])

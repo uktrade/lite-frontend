@@ -65,7 +65,7 @@ def get_locations_page(request, application_id, **kwargs):
 
 
 class GoodsLocation(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return get_locations_page(request, application_id=kwargs["pk"])
 
 
@@ -140,7 +140,7 @@ class AddExternalLocation(LoginRequiredMixin, MultiFormView):
 
 
 class RemoveExternalLocation(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         draft_id = str(kwargs["pk"])
         ext_loc_id = str(kwargs["ext_loc_pk"])
         data, _ = delete_external_locations_from_draft(request, draft_id, ext_loc_id)
@@ -283,7 +283,7 @@ class AddContractTypes(LoginRequiredMixin, SingleFormView):
 
 
 class CountriesAndContractTypesSummary(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         object_pk = kwargs["pk"]
         countries_data = get_application_countries_and_contract_types(request, object_pk)
         countries = [
@@ -310,7 +310,7 @@ class CountriesAndContractTypesSummary(LoginRequiredMixin, TemplateView):
 class StaticDestinations(LoginRequiredMixin, TemplateView):
     # To be used for OIELs where all countries are preselected and non-modifiable by the user
     # The UKCS OIEL is a special case - this is the initial page displayed before prompting the user to select contract types
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
         goodstype_category = None

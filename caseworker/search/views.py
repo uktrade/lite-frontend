@@ -43,7 +43,7 @@ class AbstractAutocompleteView:
     def perform_authentication(self, request):
         pass
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         form = forms.AutocompleteForm(request.GET)
         if form.is_valid():
             q = form.cleaned_data["q"]

@@ -24,7 +24,7 @@ class AddParty(TemplateView):
         self.copy_url = copy_url
         self.new_url = new_url
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         form = party_create_new_or_copy_existing_form(kwargs["pk"], back_url=self.back_url)
         return form_page(request, form)
 
@@ -100,7 +100,7 @@ class DeleteParty(TemplateView):
         self.action = action
         self.error = error
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         status_code = self.action(request, application_id, str(kwargs["obj_pk"]))
 
@@ -118,7 +118,7 @@ class CopyParties(TemplateView):
         self.back_url = f"applications:add_{new_party_type}"
         self.new_party_type = new_party_type
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         List of existing parties
         """

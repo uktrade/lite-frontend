@@ -15,7 +15,7 @@ from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
 
 class TeamsList(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         data = get_teams(request)
 
         context = {
@@ -31,7 +31,7 @@ class Team(CaseworkerLoginRequiredMixin, RedirectView):
 
 
 class TeamDetail(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         user, _ = get_gov_user(self.request)
         team, _ = get_team(request, str(kwargs["pk"]))
         users, _ = get_users_by_team(request, str(kwargs["pk"]))

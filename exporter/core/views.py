@@ -37,7 +37,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 class Home(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         if not request.authbroker_client.authorized:
             return render(request, "core/start.html")
         try:
@@ -74,7 +74,7 @@ class PickOrganisation(LoginRequiredMixin, TemplateView):
 
         return super(PickOrganisation, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         data = {"organisation": str(request.session.get("organisation"))}
         return form_page(request, self.form, data=data, extra_data={"user_in_limbo": data["organisation"] == "None"})
 

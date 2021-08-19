@@ -16,7 +16,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 class UltimateEndUsers(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
         ultimate_end_users = get_ultimate_end_users(request, application_id)

@@ -37,7 +37,7 @@ from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
 
 class Picklists(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Return a list of picklists and show all the relevant items
         """
@@ -67,7 +67,7 @@ class Picklists(CaseworkerLoginRequiredMixin, TemplateView):
 
 
 class PicklistsJson(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Return JSON representation of picklists for use in picklist pickers
         """
@@ -85,7 +85,7 @@ class PicklistsJson(CaseworkerLoginRequiredMixin, TemplateView):
 
 
 class ViewPicklistItem(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         picklist_item = get_picklist_item(request, str(kwargs["pk"]))
 
         context = {

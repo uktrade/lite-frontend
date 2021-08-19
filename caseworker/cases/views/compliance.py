@@ -26,7 +26,7 @@ from lite_forms.views import SingleFormView
 
 
 class CreateVisitReport(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         case_id = str(kwargs["pk"])
         response = post_create_compliance_visit(request, case_id)
 

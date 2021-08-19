@@ -13,7 +13,7 @@ from lite_forms.components import FiltersBar, TextInput
 
 
 class LetterTemplatesList(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         params = {"page": int(request.GET.get("page", 1)), "name": request.GET.get("name", "")}
 
         data, _ = get_letter_templates(request, convert_dict_to_query_params(params))
@@ -26,7 +26,7 @@ class LetterTemplatesList(CaseworkerLoginRequiredMixin, TemplateView):
 
 
 class LetterTemplateDetail(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         letter_template_id = str(kwargs["pk"])
         params = convert_dict_to_query_params({"generate_preview": True, "activity": True})
         response, _ = get_letter_template(request, letter_template_id, params=params)

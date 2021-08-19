@@ -142,7 +142,7 @@ class CoalesceTeamAdvice(CaseworkerLoginRequiredMixin, TemplateView):
     Group all team's advice into final advice
     """
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         case_id = str(kwargs["pk"])
         coalesce_team_advice(request, case_id)
         messages.success(self.request, "Team advice combined successfully")

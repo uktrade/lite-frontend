@@ -84,7 +84,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 class Goods(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         name = request.GET.get("name", "").strip()
         description = request.GET.get("description", "").strip()
         part_number = request.GET.get("part_number", "").strip()
@@ -119,7 +119,7 @@ class Goods(LoginRequiredMixin, TemplateView):
 
 
 class GoodsDetailEmpty(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
 
 
@@ -138,7 +138,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
 
         return super(GoodsDetail, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         documents = get_good_documents(request, str(self.good_id))
 
         context = {
@@ -910,7 +910,7 @@ class EditSerialNumbers(LoginRequiredMixin, SingleFormView):
 
 
 class DeleteGood(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         data, _ = get_good(request, str(kwargs["pk"]))
         return form_page(request, delete_good_form(data))
 
@@ -983,7 +983,7 @@ class CheckDocumentGrading(LoginRequiredMixin, SingleFormView):
 
 
 class AttachDocuments(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return_to_good_page = request.GET.get("goodpage", "no")
         good_id = str(kwargs["pk"])
         extra_data = {"good_id": good_id}
@@ -1043,7 +1043,7 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
 
 
 class Document(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         good_id = str(kwargs["pk"])
         file_pk = str(kwargs["file_pk"])
 
@@ -1052,7 +1052,7 @@ class Document(LoginRequiredMixin, TemplateView):
 
 
 class DeleteDocument(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         good_id = str(kwargs["pk"])
         draft_pk = str(kwargs.get("draft_pk", ""))
         file_pk = str(kwargs["file_pk"])

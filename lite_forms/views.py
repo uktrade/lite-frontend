@@ -277,7 +277,7 @@ class SummaryListFormView(FormView):
         }
         return render(self.request, "summary-list.html", context)
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.init(request, **kwargs)
 
         if self.data:

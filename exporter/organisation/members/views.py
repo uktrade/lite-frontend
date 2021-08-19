@@ -49,7 +49,7 @@ class AddUser(SingleFormView):
 
 
 class ViewUser(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         request_user = get_organisation_user(request, str(request.session["organisation"]), str(kwargs["pk"]))
         user = get_user(request)
 
@@ -72,7 +72,7 @@ class ViewUser(TemplateView):
 
 
 class ViewProfile(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         pk = request.session["lite_api_user_id"]
         return redirect(reverse_lazy("organisation:members:user", kwargs={"pk": pk}))
 
@@ -89,7 +89,7 @@ class EditUser(SingleFormView):
 
 
 class ChangeUserStatus(TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         status = kwargs["status"]
         description = ""
 

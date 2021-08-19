@@ -34,7 +34,7 @@ from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
 
 class RoutingRulesList(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         params = {
             "page": int(request.GET.get("page", 1)),
             **get_params_if_exist(request, ["case_status", "team", "queue", "tier", "only_active"]),

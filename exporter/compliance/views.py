@@ -120,7 +120,7 @@ class AddAnnualReturn(LoginRequiredMixin, MultiFormView):
 
 
 class AddAnnualReturnSuccess(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return success_page(
             request=request,
             title=OpenReturnsForm.Success.TITLE,

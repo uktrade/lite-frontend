@@ -15,7 +15,7 @@ from caseworker.auth.views import CaseworkerLoginRequiredMixin
 
 
 class Add(CaseworkerLoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         return form_page(request, add_letter_template(request).forms[0])
 
     @staticmethod
@@ -64,7 +64,7 @@ class VariableHelp(CaseworkerLoginRequiredMixin, TemplateView):
         rows = [item.strip().replace("\\n", "\n") for item in text.split("\n") if item.strip()]
         return [row.split("|") for row in rows]
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         tables = {
             table.name: self._get_table_text(table.value) for table in strings.letter_templates.VariableHelpPageTables
         }
