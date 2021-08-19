@@ -32,7 +32,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
     "fetch-polyfill": "^0.8.2",
-    "govuk-frontend": "^3.9.0",
+    "govuk-frontend": "^3.13.0",
     "highlight-within-textarea": "^2.0.5",
     "jquery": "^3.5.1",
     "lightpick": "^1.6.2",
