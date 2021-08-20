@@ -6,14 +6,12 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import friendly_boolean
-
+from caseworker.core.helpers import generate_activity_filters
+from caseworker.core.services import get_countries, get_control_list_entries
 from lite_content.lite_internal_frontend import open_general_licences as open_general_licences_strings, generic
 from lite_forms.components import FiltersBar, Select, TextInput, AutocompleteInput, BackLink, HiddenField
 from lite_forms.generators import confirm_form
 from lite_forms.views import SummaryListFormView, SingleFormView
-
-from caseworker.core.helpers import generate_activity_filters
-from caseworker.core.services import get_countries, get_control_list_entries
 from caseworker.open_general_licences import constants
 from caseworker.open_general_licences.enums import OpenGeneralExportLicences
 from caseworker.open_general_licences.forms import open_general_licence_forms
@@ -25,10 +23,11 @@ from caseworker.open_general_licences.services import (
     set_open_general_licence_status,
     get_ogl_activity,
 )
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
+
+from core.auth.views import LoginRequiredMixin
 
 
-class ListView(CaseworkerLoginRequiredMixin, TemplateView):
+class ListView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         open_general_licences = get_open_general_licences(request, **request.GET)
         control_list_entries = get_control_list_entries(request, True)
@@ -52,7 +51,7 @@ class ListView(CaseworkerLoginRequiredMixin, TemplateView):
         return render(request, "open-general-licences/index.html", context)
 
 
-class DetailView(CaseworkerLoginRequiredMixin, TemplateView):
+class DetailView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         activity_and_filters = get_ogl_activity(request, kwargs["pk"], activity_filters=request.GET)
         context = {
@@ -66,7 +65,7 @@ class DetailView(CaseworkerLoginRequiredMixin, TemplateView):
         return render(request, "open-general-licences/open-general-licence.html", context)
 
 
-class CreateView(CaseworkerLoginRequiredMixin, SummaryListFormView):
+class CreateView(LoginRequiredMixin, SummaryListFormView):
     def init(self, request, **kwargs):
         licence = OpenGeneralExportLicences.get_by_id(
             request.POST.get("case_type", OpenGeneralExportLicences.open_general_export_licence.id)
@@ -94,7 +93,7 @@ class CreateView(CaseworkerLoginRequiredMixin, SummaryListFormView):
         return data
 
 
-class UpdateView(CaseworkerLoginRequiredMixin, SingleFormView):
+class UpdateView(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_open_general_licence(request, self.object_pk)
@@ -128,7 +127,7 @@ class UpdateView(CaseworkerLoginRequiredMixin, SingleFormView):
         return form
 
 
-class ChangeStatusView(CaseworkerLoginRequiredMixin, SingleFormView):
+class ChangeStatusView(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_open_general_licence(request, self.object_pk)

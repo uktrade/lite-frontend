@@ -62,10 +62,6 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
 
 class LoginRequiredMixin:
-    @property
-    def user_profile(self):
-        return get_profile(self.request.authbroker_client)
-
     def redirect_to_login(self):
         resolved_url = resolve_url(settings.LOGIN_URL)
         login_url_parts = list(urlparse(resolved_url))
@@ -75,8 +71,6 @@ class LoginRequiredMixin:
         return HttpResponseRedirect(urlunparse(login_url_parts))
 
     def dispatch(self, request, *args, **kwargs):
-        # is user logged in to SSO?
         if not self.request.authbroker_client.authorized:
             return self.redirect_to_login()
-
         return super().dispatch(request, *args, **kwargs)

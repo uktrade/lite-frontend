@@ -5,7 +5,6 @@ import pytest
 from urllib import parse
 
 from django.test import Client
-from django.conf import settings
 
 from core import client
 from core.helpers import convert_value_to_query_param
@@ -13,64 +12,6 @@ from core.helpers import convert_value_to_query_param
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
 gov_uk_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
-
-
-@pytest.fixture(autouse=True)
-def mock_caseworker_sso_auth(requests_mock):
-    url = settings.AUTHBROKER_PROFILE_URL
-    data = {
-        "id": 123,
-        "email": "john.smith@example.com",
-        "first_name": "John",
-        "last_name": "Smith",
-        "status": "Active",
-        "token": "foo",
-    }
-    yield requests_mock.get(url=url, json=data)
-
-
-@pytest.fixture(autouse=True)
-def mock_post_caseworker_sso_auth(requests_mock):
-    url = settings.AUTHBROKER_PROFILE_URL
-    data = {
-        "id": 123,
-        "email": "john.smith@example.com",
-        "first_name": "John",
-        "last_name": "Smith",
-        "status": "Active",
-        "token": "foo",
-    }
-    yield requests_mock.post(url=url, json=data)
-
-
-@pytest.fixture(autouse=True)
-def mock_get_gov_user(requests_mock, data_open_case):
-    url = client._build_absolute_uri("/gov-users/d355428a-64cb-4347-853b-afcacee15d93/")
-    data = {}
-    yield requests_mock.get(url=url, json=data)
-
-
-@pytest.fixture(autouse=True)
-def mock_get_queue(requests_mock, data_open_case):
-    url = client._build_absolute_uri("/queues/00000000-0000-0000-0000-000000000001/")
-    data = {}
-    yield requests_mock.get(url=url, json=data)
-
-
-@pytest.fixture(autouse=True)
-def mock_post_gov_user(requests_mock, data_open_case):
-    url = client._build_absolute_uri("/gov-users/authenticate/")
-    data = {
-        "id": 123,
-        "email": "john.smith@example.com",
-        "first_name": "John",
-        "last_name": "Smith",
-        "default_queue": "00000000-0000-0000-0000-000000000001",
-        "status": "Active",
-        "token": "foo",
-        "lite_api_user_id": "d355428a-64cb-4347-853b-afcacee15d93",
-    }
-    yield requests_mock.post(url=url, json=data)
 
 
 @pytest.fixture

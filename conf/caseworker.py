@@ -107,8 +107,6 @@ CACHES = {
 
 FEATURE_PRODUCTPEDIA_ON = env.bool("FEATURE_PRODUCTPEDIA_ON", False)
 
-SERVICE_NAME = "lite-internal-frontend"
-
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):
     ELASTIC_APM = {

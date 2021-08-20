@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 
 from s3chunkuploader.file_handler import s3_client
 
+from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
 
 from lite_content.lite_internal_frontend import cases
@@ -20,7 +21,6 @@ from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
 
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.additional_contacts import add_additional_contact_form
 from caseworker.cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
@@ -532,7 +532,7 @@ class NextReviewDate(SingleFormView):
         return data
 
 
-class Denials(CaseworkerLoginRequiredMixin, TemplateView):
+class Denials(LoginRequiredMixin, TemplateView):
     template_name = "case/denial-for-case.html"
 
     def get_context_data(self, **kwargs):

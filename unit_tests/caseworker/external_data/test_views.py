@@ -104,7 +104,7 @@ def test_denial_revoke_submit(authorized_client, mock_denial_detail, mock_denial
     response = authorized_client.post(url, {"comment": "abc"})
 
     # then the denial is revoked
-    assert requests_mock.request_history[3].json() == {"is_revoked": True, "is_revoked_comment": "abc"}
+    assert requests_mock.request_history[0].json() == {"is_revoked": True, "is_revoked_comment": "abc"}
 
     # and the user is redirected back to denial detail
     assert response.status_code == 302
