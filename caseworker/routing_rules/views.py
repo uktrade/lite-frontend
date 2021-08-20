@@ -3,18 +3,15 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
+from caseworker.core.constants import Permission
+from caseworker.core.helpers import has_permission, get_params_if_exist
 from core.helpers import convert_dict_to_query_params
-
+from caseworker.core.services import get_statuses
 from lite_content.lite_internal_frontend.routing_rules import Filter, CONFIRM_FORM_ERROR
-
 from lite_forms.components import FiltersBar, Option, Checkboxes, Select, AutocompleteInput, TextInput
 from lite_forms.generators import form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import MultiFormView, SingleFormView
-
-from caseworker.core.constants import Permission
-from caseworker.core.helpers import has_permission, get_params_if_exist
-from caseworker.core.services import get_statuses
 from caseworker.queues.services import get_queues
 from caseworker.routing_rules.forms import (
     routing_rule_form_group,
@@ -30,10 +27,11 @@ from caseworker.routing_rules.services import (
 )
 from caseworker.teams.services import get_teams, get_users_team_queues
 from caseworker.users.services import get_gov_user
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
+
+from core.auth.views import LoginRequiredMixin
 
 
-class RoutingRulesList(CaseworkerLoginRequiredMixin, TemplateView):
+class RoutingRulesList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         params = {
             "page": int(request.GET.get("page", 1)),
@@ -80,7 +78,7 @@ class RoutingRulesList(CaseworkerLoginRequiredMixin, TemplateView):
         return render(request, "routing-rules/index.html", context)
 
 
-class CreateRoutingRule(CaseworkerLoginRequiredMixin, MultiFormView):
+class CreateRoutingRule(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         select_team = has_permission(request, Permission.MANAGE_ALL_ROUTING_RULES)
         team_id = request.POST.get("team", get_gov_user(request)[0]["user"]["team"]["id"])
@@ -96,7 +94,7 @@ class CreateRoutingRule(CaseworkerLoginRequiredMixin, MultiFormView):
         self.action = post_routing_rule
 
 
-class ChangeRoutingRuleActiveStatus(CaseworkerLoginRequiredMixin, SingleFormView):
+class ChangeRoutingRuleActiveStatus(LoginRequiredMixin, SingleFormView):
     success_url = reverse_lazy("routing_rules:list")
 
     def init(self, request, **kwargs):
@@ -125,7 +123,7 @@ class ChangeRoutingRuleActiveStatus(CaseworkerLoginRequiredMixin, SingleFormView
         return super(ChangeRoutingRuleActiveStatus, self).post(request, **kwargs)
 
 
-class EditRoutingRules(CaseworkerLoginRequiredMixin, MultiFormView):
+class EditRoutingRules(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_routing_rule(request, self.object_pk)[0]

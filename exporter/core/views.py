@@ -112,7 +112,7 @@ class RegisterAnOrganisationTriage(MultiFormView):
             request.session["email"] = profile["email"]
             request.session["first_name"] = profile.get("user_profile", {}).get("first_name")
             request.session["last_name"] = profile.get("user_profile", {}).get("last_name")
-        if "user_token" in request.session and get_user(request).get("organisations"):
+        if "user_token" in request.session and get_user(request)["organisations"]:
             raise Http404
 
     def get_success_url(self):

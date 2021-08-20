@@ -4,7 +4,9 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
 from core.builtins.custom_tags import str_date
-
+from caseworker.core.services import get_countries, get_denial_reasons
+from caseworker.flags.enums import FlagStatus
+from caseworker.flags.services import get_flags
 from lite_content.lite_internal_frontend.picklists import (
     ReactivatePicklistItem,
     DeactivatePicklistItem,
@@ -13,7 +15,6 @@ from lite_content.lite_internal_frontend.picklists import (
 from lite_forms.components import FiltersBar, TextInput, HiddenField
 from lite_forms.generators import confirm_form
 from lite_forms.views import SingleFormView
-
 from caseworker.picklists.enums import PicklistCategories
 from caseworker.picklists.forms import (
     add_picklist_item_form,
@@ -30,13 +31,11 @@ from caseworker.picklists.services import (
 )
 from caseworker.teams.services import get_team
 from caseworker.users.services import get_gov_user
-from caseworker.core.services import get_countries, get_denial_reasons
-from caseworker.flags.enums import FlagStatus
-from caseworker.flags.services import get_flags
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
+
+from core.auth.views import LoginRequiredMixin
 
 
-class Picklists(CaseworkerLoginRequiredMixin, TemplateView):
+class Picklists(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         Return a list of picklists and show all the relevant items
@@ -66,7 +65,7 @@ class Picklists(CaseworkerLoginRequiredMixin, TemplateView):
         return render(request, "teams/picklists.html", context)
 
 
-class PicklistsJson(CaseworkerLoginRequiredMixin, TemplateView):
+class PicklistsJson(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
         Return JSON representation of picklists for use in picklist pickers
@@ -84,7 +83,7 @@ class PicklistsJson(CaseworkerLoginRequiredMixin, TemplateView):
         return JsonResponse(data=picklist_items)
 
 
-class ViewPicklistItem(CaseworkerLoginRequiredMixin, TemplateView):
+class ViewPicklistItem(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         picklist_item = get_picklist_item(request, str(kwargs["pk"]))
 
@@ -96,7 +95,7 @@ class ViewPicklistItem(CaseworkerLoginRequiredMixin, TemplateView):
         return render(request, "teams/picklist-item.html", context)
 
 
-class AddPicklistItem(CaseworkerLoginRequiredMixin, SingleFormView):
+class AddPicklistItem(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.action = post_picklist_item
         countries, _ = get_countries(request)
@@ -113,7 +112,7 @@ class AddPicklistItem(CaseworkerLoginRequiredMixin, SingleFormView):
             return add_picklist_item_form(self.request.GET.get("type"))
 
 
-class EditPicklistItem(CaseworkerLoginRequiredMixin, SingleFormView):
+class EditPicklistItem(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_picklist_item(request, self.object_pk)
@@ -134,7 +133,7 @@ class EditPicklistItem(CaseworkerLoginRequiredMixin, SingleFormView):
             return edit_picklist_item_form(self.object)
 
 
-class ChangeStatusView(CaseworkerLoginRequiredMixin, SingleFormView):
+class ChangeStatusView(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.object = get_picklist_item(request, self.object_pk)

@@ -5,8 +5,7 @@ from django.shortcuts import redirect
 from django.views.generic import FormView
 
 from core.auth.permissions import IsAuthbrokerAuthenticated
-
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
+from core.auth.views import LoginRequiredMixin
 from caseworker.search import forms, helpers, services
 
 
@@ -53,7 +52,7 @@ class AbstractAutocompleteView:
         return Response(results)
 
 
-class ApplicationSearchView(AbstractSearchView, CaseworkerLoginRequiredMixin, FormView):
+class ApplicationSearchView(AbstractSearchView, LoginRequiredMixin, FormView):
     template_name = "search/search-application.html"
     service = staticmethod(services.get_application_search_results)
 
@@ -62,7 +61,7 @@ class ApplicationAutocompleteView(AbstractAutocompleteView, views.APIView):
     service = staticmethod(services.get_application_autocomplete)
 
 
-class ProductSearchView(AbstractSearchView, CaseworkerLoginRequiredMixin, FormView):
+class ProductSearchView(AbstractSearchView, LoginRequiredMixin, FormView):
     template_name = "search/search-product.html"
     form_class = forms.SearchForm
     service = staticmethod(services.get_product_search_results)
@@ -75,7 +74,7 @@ class ProductAutocompleteView(AbstractAutocompleteView, views.APIView):
     service = staticmethod(services.get_product_autocomplete)
 
 
-class ProductDetailSpireView(CaseworkerLoginRequiredMixin, FormView):
+class ProductDetailSpireView(LoginRequiredMixin, FormView):
     template_name = "search/product-details.html"
     form_class = forms.CommentForm
 
@@ -90,7 +89,7 @@ class ProductDetailSpireView(CaseworkerLoginRequiredMixin, FormView):
         return redirect(self.request.get_full_path())
 
 
-class ProductDetailLiteView(CaseworkerLoginRequiredMixin, FormView):
+class ProductDetailLiteView(LoginRequiredMixin, FormView):
     template_name = "search/product-details.html"
     form_class = forms.CommentForm
 

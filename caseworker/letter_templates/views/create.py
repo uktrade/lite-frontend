@@ -1,8 +1,7 @@
+from lite_content.lite_internal_frontend import strings
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
-
-from lite_content.lite_internal_frontend import strings
 
 from lite_forms.generators import form_page, error_page
 from lite_forms.submitters import submit_paged_form
@@ -11,10 +10,11 @@ from caseworker.letter_templates.forms import add_letter_template
 from caseworker.letter_templates.helpers import get_template_content
 from caseworker.letter_templates.services import post_letter_template
 from caseworker.letter_templates.views.letter_paragraphs import get_order_paragraphs_page
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
+
+from core.auth.views import LoginRequiredMixin
 
 
-class Add(CaseworkerLoginRequiredMixin, TemplateView):
+class Add(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         return form_page(request, add_letter_template(request).forms[0])
 
@@ -29,7 +29,7 @@ class Add(CaseworkerLoginRequiredMixin, TemplateView):
         return get_order_paragraphs_page(request, template_content)
 
 
-class Create(CaseworkerLoginRequiredMixin, TemplateView):
+class Create(LoginRequiredMixin, TemplateView):
     @staticmethod
     def post(request):
         json = request.POST.copy()
@@ -53,7 +53,7 @@ class Create(CaseworkerLoginRequiredMixin, TemplateView):
         return redirect("letter_templates:letter_templates")
 
 
-class VariableHelp(CaseworkerLoginRequiredMixin, TemplateView):
+class VariableHelp(LoginRequiredMixin, TemplateView):
     @staticmethod
     def _get_table_text(text):
         """

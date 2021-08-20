@@ -3,19 +3,16 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
+from caseworker.core.constants import Permission
 from core.helpers import convert_dict_to_query_params
-
+from caseworker.core.objects import Tab
+from caseworker.core.services import get_user_permissions, get_menu_notifications, get_countries
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage, OrganisationPage
-
 from lite_forms.components import FiltersBar, TextInput, Select, Option, HiddenField
 from lite_forms.common import edit_address_questions_form
 from lite_forms.helpers import flatten_data
 from lite_forms.views import MultiFormView, SingleFormView
-
-from caseworker.core.constants import Permission
-from caseworker.core.objects import Tab
-from caseworker.core.services import get_user_permissions, get_menu_notifications, get_countries
 from caseworker.organisations.forms import (
     register_organisation_forms,
     register_hmrc_organisation_forms,
@@ -35,10 +32,11 @@ from caseworker.organisations.services import (
     get_organisation_activity,
     get_site_activity,
 )
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
+
+from core.auth.views import LoginRequiredMixin
 
 
-class OrganisationList(CaseworkerLoginRequiredMixin, TemplateView):
+class OrganisationList(LoginRequiredMixin, TemplateView):
     """
     Show all organisations.
     """
@@ -90,7 +88,7 @@ class OrganisationView(TemplateView):
     def get_additional_context(self):
         return self.additional_context
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, **kwargs):
         self.organisation_id = kwargs["pk"]
         self.organisation = get_organisation(request, self.organisation_id)
 
@@ -120,7 +118,7 @@ class OrganisationView(TemplateView):
         return render(request, f"organisations/organisation/{self.template_name}.html", context)
 
 
-class OrganisationDetails(CaseworkerLoginRequiredMixin, OrganisationView):
+class OrganisationDetails(LoginRequiredMixin, OrganisationView):
     template_name = "details"
 
     def get_additional_context(self):
@@ -129,7 +127,7 @@ class OrganisationDetails(CaseworkerLoginRequiredMixin, OrganisationView):
         return {**context, "orgasation_documents": documents}
 
 
-class OrganisationReview(CaseworkerLoginRequiredMixin, SingleFormView):
+class OrganisationReview(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.action = put_organisation_status
@@ -137,14 +135,14 @@ class OrganisationReview(CaseworkerLoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("organisations:organisation", kwargs={"pk": self.object_pk})
 
 
-class OrganisationMembers(CaseworkerLoginRequiredMixin, OrganisationView):
+class OrganisationMembers(LoginRequiredMixin, OrganisationView):
     template_name = "members"
 
     def get_additional_context(self):
         return {"members": get_organisation_members(self.request, self.organisation_id)}
 
 
-class OrganisationSites(CaseworkerLoginRequiredMixin, OrganisationView):
+class OrganisationSites(LoginRequiredMixin, OrganisationView):
     template_name = "sites"
 
     def get_additional_context(self):
@@ -154,7 +152,7 @@ class OrganisationSites(CaseworkerLoginRequiredMixin, OrganisationView):
         }
 
 
-class RegisterOrganisation(CaseworkerLoginRequiredMixin, MultiFormView):
+class RegisterOrganisation(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = register_organisation_forms(request)
         self.action = post_organisations
@@ -162,7 +160,7 @@ class RegisterOrganisation(CaseworkerLoginRequiredMixin, MultiFormView):
         self.success_url = reverse("organisations:organisations")
 
 
-class RegisterHMRC(CaseworkerLoginRequiredMixin, MultiFormView):
+class RegisterHMRC(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = register_hmrc_organisation_forms()
         self.action = post_hmrc_organisations
@@ -170,7 +168,7 @@ class RegisterHMRC(CaseworkerLoginRequiredMixin, MultiFormView):
         self.success_url = reverse("organisations:organisations")
 
 
-class EditOrganisation(CaseworkerLoginRequiredMixin, SingleFormView):
+class EditOrganisation(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         organisation = get_organisation(request, str(self.object_pk))
@@ -194,7 +192,7 @@ class EditOrganisation(CaseworkerLoginRequiredMixin, SingleFormView):
         return form(self.data, permission_to_edit_org_name, are_fields_optional)
 
 
-class EditOrganisationAddress(CaseworkerLoginRequiredMixin, SingleFormView):
+class EditOrganisationAddress(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.organisation = get_organisation(request, str(self.object_pk))

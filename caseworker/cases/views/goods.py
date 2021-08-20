@@ -17,7 +17,7 @@ from caseworker.core.constants import Permission
 from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
 from caseworker.search.services import get_product_like_this
-from caseworker.auth.views import CaseworkerLoginRequiredMixin
+from core.auth.views import LoginRequiredMixin
 from lite_forms.views import SingleFormView
 
 from django.shortcuts import redirect
@@ -26,7 +26,7 @@ from django.views.generic import FormView
 from django.utils.functional import cached_property
 
 
-class ReviewGoods(CaseworkerLoginRequiredMixin, SingleFormView):
+class ReviewGoods(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         case_url = reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]})
         if not has_permission(request, Permission.REVIEW_GOODS):
@@ -186,7 +186,7 @@ class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
         return super().get_context_data(object_control_list_entries=self.object["control_list_entries"], **kwargs)
 
 
-class GoodDetails(CaseworkerLoginRequiredMixin, FormView):
+class GoodDetails(LoginRequiredMixin, FormView):
     template_name = "case/product-on-case.html"
     form_class = SearchForm
 
