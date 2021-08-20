@@ -1,8 +1,9 @@
 from django.urls import reverse_lazy
 from django import forms
+from django.template.loader import render_to_string
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit, Layout, HTML
+from crispy_forms_gds.layout import Submit, Layout, HTML, Field
 
 from exporter.core.constants import Permissions
 from exporter.core.services import get_countries, get_organisation_users
@@ -146,7 +147,9 @@ class NewSiteConfirmForm(forms.Form):
 
 
 class NewSiteAssignUsersForm(forms.Form):
-    users = forms.MultipleChoiceField(label="", choices=[], widget=forms.CheckboxSelectMultiple(),)
+    users = forms.MultipleChoiceField(
+        label="", choices=[], widget=forms.CheckboxSelectMultiple(), required=False,  # populated in __init__
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
@@ -162,7 +165,7 @@ class NewSiteAssignUsersForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(AddSiteForm.AssignUsers.TITLE),
             HTML.p(AddSiteForm.AssignUsers.DESCRIPTION),
-            # TODO: add filters
+            HTML(render_to_string("forms/filter.html")) if users_choices else None,
             "users" if users_choices else HTML.warning("No items"),
             Submit("submit", "Continue"),
         )

@@ -1,0 +1,13 @@
+{% load svg static %}
+
+<div class="govuk-form-group">
+	<div class="lite-search__container" style="max-width: 400px; display: none;">
+	    <input type="search" class="govuk-input" id="filter-box" placeholder="{{ placeholder }}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+		<button class="lite-search__button lite-search__button--instant-search" type="submit">
+			{% svg 'search' %}
+			<span>Search</span>
+		</button>
+	</div>
+</div>
+
+<script type="text/javascript" src="{% static '/javascripts/filter-checkbox-list.js' %}" nonce="{{ request.csp_nonce }}"></script>
