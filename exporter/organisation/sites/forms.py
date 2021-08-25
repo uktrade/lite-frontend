@@ -3,7 +3,7 @@ from django import forms
 from django.template.loader import render_to_string
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit, Layout, HTML, Field
+from crispy_forms_gds.layout import Submit, Layout, HTML
 
 from exporter.core.constants import Permissions
 from exporter.core.services import get_countries, get_organisation_users
@@ -59,6 +59,7 @@ class NewSiteLocationForm(forms.Form):
 def serialize_site_data(cleaned_data):
     # address is a separate model so the serializer on lite-api expects it as a nested dictionary
     return {
+        "location": cleaned_data.get("location"),
         "name": cleaned_data.get("name"),
         # BUG: phone_number and website are not actually saved on the site instance
         # they are saved on the organisation
@@ -69,10 +70,10 @@ def serialize_site_data(cleaned_data):
             "address": cleaned_data.get("address"),  # for international addresses
             "address_line_1": cleaned_data.get("address_line_1"),  # for uk addresses
             "address_line_2": cleaned_data.get("address_line_2"),  # for uk addresses
-            "city": cleaned_data.get("city"),
-            "region": cleaned_data.get("region"),
-            "postcode": cleaned_data.get("postcode"),
-            "country": cleaned_data.get("country"),
+            "city": cleaned_data.get("city"),  # for uk addresses
+            "region": cleaned_data.get("region"),  # for uk addresses
+            "postcode": cleaned_data.get("postcode"),  # for uk addresses
+            "country": cleaned_data.get("country"),  # for international addresses
         },
     }
 
@@ -208,6 +209,7 @@ class NewSiteAssignUsersForm(forms.Form):
             {"disable_pagination": True, "exclude_permission": Permissions.ADMINISTER_SITES},
             True,
         )
+        # TODO: check users have correct values
         self.declared_fields["users"].choices = users_choices
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()

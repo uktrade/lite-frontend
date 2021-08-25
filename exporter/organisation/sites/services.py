@@ -66,15 +66,6 @@ def update_site(request, pk, json):
 
 
 def post_sites(request, organisation_id, json):
-    if json.get("are_you_sure", True) == "None":
-        return (
-            {"errors": {"are_you_sure": [AddSiteForm.WhereIsYourSiteBased.EXISTING_SITE_ERROR]}},
-            HTTPStatus.BAD_REQUEST,
-        )
-
-    if "location" not in json:
-        return {"errors": {"location": [AddSiteForm.WhereIsYourSiteBased.ERROR]}}, HTTPStatus.BAD_REQUEST
-
     data = client.post(request, f"/organisations/{organisation_id}/sites/", json)
     return data.json(), data.status_code
 
