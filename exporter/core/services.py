@@ -173,7 +173,7 @@ def get_organisation_users(request, pk, params, convert_to_options=False):
 
 
 def get_organisation_user(request, pk, user_pk):
-    data = client.get(request, f"/organisations/{pk}/users/" + user_pk)
+    data = client.get(request, f"/organisations/{pk}/users/{user_pk}")
     return data.json()
 
 

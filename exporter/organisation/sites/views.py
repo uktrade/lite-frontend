@@ -7,7 +7,7 @@ from formtools.wizard.views import SessionWizardView
 
 from exporter.core.services import get_organisation
 from lite_forms.views import SingleFormView
-from exporter.organisation.sites.forms import edit_site_name_form, site_records_location, serialize_site_data
+from exporter.organisation.sites.forms import edit_site_name_form, site_records_location
 from exporter.organisation.sites.services import get_site, post_sites, update_site, get_sites
 from exporter.organisation.views import OrganisationView
 from exporter.organisation.sites import forms as site_forms
@@ -67,7 +67,7 @@ class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
         context["back_link_url"] = reverse("organisation:sites:sites")
         return context
 
-    def get_form_kwargs(self, step):
+    def get_form_kwargs(self, step):  # noqa pylint incorrectly flagging this
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         if step == CONFIRM:
@@ -77,24 +77,11 @@ class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
 
     def done(self, form_list, **kwargs):
         # merge all answers into one dictionary
-        form_data = [form.cleaned_data for form in form_list]
+        form_data = [form.serialized_data for form in form_list]
         site_data = {key: value for f in form_data for key, value in f.items()}
-        serialized_data = serialize_site_data(site_data)
-        # lite-api assumes which type of address (uk or abroad)
-        # the data is for based on which keys exist in the json
-        # so remove non-relevant keys here
-        # TODO: update lite-api to check which type of address based on the location value
-        if site_data["location"] == "united_kingdom":
-            del serialized_data["address"]["address"]
-            del serialized_data["address"]["country"]
-        else:
-            del serialized_data["address"]["address_line_1"]
-            del serialized_data["address"]["address_line_2"]
-            del serialized_data["address"]["region"]
-            del serialized_data["address"]["city"]
-            del serialized_data["address"]["postcode"]
         organisation_id = str(self.request.session["organisation"])
-        json, status_code = post_sites(self.request, organisation_id, serialized_data)
+        response = post_sites(self.request, organisation_id, site_data)
+        json = response.json()
         return redirect(reverse("organisation:sites:site", kwargs={"pk": json["site"]["id"]}))
 
 

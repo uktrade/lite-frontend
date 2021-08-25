@@ -1,10 +1,7 @@
-from http import HTTPStatus
-
 from urllib.parse import urlencode
 
 from core import client
 from lite_content.lite_exporter_frontend import strings
-from lite_content.lite_exporter_frontend.sites import AddSiteForm
 from lite_forms.components import Option
 
 
@@ -66,14 +63,12 @@ def update_site(request, pk, json):
 
 
 def post_sites(request, organisation_id, json):
-    data = client.post(request, f"/organisations/{organisation_id}/sites/", json)
-    return data.json(), data.status_code
+    return client.post(request, f"/organisations/{organisation_id}/sites/", json)
 
 
 def validate_sites(request, organisation_id, json):
     json["validate_only"] = True
-    data = client.post(request, f"/organisations/{organisation_id}/sites/", json)
-    return data.json(), data.status_code
+    return client.post(request, f"/organisations/{organisation_id}/sites/", json)
 
 
 def put_assign_sites(request, pk, json):
