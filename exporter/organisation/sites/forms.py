@@ -26,7 +26,7 @@ from lite_forms.components import (
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
 from core.forms import widgets
-from exporter.organisation.sites.services import get_sites, filter_sites_in_the_uk
+from exporter.organisation.sites.services import get_sites, filter_sites_in_the_uk, validate_sites
 
 
 class NewSiteLocationForm(forms.Form):
@@ -36,6 +36,7 @@ class NewSiteLocationForm(forms.Form):
             ("united_kingdom", AddSiteForm.WhereIsYourSiteBased.IN_THE_UK),
             ("abroad", AddSiteForm.WhereIsYourSiteBased.OUTSIDE_THE_UK),
         ],
+        error_messages={"required": ["Select a location"]},
     )
 
     def get_context_data(self, *args, **kwargs):
@@ -55,15 +56,38 @@ class NewSiteLocationForm(forms.Form):
         )
 
 
+def serialize_site_data(cleaned_data):
+    # address is a separate model so the serializer on lite-api expects it as a nested dictionary
+    return {
+        "name": cleaned_data.get("name"),
+        # BUG: phone_number and website are not actually saved on the site instance
+        # they are saved on the organisation
+        # so including them here does nothing at the moment
+        "phone_number": cleaned_data.get("phone_number"),
+        "website": cleaned_data.get("website"),
+        "address": {
+            "address": cleaned_data.get("address"),  # for international addresses
+            "address_line_1": cleaned_data.get("address_line_1"),  # for uk addresses
+            "address_line_2": cleaned_data.get("address_line_2"),  # for uk addresses
+            "city": cleaned_data.get("city"),
+            "region": cleaned_data.get("region"),
+            "postcode": cleaned_data.get("postcode"),
+            "country": cleaned_data.get("country"),
+        },
+    }
+
+
 class NewSiteUKAddressForm(forms.Form):
-    name = forms.CharField(label=AddSiteForm.Details.NAME)
-    address_line_1 = forms.CharField(label="Building and street")
-    address_line_2 = forms.CharField(label="")
-    city = forms.CharField(label="Town or city")
-    region = forms.CharField(label="County or state")
-    postcode = forms.CharField(label="Postcode")
-    phone_number = forms.CharField(label="Phone number", help_text="For international numbers include the country code")
-    website = forms.CharField(label="Website")
+    name = forms.CharField(label=AddSiteForm.Details.NAME, required=False)
+    address_line_1 = forms.CharField(label="Building and street", required=False)
+    address_line_2 = forms.CharField(label="", required=False)
+    city = forms.CharField(label="Town or city", required=False)
+    region = forms.CharField(label="County or state", required=False)
+    postcode = forms.CharField(label="Postcode", required=False)
+    phone_number = forms.CharField(
+        label="Phone number", help_text="For international numbers include the country code", required=False
+    )
+    website = forms.CharField(label="Website", required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
@@ -84,9 +108,24 @@ class NewSiteUKAddressForm(forms.Form):
             Submit("submit", "Continue"),
         )
 
+    def add_form_errors(self, errors):
+        address_errors = errors.pop("address")
+        flattened_errors = {**errors, **address_errors}
+        for key, value in flattened_errors.items():
+            if key in self.declared_fields:
+                self.add_error(key, value)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        serialized_data = serialize_site_data(cleaned_data)
+        json, status_code = validate_sites(self.request, self.request.session["organisation"], serialized_data)
+        if json.get("errors"):
+            self.add_form_errors(json.get("errors"))
+        return cleaned_data
+
 
 class NewSiteInternationalAddressForm(forms.Form):
-    name = forms.CharField(label=AddSiteForm.Details.NAME)
+    name = forms.CharField(label=AddSiteForm.Details.NAME, required=False)
     address = forms.CharField(
         label="Address", widget=forms.Textarea(attrs={"class": "govuk-input--width-20", "rows": 6}), required=False
     )
@@ -95,7 +134,7 @@ class NewSiteInternationalAddressForm(forms.Form):
     )
     website = forms.CharField(label="Website", required=False)
     country = forms.ChoiceField(
-        choices=[], widget=widgets.Autocomplete(attrs={"id": "country-autocomplete"})
+        choices=[], widget=widgets.Autocomplete(attrs={"id": "country-autocomplete"}), required=False
     )  # populated in __init__
 
     def __init__(self, *args, **kwargs):
@@ -118,10 +157,20 @@ class NewSiteInternationalAddressForm(forms.Form):
             Submit("submit", "Continue"),
         )
 
-    # def clean(self):
-    #     TODO: send to api for validation here
-    #     cleaned_data = super().clean()
-    #     post_sites()
+    def add_form_errors(self, errors):
+        address_errors = errors.pop("address")
+        flattened_errors = {**errors, **address_errors}
+        for key, value in flattened_errors.items():
+            if key in self.declared_fields:
+                self.add_error(key, value)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        serialized_data = serialize_site_data(cleaned_data)
+        json, status_code = validate_sites(self.request, self.request.session["organisation"], serialized_data)
+        if json.get("errors"):
+            self.add_form_errors(json.get("errors"))
+        return cleaned_data
 
 
 class NewSiteConfirmForm(forms.Form):

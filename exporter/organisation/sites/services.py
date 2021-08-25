@@ -79,6 +79,12 @@ def post_sites(request, organisation_id, json):
     return data.json(), data.status_code
 
 
+def validate_sites(request, organisation_id, json):
+    json["validate_only"] = True
+    data = client.post(request, f"/organisations/{organisation_id}/sites/", json)
+    return data.json(), data.status_code
+
+
 def put_assign_sites(request, pk, json):
     data = client.put(request, f"/users/{pk}/sites/", json)
     return data.json(), data.status_code
