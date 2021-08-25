@@ -1,14 +1,13 @@
 from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
 
-from formtools.wizard.views import SessionWizardView, NamedUrlSessionWizardView
+from formtools.wizard.views import SessionWizardView
 
-from exporter.core.helpers import str_to_bool
-from exporter.core.services import get_organisation, get_countries
-from lite_forms.views import MultiFormView, SingleFormView
-from exporter.organisation.sites.forms import new_site_forms, edit_site_name_form, site_records_location
+from exporter.core.services import get_organisation
+from lite_forms.views import SingleFormView
+from exporter.organisation.sites.forms import edit_site_name_form, site_records_location, serialize_site_data
 from exporter.organisation.sites.services import get_site, post_sites, update_site, get_sites
 from exporter.organisation.views import OrganisationView
 from exporter.organisation.sites import forms as site_forms
@@ -70,6 +69,28 @@ class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
             if self.storage.get_step_data("uk_address"):
                 kwargs["postcode"] = self.storage.get_step_data("uk_address").get("uk_address-postcode")
         return kwargs
+
+    def done(self, form_list, **kwargs):
+        # merge all answers into one dictionary
+        form_data = [form.cleaned_data for form in form_list]
+        site_data = {key: value for f in form_data for key, value in f.items()}
+        serialized_data = serialize_site_data(site_data)
+        # lite-api assumes which type of address (uk or abroad)
+        # the data is for based on which keys exist in the json
+        # so remove non-relevant keys here
+        # TODO: update lite-api to check which type of address based on the location value
+        if site_data["location"] == "united_kingdom":
+            del serialized_data["address"]["address"]
+            del serialized_data["address"]["country"]
+        else:
+            del serialized_data["address"]["address_line_1"]
+            del serialized_data["address"]["address_line_2"]
+            del serialized_data["address"]["region"]
+            del serialized_data["address"]["city"]
+            del serialized_data["address"]["postcode"]
+        organisation_id = str(self.request.session["organisation"])
+        json, status_code = post_sites(self.request, organisation_id, serialized_data)
+        return redirect(reverse("organisation:sites:site", kwargs={"pk": json["site"]["id"]}))
 
 
 class ViewSite(TemplateView):
