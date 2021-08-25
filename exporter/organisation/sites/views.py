@@ -62,6 +62,11 @@ class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
         (ASSIGN_USERS, site_forms.NewSiteAssignUsersForm),
     ]
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["back_link_url"] = reverse("organisation:sites:sites")
+        return context
+
     def get_form_kwargs(self, step):
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request

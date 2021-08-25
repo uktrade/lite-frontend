@@ -39,11 +39,6 @@ class NewSiteLocationForm(forms.Form):
         error_messages={"required": ["Select a location"]},
     )
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["back_link_url"] = reverse_lazy("organisation:sites:sites")
-        return context
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
