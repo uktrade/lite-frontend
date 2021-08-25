@@ -85,9 +85,6 @@ LITE_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
 
 LITE_API_AUTH_HEADER_NAME = "GOV-USER-TOKEN"
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = ["gds"]
-CRISPY_TEMPLATE_PACK = "gds"
-
 if "redis" in VCAP_SERVICES:
     REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
 else:

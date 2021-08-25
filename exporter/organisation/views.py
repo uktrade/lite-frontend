@@ -1,22 +1,17 @@
 from django.conf import settings
-from django.shortcuts import redirect, render
-from django.urls import reverse
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView, RedirectView
+from django.shortcuts import render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import FormView, TemplateView, RedirectView
 
-from exporter.applications.helpers.date_fields import format_date
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend.organisation import Tabs
 from lite_forms.helpers import conditional
-from exporter.core.validators import validate_expiry_date
 from exporter.organisation.roles.services import get_user_permissions
-from exporter.goods.forms import attach_firearm_dealer_certificate_form
 from exporter.organisation import forms
 from exporter.organisation.services import post_document_on_organisation, get_document_on_organisation
 from core.auth.views import LoginRequiredMixin
-from lite_forms.generators import form_page
 from s3chunkuploader.file_handler import s3_client
 
 
@@ -75,47 +70,51 @@ class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
         return signed_url
 
 
-class AbstractOrganisationUpload(LoginRequiredMixin, TemplateView):
+class AbstractOrganisationUpload(LoginRequiredMixin, FormView):
     document_type = None
 
-    def form_function(self, back_url):
-        raise NotImplementedError
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(back_link_url=reverse("organisation:details"), *args, **kwargs)
 
-    def get(self, request, **kwargs):
-        form = self.form_function(back_url=reverse("organisation:details"))  # pylint: disable=E1102
-        return form_page(request, form)
+    def form_valid(self, form):
+        organisation_id = str(self.request.session["organisation"])
 
-    def post(self, request, **kwargs):
-        organisation_id = str(request.session["organisation"])
-        data = {
-            "expiry_date": format_date(request.POST, "expiry_date_"),
-            "reference_code": self.request.POST["reference_code"],
-            "document_type": self.document_type,
+        data = {**form.cleaned_data}
+        file = data.pop("file")
+
+        data["document_type"] = self.document_type
+        data["document"] = {
+            "name": getattr(file, "original_name", file.name),
+            "s3_key": file.name,
+            "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
         }
 
-        errors = validate_expiry_date(request, "expiry_date_")
-        if errors:
-            form = self.form_function(back_url=reverse("organisation:details"))
-            return form_page(request, form, data=request.POST, errors={"expiry_date": errors})
+        formatted_date = data["expiry_date"].isoformat()
+        data["expiry_date"] = formatted_date
 
-        file = request.FILES.get("file")
-        if file:
-            data["document"] = {
-                "name": getattr(file, "original_name", file.name),
-                "s3_key": file.name,
-                "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-            }
-
-        post_document_on_organisation(request=request, organisation_id=organisation_id, data=data)
-
-        return redirect(reverse("organisation:details"))
+        post_document_on_organisation(request=self.request, organisation_id=organisation_id, data=data)
+        return super().form_valid(form)
 
 
 class UploadFirearmsCertificate(AbstractOrganisationUpload):
-    form_function = staticmethod(attach_firearm_dealer_certificate_form)
+    template_name = "core/form.html"
+    form_class = forms.UploadFirearmsCertificateForm
+    success_url = reverse_lazy("organisation:details")
     document_type = "rfd-certificate"
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(
+            form_action_url=reverse("organisation:upload-firearms-certificate"), *args, **kwargs
+        )
 
 
 class UploadSectionFiveCertificate(AbstractOrganisationUpload):
-    form_function = staticmethod(forms.attach_section_five_certificate_form)
+    template_name = "core/form.html"
+    form_class = forms.UploadSectionFiveCertificateForm
+    success_url = reverse_lazy("organisation:details")
     document_type = "section-five-certificate"
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(
+            form_action_url=reverse("organisation:upload-section-five-certificate"), *args, **kwargs
+        )
