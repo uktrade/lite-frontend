@@ -2,7 +2,9 @@ from bs4 import BeautifulSoup
 from copy import deepcopy
 from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
 
+from django.test import override_settings
 from django.urls import reverse
+from django.conf import settings
 
 import pytest
 
@@ -169,6 +171,7 @@ good_review_parametrize_data = (
 
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
+@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_standard_review_goods(
     authorized_client,
     requests_mock,
@@ -184,16 +187,14 @@ def test_standard_review_goods(
     good_on_application_pk = data_standard_case["case"]["data"]["goods"][0]["id"]
 
     step_data = build_wizard_step_data(
-        view_name="review_standard_application_good_wizard_view", step_name=good_pk, data=data,
+        view_name="review_standard_application_good_wizard_view", step_name=good_on_application_pk, data=data,
     )
     url = reverse("cases:review_standard_application_goods", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
 
-    response = authorized_client.get(f"{url}?goods={good_pk}")
-
+    response = authorized_client.get(f"{url}?goods={good_on_application_pk}")
     assert response.status_code == 200
 
-    response = authorized_client.post(f"{url}?goods={good_pk}", step_data)
-
+    response = authorized_client.post(f"{url}?goods={good_on_application_pk}", step_data)
     assert response.status_code == 302
     assert requests_mock_instance.call_count == 1
     assert requests_mock_instance.request_history[0].json() == {**expected, "objects": [good_pk]}
@@ -202,6 +203,7 @@ def test_standard_review_goods(
 
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
+@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_open_review_goods(
     authorized_client,
     requests_mock,
@@ -223,12 +225,8 @@ def test_open_review_goods(
 
     assert response.status_code == 200
 
-    response = authorized_client.post(f"{url}?goods_types={good_pk}", step_data)
-
-    assert response.status_code == 302
-    assert requests_mock_instance.call_count == 1
-    assert requests_mock_instance.request_history[0].json() == {**expected, "objects": [good_pk]}
-    assert good_pk in mock_product_more_like_this.request_history[0].url
+    with pytest.raises(ValueError) as e:
+        response = authorized_client.post(f"{url}?goods_types={good_pk}", step_data)
 
 
 def build_wizard_step_data(view_name, step_name, data):
@@ -237,6 +235,7 @@ def build_wizard_step_data(view_name, step_name, data):
     return step_data
 
 
+@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail(
     authorized_client,
     mock_application_search,
@@ -256,14 +255,16 @@ def test_good_on_application_detail(
     assert response.status_code == 200
     # then the search endpoint is requested for cases with goods with the same part number and control list entries
     assert mock_application_search.request_history[0].qs == {"part": ["44"], "clc_rating": ["ml1", "ml2"]}
-    # and the view exposes the data that the template needs
-    assert response.context_data["good_on_application"] == data_good_on_application
     assert response.context_data["other_cases"] == data_search
-    assert response.context_data["case"] == data_standard_case["case"]
     # and the form is pre-populated with the part number and control list entries
     assert response.context_data["form"]["search_string"].initial == 'part:"44" clc_rating:"ML1" clc_rating:"ML2"'
 
+    # and the view exposes the data that the template needs
+    assert response.context_data["good_on_application"] == data_good_on_application
+    assert response.context_data["case"] == data_standard_case["case"]
 
+
+@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_no_part_number(
     authorized_client,
     mock_application_search,
@@ -286,6 +287,7 @@ def test_good_on_application_detail_no_part_number(
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1" clc_rating:"ML2"'
 
 
+@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_no_part_number_no_control_list_entries(
     authorized_client,
     mock_application_search,
@@ -310,6 +312,7 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
     assert response.context_data["form"]["search_string"].initial == ""
 
 
+@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_not_rated_at_application_level(
     authorized_client,
     mock_application_search,
