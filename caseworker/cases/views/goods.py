@@ -102,7 +102,9 @@ class AbstractReviewGoodWizardView(SessionWizardView):
         )
 
     def process_step(self, form):
-        data = {**form.cleaned_data, "objects": [self.object_pk]}
+        if self.case["case_type"]["reference"]["key"] != "siel":
+            raise ValueError("Only SIEL licences are supported")
+        data = {**form.cleaned_data, "objects": [self.object["good"]["id"]]}
         del data["does_not_have_control_list_entries"]
         post_review_good(self.request, case_id=self.kwargs["pk"], data=data)
         return super().process_step(form)
@@ -122,7 +124,7 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
 
     @property
     def object(self):
-        return next(item for item in self.case.goods if item["good"]["id"] == self.object_pk)
+        return next(item for item in self.case.goods if item["id"] == self.object_pk)
 
     def get_form_initial(self, step):
         # if the good was reviewed at application level then use that as source of truth, otherwise use the export
