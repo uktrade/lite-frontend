@@ -194,7 +194,6 @@ class NewSiteConfirmForm(SiteFormMixin, forms.Form):
             HTML.p(AddSiteForm.Postcode.DESCRIPTION.format(", ".join(site["name"] for site in existing_sites))),
             "are_you_sure",
             Submit("submit", "Continue"),
-            # TODO: if user selects No don't submit anything and redirect back to the sites page
         )
 
 
