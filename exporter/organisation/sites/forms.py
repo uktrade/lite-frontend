@@ -204,13 +204,16 @@ class NewSiteAssignUsersForm(SiteFormMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
-        users_choices = get_organisation_users(
+        organisation_members = get_organisation_users(
             self.request,
             self.request.session["organisation"],
             {"disable_pagination": True, "exclude_permission": Permissions.ADMINISTER_SITES},
-            True,
+            False,
         )
-        # TODO: check users have correct values
+        users_choices = [
+            (user["id"], f"{user['first_name']} {user['last_name']}" if user["first_name"] else user["email"])
+            for user in organisation_members
+        ]
         self.declared_fields["users"].choices = users_choices
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
