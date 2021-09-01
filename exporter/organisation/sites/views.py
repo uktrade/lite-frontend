@@ -11,6 +11,7 @@ from exporter.organisation.sites.forms import edit_site_name_form, site_records_
 from exporter.organisation.sites.services import get_site, post_sites, update_site, get_sites
 from exporter.organisation.views import OrganisationView
 from exporter.organisation.sites import forms as site_forms
+from exporter.core.helpers import str_to_bool
 
 from core.auth.views import LoginRequiredMixin
 
@@ -61,6 +62,12 @@ class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
         (CONFIRM, site_forms.NewSiteConfirmForm),
         (ASSIGN_USERS, site_forms.NewSiteAssignUsersForm),
     ]
+
+    def render_next_step(self, form, **kwargs):
+        if self.steps.current == "confirm":
+            if not str_to_bool(form.cleaned_data["are_you_sure"]):
+                return redirect(reverse("organisation:sites:sites"))
+        return super().render_next_step(form, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
