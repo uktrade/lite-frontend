@@ -37,11 +37,7 @@ class SiteFormMixin:
         return data
 
     def add_form_errors(self, errors):
-        address_errors = {}
-        if errors.get("address"):
-            address_errors = errors.pop("address")
-        flattened_errors = {**errors, **address_errors}
-        for key, value in flattened_errors.items():
+        for key, value in errors.items():
             if key in self.declared_fields:
                 self.add_error(key, value)
 
@@ -49,8 +45,17 @@ class SiteFormMixin:
         response = validate_sites(self.request, self.request.session["organisation"], self.serialized_data)
         json = response.json()
         if json.get("errors"):
-            self.add_form_errors(json.get("errors"))
+            errors = self.flatten_errors(json.get("errors"))
+            self.add_form_errors(errors)
         return self.cleaned_data
+
+    def flatten_errors(self, errors):
+        if errors.get("address"):
+            if isinstance(errors["address"], list):
+                del errors["address"]
+            elif isinstance(errors["address"], dict):
+                return {**errors, **errors.pop("address")}
+        return errors
 
 
 class NewSiteLocationForm(SiteFormMixin, forms.Form):
