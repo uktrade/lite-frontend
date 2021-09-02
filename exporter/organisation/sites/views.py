@@ -64,7 +64,7 @@ class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
     ]
 
     def render_next_step(self, form, **kwargs):
-        if self.steps.current == "confirm":
+        if self.steps.current == CONFIRM:
             if not str_to_bool(form.cleaned_data["are_you_sure"]):
                 return redirect(reverse("organisation:sites:sites"))
         return super().render_next_step(form, **kwargs)
