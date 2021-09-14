@@ -2,10 +2,11 @@ from collections import defaultdict
 from http import HTTPStatus
 
 from django.contrib import messages
+from django.forms import forms
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
 
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.advice import (
@@ -14,6 +15,7 @@ from caseworker.cases.forms.advice import (
     generate_documents_form,
     reissue_finalise_form,
     finalise_form,
+    GenerateDocumentsCrispyForm
 )
 from caseworker.cases.forms.finalise_case import deny_licence_form
 from caseworker.cases.helpers.advice import (
@@ -291,3 +293,39 @@ class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
         self.action = grant_licence
         self.success_message = GenerateGoodsDecisionForm.SUCCESS_MESSAGE
         self.success_url = reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
+
+
+class FinaliseGenerateDocumentsCrispyView(FormView):
+    template_name = "components/generate-documents-application-finalise.html"
+    success_url = None
+    form_class = GenerateDocumentsCrispyForm
+
+    @property
+    def case(self):
+        return get_case(self.request, self.kwargs["pk"])
+
+    @property
+    def decisions(self):
+        decisions, _ = get_final_decision_documents(self.request, self.kwargs["pk"])
+        decisions = decisions["documents"]
+        return decisions
+
+    def get_context_data(self, **kwargs):
+        # case = get_case(self.request, self.kwargs["pk"])
+        # decisions, _ = get_final_decision_documents(self.request, self.kwargs["pk"])
+        # decisions = decisions["documents"]
+        case = self.case
+        decisions = self.decisions
+        import pdb; pdb.set_trace()
+        can_submit = all([decision.get("document") for decision in decisions.values()])
+        context = super().get_context_data(**kwargs)
+        context["case"] = case
+        context["can_submit"] = can_submit
+        context["decisions"] = decisions
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["case"] = self.case
+        kwargs["decisions"] = self.decisions
+        return kwargs

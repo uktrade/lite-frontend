@@ -1,5 +1,9 @@
 from datetime import datetime, date
 
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Layout, HTML
+from django.forms import forms
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from caseworker.cases.constants import CaseType
@@ -167,6 +171,23 @@ def generate_documents_form(queue_pk, case_pk):
         container="case",
         default_button_name=GenerateGoodsDecisionForm.BUTTON,
     )
+
+
+class GenerateDocumentsCrispyForm(forms.Form):
+    def __init__(self, case, decisions, **kwargs):
+        super().__init__(case, decisions, **kwargs)
+        context = {
+            "case": case,
+            "decisions": decisions,
+        }
+        headers = ["Name", "Status", "Added by", "Date", "Actions"]
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1("Generate decision documents"),
+            # HTML.table(headers=headers, rows=[]),
+            HTML(render_to_string("components/finalise-generate-documents.html", context=context))
+        )
+
 
 
 def finalise_goods_countries_form(case_pk, queue_pk):

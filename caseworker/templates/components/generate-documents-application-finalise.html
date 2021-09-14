@@ -1,0 +1,26 @@
+{% extends 'layouts/case.html' %}
+
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% load static from staticfiles %}
+
+{% block title %}Generate decision documents{% endblock %}
+
+{% block two_thirds %}
+    <a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">Back</a>
+
+    <!-- <h1 class="govuk-heading-l">Generate decision documents</h1>
+
+    {% include "components/finalise-generate-documents.html" %} -->
+
+	<form action="{{ form_action_url }}" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+
+		{% error_summary form %}
+
+		<div class="govuk-body">
+			{% crispy form %}
+		</div>
+
+	</form>
+{% endblock %}
