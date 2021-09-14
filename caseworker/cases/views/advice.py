@@ -5,10 +5,11 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
 
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.advice import (
+    GenerateDocumentsForm,
     give_advice_form,
     finalise_goods_countries_form,
     generate_documents_form,
@@ -291,3 +292,36 @@ class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
         self.action = grant_licence
         self.success_message = GenerateGoodsDecisionForm.SUCCESS_MESSAGE
         self.success_url = reverse_lazy("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
+
+
+class FinaliseGenerateDocumentsCrispy(LoginRequiredMixin, FormView):
+    template_name = "case/generate-documents.html"
+    success_message = GenerateGoodsDecisionForm.SUCCESS_MESSAGE
+    form_class = GenerateDocumentsForm
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        decisions, _ = get_final_decision_documents(self.request, self.kwargs["pk"])
+        decisions = decisions["documents"]
+
+        data["case"] = get_case(self.request, self.kwargs["pk"])
+        data["decisions"] = decisions
+        data["note_title"] = GenerateGoodsDecisionForm.NOTE
+        data["note_description"] = GenerateGoodsDecisionForm.NOTE_DESCRIPTION
+
+        data["form"].layout(data, self.request)
+
+        return data
+
+    def form_valid(self, form):
+        validated_data, _ = grant_licence(self.request, self.kwargs["pk"], form.cleaned_data)
+        if "errors" in validated_data:
+            for error in validated_data["errors"]:
+                form.add_error(field=None, error=validated_data["errors"][error][0])
+            return self.render_to_response(self.get_context_data(form=form))
+        else:
+            return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})

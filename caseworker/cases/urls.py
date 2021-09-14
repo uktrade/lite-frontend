@@ -26,6 +26,11 @@ urlpatterns = [
     path("finalise/", advice.Finalise.as_view(), name="finalise"),
     path("finalise/generate-documents/", advice.FinaliseGenerateDocuments.as_view(), name="finalise_documents"),
     path(
+        "finalise/generate-documents-crispy/",
+        advice.FinaliseGenerateDocumentsCrispy.as_view(),
+        name="finalise_documents_crispy",
+    ),
+    path(
         "finalise/<str:decision_key>/generate-document/",
         generate_document.GenerateDecisionDocument.as_view(),
         name="finalise_document_template",

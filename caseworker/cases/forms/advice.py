@@ -1,5 +1,9 @@
 from datetime import datetime, date
 
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Submit, Layout, HTML
+from django import forms
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from caseworker.cases.constants import CaseType
@@ -26,8 +30,8 @@ from lite_forms.components import (
     Select,
     DetailComponent,
 )
-from lite_forms.helpers import conditional
 from caseworker.picklists.enums import PicklistCategories
+from lite_forms.helpers import conditional
 
 
 def give_advice_form(request, case: Case, tab, queue_pk, denial_reasons):
@@ -220,3 +224,21 @@ def finalise_form(request, case, goods, queue_pk):
         goods_html="components/goods-licence-list.html",
     )
     return form, data
+
+
+class GenerateDocumentsForm(forms.Form):
+
+    note = forms.CharField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+
+    def layout(self, context, request):
+        self.helper.layout = Layout(
+            HTML.h1(GenerateGoodsDecisionForm.TITLE),
+            HTML(render_to_string("components/finalise-generate-documents.html", context=context, request=request)),
+            HTML(render_to_string("components/note-details.html", context=context, request=request)),
+            Submit("submit", GenerateGoodsDecisionForm.BUTTON),
+        )
