@@ -234,15 +234,15 @@ def case_goods_has_conflicting_advice(goods, advice_list):
     return False
 
 
-def goods_list_has_at_least_one_approval(goods, advice_list):
-    # go through each product. check for approvals/provisos
+def goods_can_finalise(goods, advice_list):
+    # go through each product. check for approvals/provisos/NLRs
     for good_on_application in goods:
         # find advice belonging to the good
         product_advice = [a for a in advice_list if a["good"] == good_on_application["good"]["id"]]
 
         advice_types = set([a["type"]["key"] for a in product_advice])
 
-        if "approve" in advice_types or "proviso" in advice_types:
+        if "approve" in advice_types or "proviso" in advice_types or "no_licence_required" in advice_types:
             return True
 
     return False
