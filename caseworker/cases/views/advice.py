@@ -239,13 +239,20 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 request,
                 form,
                 data=form_data,
-                extra_data={"any_nlr": any_nlr, "case": case, "has_proviso": any([item == "proviso" for item in items])},
+                extra_data={
+                    "any_nlr": any_nlr,
+                    "case": case,
+                    "has_proviso": any([item == "proviso" for item in items]),
+                },
             )
         else:
             return form_page(
                 request,
                 deny_licence_form(
-                    kwargs["queue_pk"], case_id, case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value, all_nlr
+                    kwargs["queue_pk"],
+                    case_id,
+                    case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value,
+                    all_nlr,
                 ),
             )
 
