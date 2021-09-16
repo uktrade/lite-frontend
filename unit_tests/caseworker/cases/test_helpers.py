@@ -3,6 +3,7 @@ import pytest
 from caseworker.cases.helpers import advice
 from caseworker.cases.objects import Case
 
+nlr = {"key": "no_licence_required", "value": "No licence required"}
 approve = {"key": "approve", "value": "Approve"}
 proviso = {"key": "proviso", "value": "Approve with proviso"}
 refuse = {"key": "refuse", "value": "Refuse"}
@@ -131,16 +132,17 @@ def test_case_goods_has_conflicting_advice(product_1_advice, product_2_advice, i
 
 
 @pytest.mark.parametrize(
-    "advice_types,has_at_least_one_approval",
+    "advice_types,can_finalise",
     (
         ([approve, refuse, refuse], True),
         ([approve, proviso, approve], True),
         ([refuse, proviso, refuse], True),
+        ([refuse, refuse, nlr], True),
         ([refuse, refuse, refuse], False),
         ([refuse, conflicting, refuse], False),
     ),
 )
-def test_goods_list_has_at_least_one_approval(advice_types, has_at_least_one_approval):
+def test_goods_list_can_finalise(advice_types, can_finalise):
     product_1_id = "8b730c06-ab4e-401c-aeb0-32b3c92e912c"
     product_2_id = "13820c06-ab4e-401c-aeb0-32b3c92e912c"
     product_3_id = "00020c06-ab4e-401c-aeb0-32b3c92e912c"
@@ -177,7 +179,7 @@ def test_goods_list_has_at_least_one_approval(advice_types, has_at_least_one_app
     goods = [product_1, product_2, product_3]
     advice_list = [product_1_advice, product_2_advice, product_3_advice]
 
-    assert advice.goods_list_has_at_least_one_approval(goods, advice_list) == has_at_least_one_approval
+    assert advice.goods_can_finalise(goods, advice_list) == can_finalise
 
 
 advice_stub = {
