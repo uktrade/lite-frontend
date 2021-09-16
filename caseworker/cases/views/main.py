@@ -6,10 +6,11 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from s3chunkuploader.file_handler import s3_client
 
+from caseworker.cases.forms import move_case_2
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
 
@@ -325,6 +326,32 @@ class MoveCase(SingleFormView):
         self.success_url = reverse_lazy(
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
         )
+
+
+class MoveCase2(FormView):
+    form_class = move_case_2.MoveCase
+    template_name = "case/move-case.html"
+
+    def init(self, request, **kwargs):
+        self.object_pk = kwargs["pk"]
+        case = get_case(request, self.object_pk)
+        self.action = put_case_queues
+        self.context = {"case": case}
+        self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
+        self.success_url = reverse_lazy(
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
+        )
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        data["case"] = get_case(self.request, self.kwargs["pk"])
+        data["note_title"] = Manage.MoveCase.TITLE
+        data["note_description"] = ""
+
+        data["form"].layout(data, self.request)
+
+        return data
 
 
 class AddAnAdditionalContact(SingleFormView):

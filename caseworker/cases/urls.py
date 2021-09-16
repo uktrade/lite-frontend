@@ -1,5 +1,6 @@
 from django.urls import path
 
+from caseworker.cases.forms import move_case_2
 from caseworker.cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance, external_data
 from caseworker.flags.views import AssignFlags
 
@@ -11,6 +12,7 @@ urlpatterns = [
     path("im-done/", main.ImDoneView.as_view(), name="done"),
     path("change-status/", main.ChangeStatus.as_view(), name="manage"),
     path("move/", main.MoveCase.as_view(), name="move"),
+    path("move2/", main.MoveCase2.as_view(), name="move2"),
     path("additional-contacts/add/", main.AddAnAdditionalContact.as_view(), name="add_additional_contact"),
     path("attach/", main.AttachDocuments.as_view(), name="attach_documents"),
     path("documents/<str:file_pk>/", main.Document.as_view(), name="document"),
