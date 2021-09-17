@@ -26,7 +26,44 @@ def mock_exporter_user(requests_mock):
 
 
 @pytest.fixture
-def authorized_client_factory(client: Client, settings):
+def mock_exporter_user_me(requests_mock):
+    url = client._build_absolute_uri("/users/me/")
+    data = {
+        "user": {
+            "id": 123,
+            "email": "foo@example.com",
+            "first_name": "Foo",
+            "last_name": "Bar",
+            "status": "Active",
+            "token": "foo",
+            "lite_api_user_id": "d355428a-64cb-4347-853b-afcacee15d93",
+            "organisations": [
+                {
+                    "id": "9bc26604-35ee-4383-9f58-74f8cab67443",
+                    "name": "Archway Communications",
+                    "joined_at": "2020-06-29T09:30:58.425994Z",
+                    "status": {"key": "active", "value": "Active"},
+                }
+            ],
+        },
+        "role": {
+            "id": "00000000-0000-0000-0000-000000000001",
+            "permissions": [
+                "ADMINISTER_USERS",
+                "ADMINISTER_SITES",
+                "EXPORTER_ADMINISTER_ROLES",
+                "SUBMIT_LICENCE_APPLICATION",
+                "SUBMIT_CLEARANCE_APPLICATION",
+            ],
+        },
+    }
+
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
+def authorized_client_factory(client: Client, settings, organisation_pk):
     """
     returns a factory to make a authorized client for a mock_exporter_user,
 
@@ -41,7 +78,7 @@ def authorized_client_factory(client: Client, settings):
         session["user_token"] = user["token"]
         session["lite_api_user_id"] = user["lite_api_user_id"]
         session["email"] = user["email"]
-        session["organisation"] = "1"
+        session["organisation"] = organisation_pk
         session[settings.TOKEN_SESSION_KEY] = {
             "access_token": "mock_access_token",
             "expires_in": 36000,
@@ -93,5 +130,21 @@ def mock_units(requests_mock):
         }
     }
 
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture(autouse=True)
+def mock_notifications(requests_mock):
+    url = client._build_absolute_uri("/users/notifications/")
+    data = {}
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture(autouse=True)
+def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
+    url = client._build_absolute_uri("/applications/existing/")
+    data = {"applications": True}
     requests_mock.get(url=url, json=data)
     yield data

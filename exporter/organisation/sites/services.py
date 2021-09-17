@@ -1,10 +1,7 @@
-from http import HTTPStatus
-
 from urllib.parse import urlencode
 
 from core import client
 from lite_content.lite_exporter_frontend import strings
-from lite_content.lite_exporter_frontend.sites import AddSiteForm
 from lite_forms.components import Option
 
 
@@ -66,17 +63,12 @@ def update_site(request, pk, json):
 
 
 def post_sites(request, organisation_id, json):
-    if json.get("are_you_sure", True) == "None":
-        return (
-            {"errors": {"are_you_sure": [AddSiteForm.WhereIsYourSiteBased.EXISTING_SITE_ERROR]}},
-            HTTPStatus.BAD_REQUEST,
-        )
+    return client.post(request, f"/organisations/{organisation_id}/sites/", json)
 
-    if "location" not in json:
-        return {"errors": {"location": [AddSiteForm.WhereIsYourSiteBased.ERROR]}}, HTTPStatus.BAD_REQUEST
 
-    data = client.post(request, f"/organisations/{organisation_id}/sites/", json)
-    return data.json(), data.status_code
+def validate_sites(request, organisation_id, json):
+    json["validate_only"] = True
+    return client.post(request, f"/organisations/{organisation_id}/sites/", json)
 
 
 def put_assign_sites(request, pk, json):

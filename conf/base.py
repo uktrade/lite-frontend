@@ -46,9 +46,11 @@ INSTALLED_APPS = [
     "health_check.cache",
     "health_check.storage",
     "core.api",
+    "core.forms",
     "crispy_forms",
     "crispy_forms_gds",
     "core.feedback",
+    "formtools",
 ]
 
 MIDDLEWARE = [

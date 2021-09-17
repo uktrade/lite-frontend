@@ -10,12 +10,13 @@ ROOT_URLCONF = "exporter.urls"
 
 INSTALLED_APPS += [
     "exporter.core",
+    "exporter.organisation",
 ]
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "exporter/templates")],
+        "DIRS": [os.path.join(BASE_DIR, "exporter/templates"), os.path.join(BASE_DIR, "core/forms/templates"),],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
