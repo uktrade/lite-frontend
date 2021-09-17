@@ -25,10 +25,13 @@ class NewECJUQueryView(LoginRequiredMixin, SingleFormView):
 
 class NewECJUQueryViewCrispy(LoginRequiredMixin, TemplateView):
     template_name = "case/new_ecju_query.html"
+    page_title = "New standard query"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["case"] = get_case(self.request, self.kwargs["pk"])
         context["form"] = NewEcjuQueryFormCrispy(self.request.POST or None)
+        context["page_title"] = self.page_title
         return context
 
     def post(self, request, *args, **kwargs):
