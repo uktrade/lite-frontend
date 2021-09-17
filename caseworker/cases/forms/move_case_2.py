@@ -18,7 +18,10 @@ class MoveCase(forms.Form):
         self.helper = FormHelper()
 
     def layout(self, context, request):
+        queues = get_queues(request)
         self.helper.layout = Layout(
             HTML.h1(Manage.MoveCase.TITLE),
+            HTML(render_to_string("filter.html")) if queues else None,
+            "queues" if queues else HTML.warning("No items"),
             Submit("Save", "Save"),
         )
