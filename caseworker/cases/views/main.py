@@ -328,156 +328,17 @@ class MoveCase(SingleFormView):
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
         )
 
-class Filter:
-    """
-    Filters a list of checkboxes based on title and description
-    """
-
-    def __init__(self, placeholder: str = "Filter"):
-        """
-        :type placeholder: Sets the placeholder text on the input field
-        """
-        self.placeholder = placeholder
-        self.input_type = "filter"
-
-class _Component:
-    """
-    Base component for LITE forms - only for internal use
-    """
-
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        short_title: str = None,
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-        extras=None,
-    ):
-        from lite_forms.helpers import convert_to_markdown
-
-        self.name = name
-        self.title = title
-        self.description = convert_to_markdown(description)
-        self.short_title = short_title or title
-        self.accessible_description = accessible_description
-        self.optional = optional
-        self.classes = classes
-        self.extras = extras
-
-
-class TextArea(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        short_title: str = None,
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-        extras: Optional[Dict] = None,
-        rows: int = 10,
-        data_attributes: Optional[Dict] = None,
-    ):
-        super().__init__(
-            name=name,
-            title=title,
-            short_title=short_title,
-            description=description,
-            accessible_description=accessible_description,
-            optional=optional,
-            classes=classes,
-            extras=extras,
-        )
-        self.rows = rows
-        self.data_attributes = data_attributes
-        self.input_type = "textarea"
-
-
-class Checkboxes(_Component):
-    """
-    Displays checkboxes on the page
-    Add Option components to the options array to show checkboxes
-    Add optional classes such as 'govuk-checkboxes--inline' or 'govuk-checkboxes--small'
-    """
-
-    def __init__(
-        self,
-        name: str,
-        options: [],
-        title: str = "",
-        short_title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-        empty_notice: str = "No items",
-        show_select_links: bool = False,
-        disabled_hint: str = "",
-        filterable: bool = False,
-        import_custom_js: list = None,
-    ):
-        super().__init__(
-            name=name,
-            title=title,
-            short_title=short_title,
-            description=description,
-            accessible_description=accessible_description,
-            optional=optional,
-            classes=classes,
-        )
-        self.options = options
-        self.disabled_hint = disabled_hint
-        self.empty_notice = empty_notice
-        self.show_select_links = show_select_links
-        self.input_type = "checkboxes"
-        self.javascript_imports = ["/javascripts/select-links.js"]
-        if filterable:
-            self.javascript_imports.append("/javascripts/filter-checkbox-list.js")
-        if import_custom_js:
-            self.javascript_imports.extend(import_custom_js)
-
-
-class DetailComponent:
-    def __init__(self, title, description="", components=None):
-        from lite_forms.helpers import convert_to_markdown
-
-        self.title = title
-        self.description = convert_to_markdown(description)
-        self.components = components
-        self.input_type = "detail"
-
 
 class MoveCase2(FormView):
+    template_name = "core/form.html"
     form_class = move_case_2.MoveCase
-    template_name = "case/move-case.html"
-
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        case = get_case(request, self.object_pk)
-        self.action = put_case_queues
-        self.context = {"case": case}
-        self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
-        self.success_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
-        )
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        questions=[
-            Filter(),
-            Checkboxes("queues[]", get_queues(self.request, convert_to_options=True), filterable=True),
-            DetailComponent(
-                title=Manage.MoveCase.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
-            ),
-        ],
-        data["case"] = get_case(self.request, self.kwargs["pk"])
+        case = get_case(self.request, self.kwargs["pk"])
+        data["block_title"] = case['reference_code']
         data["page"] = {"title":  Manage.MoveCase.TITLE,
-                        "back_link":  BackLink(),
-                        "questions": questions}
+                        "back_link":  BackLink()}
         data["note_description"] = ""
 
         data["form"].layout(data, self.request)

@@ -19,7 +19,8 @@ MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "caseworker/templates"), os.path.join(BASE_DIR, "libraries")],
+        "DIRS": [os.path.join(BASE_DIR, "caseworker/templates"), os.path.join(BASE_DIR, "libraries"),
+                 os.path.join(BASE_DIR, "core/forms/templates"),],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
