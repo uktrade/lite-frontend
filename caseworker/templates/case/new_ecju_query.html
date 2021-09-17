@@ -1,4 +1,29 @@
+{% extends 'layouts/case.html' %}
+
 {% load crispy_forms_tags crispy_forms_gds %}
 
-<h1>Manos form..</h1>
-{% crispy form %}
+{% load static from staticfiles %}
+
+{% block title %}
+	{{ page_title }}
+{% endblock %}
+
+{% block back_link %}
+{% endblock %}
+
+{% block body %}
+
+	<div class="govuk-grid-column-two-thirds">
+		<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">Back</a>
+
+		<form action="{{ form_action_url }}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			{% error_summary form %}
+
+			<div class="govuk-body">
+				{% crispy form %}
+			</div>
+		</form>
+	</div>
+
+{% endblock %}
