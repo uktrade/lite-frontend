@@ -1,5 +1,6 @@
 import datetime
 from logging import getLogger
+from typing import Optional, List, Dict
 
 from django.conf import settings
 from django.contrib import messages
@@ -17,7 +18,7 @@ from core.builtins.custom_tags import filter_advice_by_level
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import DoneWithCaseOnQueueForm, Manage
 
-from lite_forms.components import FiltersBar, TextInput
+from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
@@ -55,7 +56,7 @@ from caseworker.compliance.services import get_compliance_licences
 from caseworker.core.services import get_status_properties, get_permissible_statuses
 from caseworker.core.constants import Permission
 from caseworker.external_data.services import search_denials
-from caseworker.queues.services import put_queue_single_case_assignment, get_queue
+from caseworker.queues.services import put_queue_single_case_assignment, get_queue, get_queues
 from caseworker.teams.services import get_teams
 from caseworker.users.services import get_gov_user_from_form_selection
 
@@ -327,6 +328,128 @@ class MoveCase(SingleFormView):
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
         )
 
+class Filter:
+    """
+    Filters a list of checkboxes based on title and description
+    """
+
+    def __init__(self, placeholder: str = "Filter"):
+        """
+        :type placeholder: Sets the placeholder text on the input field
+        """
+        self.placeholder = placeholder
+        self.input_type = "filter"
+
+class _Component:
+    """
+    Base component for LITE forms - only for internal use
+    """
+
+    def __init__(
+        self,
+        name: str,
+        title: str = "",
+        description: str = "",
+        short_title: str = None,
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: Optional[List] = None,
+        extras=None,
+    ):
+        from lite_forms.helpers import convert_to_markdown
+
+        self.name = name
+        self.title = title
+        self.description = convert_to_markdown(description)
+        self.short_title = short_title or title
+        self.accessible_description = accessible_description
+        self.optional = optional
+        self.classes = classes
+        self.extras = extras
+
+
+class TextArea(_Component):
+    def __init__(
+        self,
+        name: str,
+        title: str = "",
+        short_title: str = None,
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: Optional[List] = None,
+        extras: Optional[Dict] = None,
+        rows: int = 10,
+        data_attributes: Optional[Dict] = None,
+    ):
+        super().__init__(
+            name=name,
+            title=title,
+            short_title=short_title,
+            description=description,
+            accessible_description=accessible_description,
+            optional=optional,
+            classes=classes,
+            extras=extras,
+        )
+        self.rows = rows
+        self.data_attributes = data_attributes
+        self.input_type = "textarea"
+
+
+class Checkboxes(_Component):
+    """
+    Displays checkboxes on the page
+    Add Option components to the options array to show checkboxes
+    Add optional classes such as 'govuk-checkboxes--inline' or 'govuk-checkboxes--small'
+    """
+
+    def __init__(
+        self,
+        name: str,
+        options: [],
+        title: str = "",
+        short_title: str = "",
+        description: str = "",
+        accessible_description: str = None,
+        optional: bool = False,
+        classes: Optional[List] = None,
+        empty_notice: str = "No items",
+        show_select_links: bool = False,
+        disabled_hint: str = "",
+        filterable: bool = False,
+        import_custom_js: list = None,
+    ):
+        super().__init__(
+            name=name,
+            title=title,
+            short_title=short_title,
+            description=description,
+            accessible_description=accessible_description,
+            optional=optional,
+            classes=classes,
+        )
+        self.options = options
+        self.disabled_hint = disabled_hint
+        self.empty_notice = empty_notice
+        self.show_select_links = show_select_links
+        self.input_type = "checkboxes"
+        self.javascript_imports = ["/javascripts/select-links.js"]
+        if filterable:
+            self.javascript_imports.append("/javascripts/filter-checkbox-list.js")
+        if import_custom_js:
+            self.javascript_imports.extend(import_custom_js)
+
+
+class DetailComponent:
+    def __init__(self, title, description="", components=None):
+        from lite_forms.helpers import convert_to_markdown
+
+        self.title = title
+        self.description = convert_to_markdown(description)
+        self.components = components
+        self.input_type = "detail"
+
 
 class MoveCase2(FormView):
     form_class = move_case_2.MoveCase
@@ -344,9 +467,17 @@ class MoveCase2(FormView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-
+        questions=[
+            Filter(),
+            Checkboxes("queues[]", get_queues(self.request, convert_to_options=True), filterable=True),
+            DetailComponent(
+                title=Manage.MoveCase.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+            ),
+        ],
         data["case"] = get_case(self.request, self.kwargs["pk"])
-        data["note_title"] = Manage.MoveCase.TITLE
+        data["page"] = {"title":  Manage.MoveCase.TITLE,
+                        "back_link":  BackLink(),
+                        "questions": questions}
         data["note_description"] = ""
 
         data["form"].layout(data, self.request)
