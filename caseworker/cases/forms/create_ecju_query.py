@@ -5,6 +5,13 @@ from lite_content.lite_internal_frontend.cases import EcjuQueries
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.components import Form, TextArea, HiddenField, BackLink
 
+from django.views.generic import FormView
+
+from django import forms
+
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Submit
+
 
 class ECJUQueryTypes:
     ECJU_QUERY = "ecju_query"
@@ -39,3 +46,20 @@ def new_ecju_query_form(queue_pk, pk, query_type):
         default_button_name=cases.EcjuQueries.AddQuery.SUBMIT,
         container="case",
     )
+
+
+class NewEcjuQueryFormCrispy(forms.Form):
+    # TODO: Actually replicate existing Laylout
+    name = forms.CharField(
+        label="Name",
+        help_text="Your full name.",
+        widget=forms.TextInput(),
+        error_messages={
+            "required": "Enter your name as it appears on your passport"
+        }
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", "Submit"))

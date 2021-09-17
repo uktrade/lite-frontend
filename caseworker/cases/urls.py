@@ -46,6 +46,7 @@ urlpatterns = [
         name="finalise_document_create",
     ),
     path("ecju-queries/new/", ecju.NewECJUQueryView.as_view(), name="new_ecju_query"),
+    path("ecju-queries/new-crispy/", ecju.NewECJUQueryViewCrispy.as_view(), name="new_ecju_query_crispy"),
     path("respond-to-clc-query/", goods_query.RespondCLCQuery.as_view(), name="respond_to_clc_query"),
     path(
         "respond-to-pv-grading-query/", goods_query.RespondPVGradingQuery.as_view(), name="respond_to_pv_grading_query",
