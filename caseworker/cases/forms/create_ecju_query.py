@@ -4,6 +4,7 @@ from caseworker.core.components import PicklistPicker
 from lite_content.lite_internal_frontend.cases import EcjuQueries
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.components import Form, TextArea, HiddenField, BackLink
+from crispy_forms_gds.layout import Field, Layout, Size, Submit
 
 from django.views.generic import FormView
 
@@ -20,8 +21,8 @@ class ECJUQueryTypes:
 
     choices = [
         (ECJU_QUERY, EcjuQueries.Queries.ECJU_QUERY),
-        (PRE_VISIT_QUESTIONNAIRE, EcjuQueries.Queries.PRE_VISIT_QUESTIONNAIRE),
-        (COMPLIANCE_ACTION, EcjuQueries.Queries.COMPLIANCE_ACTION),
+        (PRE_VISIT_QUESTIONNAIRE, EcjuQueries.Queries.PRE_VISIT_QUESTIONNAIRE),  # ?
+        (COMPLIANCE_ACTION, EcjuQueries.Queries.COMPLIANCE_ACTION),  # ?
     ]
 
     @classmethod
@@ -49,17 +50,24 @@ def new_ecju_query_form(queue_pk, pk, query_type):
 
 
 class NewEcjuQueryFormCrispy(forms.Form):
-    # TODO: Actually replicate existing Laylout
-    name = forms.CharField(
-        label="Name",
-        help_text="Your full name.",
-        widget=forms.TextInput(),
-        error_messages={
-            "required": "Enter your name as it appears on your passport"
-        }
+    title = EcjuQueries.AddQuery.TITLE_PREFIX + ECJUQueryTypes.get_text("ecju_query").lower(),
+
+    questions = forms.CharField(
+        label=title,
+        widget=forms.Textarea,
+        help_text=cases.EcjuQueries.AddQuery.DESCRIPTION,
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Submit"))
+        self.helper.layout = Layout(
+            Field.textarea(
+                "questions",
+                label_size=Size.LARGE,
+                label_tag="h2",
+                rows=10,
+                max_length=5000,
+            ),
+            Submit("submit", "Submit"),
+        )
