@@ -5,6 +5,7 @@ Feature: I want to be able to submit SIEL firearm applications
   Scenario: Initiate an application for a SIEL firearm
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "temporary" export type
+    When I am on the application overview page entitled "Standard Individual Export Licence"
     Then I see the application overview
     And I logout
 
