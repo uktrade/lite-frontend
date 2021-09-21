@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 from django import forms
 from django.template.loader import render_to_string
+from django.forms import formset_factory
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit, Layout, HTML
@@ -28,6 +29,10 @@ class SiteFormMixin:
     def serialized_data(self):
         data = self.cleaned_data.copy()
         return data
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
 
     def add_form_errors(self, errors):
         for key, value in errors.items():
@@ -62,7 +67,6 @@ class NewSiteLocationForm(SiteFormMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -106,7 +110,6 @@ class NewSiteUKAddressForm(SiteFormMixin, forms.Form):
         }
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -149,12 +152,11 @@ class NewSiteInternationalAddressForm(SiteFormMixin, forms.Form):
         }
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
         countries = get_countries(self.request, False, ["GB"])
         country_choices = [("", "Select a country")] + [(country["id"], country["name"]) for country in countries]
         self.declared_fields["country"].choices = country_choices
 
-        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(AddSiteForm.Details.TITLE),
@@ -177,10 +179,9 @@ class NewSiteConfirmForm(SiteFormMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
         postcode = kwargs.pop("postcode")
-        existing_sites = get_sites(self.request, self.request.session["organisation"], postcode=postcode)
         super().__init__(*args, **kwargs)
+        existing_sites = get_sites(self.request, self.request.session["organisation"], postcode=postcode)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(AddSiteForm.Postcode.TITLE),
@@ -196,7 +197,7 @@ class NewSiteAssignUsersForm(SiteFormMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
         organisation_members = get_organisation_users(
             self.request,
             self.request.session["organisation"],
@@ -208,7 +209,6 @@ class NewSiteAssignUsersForm(SiteFormMixin, forms.Form):
             for user in organisation_members
         ]
         self.declared_fields["users"].choices = users_choices
-        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(AddSiteForm.AssignUsers.TITLE),
