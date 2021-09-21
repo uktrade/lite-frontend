@@ -53,7 +53,7 @@ def show_add_site_confirmation_form(wizard):
     return len(existing_sites) > 0
 
 
-class NewSiteWizardView(SessionWizardView, LoginRequiredMixin):
+class NewSiteWizardView(LoginRequiredMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
     form_list = [
         (LOCATION, site_forms.NewSiteLocationForm),
