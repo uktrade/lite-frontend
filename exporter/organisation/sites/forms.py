@@ -1,7 +1,6 @@
 from django.urls import reverse_lazy
 from django import forms
 from django.template.loader import render_to_string
-from django.forms import formset_factory
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit, Layout, HTML
