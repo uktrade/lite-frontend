@@ -1081,6 +1081,14 @@ def select_consignee_type(driver, consignee_type):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select a party with type of "{consignee_type}"'))  # noqa
+def select_party(driver, consignee_type):  # noqa
+    party_rows = driver.find_elements_by_xpath("//tr[@class='govuk-table__row']")
+    for party_row in party_rows:
+        if consignee_type.lower() in party_row.text.lower():
+            party_row.find_element_by_class_name("lite-button--link").click()
+
+
 @when(parsers.parse('I select "{end_user_type}" as the type of end user'))  # noqa
 def select_end_user_type(driver, end_user_type):  # noqa
     add_end_user_page = AddEndUserPages(driver)
