@@ -154,7 +154,7 @@ class NewSiteInternationalAddressForm(SiteFormMixin, forms.Form):
         super().__init__(*args, **kwargs)
         countries = get_countries(self.request, False, ["GB"])
         country_choices = [("", "Select a country")] + [(country["id"], country["name"]) for country in countries]
-        self.declared_fields["country"].choices = country_choices
+        self.fields["country"].choices = country_choices
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -207,7 +207,7 @@ class NewSiteAssignUsersForm(SiteFormMixin, forms.Form):
             (user["id"], f"{user['first_name']} {user['last_name']}" if user["first_name"] else user["email"])
             for user in organisation_members
         ]
-        self.declared_fields["users"].choices = users_choices
+        self.fields["users"].choices = users_choices
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(AddSiteForm.AssignUsers.TITLE),
