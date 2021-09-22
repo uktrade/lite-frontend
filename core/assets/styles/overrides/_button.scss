@@ -11,3 +11,14 @@
 		background-color: darken(govuk-colour("light-grey"), 10%);
 	}
 }
+
+// remove browser default button styling
+button.govuk-back-link {
+	background: none;
+	color: inherit;
+	border: none;
+	cursor: pointer;
+	outline: inherit;
+	text-decoration: underline;
+	@extend .govuk-back-link
+}
