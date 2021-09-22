@@ -1087,6 +1087,7 @@ def select_party(driver, consignee_type):  # noqa
     for party_row in party_rows:
         if consignee_type.lower() in party_row.text.lower():
             party_row.find_element_by_class_name("lite-button--link").click()
+            return
 
 
 @when(parsers.parse('I select "{end_user_type}" as the type of end user'))  # noqa
