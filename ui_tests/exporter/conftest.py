@@ -1157,6 +1157,14 @@ def i_see_consignee_summary(driver):  # noqa
     assert elements[3].text == "N/A"
 
 
+@then("I see Government in the consignee summary")  # noqa
+def i_see_consignee_summary(driver):  # noqa
+    heading = driver.find_element_by_tag_name("h1").text
+    assert heading == "Consignee"
+    elements = driver.find_elements_by_tag_name("dd")
+    assert elements[1].text == "Government"
+
+
 @given(
     "I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
     target_fixture="create_application",

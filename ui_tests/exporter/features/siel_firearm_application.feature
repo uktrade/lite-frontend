@@ -43,7 +43,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the consignee summary
     And I logout
 
-  Scenario: Associate application with existing party
+  Scenario: Associate application with existing consignee party
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
@@ -55,7 +55,7 @@ Feature: I want to be able to submit SIEL firearm applications
     And I click continue
     And I click continue
     And I click continue
-    Then I see the consignee summary
+    Then I see Government in the consignee summary
     And I logout
 
   Scenario: Enter details for the end user section in the application
