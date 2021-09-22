@@ -216,16 +216,17 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
         if case_type == CaseType.OPEN.value:
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
-            nlr = False
+            all_nlr = False
         else:
             advice = filter_advice_by_level(case["advice"], "final")
             items = [item["type"]["key"] for item in advice]
             approve = any([item == "approve" or item == "proviso" for item in items])
-            nlr = not approve and "refuse" not in items
+            all_nlr = not approve and "refuse" not in items
 
         case_id = case["id"]
 
         if approve:
+            any_nlr = any([item == "no_licence_required" for item in items])
             licence_data, _ = get_licence(request, str(kwargs["pk"]))
             licence = licence_data.get("licence")
             # If there are licenced goods, we want to use the reissue goods flow.
@@ -238,13 +239,20 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 request,
                 form,
                 data=form_data,
-                extra_data={"case": case, "has_proviso": any([item == "proviso" for item in items])},
+                extra_data={
+                    "any_nlr": any_nlr,
+                    "case": case,
+                    "has_proviso": any([item == "proviso" for item in items]),
+                },
             )
         else:
             return form_page(
                 request,
                 deny_licence_form(
-                    kwargs["queue_pk"], case_id, case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value, nlr
+                    kwargs["queue_pk"],
+                    case_id,
+                    case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value,
+                    all_nlr,
                 ),
             )
 

@@ -91,13 +91,11 @@ class CaseDetail(CaseView):
         other_advice = [a for a in final_advice if a not in final_goods_advice]
 
         # approve/refuse on same product = cannot finalise
-        # approve refuse on different products in same application = can still finalise
-        # no approvals on any goods = cannot finalise
+        # approve refuse NLR on different products in same application = can still finalise
+        # no approvals or NLR on any goods = cannot finalise
 
         conflicting_goods_advice = advice_helpers.case_goods_has_conflicting_advice(self.case.goods, final_goods_advice)
-        goods_list_has_at_least_one_approval = advice_helpers.goods_list_has_at_least_one_approval(
-            self.case.goods, final_goods_advice
-        )
+        goods_can_finalise = advice_helpers.goods_can_finalise(self.case.goods, final_goods_advice)
 
         advice_types = set([f["type"]["key"] for f in other_advice])
 
@@ -124,7 +122,7 @@ class CaseDetail(CaseView):
             "final" in current_advice_level
             and advice_helpers.can_advice_be_finalised(self.case)
             and not conflicting_advice
-            and goods_list_has_at_least_one_approval
+            and goods_can_finalise
         ) or refuse_all
 
         return {

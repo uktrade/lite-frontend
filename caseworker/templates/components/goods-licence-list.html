@@ -15,7 +15,7 @@
 		{% for good in data %}
 			{% if good.advice.type.key == 'approve' and has_proviso %}
 				{# "approve with proviso" takes priority over "approve" #}
-			{% else %}
+			{% elif good.advice.type.key != 'no_licence_required' %}
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">
 						{% if good.is_good_controlled is not None %}
@@ -25,6 +25,7 @@
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell">
+						{{ good.good.name }}{% if good.good.name %}<br>{% endif %}
 						{{ good.good.description }}
 					</td>
 					<td class="govuk-table__cell">
@@ -80,7 +81,28 @@
 	</tbody>
 </table>
 
+{% if any_nlr %}
+<table class="govuk-table">
+	<caption class="govuk-table__caption govuk-table__caption--m">No licence required</caption>
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.DESCRIPTION_COLUMN' %}</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for good in data %}
+			{% if good.advice.type.key == 'no_licence_required' %}
+				<td class="govuk-table__cell">
+					{{ good.good.name }}{% if good.good.name %}<br>{% endif %}
+					{{ good.good.description }}
+				</td>
+			{% endif %}
+		{% endfor %}
+	</tbody>
+</table>
+{% endif %}
+
 {% block javascript %}
     <script src="{% static 'javascripts/update-total-value.js' %}"></script>
 {% endblock %}
-
