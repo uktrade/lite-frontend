@@ -34,6 +34,12 @@ def pytest_addoption(parser):
     if env == "None":
         env = "dev"
     parser.addoption("--headless", action="store_true", default=False)
+    parser.addoption(
+        "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
+    )
+    parser.addoption(
+        "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Gives extra info for every step"
+    )
     if env == "local":
         parser.addoption(
             "--exporter_url", action="store", default=f"http://localhost:{str(os.environ.get('PORT'))}/", help="url"
@@ -44,12 +50,6 @@ def pytest_addoption(parser):
         lite_api_url = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
         parser.addoption(
             "--lite_api_url", action="store", default=lite_api_url, help="url",
-        )
-        parser.addoption(
-            "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
-        )
-        parser.addoption(
-            "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Gives extra info for every step"
         )
     else:
         parser.addoption(
