@@ -22,10 +22,10 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
 
 def pytest_configure(config):
     if config.option.step_through:
-        global STEP_THROUGH
+        global STEP_THROUGH  # pylint: disable=global-statement
         STEP_THROUGH = config.option.step_through
     if config.option.step_verbose:
-        global STEP_VERBOSE
+        global STEP_VERBOSE  # pylint: disable=global-statement
         STEP_VERBOSE = config.option.step_verbose
 
 
