@@ -95,7 +95,15 @@ https://github.com/uktrade?q=spire
 
 ## UI tests
 
-The UI tests (a.k.a. end-to-end tests, e2e tests, browser tests or functional tests) require some local configuration
+We use pytest + Selenium for end-to-end tests.
+
+Run all tests
+
+    PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest ui_tests/
+
+> You can use the flags `--step-through` (in conjunction with `-s`) and `--step-verbose` to stop on each step. Helpful for exploration and debugging.
+
+> The UI tests (a.k.a. end-to-end tests, e2e tests, browser tests or functional tests) require some local configuration
 changes before they can run. As mentioned above, you need to run `make run_caseworker` and `make run_exporter`.
 These copy the `example.caseworker.env` and `example.exporter.env` files to `caseworker.env` and `exporter.env`
 respectively. In each file, the following variables need to have different values (see development team members for
