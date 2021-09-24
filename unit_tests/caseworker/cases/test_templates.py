@@ -6,8 +6,8 @@ from django.template.loader import render_to_string
 from caseworker.cases.objects import Case
 
 
-team1 = {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None}
-team2 = {"id": "47762273-5655-4ce3-afa1-b34112f3e781", "name": "team2", "part_of_ecju": None}
+team1 = {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None, "is_ogd": None}
+team2 = {"id": "47762273-5655-4ce3-afa1-b34112f3e781", "name": "team2", "part_of_ecju": None, "is_ogd": None}
 
 john_smith = {
     "email": "john.smith@example.com",

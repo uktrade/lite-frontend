@@ -23,6 +23,7 @@
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="col">{% lcs 'teams.TeamsPage.Table.NAME' %}</th>
 				<th class="govuk-table__header" scope="col">Part of ECJU</th>
+				<th class="govuk-table__header" scope="col">Is OGD</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'teams.TeamsPage.Table.ACTIONS' %}</th>
 			</tr>
 		</thead>
@@ -36,6 +37,8 @@
 						</a>
 					</td>
 					<td class="govuk-table__cell">{{team.part_of_ecju|friendly_boolean}}
+					</td>
+					<td class="govuk-table__cell">{{team.is_ogd|friendly_boolean}}
 					</td>
 					<td class="govuk-table__cell">
 						{% if not team.id|is_system_team %}

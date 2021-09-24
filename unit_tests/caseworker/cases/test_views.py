@@ -23,7 +23,7 @@ john_smith = {
     "last_name": "Smith",
     "role_name": "Super User",
     "status": "Active",
-    "team": {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None},
+    "team": {"id": "136cbb1f-390b-4f78-bfca-86300edec300", "name": "team1", "part_of_ecju": None, "is_ogd": None},
 }
 
 
