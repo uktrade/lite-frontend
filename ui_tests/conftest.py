@@ -3,8 +3,8 @@ import os
 import tests_common.tools.helpers as utils
 
 
-STEP_THROUGH = False  # Gives a prompt for every step
-STEP_VERBOSE = True   # Shows info for every step
+STEP_THROUGH = False         # Gives a prompt for every step in the terminal
+STEP_VERBOSE = STEP_THROUGH  # Shows info as a banner for every step
 
 
 def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
