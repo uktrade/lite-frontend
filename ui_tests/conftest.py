@@ -3,6 +3,32 @@ import os
 import tests_common.tools.helpers as utils
 
 
+STEP_THROUGH = False  # Gives a prompt for every step
+STEP_VERBOSE = True   # Shows info for every step
+
+
+def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
+    """
+    Runs before each step
+    """
+    if STEP_VERBOSE:
+        print("*******************************************")
+        print(f"SCENARIO: {scenario.feature.description}")
+        print(f"STEP: .. {step.keyword} {step.name}")
+        print("*******************************************")
+    if STEP_THROUGH:
+        import IPython; IPython.embed(using=False)
+
+
+def pytest_configure(config):
+    if config.option.step_through:
+        global STEP_THROUGH
+        STEP_THROUGH = config.option.step_through
+    if config.option.step_verbose:
+        global STEP_VERBOSE
+        STEP_VERBOSE = config.option.step_verbose
+
+
 def pytest_addoption(parser):
     env = str(os.environ.get("ENVIRONMENT"))
     if env == "None":
@@ -18,6 +44,12 @@ def pytest_addoption(parser):
         lite_api_url = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
         parser.addoption(
             "--lite_api_url", action="store", default=lite_api_url, help="url",
+        )
+        parser.addoption(
+            "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
+        )
+        parser.addoption(
+            "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Gives extra info for every step"
         )
     else:
         parser.addoption(
