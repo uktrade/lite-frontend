@@ -3,7 +3,7 @@ import os
 import tests_common.tools.helpers as utils
 
 
-STEP_THROUGH = False         # Gives a prompt for every step in the terminal
+STEP_THROUGH = False  # Gives a prompt for every step in the terminal
 STEP_VERBOSE = STEP_THROUGH  # Shows info as a banner for every step
 
 
@@ -17,7 +17,9 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
         print(f"STEP: .. {step.keyword} {step.name}")
         print("*******************************************")
     if STEP_THROUGH:
-        import IPython; IPython.embed(using=False)
+        import IPython
+
+        IPython.embed(using=False)
 
 
 def pytest_configure(config):
