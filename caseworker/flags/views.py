@@ -274,7 +274,10 @@ class ChangeFlaggingRuleStatus(LoginRequiredMixin, SingleFormView):
         return super(ChangeFlaggingRuleStatus, self).post(request, **kwargs)
 
 
-def perform_action(level, request, pk, json):
+def perform_action(case, level, request, pk, json):
+    selected_goods_ids = request.GET.getlist("goods", request.GET.getlist("goods_types"))
+    goods = case.data.get("goods", case.data.get("goods_types"))
+    product_ids = [item["good"]["id"] for item in goods if item["id"] in selected_goods_ids]
     data = {
         "level": level,
         "objects": [
@@ -282,7 +285,7 @@ def perform_action(level, request, pk, json):
             for x in [
                 request.GET.get("case"),
                 request.GET.get("organisation"),
-                *request.GET.getlist("goods"),
+                *product_ids,
                 *request.GET.getlist("goods_types"),
                 *request.GET.getlist("countries"),
                 request.GET.get("end_user"),
@@ -358,7 +361,7 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
             return get_destination_flags(self.request)
 
     def get_action(self):
-        return functools.partial(perform_action, self.level)
+        return functools.partial(perform_action, self.case, self.level)
 
     def get_success_url(self):
         if self.request.GET.get("return_to"):
