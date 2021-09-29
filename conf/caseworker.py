@@ -12,6 +12,7 @@ INSTALLED_APPS += [
     "caseworker.spire",
     "caseworker.letter_templates",
     "caseworker.external_data",
+    "caseworker.advice",
 ]
 
 MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")
