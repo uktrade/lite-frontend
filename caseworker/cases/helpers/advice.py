@@ -39,17 +39,7 @@ def get_param_destinations(request, case: Case):
 def get_param_goods(request, case: Case):
     selected_goods_ids = request.GET.getlist("goods", request.GET.getlist("goods_types"))
     goods = case.data.get("goods", case.data.get("goods_types"))
-    return_values = []
-
-    for good in goods:
-        if "good" in good:
-            if good["good"]["id"] in selected_goods_ids:
-                return_values.append(good)
-        else:
-            if good["id"] in selected_goods_ids:
-                return_values.append(good)
-
-    return return_values
+    return [good for good in goods if good["id"] in selected_goods_ids]
 
 
 def same_value(dicts, key):

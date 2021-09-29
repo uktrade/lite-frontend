@@ -26,7 +26,7 @@ def test_assign_flags_view_destination(authorized_client, queue_pk, open_case_pk
 
 def test_assign_flags_form_goods(authorized_client, data_standard_case, queue_pk, standard_case_pk):
 
-    good_pk = data_standard_case["case"]["data"]["goods"][0]["good"]["id"]
+    good_pk = data_standard_case["case"]["data"]["goods"][0]["id"]
 
     url = reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk}) + f"?goods={good_pk}"
     response = authorized_client.get(url)
