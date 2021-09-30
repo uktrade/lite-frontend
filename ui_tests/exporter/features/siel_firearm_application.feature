@@ -127,7 +127,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And the section "Locations" is now saved
     And I logout
 
-  @an_exporter_test
   Scenario: Submit Application
     Given I signin and go to exporter homepage and choose Test Org
     And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
