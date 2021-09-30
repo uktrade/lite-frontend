@@ -1222,9 +1222,10 @@ def navigate_to_application(driver, exporter_url, context):  # noqa
 
 
 @then("I see the application summary with <clc_rating>,<end_use>,<end_user_name>,<consignee_name>")
-def i_see_application_summary(driver, clc_rating, end_use, end_user_name, consignee_name):  # noqa
+def i_see_application_summary(driver, context, clc_rating, end_use, end_user_name, consignee_name):  # noqa
     tds = driver.find_elements_by_tag_name("td")
     dds = driver.find_elements_by_tag_name("dd")
+    assert tds[2].text == context.part_number
     assert tds[4].text == clc_rating
     assert tds[10].text == end_use
     assert dds[6].text == end_user_name
