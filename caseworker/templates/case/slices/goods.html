@@ -122,7 +122,7 @@
 						{% if not hide_status %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span class="govuk-table__header" aria-hidden="false">ARS</span>
-								{{ good.good.report_summary|default_if_none:'Not added' }}
+								{{ good.report_summary|default_if_none:'Not added' }}
 							</td>
 						{% endif %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
