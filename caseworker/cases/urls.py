@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from caseworker.cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance, external_data
 from caseworker.flags.views import AssignFlags
@@ -13,6 +13,8 @@ urlpatterns = [
     path("move/", main.MoveCase.as_view(), name="move"),
     path("additional-contacts/add/", main.AddAnAdditionalContact.as_view(), name="add_additional_contact"),
     path("attach/", main.AttachDocuments.as_view(), name="attach_documents"),
+    # This needs to be before "case" path b/c the regex in that sinks everything
+    path("advice/", include("caseworker.advice.urls")),
     path("documents/<str:file_pk>/", main.Document.as_view(), name="document"),
     path("assign-flags/", AssignFlags.as_view(), name="assign_flags"),
     path("remove-matching-denials/", external_data.RemoveMatchingDenials.as_view(), name="remove-matching-denials",),
