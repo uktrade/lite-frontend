@@ -13,7 +13,7 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
     """
     if STEP_VERBOSE:
         print("*******************************************")
-        print(f"SCENARIO: {scenario.feature.description}")
+        print(f"SCENARIO: {scenario.name}")
         print(f"STEP: .. {step.keyword} {step.name}")
         print("*******************************************")
     if STEP_THROUGH:
