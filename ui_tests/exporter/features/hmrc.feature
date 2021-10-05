@@ -26,3 +26,11 @@ Feature: I want to be able to perform actions as a HMRC user
     When I submit the application
     And I click continue
     Then application is submitted
+
+  @LTD-979
+  Scenario: Send data to HMRC
+    Create an application
+    Issue a license
+    Publish license to the exporter
+    Trigger the HMRC service
+    HMRC accepts license
