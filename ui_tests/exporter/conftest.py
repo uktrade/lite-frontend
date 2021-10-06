@@ -1149,7 +1149,8 @@ def i_see_consignee_summary(driver):  # noqa
 
 
 @given(
-    "I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
+    "I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,"
+    "<consignee_name>,<consignee_address>,<country>,<end_use>",
     target_fixture="create_application",
 )
 def create_application(
