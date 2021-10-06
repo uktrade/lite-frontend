@@ -8,7 +8,7 @@ def create_standard_application(api_test_client, context, app_data, submit=True)
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
 
     data = api_test_client.api_client.request_data["good"]
-    data["part_number"] = app_data["part_number"]
+    data["part_number"] = app_data["part_number"] if "part_number" in app_data else data["part_number"]
     data["name"] = app_data["product"]
     data["control_list_entries"] = [app_data["clc_rating"]]
     new_good = api_test_client.goods.post_good(data)
