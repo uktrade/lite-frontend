@@ -10,6 +10,7 @@ def create_standard_application(api_test_client, context, app_data, submit=True)
     data = api_test_client.api_client.request_data["good"]
     context.part_number = data["part_number"]
     data["name"] = app_data["product"]
+    data["part_number"] = app_data["part_number"]
     data["control_list_entries"] = [app_data["clc_rating"]]
     new_good = api_test_client.goods.post_good(data)
     api_test_client.api_client.add_to_context("good_id", new_good["id"])
