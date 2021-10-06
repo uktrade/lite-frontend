@@ -132,7 +132,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Given I signin and go to exporter homepage and choose Test Org
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I navigate to application summary
-    Then I see the application summary with <clc_rating>,<end_use>,<end_user_name>,<consignee_name>
+    Then I see the application summary with <clc_rating>,<end_use>,<end_user_name>,<consignee_name>,<part_number>
     When I agree to the declaration
     Then the application is submitted
     And I logout
