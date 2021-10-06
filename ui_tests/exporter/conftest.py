@@ -1189,7 +1189,6 @@ def submit_application(
     context,  # noqa
     name,
     product,
-    part_number,
     clc_rating,
     end_user_name,
     end_user_address,
@@ -1201,7 +1200,6 @@ def submit_application(
     app_data = {
         "name": name,
         "product": product,
-        "part_number": part_number,
         "clc_rating": clc_rating,
         "end_user_name": end_user_name,
         "end_user_address": end_user_address,
