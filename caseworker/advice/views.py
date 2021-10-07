@@ -7,6 +7,7 @@ class CaseContextMixin:
     Case object. This mixin, injects a reference to the Case
     in the context.
     """
+
     def get_context(self):
         return {}
 
@@ -34,3 +35,10 @@ class AdvicePlaceholderView(CaseContextMixin, TemplateView):
         return {"greetings": "Hello World!"}
 
 
+class CaseDetailView(CaseContextMixin, TemplateView):
+    """This endpoint renders case detail panel. This will probably
+    not be used stand-alone. This is useful for testing the case
+    detail template ATM.
+    """
+
+    template_name = "advice/case_detail_example.html"

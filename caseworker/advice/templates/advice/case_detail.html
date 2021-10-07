@@ -1,0 +1,130 @@
+{% load static advice_tags %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-third">
+        <h2 class="govuk-heading-m">Case Details</h2>
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    Products
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                {% for good in case.goods %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        <p class="govuk-body"><strong>{{ forloop.counter }}. {{ good.good.name }}</strong></p>
+                    </div>
+                </div>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body"><strong>License required</strong></p>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">{{ good.good.is_good_controlled.value }}</p>
+                    </div>
+                </div>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body"><strong>Control List Entry</strong></p>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">{{ good.good.control_list_entries | join:", " }}</p>
+                    </div>
+                </div>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body"><strong>Security grading</strong></p>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">{{ good.good.is_pv_graded | title }}</p>
+                    </div>
+                </div>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body"><strong>Annual report summary</strong></p>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">{{ good.report_summary | title }}</p>
+                    </div>
+                </div>
+                <hr>
+                {% endfor %}
+            </div>
+        </details>
+
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    Destinations
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-third">
+                        <p class="govuk-body"><strong>Country</strong></p>
+                    </div>
+                    <div class="govuk-grid-column-one-third">
+                        <p class="govuk-body"><strong>Type</strong></p>
+                    </div>
+                    <div class="govuk-grid-column-one-third">
+                        <p class="govuk-body"><strong>Name</strong></p>
+                    </div>
+                </div>
+                <hr>
+                {% for destination in case.destinations %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-third">
+                        <p class="govuk-body">{{ destination.country.name }}</p>
+                    </div>
+                    <div class="govuk-grid-column-one-third">
+                        <p class="govuk-body">{{ destination.type | format_heading | title }}</p>
+                    </div>
+                    <div class="govuk-grid-column-one-third">
+                        <p class="govuk-body">{{ destination.name }}</p>
+                    </div>
+                </div>
+                <hr>
+                {% endfor %}
+            </div>
+        </details>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body"><strong>Control list entries</strong></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body">{{ case.goods | get_clc | join:', ' }}<br></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body"><strong>Security grading</strong></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body">{{ case.goods | get_security_grading | join:', ' }}<br></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body"><strong>Total value</strong></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body">£{{ case.goods | get_case_value }}</p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body"><strong>Location of products</strong></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body">{{ case.organisation.primary_site.address.country.name }}</p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body"><strong>End use</strong></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body">{{ case.data.intended_end_use }}</p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body"><strong>Denial matches</strong></p>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <p class="govuk-body">{{ case.data.denial_matches | join:', ' }}<br></p>
+            </div>
+        </div>
+    </div>
+</div>
