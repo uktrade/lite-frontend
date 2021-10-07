@@ -13,6 +13,16 @@ def licences_page(driver, exporter_url):
     driver.get(exporter_url.rstrip("/") + "/licences/")
 
 
+@then("An email is sent to HMRC")
+def is_email_sent_to_hmrc(context, driver):
+    print(f"is_email_sent_to_hmrc .. {context.licence}")
+
+    # TODO: Ensure email sent..
+    # 1. Check Licence status on LITE-API
+    # 2. Check Licence status on HMRC-LITE
+    # 3. ?
+
+
 @then("I see my standard licence")
 def standard_licence_row(context, driver):
     Shared(driver).filter_by_reference_number(context.reference_code)
