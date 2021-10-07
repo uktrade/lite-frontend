@@ -66,6 +66,7 @@ htmlcov/
 .tox/
 .coverage
 .cache
+.parcel-cache
 nosetests.xml
 coverage.xml
 ui_tests/test_results/*
