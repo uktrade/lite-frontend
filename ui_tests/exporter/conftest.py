@@ -749,6 +749,25 @@ def create_licence_with_licenced_goods(context, decision, api_test_client):  # n
     context.licence = api_test_client.context["licence"]
 
 
+# HACK: Copy/pasted from above to make usable in steps
+@when(
+    parsers.parse('I create a licence for my application with "{decision}" decision document and good decisions')
+)  # noqa
+def create_licence_with_licenced_goods(context, decision, api_test_client):  # noqa
+    document_template = api_test_client.document_templates.add_template(
+        api_test_client.picklists, case_types=["oiel", "siel", "exhc"]
+    )
+    additional_data = {}
+    for good in context.goods:
+        additional_data[f"quantity-{good['id']}"] = good["quantity"]
+        additional_data[f"value-{good['id']}"] = round(float(good["value"]) * good["quantity"], 2)
+
+    api_test_client.cases.finalise_case(context.case_id, "approve", additional_data)
+    api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
+    api_test_client.cases.finalise_licence(context.case_id)
+    context.licence = api_test_client.context["licence"]
+
+
 @then(parsers.parse('I can see the sections "{sections}" are on the task list'))  # noqa
 def sections_appear_on_task_list(driver, sections):  # noqa
     sections = sections.split(", ")
