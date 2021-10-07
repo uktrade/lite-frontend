@@ -4,10 +4,10 @@
   "description": "Combined repo for LITE exporter and caseworker frontends",
   "private": true,
   "scripts": {
-    "build_exporter": "parcel build ./exporter/assets/javascripts/{main,head}.js --out-dir exporter/assets/built --public-url /assets/",
-    "build_caseworker": "parcel build ./caseworker/assets/javascripts/{main,head}.js ./caseworker/assets/javascripts/search-cases.js ./caseworker/assets/javascripts/review-good.js ./caseworker/assets/javascripts/search-products.js --out-dir caseworker/assets/built --public-url /assets/",
-    "watch_exporter": "parcel watch ./exporter/assets/javascripts/{main,head}.js --out-dir exporter/assets/built --public-url /assets/",
-    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head}.js --out-dir caseworker/assets/built --public-url /assets/",
+    "build_exporter": "parcel build ./exporter/assets/javascripts/{main,head}.js --dist-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker": "parcel build ./caseworker/assets/javascripts/{main,head}.js ./caseworker/assets/javascripts/search-cases.js ./caseworker/assets/javascripts/review-good.js ./caseworker/assets/javascripts/search-products.js --dist-dir caseworker/assets/built --public-url /assets/",
+    "watch_exporter": "parcel watch ./exporter/assets/javascripts/{main,head}.js --dist-dir exporter/assets/built --public-url /assets/",
+    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head}.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch": "npm-run-all --parallel watch_exporter watch_caseworker",
     "build": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker"
   },
@@ -39,7 +39,7 @@
     "mark.js": "^8.11.1",
     "moment": "^2.29.1",
     "npm-run-all": "^4.1.5",
-    "parcel-bundler": "^1.12.5",
+    "parcel": "^2.0.0-rc.0",
     "sass": "^1.38.0",
     "sortablejs": "^1.11.2-alpha.3",
     "tippy.js": "^6.2.6",
