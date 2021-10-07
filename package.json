@@ -4,7 +4,7 @@
   "description": "Combined repo for LITE exporter and caseworker frontends",
   "private": true,
   "scripts": {
-    "build_exporter": "parcel build ./exporter/assets/javascripts/{main,head}.js --dist-dir exporter/assets/built --public-url /assets/",
+    "build_exporter": "parcel build ./exporter/assets/javascripts/main.js --dist-dir exporter/assets/built --public-url /assets/",
     "build_caseworker": "parcel build ./caseworker/assets/javascripts/{main,head}.js ./caseworker/assets/javascripts/search-cases.js ./caseworker/assets/javascripts/review-good.js ./caseworker/assets/javascripts/search-products.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch_exporter": "parcel watch ./exporter/assets/javascripts/{main,head}.js --dist-dir exporter/assets/built --public-url /assets/",
     "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head}.js --dist-dir caseworker/assets/built --public-url /assets/",
@@ -26,6 +26,8 @@
   "homepage": "https://github.com/uktrade/lite-frontend#readme",
   "browserslist": "> 0.25%, not dead",
   "devDependencies": {
+    "@parcel/transformer-image": "^2.0.0-rc.0",
+    "@parcel/transformer-sass": "^2.0.0-rc.0",
     "@popperjs/core": "^2.4.4",
     "@tarekraafat/autocomplete.js": "^8.3.2",
     "accessible-autocomplete": "^2.0.3",
