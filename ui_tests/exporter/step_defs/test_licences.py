@@ -13,6 +13,26 @@ def licences_page(driver, exporter_url):
     driver.get(exporter_url.rstrip("/") + "/licences/")
 
 
+@then("An email is sent to HMRC")
+def is_email_sent_to_hmrc(context, driver, api_client):
+
+    # Force the task manager on LITE-HMRC to send any queued
+    # emails. This is required so our test doesn't have to
+    # wait 10mins until the task manager runs the task.
+    url = f"/licences/hmrc-integration/force-mail-push/"
+    response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
+    assert response.status_code == 200
+
+    # Check email is sent by probing the lite-api endpoint (which in turn cascades to LITE-HMRC)
+    url = f"/licences/hmrc-integration/{context.licence}/"
+    response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
+    assert response.status_code == 200
+
+    # Check mail status
+    hmrc_mail_status = response.json()["hmrc_mail_status"]
+    assert hmrc_mail_status == "reply_pending", f"HMRC mail status is {hmrc_mail_status}"
+
+
 @then("I see my standard licence")
 def standard_licence_row(context, driver):
     Shared(driver).filter_by_reference_number(context.reference_code)
