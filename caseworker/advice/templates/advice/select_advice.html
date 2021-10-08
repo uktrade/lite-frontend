@@ -1,7 +1,8 @@
 {% extends 'layouts/case.html' %}
+{% load crispy_forms_tags %}
 
 {% block body %}
 <main class="govuk-main-wrapper">
-Hello Select Advice!
+{% crispy form %}
 </main>
 {% endblock %}
