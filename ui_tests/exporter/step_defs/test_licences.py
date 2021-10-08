@@ -20,7 +20,8 @@ def is_email_sent_to_hmrc(context, driver):
     # TODO: Ensure email sent..
     # 1. Check Licence status on LITE-API
     # 2. Check Licence status on HMRC-LITE
-    # 3. ?
+    # 3. Merge HMRC-LITE code and mock stuff
+    # 4. ?
 
 
 @then("I see my standard licence")
