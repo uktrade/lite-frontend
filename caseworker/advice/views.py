@@ -1,5 +1,8 @@
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+from django.urls import reverse_lazy
+
 from caseworker.cases.services import get_case
+from caseworker.advice.forms import TextInputForm
 
 
 class CaseContextMixin:
@@ -13,7 +16,7 @@ class CaseContextMixin:
 
     def get_context_data(self, **kwargs):
         context = super(CaseContextMixin, self).get_context_data(**kwargs)
-        case_id = str(kwargs["pk"])
+        case_id = str(self.kwargs["pk"])
         # Ideally, we would probably want to not use the following
         # That said, if you look at the code, it is functional and
         # doesn't have anything to do with e.g. lite-forms
@@ -46,3 +49,5 @@ class CaseDetailView(CaseContextMixin, TemplateView):
 
 class SelectAdviceView(CaseContextMixin, FormView):
     template_name = "advice/select_advice.html"
+    form_class = TextInputForm
+    success_url = reverse_lazy('advice_placeholder')
