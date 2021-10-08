@@ -42,3 +42,7 @@ class CaseDetailView(CaseContextMixin, TemplateView):
     """
 
     template_name = "advice/case_detail_example.html"
+
+
+class SelectAdviceView(CaseContextMixin, FormView):
+    template_name = "advice/select_advice.html"
