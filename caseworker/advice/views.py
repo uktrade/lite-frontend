@@ -50,4 +50,11 @@ class CaseDetailView(CaseContextMixin, TemplateView):
 class SelectAdviceView(CaseContextMixin, FormView):
     template_name = "advice/select_advice.html"
     form_class = SelectAdviceForm
-    success_url = reverse_lazy('advice_placeholder')
+
+    def get_success_url(self):
+        recommendation = self.request.POST.get("recommendation")
+        if recommendation == "approve_all":
+            return "/#approve"
+        else:
+            return "/#refuse"
+
