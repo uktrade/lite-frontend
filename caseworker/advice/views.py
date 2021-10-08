@@ -2,7 +2,7 @@ from django.views.generic import TemplateView, FormView
 from django.urls import reverse_lazy
 
 from caseworker.cases.services import get_case
-from caseworker.advice.forms import TextInputForm
+from caseworker.advice.forms import SelectAdviceForm
 
 
 class CaseContextMixin:
@@ -49,5 +49,5 @@ class CaseDetailView(CaseContextMixin, TemplateView):
 
 class SelectAdviceView(CaseContextMixin, FormView):
     template_name = "advice/select_advice.html"
-    form_class = TextInputForm
+    form_class = SelectAdviceForm
     success_url = reverse_lazy('advice_placeholder')
