@@ -16,6 +16,7 @@ Feature: I want to view the case details of a case
     Then I should see the product name as "Rifle" with product rating as "PL9002"
     And the "Consignee" name is "Automated Consignee", address is "1234, Trade centre", country is "Belgium"
     And the "End user" name is "Automated End user", address is "1234, High street", country is "Belgium"
+    And the intended end use details should be "Research and development"
 
     Examples:
     | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
