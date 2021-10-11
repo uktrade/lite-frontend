@@ -249,6 +249,13 @@ def get_my_case_list(driver):  # noqa
     driver.find_element_by_link_text("Cases").click()
 
 
+@when(parsers.parse('I switch to queue "{queue}"'))  # noqa
+def switch_queue_dropdown(driver, queue):  # noqa
+    driver.find_element_by_id("link-queue").click()
+    queues = driver.find_element_by_id("queues")
+    queues.find_element_by_xpath(f"//a[contains(text(), '{queue}')]").click()
+
+
 @then("I should see my case in the cases list")  # noqa
 def case_in_cases_list(driver, context):  # noqa
     case_page = CaseListPage(driver)

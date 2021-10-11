@@ -41,8 +41,9 @@ Feature: I want to have cases be automatically routed to relevant work queues an
       Given I sign in to SSO or am signed into SSO
       And I create standard application or standard application has been previously created
       When I go to my profile page
-      And I change my team to "Licensing Reception" and default queue to "Licensing Reception SIEL applications"
+      And I change my team to "Licensing Reception" and default queue to "Open cases"
       And I go to my case list
+      And I switch to queue "Licensing Reception SIEL applications"
       Then I see previously created application
       When I click on the application previously created
       Then I should see the button "I'm done"
