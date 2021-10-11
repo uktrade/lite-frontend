@@ -104,7 +104,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     def process_step(self, form):
         if self.case["case_type"]["reference"]["key"] != "siel":
             raise ValueError("Only SIEL licences are supported")
-        data = {**form.cleaned_data, "objects": [self.object["good"]["id"]]}
+        data = {**form.cleaned_data, "current_object": self.object["id"], "objects": [self.object["good"]["id"]]}
         del data["does_not_have_control_list_entries"]
         post_review_good(self.request, case_id=self.kwargs["pk"], data=data)
         return super().process_step(form)
@@ -127,18 +127,20 @@ class ReviewStandardApplicationGoodWizardView(AbstractReviewGoodWizardView):
         return next(item for item in self.case.goods if item["id"] == self.object_pk)
 
     def get_form_initial(self, step):
+        current_step_object = next(item for item in self.case.goods if item["id"] == step)
+
         # if the good was reviewed at application level then use that as source of truth, otherwise use the export
         # control characteristics from the canonical good level
         if self.object["is_good_controlled"] is None:
-            source = self.object["good"]
+            source = current_step_object["good"]
         else:
-            source = self.object
+            source = current_step_object
         is_good_controlled = source["is_good_controlled"]
         initial = {
             "is_good_controlled": is_good_controlled["key"] if is_good_controlled else None,
             "does_not_have_control_list_entries": not source["control_list_entries"],
             "control_list_entries": [item["rating"] for item in source["control_list_entries"]],
-            "report_summary": self.object["good"]["report_summary"],
+            "report_summary": current_step_object["report_summary"],
             "comment": source["comment"],
             "end_use_control": self.object["end_use_control"],
             "is_precedent": self.object.get("is_precedent", False),

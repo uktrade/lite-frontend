@@ -185,6 +185,8 @@ def test_standard_review_goods(
     requests_mock_instance = requests_mock.post(f"/goods/control-list-entries/{standard_case_pk}/", json={})
     good_pk = data_standard_case["case"]["data"]["goods"][0]["good"]["id"]
     good_on_application_pk = data_standard_case["case"]["data"]["goods"][0]["id"]
+    data["current_object"] = good_on_application_pk
+    expected["current_object"] = good_on_application_pk
 
     step_data = build_wizard_step_data(
         view_name="review_standard_application_good_wizard_view", step_name=good_on_application_pk, data=data,
