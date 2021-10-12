@@ -1,5 +1,4 @@
 from django.views.generic import TemplateView, FormView
-from django.urls import reverse_lazy
 
 from caseworker.cases.services import get_case
 from caseworker.advice.forms import SelectAdviceForm
@@ -57,4 +56,3 @@ class SelectAdviceView(CaseContextMixin, FormView):
             return "/#approve"
         else:
             return "/#refuse"
-
