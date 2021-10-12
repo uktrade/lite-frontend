@@ -1,0 +1,58 @@
+{% extends 'layouts/case.html' %}
+
+{% load static custom_tags %}
+
+{% block header_tabs %}
+	{% include "cases/case-tabs.html" with case=case queue=queue %}
+{% endblock %}
+
+{% block two_thirds %}
+{% if advice %}
+<a draggable="false" class="govuk-button govuk-button--primary" href="/">Give advice</a>
+
+<h2 class="govuk-heading-m">Other recommendations for this case</h2>
+
+<pre>{{ case.advice|distinct_advice:case|pprint }}</pre>
+
+{% for a in case.advice|distinct_advice:case|values %}
+	<details open class="govuk-details" data-module="govuk-details">
+		<summary class="govuk-details__summary">
+			<span class="govuk-details__summary-text">
+				{{ a.user.first_name }} {{ a.user.last_name }}
+			</span>
+		</summary>
+		<h2 class="govuk-heading-m">{{ a.decision }} by {{ a.user.name }}</h2>
+		<div class="govuk-details__text">
+				<table class="govuk-table">
+					<caption class="govuk-table__caption govuk-table__caption--m">{{ decision_advice.decision|capfirst }}</caption>
+					<thead class="govuk-table__head">
+						<tr class="govuk-table__row">
+							<th scope="col" class="govuk-table__header">Country</th>
+							<th scope="col" class="govuk-table__header">Type</th>
+							<th scope="col" class="govuk-table__header">Name</th>
+							<th scope="col" class="govuk-table__header">Approved products</th>
+							<th scope="col" class="govuk-table__header">Licence condition added</th>
+						</tr>
+					</thead>
+					<tbody class="govuk-table__body">
+						{% for item in a.advice %}
+						<tr class="govuk-table__row">
+							<td class="govuk-table__cell">Get country from the address of the Party</td>
+							{# type of advice eg end_user, third_party #}
+							<td class="govuk-table__cell">Type of Party</td>
+							<td class="govuk-table__cell">Name of the Party (individual or org)</td>
+							<td class="govuk-table__cell">Which products??</td>
+							<td class="govuk-table__cell">Is this a proviso?</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+		</div>
+	</details>
+{% endfor %}
+
+{% else %}
+<h2 class="govuk-heading-m">There is no advice for this case yet</h2>
+<a draggable="false" class="govuk-button govuk-button--primary" href="/">Give advice</a>
+{% endif %}
+{% endblock %}

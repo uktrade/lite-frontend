@@ -1,0 +1,27 @@
+<div id="tab-bar" class="app-case-tab-bar">
+	<div class="govuk-width-container lite-tabs__container">
+		<div class="lite-tabs ">
+			<a id="tab-details" href="{% url 'cases:case' queue.id case.id 'details' %}" class="lite-tabs__tab">
+				Details
+			</a>
+			<a id="tab-licences" href="{% url 'cases:case' queue.id case.id 'licences' %}" class="lite-tabs__tab ">
+				Licences
+			</a>
+			<a id="tab-additional-contacts" href="{% url 'cases:case' queue.id case.id 'contacts' %}" class="lite-tabs__tab ">
+				Contacts
+			</a>
+			<a id="tab-ecju-queries" href="{% url 'cases:case' queue.id case.id 'ecju-queries' %}" class="lite-tabs__tab ">
+				Queries
+			</a>
+			<a id="tab-documents" href="{% url 'cases:case' queue.id case.id 'documents' %}" class="lite-tabs__tab ">
+				Documents
+			</a>
+			<a id="tab-activity" href="{% url 'cases:case' queue.id case.id 'activity' %}" class="lite-tabs__tab ">
+				Notes and timeline
+			</a>
+			<a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab lite-tabs__tab--selected">
+				Advice and decision
+			</a>
+		</div>
+	</div>
+</div>

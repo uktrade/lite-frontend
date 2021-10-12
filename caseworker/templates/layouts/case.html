@@ -115,6 +115,7 @@
 				</div>
 			{% endif %}
 		</div>
+		{% block header_tabs %}
 		{% if tabs %}
 			<div id="tab-bar" class="app-case-tab-bar">
 				<div class="govuk-width-container lite-tabs__container">
@@ -155,6 +156,7 @@
 				</div>
 			</div>
 		{% endif %}
+		{% endblock %}
 	</div>
 {% endblock %}
 
