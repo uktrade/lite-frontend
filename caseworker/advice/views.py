@@ -1,8 +1,11 @@
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
+
+from caseworker.advice import forms
 from caseworker.cases.services import get_case
+from core.auth.views import LoginRequiredMixin
 
 
-class CaseContextMixin:
+class CaseContextMixin(LoginRequiredMixin):
     """Most advice views need a reference to the associated
     Case object. This mixin, injects a reference to the Case
     in the context.
@@ -11,9 +14,9 @@ class CaseContextMixin:
     def get_context(self):
         return {}
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         context = super(CaseContextMixin, self).get_context_data(**kwargs)
-        case_id = str(kwargs["pk"])
+        case_id = str(self.kwargs["pk"])
         # Ideally, we would probably want to not use the following
         # That said, if you look at the code, it is functional and
         # doesn't have anything to do with e.g. lite-forms
@@ -42,3 +45,26 @@ class CaseDetailView(CaseContextMixin, TemplateView):
     """
 
     template_name = "advice/case_detail_example.html"
+
+
+class GiveApprovalAdviceView(CaseContextMixin, FormView):
+    """
+    """
+
+    form_class = forms.GiveApprovalAdviceForm
+    template_name = "advice/give-approval-advice.html"
+
+    def get(self, request, *args, **kwargs):
+        """
+        FormView doesn't pass kwargs to get_context_data() by default in get()
+        so override and send kwargs
+        """
+        return self.render_to_response(self.get_context_data(**kwargs))
+
+    def get_form_kwargs(self):
+        # default method supplies different set of kwargs so override and append ours
+        default_kwargs = super().get_form_kwargs()
+        return {**self.kwargs, **default_kwargs}
+
+    def form_valid(self, form):
+        return super().form_valid(form)
