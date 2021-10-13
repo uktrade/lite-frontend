@@ -3,6 +3,7 @@ from django.views.generic import FormView, TemplateView
 from caseworker.advice import forms, services
 from caseworker.cases.services import get_case
 from core.auth.views import LoginRequiredMixin
+from django.views.generic import TemplateView, FormView
 
 
 class CaseContextMixin(LoginRequiredMixin):
@@ -47,8 +48,21 @@ class CaseDetailView(CaseContextMixin, TemplateView):
     template_name = "advice/case_detail_example.html"
 
 
+class SelectAdviceView(CaseContextMixin, FormView):
+    template_name = "advice/select_advice.html"
+    form_class = forms.SelectAdviceForm
+
+    def get_success_url(self):
+        recommendation = self.request.POST.get("recommendation")
+        if recommendation == "approve_all":
+            return "/#approve"
+        else:
+            return "/#refuse"
+
+
 class GiveApprovalAdviceView(CaseContextMixin, FormView):
     """
+    Form to recommend approval advice for all products on the application
     """
 
     form_class = forms.GiveApprovalAdviceForm
@@ -72,4 +86,4 @@ class GiveApprovalAdviceView(CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-            return "/#save-advice"
+        return "/#save-advice"
