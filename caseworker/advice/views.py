@@ -1,6 +1,6 @@
 from django.views.generic import FormView, TemplateView
 
-from caseworker.advice import forms
+from caseworker.advice import forms, services
 from caseworker.cases.services import get_case
 from core.auth.views import LoginRequiredMixin
 
@@ -67,4 +67,9 @@ class GiveApprovalAdviceView(CaseContextMixin, FormView):
         return {**self.kwargs, **default_kwargs}
 
     def form_valid(self, form):
+        case = self.get_context_data()["case"]
+        services.post_advice(self.request, case, form.cleaned_data)
         return super().form_valid(form)
+
+    def get_success_url(self):
+            return "/#save-advice"
