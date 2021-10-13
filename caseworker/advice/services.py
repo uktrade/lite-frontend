@@ -1,12 +1,10 @@
 from core import client
 
 
-def post_advice(request, case, data):
-    json = {}
+def post_approval_advice(request, case, data):
     product_ids = [item["id"] for item in case["data"]["goods"]]
-    json = []
-    for product_id in product_ids:
-        json.append({
+    json = [
+        {
             "type": "approve",
             "text": data["approval_reasons"],
             "proviso": data["proviso"],
@@ -15,7 +13,9 @@ def post_advice(request, case, data):
             "footnote": data["footnote_details"],
             "good": product_id,
             "denial_reasons": [],
-        })
+        }
+        for product_id in product_ids
+    ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
     response.raise_for_status()

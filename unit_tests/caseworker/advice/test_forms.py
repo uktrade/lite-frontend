@@ -11,7 +11,7 @@ from caseworker.advice import forms
     ),
 )
 def test_give_approval_advice_form_valid(data, valid_status):
-    form = forms.GiveApprovalAdviceForm(queue_pk="queue", pk="pk", data=data,)
+    form = forms.GiveApprovalAdviceForm(data=data)
     assert form.is_valid() == valid_status
     if valid_status == False:
         assert form.errors["approval_reasons"][0] == "Enter a reason for approving"
