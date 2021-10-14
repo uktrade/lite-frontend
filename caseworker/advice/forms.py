@@ -51,3 +51,22 @@ class GiveApprovalAdviceForm(forms.Form):
             ),
             Submit("submit", "Submit"),
         )
+
+
+class RefusalAdviceForm(forms.Form):
+    def __init__(self, denial_reasons, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = [(item["id"], item["id"]) for item in denial_reasons]
+        self.fields["denial_reasons"] = forms.MultipleChoiceField(
+            choices=choices,
+            widget=forms.CheckboxSelectMultiple(),
+            label='Select all <a href="/">refusal criteria</a> that apply',
+        )
+        self.fields["refusal_reasons"] = forms.CharField(
+            label="What are your reasons for this refusal?",
+            help_text='<a href="/">Choose a refusal reason from the template list</a>',
+            widget=forms.Textarea(),
+            error_messages={"required": "Enter a reason for refusing"},
+        )
+        self.helper = FormHelper()
+        self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit"))
