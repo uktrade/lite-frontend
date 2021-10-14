@@ -1,0 +1,9 @@
+.app-bg-colour {
+  &--green {
+    background: govuk-tint(govuk-colour("green"), 75);
+  }
+
+  &--red {
+    background: govuk-tint(govuk-colour("red"), 75);
+  }
+}
