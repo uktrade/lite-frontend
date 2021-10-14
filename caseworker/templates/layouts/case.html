@@ -180,6 +180,7 @@
 				{% endif %}
 			{% endif %}
 
+			{% block full_width %}
 			<div class="govuk-grid-row">
 				<div class="govuk-grid-column-two-thirds">
 					{% block two_thirds %}{% endblock %}
@@ -189,6 +190,7 @@
 					{% block one_third %}{% endblock %}
 				</div>
 			</div>
+			{% endblock %}
 		</div>
 	{% endblock %}
 {% endblock %}
