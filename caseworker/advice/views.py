@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from caseworker.advice import forms, services
 from caseworker.cases.services import get_case
+from caseworker.core.services import get_denial_reasons
 from core.auth.views import LoginRequiredMixin
 
 
@@ -72,4 +73,23 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def form_valid(self, form):
         case = self.get_context_data()["case"]
         services.post_approval_advice(self.request, case, form.cleaned_data)
+        return super().form_valid(form)
+
+
+class RefusalAdviceView(CaseContextMixin, FormView):
+    template_name = "advice/refusal_advice.html"
+    form_class = forms.RefusalAdviceForm
+    success_url = "/#save-advice"
+
+    def get_form_kwargs(self):
+        """Overriding this so that I can pass denial_reasons
+        to the form.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["denial_reasons"] = get_denial_reasons(self.request)
+        return kwargs
+
+    def form_valid(self, form):
+        case = self.get_context_data()["case"]
+        services.post_refusal_advice(self.request, case, form.cleaned_data)
         return super().form_valid(form)
