@@ -7,19 +7,43 @@ from caseworker.advice.templatetags.advice_tags import get_clc, get_case_value, 
     "goods, expected_value",
     (
         # Base case
-        ([{"good": {"control_list_entries": ["a"]}}, {"good": {"control_list_entries": ["b"]}}], ["a", "b"],),
+        (
+            [
+                {"good": {"control_list_entries": [{"rating": "a"}]}},
+                {"good": {"control_list_entries": [{"rating": "b"}]}},
+            ],
+            ["a", "b"],
+        ),
         # One of the CLC is empty
-        ([{"good": {"control_list_entries": ["a"]}}, {"good": {"control_list_entries": []}}], ["a"],),
+        ([{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {"control_list_entries": []}}], ["a"],),
         # Same control_list_entry
-        ([{"good": {"control_list_entries": ["a"]}}, {"good": {"control_list_entries": ["a"]}}], ["a"],),
+        (
+            [
+                {"good": {"control_list_entries": [{"rating": "a"}]}},
+                {"good": {"control_list_entries": [{"rating": "a"}]}},
+            ],
+            ["a"],
+        ),
         # One of the CLC has more than one entry
-        ([{"good": {"control_list_entries": ["a", "b"]}}, {"good": {"control_list_entries": ["c"]}}], ["a", "b", "c"],),
+        (
+            [
+                {"good": {"control_list_entries": [{"rating": "a"}, {"rating": "b"}]}},
+                {"good": {"control_list_entries": [{"rating": "c"}]}},
+            ],
+            ["a", "b", "c"],
+        ),
         # One of the CLC has a None entry
-        ([{"good": {"control_list_entries": ["a", None]}}, {"good": {"control_list_entries": ["b"]}}], ["a", "b"],),
+        (
+            [
+                {"good": {"control_list_entries": [{"rating": "a"}, None]}},
+                {"good": {"control_list_entries": [{"rating": "b"}]}},
+            ],
+            ["a", "b"],
+        ),
         # Missing control_list_entries key
-        ([{"good": {"control_list_entries": ["a"]}}, {"good": {}}], ["a"],),
+        ([{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {}}], ["a"],),
         # Missing good key
-        ([{"good": {"control_list_entries": ["a"]}}, {}], ["a"],),
+        ([{"good": {"control_list_entries": [{"rating": "a"}]}}, {}], ["a"],),
     ),
 )
 def test_get_clc(goods, expected_value):

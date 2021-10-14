@@ -6,7 +6,7 @@ register = template.Library()
 
 @register.filter()
 def get_clc(goods):
-    clcs = {clc for good in goods for clc in good.get("good", {}).get("control_list_entries", [])}
+    clcs = {clc["rating"] for good in goods for clc in good.get("good", {}).get("control_list_entries", []) if clc}
     return sorted(clcs - {None})
 
 
