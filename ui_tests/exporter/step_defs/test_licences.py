@@ -14,14 +14,14 @@ def licences_page(driver, exporter_url):
 
 
 @then("An email is sent to HMRC")
-def is_email_sent_to_hmrc(context, driver):
-    print(f"is_email_sent_to_hmrc .. {context.licence}")
+def is_email_sent_to_hmrc(context, driver, api_client):
 
-    # TODO: Ensure email sent..
-    # 1. Check Licence status on LITE-API
-    # 2. Check Licence status on HMRC-LITE
-    # 3. Merge HMRC-LITE code and mock stuff
-    # 4. ?
+    # Check by checking mail status from lite-api endpoint
+    url = f"/licences/hmrc-integration/{context.licence}/"
+    response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
+    assert response.status_code == 200
+
+    # TODO: Check further payload ..
 
 
 @then("I see my standard licence")
