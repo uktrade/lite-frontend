@@ -5,7 +5,7 @@ def post_approval_advice(request, case, data):
     product_ids = [item["id"] for item in case["data"]["goods"]]
     json = [
         {
-            "type": "approve",
+            "type": "proviso" if data["proviso"] else "approve",
             "text": data["approval_reasons"],
             "proviso": data["proviso"],
             "note": data["instructions_to_exporter"],

@@ -8,4 +8,5 @@ urlpatterns = [
     path("select-advice/", views.SelectAdviceView.as_view(), name="select_advice"),
     path("approve-all/", views.GiveApprovalAdviceView.as_view(), name="approve_all"),
     path("refuse-all/", views.RefusalAdviceView.as_view(), name="refuse_all"),
+    path("view-my-advice/", views.ViewMyAdviceView.as_view(), name="view_my_advice"),
 ]
