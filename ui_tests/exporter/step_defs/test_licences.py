@@ -16,6 +16,12 @@ def licences_page(driver, exporter_url):
 @then("An email is sent to HMRC")
 def is_email_sent_to_hmrc(context, driver, api_client):
 
+    # Force the task manager on LITE-HMRC to send any queued
+    # emails. This is required so our test doesn't have to
+    # wait 10mins until the task manager runs the task.
+    url = f"/mail/send-licence-updates-to-hmrc/"
+    # TODO: Send to LITE-HMRC
+
     # Check by checking mail status from lite-api endpoint
     url = f"/licences/hmrc-integration/{context.licence}/"
     response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
