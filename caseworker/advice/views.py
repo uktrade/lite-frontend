@@ -2,9 +2,23 @@ from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 
 from caseworker.advice import forms, services
+
+import json
+
+from django.utils.functional import cached_property
+
+from core import client
+
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
 from core.auth.views import LoginRequiredMixin
+
+DECISION_TYPE_VERB_MAPPING = {
+    "Approve": "approved",
+    "Proviso": "approved with proviso",
+    "Refuse": "refused",
+    "Conflicting": "given conflicting advice",
+}
 
 
 class CaseContextMixin:
@@ -12,32 +26,16 @@ class CaseContextMixin:
     Case object. This mixin, injects a reference to the Case
     in the context.
     """
+    @property
+    def case_id(self):
+        return str(self.kwargs["pk"])
 
-    def get_context(self):
-        return {}
+    @cached_property
+    def case(self):
+        return get_case(self.request, self.case_id)
 
     def get_context_data(self, **kwargs):
-        context = super(CaseContextMixin, self).get_context_data(**kwargs)
-        case_id = str(self.kwargs["pk"])
-        # Ideally, we would probably want to not use the following
-        # That said, if you look at the code, it is functional and
-        # doesn't have anything to do with e.g. lite-forms
-        # P.S. the case here is needed for rendering the base
-        # template (layouts/case.html) from which we are inheriting.
-        case = get_case(self.request, case_id)
-        return {**context, **self.get_context(), "case": case, "queue_pk": self.kwargs["queue_pk"]}
-
-
-class AdvicePlaceholderView(LoginRequiredMixin, CaseContextMixin, TemplateView):
-    """This is POC ATM and should be removed with the first PR
-    of advice. Currently, this is a TemplateView but it should
-    be fairly simple to make this e.g. a SingleFormView.
-    """
-
-    template_name = "advice/placeholder.html"
-
-    def get_context(self):
-        return {"greetings": "Hello World!"}
+        return super().get_context_data(case=self.case, **kwargs,)
 
 
 class CaseDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -163,3 +161,115 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+
+
+class GetTeamsMixin:
+    @cached_property
+    def all_teams(self):
+        response = client.get(self.request, "/teams/")
+        response.raise_for_status()
+        return response.json()["teams"]
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(all_teams=self.all_teams, **kwargs,)
+
+
+class QueueContextMixin:
+    @property
+    def queue_id(self):
+        return str(self.kwargs["queue_pk"])
+
+    @cached_property
+    def queue(self):
+        response = client.get(self.request, f"/queues/{self.queue_id}")
+        response.raise_for_status()
+        return response.json()
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(queue=self.queue, **kwargs,)
+
+
+class AdviceView(GetTeamsMixin, QueueContextMixin, CaseContextMixin, TemplateView):
+    """This is POC ATM and should be removed with the first PR
+    of advice. Currently, this is a TemplateView but it should
+    be fairly simple to make this e.g. a SingleFormView.
+    """
+
+    template_name = "advice/view-advice.html"
+
+    @property
+    def destinations(self):
+        return self.case.destinations
+
+    # this is a rough schema for the grouped_advice
+    # grouped_advice = [
+    #     {
+    #         "team": {team data},
+    #         "advice": [
+    #             {
+    #                 "user": user,
+    #                 "decision": approve/refuse etc,
+    #                 "advice": [
+    #                     {
+    #                         "party_type": end user, third party etc,
+    #                         "country": country,
+    #                         "name": party name - of the organisation or individual. we don't get this from the api yet so using address for now,
+    #                         "approved_products": [list of ids or serialized as names?],
+    #                         "licence_condition": this will replace 'approve with proviso'
+    #                     }
+    #                 ]
+    #             }
+    #         ]
+    #     }
+    # ]
+
+    @property
+    def grouped_advice(self):
+        if not self.case["advice"]:
+            return []
+        grouped_advice = []
+        for team in self.teams:
+            team_advice = [advice for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]]
+            team_advice_group = {
+                "team": team,
+                "advice": [],
+            }
+            team_users_unique = set([json.dumps(advice["user"]) for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]])
+            team_users = [json.loads(user) for user in team_users_unique]
+
+            for team_user in team_users:
+                user_advice = [advice for advice in team_advice if advice["user"]["id"] == team_user["id"]]
+
+                decisions = set([advice["type"]["value"] for advice in user_advice])
+
+                for decision in decisions:
+                    user_decision_advice_group = {
+                        "user": team_user,
+                        "decision": decision,
+                        "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
+                        "advice": [],
+                    }
+                    for destination in self.destinations:
+                        advice = [a for a in user_advice if a[destination["type"]] is not None][0]
+                        user_advice_destination = {
+                            "type": destination["name"],
+                            "address": destination["address"],
+                            "licence_condition": advice["proviso"],
+                            "country": destination["country"]["name"],
+                            "advice": advice,
+                        }
+                        user_decision_advice_group["advice"].append(user_advice_destination)
+
+                    team_advice_group["advice"].append(user_decision_advice_group)
+
+                grouped_advice.append(team_advice_group)
+
+        return grouped_advice
+
+    @property
+    def teams(self):
+        teams_unique = set([json.dumps(advice["user"]["team"]) for advice in self.case["advice"]])
+        return [json.loads(team) for team in teams_unique]
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(advice=self.case["advice"], grouped_advice=self.grouped_advice, **kwargs,)
