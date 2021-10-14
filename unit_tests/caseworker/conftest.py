@@ -258,6 +258,19 @@ def mock_standard_case_assigned_queues(requests_mock, standard_case_pk):
 
 
 @pytest.fixture
+def mock_denial_reasons(requests_mock):
+    url = client._build_absolute_uri("/static/denial-reasons/")
+    data = {"denial_reasons": [{"id": "1"}, {"id": "1a"}, {"id": "2"}, {"id": "2a"}, {"id": "2b"}, {"id": "M"}]}
+    yield requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
+def mock_post_refusal_advice(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/user-advice/")
+    yield requests_mock.post(url=url, json={})
+
+
+@pytest.fixture
 def mock_case_documents(requests_mock):
     url = client._build_absolute_uri(f"/cases/{application_id}/documents/")
     data = {
