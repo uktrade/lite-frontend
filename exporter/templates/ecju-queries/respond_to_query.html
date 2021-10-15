@@ -37,7 +37,7 @@
             {% csrf_token %}
             <h1 class="govuk-heading-xl">Respond to query</h1>
             <div class="app-ecju-query__text">
-                {{ ecju_query.question }}
+                {{ ecju_query.question|linebreaks }}
             </div><br><br>
 
             <div id="response-text-container"

@@ -5,7 +5,7 @@
 			<div class="app-ecju-query__item">
 				<p class="app-ecju-query__heading">{{ ecju_query.team.name }}</p>
 				<div class="app-ecju-query__text">
-					{{ ecju_query.question }}
+					{{ ecju_query.question|linebreaks }}
 				</div>
 				<p class="app-ecju-query__date">
 					<span class="govuk-visually-hidden">Created at </span>{{ ecju_query.created_at|str_date }}
@@ -26,7 +26,7 @@
 			<div class="app-ecju-query__item">
 				<p class="app-ecju-query__heading">{{ ecju_query.team.name }}</p>
 				<div class="app-ecju-query__text">
-					{{ ecju_query.question }}
+					{{ ecju_query.question|linebreaks }}
 				</div>
 				<p class="app-ecju-query__date">
 					<span class="govuk-visually-hidden">Created at </span>{{ ecju_query.created_at|str_date }}
