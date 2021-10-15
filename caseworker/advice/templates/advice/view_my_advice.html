@@ -15,7 +15,7 @@
                     Clear recommendation
                 </a>
 
-                <table class="govuk-table">
+                <table id="table-licenceable-products" class="govuk-table">
                     <h2 class="govuk-heading-m">My approval recommendation</h2>
                     <thead class="govuk-table__head">
                       <tr class="govuk-table__row">
@@ -97,7 +97,7 @@
                 <br><br>
 
                 {% if nlr_products|length %}
-                  <table class="govuk-table">
+                  <table id="table-nlr-products" class="govuk-table">
                     <caption class="govuk-table__caption govuk-table__caption--m">No licence required products</caption>
                     <thead class="govuk-table__head">
                       <tr class="govuk-table__row">
