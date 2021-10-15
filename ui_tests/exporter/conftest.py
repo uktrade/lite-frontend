@@ -123,6 +123,16 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
         functions.click_submit(driver)
 
 
+@given("Only my email is to be processed by LITE-HMRC")
+def only_my_email_is_to_be_processed_by_lite_hmrc(api_client):
+
+    # Mark all existing emails to be processed/sent so we can focus
+    # on a single one
+    url = f"/licences/hmrc-integration/mark-emails-as-processed/"
+    response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
+    assert response.status_code == 200
+
+
 @then("I logout")  # noqa
 def i_logout(driver, exporter_url):  # noqa
     driver.get(exporter_url.rstrip("/") + "/auth/logout")
@@ -743,25 +753,6 @@ def create_licence_with_licenced_goods(context, decision, api_test_client):  # n
     for good in context.goods:
         additional_data[f"quantity-{good['id']}"] = good["quantity"]
         additional_data[f"value-{good['id']}"] = round(float(good["value"]) * good["quantity"], 2)
-    api_test_client.cases.finalise_case(context.case_id, "approve", additional_data)
-    api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
-    api_test_client.cases.finalise_licence(context.case_id)
-    context.licence = api_test_client.context["licence"]
-
-
-# HACK: Copy/pasted from above to make usable in steps
-@when(
-    parsers.parse('I create a licence for my application with "{decision}" decision document and good decisions')
-)  # noqa
-def create_licence_with_licenced_goods(context, decision, api_test_client):  # noqa
-    document_template = api_test_client.document_templates.add_template(
-        api_test_client.picklists, case_types=["oiel", "siel", "exhc"]
-    )
-    additional_data = {}
-    for good in context.goods:
-        additional_data[f"quantity-{good['id']}"] = good["quantity"]
-        additional_data[f"value-{good['id']}"] = round(float(good["value"]) * good["quantity"], 2)
-
     api_test_client.cases.finalise_case(context.case_id, "approve", additional_data)
     api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
     api_test_client.cases.finalise_licence(context.case_id)
