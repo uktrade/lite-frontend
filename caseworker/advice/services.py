@@ -2,7 +2,9 @@ from core import client
 
 
 def post_approval_advice(request, case, data):
-    product_ids = [item["id"] for item in case["data"]["goods"]]
+    licenceable_products = [
+        product for product in case["data"]["goods"] if product["is_good_controlled"]["key"] == "True"
+    ]
     json = [
         {
             "type": "proviso" if data["proviso"] else "approve",
@@ -11,10 +13,10 @@ def post_approval_advice(request, case, data):
             "note": data["instructions_to_exporter"],
             "footnote_required": True if data["footnote_details"] else False,
             "footnote": data["footnote_details"],
-            "good": product_id,
+            "good": product["id"],
             "denial_reasons": [],
         }
-        for product_id in product_ids
+        for product in licenceable_products
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
@@ -23,16 +25,18 @@ def post_approval_advice(request, case, data):
 
 
 def post_refusal_advice(request, case, data):
-    product_ids = [item["id"] for item in case["data"]["goods"]]
+    licenceable_products = [
+        product for product in case["data"]["goods"] if product["is_good_controlled"]["key"] == "True"
+    ]
     json = [
         {
             "type": "refuse",
             "text": data["refusal_reasons"],
             "footnote_required": False,
-            "good": product_id,
+            "good": product["id"],
             "denial_reasons": data["denial_reasons"],
         }
-        for product_id in product_ids
+        for product in licenceable_products
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)

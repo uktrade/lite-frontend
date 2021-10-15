@@ -1,6 +1,5 @@
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
-from caseworker import advice
 
 from caseworker.advice import forms, services
 from caseworker.cases.services import get_case
@@ -110,7 +109,11 @@ class ViewMyAdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         ]
 
     def nlr_products(self, products):
-        return [product for product in products if product["is_good_controlled"]["key"] == "True"]
+        return [
+            product
+            for product in products
+            if not product["is_good_controlled"] or product["is_good_controlled"]["key"] == "False"
+        ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
