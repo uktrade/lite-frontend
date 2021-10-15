@@ -674,3 +674,10 @@ def case_removed_from_queue(driver, queue):  # noqa
     driver.find_element_by_id("link-change-queues").click()
     select_queue(driver, queue, False)
     functions.click_submit(driver)
+
+
+@then(parsers.parse('the flag "{flag}" is not present'))  # noqa
+def flag_not_present(driver, flag):  # noqa
+    flags_container = driver.find_element_by_id("case-flags")
+    el = flags_container.find_elements_by_xpath(f"//li[contains(text(), '{flag}')]")
+    assert len(el) == 0

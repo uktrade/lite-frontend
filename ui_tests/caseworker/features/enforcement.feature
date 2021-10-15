@@ -50,6 +50,7 @@ Feature: I want to export and import XML for enforcement checking
     And I import the generated enforcement check xml file
     And I go to application previously created
     Then the application is removed from "Enforcement Unit Cases to Review" queue
+    And the flag "Enforcement Check Req" is not present
     And I cleanup the temporary files created
 
     Examples:
