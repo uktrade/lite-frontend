@@ -7,7 +7,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
 
   Scenario: Gov user can review product in an application
     Given I sign in to SSO or am signed into SSO
-    And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to my profile page
     And I change my team to "TAU" and default queue to "Open cases"
@@ -19,17 +19,19 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     Then I should see the product name as "Rifle" with product rating as "PL9002"
     And I select the product and click on Review goods
     And I update the control list entry to "ML4b"
+    And I check the product part number is "PN-ABC-123"
     And I input "Rifles" for annual report summary and submit
     Then I should see the product name as "Rifle" with product rating as "ML4b"
+    And I check the product annual report summary is "Rifles"
     And the product status is "Verified"
 
     Examples:
-    | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+    | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test    | Rifle   | PN-ABC-123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
   Scenario: Gov user can add case note
     Given I sign in to SSO or am signed into SSO
-    And I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to my profile page
     And I change my team to "TAU" and default queue to "Open cases"
@@ -44,8 +46,8 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     Then I should see "Automated Test_Add a case note" appear in the timeline
 
     Examples:
-    | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+    | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test    | Rifle   | SN-XYZ-456  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
   @skip @LT_1300 @regression
   Scenario: Review goods On Standard Application
