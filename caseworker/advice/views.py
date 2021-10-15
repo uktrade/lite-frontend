@@ -2,23 +2,15 @@ from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 
 from caseworker.advice import forms, services
+from caseworker.advice.constants import DECISION_TYPE_VERB_MAPPING
 
 import json
-
-from django.utils.functional import cached_property
 
 from core import client
 
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
 from core.auth.views import LoginRequiredMixin
-
-DECISION_TYPE_VERB_MAPPING = {
-    "Approve": "approved",
-    "Proviso": "approved with proviso",
-    "Refuse": "refused",
-    "Conflicting": "given conflicting advice",
-}
 
 
 class CaseContextMixin:
@@ -30,12 +22,21 @@ class CaseContextMixin:
     def case_id(self):
         return str(self.kwargs["pk"])
 
-    @cached_property
+    @property
     def case(self):
         return get_case(self.request, self.case_id)
 
+    def get_context(self, **kwargs):
+        return {}
+
     def get_context_data(self, **kwargs):
-        return super().get_context_data(case=self.case, **kwargs,)
+        context = super().get_context_data(**kwargs)
+        # Ideally, we would probably want to not use the following
+        # That said, if you look at the code, it is functional and
+        # doesn't have anything to do with e.g. lite-forms
+        # P.S. the case here is needed for rendering the base
+        # template (layouts/case.html) from which we are inheriting.
+        return {**context, **self.get_context(), "case": self.case, "queue_pk": self.kwargs["queue_pk"]}
 
 
 class CaseDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -163,43 +164,23 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
-class GetTeamsMixin:
-    @cached_property
-    def all_teams(self):
-        response = client.get(self.request, "/teams/")
-        response.raise_for_status()
-        return response.json()["teams"]
+class AdviceView(CaseContextMixin, TemplateView):
+    template_name = "advice/view-advice.html"
 
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(all_teams=self.all_teams, **kwargs,)
-
-
-class QueueContextMixin:
     @property
     def queue_id(self):
         return str(self.kwargs["queue_pk"])
 
-    @cached_property
+    @property
     def queue(self):
         response = client.get(self.request, f"/queues/{self.queue_id}")
         response.raise_for_status()
         return response.json()
 
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(queue=self.queue, **kwargs,)
-
-
-class AdviceView(GetTeamsMixin, QueueContextMixin, CaseContextMixin, TemplateView):
-    """This is POC ATM and should be removed with the first PR
-    of advice. Currently, this is a TemplateView but it should
-    be fairly simple to make this e.g. a SingleFormView.
-    """
-
-    template_name = "advice/view-advice.html"
-
     @property
-    def destinations(self):
-        return self.case.destinations
+    def teams(self):
+        teams_unique = set([json.dumps(advice["user"]["team"]) for advice in self.case["advice"]])
+        return [json.loads(team) for team in teams_unique]
 
     # this is a rough schema for the grouped_advice
     # grouped_advice = [
@@ -249,7 +230,7 @@ class AdviceView(GetTeamsMixin, QueueContextMixin, CaseContextMixin, TemplateVie
                         "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
                         "advice": [],
                     }
-                    for destination in self.destinations:
+                    for destination in self.case.destinations:
                         advice = [a for a in user_advice if a[destination["type"]] is not None][0]
                         user_advice_destination = {
                             "type": destination["name"],
@@ -266,10 +247,8 @@ class AdviceView(GetTeamsMixin, QueueContextMixin, CaseContextMixin, TemplateVie
 
         return grouped_advice
 
-    @property
-    def teams(self):
-        teams_unique = set([json.dumps(advice["user"]["team"]) for advice in self.case["advice"]])
-        return [json.loads(team) for team in teams_unique]
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(advice=self.case["advice"], grouped_advice=self.grouped_advice, **kwargs,)
+    def get_context(self):
+        return {
+            "queue": self.queue,
+            "grouped_advice": self.grouped_advice,
+        }

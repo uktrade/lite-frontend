@@ -3,7 +3,7 @@ from django.urls import path
 from caseworker.advice import views
 
 urlpatterns = [
-    path("", views.AdviceView.as_view(), name="advice_placeholder"),
+    path("", views.AdviceView.as_view(), name="advice_view"),
     path("case-details/", views.CaseDetailView.as_view(), name="case_details"),
     path("select-advice/", views.SelectAdviceView.as_view(), name="select_advice"),
     path("approve-all/", views.GiveApprovalAdviceView.as_view(), name="approve_all"),

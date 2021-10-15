@@ -3,17 +3,17 @@
 {% load static custom_tags %}
 
 {% block header_tabs %}
-	{% include "cases/case-tabs.html" with case=case queue=queue %}
+	{% include "advice/case-tabs.html" with case=case queue=queue %}
 {% endblock %}
 
 {% block full_width %}
-{% if advice %}
+{% if grouped_advice %}
 <a draggable="false" class="govuk-button govuk-button--primary" href="/">Give advice</a>
 
 <h2 class="govuk-heading-m">Other recommendations for this case</h2>
 
 {% for team_advice in grouped_advice %}
-	<details open class="govuk-details" data-module="govuk-details">
+	<details class="govuk-details" data-module="govuk-details">
 		<summary class="govuk-details__summary">
 			<span class="govuk-details__summary-text govuk-!-font-weight-bold">
 				{{ team_advice.team.name }}
