@@ -4,7 +4,6 @@ from django.urls import reverse
 from caseworker.advice import forms, services
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
-from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
 
 
@@ -96,27 +95,19 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
 
-class ViewMyAdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/view_my_advice.html"
 
     def current_user_advice(self, case):
-        gov_user, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
         return [
             advice
             for advice in case.advice
-            if (advice["type"]["key"] == "approve" or advice["type"]["key"] == "proviso")
-            and (advice["user"]["id"] == gov_user["user"]["id"])
-        ]
-
-    def nlr_products(self, products):
-        return [
-            product
-            for product in products
-            if not product["is_good_controlled"] or product["is_good_controlled"]["key"] == "False"
+            if advice["type"]["key"] in ["approve", "proviso", "refuse"]
+            and (advice["user"]["id"] == str(self.request.session["lite_api_user_id"]))
         ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         my_advice = self.current_user_advice(context["case"])
-        nlr_products = self.nlr_products(context["case"]["data"]["goods"])
+        nlr_products = services.filter_nlr_products(context["case"]["data"]["goods"])
         return {**context, "my_advice": my_advice, "nlr_products": nlr_products}

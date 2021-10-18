@@ -8,7 +8,20 @@ from core import client
 
 
 @pytest.fixture
-def standard_case_with_advice():
+def current_user():
+    return {
+        "email": "test.user@example.com",
+        "first_name": "Test",
+        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {"id": "00000000-1234-0000-0000-e676b794b394", "is_ogd": False, "name": "Admin", "part_of_ecju": None,},
+    }
+
+
+@pytest.fixture
+def standard_case_with_advice(current_user):
     return {
         "id": "2c14d003-1234-4c11-a0fd-bbfd7572c5a4",
         "data": {
@@ -81,23 +94,34 @@ def standard_case_with_advice():
                 "third_party": None,
                 "type": {"key": "proviso", "value": "Proviso"},
                 "ultimate_end_user": None,
-                "user": {
-                    "email": "test.user@example.com",
-                    "first_name": "Test",
-                    "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                    "last_name": "User",
-                    "role_name": "Super User",
-                    "status": "Active",
-                    "team": {
-                        "id": "00000000-1234-0000-0000-e676b794b394",
-                        "is_ogd": False,
-                        "name": "Admin",
-                        "part_of_ecju": None,
-                    },
-                },
+                "user": current_user,
             }
         ],
     }
+
+
+@pytest.fixture
+def refusal_advice(current_user):
+    return [
+        {
+            "id": "5cf3c92d-e841-4b8a-8ce5-bd7f869a3e8d",
+            "text": "Not matching the criteria to issue the licence",
+            "note": None,
+            "type": {"key": "refuse", "value": "Refuse"},
+            "level": "user",
+            "proviso": None,
+            "denial_reasons": ["5a", "5b"],
+            "footnote": None,
+            "user": current_user,
+            "created_at": "2021-10-17T23:23:30.421294+01:00",
+            "good": "73152304-6026-4cc0-a3d7-0a93048ecdce",
+            "country": None,
+            "end_user": None,
+            "ultimate_end_user": None,
+            "consignee": None,
+            "third_party": None,
+        }
+    ]
 
 
 @pytest.fixture(autouse=True)
@@ -112,7 +136,7 @@ def url(data_queue, data_standard_case):
     )
 
 
-def test_view_my_advice_with_conditions_notes_and_nlr_products(
+def test_view_approve_advice_with_conditions_notes_and_nlr_products(
     authorized_client, requests_mock, data_standard_case, standard_case_with_advice, url
 ):
     """
@@ -134,7 +158,7 @@ def test_view_my_advice_with_conditions_notes_and_nlr_products(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-    table_rows = soup.find("table", id="table-licenceable-products").find_all("tr")
+    table_rows = soup.find("table", id="table-licenceable-products-approve-all").find_all("tr")
     assert len(table_rows) == 3  # including header
 
     # Assert on Parties
@@ -156,6 +180,55 @@ def test_view_my_advice_with_conditions_notes_and_nlr_products(
     assert advice_content[0] == case_data["case"]["advice"][0]["text"]
     assert advice_content[1] == case_data["case"]["advice"][0]["proviso"]
     assert advice_content[2] == case_data["case"]["advice"][0]["note"]
+
+    # Assert NLR - the second product on this application is NLR
+    nlr_table_rows = soup.find("table", id="table-nlr-products").find_all("tr")
+    assert ["Product name"] == [column.text for column in nlr_table_rows[0].find_all("th")]
+    assert [case_data["case"]["data"]["goods"][1]["good"]["name"]] == [
+        column.text for column in nlr_table_rows[1].find_all("td")
+    ]
+
+
+def test_view_refusal_advice_not_including_nlr_products(
+    authorized_client, requests_mock, data_standard_case, standard_case_with_advice, refusal_advice, url
+):
+    """
+    Tests display of the 'Refuse all' advice given by the user and it doesn't include NLR products
+    """
+    case_data = deepcopy(data_standard_case)
+    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
+    case_data["case"]["advice"] = refusal_advice
+
+    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=case_data)
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov_users/{data_standard_case['case']['id']}"),
+        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+    )
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    table_rows = soup.find("table", id="table-licenceable-products-refuse-all").find_all("tr")
+    assert len(table_rows) == 3  # including header
+
+    # Assert on Parties
+    expected_headers = ["Country", "Type", "Name", "Refused products", "Refusal criteria"]
+    consignee = case_data["case"]["data"]["consignee"]
+    expected_consignee_values = [consignee["country"]["name"], "Consignee", consignee["name"], "All", "5a, 5b"]
+    end_user = case_data["case"]["data"]["end_user"]
+    expected_end_user_values = [end_user["country"]["name"], "End user", end_user["name"], "All", "5a, 5b"]
+
+    assert expected_headers == [column.text for column in table_rows[0].find_all("th")]
+    assert expected_consignee_values == [column.text for column in table_rows[1].find_all("td")]
+    assert expected_end_user_values == [column.text for column in table_rows[2].find_all("td")]
+
+    # Assert Advice
+    advice_content = [
+        p.text for item in soup.findAll("div", {"class": "govuk-cookie-banner__content"}) for p in item.findAll("p")
+    ]
+    assert len(advice_content) == 1
+    assert advice_content[0] == case_data["case"]["advice"][0]["text"]
 
     # Assert NLR - the second product on this application is NLR
     nlr_table_rows = soup.find("table", id="table-nlr-products").find_all("tr")

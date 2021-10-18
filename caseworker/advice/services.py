@@ -1,10 +1,19 @@
 from core import client
 
 
-def post_approval_advice(request, case, data):
-    licenceable_products = [
-        product for product in case["data"]["goods"] if product["is_good_controlled"]["key"] == "True"
+def filter_licenceable_products(products):
+    return [product for product in products if product["is_good_controlled"]["key"] == "True"]
+
+
+def filter_nlr_products(products):
+    return [
+        product
+        for product in products
+        if not product["is_good_controlled"] or product["is_good_controlled"]["key"] == "False"
     ]
+
+
+def post_approval_advice(request, case, data):
     json = [
         {
             "type": "proviso" if data["proviso"] else "approve",
@@ -16,7 +25,7 @@ def post_approval_advice(request, case, data):
             "good": product["id"],
             "denial_reasons": [],
         }
-        for product in licenceable_products
+        for product in filter_licenceable_products(case["data"]["goods"])
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
@@ -25,9 +34,6 @@ def post_approval_advice(request, case, data):
 
 
 def post_refusal_advice(request, case, data):
-    licenceable_products = [
-        product for product in case["data"]["goods"] if product["is_good_controlled"]["key"] == "True"
-    ]
     json = [
         {
             "type": "refuse",
@@ -36,7 +42,7 @@ def post_refusal_advice(request, case, data):
             "good": product["id"],
             "denial_reasons": data["denial_reasons"],
         }
-        for product in licenceable_products
+        for product in filter_licenceable_products(case["data"]["goods"])
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
