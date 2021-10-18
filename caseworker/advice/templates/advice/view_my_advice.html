@@ -8,7 +8,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-three-quarters">
               <h1 class="govuk-heading-xl">View Advice</h1>
-              <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#edit-recommendation">
+              <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">
                   Edit recommendation
               </a>
               <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#clear-recommendation">
