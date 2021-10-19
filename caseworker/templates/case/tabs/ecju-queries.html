@@ -52,7 +52,7 @@
 						</a>
 					</p>
 					<div class="app-ecju-query__text" data-max-length="300">
-						{{ ecju_query.response }}
+						{{ ecju_query.response|linebreaks }}
 					</div>
 					{% if ecju_query.documents %}
 						{% for document in ecju_query.documents %}
