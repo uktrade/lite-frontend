@@ -48,3 +48,9 @@ def post_refusal_advice(request, case, data):
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
     response.raise_for_status()
     return response.json(), response.status_code
+
+
+def delete_user_advice(request, case_pk):
+    response = client.delete(request, f"/cases/{case_pk}/user-advice/")
+    response.raise_for_status()
+    return response.json(), response.status_code

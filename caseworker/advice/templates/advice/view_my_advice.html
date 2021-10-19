@@ -11,7 +11,7 @@
               <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#edit-recommendation">
                   Edit recommendation
               </a>
-              <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#clear-recommendation">
+              <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:delete_advice' queue_pk case.id %}">
                   Clear recommendation
               </a>
               {% if my_advice|length %}
@@ -38,3 +38,4 @@
     </main>
 </div>
 {% endblock %}
+

@@ -70,3 +70,10 @@ class RefusalAdviceForm(forms.Form):
         )
         self.helper = FormHelper()
         self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit"))
+
+
+class DeleteAdviceForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("confirm", "Confirm"))

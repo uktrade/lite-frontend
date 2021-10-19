@@ -111,3 +111,16 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         my_advice = self.current_user_advice(context["case"])
         nlr_products = services.filter_nlr_products(context["case"]["data"]["goods"])
         return {**context, "my_advice": my_advice, "nlr_products": nlr_products}
+
+
+class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/delete-advice.html"
+    form_class = forms.DeleteAdviceForm
+
+    def form_valid(self, form):
+        case = self.get_context_data()["case"]
+        services.delete_user_advice(self.request, case["id"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
