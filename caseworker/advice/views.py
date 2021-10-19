@@ -208,42 +208,43 @@ class AdviceView(CaseContextMixin, TemplateView):
     def grouped_advice(self):
         if not self.case["advice"]:
             return []
+
+        return self.group_advice()
+
+    def group_user_advice(self, user_advice, destination):
+        advice_item = [a for a in user_advice if a[destination["type"]] is not None][0]
+        return {
+            "type": destination["name"],
+            "address": destination["address"],
+            "licence_condition": advice_item["proviso"],
+            "country": destination["country"]["name"],
+            "advice": advice_item,
+        }
+
+    def group_user_decision_advice(self, user_advice, team_user, decision):
+        return {
+            "user": team_user,
+            "decision": decision,
+            "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
+            "advice": [self.group_user_advice(user_advice, destination) for destination in self.case.destinations],
+        }
+
+    def group_team_user_advice(self, team, team_advice, team_user):
+        user_advice = [advice for advice in team_advice if advice["user"]["id"] == team_user["id"]]
+        decisions = set([advice["type"]["value"] for advice in user_advice])
+        return {
+            "team": team,
+            "advice": [self.group_user_decision_advice(user_advice, team_user, decision) for decision in decisions],
+        }
+
+    def group_advice(self):
         grouped_advice = []
+
         for team in self.teams:
             team_advice = [advice for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]]
-            team_advice_group = {
-                "team": team,
-                "advice": [],
-            }
             team_users_unique = set([json.dumps(advice["user"]) for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]])
             team_users = [json.loads(user) for user in team_users_unique]
-
-            for team_user in team_users:
-                user_advice = [advice for advice in team_advice if advice["user"]["id"] == team_user["id"]]
-
-                decisions = set([advice["type"]["value"] for advice in user_advice])
-
-                for decision in decisions:
-                    user_decision_advice_group = {
-                        "user": team_user,
-                        "decision": decision,
-                        "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
-                        "advice": [],
-                    }
-                    for destination in self.case.destinations:
-                        advice = [a for a in user_advice if a[destination["type"]] is not None][0]
-                        user_advice_destination = {
-                            "type": destination["name"],
-                            "address": destination["address"],
-                            "licence_condition": advice["proviso"],
-                            "country": destination["country"]["name"],
-                            "advice": advice,
-                        }
-                        user_decision_advice_group["advice"].append(user_advice_destination)
-
-                    team_advice_group["advice"].append(user_decision_advice_group)
-
-                grouped_advice.append(team_advice_group)
+            grouped_advice += [self.group_team_user_advice(team, team_advice, team_user) for team_user in team_users]
 
         return grouped_advice
 
