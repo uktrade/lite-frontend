@@ -118,46 +118,34 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_form(self):
         case = get_case(self.request, self.kwargs["pk"])
         my_advice = services.filter_current_user_advice(case.advice, str(self.request.session["lite_api_user_id"]))
-        if not my_advice:
-            raise ValueError("User has not yet given advice for this case")
-
         advice = my_advice[0]
 
         if advice["type"]["key"] in ["approve", "proviso"]:
-            initial_data = {
-                "proviso": advice["proviso"],
-                "approval_reasons": advice["text"],
-                "instructions_to_exporter": advice["note"],
-                "footnote_details": advice["footnote"],
-            }
             self.advice_type = "approve"
             self.template_name = "advice/give-approval-advice.html"
-            return forms.GiveApprovalAdviceForm(data=initial_data)
+            return forms.get_approval_advice_form_factory(advice)
         elif advice["type"]["key"] == "refuse":
-            initial_data = {
-                "refusal_reasons": advice["text"],
-                "denial_reasons": [r for r in advice["denial_reasons"]],
-            }
-            denial_reasons = get_denial_reasons(self.request)
-
             self.advice_type = "refuse"
             self.template_name = "advice/refusal_advice.html"
-            return forms.RefusalAdviceForm(data=initial_data, denial_reasons=denial_reasons)
+            denial_reasons = get_denial_reasons(self.request)
+            return forms.get_refusal_advice_form_factory(advice, denial_reasons)
         else:
             raise ValueError("Invalid advice type encountered")
 
     def form_valid(self, form):
         case = self.get_context_data()["case"]
         data = form.cleaned_data.copy()
-        if form.has_changed():
-            if self.advice_type == "approve":
-                for field in form.changed_data:
-                    data[field] = self.request.POST.get(field)
-                services.post_approval_advice(self.request, case, data)
-            elif self.advice_type == "refuse":
-                data["refusal_reasons"] = self.request.POST.get("refusal_reasons")
-                data["denial_reasons"] = self.request.POST.getlist("denial_reasons")
-                services.post_refusal_advice(self.request, case, data)
+        if self.advice_type == "approve":
+            for field in form.changed_data:
+                data[field] = self.request.POST.get(field)
+            services.post_approval_advice(self.request, case, data)
+        elif self.advice_type == "refuse":
+            data["refusal_reasons"] = self.request.POST.get("refusal_reasons")
+            data["denial_reasons"] = self.request.POST.getlist("denial_reasons")
+            services.post_refusal_advice(self.request, case, data)
+        else:
+            raise ValueError("Unknown advice type")
+
         return super().form_valid(form)
 
     def get_success_url(self):
