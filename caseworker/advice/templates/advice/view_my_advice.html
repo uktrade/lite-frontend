@@ -1,0 +1,40 @@
+{% extends 'layouts/case.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="govuk-width-container">
+    <a href="#" class="govuk-back-link">Back</a>
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-quarters">
+              <h1 class="govuk-heading-xl">View Advice</h1>
+              <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#edit-recommendation">
+                  Edit recommendation
+              </a>
+              <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#clear-recommendation">
+                  Clear recommendation
+              </a>
+              {% if my_advice|length %}
+                {% with advice=my_advice.0 %}
+
+                  {% if advice.type.key in 'approve,proviso' %}
+                    {% include "advice/approve-advice-details.html" %}
+                  {% elif advice.type.key == "refuse" %}
+                    {% include "advice/refuse-advice-details.html" %}
+                  {% endif %}
+
+                {% endwith %}
+            {% endif %}
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+                <a role="button" draggable="false" class="govuk-button" href="#move-forward">
+                    Move case forward
+                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
+                      <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

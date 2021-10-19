@@ -1,0 +1,86 @@
+<table id="table-licenceable-products-refuse-all" class="govuk-table">
+    <h2 class="govuk-heading-m">My refusal recommendation</h2>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Country</th>
+        <th scope="col" class="govuk-table__header">Type</th>
+        <th scope="col" class="govuk-table__header">Name</th>
+        <th scope="col" class="govuk-table__header">Refused products</th>
+        <th scope="col" class="govuk-table__header">Refusal criteria</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        {% if case.data.consignee %}
+            {% with consignee=case.data.consignee %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">{{ consignee.country.name }}</td>
+                    <td class="govuk-table__cell">{{ consignee.type|sentence_case }}</td>
+                    <td class="govuk-table__cell">{{ consignee.name }}</td>
+                    <td class="govuk-table__cell">All</td>
+                    <td class="govuk-table__cell">{{ advice.denial_reasons|join:", "}}</td>
+                </tr>
+            {% endwith %}
+        {% endif %}
+        {% if case.data.end_user %}
+            {% with end_user=case.data.end_user %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">{{ end_user.country.name }}</td>
+                    <td class="govuk-table__cell">{{ end_user.type|sentence_case }}</td>
+                    <td class="govuk-table__cell">{{ end_user.name }}</td>
+                    <td class="govuk-table__cell">All</td>
+                    <td class="govuk-table__cell">{{ advice.denial_reasons|join:", "}}</td>
+                </tr>
+            {% endwith %}
+        {% endif %}
+        {% if case.data.ultimate_end_users %}
+            {% for ultimate_end_user in case.data.ultimate_end_users %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
+                    <td class="govuk-table__cell">{{ ultimate_end_user.type|sentence_case }}</td>
+                    <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+                    <td class="govuk-table__cell">All</td>
+                    <td class="govuk-table__cell">{{ advice.denial_reasons|join:", "}}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+<br>
+
+<div class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Reason for refusing">
+    <div class="govuk-cookie-banner__message govuk-width-container">
+  
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">Reason for refusing</h2>
+            <div class="govuk-cookie-banner__content">
+            <p class="govuk-body">{{ advice.text }}</p>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<br><br>
+
+{% if nlr_products|length %}
+  <table id="table-nlr-products" class="govuk-table">
+    <caption class="govuk-table__caption govuk-table__caption--m">No licence required products</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Product name</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for product in nlr_products %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">{{ product.good.name }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <h2 class="govuk-heading-m">No licence required products</h2>
+  <label class="govuk-label">None</label>
+{% endif %}

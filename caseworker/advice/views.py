@@ -76,7 +76,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
 
-class RefusalAdviceView(CaseContextMixin, FormView):
+class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/refusal_advice.html"
     form_class = forms.RefusalAdviceForm
     success_url = "/#save-advice"
@@ -93,3 +93,21 @@ class RefusalAdviceView(CaseContextMixin, FormView):
         case = self.get_context_data()["case"]
         services.post_refusal_advice(self.request, case, form.cleaned_data)
         return super().form_valid(form)
+
+
+class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    template_name = "advice/view_my_advice.html"
+
+    def current_user_advice(self, case):
+        return [
+            advice
+            for advice in case.advice
+            if advice["type"]["key"] in ["approve", "proviso", "refuse"]
+            and (advice["user"]["id"] == str(self.request.session["lite_api_user_id"]))
+        ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        my_advice = self.current_user_advice(context["case"])
+        nlr_products = services.filter_nlr_products(context["case"]["data"]["goods"])
+        return {**context, "my_advice": my_advice, "nlr_products": nlr_products}
