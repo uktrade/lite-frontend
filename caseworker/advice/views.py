@@ -150,3 +150,16 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs={**self.kwargs})
+
+
+class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/delete-advice.html"
+    form_class = forms.DeleteAdviceForm
+
+    def form_valid(self, form):
+        case = self.get_context_data()["case"]
+        services.delete_user_advice(self.request, case["id"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
