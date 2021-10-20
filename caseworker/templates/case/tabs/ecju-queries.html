@@ -17,7 +17,7 @@
 				<div class="app-ecju-query__item">
 					<p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
 					<div class="app-ecju-query__text" data-max-length="300">
-						{{ ecju_query.question }}
+						{{ ecju_query.question|linebreaks }}
 					</div>
 					<p class="app-ecju-query__date">
 						<span class="govuk-visually-hidden">Created at </span>{{ ecju_query.created_at|str_date }}
@@ -39,7 +39,7 @@
 				<div class="app-ecju-query__item">
 					<p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
 					<div class="app-ecju-query__text">
-						{{ ecju_query.question }}
+						{{ ecju_query.question|linebreaks }}
 					</div>
 					<p class="app-ecju-query__date">
 						<span class="govuk-visually-hidden">{% lcs 'cases.EcjuQueries.CREATED_AT' %} </span>{{ ecju_query.created_at|str_date }}
@@ -52,7 +52,7 @@
 						</a>
 					</p>
 					<div class="app-ecju-query__text" data-max-length="300">
-						{{ ecju_query.response }}
+						{{ ecju_query.response|linebreaks }}
 					</div>
 					{% if ecju_query.documents %}
 						{% for document in ecju_query.documents %}

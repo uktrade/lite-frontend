@@ -1,0 +1,45 @@
+{% extends 'layouts/case.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="govuk-width-container">
+    <a href="#" class="govuk-back-link">Back</a>
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-quarters">
+              <h1 class="govuk-heading-xl">View Advice</h1>
+              {% if my_advice|length %}
+                <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">
+                    Edit recommendation
+                </a>
+                <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#clear-recommendation">
+                    Clear recommendation
+                </a>
+                {% with advice=my_advice.0 %}
+
+                  {% if advice.type.key in 'approve,proviso' %}
+                    {% include "advice/approve-advice-details.html" %}
+                  {% elif advice.type.key == "refuse" %}
+                    {% include "advice/refuse-advice-details.html" %}
+                  {% endif %}
+
+                {% endwith %}
+              {% else %}
+                <label class="govuk-label">No Advice is given for this case yet</label>
+              {% endif %}
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+              {% if my_advice|length %}
+                <a role="button" draggable="false" class="govuk-button" href="#move-forward">
+                    Move case forward
+                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
+                      <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                    </svg>
+                </a>
+              {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+

@@ -81,7 +81,8 @@ def create_app(driver, apply_for_standard_application):  # noqa
 
 
 @given(
-    "I create an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
+    "I create an application with <name>,<product>,<part_number>,<clc_rating>,"
+    "<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
     target_fixture="create_application",
 )
 def create_application(
@@ -89,6 +90,7 @@ def create_application(
     context,  # noqa
     name,
     product,
+    part_number,
     clc_rating,
     end_user_name,
     end_user_address,
@@ -100,6 +102,7 @@ def create_application(
     app_data = {
         "name": name,
         "product": product,
+        "part_number": part_number,
         "clc_rating": clc_rating,
         "end_user_name": end_user_name,
         "end_user_address": end_user_address,
@@ -118,6 +121,20 @@ def check_product_name_and_rating(driver, product_name, clc_rating):  # noqa
     rating_element = product_table.find_element_by_xpath("//tbody/tr/td[6]")
     assert name_element.text == product_name
     assert rating_element.text == clc_rating
+
+
+@then(parsers.parse('I check the product part number is "{part_number}"'))
+def check_product_part_number(driver, part_number):  # noqa
+    product_table = driver.find_element_by_class_name("govuk-table")
+    pn_element = product_table.find_element_by_xpath("//tbody/tr[5]/td")
+    assert pn_element.text == part_number
+
+
+@then(parsers.parse('I check the product annual report summary is "{report_summary}"'))
+def check_product_report_summary(driver, report_summary):  # noqa
+    product_table = driver.find_element_by_id("table-goods")
+    summary_element = product_table.find_element_by_xpath("//tbody/tr/td[9]")
+    assert summary_element.text == report_summary
 
 
 @then(parsers.parse('I should see "{timeline_text}" appear in the timeline'))
@@ -657,3 +674,10 @@ def case_removed_from_queue(driver, queue):  # noqa
     driver.find_element_by_id("link-change-queues").click()
     select_queue(driver, queue, False)
     functions.click_submit(driver)
+
+
+@then(parsers.parse('the flag "{flag}" is not present'))  # noqa
+def flag_not_present(driver, flag):  # noqa
+    flags_container = driver.find_element_by_id("case-flags")
+    el = flags_container.find_elements_by_xpath(f"//li[contains(text(), '{flag}')]")
+    assert len(el) == 0
