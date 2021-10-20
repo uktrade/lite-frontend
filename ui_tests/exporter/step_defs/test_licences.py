@@ -29,8 +29,9 @@ def is_email_sent_to_hmrc(context, driver, api_client):
     assert response.status_code == 200
 
     # Check mail status
-    hmrc_mail_status = response.json()['hmrc_mail_status']
+    hmrc_mail_status = response.json()["hmrc_mail_status"]
     assert hmrc_mail_status == "reply_pending", f"HMRC mail status is {hmrc_mail_status}"
+
 
 @then("I see my standard licence")
 def standard_licence_row(context, driver):

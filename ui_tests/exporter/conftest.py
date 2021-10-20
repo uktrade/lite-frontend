@@ -124,7 +124,7 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
 
 
 @given("Only my email is to be processed by LITE-HMRC")
-def only_my_email_is_to_be_processed_by_lite_hmrc(api_client):
+def only_my_email_is_to_be_processed_by_lite_hmrc(api_client):  # noqa
 
     # Mark all existing emails to be processed/sent so we can focus
     # on a single one
