@@ -4,6 +4,26 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 
 
+def get_approval_advice_form_factory(advice):
+    data = {
+        "proviso": advice["proviso"],
+        "approval_reasons": advice["text"],
+        "instructions_to_exporter": advice["note"],
+        "footnote_details": advice["footnote"],
+    }
+
+    return GiveApprovalAdviceForm(data=data)
+
+
+def get_refusal_advice_form_factory(advice, denial_reasons_choices):
+    data = {
+        "refusal_reasons": advice["text"],
+        "denial_reasons": [r for r in advice["denial_reasons"]],
+    }
+
+    return RefusalAdviceForm(data=data, denial_reasons=denial_reasons_choices)
+
+
 class SelectAdviceForm(forms.Form):
 
     CHOICES = [("approve_all", "Approve all"), ("refuse_all", "Refuse all")]

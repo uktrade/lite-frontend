@@ -13,6 +13,16 @@ def filter_nlr_products(products):
     ]
 
 
+def filter_current_user_advice(all_advice, user_id):
+    return [
+        advice
+        for advice in all_advice
+        if advice["level"] == "user"
+        and advice["type"]["key"] in ["approve", "proviso", "refuse"]
+        and (advice["user"]["id"] == user_id)
+    ]
+
+
 def post_approval_advice(request, case, data):
     json = [
         {
