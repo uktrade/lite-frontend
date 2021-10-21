@@ -1,3 +1,5 @@
+from time import sleep
+
 from django.contrib.humanize.templatetags.humanize import intcomma
 from pytest_bdd import scenarios, given, when, then
 
@@ -22,6 +24,8 @@ def is_email_sent_to_hmrc(context, driver, api_client):
     url = f"/licences/hmrc-integration/force-mail-push/"
     response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
     assert response.status_code == 200
+
+    sleep(5)
 
     # Check email is sent by probing the lite-api endpoint (which in turn cascades to LITE-HMRC)
     url = f"/licences/hmrc-integration/{context.licence}/"
