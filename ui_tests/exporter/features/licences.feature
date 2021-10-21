@@ -20,7 +20,7 @@ Feature: I want to be able to view licences as an exporter user
 
   Scenario: When a new licence is issued, an email is sent to notify LITE-HMRC
     Given I signin and go to exporter homepage and choose Test Org
-    Given Only my email is to be processed by LITE-HMRC
+    And Only my email is to be processed by LITE-HMRC
 
     # Caseworker setup via API
     And I put the test user in the admin team
