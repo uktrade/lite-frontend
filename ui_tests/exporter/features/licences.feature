@@ -20,16 +20,18 @@ Feature: I want to be able to view licences as an exporter user
 
   Scenario: When a new licence is issued, an email is sent to notify LITE-HMRC
     Given I signin and go to exporter homepage and choose Test Org
-    Given Only my email is to be processed by LITE-HMRC
-
-    # Caseworker setup via API
+    And Only my email is to be processed by LITE-HMRC
     And I put the test user in the admin team
     And I create a standard application via api
     And I remove the flags
     And I create "approve" final advice
     And I create a licence for my application with "approve" decision document and good decisions
-
-    Then An email is sent to HMRC
+    When I go to the licences page
+    Then I see my standard licence
+    When I view my licence
+    Then I see all the typical licence details
+    And I see my standard application licence details
+    And an email is sent to HMRC
 
   @skip @LT_1254_view_licences_open @regression
   Scenario: View my open application licences
