@@ -688,7 +688,7 @@ def final_advice(context, decision, api_test_client):  # noqa
     )
 
 
-@given("I remove the flags")  # noqa
+@given("I remove the flags to finalise the licence")  # noqa
 def i_remove_all_flags(context, api_test_client):  # noqa
     api_test_client.flags.assign_case_flags(context.case_id, [])
 

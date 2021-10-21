@@ -8,7 +8,7 @@ Feature: Compliance
   Scenario: Submit and view open licence returns
     Given I go to exporter homepage and choose Test Org
     And I create an open application via api
-    And I remove the flags
+    And I remove the flags to finalise the licence
     And I create "approve" final advice for open application
     And I create a licence for my application with "approve" decision document
     And I create a visit case for the linked compliance case
