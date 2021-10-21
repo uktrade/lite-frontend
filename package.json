@@ -12,7 +12,7 @@
     "build": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker"
   },
   "engines": {
-    "node": ">=12.16.1"
+    "node": ">=14.18.0"
   },
   "repository": {
     "type": "git",

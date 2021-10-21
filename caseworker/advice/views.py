@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from caseworker.advice import forms, services
 from caseworker.cases.services import get_case
+from caseworker.core.services import get_denial_reasons
 from core.auth.views import LoginRequiredMixin
 
 
@@ -67,9 +68,98 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     form_class = forms.GiveApprovalAdviceForm
     template_name = "advice/give-approval-advice.html"
-    success_url = "/#save-advice"
 
     def form_valid(self, form):
         case = self.get_context_data()["case"]
         services.post_approval_advice(self.request, case, form.cleaned_data)
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs={**self.kwargs})
+
+
+class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/refusal_advice.html"
+    form_class = forms.RefusalAdviceForm
+
+    def get_form_kwargs(self):
+        """Overriding this so that I can pass denial_reasons
+        to the form.
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs["denial_reasons"] = get_denial_reasons(self.request)
+        return kwargs
+
+    def form_valid(self, form):
+        case = self.get_context_data()["case"]
+        services.post_refusal_advice(self.request, case, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs={**self.kwargs})
+
+
+class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    template_name = "advice/view_my_advice.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        case = context["case"]
+        my_advice = services.filter_current_user_advice(case.advice, str(self.request.session["lite_api_user_id"]))
+        nlr_products = services.filter_nlr_products(case["data"]["goods"])
+        return {**context, "my_advice": my_advice, "nlr_products": nlr_products}
+
+
+class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+    """
+    Form to edit given advice for all products on the application
+    """
+
+    def get_form(self):
+        case = get_case(self.request, self.kwargs["pk"])
+        my_advice = services.filter_current_user_advice(case.advice, str(self.request.session["lite_api_user_id"]))
+        advice = my_advice[0]
+
+        if advice["type"]["key"] in ["approve", "proviso"]:
+            self.advice_type = "approve"
+            self.template_name = "advice/give-approval-advice.html"
+            return forms.get_approval_advice_form_factory(advice)
+        elif advice["type"]["key"] == "refuse":
+            self.advice_type = "refuse"
+            self.template_name = "advice/refusal_advice.html"
+            denial_reasons = get_denial_reasons(self.request)
+            return forms.get_refusal_advice_form_factory(advice, denial_reasons)
+        else:
+            raise ValueError("Invalid advice type encountered")
+
+    def form_valid(self, form):
+        case = self.get_context_data()["case"]
+        data = form.cleaned_data.copy()
+        if self.advice_type == "approve":
+            for field in form.changed_data:
+                data[field] = self.request.POST.get(field)
+            services.post_approval_advice(self.request, case, data)
+        elif self.advice_type == "refuse":
+            data["refusal_reasons"] = self.request.POST.get("refusal_reasons")
+            data["denial_reasons"] = self.request.POST.getlist("denial_reasons")
+            services.post_refusal_advice(self.request, case, data)
+        else:
+            raise ValueError("Unknown advice type")
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs={**self.kwargs})
+
+
+class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/delete-advice.html"
+    form_class = forms.DeleteAdviceForm
+
+    def form_valid(self, form):
+        case = self.get_context_data()["case"]
+        services.delete_user_advice(self.request, case["id"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
