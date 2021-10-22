@@ -18,6 +18,7 @@ class CaseContextMixin:
     Case object. This mixin, injects a reference to the Case
     in the context.
     """
+
     @property
     def case_id(self):
         return str(self.kwargs["pk"])
@@ -242,7 +243,13 @@ class AdviceView(CaseContextMixin, TemplateView):
 
         for team in self.teams:
             team_advice = [advice for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]]
-            team_users_unique = set([json.dumps(advice["user"]) for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]])
+            team_users_unique = set(
+                [
+                    json.dumps(advice["user"])
+                    for advice in self.case["advice"]
+                    if advice["user"]["team"]["id"] == team["id"]
+                ]
+            )
             team_users = [json.loads(user) for user in team_users_unique]
             grouped_advice += [self.group_team_user_advice(team, team_advice, team_user) for team_user in team_users]
 
