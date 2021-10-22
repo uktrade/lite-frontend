@@ -119,7 +119,9 @@ def test_advice_view_heading_no_advice(requests_mock, mock_queue, authorized_cli
     assert "There is no advice for this case yet" in soup.find("h2")
 
 
-def test_advice_view_heading_ogd_advice(requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, data_case_advice):
+def test_advice_view_heading_ogd_advice(
+    requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, data_case_advice
+):
     case_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
     requests_mock.get(url=case_url, json=data_standard_case)
 
