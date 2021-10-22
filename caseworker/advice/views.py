@@ -4,8 +4,6 @@ from django.urls import reverse
 from caseworker.advice import forms, services
 from caseworker.advice.constants import DECISION_TYPE_VERB_MAPPING
 
-import json
-
 from core import client
 
 from caseworker.cases.services import get_case
