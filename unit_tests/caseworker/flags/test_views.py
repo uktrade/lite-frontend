@@ -89,7 +89,7 @@ def test_assign_flags_destination_form_submit(
     authorized_client, mock_queue, data_standard_case, mock_put_flags, mock_case, queue_pk, standard_case_pk
 ):
 
-    destination_pk = data_standard_case["case"]["data"]["destinations"]["data"][0]["id"]
+    destination_pk = data_standard_case["case"]["data"]["destinations"]["data"]["id"]
 
     valid_data = {
         "note": "Lorem ipsum",
@@ -112,7 +112,7 @@ def test_assign_flags_form_return_to(
     authorized_client, mock_queue, data_standard_case, mock_put_flags, mock_case, queue_pk, standard_case_pk
 ):
 
-    destination_pk = data_standard_case["case"]["data"]["destinations"]["data"][0]["id"]
+    destination_pk = data_standard_case["case"]["data"]["destinations"]["data"]["id"]
 
     valid_data = {
         "note": "Lorem ipsum",
