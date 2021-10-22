@@ -123,6 +123,16 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
         functions.click_submit(driver)
 
 
+@given("Only my email is to be processed by LITE-HMRC")
+def only_my_email_is_to_be_processed_by_lite_hmrc(api_client):  # noqa
+
+    # Mark all existing emails to be processed/sent so we can focus
+    # on a single one
+    url = f"/licences/hmrc-integration/mark-emails-as-processed/"
+    response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
+    assert response.status_code == 200
+
+
 @then("I logout")  # noqa
 def i_logout(driver, exporter_url):  # noqa
     driver.get(exporter_url.rstrip("/") + "/auth/logout")
@@ -678,7 +688,7 @@ def final_advice(context, decision, api_test_client):  # noqa
     )
 
 
-@given("I remove the flags")  # noqa
+@given("I remove the flags to finalise the licence")  # noqa
 def i_remove_all_flags(context, api_test_client):  # noqa
     api_test_client.flags.assign_case_flags(context.case_id, [])
 
