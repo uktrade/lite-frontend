@@ -180,30 +180,7 @@ class AdviceView(CaseContextMixin, TemplateView):
 
     @property
     def teams(self):
-        teams_unique = set([json.dumps(advice["user"]["team"]) for advice in self.case["advice"]])
-        return [json.loads(team) for team in teams_unique]
-
-    # this is a rough schema for the grouped_advice
-    # grouped_advice = [
-    #     {
-    #         "team": {team data},
-    #         "advice": [
-    #             {
-    #                 "user": user,
-    #                 "decision": approve/refuse etc,
-    #                 "advice": [
-    #                     {
-    #                         "party_type": end user, third party etc,
-    #                         "country": country,
-    #                         "name": party name - of the organisation or individual. we don't get this from the api yet so using address for now,
-    #                         "approved_products": [list of ids or serialized as names?],
-    #                         "licence_condition": this will replace 'approve with proviso'
-    #                     }
-    #                 ]
-    #             }
-    #         ]
-    #     }
-    # ]
+        return {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in self.case["advice"]}.values()
 
     @property
     def grouped_advice(self):
@@ -243,14 +220,11 @@ class AdviceView(CaseContextMixin, TemplateView):
 
         for team in self.teams:
             team_advice = [advice for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]]
-            team_users_unique = set(
-                [
-                    json.dumps(advice["user"])
-                    for advice in self.case["advice"]
-                    if advice["user"]["team"]["id"] == team["id"]
-                ]
-            )
-            team_users = [json.loads(user) for user in team_users_unique]
+            team_users = {
+                advice["user"]["id"]: advice["user"]
+                for advice in self.case["advice"]
+                if advice["user"]["team"]["id"] == team["id"]
+            }.values()
             grouped_advice += [self.group_team_user_advice(team, team_advice, team_user) for team_user in team_users]
 
         return grouped_advice
