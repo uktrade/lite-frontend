@@ -22,7 +22,12 @@ Feature: I want to be able to view licences as an exporter user
     And I remove the flags to finalise the licence
     And I create "approve" final advice
     And I create a licence for my application with "approve" decision document and good decisions
-    Then An email is sent to HMRC
+    When I go to the licences page
+    Then I see my standard licence
+    When I view my licence
+    Then I see all the typical licence details
+    And I see my standard application licence details
+    And an email is sent to HMRC
 
   @skip @LT_1254_view_licences_open @regression
   Scenario: View my open application licences

@@ -15,7 +15,7 @@ def licences_page(driver, exporter_url):
     driver.get(exporter_url.rstrip("/") + "/licences/")
 
 
-@then("An email is sent to HMRC")
+@then("an email is sent to HMRC")
 def is_email_sent_to_hmrc(context, driver, api_client):
 
     # Force the task manager on LITE-HMRC to send any queued
