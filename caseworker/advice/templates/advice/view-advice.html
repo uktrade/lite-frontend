@@ -24,7 +24,6 @@
 			<div class="govuk-details__text">
 					<h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 {% if user_decision_advice.decision == "Approve" or user_decision_advice.decision == "Proviso" %}app-bg-colour--green{% elif user_decision_advice.decision == "Refuse" %}app-bg-colour--red{% endif %}">{{ user_decision_advice.decision_verb|capfirst }} by {% if user_decision_advice.user.first_name %}{{ user_decision_advice.user.first_name|add:' '|add:user_decision_advice.user.last_name }}{% else %}{{ user_decision_advice.user.email }}{% endif %}</h2>
 					<table class="govuk-table">
-						<caption class="govuk-table__caption govuk-table__caption--m">{{ decision_advice.decision|capfirst }}</caption>
 						<thead class="govuk-table__head">
 							<tr class="govuk-table__row">
 								<th scope="col" class="govuk-table__header">Country</th>
