@@ -178,7 +178,10 @@ class AdviceView(CaseContextMixin, TemplateView):
 
     @property
     def teams(self):
-        return {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in self.case["advice"]}.values()
+        return sorted(
+            {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in self.case["advice"]}.values(),
+            key=lambda a: a["name"],
+        )
 
     @property
     def grouped_advice(self):
@@ -198,26 +201,39 @@ class AdviceView(CaseContextMixin, TemplateView):
         }
 
     def group_user_decision_advice(self, user_advice, team_user, decision):
+        user_advice_for_decision = [a for a in user_advice if a["type"]["value"] == decision and not a["good"]]
         return {
             "user": team_user,
             "decision": decision,
             "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
-            "advice": [self.group_user_advice(user_advice, destination) for destination in self.case.destinations],
+            "advice": [
+                self.group_user_advice(user_advice_for_decision, destination)
+                for destination in sorted(self.case.destinations, key=lambda d: d["name"])
+                if [a for a in user_advice_for_decision if a[destination["type"]] is not None]
+            ],
         }
 
     def group_team_user_advice(self, team, team_advice, team_user):
         user_advice = [advice for advice in team_advice if advice["user"]["id"] == team_user["id"]]
-        decisions = set([advice["type"]["value"] for advice in user_advice])
+        decisions = sorted(set([advice["type"]["value"] for advice in user_advice]))
         return {
             "team": team,
-            "advice": [self.group_user_decision_advice(user_advice, team_user, decision) for decision in decisions],
+            "advice": [
+                self.group_user_decision_advice(user_advice, team_user, decision)
+                for decision in decisions
+                if [a for a in user_advice if a["type"]["value"] == decision]
+            ],
         }
 
     def group_advice(self):
         grouped_advice = []
 
         for team in self.teams:
-            team_advice = [advice for advice in self.case["advice"] if advice["user"]["team"]["id"] == team["id"]]
+            team_advice = [
+                advice
+                for advice in self.case["advice"]
+                if advice["user"]["team"]["id"] == team["id"] and not advice["good"]
+            ]
             team_users = {
                 advice["user"]["id"]: advice["user"]
                 for advice in self.case["advice"]
