@@ -202,7 +202,6 @@ def test_advice_view_heading_ogd_advice_data(
 
     url = reverse("cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
-    print(response.context_data["grouped_advice"])
 
     exp_advice = [
         {
