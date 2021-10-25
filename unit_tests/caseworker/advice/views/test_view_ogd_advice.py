@@ -119,9 +119,7 @@ def test_advice_view_heading_no_advice(requests_mock, mock_queue, authorized_cli
     assert "There is no advice for this case yet" in soup.find("h2")
 
 
-def test_advice_view_heading_ogd_advice(
-    requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, data_case_advice
-):
+def test_advice_view_heading_ogd_advice(requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, data_case_advice):
     case_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
     requests_mock.get(url=case_url, json=data_standard_case)
 
@@ -137,3 +135,27 @@ def test_advice_view_heading_ogd_advice(
 
     team_headings = {heading.text.strip() for heading in soup.select("details summary")}
     assert team_headings == {"team1", "team2"}
+
+# need to test grouped advice schema
+
+# this is a rough schema for the grouped_advice
+# grouped_advice = [
+#     {
+#         "team": {team data},
+#         "advice": [
+#             {
+#                 "user": user,
+#                 "decision": approve/refuse etc,
+#                 "advice": [
+#                     {
+#                         "party_type": end user, third party etc,
+#                         "country": country,
+#                         "name": party name - of the organisation or individual. we don't get this from the api yet so using address for now,
+#                         "approved_products": [list of ids or serialized as names?],
+#                         "licence_condition": this will replace 'approve with proviso'
+#                     }
+#                 ]
+#             }
+#         ]
+#     }
+# ]
