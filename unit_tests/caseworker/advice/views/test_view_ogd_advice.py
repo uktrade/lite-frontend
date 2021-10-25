@@ -131,6 +131,30 @@ def goods_advice2(data_standard_case):
     return goods_advice2
 
 
+@pytest.fixture
+def data_case_advice(
+    data_standard_case,
+    end_user_advice1,
+    end_user_advice2,
+    consignee_advice1,
+    consignee_advice2,
+    third_party_advice1,
+    third_party_advice2,
+    goods_advice1,
+    goods_advice2,
+):
+    return [
+        end_user_advice1,
+        end_user_advice2,
+        consignee_advice1,
+        consignee_advice2,
+        third_party_advice1,
+        third_party_advice2,
+        goods_advice1,
+        goods_advice2,
+    ]
+
+
 def test_advice_view_200(mock_queue, mock_case, authorized_client, data_queue, data_standard_case):
     url = reverse("cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
@@ -165,7 +189,7 @@ def test_advice_view_heading_ogd_advice(
     assert "Other recommendations for this case" in soup.find("h2")
 
     team_headings = {heading.text.strip() for heading in soup.select("details summary")}
-    assert team_headings == {"team1", "team2"}
+    assert team_headings == {"A team", "B team"}
 
 
 def test_advice_view_heading_ogd_advice_data(
