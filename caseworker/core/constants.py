@@ -12,6 +12,13 @@ SLA_RADIUS = 16
 SLA_DIAMETER = SLA_RADIUS * 2
 SLA_CIRCUMFERENCE = SLA_DIAMETER * math.pi
 
+PARTY_TYPE_MAPPING = {
+    "end_user": "End User",
+    "third_party": "Third Party",
+    "ultimate_end_user": "Ultimate End User",
+    "consignee": "Consignee",
+}
+
 
 class GoodSystemFlags:
     CLC_FLAG = "00000000-0000-0000-0000-000000000002"

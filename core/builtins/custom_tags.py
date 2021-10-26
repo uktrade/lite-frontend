@@ -32,7 +32,7 @@ from exporter.core.constants import (
 )
 from exporter.applications.constants import F680
 
-from caseworker.core.constants import SystemTeamsID, SLA_CIRCUMFERENCE
+from caseworker.core.constants import SystemTeamsID, SLA_CIRCUMFERENCE, PARTY_TYPE_MAPPING
 
 
 strings = import_module(settings.LITE_CONTENT_IMPORT_PATH)
@@ -318,12 +318,7 @@ def username(user: dict):
 
 @register.filter()
 def get_party_type(party):
-    return {
-        "end_user": "End User",
-        "third_party": "Third Party",
-        "ultimate_end_user": "Ultimate End User",
-        "consignee": "Consignee",
-    }[party["type"]]
+    return PARTY_TYPE_MAPPING[party["type"]]
 
 
 @register.filter()

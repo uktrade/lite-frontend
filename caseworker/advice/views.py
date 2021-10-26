@@ -2,6 +2,10 @@ from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 
 from caseworker.advice import forms, services
+from caseworker.advice.constants import DECISION_TYPE_VERB_MAPPING
+
+from core import client
+
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
 from core.auth.views import LoginRequiredMixin
@@ -13,31 +17,25 @@ class CaseContextMixin:
     in the context.
     """
 
-    def get_context(self):
+    @property
+    def case_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def case(self):
+        return get_case(self.request, self.case_id)
+
+    def get_context(self, **kwargs):
         return {}
 
     def get_context_data(self, **kwargs):
-        context = super(CaseContextMixin, self).get_context_data(**kwargs)
-        case_id = str(self.kwargs["pk"])
+        context = super().get_context_data(**kwargs)
         # Ideally, we would probably want to not use the following
         # That said, if you look at the code, it is functional and
         # doesn't have anything to do with e.g. lite-forms
         # P.S. the case here is needed for rendering the base
         # template (layouts/case.html) from which we are inheriting.
-        case = get_case(self.request, case_id)
-        return {**context, **self.get_context(), "case": case, "queue_pk": self.kwargs["queue_pk"]}
-
-
-class AdvicePlaceholderView(LoginRequiredMixin, CaseContextMixin, TemplateView):
-    """This is POC ATM and should be removed with the first PR
-    of advice. Currently, this is a TemplateView but it should
-    be fairly simple to make this e.g. a SingleFormView.
-    """
-
-    template_name = "advice/placeholder.html"
-
-    def get_context(self):
-        return {"greetings": "Hello World!"}
+        return {**context, **self.get_context(), "case": self.case, "queue_pk": self.kwargs["queue_pk"]}
 
 
 class CaseDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -163,3 +161,90 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+
+
+class AdviceView(CaseContextMixin, TemplateView):
+    template_name = "advice/view-advice.html"
+
+    @property
+    def queue_id(self):
+        return str(self.kwargs["queue_pk"])
+
+    @property
+    def queue(self):
+        response = client.get(self.request, f"/queues/{self.queue_id}")
+        response.raise_for_status()
+        return response.json()
+
+    @property
+    def teams(self):
+        return sorted(
+            {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in self.case["advice"]}.values(),
+            key=lambda a: a["name"],
+        )
+
+    @property
+    def grouped_advice(self):
+        if not self.case["advice"]:
+            return []
+
+        return self.group_advice()
+
+    def group_user_advice(self, user_advice, destination):
+        advice_item = [a for a in user_advice if a[destination["type"]] is not None][0]
+        return {
+            "type": destination["name"],
+            "address": destination["address"],
+            "licence_condition": advice_item["proviso"],
+            "country": destination["country"]["name"],
+            "advice": advice_item,
+        }
+
+    def group_user_decision_advice(self, user_advice, team_user, decision):
+        user_advice_for_decision = [a for a in user_advice if a["type"]["value"] == decision and not a["good"]]
+        return {
+            "user": team_user,
+            "decision": decision,
+            "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
+            "advice": [
+                self.group_user_advice(user_advice_for_decision, destination)
+                for destination in sorted(self.case.destinations, key=lambda d: d["name"])
+                if [a for a in user_advice_for_decision if a[destination["type"]] is not None]
+            ],
+        }
+
+    def group_team_user_advice(self, team, team_advice, team_user):
+        user_advice = [advice for advice in team_advice if advice["user"]["id"] == team_user["id"]]
+        decisions = sorted(set([advice["type"]["value"] for advice in user_advice]))
+        return {
+            "team": team,
+            "advice": [
+                self.group_user_decision_advice(user_advice, team_user, decision)
+                for decision in decisions
+                if [a for a in user_advice if a["type"]["value"] == decision]
+            ],
+        }
+
+    def group_advice(self):
+        grouped_advice = []
+
+        for team in self.teams:
+            team_advice = [
+                advice
+                for advice in self.case["advice"]
+                if advice["user"]["team"]["id"] == team["id"] and not advice["good"]
+            ]
+            team_users = {
+                advice["user"]["id"]: advice["user"]
+                for advice in self.case["advice"]
+                if advice["user"]["team"]["id"] == team["id"]
+            }.values()
+            grouped_advice += [self.group_team_user_advice(team, team_advice, team_user) for team_user in team_users]
+
+        return grouped_advice
+
+    def get_context(self):
+        return {
+            "queue": self.queue,
+            "grouped_advice": self.grouped_advice,
+        }

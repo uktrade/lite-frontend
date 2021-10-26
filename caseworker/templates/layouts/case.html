@@ -115,6 +115,7 @@
 				</div>
 			{% endif %}
 		</div>
+		{% block header_tabs %}
 		{% if tabs %}
 			<div id="tab-bar" class="app-case-tab-bar">
 				<div class="govuk-width-container lite-tabs__container">
@@ -155,6 +156,7 @@
 				</div>
 			</div>
 		{% endif %}
+		{% endblock %}
 	</div>
 {% endblock %}
 
@@ -178,6 +180,7 @@
 				{% endif %}
 			{% endif %}
 
+			{% block full_width %}
 			<div class="govuk-grid-row">
 				<div class="govuk-grid-column-two-thirds">
 					{% block two_thirds %}{% endblock %}
@@ -187,6 +190,7 @@
 					{% block one_third %}{% endblock %}
 				</div>
 			</div>
+			{% endblock %}
 		</div>
 	{% endblock %}
 {% endblock %}

@@ -12,7 +12,7 @@ from core import client
 
 
 approve = {"key": "approve", "value": "Approve"}
-proviso = {"key": "proviso", "value": "Approve with proviso"}
+proviso = {"key": "proviso", "value": "Proviso"}
 refuse = {"key": "refuse", "value": "Refuse"}
 conflicting = {"key": "conflicting", "value": "Conflicting"}
 
