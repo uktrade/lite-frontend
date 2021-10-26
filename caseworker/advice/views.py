@@ -1,3 +1,4 @@
+from django.forms import formset_factory
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 
@@ -246,6 +247,27 @@ class AdviceView(CaseContextMixin, TemplateView):
             "queue": self.queue,
             "grouped_advice": self.grouped_advice,
         }
+
+
+class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, FormView):
+    success_url = "#view-countersign"
+    form_class = forms.ReviewCounterSignForm
+    template_name = "advice/review_countersign.html"
+
+    def get_context(self):
+        context = super().get_context()
+        context["formset"] = formset_factory(forms.CountersignAdviceForm, extra=2, min_num=2, max_num=2)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        CountersignAdviceFormset = context["formset"]
+        formset = CountersignAdviceFormset()
+        if formset.is_valid():
+            return self.form_valid()
+
+    def form_valid(self, form):
+        return super().form_valid(form)
 
 
 class CountersignEditAdviceView(EditAdviceView):

@@ -97,3 +97,29 @@ class DeleteAdviceForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("confirm", "Confirm"))
+
+
+class CountersignAdviceForm(forms.Form):
+    CHOICES = [("yes", "Yes"), ("no", "No")]
+
+    agree_with_recommendation = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, label="")
+    approval_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "10"}),
+        label="What are your reasons for approving?",
+        error_messages={"required": "Enter a reason for approving"},
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "approval_reasons",
+            Submit("submit", "Submit"),
+        )
+
+
+class ReviewCounterSignForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", "Continue"))
