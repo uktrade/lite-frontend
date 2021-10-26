@@ -112,14 +112,4 @@ class CountersignAdviceForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.layout = Layout(
-            "approval_reasons",
-            Submit("submit", "Submit"),
-        )
-
-
-class ReviewCounterSignForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Continue"))
+        self.helper.form_tag = False

@@ -15,9 +15,13 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-xl">Review and countersign</h2>
-                {% crispy formset %}
-                {{ formset.management_form }}
-                {% crispy form %}
+                <form action="." method="POST">
+                    {{ formset.management_form|crispy }}
+                    {% for form in formset %}
+                    {% crispy form %}
+                    {% endfor %}
+                    <div class="form-actions"> <input type="submit" name="submit" value="Save" class="govuk-button" id="submit-id-submit"> </div>
+                </form>
             </div>
             <div class="govuk-grid-column-one-thirds">
                 {% include "advice/case_detail.html" %}

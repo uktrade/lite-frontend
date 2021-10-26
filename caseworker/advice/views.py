@@ -249,25 +249,20 @@ class AdviceView(CaseContextMixin, TemplateView):
         }
 
 
-class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, FormView):
+class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     success_url = "#view-countersign"
-    form_class = forms.ReviewCounterSignForm
     template_name = "advice/review_countersign.html"
+    CountersignAdviceFormset = formset_factory(forms.CountersignAdviceForm, extra=2, min_num=2, max_num=2)
 
     def get_context(self):
         context = super().get_context()
-        context["formset"] = formset_factory(forms.CountersignAdviceForm, extra=2, min_num=2, max_num=2)
+        context["formset"] = self.CountersignAdviceFormset()
         return context
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        CountersignAdviceFormset = context["formset"]
-        formset = CountersignAdviceFormset()
+        formset = self.CountersignAdviceFormset(request.POST)
         if formset.is_valid():
             return self.form_valid()
-
-    def form_valid(self, form):
-        return super().form_valid(form)
 
 
 class CountersignEditAdviceView(EditAdviceView):
