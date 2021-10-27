@@ -2,14 +2,14 @@ from core import client
 
 
 def filter_licenceable_products(products):
-    return [product for product in products if product["is_good_controlled"]["key"] == "True"]
+    return [product for product in products if product["is_good_controlled"] == {"key": "True", "value": "Yes"}]
 
 
 def filter_nlr_products(products):
     return [
         product
         for product in products
-        if not product["is_good_controlled"] or product["is_good_controlled"]["key"] == "False"
+        if not product["is_good_controlled"] or product["is_good_controlled"] == {"key": "False", "value": "No"}
     ]
 
 
