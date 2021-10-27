@@ -11,4 +11,5 @@ urlpatterns = [
     path("view-my-advice/", views.AdviceDetailView.as_view(), name="view_my_advice"),
     path("edit-advice/", views.EditAdviceView.as_view(), name="edit_advice"),
     path("delete-advice/", views.DeleteAdviceView.as_view(), name="delete_advice"),
+    path("countersign/edit-advice", views.CountersignEditAdviceView.as_view(), name="countersign_edit"),
 ]
