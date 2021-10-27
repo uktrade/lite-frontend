@@ -56,7 +56,7 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         if recommendation == "approve_all":
             return reverse("cases:approve_all", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
         else:
-            return "/#refuse"
+            return reverse("cases:refuse_all", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
 class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -68,8 +68,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/give-approval-advice.html"
 
     def form_valid(self, form):
-        case = self.get_context_data()["case"]
-        services.post_approval_advice(self.request, case, form.cleaned_data)
+        services.post_approval_advice(self.request, self.case, form.cleaned_data)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -89,8 +88,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        case = self.get_context_data()["case"]
-        services.post_refusal_advice(self.request, case, form.cleaned_data)
+        services.post_refusal_advice(self.request, self.case, form.cleaned_data)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -248,3 +246,14 @@ class AdviceView(CaseContextMixin, TemplateView):
             "queue": self.queue,
             "grouped_advice": self.grouped_advice,
         }
+
+
+class CountersignEditAdviceView(EditAdviceView):
+
+    subtitle = (
+        "Your changes as countersigner will be reflected on the recommendation that goes forward "
+        "to the Licensing Unit. The original version will be recorded in the case history"
+    )
+
+    def get_context(self):
+        return {**super().get_context(), "subtitle": self.subtitle, "edit": True}

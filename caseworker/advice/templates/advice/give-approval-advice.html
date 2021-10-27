@@ -14,7 +14,8 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-xl">Recommend an approval</h2>
+                <h1 class="govuk-heading-xl">{% if edit %}Edit Approval Advice{% else %}Recommend an approval{% endif %}</h1>
+                <span class="govuk-caption-xl">{{ subtitle }}</span>
                 {% crispy form %}
             </div>
             <div class="govuk-grid-column-one-thirds">

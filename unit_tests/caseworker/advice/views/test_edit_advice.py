@@ -11,9 +11,9 @@ def setup(mock_queue, mock_case):
     yield
 
 
-@pytest.fixture
-def url(data_queue, data_standard_case):
-    return reverse("cases:edit_advice", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+@pytest.fixture(params=("edit_advice", "countersign_edit"))
+def url(request, data_queue, data_standard_case):
+    return reverse(f"cases:{request.param}", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
 
 
 def test_edit_approve_advice_post(authorized_client, requests_mock, data_standard_case, standard_case_with_advice, url):
