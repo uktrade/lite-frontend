@@ -52,6 +52,6 @@
 
 {% else %}
 <h2 class="govuk-heading-m">There is no advice for this case yet</h2>
-<a draggable="false" class="govuk-button govuk-button--primary" href="/">Give advice</a>
+<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
 {% endif %}
 {% endblock %}
