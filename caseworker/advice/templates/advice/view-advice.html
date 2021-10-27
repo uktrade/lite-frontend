@@ -8,7 +8,7 @@
 
 {% block full_width %}
 {% if grouped_advice %}
-<a draggable="false" class="govuk-button govuk-button--primary" href="/">Give advice</a>
+<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
 
 <h2 class="govuk-heading-m">Other recommendations for this case</h2>
 
