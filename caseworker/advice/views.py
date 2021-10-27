@@ -236,6 +236,7 @@ class AdviceView(CaseContextMixin, TemplateView):
                 advice["user"]["id"]: advice["user"]
                 for advice in self.case["advice"]
                 if advice["user"]["team"]["id"] == team["id"]
+                and advice["user"]["id"] != self.request.session["lite_api_user_id"]
             }.values()
             grouped_advice += [self.group_team_user_advice(team, team_advice, team_user) for team_user in team_users]
 
@@ -245,6 +246,8 @@ class AdviceView(CaseContextMixin, TemplateView):
         return {
             "queue": self.queue,
             "grouped_advice": self.grouped_advice,
+            "my_advice": services.filter_current_user_advice(self.case.advice, str(self.request.session["lite_api_user_id"])),
+            "nlr_products": services.filter_nlr_products(self.case.goods)
         }
 
 
