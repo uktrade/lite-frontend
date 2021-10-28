@@ -1,0 +1,12 @@
+<div>
+  {% for group, options, index in widget.optgroups %}
+  <fieldset class="govuk-fieldset">
+    <div class="govuk-checkboxes govuk-checkboxes--inline govuk-checkboxes--small" data-module="govuk-checkboxes">
+      {% for option in options %}
+      {% include option.template_name with widget=option %}
+      {% endfor %}
+    </div>
+  </fieldset>
+  <br>
+  {% endfor %}
+</div>
