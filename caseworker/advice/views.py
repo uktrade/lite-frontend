@@ -257,3 +257,8 @@ class CountersignEditAdviceView(EditAdviceView):
 
     def get_context(self):
         return {**super().get_context(), "subtitle": self.subtitle, "edit": True}
+
+
+class RadioFormsView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/radio-form.html"
+    form_class = forms.RadioForm

@@ -12,4 +12,5 @@ urlpatterns = [
     path("edit-advice/", views.EditAdviceView.as_view(), name="edit_advice"),
     path("delete-advice/", views.DeleteAdviceView.as_view(), name="delete_advice"),
     path("countersign/edit-advice", views.CountersignEditAdviceView.as_view(), name="countersign_edit"),
+    path("poc/", views.RadioFormsView.as_view(), name="radioforms"),
 ]

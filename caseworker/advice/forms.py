@@ -106,3 +106,13 @@ class DeleteAdviceForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("confirm", "Confirm"))
+
+
+class RadioForm(forms.Form):
+
+    a = forms.CharField()
+    b = forms.CharField()
+    mapping = {"yes": ["a"], "no": ["b"]}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
