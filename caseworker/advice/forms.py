@@ -102,14 +102,30 @@ class DeleteAdviceForm(forms.Form):
 class CountersignAdviceForm(forms.Form):
     CHOICES = [("yes", "Yes"), ("no", "No")]
 
-    agree_with_recommendation = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, label="")
+    agree_with_recommendation = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={"required": "Select yes if you agree with the recommendation"},
+    )
     approval_reasons = forms.CharField(
+        required=False, widget=forms.Textarea(attrs={"rows": "10"}), label="Explain your reasons",
+    )
+    refusal_reasons = forms.CharField(
+        required=False,
         widget=forms.Textarea(attrs={"rows": "10"}),
-        label="What are your reasons for approving?",
-        error_messages={"required": "Enter a reason for approving"},
+        label="Explain why this recommendation needs to be sent back to the advisor",
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        option_selected = cleaned_data.get("agree_with_recommendation")
+        if option_selected == "yes" and cleaned_data.get("approval_reasons") == "":
+            self.add_error("approval_reasons", "Enter your reasons for agreeing with the recommendation")
+        if option_selected == "no" and cleaned_data.get("refusal_reasons") == "":
+            self.add_error("refusal_reasons", "Enter why you do not agree with the recommendation")

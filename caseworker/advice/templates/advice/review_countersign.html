@@ -17,10 +17,27 @@
                 <h2 class="govuk-heading-xl">Review and countersign</h2>
                 <form action="." method="POST">
                     {{ formset.management_form|crispy }}
-                    {% for form in formset %}
-                    {% crispy form %}
-                    {% endfor %}
-                    <div class="form-actions"> <input type="submit" name="submit" value="Save" class="govuk-button" id="submit-id-submit"> </div>
+                    {% if advice_to_countersign|length %}
+                        {% for advice in advice_to_countersign %}
+                            {% with form=formset|index:forloop.counter0 %}
+                                <!-- custom layout for each form -->
+                                {% if advice.type.key in 'approve,proviso' %}
+                                    {% include "advice/approve-advice-details.html" %}
+                                {% elif advice.type.key == "refuse" %}
+                                    {% include "advice/refuse-advice-details.html" %}
+                                {% endif %}
+
+                                <br><br>
+
+                                <!-- Render the form -->
+                                {% crispy form %}
+
+                                <br>
+
+                            {% endwith %}
+                        {% endfor %}
+                    {% endif %}
+                    <div class="form-actions"> <input type="submit" name="submit" value="Submit" class="govuk-button" id="submit-id-submit"> </div>
                 </form>
             </div>
             <div class="govuk-grid-column-one-thirds">

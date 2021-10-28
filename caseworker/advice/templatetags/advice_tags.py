@@ -19,3 +19,8 @@ def get_case_value(goods):
 def get_security_grading(goods):
     gradings = {good.get("good", {}).get("pv_grading_details") for good in goods}
     return sorted(gradings - {None})
+
+
+@register.filter
+def index(iter, i):
+    return iter[i]

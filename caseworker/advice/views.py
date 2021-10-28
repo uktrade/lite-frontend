@@ -1,4 +1,5 @@
 from django.forms import formset_factory
+from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 
@@ -9,6 +10,7 @@ from core import client
 
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
+from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
 
 
@@ -26,6 +28,11 @@ class CaseContextMixin:
     def case(self):
         return get_case(self.request, self.case_id)
 
+    @property
+    def caseworker(self):
+        user_id = str(self.request.session["lite_api_user_id"])
+        return get_gov_user(self.request, user_id)[0]
+
     def get_context(self, **kwargs):
         return {}
 
@@ -36,7 +43,13 @@ class CaseContextMixin:
         # doesn't have anything to do with e.g. lite-forms
         # P.S. the case here is needed for rendering the base
         # template (layouts/case.html) from which we are inheriting.
-        return {**context, **self.get_context(), "case": self.case, "queue_pk": self.kwargs["queue_pk"]}
+        return {
+            **context,
+            **self.get_context(case=self.case),
+            "case": self.case,
+            "queue_pk": self.kwargs["queue_pk"],
+            "caseworker": self.caseworker,
+        }
 
 
 class CaseDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -252,17 +265,29 @@ class AdviceView(CaseContextMixin, TemplateView):
 class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     success_url = "#view-countersign"
     template_name = "advice/review_countersign.html"
-    CountersignAdviceFormset = formset_factory(forms.CountersignAdviceForm, extra=2, min_num=2, max_num=2)
+    form_class = forms.CountersignAdviceForm
 
-    def get_context(self):
+    def get_context(self, **kwargs):
         context = super().get_context()
-        context["formset"] = self.CountersignAdviceFormset()
+        case = kwargs.get("case").__dict__
+        caseworker = self.caseworker["user"]
+
+        advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
+        num_advice = len(advice_to_countersign)
+        context["formset"] = formset_factory(self.form_class, extra=num_advice, min_num=num_advice, max_num=num_advice)
+        context["advice_to_countersign"] = advice_to_countersign
         return context
 
     def post(self, request, *args, **kwargs):
-        formset = self.CountersignAdviceFormset(request.POST)
-        if formset.is_valid():
-            return self.form_valid()
+        context = self.get_context_data()
+        case = context["case"]
+        caseworker = self.caseworker["user"]
+        formset = context["formset"](request.POST)
+        if all([form.is_valid() for form in formset]):
+            services.countersign_advice(request, case, caseworker, formset.cleaned_data)
+            return HttpResponseRedirect(self.success_url)
+        else:
+            return self.render_to_response({**context, "formset": formset})
 
 
 class CountersignEditAdviceView(EditAdviceView):

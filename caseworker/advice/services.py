@@ -1,4 +1,5 @@
 from core import client
+from caseworker.users.services import get_gov_user
 
 
 def filter_licenceable_products(products):
@@ -21,6 +22,23 @@ def filter_current_user_advice(all_advice, user_id):
         and advice["type"]["key"] in ["approve", "proviso", "refuse"]
         and (advice["user"]["id"] == user_id)
     ]
+
+
+def filter_advice_by_type(all_advice, advice_types):
+    return [advice for advice in all_advice if advice["type"]["key"] in advice_types]
+
+
+def filter_advice_by_level(all_advice, advice_levels):
+    return [advice for advice in all_advice if advice["level"] in advice_levels]
+
+
+def filter_advice_by_users_team(all_advice, caseworker):
+    return [advice for advice in all_advice if advice["user"]["team"]["id"] == caseworker["team"]["id"]]
+
+
+def get_advice_to_countersign(case, caseworker):
+    advice_by_team = filter_advice_by_users_team(case["advice"], caseworker)
+    return filter_advice_by_level(advice_by_team, ["user"])
 
 
 def post_approval_advice(request, case, data):
@@ -62,5 +80,25 @@ def post_refusal_advice(request, case, data):
 
 def delete_user_advice(request, case_pk):
     response = client.delete(request, f"/cases/{case_pk}/user-advice/")
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def countersign_advice(request, case, caseworker, formset_data):
+    data = []
+    case_pk = case["id"]
+    advice_to_countersign = get_advice_to_countersign(case, caseworker)
+
+    for index, advice in enumerate(advice_to_countersign):
+        form_data = formset_data[index]
+        comments = ""
+        if form_data["agree_with_recommendation"] == "yes":
+            comments = form_data["approval_reasons"]
+        elif form_data["agree_with_recommendation"] == "no":
+            comments = form_data["refusal_reasons"]
+
+        data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
+
+    response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
     response.raise_for_status()
     return response.json(), response.status_code
