@@ -77,7 +77,6 @@ class GiveApprovalAdviceForm(forms.Form):
 
 
 class RefusalAdviceForm(forms.Form):
-
     def _group_denial_reasons(self, denial_reasons):
         grouped = defaultdict(list)
         for item in denial_reasons:
