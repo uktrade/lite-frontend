@@ -7,27 +7,33 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl">Radio Forms POC</h1>
-                <form action="." method="POST">
-                    <div class="govuk-radios">
-                        {% for key, vals in form.mapping.items %}
-                        <div class="govuk-radios__item">
-                          <input class="govuk-radios__input" id="{{ key }}" name="choose" type="radio" name="radio" value="{{ key }}" onclick="yesnoCheck('{{ key }}');">
-                          <label class="govuk-label govuk-radios__label" for="{{ key }}">{{ key }}</label>
-                          <fieldset id="if{{ key }}" class="govuk-fieldset yesno" hidden>
-                              {% for field in form %}
-                              {% if field.name in vals %}
-                              {{field|as_crispy_field}}
-                              {% endif %}
-                              {% endfor %}
-                          </fieldset>
+                <div class="govuk-form-group">
+                    <legend>
+                        <h1 class="govuk-heading-xl">Radio Forms POC</h1>
+                    </legend>
+                    <form action="." method="POST">
+                        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                            {% for key, vals in form.mapping.items %}
+                            <div class="govuk-radios__item">
+                              <input class="govuk-radios__input" id="{{ key }}" name="choose" type="radio" value="{{ key }}" data-aria-controls="conditional-{{ key }}">
+                              <label class="govuk-label govuk-radios__label" for="{{ key }}">{{ key }}</label>
+                            </div>
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{ key }}">
+                                <div class="govuk-form-group">
+                                    {% for field in form %}
+                                    {% if field.name in vals %}
+                                    {{field|as_crispy_field}}
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-actions">
-                        <input type="submit" name="submit" value="Save" class="govuk-button" id="submit-id-submit">
-                    </div>
-                </form>
+                        <div class="form-actions">
+                            <input type="submit" name="submit" value="Save" class="govuk-button" id="submit-id-submit">
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="govuk-grid-column-one-thirds">
                 {% include "advice/case_detail.html" %}
@@ -36,15 +42,4 @@
     </main>
 </div>
 
-<script type="text/javascript" nonce="{{ request.csp_nonce }}">
-    function yesnoCheck(id) {
-        var yesno = document.getElementsByClassName('yesno');
-        for (var i = 0; i < yesno.length; i ++) {
-            yesno[i].style.display = 'none';
-        }
-        if (document.getElementById(id).checked) {
-            document.getElementById(`if${id}`).style.display = 'block';
-        }
-    }
-</script>
 {% endblock %}
