@@ -12,9 +12,9 @@
                     <div class="govuk-radios">
                         {% for key, vals in form.mapping.items %}
                         <div class="govuk-radios__item">
-                          <input class="govuk-radios__input" id="{{ key }}" name="choose" type="radio" name="radio" value="{{ key }}" onclick="javascript:yesnoCheck('{{ key }}');">
+                          <input class="govuk-radios__input" id="{{ key }}" name="choose" type="radio" name="radio" value="{{ key }}" onclick="yesnoCheck('{{ key }}');">
                           <label class="govuk-label govuk-radios__label" for="{{ key }}">{{ key }}</label>
-                          <fieldset id="if{{ key }}" class="govuk-fieldset" hidden>
+                          <fieldset id="if{{ key }}" class="govuk-fieldset yesno" hidden>
                               {% for field in form %}
                               {% if field.name in vals %}
                               {{field|as_crispy_field}}
@@ -38,11 +38,13 @@
 
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
     function yesnoCheck(id) {
-        alert("Hello");
+        var yesno = document.getElementsByClassName('yesno');
+        for (var i = 0; i < yesno.length; i ++) {
+            yesno[i].style.display = 'none';
+        }
         if (document.getElementById(id).checked) {
             document.getElementById(`if${id}`).style.display = 'block';
         }
-        else document.getElementById(`if${id}`).style.display = 'none';
     }
 </script>
 {% endblock %}
