@@ -29,7 +29,7 @@
                         <p class="govuk-body"><strong>Control List Entry</strong></p>
                     </div>
                     <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body">{{ good.good.control_list_entries | join:", " }}</p>
+                        <p class="govuk-body">{{ case.goods | get_clc | join:', ' }}<br></p>
                     </div>
                 </div>
                 <div class="govuk-grid-row">
