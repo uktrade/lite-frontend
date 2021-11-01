@@ -7,10 +7,49 @@
 {% endblock %}
 
 {% block full_width %}
+
+{% if my_advice %}
+	{% include "advice/view_my_advice.html" %}
+
+	{% if nlr_products %}
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-three-quarters">
+
+			<table id="table-nlr-products" class="govuk-table">
+				<caption class="govuk-table__caption govuk-!-font-size-19 govuk-!-font-weight-bold govuk-body govuk-!-padding-2 app-bg-colour--mid-grey">No licence required products</caption>
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header">Product name</th>
+						<th scope="col" class="govuk-table__header">Product description</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for product in nlr_products %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">{{ product.good.name|default:"N/A" }}</td>
+						<td class="govuk-table__cell">{{ product.good.description }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+	{% else %}
+	<h2 class="govuk-heading-m">No licence required products</h2>
+	<p class="govuk-body">None</p>
+	{% endif %}
+
+{% else %}
+	<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
+{% endif %}
+
 {% if grouped_advice %}
-<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
 
 <h2 class="govuk-heading-m">Other recommendations for this case</h2>
+
+<div class="govuk-grid-row">
+<div class="govuk-grid-column-three-quarters">
 
 {% for team_advice in grouped_advice %}
 	<details class="govuk-details" data-module="govuk-details">
@@ -37,21 +76,34 @@
 							{% for advice in user_decision_advice.advice %}
 							<tr class="govuk-table__row">
 								<td class="govuk-table__cell">{{ advice.country }}</td>
-								<td class="govuk-table__cell">{{ advice.type }}</td>
+								<td class="govuk-table__cell">{{ advice.type|sentence_case }}</td>
 								<td class="govuk-table__cell">{{ advice.address }}</td>
-								<td class="govuk-table__cell">No data</td>
+								<td class="govuk-table__cell">All</td>
 								<td class="govuk-table__cell">{{ advice.licence_condition|yesno:"Yes,No" }}</td>
 							</tr>
 							{% endfor %}
 						</tbody>
 					</table>
+
+					{# since we are giving advice for all destinations/goods, assume the advice content is the same across all advice items so we just pass the first item #}
+					{% if user_decision_advice.decision in "Approve,Proviso" %}
+						{% include "advice/approve-advice-text.html" with advice_item=user_decision_advice.advice.0.advice %}
+					{% elif user_decision_advice.decision == "Refuse" %}
+						{% include "advice/refuse-advice-text.html" with advice_item=user_decision_advice.advice.0.advice %}
+					{% endif %}
 			</div>
 		{% endfor %}
 	</details>
 {% endfor %}
 
-{% else %}
+{% endif %}
+
+{% if not my_advice and not grouped_advice %}
 <h2 class="govuk-heading-m">There is no advice for this case yet</h2>
 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
 {% endif %}
+
+</div>
+</div>
+
 {% endblock %}
