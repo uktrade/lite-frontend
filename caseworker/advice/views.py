@@ -263,7 +263,6 @@ class AdviceView(CaseContextMixin, TemplateView):
 
 
 class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
-    success_url = "#view-countersign"
     template_name = "advice/review_countersign.html"
     form_class = forms.CountersignAdviceForm
 
@@ -276,6 +275,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         num_advice = len(advice_to_countersign)
         context["formset"] = formset_factory(self.form_class, extra=num_advice, min_num=num_advice, max_num=num_advice)
         context["advice_to_countersign"] = advice_to_countersign
+        context["review"] = True
         return context
 
     def post(self, request, *args, **kwargs):
@@ -285,9 +285,27 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         formset = context["formset"](request.POST)
         if all([form.is_valid() for form in formset]):
             services.countersign_advice(request, case, caseworker, formset.cleaned_data)
-            return HttpResponseRedirect(self.success_url)
+            return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response({**context, "formset": formset})
+
+    def get_success_url(self):
+        return reverse("cases:countersign_view", kwargs={**self.kwargs})
+
+
+class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    template_name = "advice/review_countersign.html"
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        case = kwargs.get("case")
+        caseworker = self.caseworker["user"]
+
+        advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
+        context["advice_to_countersign"] = advice_to_countersign
+        context["review"] = False
+        context["subtitle"] = f"Approved by {caseworker['team']['name']}"
+        return context
 
 
 class CountersignEditAdviceView(EditAdviceView):

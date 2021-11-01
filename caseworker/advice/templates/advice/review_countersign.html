@@ -1,6 +1,7 @@
 {% extends 'layouts/case.html' %}
 
 {% load static custom_tags %}
+{% load static advice_tags %}
 {% load crispy_forms_tags %}
 
 
@@ -13,36 +14,67 @@
     {% endif %}
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-xl">Review and countersign</h2>
-                <form action="." method="POST">
-                    {{ formset.management_form|crispy }}
+            <div {% if review %} class="govuk-grid-column-two-thirds" {% else %} class="govuk-grid-column-three-quarters" {% endif %}>
+                {% if review %}
+                    <h2 class="govuk-heading-xl">{{ subtitle|default:"Review and countersign" }}</h2>
+                    <form action="." method="POST">
+                        {{ formset.management_form|crispy }}
+                        {% if advice_to_countersign|length %}
+                            {% for advice in advice_to_countersign %}
+                                {% with form=formset|index:forloop.counter0 %}
+                                    <!-- custom layout for each form -->
+                                    {% if advice.type.key in 'approve,proviso' %}
+                                        {% include "advice/approve-advice-details.html" with display_countersign=False user=advice|advice_given_by %}
+                                    {% elif advice.type.key == "refuse" %}
+                                        {% include "advice/refuse-advice-details.html" with display_countersign=False user=advice|advice_given_by %}
+                                    {% endif %}
+
+                                    <br><br>
+
+                                    <!-- Render the form -->
+                                    {% crispy form %}
+
+                                    <br>
+
+                                {% endwith %}
+                            {% endfor %}
+                        {% endif %}
+                        <div class="form-actions"> <input type="submit" name="submit" value="Submit" class="govuk-button" id="submit-id-submit"> </div>
+                    </form>
+                {% else %}
+                    <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#">
+                        Edit recommendation
+                    </a>
                     {% if advice_to_countersign|length %}
                         {% for advice in advice_to_countersign %}
-                            {% with form=formset|index:forloop.counter0 %}
-                                <!-- custom layout for each form -->
-                                {% if advice.type.key in 'approve,proviso' %}
-                                    {% include "advice/approve-advice-details.html" %}
-                                {% elif advice.type.key == "refuse" %}
-                                    {% include "advice/refuse-advice-details.html" %}
-                                {% endif %}
-
-                                <br><br>
-
-                                <!-- Render the form -->
-                                {% crispy form %}
-
-                                <br>
-
-                            {% endwith %}
+                            <br><br>
+                            {% if advice.type.key in 'approve,proviso' %}
+                                {% include "advice/approve-advice-details.html" with display_countersign=True user=advice|countersigned_user_team %}
+                            {% elif advice.type.key == "refuse" %}
+                                {% include "advice/refuse-advice-details.html" with display_countersign=True user=advice|countersigned_user_team %}
+                            {% endif %}
+                            <br>
                         {% endfor %}
                     {% endif %}
-                    <div class="form-actions"> <input type="submit" name="submit" value="Submit" class="govuk-button" id="submit-id-submit"> </div>
-                </form>
+                {% endif %}
             </div>
-            <div class="govuk-grid-column-one-thirds">
-                {% include "advice/case_detail.html" %}
-            </div>
+
+            {% if review %}
+                <div class="govuk-grid-column-one-thirds">
+                    {% include "advice/case_detail.html" %}
+                </div>
+            {% else %}
+                <div class="govuk-grid-column-one-quarter">
+                    {% if advice_to_countersign|length %}
+                    <a role="button" draggable="false" class="govuk-button" href="#move-forward">
+                        Move case forward
+                        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
+                            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </main>
 </div>
