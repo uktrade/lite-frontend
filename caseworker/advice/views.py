@@ -8,6 +8,7 @@ from core import client
 
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
+
 from core.auth.views import LoginRequiredMixin
 
 
@@ -95,17 +96,6 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return reverse("cases:view_my_advice", kwargs={**self.kwargs})
 
 
-class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
-    template_name = "advice/view_my_advice.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        case = context["case"]
-        my_advice = services.filter_current_user_advice(case.advice, str(self.request.session["lite_api_user_id"]))
-        nlr_products = services.filter_nlr_products(case["data"]["goods"])
-        return {**context, "my_advice": my_advice, "nlr_products": nlr_products}
-
-
 class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Form to edit given advice for all products on the application
@@ -188,11 +178,19 @@ class AdviceView(CaseContextMixin, TemplateView):
 
         return self.group_advice()
 
+    @property
+    def my_advice(self):
+        if not self.case["advice"]:
+            return []
+
+        return self.group_my_advice()
+
     def group_user_advice(self, user_advice, destination):
         advice_item = [a for a in user_advice if a[destination["type"]] is not None][0]
         return {
-            "type": destination["name"],
-            "address": destination["address"],
+            "type": destination["type"],
+            "name": destination["name"],
+            "denial_reasons": advice_item["denial_reasons"],
             "licence_condition": advice_item["proviso"],
             "country": destination["country"]["name"],
             "advice": advice_item,
@@ -223,6 +221,18 @@ class AdviceView(CaseContextMixin, TemplateView):
             ],
         }
 
+    def group_my_advice(self):
+        my_advice = services.filter_current_user_advice(self.case.advice, str(self.request.session["lite_api_user_id"]))
+        my_advice_destinations = [a for a in my_advice if a["good"] is None]  # we don't want to include advice given on individual goods yet
+        decisions = sorted(set([advice["type"]["value"] for advice in my_advice_destinations]))
+        user = my_advice_destinations[0]["user"]
+        grouped_my_advice = [
+            self.group_user_decision_advice(my_advice_destinations, user, decision)
+            for decision in decisions
+            if [a for a in my_advice_destinations if a["type"]["value"] == decision]
+        ]
+        return grouped_my_advice
+
     def group_advice(self):
         grouped_advice = []
 
@@ -246,8 +256,8 @@ class AdviceView(CaseContextMixin, TemplateView):
         return {
             "queue": self.queue,
             "grouped_advice": self.grouped_advice,
-            "my_advice": services.filter_current_user_advice(self.case.advice, str(self.request.session["lite_api_user_id"])),
-            "nlr_products": services.filter_nlr_products(self.case.goods)
+            "my_advice": self.my_advice,
+            "nlr_products": services.filter_nlr_products(self.case.goods),
         }
 
 
