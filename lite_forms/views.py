@@ -36,6 +36,8 @@ class FormView(TemplateView, ABC):
     """
     Base class with properties necessary to support getting and posting to forms within subclasses of this
     class, using supplied data and actions.
+
+    Will call validate() if it exists with parsed data (not validated yet)
     """
 
     data: dict = None
@@ -43,6 +45,14 @@ class FormView(TemplateView, ABC):
     object_pk = None
     success_url: str = ""
     success_message: str = ""
+
+    def parse_boolean(self, value):
+        if isinstance(value, str):
+            if value.lower() in ("yes", "true"):
+                return True
+            else:
+                return False
+        return value
 
     def get_data(self):
         data = getattr(self, "data", {})

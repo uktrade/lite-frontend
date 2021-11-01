@@ -32,6 +32,20 @@ from lite_forms.helpers import (
 )
 from lite_forms.templatetags import custom_tags
 from lite_forms.templatetags.custom_tags import prefix_dots
+from lite_forms.views import FormView
+
+
+class FormViewTests(TestCase):
+    def test_parse_boolean(self):
+        parse_boolean = FormView().parse_boolean
+        assert parse_boolean(True) == True
+        assert parse_boolean(False) == False
+        assert parse_boolean("yes") == True
+        assert parse_boolean("no") == False
+        assert parse_boolean("YES") == True
+        assert parse_boolean("NO") == False
+        assert parse_boolean("true") == True
+        assert parse_boolean("false") == False
 
 
 class FormTests(TestCase):

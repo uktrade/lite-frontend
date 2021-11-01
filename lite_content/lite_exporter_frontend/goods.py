@@ -104,11 +104,9 @@ class GoodPage:
 
 class DocumentAvailabilityForm:
     TITLE = "Do you have a document that shows what your product is and what it’s designed to do?"
-    DESCRIPTION = (
-        "For example, a technical specification, datasheet, sales brochure or something else that fully "
-        "describes the product details.\n"
-
-        "This is required in order to process the application."
+    DESCRIPTION = "Select yes if you have a product document"
+    NO_DOCUMENT_TEXTFIELD_DESCRIPTION = (
+        "Explain why you are not able to upload a product document. This may delay your application"
     )
 
 

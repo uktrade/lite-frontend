@@ -305,10 +305,7 @@ def test_goods_check_document_available_form():
     form = forms.check_document_available_form("back")
     assert len(form.questions) == 1
     assert form.title == "Do you have a document that shows what your product is and what it’s designed to do?"
-    expected_description_p1 = "For example, a technical specification, datasheet, sales brochure or something else that fully describes the product details."
-    expected_description_p2 = "This is required in order to process the application."
-    assert expected_description_p1 in form.description
-    assert expected_description_p2 in form.description
+    assert form.description == "Select yes if you have a product document"
     assert form.questions[0].name == "is_document_available"
     assert len(form.buttons) == 1
     assert form.buttons[0].value == "Save and continue"
