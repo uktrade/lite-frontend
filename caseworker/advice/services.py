@@ -24,8 +24,8 @@ def filter_current_user_advice(all_advice, user_id):
 
 
 def get_advice_subjects(case):
-    return [(destination["name"], destination["id"]) for destination in case.destinations] + [
-        ("good", good["id"]) for good in case.goods
+    return [(destination["type"], destination["id"], None) for destination in case.destinations] + [
+        ("good", good["id"], good["is_good_controlled"]) for good in case.goods
     ]
 
 
@@ -41,7 +41,7 @@ def post_approval_advice(request, case, data):
             subject_name: subject_id,
             "denial_reasons": [],
         }
-        for subject_name, subject_id in get_advice_subjects(case)
+        for subject_name, subject_id, licensable in get_advice_subjects(case)
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
@@ -55,10 +55,11 @@ def post_refusal_advice(request, case, data):
             "type": "refuse",
             "text": data["refusal_reasons"],
             "footnote_required": False,
-            "good": product["id"],
+            subject_name: subject_id,
             "denial_reasons": data["denial_reasons"],
         }
-        for product in filter_licenceable_products(case["data"]["goods"])
+        for subject_name, subject_id, licensable in get_advice_subjects(case)
+        if subject_name == "good" and licensable == {"key": "True", "value": "Yes"}
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
