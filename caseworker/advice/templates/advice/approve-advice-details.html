@@ -54,7 +54,7 @@
       <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-three-quarters">
-            <h2 class="govuk-heading-m">Countersigned by {{ advice.countersigned_by.first_name }} {{ advice.countersigned_by.last_name }}</h2>
+            <h2 class="govuk-heading-m">Countersigned by {{ advice.countersigned_by|full_name }}</h2>
             <p class="govuk-body">{{ advice.countersign_comments }}</p>
           </div>
         </div>

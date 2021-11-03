@@ -255,7 +255,7 @@ class AdviceView(CaseContextMixin, TemplateView):
 
         return grouped_advice
 
-    def get_context(self):
+    def get_context(self, **kwargs):
         return {
             "queue": self.queue,
             "grouped_advice": self.grouped_advice,
@@ -315,5 +315,5 @@ class CountersignEditAdviceView(EditAdviceView):
         "to the Licensing Unit. The original version will be recorded in the case history"
     )
 
-    def get_context(self):
+    def get_context(self, **kwargs):
         return {**super().get_context(), "subtitle": self.subtitle, "edit": True}

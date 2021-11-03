@@ -24,9 +24,9 @@
                                 {% with form=formset|index:forloop.counter0 %}
                                     <!-- custom layout for each form -->
                                     {% if advice.type.key in 'approve,proviso' %}
-                                        {% include "advice/approve-advice-details.html" with display_countersign=False user=advice|advice_given_by %}
+                                        {% include "advice/approve-advice-details.html" with display_countersign=False user=advice.user|full_name %}
                                     {% elif advice.type.key == "refuse" %}
-                                        {% include "advice/refuse-advice-details.html" with display_countersign=False user=advice|advice_given_by %}
+                                        {% include "advice/refuse-advice-details.html" with display_countersign=False user=advice.user|full_name %}
                                     {% endif %}
 
                                     <br><br>
@@ -49,9 +49,9 @@
                         {% for advice in advice_to_countersign %}
                             <br><br>
                             {% if advice.type.key in 'approve,proviso' %}
-                                {% include "advice/approve-advice-details.html" with display_countersign=True user=advice|countersigned_user_team %}
+                                {% include "advice/approve-advice-details.html" with display_countersign=True user=advice.countersigned_by.team.name %}
                             {% elif advice.type.key == "refuse" %}
-                                {% include "advice/refuse-advice-details.html" with display_countersign=True user=advice|countersigned_user_team %}
+                                {% include "advice/refuse-advice-details.html" with display_countersign=True user=advice.countersigned_by.team.name %}
                             {% endif %}
                             <br>
                         {% endfor %}

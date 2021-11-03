@@ -1,5 +1,4 @@
 from core import client
-from caseworker.users.services import get_gov_user
 
 
 def filter_licenceable_products(products):

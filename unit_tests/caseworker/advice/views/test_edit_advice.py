@@ -37,10 +37,11 @@ def test_edit_approve_advice_post(authorized_client, requests_mock, data_standar
     }
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
-    history = requests_mock.request_history
-    assert user_advice_create_url in history[3].url
-    assert history[3].method == "POST"
-    assert history[3].json() == [
+    history = [item for item in requests_mock.request_history if user_advice_create_url in item.url]
+    assert len(history) == 1
+    history = history[0]
+    assert history.method == "POST"
+    assert history.json() == [
         {
             "type": "approve",
             "text": "meets the requirements updated",
@@ -89,10 +90,11 @@ def test_edit_refuse_advice_post(
     }
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
-    history = requests_mock.request_history
-    assert user_advice_create_url in history[5].url
-    assert history[5].method == "POST"
-    assert history[5].json() == [
+    history = [item for item in requests_mock.request_history if user_advice_create_url in item.url]
+    assert len(history) == 1
+    history = history[0]
+    assert history.method == "POST"
+    assert history.json() == [
         {
             "type": "refuse",
             "text": "doesn't meet the requirement",

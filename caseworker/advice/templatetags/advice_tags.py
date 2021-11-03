@@ -22,13 +22,8 @@ def get_security_grading(goods):
 
 
 @register.filter
-def index(iter, i):
-    return iter[i]
-
-
-@register.filter
-def advice_given_by(advice):
-    return f"{advice['user']['first_name']} {advice['user']['last_name']}"
+def index(array, i):
+    return array[i]
 
 
 @register.filter
