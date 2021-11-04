@@ -1,4 +1,4 @@
-<div class="app-bg-colour--light-grey govuk-!-padding-4 govuk-!-margin-bottom-6">
+<div class="app-bg-colour--light-grey govuk-!-padding-4 govuk-!-margin-bottom-6 advice-text">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-three-quarters">
         {% if advice_item.text %}
@@ -14,6 +14,11 @@
         {% if advice_item.note %}
         <h2 class="govuk-heading-m">Additional instructions</h2>
         <p class="govuk-body">{{ advice_item.note }}</p>
+        {% endif %}
+
+        {% if advice_item.footnote %}
+        <h2 class="govuk-heading-m">Footnote</h2>
+        <p class="govuk-body">{{ advice_item.footnote }}</p>
         {% endif %}
       </div>
     </div>
