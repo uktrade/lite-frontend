@@ -15,7 +15,7 @@ def setup(mock_queue, mock_case):
 @pytest.fixture
 def url(data_queue, data_standard_case):
     return reverse(
-        "cases:view_my_advice", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+        "cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
     )
 
 
