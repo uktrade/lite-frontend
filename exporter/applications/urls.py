@@ -27,7 +27,6 @@ from exporter.goods.views import (
     GoodInformationSecurity,
     GoodSoftwareTechnology,
     EditFirearmProductType,
-    EditFirearmSportingShotgunStatus,
     EditCalibre,
     EditFirearmActDetails,
     EditNumberofItems,
@@ -90,11 +89,6 @@ urlpatterns = [
         name="firearm_type",
     ),
     path("<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/calibre/", EditCalibre.as_view(), name="calibre"),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/sporting-shotgun/",
-        EditFirearmSportingShotgunStatus.as_view(),
-        name="sporting-shotgun",
-    ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/year-of-manufacture/",
         EditYearOfManufacture.as_view(),

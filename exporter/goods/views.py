@@ -46,7 +46,6 @@ from exporter.goods.forms import (
     upload_firearms_act_certificate_form,
     build_firearm_create_back,
     identification_markings_form,
-    firearms_sporting_shotgun_form,
     firearm_year_of_manufacture_details_form,
     firearm_replica_form,
 )
