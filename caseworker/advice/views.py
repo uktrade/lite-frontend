@@ -198,8 +198,21 @@ class AdviceView(CaseContextMixin, TemplateView):
 
     def group_user_decision_advice(self, user_advice, team_user, decision):
         user_advice_for_decision = [a for a in user_advice if a["type"]["value"] == decision and not a["good"]]
+        full_name = (
+            f"{team_user['first_name']} {team_user['last_name']}"
+            if team_user["first_name"] and team_user["last_name"]
+            else ""
+        )
+        other_user_title = f"{full_name or team_user['email']} has {DECISION_TYPE_VERB_MAPPING[decision]}"
+        if decision in ["Approve", "Proviso"]:
+            current_user_title = "My approval recommendation"
+        elif decision in ["Refuse"]:
+            current_user_title = "My refusal recommendation"
         return {
             "user": team_user,
+            "title": current_user_title
+            if team_user["id"] == str(self.request.session["lite_api_user_id"])
+            else other_user_title,
             "decision": decision,
             "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
             "advice": [
@@ -223,7 +236,11 @@ class AdviceView(CaseContextMixin, TemplateView):
 
     def group_my_advice(self):
         my_advice = services.filter_current_user_advice(self.case.advice, str(self.request.session["lite_api_user_id"]))
-        my_advice_destinations = [a for a in my_advice if a["good"] is None]  # we don't want to include advice given on individual goods yet
+        if not my_advice:
+            return []
+        my_advice_destinations = [
+            a for a in my_advice if a["good"] is None
+        ]  # we don't want to include advice given on individual goods yet
         decisions = sorted(set([advice["type"]["value"] for advice in my_advice_destinations]))
         user = my_advice_destinations[0]["user"]
         grouped_my_advice = [
