@@ -107,9 +107,7 @@ def test_view_refusal_advice_not_including_nlr_products(
     assert expected_end_user_values == [column.text for column in table_rows[2].find_all("td")]
 
     # Assert Advice
-    advice_content = [
-        p.text for item in soup.select(".advice-text") for p in item.findAll("p")
-    ]
+    advice_content = [p.text for item in soup.select(".advice-text") for p in item.findAll("p")]
     assert len(advice_content) == 1
     assert advice_content[0] == case_data["case"]["advice"][0]["text"]
 
