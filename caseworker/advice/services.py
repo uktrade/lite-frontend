@@ -24,6 +24,11 @@ def filter_current_user_advice(all_advice, user_id):
 
 
 def get_advice_subjects(case):
+    """
+        The "advice subject" is an item on a case (eg a good, end user, consignee etc)
+        that can have advice related to it.
+        See lite-api/api/cases/models.py for foreign key fields on the Advice model.
+    """
     return [(destination["type"], destination["id"], None) for destination in case.destinations] + [
         ("good", good["id"], good["is_good_controlled"]) for good in case.goods
     ]
