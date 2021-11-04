@@ -373,7 +373,8 @@
               										Document is above OFFICIAL-SENSITIVE
               									{% endif %}
               									{% if not good_on_application.good.is_document_available %}
-              										No document available
+                                  No
+              										<span class="govuk-hint">{{ good_on_application.good.no_document_comments }}</span>
               									{% endif %}
               								{% endif %}
               							</td>
