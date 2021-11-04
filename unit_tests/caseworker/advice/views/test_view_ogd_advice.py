@@ -234,19 +234,21 @@ def test_advice_view_heading_ogd_advice_data(
                 {
                     "user": john_smith,
                     "decision": "Approve",
-                    "decision_verb": "approved",
+                    "title": "John Smith has approved",
                     "advice": [
                         {
-                            "type": "Consignee",
-                            "address": "44",
+                            "type": "consignee",
                             "licence_condition": None,
+                            "denial_reasons": None,
+                            "name": "Consignee",
                             "country": "Abu Dhabi",
                             "advice": consignee_advice1,
                         },
                         {
-                            "type": "End User",
-                            "address": "44",
+                            "type": "end_user",
                             "licence_condition": None,
+                            "denial_reasons": None,
+                            "name": "End User",
                             "country": "United Kingdom",
                             "advice": end_user_advice1,
                         },
@@ -254,13 +256,14 @@ def test_advice_view_heading_ogd_advice_data(
                 },
                 {
                     "user": john_smith,
+                    "title": "John Smith has refused",
                     "decision": "Refuse",
-                    "decision_verb": "refused",
                     "advice": [
                         {
-                            "type": "Third party",
-                            "address": "44",
+                            "type": "third_party",
                             "licence_condition": None,
+                            "denial_reasons": None,
+                            "name": "Third party",
                             "country": "United Kingdom",
                             "advice": third_party_advice1,
                         }
@@ -274,27 +277,30 @@ def test_advice_view_heading_ogd_advice_data(
                 {
                     "user": jane_doe,
                     "decision": "Approve",
-                    "decision_verb": "approved",
+                    "title": "Jane Doe has approved",
                     "advice": [
                         {
-                            "type": "Consignee",
-                            "address": "44",
+                            "type": "consignee",
                             "licence_condition": None,
+                            "name": "Consignee",
                             "country": "Abu Dhabi",
+                            "denial_reasons": None,
                             "advice": consignee_advice2,
                         },
                         {
-                            "type": "End User",
-                            "address": "44",
+                            "type": "end_user",
                             "licence_condition": None,
+                            "name": "End User",
                             "country": "United Kingdom",
+                            "denial_reasons": None,
                             "advice": end_user_advice2,
                         },
                         {
-                            "type": "Third party",
-                            "address": "44",
+                            "type": "third_party",
                             "licence_condition": None,
+                            "name": "Third party",
                             "country": "United Kingdom",
+                            "denial_reasons": None,
                             "advice": third_party_advice2,
                         },
                     ],
@@ -319,17 +325,17 @@ def test_advice_view_heading_ogd_advice_data(
     # team1 approved 2 destinations
     assert team1_advice["advice"][0]["decision"] == "Approve"
     assert len(team1_advice["advice"][0]["advice"]) == 2
-    assert team1_advice["advice"][0]["advice"][0]["type"] == "Consignee"
-    assert team1_advice["advice"][0]["advice"][1]["type"] == "End User"
+    assert team1_advice["advice"][0]["advice"][0]["type"] == "consignee"
+    assert team1_advice["advice"][0]["advice"][1]["type"] == "end_user"
 
     # team1 refused 1 destination
     assert team1_advice["advice"][1]["decision"] == "Refuse"
     assert len(team1_advice["advice"][1]["advice"]) == 1
-    assert team1_advice["advice"][1]["advice"][0]["type"] == "Third party"
+    assert team1_advice["advice"][1]["advice"][0]["type"] == "third_party"
 
     # team2 approved all three destinations
     assert team2_advice["advice"][0]["decision"] == "Approve"
     assert len(team2_advice["advice"][0]["advice"]) == 3
-    assert team2_advice["advice"][0]["advice"][0]["type"] == "Consignee"
-    assert team2_advice["advice"][0]["advice"][1]["type"] == "End User"
-    assert team2_advice["advice"][0]["advice"][2]["type"] == "Third party"
+    assert team2_advice["advice"][0]["advice"][0]["type"] == "consignee"
+    assert team2_advice["advice"][0]["advice"][1]["type"] == "end_user"
+    assert team2_advice["advice"][0]["advice"][2]["type"] == "third_party"

@@ -41,34 +41,34 @@ def test_view_approve_advice_with_conditions_notes_and_nlr_products(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-    table_rows = soup.find("table", id="table-licenceable-products-approve-all").find_all("tr")
+    table_rows = soup.select("table.table-licenceable-products-approve-all")[0].find_all("tr")
     assert len(table_rows) == 3  # including header
 
     # Assert on Parties
-    expected_headers = ["Country", "Type", "Name", "Approved products"]
+    expected_headers = ["Country", "Type", "Name", "Approved products", "Licence condition added"]
     consignee = case_data["case"]["data"]["consignee"]
-    expected_consignee_values = [consignee["country"]["name"], "Consignee", consignee["name"], "All"]
+    expected_consignee_values = [consignee["country"]["name"], "Consignee", consignee["name"], "All", "Yes"]
     end_user = case_data["case"]["data"]["end_user"]
-    expected_end_user_values = [end_user["country"]["name"], "End user", end_user["name"], "All"]
+    expected_end_user_values = [end_user["country"]["name"], "End user", end_user["name"], "All", "Yes"]
 
     assert expected_headers == [column.text for column in table_rows[0].find_all("th")]
     assert expected_consignee_values == [column.text for column in table_rows[1].find_all("td")]
     assert expected_end_user_values == [column.text for column in table_rows[2].find_all("td")]
 
     # Assert Advice
-    advice_content = [
-        p.text for item in soup.findAll("div", {"class": "govuk-cookie-banner__content"}) for p in item.findAll("p")
-    ]
-    assert len(advice_content) == 3
+    advice_content = [p.text for item in soup.select(".advice-text") for p in item.findAll("p")]
+    assert len(advice_content) == 4
     assert advice_content[0] == case_data["case"]["advice"][0]["text"]
     assert advice_content[1] == case_data["case"]["advice"][0]["proviso"]
     assert advice_content[2] == case_data["case"]["advice"][0]["note"]
+    assert advice_content[3] == case_data["case"]["advice"][0]["footnote"]
 
     # Assert NLR - the second product on this application is NLR
-    nlr_table_rows = soup.find("table", id="table-nlr-products").find_all("tr")
-    assert ["Product name"] == [column.text for column in nlr_table_rows[0].find_all("th")]
-    assert [case_data["case"]["data"]["goods"][1]["good"]["name"]] == [
-        column.text for column in nlr_table_rows[1].find_all("td")
+    nlr_table_rows = soup.select("table.table-nlr-products")[0].find_all("tr")
+    assert [column.text for column in nlr_table_rows[0].find_all("th")] == ["Product name", "Product description"]
+    assert [column.text for column in nlr_table_rows[1].find_all("td")] == [
+        case_data["case"]["data"]["goods"][1]["good"]["name"],
+        case_data["case"]["data"]["goods"][1]["good"]["description"],
     ]
 
 
@@ -92,7 +92,7 @@ def test_view_refusal_advice_not_including_nlr_products(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-    table_rows = soup.find("table", id="table-licenceable-products-refuse-all").find_all("tr")
+    table_rows = soup.select("table.table-licenceable-products-refuse-all")[0].find_all("tr")
     assert len(table_rows) == 3  # including header
 
     # Assert on Parties
@@ -108,14 +108,15 @@ def test_view_refusal_advice_not_including_nlr_products(
 
     # Assert Advice
     advice_content = [
-        p.text for item in soup.findAll("div", {"class": "govuk-cookie-banner__content"}) for p in item.findAll("p")
+        p.text for item in soup.select(".advice-text") for p in item.findAll("p")
     ]
     assert len(advice_content) == 1
     assert advice_content[0] == case_data["case"]["advice"][0]["text"]
 
     # Assert NLR - the second product on this application is NLR
-    nlr_table_rows = soup.find("table", id="table-nlr-products").find_all("tr")
-    assert ["Product name"] == [column.text for column in nlr_table_rows[0].find_all("th")]
-    assert [case_data["case"]["data"]["goods"][1]["good"]["name"]] == [
-        column.text for column in nlr_table_rows[1].find_all("td")
+    nlr_table_rows = soup.select("table.table-nlr-products")[0].find_all("tr")
+    assert [column.text for column in nlr_table_rows[0].find_all("th")] == ["Product name", "Product description"]
+    assert [column.text for column in nlr_table_rows[1].find_all("td")] == [
+        case_data["case"]["data"]["goods"][1]["good"]["name"],
+        case_data["case"]["data"]["goods"][1]["good"]["description"],
     ]

@@ -214,7 +214,6 @@ class AdviceView(CaseContextMixin, TemplateView):
             if team_user["id"] == str(self.request.session["lite_api_user_id"])
             else other_user_title,
             "decision": decision,
-            "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
             "advice": [
                 self.group_user_advice(user_advice_for_decision, destination)
                 for destination in sorted(self.case.destinations, key=lambda d: d["name"])
@@ -241,6 +240,8 @@ class AdviceView(CaseContextMixin, TemplateView):
         my_advice_destinations = [
             a for a in my_advice if a["good"] is None
         ]  # we don't want to include advice given on individual goods yet
+        if not my_advice_destinations:
+            return []
         decisions = sorted(set([advice["type"]["value"] for advice in my_advice_destinations]))
         user = my_advice_destinations[0]["user"]
         grouped_my_advice = [
