@@ -16,7 +16,7 @@
 					</td>
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						{% for good in licence.goods %}
-						{% if good.control_list_entries %}{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %} : {% endif %}{{ good.description }}<br>
+						{% if good.control_list_entries %}{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %} : {% endif %}{{ good.name }}<br>
 						{% endfor %}
 					</td>
 					<td class="govuk-table__cell govuk-table__cell--tight">
