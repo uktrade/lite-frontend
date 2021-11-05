@@ -192,7 +192,7 @@
                                                 {{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
                                                 {% endfor %}
                                             </div>
-                                        </details>																																
+                                        </details>
                                     </td>
                                 </tr>
                             {% endif %}
@@ -348,7 +348,8 @@
                             Document is above OFFICIAL-SENSITIVE
                         {% endif %}
                         {% if not object.good.is_document_available %}
-                            No document available
+                            No
+                            <span class="govuk-hint">{{ object.good.no_document_comments }}</span>
                         {% endif %}
                     {% endif %}
                 </td>
