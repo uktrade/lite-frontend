@@ -2,14 +2,14 @@ from core import client
 
 
 def filter_licenceable_products(products):
-    return [product for product in products if product["is_good_controlled"]["key"] == "True"]
+    return [product for product in products if product["is_good_controlled"] == {"key": "True", "value": "Yes"}]
 
 
 def filter_nlr_products(products):
     return [
         product
         for product in products
-        if not product["is_good_controlled"] or product["is_good_controlled"]["key"] == "False"
+        if not product["is_good_controlled"] or product["is_good_controlled"] == {"key": "False", "value": "No"}
     ]
 
 
@@ -23,6 +23,17 @@ def filter_current_user_advice(all_advice, user_id):
     ]
 
 
+def get_advice_subjects(case):
+    """
+        The "advice subject" is an item on a case (eg a good, end user, consignee etc)
+        that can have advice related to it.
+        See lite-api/api/cases/models.py for foreign key fields on the Advice model.
+    """
+    return [(destination["type"], destination["id"], None) for destination in case.destinations] + [
+        ("good", good["id"], good["is_good_controlled"]) for good in case.goods
+    ]
+
+
 def post_approval_advice(request, case, data):
     json = [
         {
@@ -32,10 +43,10 @@ def post_approval_advice(request, case, data):
             "note": data["instructions_to_exporter"],
             "footnote_required": True if data["footnote_details"] else False,
             "footnote": data["footnote_details"],
-            "good": product["id"],
+            subject_name: subject_id,
             "denial_reasons": [],
         }
-        for product in filter_licenceable_products(case["data"]["goods"])
+        for subject_name, subject_id, licensable in get_advice_subjects(case)
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
@@ -49,10 +60,11 @@ def post_refusal_advice(request, case, data):
             "type": "refuse",
             "text": data["refusal_reasons"],
             "footnote_required": False,
-            "good": product["id"],
+            subject_name: subject_id,
             "denial_reasons": data["denial_reasons"],
         }
-        for product in filter_licenceable_products(case["data"]["goods"])
+        for subject_name, subject_id, licensable in get_advice_subjects(case)
+        if subject_name == "good" and licensable == {"key": "True", "value": "Yes"}
     ]
 
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)

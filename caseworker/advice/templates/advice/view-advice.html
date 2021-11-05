@@ -7,10 +7,52 @@
 {% endblock %}
 
 {% block full_width %}
+
+{% if my_advice %}
+
+<div id="my-advice">
+	{% include "advice/view_my_advice.html" %}
+
+	{% if nlr_products %}
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-three-quarters">
+
+			<table class="govuk-table table-nlr-products">
+				<caption class="govuk-table__caption govuk-!-font-size-19 govuk-!-font-weight-bold govuk-body govuk-!-padding-2 app-bg-colour--mid-grey">No licence required products</caption>
+				<thead class="govuk-table__head">
+					<tr class="govuk-table__row">
+						<th scope="col" class="govuk-table__header">Product name</th>
+						<th scope="col" class="govuk-table__header">Product description</th>
+					</tr>
+				</thead>
+				<tbody class="govuk-table__body">
+					{% for product in nlr_products %}
+					<tr class="govuk-table__row">
+						<td class="govuk-table__cell">{{ product.good.name|default:"N/A" }}</td>
+						<td class="govuk-table__cell">{{ product.good.description }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+	{% else %}
+	<h2 class="govuk-heading-m">No licence required products</h2>
+	<p class="govuk-body">None</p>
+	{% endif %}
+</div>
+
+{% else %}
+	<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
+{% endif %}
+
 {% if grouped_advice %}
-<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
 
 <h2 class="govuk-heading-m">Other recommendations for this case</h2>
+
+<div class="govuk-grid-row">
+<div class="govuk-grid-column-three-quarters">
 
 {% for team_advice in grouped_advice %}
 	<details class="govuk-details" data-module="govuk-details">
@@ -20,38 +62,28 @@
 			</span>
 		</summary>
 
-		{% for user_decision_advice in team_advice.advice %}
 			<div class="govuk-details__text">
-					<h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 {% if user_decision_advice.decision == "Approve" or user_decision_advice.decision == "Proviso" %}app-bg-colour--green{% elif user_decision_advice.decision == "Refuse" %}app-bg-colour--red{% endif %}">{{ user_decision_advice.decision_verb|capfirst }} by {% if user_decision_advice.user.first_name %}{{ user_decision_advice.user.first_name|add:' '|add:user_decision_advice.user.last_name }}{% else %}{{ user_decision_advice.user.email }}{% endif %}</h2>
-					<table class="govuk-table">
-						<thead class="govuk-table__head">
-							<tr class="govuk-table__row">
-								<th scope="col" class="govuk-table__header">Country</th>
-								<th scope="col" class="govuk-table__header">Type</th>
-								<th scope="col" class="govuk-table__header">Address</th>
-								<th scope="col" class="govuk-table__header">Products</th>
-								<th scope="col" class="govuk-table__header">Licence condition added</th>
-							</tr>
-						</thead>
-						<tbody class="govuk-table__body">
-							{% for advice in user_decision_advice.advice %}
-							<tr class="govuk-table__row">
-								<td class="govuk-table__cell">{{ advice.country }}</td>
-								<td class="govuk-table__cell">{{ advice.type }}</td>
-								<td class="govuk-table__cell">{{ advice.address }}</td>
-								<td class="govuk-table__cell">No data</td>
-								<td class="govuk-table__cell">{{ advice.licence_condition|yesno:"Yes,No" }}</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-					</table>
+				{% for user_decision_advice in team_advice.advice %}
+
+				{% if user_decision_advice.decision in 'Approve,Proviso' %}
+					{% include "advice/approve-advice-details.html" %}
+				{% elif user_decision_advice.decision == "Refuse" %}
+					{% include "advice/refuse-advice-details.html" %}
+				{% endif %}
+
+				{% endfor %}
 			</div>
-		{% endfor %}
 	</details>
 {% endfor %}
 
-{% else %}
+{% endif %}
+
+{% if not my_advice and not grouped_advice %}
 <h2 class="govuk-heading-m">There is no advice for this case yet</h2>
 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
 {% endif %}
+
+</div>
+</div>
+
 {% endblock %}

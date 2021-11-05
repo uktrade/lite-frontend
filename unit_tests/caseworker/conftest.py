@@ -284,7 +284,7 @@ def current_user():
 
 
 @pytest.fixture
-def refusal_advice(current_user):
+def refusal_advice(current_user, data_standard_case):
     return [
         {
             "id": "5cf3c92d-e841-4b8a-8ce5-bd7f869a3e8d",
@@ -303,12 +303,48 @@ def refusal_advice(current_user):
             "ultimate_end_user": None,
             "consignee": None,
             "third_party": None,
-        }
+        },
+        {
+            "consignee": data_standard_case["case"]["data"]["consignee"]["id"],
+            "country": None,
+            "created_at": "2021-10-16T23:48:39.486679+01:00",
+            "denial_reasons": ["5a", "5b"],
+            "end_user": None,
+            "footnote": None,
+            "good": None,
+            "id": "429c5596-fe8b-4540-988b-c37805cd08de",
+            "level": "user",
+            "note": None,
+            "proviso": None,
+            "text": "Not matching the criteria to issue the licence",
+            "third_party": None,
+            "type": {"key": "refuse", "value": "Refuse"},
+            "ultimate_end_user": None,
+            "user": current_user,
+        },
+        {
+            "consignee": None,
+            "country": None,
+            "created_at": "2021-10-16T23:48:39.486679+01:00",
+            "denial_reasons": ["5a", "5b"],
+            "end_user": data_standard_case["case"]["data"]["end_user"]["id"],
+            "footnote": None,
+            "good": None,
+            "id": "429c5596-fe8b-4540-988b-c37805cd08de",
+            "level": "user",
+            "note": None,
+            "proviso": None,
+            "text": "Not matching the criteria to issue the licence",
+            "third_party": None,
+            "type": {"key": "refuse", "value": "Refuse"},
+            "ultimate_end_user": None,
+            "user": current_user,
+        },
     ]
 
 
 @pytest.fixture
-def standard_case_with_advice(current_user):
+def standard_case_with_advice(current_user, data_standard_case):
     return {
         "id": "2c14d003-1234-4c11-a0fd-bbfd7572c5a4",
         "data": {
@@ -382,7 +418,43 @@ def standard_case_with_advice(current_user):
                 "type": {"key": "proviso", "value": "Proviso"},
                 "ultimate_end_user": None,
                 "user": current_user,
-            }
+            },
+            {
+                "consignee": data_standard_case["case"]["data"]["consignee"]["id"],
+                "country": None,
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "denial_reasons": [],
+                "end_user": None,
+                "footnote": "footnotes",
+                "good": None,
+                "id": "429c5596-fe8b-4540-988b-c37805cd08de",
+                "level": "user",
+                "note": "additional notes",
+                "proviso": "no conditions",
+                "text": "meets the criteria",
+                "third_party": None,
+                "type": {"key": "proviso", "value": "Proviso"},
+                "ultimate_end_user": None,
+                "user": current_user,
+            },
+            {
+                "consignee": None,
+                "country": None,
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "denial_reasons": [],
+                "end_user": data_standard_case["case"]["data"]["end_user"]["id"],
+                "footnote": "footnotes",
+                "good": None,
+                "id": "429c5596-fe8b-4540-988b-c37805cd08de",
+                "level": "user",
+                "note": "additional notes",
+                "proviso": "no conditions",
+                "text": "meets the criteria",
+                "third_party": None,
+                "type": {"key": "proviso", "value": "Proviso"},
+                "ultimate_end_user": None,
+                "user": current_user,
+            },
         ],
     }
 
