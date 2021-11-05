@@ -14,9 +14,7 @@ def setup(mock_queue, mock_case):
 
 @pytest.fixture
 def url(data_queue, data_standard_case):
-    return reverse(
-        "cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
-    )
+    return reverse("cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
 
 
 def test_view_approve_advice_with_conditions_notes_and_nlr_products(
