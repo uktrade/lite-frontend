@@ -7,7 +7,7 @@
 {% block body %}
 <div class="govuk-width-container">
     {% if form.has_changed %}
-        <a href="{% url 'cases:advice_view' queue_pk case.id %}" class="govuk-back-link">Back</a>
+        <a href="{% url 'cases:view_my_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
     {% else %}
         <a href="{% url 'cases:select_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
     {% endif %}
