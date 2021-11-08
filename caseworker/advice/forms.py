@@ -1,7 +1,10 @@
+from collections import defaultdict
 from django import forms
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
+
+from core.forms.widgets import GridmultipleSelect
 
 
 def get_approval_advice_form_factory(advice):
@@ -74,12 +77,18 @@ class GiveApprovalAdviceForm(forms.Form):
 
 
 class RefusalAdviceForm(forms.Form):
+    def _group_denial_reasons(self, denial_reasons):
+        grouped = defaultdict(list)
+        for item in denial_reasons:
+            grouped[item["id"][0]].append((item["id"], item["id"]))
+        return grouped.items()
+
     def __init__(self, denial_reasons, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        choices = [(item["id"], item["id"]) for item in denial_reasons]
+        choices = self._group_denial_reasons(denial_reasons)
         self.fields["denial_reasons"] = forms.MultipleChoiceField(
             choices=choices,
-            widget=forms.CheckboxSelectMultiple(),
+            widget=GridmultipleSelect(),
             label='Select all <a href="/">refusal criteria</a> that apply',
         )
         self.fields["refusal_reasons"] = forms.CharField(

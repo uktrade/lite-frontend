@@ -41,7 +41,6 @@
 		@include govuk-font($size: 24);
 		display: block;
 		margin-bottom: govuk-spacing(2);
-		word-break: break-all;
 	}
 
 	.govuk-hint {
@@ -49,13 +48,11 @@
 		color: $govuk-text-colour;
 		margin: 0;
 		margin-bottom: govuk-spacing(2);
-		word-break: break-all;
 	}
 
 	.govuk-body {
 		@include govuk-font($size: 16, $line-height: 1.5);
 		color: $govuk-secondary-text-colour;
 		margin: 0;
-		word-break: break-all;
 	}
 }

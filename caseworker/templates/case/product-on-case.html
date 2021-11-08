@@ -352,31 +352,32 @@
                         <tr class="govuk-table__row app-table__row">
                             <th scope="row" class="govuk-table__header">Document</th>
                             <td class="govuk-table__cell">
-								{% if good_on_application.good.documents %}
-									{% if good_on_application.good.documents|length > 1 %}
-										<ol class="govuk-list govuk-list--number">
-											{% for document in good_on_application.good.documents %}
-											<li>
-											<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
-												<span class="govuk-hint"> {{ document.description }} </span>
-											</li>
-											{% endfor %}
-										</ol>
-									{% else %}
-										{% with document=good_on_application.good.documents.0 %}
-										<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
-											<span class="govuk-hint"> {{ document.description }} </span>
-										{% endwith %}
-									{% endif %}
-								{% else %}
-									{% if good_on_application.good.is_document_sensitive %}
-										Document is above OFFICIAL-SENSITIVE
-									{% endif %}
-									{% if not good_on_application.good.is_document_available %}
-										No document available
-									{% endif %}
-								{% endif %}
-							</td>
+              								{% if good_on_application.good.documents %}
+              									{% if good_on_application.good.documents|length > 1 %}
+              										<ol class="govuk-list govuk-list--number">
+              											{% for document in good_on_application.good.documents %}
+              											<li>
+              											<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+              												<span class="govuk-hint"> {{ document.description }} </span>
+              											</li>
+              											{% endfor %}
+              										</ol>
+              									{% else %}
+              										{% with document=good_on_application.good.documents.0 %}
+              										<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+              											<span class="govuk-hint"> {{ document.description }} </span>
+              										{% endwith %}
+              									{% endif %}
+              								{% else %}
+              									{% if good_on_application.good.is_document_sensitive %}
+              										Document is above OFFICIAL-SENSITIVE
+              									{% endif %}
+              									{% if not good_on_application.good.is_document_available %}
+                                  No
+              										<span class="govuk-hint">{{ good_on_application.good.no_document_comments }}</span>
+              									{% endif %}
+              								{% endif %}
+              							</td>
                         </tr>
                     </tbody>
                 </table>
