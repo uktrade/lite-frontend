@@ -25,7 +25,6 @@
 
 		span {
 			@include govuk-font($size: 19);
-			word-break: break-all;
 		}
 	}
 	@media screen and (min-width: 900px) {
@@ -540,5 +539,5 @@ $case-header-text-colour: govuk-colour("white");
 	#related-cases-tab {
 		overflow: hidden;
 	}
-	
+
 }
