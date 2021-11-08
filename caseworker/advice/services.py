@@ -42,6 +42,10 @@ def get_advice_to_countersign(case, caseworker):
 
 
 def post_approval_advice(request, case, data):
+    if "country" in data:
+        # This means that the advice is being given for a specific destination and not for the entire case.
+        # What should send to the API to make this happen?
+        pass
     json = [
         {
             "type": "proviso" if data["proviso"] else "approve",
