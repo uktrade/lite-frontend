@@ -487,6 +487,7 @@
 						{% elif not good.good.is_document_available %}
 							<dd class="govuk-summary-list__value">
 								No document available
+								<span class="govuk-hint">{{ good.no_document_comments }}</span>
 							</dd>
 						{% endif %}
 					{% endif %}

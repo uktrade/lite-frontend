@@ -428,7 +428,18 @@ def check_document_available_form(back_url):
                 name="is_document_available",
                 options=[
                     Option(key="yes", value=DocumentSensitivityForm.Options.YES),
-                    Option(key="no", value=DocumentSensitivityForm.Options.NO,),
+                    Option(
+                        key="no",
+                        value=DocumentSensitivityForm.Options.NO,
+                        components=[
+                            TextArea(
+                                title=DocumentAvailabilityForm.NO_DOCUMENT_TEXTFIELD_DESCRIPTION,
+                                description=None,
+                                name="no_document_comments",
+                                optional=False,
+                            ),
+                        ],
+                    ),
                 ],
             ),
         ],
