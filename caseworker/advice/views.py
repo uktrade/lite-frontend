@@ -1,13 +1,12 @@
 from django.forms import formset_factory
+from django.forms.formsets import BaseFormSet
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 
 from caseworker.advice import forms, services
 from caseworker.advice.constants import DECISION_TYPE_VERB_MAPPING
-
 from core import client
-
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
 from caseworker.users.services import get_gov_user
@@ -262,6 +261,15 @@ class AdviceView(CaseContextMixin, TemplateView):
         }
 
 
+class CountersignAdviceFormSet(BaseFormSet):
+    def get_form_kwargs(self, index):
+        kwargs = super().get_form_kwargs(index)
+        request = kwargs.pop("request")
+        user_pks = kwargs.pop("user_pks")
+        queues, _ = services.get_users_team_queues(request, user_pks[index])
+        return {**kwargs, "queues": queues["queues"]}
+
+
 class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/review_countersign.html"
     form_class = forms.CountersignAdviceForm
@@ -272,9 +280,16 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         caseworker = self.caseworker["user"]
 
         advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
+        advice_users_pks = [item["user"]["id"] for item in advice_to_countersign]
         num_advice = len(advice_to_countersign)
-        context["formset"] = formset_factory(self.form_class, extra=num_advice, min_num=num_advice, max_num=num_advice)
+        CountersignAdviceFormsetFactory = formset_factory(
+            self.form_class, formset=CountersignAdviceFormSet, extra=num_advice, min_num=num_advice, max_num=num_advice
+        )
+        context["formset"] = CountersignAdviceFormsetFactory(
+            form_kwargs={"request": self.request, "user_pks": advice_users_pks}
+        )
         context["advice_to_countersign"] = advice_to_countersign
+        context["user_pks"] = advice_users_pks
         context["review"] = True
         return context
 
@@ -282,7 +297,13 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         context = self.get_context_data()
         case = context["case"]
         caseworker = self.caseworker["user"]
-        formset = context["formset"](request.POST)
+        num_advice = len(context["user_pks"])
+        CountersignAdviceFormsetFactory = formset_factory(
+            self.form_class, formset=CountersignAdviceFormSet, extra=num_advice, min_num=num_advice, max_num=num_advice
+        )
+        formset = CountersignAdviceFormsetFactory(
+            data=request.POST, form_kwargs={"request": self.request, "user_pks": context["user_pks"]}
+        )
         if all([form.is_valid() for form in formset]):
             services.countersign_advice(request, case, caseworker, formset.cleaned_data)
             return HttpResponseRedirect(self.get_success_url())

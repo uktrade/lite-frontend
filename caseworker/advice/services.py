@@ -1,4 +1,5 @@
 from core import client
+from caseworker.cases.services import put_case_queues
 
 
 def filter_licenceable_products(products):
@@ -83,8 +84,15 @@ def delete_user_advice(request, case_pk):
     return response.json(), response.status_code
 
 
+def get_users_team_queues(request, user):
+    response = client.get(request, f"/users/{user}/team-queues/")
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def countersign_advice(request, case, caseworker, formset_data):
     data = []
+    queues = []
     case_pk = case["id"]
     advice_to_countersign = get_advice_to_countersign(case, caseworker)
 
@@ -95,9 +103,15 @@ def countersign_advice(request, case, caseworker, formset_data):
             comments = form_data["approval_reasons"]
         elif form_data["agree_with_recommendation"] == "no":
             comments = form_data["refusal_reasons"]
+            if form_data["queue_to_return"] not in queues:
+                queues.append(form_data["queue_to_return"])
 
         data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
 
     response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
     response.raise_for_status()
+
+    if queues:
+        put_case_queues(request, case_pk, json={"queues": queues})
+
     return response.json(), response.status_code
