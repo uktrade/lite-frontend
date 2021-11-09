@@ -4,6 +4,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from django.utils.functional import cached_property
 
 from exporter.applications.forms.countries import (
     countries_form,
@@ -67,7 +68,7 @@ def get_locations_page(request, application_id, **kwargs):
 class GoodsLocation(LoginRequiredMixin, TemplateView):
     template_name = "applications/goods-locations/goods-locations.html"
 
-    @property
+    @cached_property
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
 
