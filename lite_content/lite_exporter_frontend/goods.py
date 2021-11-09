@@ -111,6 +111,7 @@ class DocumentAvailabilityForm:
     NO_DOCUMENT_TEXTFIELD_DESCRIPTION = (
         "Explain why you are not able to upload a product document. This may delay your application."
     )
+    SUBMIT_BUTTON = "Continue"
 
 
 class DocumentSensitivityForm:

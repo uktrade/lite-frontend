@@ -444,7 +444,7 @@ def check_document_available_form(back_url):
             ),
         ],
         back_link=BackLink("Back", back_url),
-        default_button_name="Save and continue",
+        default_button_name=DocumentAvailabilityForm.SUBMIT_BUTTON,
     )
 
 
