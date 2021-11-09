@@ -41,11 +41,22 @@ def get_advice_to_countersign(case, caseworker):
     return filter_advice_by_level(advice_by_team, ["user"])
 
 
+def get_advice_subjects(case, countries=None):
+    """The "advice subject" is an item on a case (eg a good, end user, consignee etc)
+    that can have advice related to it. See lite-api/api/cases/models.py for foreign
+    key fields on the Advice model.
+    """
+    destinations = []
+    for dest in case.destinations:
+        if countries is not None:
+            if dest["country"]["id"] not in countries:
+                continue
+        destinations.append((dest["type"], dest["id"]))
+    goods = [("good", good["id"]) for good in case.goods if good["is_good_controlled"]]
+    return destinations + goods
+
+
 def post_approval_advice(request, case, data):
-    if "country" in data:
-        # This means that the advice is being given for a specific destination and not for the entire case.
-        # What should send to the API to make this happen?
-        pass
     json = [
         {
             "type": "proviso" if data["proviso"] else "approve",
