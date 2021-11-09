@@ -285,7 +285,7 @@ class Goods:
         INFORMATION_SECURITY_FEATURES = "Information security features"
         PURPOSE_SOFTWARE_TECHNOLOGY = "Purpose"
 
-        SAVE_AND_CONTINUE_BUTTON = "Save and continue"
+        SAVE_AND_CONTINUE_BUTTON = "Continue"
 
         class FirearmDetails:
             PRODUCT_TYPE = "Product type"
