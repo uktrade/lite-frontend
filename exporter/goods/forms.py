@@ -646,7 +646,7 @@ def firearms_capture_serial_numbers(number_of_items):
 def firearm_year_of_manufacture_details_form(good_id=None):
     return Form(
         title="What is the year of manufacture of the firearm?",
-        default_button_name="Save and continue",
+        default_button_name="Continue",
         questions=list(
             filter(
                 bool,
