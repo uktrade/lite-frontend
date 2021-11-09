@@ -605,7 +605,7 @@ def firearms_number_of_items(firearm_type):
             HiddenField("number_of_items_step", True),
             TextInput(name="number_of_items"),
         ],
-        default_button_name="Save and continue",
+        default_button_name="Continue",
     )
 
 
