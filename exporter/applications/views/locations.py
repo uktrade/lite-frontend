@@ -65,8 +65,22 @@ def get_locations_page(request, application_id, **kwargs):
 
 
 class GoodsLocation(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        return get_locations_page(request, application_id=kwargs["pk"])
+    template_name = "applications/goods-locations/goods-locations.html"
+
+    @property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["application"] = self.application
+        context["is_application_draft_or_major_edit"] = self.application["status"]["key"] in [APPLICANT_EDITING, "draft"]
+        return context
+
+    def dispatch(self, *args, **kwargs):
+        if not self.application["goods_locations"]:
+            return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": self.kwargs["pk"]}))
+        return super().dispatch(*args, **kwargs)
 
 
 class EditGoodsLocation(LoginRequiredMixin, SingleFormView):
