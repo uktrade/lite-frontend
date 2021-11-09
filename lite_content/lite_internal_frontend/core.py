@@ -1,9 +1,12 @@
+from django.conf import settings
+
+
 def get_human_readable_exception(status_code):
     """
     Returns friendly help text for exceptions (such as 400s, 403s, 404s and 500s)
     If a status code hasn't been handled here we'll just return the generic error text
     """
-    support_text = "Contact [support](mailto:PLACEHOLDER) if you need any help."
+    support_text = f"Contact [support](mailto:{settings.LITE_FEEDBACK_EMAIL}) if you need any help."
 
     data = {
         404: {
