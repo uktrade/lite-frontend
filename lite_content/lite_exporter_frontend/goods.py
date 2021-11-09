@@ -219,6 +219,8 @@ class CreateGoodForm:
     class FirearmGood:
         class ProductType:
             TITLE = "Select the type of product"
+            BUTTON_TEXT = "Continue"
+
             FIREARM = "Firearm"
             COMPONENTS_FOR_FIREARM = "Component of a firearm"
             AMMUNITION = "Ammunition"

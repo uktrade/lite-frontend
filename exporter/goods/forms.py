@@ -570,7 +570,7 @@ def group_two_product_type_form(back_link=None):
                 ],
             ),
         ],
-        default_button_name="Save and continue",
+        default_button_name=CreateGoodForm.FirearmGood.ProductType.BUTTON_TEXT,
     )
 
     if back_link:
