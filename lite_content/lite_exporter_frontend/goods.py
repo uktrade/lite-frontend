@@ -262,6 +262,8 @@ class CreateGoodForm:
             YES = "Yes"
             NO = "No"
 
+            BUTTON_TEXT = "Continue"
+
 
 class GoodGradingForm:
     TITLE = "Security grading"

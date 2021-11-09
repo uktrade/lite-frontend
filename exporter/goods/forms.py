@@ -859,7 +859,7 @@ def identification_markings_form(draft_pk=None, good_id=None):
     return Form(
         title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE,
         questions=questions,
-        default_button_name="Save and continue",
+        default_button_name=CreateGoodForm.FirearmGood.IdentificationMarkings.BUTTON_TEXT,
     )
 
 
