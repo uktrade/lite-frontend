@@ -2,10 +2,6 @@ from core import client
 from caseworker.cases.services import put_case_queues
 
 
-def filter_licenceable_products(products):
-    return [product for product in products if product["is_good_controlled"]["key"] == "True"]
-
-
 def filter_nlr_products(products):
     return [
         product
@@ -65,12 +61,11 @@ def post_approval_advice(request, case, data):
             "note": data["instructions_to_exporter"],
             "footnote_required": True if data["footnote_details"] else False,
             "footnote": data["footnote_details"],
-            "good": product["id"],
+            subject_name: subject_id,
             "denial_reasons": [],
         }
-        for product in filter_licenceable_products(case["data"]["goods"])
+        for subject_name, subject_id in get_advice_subjects(case, data.get("countries"))
     ]
-
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
     response.raise_for_status()
     return response.json(), response.status_code
@@ -82,12 +77,11 @@ def post_refusal_advice(request, case, data):
             "type": "refuse",
             "text": data["refusal_reasons"],
             "footnote_required": False,
-            "good": product["id"],
+            subject_name: subject_id,
             "denial_reasons": data["denial_reasons"],
         }
-        for product in filter_licenceable_products(case["data"]["goods"])
+        for subject_name, subject_id, in get_advice_subjects(case, data.get("countries"))
     ]
-
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
     response.raise_for_status()
     return response.json(), response.status_code
