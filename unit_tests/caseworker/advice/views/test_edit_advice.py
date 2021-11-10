@@ -43,14 +43,54 @@ def test_edit_approve_advice_post(authorized_client, requests_mock, data_standar
     assert history.method == "POST"
     assert history.json() == [
         {
-            "type": "approve",
-            "text": "meets the requirements updated",
-            "proviso": None,
-            "note": "no specific instructions",
-            "footnote_required": False,
-            "footnote": None,
-            "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
-            "denial_reasons": [],
+            'denial_reasons': [],
+            'end_user': '95d3ea36-6ab9-41ea-a744-7284d17b9cc5',
+            'footnote': None,
+            'footnote_required': False,
+            'note': 'no specific instructions',
+            'proviso': None,
+            'text': 'meets the requirements updated',
+            'type': 'approve'
+        },
+        {
+            'consignee': 'cd2263b4-a427-4f14-8552-505e1d192bb8',
+            'denial_reasons': [],
+            'footnote': None,
+            'footnote_required': False,
+            'note': 'no specific instructions',
+            'proviso': None,
+            'text': 'meets the requirements updated',
+            'type': 'approve'
+        },
+        {
+            'denial_reasons': [],
+            'footnote': None,
+            'footnote_required': False,
+            'note': 'no specific instructions',
+            'proviso': None,
+            'text': 'meets the requirements updated',
+            'third_party': '95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747',
+            'type': 'approve'
+        },
+        {
+            'denial_reasons': [],
+            'footnote': None,
+            'footnote_required': False,
+            'good': '9fbffa7f-ef50-402e-93ac-2f3f37d09030',
+            'note': 'no specific instructions',
+            'proviso': None,
+            'text': 'meets the requirements updated',
+            'type': 'approve'
+        },
+        {
+            'denial_reasons': [],
+            'footnote': None,
+            'footnote_required': False,
+            'good': 'd4feac1e-851d-41a5-b833-eb28addb8547',
+            'note': 'no specific instructions',
+            'proviso': None,
+            'text': 'meets the requirements updated',
+            'type': 'approve'
         }
     ]
 
@@ -90,16 +130,43 @@ def test_edit_refuse_advice_post(
     }
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
-    history = [item for item in requests_mock.request_history if user_advice_create_url in item.url]
-    assert len(history) == 1
-    history = history[0]
-    assert history.method == "POST"
-    assert history.json() == [
+    history = requests_mock.request_history
+    assert user_advice_create_url in history[5].url
+    assert history[5].method == "POST"
+    assert history[5].json() == [
         {
-            "type": "refuse",
-            "text": "doesn't meet the requirement",
-            "footnote_required": False,
-            "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
-            "denial_reasons": ["3", "4", "5", "5a", "5b"],
+            'denial_reasons': ['3', '4', '5', '5a', '5b'],
+            'end_user': '95d3ea36-6ab9-41ea-a744-7284d17b9cc5',
+            'footnote_required': False,
+            'text': "doesn't meet the requirement",
+            'type': 'refuse'
+        },
+        {
+            'consignee': 'cd2263b4-a427-4f14-8552-505e1d192bb8',
+            'denial_reasons': ['3', '4', '5', '5a', '5b'],
+            'footnote_required': False,
+            'text': "doesn't meet the requirement",
+            'type': 'refuse'
+        },
+        {
+            'denial_reasons': ['3', '4', '5', '5a', '5b'],
+            'footnote_required': False,
+            'text': "doesn't meet the requirement",
+            'third_party': '95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747',
+            'type': 'refuse'
+        },
+        {
+            'denial_reasons': ['3', '4', '5', '5a', '5b'],
+            'footnote_required': False,
+            'good': '9fbffa7f-ef50-402e-93ac-2f3f37d09030',
+            'text': "doesn't meet the requirement",
+            'type': 'refuse'
+        },
+        {
+            'denial_reasons': ['3', '4', '5', '5a', '5b'],
+            'footnote_required': False,
+            'good': 'd4feac1e-851d-41a5-b833-eb28addb8547',
+            'text': "doesn't meet the requirement",
+            'type': 'refuse'
         }
     ]
