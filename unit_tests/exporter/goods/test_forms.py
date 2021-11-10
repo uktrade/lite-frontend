@@ -305,10 +305,10 @@ def test_goods_check_document_available_form():
     form = forms.check_document_available_form("back")
     assert len(form.questions) == 1
     assert form.title == "Do you have a document that shows what your product is and what it’s designed to do?"
-    assert form.description == "Select yes if you have a product document"
+    assert form.description
     assert form.questions[0].name == "is_document_available"
     assert len(form.buttons) == 1
-    assert form.buttons[0].value == "Save and continue"
+    assert form.buttons[0].value == "Continue"
 
 
 def test_goods_check_document_sensitivity_form():
@@ -325,7 +325,7 @@ def test_goods_firearms_number_of_items_form():
     assert len(form.questions) == 3
     assert form.title == "Number of items"
     assert len(form.buttons) == 1
-    assert form.buttons[0].value == "Save and continue"
+    assert form.buttons[0].value == "Continue"
 
 
 def test_goods_firearms_capture_serial_numbers_form():

@@ -444,7 +444,7 @@ def check_document_available_form(back_url):
             ),
         ],
         back_link=BackLink("Back", back_url),
-        default_button_name="Save and continue",
+        default_button_name=DocumentAvailabilityForm.SUBMIT_BUTTON,
     )
 
 
@@ -570,7 +570,7 @@ def group_two_product_type_form(back_link=None):
                 ],
             ),
         ],
-        default_button_name="Save and continue",
+        default_button_name=CreateGoodForm.FirearmGood.ProductType.BUTTON_TEXT,
     )
 
     if back_link:
@@ -605,7 +605,7 @@ def firearms_number_of_items(firearm_type):
             HiddenField("number_of_items_step", True),
             TextInput(name="number_of_items"),
         ],
-        default_button_name="Save and continue",
+        default_button_name="Continue",
     )
 
 
@@ -646,7 +646,7 @@ def firearms_capture_serial_numbers(number_of_items):
 def firearm_year_of_manufacture_details_form(good_id=None):
     return Form(
         title="What is the year of manufacture of the firearm?",
-        default_button_name="Save and continue",
+        default_button_name="Continue",
         questions=list(
             filter(
                 bool,
@@ -859,7 +859,7 @@ def identification_markings_form(draft_pk=None, good_id=None):
     return Form(
         title=CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE,
         questions=questions,
-        default_button_name="Save and continue",
+        default_button_name=CreateGoodForm.FirearmGood.IdentificationMarkings.BUTTON_TEXT,
     )
 
 
