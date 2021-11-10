@@ -1,9 +1,22 @@
-import pytest
+import os
 
+import pytest
+from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
 
 from core import client
+
+
+DEFAULT_ENVFILE = "exporter.env"
+
+
+def pytest_configure(config):
+    """
+    Load exporter env variables automagically
+    """
+    if not os.environ.get("PIPENV_DOTENV_LOCATION"):
+        load_dotenv(dotenv_path=DEFAULT_ENVFILE, override=True)
 
 
 @pytest.fixture

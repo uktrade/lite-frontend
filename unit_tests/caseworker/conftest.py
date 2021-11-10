@@ -1,9 +1,9 @@
 import re
-
-import pytest
-
+import os
 from urllib import parse
 
+import pytest
+from dotenv import load_dotenv
 from django.test import Client
 
 from core import client
@@ -12,6 +12,17 @@ from core.helpers import convert_value_to_query_param
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
 gov_uk_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
+
+
+DEFAULT_ENVFILE = "caseworker.env"
+
+
+def pytest_configure(config):
+    """
+    Load caseworker env variables automagically
+    """
+    if not os.environ.get("PIPENV_DOTENV_LOCATION"):
+        load_dotenv(dotenv_path=DEFAULT_ENVFILE, override=True)
 
 
 @pytest.fixture
