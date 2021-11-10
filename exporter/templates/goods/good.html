@@ -754,7 +754,8 @@
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>
 			<p class="lite-information-text__text">
 				<span class="govuk-visually-hidden">{% lcs "generic.NoticeComponent.INFORMATION" %}</span>
-				No document attached: No document available
+				No document attached
+				<span class="govuk-hint">{{ good.no_document_comments }}</span>
 			</p>
 		</div>
 	{% else %}

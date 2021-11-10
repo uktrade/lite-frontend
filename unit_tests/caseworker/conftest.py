@@ -290,7 +290,7 @@ def current_user():
         "last_name": "User",
         "role_name": "Super User",
         "status": "Active",
-        "team": {"id": "00000000-1234-0000-0000-e676b794b394", "is_ogd": False, "name": "Admin", "part_of_ecju": None,},
+        "team": {"id": "00000000-0000-0000-0000-000000000001", "is_ogd": False, "name": "Admin", "part_of_ecju": None,},
     }
 
 
@@ -315,6 +315,106 @@ def refusal_advice(current_user):
             "consignee": None,
             "third_party": None,
         }
+    ]
+
+
+@pytest.fixture
+def advice_for_countersign(current_user):
+    return [
+        {
+            "consignee": None,
+            "country": None,
+            "created_at": "2021-07-14T15:20:35.713348+01:00",
+            "denial_reasons": [],
+            "end_user": None,
+            "footnote": None,
+            "good": "de385241-ffe3-4e81-96a6-64c0934bc4e2",
+            "goods_type": None,
+            "id": "825bddc9-4e6c-4a26-8231-9c0500b037a6",
+            "level": "user",
+            "note": "",
+            "proviso": None,
+            "text": "",
+            "third_party": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "ultimate_end_user": None,
+            "user": {
+                "email": "yscott@bob-scott.com",
+                "first_name": "Scott",
+                "id": "5d36079b-e921-4598-b0f9-d7a62da6e9ef",
+                "last_name": "Bob",
+                "role_name": "Adviser",
+                "status": "Active",
+                "team": {
+                    "id": "2e5fab3c-4599-432e-9540-74ccfafb18ee",
+                    "is_ogd": False,
+                    "name": "Team-A",
+                    "part_of_ecju": False,
+                },
+            },
+        },
+        {
+            "id": "b32d7dfa-a90d-4b37-adac-db231d4b83be",
+            "consignee": None,
+            "country": None,
+            "created_at": "2021-07-15T13:46:42.608237+01:00",
+            "denial_reasons": [],
+            "end_user": "095774f4-4e3d-41f0-bfdf-d442ced2933b",
+            "footnote": None,
+            "good": None,
+            "level": "user",
+            "note": "",
+            "proviso": None,
+            "text": "ammunition for Police intended for training use, I recommend issue as it meets the criteria",
+            "third_party": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "ultimate_end_user": None,
+            "user": {
+                "email": "robert45@bob-perkins.biz",
+                "first_name": "Bob",
+                "id": "60bcedcb-ead4-4601-b2d5-e50cbdc7ff31",
+                "last_name": "Smith",
+                "role_name": "Administrator",
+                "status": "Active",
+                "team": {
+                    "id": "00000000-0000-0000-0000-000000000001",
+                    "is_ogd": False,
+                    "name": "TeamB",
+                    "part_of_ecju": True,
+                },
+            },
+        },
+        {
+            "id": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
+            "consignee": "64ab5d25-2067-4f37-9593-5dba2707887e",
+            "country": None,
+            "created_at": "2021-07-15T13:46:42.622782+01:00",
+            "denial_reasons": [],
+            "end_user": None,
+            "footnote": None,
+            "good": None,
+            "level": "user",
+            "note": "",
+            "proviso": None,
+            "text": "ammunition for Police intended for training use, recommend issue as it meets the criteria",
+            "third_party": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "ultimate_end_user": None,
+            "user": {
+                "email": "robert45@bob-perkins.biz",
+                "first_name": "Bob",
+                "id": "60bcedcb-ead4-4601-b2d5-e50cbdc7ff31",
+                "last_name": "Smith",
+                "role_name": "Administrator",
+                "status": "Active",
+                "team": {
+                    "id": "00000000-0000-0000-0000-000000000001",
+                    "is_ogd": False,
+                    "name": "TeamB",
+                    "part_of_ecju": True,
+                },
+            },
+        },
     ]
 
 
