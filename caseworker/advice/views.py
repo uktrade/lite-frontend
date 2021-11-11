@@ -35,7 +35,7 @@ class CaseContextMixin:
 
     def unadvised_countries(self):
         """Returns a dict of countries for which advice has not been given"""
-        dest_types = ("end_user", "ultimate_end_user", "consignee")
+        dest_types = ("end_user", "ultimate_end_user", "consignee", "third_parties")
         dests = {advice.get(dest_type) for dest_type in dest_types for advice in self.case.advice} - {None}
         return {
             dest["country"]["id"]: dest["country"]["name"] for dest in self.case.destinations if dest["id"] not in dests
