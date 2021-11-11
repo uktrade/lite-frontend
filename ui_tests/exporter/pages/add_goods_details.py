@@ -97,10 +97,6 @@ class AddGoodDetails(BasePage):
         if has_markings is False:
             self.enter_related_field_details("identification_markings_details", details)
 
-    def select_sporting_gun_status(self, status):
-        status = self.true_or_false(status)
-        self.driver.find_element_by_id(f"is_sporting_shotgun-{status}").click()
-
     def enter_number_of_items(self, number_of_items):
         element = self.driver.find_element_by_id(self.FIREARMS_NUMBER_OF_ITEMS)
         element.clear()

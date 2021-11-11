@@ -93,7 +93,6 @@ class GoodPage:
 
         class FirearmDetails:
             PRODUCT_TYPE = "Product type"
-            SPORTING_SHOTGUN = "Sporting shotgun"
             YEAR_OF_MANUFACTURE = "Year of manufacture"
             REPLICA_FIREARM = "Replica firearm"
             CALIBRE = "Calibre"

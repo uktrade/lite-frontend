@@ -822,13 +822,6 @@ def specify_serial_number_of_other_identification_details(driver, has_markings, 
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I select sporting shotgun status as "{status}"'))
-def select_sporting_gun_status(driver, status):  # noqa
-    good_details_page = AddGoodDetails(driver)
-    good_details_page.select_sporting_gun_status(status)
-    functions.click_submit(driver)
-
-
 @when(parsers.parse('I specify number of items as "{number_of_items}"'))
 def specify_number_of_items(driver, number_of_items):  # noqa
     good_details_page = AddGoodDetails(driver)
@@ -965,7 +958,6 @@ def summary_screen_for_product_type(driver, product_type_value, name, proceed): 
 
     if product_type_value == "Firearms":
         expected_fields += [
-            "Sporting shotgun",
             "Year of manufacture",
             "Replica firearm",
             "Calibre",

@@ -259,7 +259,6 @@ Feature: I want to indicate the standard licence I want
     And I choose to add a new product
     And I select product category "firearms"
     And I select product type "firearm"
-    And I select sporting shotgun status as "Yes"
     And I specify number of items as "4"
     And I select "Yes" for serial number or other identification markings with details as " "
     And I enter "4" serial numbers as "serial1,serial2,serial3,serial4"
@@ -288,7 +287,6 @@ Feature: I want to indicate the standard licence I want
     And I choose to add a new product
     And I select product category "firearms"
     And I select product type "component_for_ammunition"
-    And I select sporting shotgun status as "Yes"
     And I specify number of items as "3"
     And I select "Yes" for serial number or other identification markings with details as " "
     And I enter "3" serial numbers as "serial1,serial2,serial3"
@@ -353,7 +351,6 @@ Feature: I want to indicate the standard licence I want
     And I choose to add a new product
     And I select product category "firearms"
     And I select product type "firearm"
-    And I select sporting shotgun status as "No"
     And I specify number of items as "3"
     And I select "Yes" for serial number or other identification markings with details as "serial number FR8654-Z"
     And I enter "3" serial numbers as "serial1,serial2,serial3"
