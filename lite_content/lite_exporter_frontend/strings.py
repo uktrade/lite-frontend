@@ -125,19 +125,9 @@ class EndUser:
         VIRUS_INFECTED = "Virus infected"
 
         class AttachDocuments:
-            TITLE = "Attach end user documents"
-            DESCRIPTION = (
-                "You must attach:\n\n- a completed [end user undertaking"
-                "(EUU)](https://www.gov.uk/government/publications/end-user-undertaking-euu-form) or "
-                "[stockist undertaking (SU)](https://www.gov.uk/government/publications/stockist-undertaking-su-form) "
-                "completed by the end user or stockist\n- a letterhead as proof of the end user or stockist\n\nIf the "
-                "end user is a government organisation, instead of an EUU or SU you can attach a government purchase "
-                "order. The purchase order must identify you as the applicant, any consignees, the products and "
-                "respective quantities.\n\nIf any of the information provided by the end user is not in English, "
-                "attach a translation.\n\nIf you haven’t received the completed undertakings from the end user, you "
-                "can attach them later before you submit the application.\n\nThe files must be smaller than 50MB."
-            )
-            DESCRIPTION_FIELD_TITLE = "Description"
+            TITLE = "Upload an end-user document"
+            DESCRIPTION = ""
+            DESCRIPTION_FIELD_TITLE = "Describe any differences between products listed in the document and products on the application"
             BACK = "Back to end user summary"
             # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
