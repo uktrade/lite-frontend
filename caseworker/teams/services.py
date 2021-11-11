@@ -18,10 +18,11 @@ def get_teams(request, converted_to_options=False):
 
 
 def get_users_team_queues(request, user, convert_to_options=True):
-    data = client.get(request, f"/users/{user}/team-queues/").json()
+    data = client.get(request, f"/users/{user}/team-queues/")
     if convert_to_options:
+        data = data.json()
         return [Option(key=queue[0], value=queue[1], description=None) for queue in data["queues"]]
-    return data, data.status_code
+    return data.json(), data.status_code
 
 
 def post_teams(request, json):
