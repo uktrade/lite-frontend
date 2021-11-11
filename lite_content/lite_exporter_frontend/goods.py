@@ -104,10 +104,14 @@ class GoodPage:
 
 class DocumentAvailabilityForm:
     TITLE = "Do you have a document that shows what your product is and what it’s designed to do?"
-    DESCRIPTION = "Select yes if you have a product document"
-    NO_DOCUMENT_TEXTFIELD_DESCRIPTION = (
-        "Explain why you are not able to upload a product document. This may delay your application"
+    DESCRIPTION = (
+        "For example, a technical specification, datasheet, sales brochure or something else that fully describes the product details."
+        "\nThis is required in order to process the application."
     )
+    NO_DOCUMENT_TEXTFIELD_DESCRIPTION = (
+        "Explain why you are not able to upload a product document. This may delay your application."
+    )
+    SUBMIT_BUTTON = "Continue"
 
 
 class DocumentSensitivityForm:
@@ -215,6 +219,8 @@ class CreateGoodForm:
     class FirearmGood:
         class ProductType:
             TITLE = "Select the type of product"
+            BUTTON_TEXT = "Continue"
+
             FIREARM = "Firearm"
             COMPONENTS_FOR_FIREARM = "Component of a firearm"
             AMMUNITION = "Ammunition"
@@ -257,6 +263,8 @@ class CreateGoodForm:
             NO_MARKINGS_DETAILS = "Explain why the product has not been marked"
             YES = "Yes"
             NO = "No"
+
+            BUTTON_TEXT = "Continue"
 
 
 class GoodGradingForm:
