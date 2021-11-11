@@ -82,16 +82,6 @@ def test_edit_approve_advice_post(authorized_client, requests_mock, data_standar
             "text": "meets the requirements updated",
             "type": "approve",
         },
-        {
-            "denial_reasons": [],
-            "footnote": None,
-            "footnote_required": False,
-            "good": "d4feac1e-851d-41a5-b833-eb28addb8547",
-            "note": "no specific instructions",
-            "proviso": None,
-            "text": "meets the requirements updated",
-            "type": "approve",
-        },
     ]
 
 
@@ -130,10 +120,10 @@ def test_edit_refuse_advice_post(
     }
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
-    history = requests_mock.request_history
-    assert user_advice_create_url in history[5].url
-    assert history[5].method == "POST"
-    assert history[5].json() == [
+    history = requests_mock.request_history.pop()
+    assert user_advice_create_url in history.url
+    assert history.method == "POST"
+    assert history.json() == [
         {
             "denial_reasons": ["3", "4", "5", "5a", "5b"],
             "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
@@ -159,13 +149,6 @@ def test_edit_refuse_advice_post(
             "denial_reasons": ["3", "4", "5", "5a", "5b"],
             "footnote_required": False,
             "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
-            "text": "doesn't meet the requirement",
-            "type": "refuse",
-        },
-        {
-            "denial_reasons": ["3", "4", "5", "5a", "5b"],
-            "footnote_required": False,
-            "good": "d4feac1e-851d-41a5-b833-eb28addb8547",
             "text": "doesn't meet the requirement",
             "type": "refuse",
         },
