@@ -289,7 +289,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     def get_context(self, **kwargs):
         context = super().get_context()
         case = kwargs.get("case").__dict__
-        caseworker = self.caseworker["user"]
+        caseworker = self.caseworker
 
         advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
         advice_users_pks = [item["user"]["id"] for item in advice_to_countersign]
@@ -308,7 +308,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         case = context["case"]
-        caseworker = self.caseworker["user"]
+        caseworker = self.caseworker
         num_advice = len(context["user_pks"])
         CountersignAdviceFormsetFactory = formset_factory(
             self.form_class, formset=CountersignAdviceFormSet, extra=num_advice, min_num=num_advice, max_num=num_advice
@@ -332,7 +332,7 @@ class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView
     def get_context(self, **kwargs):
         context = super().get_context()
         case = kwargs.get("case")
-        caseworker = self.caseworker["user"]
+        caseworker = self.caseworker
 
         advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
         context["advice_to_countersign"] = advice_to_countersign
