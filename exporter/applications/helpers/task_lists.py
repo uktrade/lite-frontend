@@ -76,7 +76,14 @@ def get_application_task_list(request, application, errors=None):
 
     context["can_submit"] = Permissions.SUBMIT_LICENCE_APPLICATION in user_permissions
     context["supporting_documents"] = additional_documents["documents"]
-    context["locations"] = sites["sites"] or external_locations["external_locations"]
+    context["locations"] = (
+        # This is an interim solution to get the task list to display the new locations section as completed
+        # Since goods_recipients is the last question in the flow, if it's been answered it's likely
+        # all other required questions in the flow are complete as well
+        sites["sites"]
+        or external_locations["external_locations"]
+        or application["goods_recipients"]
+    )
     context["notes"] = get_case_notes(request, application["id"])["case_notes"]
 
     if application_type == STANDARD:
