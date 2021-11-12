@@ -150,9 +150,6 @@ def export_licence_questions(request, application_type, goodstype_category=None)
     if application_type == CaseTypes.OIEL:
         forms.append(goodstype_category_form())
 
-    if application_type != CaseTypes.OGEL and goodstype_category not in ["media", "cryptographic"]:
-        forms.append(export_permanency_form(application_type))
-
     if application_type != CaseTypes.OGEL:
         forms.append(reference_name_form())
 
