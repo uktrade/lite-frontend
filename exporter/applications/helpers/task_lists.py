@@ -76,7 +76,9 @@ def get_application_task_list(request, application, errors=None):
 
     context["can_submit"] = Permissions.SUBMIT_LICENCE_APPLICATION in user_permissions
     context["supporting_documents"] = additional_documents["documents"]
-    context["locations"] = sites["sites"] or external_locations["external_locations"]
+    context["locations"] = (
+        sites["sites"] or external_locations["external_locations"] or application["sent_from_gb_or_ni"]
+    )
     context["notes"] = get_case_notes(request, application["id"])["case_notes"]
 
     if application_type == STANDARD:

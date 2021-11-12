@@ -3,25 +3,19 @@ from django.urls import reverse
 from exporter.applications.forms.temporary_export_details import temporary_export_details_form
 from exporter.applications.helpers.date_fields import split_date_into_components, create_formatted_date_from_components
 from exporter.applications.services import get_application, put_temporary_export_details
-from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.applications import TemporaryExportDetails as strings
-from lite_forms.views import SummaryListFormView
+from lite_forms.views import MultiFormView
 
 from core.auth.views import LoginRequiredMixin
 
 
-class TemporaryExportDetails(LoginRequiredMixin, SummaryListFormView):
+class TemporaryExportDetails(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
-        self.success_url = reverse("applications:task_list", kwargs={"pk": kwargs["pk"]}) + "#temporary_export_details"
+        self.success_url = reverse("applications:locations_summary", kwargs={"pk": kwargs["pk"]})
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.forms = temporary_export_details_form()
         self.action = put_temporary_export_details
         self.data = self._parse_temporary_export_details(application)
-        self.summary_list_title = strings.SummaryList.TITLE
-        self.summary_list_notice_title = ""
-        self.summary_list_notice_text = ""
-        self.summary_list_button = generic.SAVE_AND_RETURN
         self.validate_only_until_final_submission = False
         self.cancel_link_text = "cancel"
         self.cancel_link_url = self.success_url

@@ -2,8 +2,8 @@ from operator import itemgetter
 
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy, reverse
+from django.views.generic import TemplateView, FormView
 from django.utils.functional import cached_property
 
 from exporter.applications.forms.countries import (
@@ -19,6 +19,7 @@ from exporter.applications.forms.locations import (
     sites_form,
     new_external_location_form,
 )
+from exporter.applications.forms import locations as location_forms
 from exporter.applications.helpers.check_your_answers import is_application_oiel_of_type
 from exporter.applications.helpers.countries import prettify_country_data
 from exporter.applications.helpers.validators import (
@@ -30,6 +31,7 @@ from exporter.applications.services import (
     get_application,
     get_application_countries,
     post_application_countries,
+    put_application,
     put_contract_type_for_country,
     get_application_countries_and_contract_types,
 )
@@ -75,13 +77,103 @@ class GoodsLocation(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["application"] = self.application
-        context["is_application_draft_or_major_edit"] = self.application["status"]["key"] in [APPLICANT_EDITING, "draft"]
+        context["is_application_draft_or_major_edit"] = self.application["status"]["key"] in [
+            APPLICANT_EDITING,
+            "draft",
+        ]
         return context
 
     def dispatch(self, *args, **kwargs):
         if not self.application["goods_locations"]:
             return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": self.kwargs["pk"]}))
         return super().dispatch(*args, **kwargs)
+
+
+class GoodsLocationFormView(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = location_forms.GBOrNIForm
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["back_link_url"] = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+    def get_initial(self):
+        return {"sent_from_gb_or_ni": self.application["sent_from_gb_or_ni"]}
+
+    def get_success_url(self):
+        return reverse("applications:temporary_or_permanent", kwargs={"pk": self.kwargs["pk"]})
+
+    def form_valid(self, form):
+        data, status_code = put_application(self.request, self.kwargs["pk"], form.cleaned_data)
+        return super().form_valid(form)
+
+
+class TemporaryOrPermanentFormView(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = location_forms.PermanentOrTemporaryExportForm
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    def get_initial(self):
+        if self.application["export_type"]:
+            return {"export_type": self.application["export_type"]["key"]}
+        return {}
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["back_link_url"] = reverse("applications:edit_location", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+    def form_valid(self, form):
+        data, status_code = put_application(self.request, self.kwargs["pk"], form.cleaned_data)
+        if form.cleaned_data["export_type"] == "temporary":
+            return redirect(reverse("applications:temporary_export_details", kwargs={"pk": self.kwargs["pk"]}))
+        else:
+            return redirect(reverse("applications:route_of_goods", kwargs={"pk": self.kwargs["pk"]}))
+
+
+class WhoAreGoodsGoingToFormView(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = location_forms.WhoAreGoodsGoingToForm
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    def get_initial(self):
+        return {
+            "who_are_goods_going_to": self.application["who_are_goods_going_to"],
+        }
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["back_link_url"] = reverse("applications:edit_location", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+    def form_valid(self, form):
+        data, status_code = put_application(self.request, self.kwargs["pk"], form.cleaned_data)
+        return redirect(reverse("applications:locations_summary", kwargs={"pk": self.kwargs["pk"]}))
+
+
+class LocationsSummaryView(LoginRequiredMixin, TemplateView):
+    template_name = "applications/goods-locations/goods-locations-summary.html"
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["application"] = self.application
+        context["back_link_url"] = reverse("applications:who_are_goods_going_to", kwargs={"pk": self.kwargs["pk"]})
+        return context
 
 
 class EditGoodsLocation(LoginRequiredMixin, SingleFormView):

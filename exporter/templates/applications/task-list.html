@@ -13,7 +13,9 @@
 {% block subtitle %}
 	{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
 			{% if is_editing %}Licence type: {{ licence_type }} - {% endif %}
-			Export type: {{ application.export_type.value }}
+			{% if application.export_type %}
+				Export type: {{ application.export_type.value }}
+			{% endif %}
 			{% if application.goodstype_category.key %}
 				<br> OIEL Type: {{ application.goodstype_category.value }}
 			{% endif %}
@@ -108,27 +110,6 @@
 					{% endif %}
 				{% endif %}
 
-
-				{# Route of goods #}
-				{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
-					{% if not is_crypto_application %}
-						{% if not is_editing or edit_type == 'major_edit' %}
-							{% url 'applications:route_of_goods' application.id as route_of_goods_url %}
-							{% include "includes/task-list-item.html" with id='route_of_goods' title="Route of goods" status=route_of_goods|task_list_item_status url=route_of_goods_url %}
-						{% endif %}
-					{% endif %}
-				{% endif %}
-
-				{# Temporary Export Details #}
-				{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
-					{% if application.export_type.value == 'Temporary' %}
-						{% if not is_editing or edit_type == 'major_edit' %}
-							{% url 'applications:temporary_export_details' application.id as temporary_export_details_url %}
-							{% include "includes/task-list-item.html" with id='temporary_export_details' status=temporary_export_details|task_list_item_status title=strings.TEMPORARY_EXPORT_DETAILS url=temporary_export_details_url %}
-						{% endif %}
-					{% endif %}
-				{% endif %}
-
 				{# Location #}
 				{% if application_type|application_type_in_list:"HAS_LOCATIONS" %}
 					{% if not is_crypto_application %}
@@ -193,15 +174,23 @@
 
 				{# Consignee #}
 				{% if application_type|application_type_in_list:"HAS_CONSIGNEE" %}
-					{% url 'applications:consignee' application.id as consignee_url %}
-					{% include "includes/task-list-item.html" with id="consignee" title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status_optional_documents %}
+					{% if application.who_are_goods_going_to == "via_consignee" or application.who_are_goods_going_to == "via_consignee_and_third_parties" %}
+						{% url 'applications:consignee' application.id as consignee_url %}
+						{% include "includes/task-list-item.html" with id="consignee" title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status_optional_documents %}
+					{% endif %}
 				{% endif %}
 
 				{# Third Parties #}
 				{% if application_type|application_type_in_list:"HAS_THIRD_PARTIES" or is_crypto_application %}
-					{% url 'applications:third_parties' application.id as third_parties_url %}
-					{% tld third_parties 'third party' 'third parties' as third_parties_description %}
-					{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description optional=True %}
+					{% if application.who_are_goods_going_to == "via_consignee_and_third_parties" %}
+						{% url 'applications:third_parties' application.id as third_parties_url %}
+						{% tld third_parties 'third party' 'third parties' as third_parties_description %}
+						{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description %}
+					{% else %}
+						{% url 'applications:third_parties' application.id as third_parties_url %}
+						{% tld third_parties 'third party' 'third parties' as third_parties_description %}
+						{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description optional=True %}
+					{% endif %}
 				{% endif %}
 
 				{# Additional Documents #}
