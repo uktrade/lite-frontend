@@ -71,7 +71,6 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the end user summary
     And I logout
 
-  @runthis
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type

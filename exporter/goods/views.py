@@ -503,8 +503,8 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
         if firearm_type:
             if "good_pk" in self.kwargs:
                 return reverse_lazy(
-                    "applications:edit_good",
-                    kwargs={"pk": self.application_id, "good_pk": self.object_pk})
+                    "applications:edit_good", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
             else:
                 return reverse_lazy("goods:edit", kwargs={"pk": self.object_pk})
         elif self.draft_pk:
@@ -988,7 +988,8 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         draft_pk = str(kwargs.get("draft_pk", ""))
         good_id = str(kwargs["pk"])
         back_link = BackLink(
-            AttachDocumentForm.BACK_FORM_LINK, reverse("goods:check_document_sensitivity", kwargs={"pk": good_id}),
+            AttachDocumentForm.BACK_FORM_LINK,
+            reverse("goods:check_document_sensitivity", kwargs={"pk": good_id}),
         )
 
         data, error = add_document_data(request)
