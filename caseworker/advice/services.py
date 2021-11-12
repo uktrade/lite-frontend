@@ -2,10 +2,6 @@ from core import client
 from caseworker.cases.services import put_case_queues
 
 
-def filter_licenceable_products(products):
-    return [product for product in products if product["is_good_controlled"]["key"] == "True"]
-
-
 def filter_nlr_products(products):
     return [
         product
@@ -41,6 +37,21 @@ def get_advice_to_countersign(case, caseworker):
     return filter_advice_by_level(advice_by_team, ["user"])
 
 
+def get_advice_subjects(case, countries=None):
+    """The "advice subject" is an item on a case (eg a good, end user, consignee etc)
+    that can have advice related to it. See lite-api/api/cases/models.py for foreign
+    key fields on the Advice model.
+    """
+    destinations = []
+    for dest in case.destinations:
+        if countries is not None:
+            if dest["country"]["id"] not in countries:
+                continue
+        destinations.append((dest["type"], dest["id"]))
+    goods = [("good", good["id"]) for good in case.goods if good["is_good_controlled"]["key"] == "True"]
+    return destinations + goods
+
+
 def post_approval_advice(request, case, data):
     json = [
         {
@@ -50,12 +61,11 @@ def post_approval_advice(request, case, data):
             "note": data["instructions_to_exporter"],
             "footnote_required": True if data["footnote_details"] else False,
             "footnote": data["footnote_details"],
-            "good": product["id"],
+            subject_name: subject_id,
             "denial_reasons": [],
         }
-        for product in filter_licenceable_products(case["data"]["goods"])
+        for subject_name, subject_id in get_advice_subjects(case, data.get("countries"))
     ]
-
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
     response.raise_for_status()
     return response.json(), response.status_code
@@ -67,12 +77,11 @@ def post_refusal_advice(request, case, data):
             "type": "refuse",
             "text": data["refusal_reasons"],
             "footnote_required": False,
-            "good": product["id"],
+            subject_name: subject_id,
             "denial_reasons": data["denial_reasons"],
         }
-        for product in filter_licenceable_products(case["data"]["goods"])
+        for subject_name, subject_id, in get_advice_subjects(case, data.get("countries"))
     ]
-
     response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
     response.raise_for_status()
     return response.json(), response.status_code

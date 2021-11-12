@@ -30,7 +30,16 @@ class CaseContextMixin:
     @property
     def caseworker(self):
         user_id = str(self.request.session["lite_api_user_id"])
-        return get_gov_user(self.request, user_id)[0]
+        data, _ = get_gov_user(self.request, user_id)
+        return data["user"]
+
+    def unadvised_countries(self):
+        """Returns a dict of countries for which advice has not been given"""
+        dest_types = ("end_user", "ultimate_end_user", "consignee", "third_parties")
+        dests = {advice.get(dest_type) for dest_type in dest_types for advice in self.case.advice} - {None}
+        return {
+            dest["country"]["id"]: dest["country"]["name"] for dest in self.case.destinations if dest["id"] not in dests
+        }
 
     def get_context(self, **kwargs):
         return {}
@@ -77,8 +86,13 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     Form to recommend approval advice for all products on the application
     """
 
-    form_class = forms.GiveApprovalAdviceForm
     template_name = "advice/give-approval-advice.html"
+
+    def get_form(self):
+        if self.caseworker["team"]["name"] == "FCO":
+            return forms.FCDOApprovalAdviceForm(self.unadvised_countries(), **self.get_form_kwargs())
+        else:
+            return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
 
     def form_valid(self, form):
         services.post_approval_advice(self.request, self.case, form.cleaned_data)
@@ -90,15 +104,13 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
 class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/refusal_advice.html"
-    form_class = forms.RefusalAdviceForm
 
-    def get_form_kwargs(self):
-        """Overriding this so that I can pass denial_reasons
-        to the form.
-        """
-        kwargs = super().get_form_kwargs()
-        kwargs["denial_reasons"] = get_denial_reasons(self.request)
-        return kwargs
+    def get_form(self):
+        denial_reasons = get_denial_reasons(self.request)
+        if self.caseworker["team"]["name"] == "FCO":
+            return forms.FCDORefusalAdviceForm(denial_reasons, self.unadvised_countries(), **self.get_form_kwargs())
+        else:
+            return forms.RefusalAdviceForm(denial_reasons, **self.get_form_kwargs())
 
     def form_valid(self, form):
         services.post_refusal_advice(self.request, self.case, form.cleaned_data)
@@ -277,7 +289,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     def get_context(self, **kwargs):
         context = super().get_context()
         case = kwargs.get("case").__dict__
-        caseworker = self.caseworker["user"]
+        caseworker = self.caseworker
 
         advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
         advice_users_pks = [item["user"]["id"] for item in advice_to_countersign]
@@ -296,7 +308,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         case = context["case"]
-        caseworker = self.caseworker["user"]
+        caseworker = self.caseworker
         num_advice = len(context["user_pks"])
         CountersignAdviceFormsetFactory = formset_factory(
             self.form_class, formset=CountersignAdviceFormSet, extra=num_advice, min_num=num_advice, max_num=num_advice
@@ -320,7 +332,7 @@ class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView
     def get_context(self, **kwargs):
         context = super().get_context()
         case = kwargs.get("case")
-        caseworker = self.caseworker["user"]
+        caseworker = self.caseworker
 
         advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
         context["advice_to_countersign"] = advice_to_countersign

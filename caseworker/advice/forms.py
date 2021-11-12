@@ -146,3 +146,38 @@ class CountersignAdviceForm(forms.Form):
                 self.add_error("refusal_reasons", "Enter why you do not agree with the recommendation")
             if cleaned_data.get("queue_to_return") == "":
                 self.add_error("queue_to_return", "Select where you want to return this recommendation")
+
+
+class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):
+    def __init__(self, countries, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["countries"] = forms.MultipleChoiceField(
+            choices=countries.items(),
+            widget=GridmultipleSelect(),
+            label="Select countries for which you want to give advice",
+        )
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "countries",
+            "proviso",
+            "approval_reasons",
+            "instructions_to_exporter",
+            "footnote_details",
+            HTML.details(
+                "What is a footnote?",
+                "Footnotes explain why products to a destination have been approved or refused. "
+                "They will be publicly available in reports and data tables.",
+            ),
+            Submit("submit", "Submit"),
+        )
+
+
+class FCDORefusalAdviceForm(RefusalAdviceForm):
+    def __init__(self, denial_reasons, countries, *args, **kwargs):
+        super().__init__(denial_reasons, *args, **kwargs)
+        self.fields["countries"] = forms.MultipleChoiceField(
+            choices=countries.items(),
+            widget=GridmultipleSelect(),
+            label="Select countries for which you want to give advice",
+        )
+        self.helper.layout = Layout("countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit"))
