@@ -14,6 +14,7 @@ def attach_document_form(application_id, strings, back_link, is_optional):
             TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description"),
         ],
         back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
+        default_button_name=strings.BUTTON_TEXT,
         footer_label=Label(
             'Or <a id="return_to_application" href="'
             + str(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
