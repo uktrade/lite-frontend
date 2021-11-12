@@ -128,10 +128,8 @@ class EndUser:
             TITLE = "Upload an end-user document"
             DESCRIPTION = ""
             DESCRIPTION_FIELD_TITLE = "Describe any differences between products listed in the document and products on the application"
-            BACK = "Back to end user summary"
-            # Partial strings below
-            SAVE_AND_RETURN_LATER = "save and return to the application overview"
-            ATTACH_LATER = " to upload documents later."
+            BACK = "Back"
+            BUTTON_TEXT = "Continue"
 
 
 class UltimateEndUser:
