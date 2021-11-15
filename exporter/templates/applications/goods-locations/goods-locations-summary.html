@@ -12,7 +12,7 @@
 
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">Goods starting point</dt>
-		<dd class="govuk-summary-list__value">{{ application.sent_from_gb_or_ni }}</dd>
+		<dd class="govuk-summary-list__value">{{ application.goods_starting_point }}</dd>
 		<dd class="govuk-summary-list__actions">
 			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:location' application.id %}">
 				Change <span class="govuk-visually-hidden">goods starting point</span>

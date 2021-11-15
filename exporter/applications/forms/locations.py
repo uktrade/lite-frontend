@@ -190,8 +190,8 @@ def sites_form(request, application_type):
     )
 
 
-class GBOrNIForm(forms.Form):
-    sent_from_gb_or_ni = forms.ChoiceField(
+class GoodsStartingPointForm(forms.Form):
+    goods_starting_point = forms.ChoiceField(
         label="",
         widget=forms.RadioSelect,
         choices=[("GB", "Great Britain"), ("NI", "Northern Ireland"),],
@@ -203,7 +203,7 @@ class GBOrNIForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1("Where will the products begin their export journey?"),
-            "sent_from_gb_or_ni",
+            "goods_starting_point",
             HTML.details(
                 "Help with where the products begin their journey",
                 "<p>For physical products (including software stored on memory devices or hardcopy technology) this is "

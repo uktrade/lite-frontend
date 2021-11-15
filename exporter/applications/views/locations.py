@@ -93,7 +93,7 @@ class GoodsLocation(LoginRequiredMixin, ApplicationMixin, TemplateView):
 
 class GoodsLocationFormView(LoginRequiredMixin, ApplicationMixin, FormView):
     template_name = "core/form.html"
-    form_class = location_forms.GBOrNIForm
+    form_class = location_forms.GoodsStartingPointForm
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -101,7 +101,7 @@ class GoodsLocationFormView(LoginRequiredMixin, ApplicationMixin, FormView):
         return context
 
     def get_initial(self):
-        return {"sent_from_gb_or_ni": self.application["sent_from_gb_or_ni"]}
+        return {"goods_starting_point": self.application["goods_starting_point"]}
 
     def get_success_url(self):
         return reverse("applications:temporary_or_permanent", kwargs={"pk": self.kwargs["pk"]})
