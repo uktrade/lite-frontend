@@ -3,8 +3,6 @@ from django.urls import reverse
 
 from exporter.applications.forms import locations as locations_forms
 
-APPLICATION_ID = "8fb76bed-fd45-4293-95b8-eda9468aa254"
-
 
 @pytest.mark.parametrize(
     "form_class,data,is_valid",
@@ -34,45 +32,45 @@ def test_locations_forms_validation(form_class, data, is_valid):
 
 
 @pytest.mark.parametrize(
-    "url,valid_data,success_url",
+    "url_name,valid_data,success_url_name",
     [
         (
-            reverse("applications:edit_location", kwargs={"pk": APPLICATION_ID}),
+            "applications:edit_location",
             {"goods_starting_point": "GB"},
-            reverse("applications:temporary_or_permanent", kwargs={"pk": APPLICATION_ID}),
+            "applications:temporary_or_permanent",
         ),
         (
-            reverse("applications:temporary_or_permanent", kwargs={"pk": APPLICATION_ID}),
+            "applications:temporary_or_permanent",
             {"export_type": "temporary"},
-            reverse("applications:temporary_export_details", kwargs={"pk": APPLICATION_ID}),
+            "applications:temporary_export_details",
         ),
         (
-            reverse("applications:temporary_or_permanent", kwargs={"pk": APPLICATION_ID}),
+            "applications:temporary_or_permanent",
             {"export_type": "permanent"},
-            reverse("applications:route_of_goods", kwargs={"pk": APPLICATION_ID}),
+            "applications:route_of_goods",
         ),
         (
-            reverse("applications:route_of_goods", kwargs={"pk": APPLICATION_ID}),
+            "applications:route_of_goods",
             {"is_shipped_waybill_or_lading": True},
-            reverse("applications:goods_recipients", kwargs={"pk": APPLICATION_ID}),
+            "applications:goods_recipients",
         ),
         (
-            reverse("applications:goods_recipients", kwargs={"pk": APPLICATION_ID}),
+            "applications:goods_recipients",
             {"goods_recipients": "direct_to_end_user"},
-            reverse("applications:locations_summary", kwargs={"pk": APPLICATION_ID}),
+            "applications:locations_summary",
         ),
     ],
 )
 def test_form_view_redirects(
-    url,
+    url_name,
     valid_data,
-    success_url,
+    success_url_name,
     authorized_client,
     data_standard_case,
     mock_get_application,
     mock_put_application,
     mock_put_application_route_of_goods,
 ):
-    response = authorized_client.post(url, data=valid_data)
+    response = authorized_client.post(reverse(url_name, kwargs={"pk": data_standard_case["case"]["id"]}), data=valid_data)
     assert response.status_code == 302
-    assert response.url == success_url
+    assert response.url == reverse(success_url_name, kwargs={"pk": data_standard_case["case"]["id"]})
