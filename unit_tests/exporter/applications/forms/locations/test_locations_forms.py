@@ -1,4 +1,5 @@
 import pytest
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from exporter.applications.forms import locations as locations_forms
@@ -74,3 +75,46 @@ def test_form_view_redirects(
     response = authorized_client.post(reverse(url_name, kwargs={"pk": data_standard_case["case"]["id"]}), data=valid_data)
     assert response.status_code == 302
     assert response.url == reverse(success_url_name, kwargs={"pk": data_standard_case["case"]["id"]})
+
+
+@pytest.mark.parametrize(
+    "url_name,back_link_url",
+    [
+        (
+            "applications:edit_location",
+            "applications:task_list",
+        ),
+        (
+            "applications:temporary_or_permanent",
+            "applications:edit_location",
+        ),
+        (
+            "applications:temporary_export_details",
+            "applications:location",
+        ),
+        (
+            "applications:route_of_goods",
+            "applications:temporary_or_permanent",
+        ),
+        (
+            "applications:goods_recipients",
+            "applications:route_of_goods",
+        ),
+        (
+            "applications:locations_summary",
+            "applications:goods_recipients",
+        ),
+    ]
+)
+def test_form_view_back_link_urls(
+    url_name,
+    back_link_url,
+    authorized_client,
+    data_standard_case,
+    mock_get_application,
+):
+    response = authorized_client.get(reverse(url_name, kwargs={"pk": data_standard_case["case"]["id"]}))
+    assert response.status_code == 200
+    soup = BeautifulSoup(str(response.content), "html.parser")
+    back_link = soup.find(id="back-link")
+    assert back_link["href"] == reverse(back_link_url, kwargs={"pk": data_standard_case["case"]["id"]})
