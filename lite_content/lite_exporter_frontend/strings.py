@@ -131,6 +131,9 @@ class EndUser:
             BACK = "Back"
             BUTTON_TEXT = "Continue"
 
+            Q1_TEXT = "Is the end-user document in English?"
+            Q2_TEXT = "Does the document include at least one page on company letterhead?"
+
 
 class UltimateEndUser:
     class Documents:
