@@ -46,14 +46,6 @@ class FormView(TemplateView, ABC):
     success_url: str = ""
     success_message: str = ""
 
-    def parse_boolean(self, value):
-        if isinstance(value, str):
-            if value.lower() in ("yes", "true"):
-                return True
-            else:
-                return False
-        return value
-
     def get_data(self):
         data = getattr(self, "data", {})
         return data
