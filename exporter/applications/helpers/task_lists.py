@@ -78,11 +78,11 @@ def get_application_task_list(request, application, errors=None):
     context["supporting_documents"] = additional_documents["documents"]
     context["locations"] = (
         # This is an interim solution to get the task list to display the new locations section as completed
-        # Since who_are_goods_going_to is the last question in the flow, if it's been answered it's likely
+        # Since goods_recipients is the last question in the flow, if it's been answered it's likely
         # all other required questions in the flow are complete as well
         sites["sites"]
         or external_locations["external_locations"]
-        or application["who_are_goods_going_to"]
+        or application["goods_recipients"]
     )
     context["notes"] = get_case_notes(request, application["id"])["case_notes"]
 

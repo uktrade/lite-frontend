@@ -133,13 +133,13 @@ class TemporaryOrPermanentFormView(LoginRequiredMixin, ApplicationMixin, FormVie
             return redirect(reverse("applications:route_of_goods", kwargs={"pk": self.kwargs["pk"]}))
 
 
-class WhoAreGoodsGoingToFormView(LoginRequiredMixin, ApplicationMixin, FormView):
+class GoodsRecipientsFormView(LoginRequiredMixin, ApplicationMixin, FormView):
     template_name = "core/form.html"
-    form_class = location_forms.WhoAreGoodsGoingToForm
+    form_class = location_forms.GoodsRecipientsForm
 
     def get_initial(self):
         return {
-            "who_are_goods_going_to": self.application["who_are_goods_going_to"],
+            "goods_recipients": self.application["goods_recipients"],
         }
 
     def get_context_data(self, *args, **kwargs):
@@ -158,7 +158,7 @@ class LocationsSummaryView(LoginRequiredMixin, ApplicationMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["application"] = self.application
-        context["back_link_url"] = reverse("applications:who_are_goods_going_to", kwargs={"pk": self.kwargs["pk"]})
+        context["back_link_url"] = reverse("applications:goods_recipients", kwargs={"pk": self.kwargs["pk"]})
         return context
 
 

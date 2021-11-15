@@ -173,7 +173,7 @@
 
 				{# Consignee #}
 				{% if application_type|application_type_in_list:"HAS_CONSIGNEE" %}
-					{% if application.who_are_goods_going_to == "via_consignee" or application.who_are_goods_going_to == "via_consignee_and_third_parties" %}
+					{% if application.goods_recipients == "via_consignee" or application.goods_recipients == "via_consignee_and_third_parties" %}
 						{% url 'applications:consignee' application.id as consignee_url %}
 						{% include "includes/task-list-item.html" with id="consignee" title=strings.CONSIGNEE url=consignee_url status=application.consignee|get_parties_status_optional_documents %}
 					{% endif %}
@@ -181,7 +181,7 @@
 
 				{# Third Parties #}
 				{% if application_type|application_type_in_list:"HAS_THIRD_PARTIES" or is_crypto_application %}
-					{% if application.who_are_goods_going_to == "via_consignee_and_third_parties" %}
+					{% if application.goods_recipients == "via_consignee_and_third_parties" %}
 						{% url 'applications:third_parties' application.id as third_parties_url %}
 						{% tld third_parties 'third party' 'third parties' as third_parties_description %}
 						{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description %}

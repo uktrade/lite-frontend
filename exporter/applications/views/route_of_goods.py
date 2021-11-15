@@ -15,7 +15,7 @@ class RouteOfGoods(LoginRequiredMixin, SingleFormView):
         self.data = self.get_form_data(request)
         self.form = route_of_goods_form(back_link=back_url)
         self.action = put_application_route_of_goods
-        self.success_url = reverse("applications:who_are_goods_going_to", kwargs={"pk": self.kwargs["pk"]})
+        self.success_url = reverse("applications:goods_recipients", kwargs={"pk": self.kwargs["pk"]})
 
     def get_form_data(self, request):
         application = get_application(request, self.object_pk)

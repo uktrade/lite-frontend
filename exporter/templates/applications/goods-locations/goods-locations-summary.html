@@ -78,9 +78,9 @@
 
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">How products are being exported</dt>
-		<dd class="govuk-summary-list__value">{{ application.who_are_goods_going_to|sentence_case }}</dd>
+		<dd class="govuk-summary-list__value">{{ application.goods_recipients|sentence_case }}</dd>
 		<dd class="govuk-summary-list__actions">
-			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:who_are_goods_going_to' application.id %}">Change</a>
+			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:goods_recipients' application.id %}">Change</a>
 		</dd>
 	</div>
 </dl>

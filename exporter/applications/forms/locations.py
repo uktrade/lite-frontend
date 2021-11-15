@@ -231,8 +231,8 @@ class PermanentOrTemporaryExportForm(forms.Form):
         )
 
 
-class WhoAreGoodsGoingToForm(forms.Form):
-    who_are_goods_going_to = forms.ChoiceField(
+class GoodsRecipientsForm(forms.Form):
+    goods_recipients = forms.ChoiceField(
         label="",
         widget=forms.RadioSelect,
         choices=[
@@ -248,7 +248,7 @@ class WhoAreGoodsGoingToForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1("Who are the products going to?"),
-            "who_are_goods_going_to",
+            "goods_recipients",
             HTML.details(
                 "Help with end user, consignee and third party",
                 "<p>An end-user receives the products in the destination country. They either use the products "

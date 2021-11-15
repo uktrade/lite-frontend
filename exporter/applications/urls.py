@@ -188,8 +188,8 @@ urlpatterns = [
     path("<uuid:pk>/goods-locations/edit/", locations.GoodsLocationFormView.as_view(), name="edit_location"),
     path(
         "<uuid:pk>/who-are-goods-going-to/",
-        locations.WhoAreGoodsGoingToFormView.as_view(),
-        name="who_are_goods_going_to",
+        locations.GoodsRecipientsFormView.as_view(),
+        name="goods_recipients",
     ),
     path("<uuid:pk>/goods-locations-summary/", locations.LocationsSummaryView.as_view(), name="locations_summary"),
     path("<uuid:pk>/goods-locations/existing-sites/", locations.ExistingSites.as_view(), name="existing_sites"),
