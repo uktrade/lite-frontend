@@ -235,7 +235,7 @@ urlpatterns = [
     path("<uuid:pk>/end-user/<uuid:obj_pk>/remove/", end_users.RemoveEndUser.as_view(), name="remove_end_user"),
     path(
         "<uuid:pk>/end-user/<uuid:obj_pk>/document/attach/",
-        documents.AttachDocuments.as_view(),
+        documents.AttachDocumentsEndUser.as_view(),
         name="end_user_attach_document",
     ),
     path(
