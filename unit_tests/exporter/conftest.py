@@ -161,3 +161,90 @@ def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
     data = {"applications": True}
     requests_mock.get(url=url, json=data)
     yield data
+
+
+@pytest.fixture()
+def data_draft_standard_application(data_standard_case, data_organisation):
+    return {
+        "activity": None,
+        "additional_documents": [],
+        "agreed_to_foi": None,
+        "case": data_standard_case["case"]["id"],
+        "case_officer": None,
+        "case_type": {
+            "id": "00000000-0000-0000-0000-000000000004",
+            "reference": {"key": "siel", "value": "Standard Individual Export Licence"},
+            "sub_type": {"key": "standard", "value": "Standard Licence"},
+            "type": {"key": "application", "value": "Application"},
+        },
+        "compliant_limitations_eu_ref": None,
+        "consignee": None,
+        "created_at": "2021-11-12T16:39:14.281840Z",
+        "denial_matches": [],
+        "destinations": {"data": "", "type": "end_user"},
+        "end_user": None,
+        "export_type": {"key": "", "value": None},
+        "exporter_user_notification_count": {},
+        "foi_reason": "",
+        "goods": [],
+        "goods_locations": {},
+        "goods_recipients": "",
+        "goods_starting_point": "",
+        "have_you_been_informed": "no",
+        "id": data_standard_case["case"]["id"],
+        "inactive_parties": [],
+        "informed_wmd_ref": None,
+        "intended_end_use": None,
+        "is_amended": False,
+        "is_compliant_limitations_eu": None,
+        "is_eu_military": None,
+        "is_informed_wmd": None,
+        "is_major_editable": True,
+        "is_military_end_use_controls": None,
+        "is_shipped_waybill_or_lading": True,
+        "is_suspected_wmd": None,
+        "is_temp_direct_control": False,
+        "last_closed_at": None,
+        "licence": None,
+        "military_end_use_controls_ref": None,
+        "name": "Locations test",
+        "non_waybill_or_lading_route_details": None,
+        "organisation": data_organisation,
+        "proposed_return_date": "2022-01-01",
+        "reference_code": None,
+        "reference_number_on_information_form": None,
+        "sanction_matches": [],
+        "sla_days": 0,
+        "sla_remaining_days": None,
+        "sla_updated_at": None,
+        "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "draft"},
+        "submitted_at": None,
+        "submitted_by": "",
+        "suspected_wmd_ref": None,
+        "temp_direct_control_details": "",
+        "temp_export_details": "",
+        "third_parties": [],
+        "trade_control_activity": {"key": None, "value": None},
+        "trade_control_product_categories": [],
+        "ultimate_end_users": [],
+        "updated_at": "2021-11-15T12:46:03.018683Z",
+        "usage": None,
+    }
+
+
+@pytest.fixture()
+def mock_get_application(requests_mock, data_standard_case, data_draft_standard_application):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    yield requests_mock.get(url=url, json=data_draft_standard_application)
+
+
+@pytest.fixture()
+def mock_put_application(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    yield requests_mock.put(url=url, json={})
+
+
+@pytest.fixture()
+def mock_put_application_route_of_goods(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/route-of-goods/")
+    yield requests_mock.put(url=url, json={})
