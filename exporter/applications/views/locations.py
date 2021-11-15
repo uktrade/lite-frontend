@@ -91,7 +91,7 @@ class GoodsLocation(LoginRequiredMixin, ApplicationMixin, TemplateView):
         return super().dispatch(*args, **kwargs)
 
 
-class GoodsLocationFormView(LoginRequiredMixin, ApplicationMixin, FormView):
+class GoodsStartingPointFormView(LoginRequiredMixin, ApplicationMixin, FormView):
     template_name = "core/form.html"
     form_class = location_forms.GoodsStartingPointForm
 
