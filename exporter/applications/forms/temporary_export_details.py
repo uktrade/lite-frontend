@@ -1,4 +1,3 @@
-from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import TemporaryExportDetails
 from lite_forms.components import FormGroup, TextArea, Form, RadioButtons, Option, DateInput, BackLink
 
