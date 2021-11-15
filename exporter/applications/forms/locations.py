@@ -206,8 +206,10 @@ class GBOrNIForm(forms.Form):
             "sent_from_gb_or_ni",
             HTML.details(
                 "Help with where the products begin their journey",
-                "<p>For physical products (including software stored on memory devices or hardcopy technology) this is the place where they are packed for export.</p>"
-                "<p>For intangible items such as software and technology (for example those sent over the internet), this is the location of the official business premises of the individual who is permitting this activity.</p>",
+                "<p>For physical products (including software stored on memory devices or hardcopy technology) this is "
+                "the place where they are packed for export.</p>"
+                "<p>For intangible items such as software and technology (for example those sent over the internet), "
+                "this is the location of the official business premises of the individual who is permitting this activity.</p>",
             ),
             Submit("submit", "Continue"),
         )
@@ -249,10 +251,13 @@ class WhoAreGoodsGoingToForm(forms.Form):
             "who_are_goods_going_to",
             HTML.details(
                 "Help with end user, consignee and third party",
-                "<p>An end-user receives the products in the destination country. They either use the products themselves, resell from stock, or export them again to another country.</p>"
+                "<p>An end-user receives the products in the destination country. They either use the products "
+                "themselves, resell from stock, or export them again to another country.</p>"
                 "<p>A consignee receives the products and then delivers or sells them to the end-user.</p>"
-                "<p>A third party is involved in the export but not regarded as a consignee, end-user or ultimate end-user, for example they might be an agent, broker, consultant or distributor.</p>"
-                "<p>For products being exported again passed their first destination, there may also be an ultimate end-user. An ultimate end-user in a third country receives goods via an onward export from the end user.</p>",
+                "<p>A third party is involved in the export but not regarded as a consignee, end-user or ultimate "
+                "end-user, for example they might be an agent, broker, consultant or distributor.</p>"
+                "<p>For products being exported again passed their first destination, there may also be an ultimate "
+                "end-user. An ultimate end-user in a third country receives goods via an onward export from the end user.</p>",
             ),
             Submit("submit", "Continue"),
         )
