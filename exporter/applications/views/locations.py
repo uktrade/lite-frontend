@@ -154,7 +154,7 @@ class WhoAreGoodsGoingToFormView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["back_link_url"] = reverse("applications:edit_location", kwargs={"pk": self.kwargs["pk"]})
+        context["back_link_url"] = reverse("applications:route_of_goods", kwargs={"pk": self.kwargs["pk"]})
         return context
 
     def form_valid(self, form):
