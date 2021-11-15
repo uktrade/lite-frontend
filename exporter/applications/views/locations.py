@@ -31,7 +31,7 @@ from exporter.applications.services import (
     get_application,
     get_application_countries,
     post_application_countries,
-    put_application,
+    put_application_simple,
     put_contract_type_for_country,
     get_application_countries_and_contract_types,
 )
@@ -109,7 +109,7 @@ class GoodsLocationFormView(LoginRequiredMixin, FormView):
         return reverse("applications:temporary_or_permanent", kwargs={"pk": self.kwargs["pk"]})
 
     def form_valid(self, form):
-        data, status_code = put_application(self.request, self.kwargs["pk"], form.cleaned_data)
+        put_application_simple(self.request, self.kwargs["pk"], form.cleaned_data)
         return super().form_valid(form)
 
 
@@ -132,7 +132,7 @@ class TemporaryOrPermanentFormView(LoginRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        data, status_code = put_application(self.request, self.kwargs["pk"], form.cleaned_data)
+        put_application_simple(self.request, self.kwargs["pk"], form.cleaned_data)
         if form.cleaned_data["export_type"] == "temporary":
             return redirect(reverse("applications:temporary_export_details", kwargs={"pk": self.kwargs["pk"]}))
         else:
@@ -158,7 +158,7 @@ class WhoAreGoodsGoingToFormView(LoginRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        data, status_code = put_application(self.request, self.kwargs["pk"], form.cleaned_data)
+        put_application_simple(self.request, self.kwargs["pk"], form.cleaned_data)
         return redirect(reverse("applications:locations_summary", kwargs={"pk": self.kwargs["pk"]}))
 
 
