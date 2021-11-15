@@ -50,6 +50,12 @@ from lite_forms.views import SingleFormView, MultiFormView
 from core.auth.views import LoginRequiredMixin
 
 
+class ApplicationMixin:
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+
 def get_locations_page(request, application_id, **kwargs):
     application = get_application(request, application_id)
 
@@ -67,12 +73,8 @@ def get_locations_page(request, application_id, **kwargs):
     return render(request, "applications/goods-locations/goods-locations.html", context,)
 
 
-class GoodsLocation(LoginRequiredMixin, TemplateView):
+class GoodsLocation(LoginRequiredMixin, ApplicationMixin, TemplateView):
     template_name = "applications/goods-locations/goods-locations.html"
-
-    @cached_property
-    def application(self):
-        return get_application(self.request, self.kwargs["pk"])
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -89,13 +91,9 @@ class GoodsLocation(LoginRequiredMixin, TemplateView):
         return super().dispatch(*args, **kwargs)
 
 
-class GoodsLocationFormView(LoginRequiredMixin, FormView):
+class GoodsLocationFormView(LoginRequiredMixin, ApplicationMixin, FormView):
     template_name = "core/form.html"
     form_class = location_forms.GBOrNIForm
-
-    @cached_property
-    def application(self):
-        return get_application(self.request, self.kwargs["pk"])
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -113,13 +111,9 @@ class GoodsLocationFormView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class TemporaryOrPermanentFormView(LoginRequiredMixin, FormView):
+class TemporaryOrPermanentFormView(LoginRequiredMixin, ApplicationMixin, FormView):
     template_name = "core/form.html"
     form_class = location_forms.PermanentOrTemporaryExportForm
-
-    @cached_property
-    def application(self):
-        return get_application(self.request, self.kwargs["pk"])
 
     def get_initial(self):
         if self.application["export_type"]:
@@ -139,13 +133,9 @@ class TemporaryOrPermanentFormView(LoginRequiredMixin, FormView):
             return redirect(reverse("applications:route_of_goods", kwargs={"pk": self.kwargs["pk"]}))
 
 
-class WhoAreGoodsGoingToFormView(LoginRequiredMixin, FormView):
+class WhoAreGoodsGoingToFormView(LoginRequiredMixin, ApplicationMixin, FormView):
     template_name = "core/form.html"
     form_class = location_forms.WhoAreGoodsGoingToForm
-
-    @cached_property
-    def application(self):
-        return get_application(self.request, self.kwargs["pk"])
 
     def get_initial(self):
         return {
@@ -162,12 +152,8 @@ class WhoAreGoodsGoingToFormView(LoginRequiredMixin, FormView):
         return redirect(reverse("applications:locations_summary", kwargs={"pk": self.kwargs["pk"]}))
 
 
-class LocationsSummaryView(LoginRequiredMixin, TemplateView):
+class LocationsSummaryView(LoginRequiredMixin, ApplicationMixin, TemplateView):
     template_name = "applications/goods-locations/goods-locations-summary.html"
-
-    @cached_property
-    def application(self):
-        return get_application(self.request, self.kwargs["pk"])
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
