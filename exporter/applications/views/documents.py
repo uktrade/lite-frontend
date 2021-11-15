@@ -9,7 +9,11 @@ from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import s3_client
 
 from caseworker.cases.services import get_document
-from exporter.applications.forms.documents import attach_document_form, end_user_attach_document_form, delete_document_confirmation_form
+from exporter.applications.forms.documents import (
+    attach_document_form,
+    end_user_attach_document_form,
+    delete_document_confirmation_form,
+)
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
 from exporter.applications.helpers.reverse_documents import document_switch
 from exporter.applications.services import add_document_data, download_document_from_s3, get_application
@@ -27,7 +31,10 @@ def get_upload_page(path, draft_id, is_permanent_application=False):
         is_document_optional = False
     if "/end-user" in path:
         return end_user_attach_document_form(
-            application_id=draft_id, strings=paths["strings"], back_link=paths["homepage"], is_optional=is_document_optional
+            application_id=draft_id,
+            strings=paths["strings"],
+            back_link=paths["homepage"],
+            is_optional=is_document_optional,
         )
     return attach_document_form(
         application_id=draft_id, strings=paths["strings"], back_link=paths["homepage"], is_optional=is_document_optional

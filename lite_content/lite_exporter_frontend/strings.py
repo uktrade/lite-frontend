@@ -127,7 +127,9 @@ class EndUser:
         class AttachDocuments:
             TITLE = "Upload an end-user document"
             DESCRIPTION = ""
-            DESCRIPTION_FIELD_TITLE = "Describe any differences between products listed in the document and products on the application"
+            DESCRIPTION_FIELD_TITLE = (
+                "Describe any differences between products listed in the document and products on the application"
+            )
             BACK = "Back"
             BUTTON_TEXT = "Continue"
 

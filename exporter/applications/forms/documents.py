@@ -15,14 +15,14 @@ def attach_document_form(application_id, strings, back_link, is_optional):
         ],
         back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
         footer_label=Label(
-           'Or <a id="return_to_application" href="'
-           + str(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
-           + '" class="govuk-link govuk-link--no-visited-state">'
-           + strings.SAVE_AND_RETURN_LATER
-           + "</a> "
-           + strings.ATTACH_LATER
-       ),
-       default_button_name=strings.BUTTON_TEXT,
+            'Or <a id="return_to_application" href="'
+            + str(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
+            + '" class="govuk-link govuk-link--no-visited-state">'
+            + strings.SAVE_AND_RETURN_LATER
+            + "</a> "
+            + strings.ATTACH_LATER
+        ),
+        default_button_name=strings.BUTTON_TEXT,
     )
 
 
@@ -36,18 +36,12 @@ def end_user_attach_document_form(application_id, strings, back_link, is_optiona
             RadioButtons(
                 name="is_content_english",
                 title=strings.Q1_TEXT,
-                options=[
-                    Option(key="true", value="Yes"),
-                    Option(key="false", value="No"),
-                ],
+                options=[Option(key="true", value="Yes"), Option(key="false", value="No"),],
             ),
             RadioButtons(
                 name="includes_company_letterhead",
                 title=strings.Q2_TEXT,
-                options=[
-                    Option(key="true", value="Yes"),
-                    Option(key="false", value="No"),
-                ],
+                options=[Option(key="true", value="Yes"), Option(key="false", value="No"),],
             ),
         ],
         back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
