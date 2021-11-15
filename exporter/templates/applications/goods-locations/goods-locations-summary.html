@@ -43,6 +43,14 @@
 		<dd class="govuk-summary-list__value"></dd>
 	</div>
 
+	{% if not application.is_temp_direct_control %}
+	<div class="govuk-summary-list__row">
+		<dt class="govuk-summary-list__key">Details</dt>
+		<dd class="govuk-summary-list__value">{{ application.temp_direct_control_details }}</dd>
+		<dd class="govuk-summary-list__value"></dd>
+	</div>
+	{% endif %}
+
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">Proposed return date</dt>
 		<dd class="govuk-summary-list__value">{{ application.proposed_return_date|str_date_only }}</dd>
@@ -59,6 +67,14 @@
 			</a>
 		</dd>
 	</div>
+
+	{% if not application.is_shipped_waybill_or_lading %}
+	<div class="govuk-summary-list__row">
+		<dt class="govuk-summary-list__key">Route details</dt>
+		<dd class="govuk-summary-list__value">{{ application.non_waybill_or_lading_route_details }}</dd>
+		<dd class="govuk-summary-list__actions"></dd>
+	</div>
+	{% endif %}
 
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">How products are being exported</dt>
