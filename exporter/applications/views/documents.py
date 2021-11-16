@@ -10,7 +10,6 @@ from s3chunkuploader.file_handler import s3_client
 
 from caseworker.cases.services import get_document
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
-from exporter.applications.helpers.reverse_documents import document_switch
 from exporter.applications.services import (
     add_document_data,
     download_document_from_s3,
