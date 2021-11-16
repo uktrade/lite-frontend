@@ -6,6 +6,7 @@ import tests_common.tools.helpers as utils
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
 SCENARIO_HISTORY = OrderedDict()
+SCENARIO_DIVIDER_LEN = 70
 
 
 def print_scenario_history(entry):
@@ -26,6 +27,12 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
     """
     Runs before each step
     """
+    if scenario not in SCENARIO_HISTORY:
+        print()
+        print("*"*SCENARIO_DIVIDER_LEN)
+        print()
+        print(f"SCENARIO: {scenario.feature.description}")
+    print(f"\t {step.keyword.upper()} {step.name}")
 
     try:
         SCENARIO_HISTORY[scenario]["steps"].append(step)
@@ -36,10 +43,6 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
         }
 
     if STEP_THROUGH:
-        print("*******************************************")
-        print(f"SCENARIO: {scenario.feature.description}")
-        print(f"STEP: .. {step.keyword} {step.name}")
-        print("*******************************************")
         import IPython
 
         IPython.embed(using=False)
