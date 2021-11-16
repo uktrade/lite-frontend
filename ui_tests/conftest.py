@@ -1,15 +1,26 @@
 import os
+from collections import OrderedDict
 
 import tests_common.tools.helpers as utils
 
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
+SCENARIO_HISTORY = OrderedDict()
 
 
 def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
     """
     Runs before each step
     """
+
+    try:
+        SCENARIO_HISTORY[scenario]["steps"].append(step)
+    except KeyError:
+        SCENARIO_HISTORY[scenario] = {
+            "steps": [step],
+            "scenario": scenario,
+        }
+
     if STEP_THROUGH:
         print("*******************************************")
         print(f"SCENARIO: {scenario.feature.description}")
