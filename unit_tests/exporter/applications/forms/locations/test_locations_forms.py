@@ -25,11 +25,9 @@ from exporter.applications.forms import locations as locations_forms
 )
 def test_locations_forms_validation(form_class, data, is_valid):
     form = form_class(data=data)
+    assert form.is_valid() == is_valid
     if is_valid:
-        assert form.is_valid()
-        assert form.cleaned_data == data
-    else:
-        assert not form.is_valid()
+        form.cleaned_data == data
 
 
 @pytest.mark.parametrize(
