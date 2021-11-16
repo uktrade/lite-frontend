@@ -8,6 +8,20 @@ STEP_THROUGH = False  # Gives a prompt for every step in the terminal
 SCENARIO_HISTORY = OrderedDict()
 
 
+def print_scenario_history(entry):
+    scenario = entry["scenario"]
+    steps = entry["steps"]
+    print("*******************************************\n")
+    print(f"SCENARIO: {scenario.feature.description}\n")
+    for step in steps:
+        print(f"\t{step.keyword.upper()} {step.name}")
+    print("\n*******************************************")
+
+
+def print_scenario_history_last_entry():
+    print_scenario_history(list(SCENARIO_HISTORY.values())[-1])
+
+
 def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
     """
     Runs before each step

@@ -72,7 +72,16 @@ class ApiClient:
                 )
             else:
                 trimmed_body = response.text
-            raise Exception(f"{response.status_code} @ {response.request.method} {response.request.url}\n\n{trimmed_body}")
+            error_message = f"{response.status_code} @ {response.request.method} {response.request.url}\n\n{trimmed_body}"
+
+            from conftest import DEBUG  # noqa
+            from ui_tests.conftest import print_scenario_history_last_entry
+            if DEBUG:
+                print_scenario_history_last_entry()
+                print(f"\n***** ERROR: {__file__} {error_message}")
+                import IPython; IPython.embed(using=False)
+
+            raise Exception(error_message)
         return response
 
     @staticmethod
