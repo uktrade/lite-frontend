@@ -9,6 +9,9 @@ FUNCTION_RETRY_INTERVAL = 1  # How frequently in seconds the function should be 
 
 
 def wait_for_function(callback_function, **kwargs):
+    """
+    Will call the function until it returns True
+    """
     time_no = 0
     while time_no < TIMEOUT_LIMIT:
         if callback_function(**kwargs):

@@ -1,21 +1,58 @@
 import os
+from collections import OrderedDict
 
 import tests_common.tools.helpers as utils
 
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
-STEP_VERBOSE = STEP_THROUGH  # Shows info as a banner for every step
+SCENARIO_HISTORY = OrderedDict()
+FEATURE_DIVIDER_LEN = 70
+
+
+def print_scenario_history(entry):
+    scenario = entry["scenario"]
+    steps = entry["steps"]
+    print("*******************************************\n")
+    print(f"FEATURE:  {scenario.feature.description}\n")
+    print(f"SCENARIO: {scenario.name}\n")
+    for step in steps:
+        print(f"\t{step.keyword.upper()} {step.name}")
+    print("\n*******************************************")
+
+
+def print_scenario_history_last_entry():
+    print_scenario_history(list(SCENARIO_HISTORY.values())[-1])
 
 
 def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
     """
     Runs before each step
     """
-    if STEP_VERBOSE:
-        print("*******************************************")
-        print(f"SCENARIO: {scenario.feature.description}")
-        print(f"STEP: .. {step.keyword} {step.name}")
-        print("*******************************************")
+    if feature not in SCENARIO_HISTORY:
+        print()
+        print("*"*FEATURE_DIVIDER_LEN)
+        print()
+        print(f"FEATURE: {scenario.feature.description}")
+        SCENARIO_HISTORY[feature] = {}
+
+    if scenario not in SCENARIO_HISTORY[feature]:
+        print()
+        print(f"SCENARIO: {scenario.name}")
+        print(f"STEPS:\n")
+        SCENARIO_HISTORY[feature][scenario] = {}
+
+    print(f"\t {step.keyword.upper()} {step.name}")
+
+    try:
+        # TODO: Add feature, scenario, steps
+        SCENARIO_HISTORY[feature][scenario]["steps"].append(step)
+    except KeyError:
+        SCENARIO_HISTORY[feature][scenario] = {
+            "steps": [step],
+            "scenario": scenario,
+            "feature": feature,
+        }
+
     if STEP_THROUGH:
         import IPython
 
@@ -26,9 +63,6 @@ def pytest_configure(config):
     if config.option.step_through:
         global STEP_THROUGH  # pylint: disable=global-statement
         STEP_THROUGH = config.option.step_through
-    if config.option.step_verbose:
-        global STEP_VERBOSE  # pylint: disable=global-statement
-        STEP_VERBOSE = config.option.step_verbose
 
 
 def pytest_addoption(parser):
@@ -38,9 +72,6 @@ def pytest_addoption(parser):
     parser.addoption("--headless", action="store_true", default=False)
     parser.addoption(
         "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
-    )
-    parser.addoption(
-        "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Gives extra info for every step"
     )
     if env == "local":
         parser.addoption(

@@ -6,6 +6,9 @@ from requests import Session
 from django.conf import settings
 
 
+MAX_PAGE_DUMP = 1000
+
+
 class ApiClient:
     def __init__(self, base_url, request_data, context):
         self.base_url = base_url
@@ -58,7 +61,27 @@ class ApiClient:
             response = self.session.request(method, url, headers=headers, json=body, files=files)
 
         if not response.ok:
-            raise Exception("bad response at: " + url + "\nwith message: " + response.text)
+            MAX_PAGE_DUMP = 1000
+            if len(response.text) > MAX_PAGE_DUMP:
+                i1 = MAX_PAGE_DUMP//2
+                i2 = -i1
+                trimmed_body = (
+                    response.text[:i1] +
+                    "\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n" +
+                    response.text[i2:]
+                )
+            else:
+                trimmed_body = response.text
+            error_message = f"{response.status_code} @ {response.request.method} {response.request.url}\n\n{trimmed_body}"
+
+            from conftest import DEBUG  # noqa
+            from ui_tests.conftest import print_scenario_history_last_entry
+            if DEBUG:
+                print_scenario_history_last_entry()
+                print(f"\n***** ERROR: {__file__} {error_message}")
+                import IPython; IPython.embed(using=False)
+
+            raise Exception(error_message)
         return response
 
     @staticmethod
