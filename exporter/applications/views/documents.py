@@ -144,7 +144,7 @@ def delete_document_confirmation_form(overview_url, strings):
     )
 
 
-def get_upload_page(path, draft_id, is_permanent_application=False):
+def get_upload_form(path, draft_id, is_permanent_application=False):
     paths = document_switch(path=path)
     is_document_optional = paths["optional"]
     # For standard permanent only - upload is mandatory
@@ -184,14 +184,14 @@ def get_delete_confirmation_page(path, pk):
 class AttachDocuments(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
-        form = get_upload_page(request.path, draft_id)
+        form = get_upload_form(request.path, draft_id)
         return form_page(request, form, extra_data={"draft_id": draft_id})
 
     def post(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
         is_permanent_application = is_application_export_type_permanent(application)
-        form = get_upload_page(request.path, draft_id, is_permanent_application=is_permanent_application)
+        form = get_upload_form(request.path, draft_id, is_permanent_application=is_permanent_application)
 
         try:
             files = request.FILES
