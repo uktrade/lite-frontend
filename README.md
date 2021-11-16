@@ -99,7 +99,8 @@ We use pytest + Selenium for end-to-end tests.
 
 Run all tests
 
-    PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest ui_tests/
+    PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest ui_tests/exporter
+    PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest ui_tests/caseworker
 
 > You can use the flags `--step-through` (in conjunction with `-s`) and `--step-verbose` to stop on each step. Helpful for exploration and debugging.
 
