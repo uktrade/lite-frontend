@@ -164,7 +164,7 @@ def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
 
 
 @pytest.fixture()
-def data_draft_standard_application(data_standard_case):
+def data_draft_standard_application(data_standard_case, data_organisation):
     return {
         "activity": None,
         "additional_documents": [],
@@ -191,7 +191,7 @@ def data_draft_standard_application(data_standard_case):
         "goods_recipients": "",
         "goods_starting_point": "",
         "have_you_been_informed": "no",
-        "id": "a0cf9617-ff14-4562-8c87-a774816f1954",
+        "id": data_standard_case["case"]["id"],
         "inactive_parties": [],
         "informed_wmd_ref": None,
         "intended_end_use": None,
@@ -209,53 +209,7 @@ def data_draft_standard_application(data_standard_case):
         "military_end_use_controls_ref": None,
         "name": "Locations test",
         "non_waybill_or_lading_route_details": None,
-        "organisation": {
-            "created_at": "2021-10-05T15:30:05.449251+01:00",
-            "documents": [],
-            "eori_number": "1234567890AAA",
-            "flags": [],
-            "id": "b07f02bd-4eba-43c5-99c8-c3fe805ed59c",
-            "name": "Archway Communications",
-            "phone_number": "",
-            "primary_site": {
-                "address": {
-                    "address_line_1": "42 Question Road",
-                    "address_line_2": "",
-                    "city": "London",
-                    "country": {
-                        "id": "GB",
-                        "is_eu": True,
-                        "name": "United " "Kingdom",
-                        "report_name": "",
-                        "type": "gov.uk Country",
-                    },
-                    "id": "b8580cd7-9446-494e-8464-d0fb28d8e95c",
-                    "postcode": "SW1A 0AA",
-                    "region": "Greater London",
-                },
-                "id": "6febe516-ddb5-4604-ad57-760d8be3b6df",
-                "name": "Headquarters",
-                "records_located_at": {
-                    "address": {
-                        "address_line_1": "42 " "Question " "Road",
-                        "address_line_2": "",
-                        "city": "London",
-                        "country": {"name": "United " "Kingdom"},
-                        "postcode": "SW1A " "0AA",
-                        "region": "Greater " "London",
-                    },
-                    "id": "6febe516-ddb5-4604-ad57-760d8be3b6df",
-                    "name": "Headquarters",
-                },
-            },
-            "registration_number": "09876543",
-            "sic_number": "2345",
-            "status": {"key": "active", "value": "Active"},
-            "type": {"key": "commercial", "value": "Commercial Organisation"},
-            "updated_at": "2021-10-05T15:30:05.454346+01:00",
-            "vat_number": "GB123456789",
-            "website": "",
-        },
+        "organisation": data_organisation,
         "proposed_return_date": "2022-01-01",
         "reference_code": None,
         "reference_number_on_information_form": None,
