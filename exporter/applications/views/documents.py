@@ -224,6 +224,10 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         return get_homepage(request, draft_id)
 
 
+class AttachDocumentsEndUser(AttachDocuments):
+    pass
+
+
 class DownloadDocument(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
