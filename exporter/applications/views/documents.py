@@ -4,16 +4,11 @@ from inspect import signature
 
 from django.conf import settings
 from django.shortcuts import redirect
-from django.urls import reverse, NoReverseMatch
+from django.urls import reverse_lazy, reverse, NoReverseMatch
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import s3_client
 
 from caseworker.cases.services import get_document
-from exporter.applications.forms.documents import (
-    attach_document_form,
-    end_user_attach_document_form,
-    delete_document_confirmation_form,
-)
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
 from exporter.applications.services import (
     add_document_data,
@@ -30,8 +25,9 @@ from exporter.applications.services import (
     delete_goods_type_document,
 )
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.generators import form_page, error_page
-
+from lite_forms.generators import form_page, error_page, confirm_form
+from lite_content.lite_exporter_frontend.applications import DeletePartyDocumentForm
+from lite_forms.components import Form, FileUpload, Label, TextArea, BackLink, Option, RadioButtons
 from core.auth.views import LoginRequiredMixin
 
 
@@ -93,6 +89,59 @@ def document_switch(path):
         }
     else:
         raise NotImplementedError("document_switch doesn't support this document type")
+
+
+def attach_document_form(application_id, strings, back_link, is_optional):
+    return Form(
+        title=strings.TITLE,
+        description=strings.DESCRIPTION,
+        questions=[
+            FileUpload(optional=is_optional),
+            TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description"),
+        ],
+        back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
+        footer_label=Label(
+            'Or <a id="return_to_application" href="'
+            + str(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
+            + '" class="govuk-link govuk-link--no-visited-state">'
+            + strings.SAVE_AND_RETURN_LATER
+            + "</a> "
+            + strings.ATTACH_LATER
+        ),
+        default_button_name=strings.BUTTON_TEXT,
+    )
+
+
+def end_user_attach_document_form(application_id, strings, back_link, is_optional):
+    return Form(
+        title=strings.TITLE,
+        description=strings.DESCRIPTION,
+        questions=[
+            FileUpload(optional=is_optional),
+            TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description"),
+            RadioButtons(
+                name="is_content_english",
+                title=strings.Q1_TEXT,
+                options=[Option(key="true", value="Yes"), Option(key="false", value="No"),],
+            ),
+            RadioButtons(
+                name="includes_company_letterhead",
+                title=strings.Q2_TEXT,
+                options=[Option(key="true", value="Yes"), Option(key="false", value="No"),],
+            ),
+        ],
+        back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
+        default_button_name=strings.BUTTON_TEXT,
+    )
+
+
+def delete_document_confirmation_form(overview_url, strings):
+    return confirm_form(
+        title=DeletePartyDocumentForm.TITLE,
+        confirmation_name="delete_document_confirmation",
+        back_link_text=strings.BACK,
+        back_url=overview_url,
+    )
 
 
 def get_upload_page(path, draft_id, is_permanent_application=False):
