@@ -148,14 +148,12 @@ def get_upload_form(path, draft_id, is_permanent_application=False):
     paths = document_switch(path=path)
     is_document_optional = paths["optional"]
     # For standard permanent only - upload is mandatory
-    if "/end-user" in path and is_permanent_application:
-        is_document_optional = False
     if "/end-user" in path:
         return end_user_attach_document_form(
             application_id=draft_id,
             strings=paths["strings"],
             back_link=paths["homepage"],
-            is_optional=is_document_optional,
+            is_optional=(not is_permanent_application),
         )
     return attach_document_form(
         application_id=draft_id, strings=paths["strings"], back_link=paths["homepage"], is_optional=is_document_optional
