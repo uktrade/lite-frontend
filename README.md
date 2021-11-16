@@ -99,9 +99,10 @@ We use pytest + Selenium for end-to-end tests.
 
 Run all tests
 
-    PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest ui_tests/
+    PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest ui_tests/exporter
+    PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest ui_tests/caseworker
 
-> You can use the flags `--step-through` (in conjunction with `-s`) and `--step-verbose` to stop on each step. Helpful for exploration and debugging.
+> You can use the flags `--step-through` (in conjunction with `-s`) to stop on each step. Helpful for exploration and debugging.
 
 > The UI tests (a.k.a. end-to-end tests, e2e tests, browser tests or functional tests) require some local configuration
 changes before they can run. As mentioned above, you need to run `make run_caseworker` and `make run_exporter`.

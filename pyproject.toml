@@ -9,8 +9,8 @@ target-version = ['py36', 'py37', 'py38']
 include = '\.pyi?$'
 exclude = '''
 /(
-    \.eggs
-  | \.git
+    \.eggs        # exclude a few common directories in the
+  | \.git         # root of the project
   | \.hg
   | \.mypy_cache
   | \.tox
@@ -20,5 +20,6 @@ exclude = '''
   | build
   | dist
 )/
+|  tests_.*/
+|  .*_tests/
 '''
-
