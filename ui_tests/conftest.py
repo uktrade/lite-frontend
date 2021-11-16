@@ -4,19 +4,17 @@ import tests_common.tools.helpers as utils
 
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
-STEP_VERBOSE = STEP_THROUGH  # Shows info as a banner for every step
 
 
 def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
     """
     Runs before each step
     """
-    if STEP_VERBOSE:
+    if STEP_THROUGH:
         print("*******************************************")
         print(f"SCENARIO: {scenario.feature.description}")
         print(f"STEP: .. {step.keyword} {step.name}")
         print("*******************************************")
-    if STEP_THROUGH:
         import IPython
 
         IPython.embed(using=False)
@@ -26,9 +24,6 @@ def pytest_configure(config):
     if config.option.step_through:
         global STEP_THROUGH  # pylint: disable=global-statement
         STEP_THROUGH = config.option.step_through
-    if config.option.step_verbose:
-        global STEP_VERBOSE  # pylint: disable=global-statement
-        STEP_VERBOSE = config.option.step_verbose
 
 
 def pytest_addoption(parser):
@@ -38,9 +33,6 @@ def pytest_addoption(parser):
     parser.addoption("--headless", action="store_true", default=False)
     parser.addoption(
         "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
-    )
-    parser.addoption(
-        "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Gives extra info for every step"
     )
     if env == "local":
         parser.addoption(
