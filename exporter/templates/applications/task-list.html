@@ -54,11 +54,10 @@
 			</h2>
 			<ul class="lite-task-list__items {% if is_editing %}govuk-!-padding-0{% endif %}">
 				{# Exhibition clearance types #}
+				{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
 				{% if application_type|application_type_in_list:"EXHIBITION" and edit_type != "minor_edit" %}
-					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
 					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title %}
 				{% elif application_type|application_type_in_list:"EXHIBITION" %}
-					{% url 'applications:exhibition_details' application.id as exhibition_details_url %}
 					{% include "includes/task-list-item.html" with id="exhibition-details" title=strings.DETAILS url=exhibition_details_url status=application.title|task_list_item_status description=application.title disabled=True %}
 				{% endif %}
 
@@ -88,9 +87,9 @@
 
 				{# Good types #}
 				{% if application_type|application_type_in_list:"HAS_GOODS_TYPES" %}
-					{% url 'applications:goods_types' application.id as goods_url %}
+					{% url 'applications:goods_types' application.id as goods_types_url %}
 					{% tld goodstypes 'product' 'products' as goods_description %}
-					{% include "includes/task-list-item.html" with id='goods' title=strings.GOODS url=goods_url status=goodstypes|task_list_item_status description=goods_description %}
+					{% include "includes/task-list-item.html" with id='goods' title=strings.GOODS url=goods_types_url status=goodstypes|task_list_item_status description=goods_description %}
 				{% endif %}
 
 				{# Goods #}
@@ -113,9 +112,16 @@
 				{# Location #}
 				{% if application_type|application_type_in_list:"HAS_LOCATIONS" %}
 					{% if not is_crypto_application %}
-						{% url 'applications:location' application.id as goods_url %}
-						{% include "includes/task-list-item.html" with id='location' title="Provide product location and journey" url=goods_url status=locations|task_list_item_status description=location_description %}
+						{% url 'applications:location' application.id as locations_url %}
+						{% tld locations 'location' 'locations' as location_description %}
+						{% include "includes/task-list-item.html" with id='location' title=strings.GOODS_LOCATION url=locations_url status=locations|task_list_item_status description=location_description %}
 					{% endif %}
+				{% endif %}
+
+				{# Product location and journey #}
+				{% if application_type|application_type_in_list:"HAS_PRODUCT_JOURNEY" %}
+					{% url 'applications:location' application.id as product_journey_url %}
+					{% include "includes/task-list-item.html" with id='location' title="Provide product location and journey" url=product_journey_url status=locations|task_list_item_status description=location_description %}
 				{% endif %}
 
 				{# Countries #}
