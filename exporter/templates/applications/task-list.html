@@ -113,9 +113,14 @@
 				{# Location #}
 				{% if application_type|application_type_in_list:"HAS_LOCATIONS" %}
 					{% if not is_crypto_application %}
-						{% url 'applications:location' application.id as goods_url %}
-						{% include "includes/task-list-item.html" with id='location' title="Provide product location and journey" url=goods_url status=locations|task_list_item_status description=location_description %}
+						{% tld locations 'location' 'locations' as location_description %}
+						{% include "includes/task-list-item.html" with id='location' title=strings.GOODS_LOCATION url=goods_url status=locations|task_list_item_status description=location_description %}
 					{% endif %}
+				{% endif %}
+
+				{# Product location and journey #}
+				{% if application_type|application_type_in_list:"HAS_PRODUCT_JOURNEY" %}
+					{% include "includes/task-list-item.html" with id='location' title="Provide product location and journey" url=goods_url status=locations|task_list_item_status description=location_description %}
 				{% endif %}
 
 				{# Countries #}
