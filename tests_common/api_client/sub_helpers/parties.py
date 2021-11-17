@@ -38,6 +38,8 @@ class Parties:
             url=f"/applications/{draft_id}/parties/{party_id}/document/",
             name="Party document",
             description="Test party document",
+            is_content_english="true",  # required for end-user only
+            includes_company_letterhead="true",  # required for end-user only
         )
 
     def add_additional_contact(self, draft_id, data):
