@@ -350,3 +350,13 @@ class CountersignEditAdviceView(EditAdviceView):
 
     def get_context(self, **kwargs):
         return {**super().get_context(), "subtitle": self.subtitle, "edit": True}
+
+
+class CountersignAdviceView(AdviceView):
+    def get_context(self, **kwargs):
+        return {**super().get_context(**kwargs), "countersign": True}
+
+
+class ConsolidateAdviceView(AdviceView):
+    def get_context(self, **kwargs):
+        return {**super().get_context(**kwargs), "consolidate": True}
