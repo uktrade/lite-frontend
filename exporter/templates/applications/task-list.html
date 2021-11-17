@@ -185,10 +185,6 @@
 						{% url 'applications:third_parties' application.id as third_parties_url %}
 						{% tld third_parties 'third party' 'third parties' as third_parties_description %}
 						{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description %}
-					{% else %}
-						{% url 'applications:third_parties' application.id as third_parties_url %}
-						{% tld third_parties 'third party' 'third parties' as third_parties_description %}
-						{% include "includes/task-list-item.html" with id='third-parties' title=strings.THIRD_PARTIES url=third_parties_url status=application.third_parties|get_parties_status_optional_documents description=third_parties_description optional=True %}
 					{% endif %}
 				{% endif %}
 
