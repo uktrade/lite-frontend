@@ -125,13 +125,13 @@ class EndUser:
         VIRUS_INFECTED = "Virus infected"
 
         class AttachDocuments:
+            BUTTON_TEXT = "Continue"
             TITLE = "Upload an end-user document"
             DESCRIPTION = ""
             DESCRIPTION_FIELD_TITLE = (
                 "Describe any differences between products listed in the document and products on the application"
             )
             BACK = "Back"
-            BUTTON_TEXT = "Continue"
 
             Q1_TEXT = "Is the end-user document in English?"
             Q2_TEXT = "Does the document include at least one page on company letterhead?"
@@ -151,6 +151,7 @@ class UltimateEndUser:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
+            BUTTON_TEXT = "Continue"
             TITLE = "Attach a document"
             DESCRIPTION = (
                 "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
@@ -178,6 +179,7 @@ class Consignee:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
+            BUTTON_TEXT = "Continue"
             TITLE = "Attach a document"
             DESCRIPTION = (
                 "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
@@ -208,6 +210,7 @@ class ThirdParties:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
+            BUTTON_TEXT = "Continue"
             TITLE = "Attach a document"
             DESCRIPTION = (
                 "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
@@ -299,6 +302,7 @@ class Goods:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
+            BUTTON_TEXT = "Continue"
             BACK = "Back to product"
             BUTTON = "Add a document"
             DESCRIPTION = (
@@ -358,6 +362,7 @@ class AdditionalDocuments:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
+            BUTTON_TEXT = "Continue"
             TITLE = "Attach a supporting document"
             DESCRIPTION = (
                 "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
