@@ -464,10 +464,11 @@ def confirm_can_upload_document(driver):  # noqa
 
 @when(parsers.parse('I upload file "{filename}" with description "{description}"'))  # noqa
 def upload_a_file_with_description(driver, filename, description):  # noqa
-    attach_document_page = AttachDocumentPage(driver)
     file_path = get_file_upload_path(filename)
-    attach_document_page.choose_file(file_path)
-    attach_document_page.enter_description(description)
+    driver.find_element_by_id("file").send_keys(file_path)
+    driver.find_element_by_id("description").send_keys(description)
+    driver.find_element_by_id("is_content_english-true").click()
+    driver.find_element_by_id("includes_company_letterhead-true").click()
     functions.click_submit(driver)
 
 
