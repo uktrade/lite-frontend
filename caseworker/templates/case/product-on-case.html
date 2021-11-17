@@ -46,16 +46,6 @@
 																	<th scope="row" class="govuk-table__header">Product type</th>
 																	<td class="govuk-table__cell">{{ firearm_details.type.value }}</td>
 															</tr>
-															<tr class="govuk-table__row app-table__row">
-																	<th scope="row" class="govuk-table__header">Sporting shotgun</th>
-																	<td class="govuk-table__cell">
-																			{% if firearm_details.is_sporting_shotgun is not None %}
-																			{{ firearm_details.is_sporting_shotgun|friendly_boolean }}
-																			{% else %}
-																					N/A
-																			{% endif %}
-																	</td>
-															</tr>
 													{% else %}
 															<tr class="govuk-table__row app-table__row">
 																			<th scope="row" class="govuk-table__header">Product type</th>

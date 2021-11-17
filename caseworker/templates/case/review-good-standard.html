@@ -14,16 +14,6 @@
                 </tr>
             {% endif %}
             <tr class="govuk-table__row app-table__row">
-                <th scope="row" class="govuk-table__header">Sporting shotgun</th>
-                <td class="govuk-table__cell">
-                    {% if object.good.firearm_details.is_sporting_shotgun is not None %}
-                        {{ object.good.firearm_details.is_sporting_shotgun|friendly_boolean }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                    </td>
-            </tr>
-            <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Name</th>
                 <td class="govuk-table__cell">{% if object.good.name %} {{ object.good.name }} {% else %} {{ object.good.description }} {% endif %}</td>
             </tr>
