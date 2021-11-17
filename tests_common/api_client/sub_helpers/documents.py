@@ -4,9 +4,18 @@ class Documents:
         self.api_client = api_client
         self.request_data = request_data
 
-    def add_document(self, url, name, description, multi_upload_endpoint=False):
+    def add_document(self, url, name, description, is_content_english=None, includes_company_letterhead=None, multi_upload_endpoint=False):
         document_s3_key = self._get_or_create_test_document()
-        document_data = {"name": name, "description": description, "s3_key": document_s3_key}
+        document_data = {
+            "name": name,
+            "description": description,
+            "s3_key": document_s3_key,
+        }
+
+        if is_content_english != None:
+            document_data["is_content_english"] = is_content_english
+        if includes_company_letterhead != None:
+            document_data["includes_company_letterhead"] = includes_company_letterhead
 
         if multi_upload_endpoint:
             document_data = [document_data]
