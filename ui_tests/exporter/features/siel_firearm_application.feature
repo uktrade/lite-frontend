@@ -77,7 +77,6 @@ Feature: I want to be able to submit SIEL firearm applications
     When I click on the "Products" section
     And I choose to add a new product
     And I select product category "firearms"
-    And I select product type "firearm"
     And I select sporting shotgun status as "Yes"
     And I specify number of items as "4"
     And I select "Yes" for serial number or other identification markings with details as " "
