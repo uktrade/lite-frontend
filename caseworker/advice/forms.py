@@ -181,3 +181,10 @@ class FCDORefusalAdviceForm(RefusalAdviceForm):
             label="Select countries for which you want to give advice",
         )
         self.helper.layout = Layout("countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit"))
+
+
+class MoveCaseForwardForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(Submit("submit", "Move case forward"))
