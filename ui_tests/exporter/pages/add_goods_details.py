@@ -12,7 +12,6 @@ class AddGoodDetails(BasePage):
     GROUP1_DEVICE_ID = ITEM_CATEGORY_PREFIX + "group1_device"
     GROUP1_COMPONENTS_ID = ITEM_CATEGORY_PREFIX + "group1_components"
     GROUP1_MATERIALS_ID = ITEM_CATEGORY_PREFIX + "group1_materials"
-    GROUP2_FIREARMS_ID = ITEM_CATEGORY_PREFIX + "group2_firearms"
     GROUP3_SOFTWARE_ID = ITEM_CATEGORY_PREFIX + "group3_software"
     GROUP3_TECHNOLOGY_ID = ITEM_CATEGORY_PREFIX + "group3_technology"
 
@@ -82,7 +81,7 @@ class AddGoodDetails(BasePage):
     def select_product_category(self, category):
         # Accept categories "one", "two", "three-software", "three-technology" and match with an id accordingly
         if category == "firearms":
-            self.driver.find_element_by_id(self.GROUP2_FIREARMS_ID).click()
+            self.driver.find_element_by_css_selector("[value=firearms]").click()
         if category == "three-software":
             self.driver.find_element_by_id(self.GROUP3_SOFTWARE_ID).click()
         if category == "three-technology":
