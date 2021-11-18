@@ -467,8 +467,11 @@ def upload_a_file_with_description(driver, filename, description):  # noqa
     file_path = get_file_upload_path(filename)
     driver.find_element_by_id("file").send_keys(file_path)
     driver.find_element_by_id("description").send_keys(description)
-    driver.find_element_by_id("is_content_english-true").click()
-    driver.find_element_by_id("includes_company_letterhead-true").click()
+
+    # Extra selections for end-user
+    if "end-user" in driver.current_url:
+        driver.find_element_by_id("is_content_english-true").click()
+        driver.find_element_by_id("includes_company_letterhead-true").click()
     functions.click_submit(driver)
 
 
