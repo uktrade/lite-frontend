@@ -6,6 +6,8 @@ from django.http import StreamingHttpResponse
 from django.conf import settings
 
 from core import client
+from core.parsing import parse_boolean
+
 from exporter.applications.helpers.date_fields import (
     format_date_fields,
     format_date,
@@ -350,6 +352,10 @@ def add_document_data(request):
         "s3_key": file.name,
         "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
     }
+    if "is_content_english" in request.POST:
+        data["is_content_english"] = parse_boolean(request.POST["is_content_english"])
+    if "is_content_english" in request.POST:
+        data["includes_company_letterhead"] = parse_boolean(request.POST["includes_company_letterhead"])
     if "description" in request.POST:
         data["description"] = request.POST.get("description")
 
