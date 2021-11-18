@@ -3,6 +3,7 @@ from django.forms.formsets import BaseFormSet
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
+from requests.exceptions import HTTPError
 
 from caseworker.advice import forms, services
 from caseworker.advice.constants import DECISION_TYPE_VERB_MAPPING
@@ -120,15 +121,29 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return reverse("cases:view_my_advice", kwargs={**self.kwargs})
 
 
-class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/view_my_advice.html"
+    form_class = forms.MoveCaseForwardForm
+    success_url = "/"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         case = context["case"]
         my_advice = services.filter_current_user_advice(case.advice, str(self.request.session["lite_api_user_id"]))
         nlr_products = services.filter_nlr_products(case["data"]["goods"])
-        return {**context, "my_advice": my_advice, "nlr_products": nlr_products}
+        advice_completed = self.unadvised_countries() == {}
+        return {**context, "my_advice": my_advice, "nlr_products": nlr_products, "advice_completed": advice_completed}
+
+    def form_valid(self, form):
+        queue_id = str(self.kwargs["queue_pk"])
+        try:
+            services.move_case_forward(self.request, self.case.id, queue_id)
+        except HTTPError as e:
+            errors = e.response.json()["errors"]["queues"]
+            for error in errors:
+                form.add_error(None, error)
+            return super().form_invalid(form)
+        return super().form_valid(form)
 
 
 class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
