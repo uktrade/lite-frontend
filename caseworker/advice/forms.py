@@ -126,15 +126,58 @@ class CountersignAdviceForm(forms.Form):
         label="Explain why this recommendation needs to be sent back to the advisor",
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, queues, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+        choices = [("", "")] + [(q[0], q[1]) for q in queues]
+        self.fields["queue_to_return"] = forms.ChoiceField(
+            required=False, label="Choose where to return this recommendation", choices=choices
+        )
 
     def clean(self):
         cleaned_data = super().clean()
         option_selected = cleaned_data.get("agree_with_recommendation")
         if option_selected == "yes" and cleaned_data.get("approval_reasons") == "":
             self.add_error("approval_reasons", "Enter your reasons for agreeing with the recommendation")
-        if option_selected == "no" and cleaned_data.get("refusal_reasons") == "":
-            self.add_error("refusal_reasons", "Enter why you do not agree with the recommendation")
+        if option_selected == "no":
+            if cleaned_data.get("refusal_reasons") == "":
+                self.add_error("refusal_reasons", "Enter why you do not agree with the recommendation")
+            if cleaned_data.get("queue_to_return") == "":
+                self.add_error("queue_to_return", "Select where you want to return this recommendation")
+
+
+class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):
+    def __init__(self, countries, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["countries"] = forms.MultipleChoiceField(
+            choices=countries.items(),
+            widget=GridmultipleSelect(),
+            label="Select countries for which you want to give advice",
+        )
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "countries",
+            "proviso",
+            "approval_reasons",
+            "instructions_to_exporter",
+            "footnote_details",
+            HTML.details(
+                "What is a footnote?",
+                "Footnotes explain why products to a destination have been approved or refused. "
+                "They will be publicly available in reports and data tables.",
+            ),
+            Submit("submit", "Submit"),
+        )
+
+
+class FCDORefusalAdviceForm(RefusalAdviceForm):
+    def __init__(self, denial_reasons, countries, *args, **kwargs):
+        super().__init__(denial_reasons, *args, **kwargs)
+        self.fields["countries"] = forms.MultipleChoiceField(
+            choices=countries.items(),
+            widget=GridmultipleSelect(),
+            label="Select countries for which you want to give advice",
+        )
+        self.helper.layout = Layout("countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit"))

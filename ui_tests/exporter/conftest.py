@@ -982,7 +982,7 @@ def summary_screen_for_product_type(driver, product_type_value, name, proceed): 
     assert all(key in summary.keys() for key in expected_fields)
 
     if proceed == "continue":
-        driver.find_element_by_link_text("Save and continue").click()
+        driver.find_element_by_link_text("Continue").click()
 
 
 @when(parsers.parse('I enter product details with value "{value}" and deactivated "{status}" and Save'))  # noqa

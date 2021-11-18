@@ -8,7 +8,13 @@
 
 {% block full_width %}
 {% if grouped_advice %}
-<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
+  {% if countersign %}
+  <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review advice</a>
+  {% elif consolidate %}
+  <a draggable="false" class="govuk-button govuk-button--primary" href="#put-link-to-consolidate-view-here-when-ready">Combine advice</a>
+  {% else %}
+  <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
+  {% endif %}
 
 <h2 class="govuk-heading-m">Other recommendations for this case</h2>
 
