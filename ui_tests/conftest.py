@@ -5,6 +5,7 @@ import tests_common.tools.helpers as utils
 
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
+STEP_VERBOSE = False  # Print steps as they happen
 SCENARIO_HISTORY = OrderedDict()
 FEATURE_DIVIDER_LEN = 70
 
@@ -29,19 +30,22 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
     Runs before each step
     """
     if feature not in SCENARIO_HISTORY:
-        print()
-        print("*"*FEATURE_DIVIDER_LEN)
-        print()
-        print(f"FEATURE: {scenario.feature.description}")
+        if STEP_VERBOSE or STEP_THROUGH:
+            print()
+            print("*"*FEATURE_DIVIDER_LEN)
+            print()
+            print(f"FEATURE: {scenario.feature.description}")
         SCENARIO_HISTORY[feature] = {}
 
     if scenario not in SCENARIO_HISTORY[feature]:
-        print()
-        print(f"SCENARIO: {scenario.name}")
-        print(f"STEPS:\n")
+        if STEP_VERBOSE or STEP_THROUGH:
+            print()
+            print(f"SCENARIO: {scenario.name}")
+            print(f"STEPS:\n")
         SCENARIO_HISTORY[feature][scenario] = {}
 
-    print(f"\t {step.keyword.upper()} {step.name}")
+    if STEP_VERBOSE or STEP_THROUGH:
+        print(f"\t {step.keyword.upper()} {step.name}")
 
     try:
         # TODO: Add feature, scenario, steps
@@ -63,6 +67,9 @@ def pytest_configure(config):
     if config.option.step_through:
         global STEP_THROUGH  # pylint: disable=global-statement
         STEP_THROUGH = config.option.step_through
+    if config.option.step_verbose:
+        global STEP_VERBOSE  # pylint: disable=global-statement
+        STEP_VERBOSE = config.option.step_verbose
 
 
 def pytest_addoption(parser):
@@ -72,6 +79,9 @@ def pytest_addoption(parser):
     parser.addoption("--headless", action="store_true", default=False)
     parser.addoption(
         "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
+    )
+    parser.addoption(
+        "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Print each step before executing it"
     )
     if env == "local":
         parser.addoption(
