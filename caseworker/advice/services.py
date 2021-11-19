@@ -1,4 +1,3 @@
-
 from requests.exceptions import HTTPError
 
 from core import client
@@ -51,7 +50,11 @@ def get_advice_subjects(case, countries=None):
             if dest["country"]["id"] not in countries:
                 continue
         destinations.append((dest["type"], dest["id"]))
-    goods = [("good", good["id"]) for good in case.goods if good["is_good_controlled"]["key"] == "True"]
+    goods = [
+        ("good", good["id"])
+        for good in case.goods
+        if (good.get("is_good_controlled") or {"key": None})["key"] == "True"
+    ]
     return destinations + goods
 
 
