@@ -91,12 +91,12 @@ def document_switch(path):
         raise NotImplementedError("document_switch doesn't support this document type")
 
 
-def attach_document_form(application_id, strings, back_link, is_optional):
+def attach_document_form(application_id, strings, back_link, is_file_upload_optional):
     return Form(
         title=strings.TITLE,
         description=strings.DESCRIPTION,
         questions=[
-            FileUpload(optional=is_optional),
+            FileUpload(optional=is_file_upload_optional),
             TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description"),
         ],
         back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
@@ -112,12 +112,12 @@ def attach_document_form(application_id, strings, back_link, is_optional):
     )
 
 
-def end_user_attach_document_form(application_id, strings, back_link, is_optional):
+def end_user_attach_document_form(application_id, strings, back_link, is_file_upload_optional):
     return Form(
         title=strings.TITLE,
         description=strings.DESCRIPTION,
         questions=[
-            FileUpload(optional=is_optional),
+            FileUpload(optional=is_file_upload_optional),
             TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description"),
             RadioButtons(
                 name="is_content_english",
@@ -153,10 +153,10 @@ def get_upload_form(path, draft_id, is_permanent_application=False):
             application_id=draft_id,
             strings=paths["strings"],
             back_link=paths["homepage"],
-            is_optional=(not is_permanent_application),
+            is_file_upload_optional=(not is_permanent_application),
         )
     return attach_document_form(
-        application_id=draft_id, strings=paths["strings"], back_link=paths["homepage"], is_optional=is_document_optional
+        application_id=draft_id, strings=paths["strings"], back_link=paths["homepage"], is_file_upload_optional=is_document_optional
     )
 
 
