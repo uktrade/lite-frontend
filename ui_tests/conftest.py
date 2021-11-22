@@ -48,7 +48,6 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
         print(f"\t {step.keyword.upper()} {step.name}")
 
     try:
-        # TODO: Add feature, scenario, steps
         SCENARIO_HISTORY[feature][scenario]["steps"].append(step)
     except KeyError:
         SCENARIO_HISTORY[feature][scenario] = {
