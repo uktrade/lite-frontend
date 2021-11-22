@@ -43,7 +43,7 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
         if STEP_VERBOSE or STEP_THROUGH:
             print()
             print(f"SCENARIO: {scenario.name}")
-            print(f"STEPS:\n")
+            print(f"STEPS:")
         SCENARIO_HISTORY[feature][scenario] = {}
 
     if STEP_VERBOSE or STEP_THROUGH:
