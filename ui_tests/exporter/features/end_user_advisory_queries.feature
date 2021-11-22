@@ -34,7 +34,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
     And I click post note
     Then I can see my text in the latest case note
     When I click the ECJU Queries tab
-    And I click to respond to the ecju query
+    And I click to respond to the ECJU query
     And I enter "This is my response" for ecju query and click submit
-    And I select "yes" for submitting response and click submit
-    Then I see my ecju query is closed
+    And I select "Confirm and send the response" and click submit
+    Then I see my ECJU query is closed
