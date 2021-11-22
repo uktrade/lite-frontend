@@ -6,7 +6,7 @@ from django.http import StreamingHttpResponse
 from django.conf import settings
 
 from core import client
-from core.parsing import parse_boolean
+from core.helpers import parse_boolean
 from exporter.applications.helpers.date_fields import (
     format_date_fields,
     format_date,
