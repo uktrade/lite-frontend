@@ -1,4 +1,4 @@
-from core.parsing import parse_boolean
+from core.helpers import parse_boolean
 
 
 def test_parse_boolean():
