@@ -470,8 +470,8 @@ def upload_a_file_with_description(driver, filename, description):  # noqa
 
     # Extra selections for end-user
     if "end-user" in driver.current_url:
-        driver.find_element_by_id("is_content_english-true").click()
-        driver.find_element_by_id("includes_company_letterhead-true").click()
+        driver.find_element_by_id("is_content_english-True").click()
+        driver.find_element_by_id("includes_company_letterhead-True").click()
     functions.click_submit(driver)
 
 
