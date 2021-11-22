@@ -1,4 +1,5 @@
 import os
+from time import sleep
 from collections import OrderedDict
 
 import tests_common.tools.helpers as utils
@@ -6,6 +7,7 @@ import tests_common.tools.helpers as utils
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
 STEP_VERBOSE = False  # Print steps as they happen
+STEP_DELAY = 0  # Delay in seconds between steps
 SCENARIO_HISTORY = OrderedDict()
 FEATURE_DIVIDER_LEN = 70
 
@@ -61,6 +63,8 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
 
         IPython.embed(using=False)
 
+    sleep(STEP_DELAY)
+
 
 def pytest_configure(config):
     if config.option.step_through:
@@ -69,6 +73,9 @@ def pytest_configure(config):
     if config.option.step_verbose:
         global STEP_VERBOSE  # pylint: disable=global-statement
         STEP_VERBOSE = config.option.step_verbose
+    if config.option.step_delay:
+        global STEP_DELAY  # pylint: disable=global-statement
+        STEP_DELAY = float(config.option.step_delay)
 
 
 def pytest_addoption(parser):
@@ -81,6 +88,9 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Print each step before executing it"
+    )
+    parser.addoption(
+        "--step-delay", action="store", default=STEP_DELAY, help="Delay in secs between steps"
     )
     if env == "local":
         parser.addoption(
