@@ -122,12 +122,12 @@ def end_user_attach_document_form(application_id, strings, back_link, is_optiona
             RadioButtons(
                 name="is_content_english",
                 title=strings.Q1_TEXT,
-                options=[Option(key="true", value="Yes"), Option(key="false", value="No"),],
+                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
             ),
             RadioButtons(
                 name="includes_company_letterhead",
                 title=strings.Q2_TEXT,
-                options=[Option(key="true", value="Yes"), Option(key="false", value="No"),],
+                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
             ),
         ],
         back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
