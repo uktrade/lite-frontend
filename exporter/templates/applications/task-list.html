@@ -121,7 +121,7 @@
 				{# Product location and journey #}
 				{% if application_type|application_type_in_list:"HAS_PRODUCT_JOURNEY" %}
 					{% url 'applications:location' application.id as product_journey_url %}
-					{% include "includes/task-list-item.html" with id='location' title="Provide product location and journey" url=product_journey_url status=locations|task_list_item_status description=location_description %}
+					{% include "includes/task-list-item.html" with id='product-journey' title="Provide product location and journey" url=product_journey_url status=locations|task_list_item_status description=location_description %}
 				{% endif %}
 
 				{# Countries #}

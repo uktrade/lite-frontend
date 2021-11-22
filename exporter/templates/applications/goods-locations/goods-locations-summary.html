@@ -34,27 +34,27 @@
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">Temporary export details</dt>
 		<dd class="govuk-summary-list__value">{{ application.temp_export_details }}</dd>
-		<dd class="govuk-summary-list__value"></dd>
+		<dd class="govuk-summary-list__actions"></dd>
 	</div>
 
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">Products remain under direct control</dt>
 		<dd class="govuk-summary-list__value">{{ application.is_temp_direct_control|yesno|capfirst }}</dd>
-		<dd class="govuk-summary-list__value"></dd>
+		<dd class="govuk-summary-list__actions"></dd>
 	</div>
 
 	{% if not application.is_temp_direct_control %}
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">Details</dt>
 		<dd class="govuk-summary-list__value">{{ application.temp_direct_control_details }}</dd>
-		<dd class="govuk-summary-list__value"></dd>
+		<dd class="govuk-summary-list__actions"></dd>
 	</div>
 	{% endif %}
 
 	<div class="govuk-summary-list__row">
 		<dt class="govuk-summary-list__key">Proposed return date</dt>
 		<dd class="govuk-summary-list__value">{{ application.proposed_return_date|str_date_only }}</dd>
-		<dd class="govuk-summary-list__value"></dd>
+		<dd class="govuk-summary-list__actions"></dd>
 	</div>
 	{% endif %}
 
@@ -85,5 +85,5 @@
 	</div>
 </dl>
 
-<a href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Submit</a>
+<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Submit</a>
 {% endblock %}
