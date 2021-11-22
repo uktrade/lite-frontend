@@ -239,6 +239,11 @@ urlpatterns = [
         name="end_user_attach_document",
     ),
     path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/document/attach/<int:step>/",
+        documents.AttachDocumentsEndUser.as_view(),
+        name="end_user_attach_document",
+    ),
+    path(
         "<uuid:pk>/end-user/<uuid:obj_pk>/document/download",
         documents.DownloadDocument.as_view(),
         name="end_user_download_document",
