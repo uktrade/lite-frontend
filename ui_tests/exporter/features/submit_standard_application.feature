@@ -7,14 +7,22 @@ Feature: I want to indicate the standard licence I want
   @skip @LT_1091_draft @regression
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     Then I see the application overview
     When I delete the application
 
   @skip @LT_1091_standard @setup @regression
   Scenario: Submit standard application permanent
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    When I click on the "Provide product location and journey" section
+    And I select "Great Britain" for where my goods will begin their export journey
+    And I select "Yes" when asked if the products are being permanently exported
+    And I answer "Yes" for shipping air waybill or lading
+    And I select "To an end-user via a consignee" when asked who the products are going to
+    Then I see the Product location and journey summary
+    When I click continue
     And I click on the "location" section
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
@@ -28,9 +36,6 @@ Feature: I want to indicate the standard licence I want
     And I answer "Yes" for products received under transfer licence from the EU
     And I answer "No" for compliance with the terms of export from the EU
     And I save and continue on the summary page
-    And I click on the "route_of_goods" section
-    And I answer "Yes" for shipping air waybill or lading
-    And I click continue
     And I click on the "goods" section
     And I add a non-incorporated good to the application
     Then the good is added to the application
@@ -55,10 +60,18 @@ Feature: I want to indicate the standard licence I want
     Then I see submitted application
 
   @skip @LT_1091_external @regression
-  Scenario: Submit standard application with external locations and ultimate end users
+  Scenario: Submit standard application with ultimate end users
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
-    When I click on the "goods" section
+    When I create a standard application
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    When I click on the "Provide product location and journey" section
+    And I select "Great Britain" for where my goods will begin their export journey
+    And I select "Yes" when asked if the products are being permanently exported
+    And I answer "Yes" for shipping air waybill or lading
+    And I select "To an end-user via a consignee" when asked who the products are going to
+    Then I see the Product location and journey summary
+    When I click continue
+    And I click on the "goods" section
     And I add an incorporated good to the application
     Then the good is added to the application
     When I click on the "ultimate-end-users" section
@@ -72,16 +85,6 @@ Feature: I want to indicate the standard licence I want
     And I upload a file "file_for_doc_upload_test_1.txt"
     And I remove an ultimate end user so there is one less
     Then there is only one ultimate end user
-    When I click on the "location" section
-    And I select "external" for where my goods are located
-    And I select "new" for whether or not I want a new or existing location to be added
-    And I fill in new external location form with name: "32 Lime Street", address: "London" and country: "Ukraine" and continue
-    And I click on add new address
-    And I fill in new external location form with name: "place", address: "1 Paris Road" and country: "Ukraine" and continue
-    Then I see "2" locations
-    When I click on preexisting locations
-    And I select the location at position "2" in external locations list and continue
-    And I click the back link
     When I click on the "end_user" section
     And I add a party of sub_type: "commercial", name: "Mr Jones", website: " ", address: "London" and country "Ukraine"
     And I upload a file "file_for_doc_upload_test_1.txt"
@@ -111,11 +114,11 @@ Feature: I want to indicate the standard licence I want
     Then I see submitted application
 
   @skip @LT_1074_copy_existing_party @regression
-  Scenario: Submit standard application with external locations and ultimate end users and copy party
+  Scenario: Submit standard application with ultimate end users and copy party
     Given I go to exporter homepage and choose Test Org
     And I create a draft
     And I seed an end user for the draft
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     And I click on the "end_user" section
     And I select that I want to copy an existing party
     When I filter for my previously created end user
@@ -175,7 +178,7 @@ Feature: I want to indicate the standard licence I want
   @skip @LT_1758_standard_temporary_application_with_temporary_export_details @regression
   Scenario: Submit standard application temporary
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "temporary" export type
+    When I create a standard application
     And I click on the "location" section
     And I select "organisation" for where my goods are located
     And I select the site at position "1"
@@ -189,11 +192,15 @@ Feature: I want to indicate the standard licence I want
     And I answer "Yes" for products received under transfer licence from the EU
     And I answer "No" for compliance with the terms of export from the EU
     And I save and continue on the summary page
-    And I click on the "temporary_export_details" section
+    And I click on the "Provide product location and journey" section
+    And I select "Great Britain" for where my goods will begin their export journey
+    And I select "No, this is a temporary export" when asked if the products are being permanently exported
     And I provide details of why my export is temporary
     And I answer "No" for whether the products remain under my direct control
     And I enter the date "18", "09", "2030" when the products will return to the UK
-    And I save and continue on the summary page
+    And I answer "Yes" for shipping air waybill or lading
+    And I select "Directly to the end-user" when asked who the products are going to
+    And I click continue
     And I click on the "route_of_goods" section
     And I answer "Yes" for shipping air waybill or lading
     And I click continue
@@ -240,7 +247,7 @@ Feature: I want to indicate the standard licence I want
   @skip @LTD_361_Review_when_importing_existing_product @regression
   Scenario: Review product details when importing existing product, update description and add it to the application
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     When I click on the "goods" section
     And I choose to add a product from product list
     And I choose to review the product details of product "1"
@@ -254,7 +261,7 @@ Feature: I want to indicate the standard licence I want
   @firearms @skip @LTD_398_Add_a_new_firearm_product @regression
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "firearm"
@@ -281,7 +288,7 @@ Feature: I want to indicate the standard licence I want
   @firearms @skip @LTD_375_Add_a_new_firearm_product_ammunition_component @regression
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application that is not covered by Firearms Act
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "component_for_ammunition"
@@ -306,7 +313,7 @@ Feature: I want to indicate the standard licence I want
   @firearms @skip @LTD_398_Add_a_new_firearm_accessory @regression
   Scenario: Add a new Firearm product of type firearms accesory to the application
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "firearm_accessory"
@@ -325,7 +332,7 @@ Feature: I want to indicate the standard licence I want
   @firearms @skip @LTD_398_Add_a_new_software_related_to_firearm_product @regression
   Scenario: Add a new Software relating to a Firearm product to the application
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "software_for_firearm"
@@ -342,7 +349,7 @@ Feature: I want to indicate the standard licence I want
   @firearms @skip @LTD_398_Add_a_new_firearm_product_and_check_edit @regression
   Scenario: Add a new Firearm product and check if we can edit fields from summary screen
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "firearm"
@@ -369,7 +376,7 @@ Feature: I want to indicate the standard licence I want
   @skip @LTD_398_Add_a_new_firearm_accessory_and_check_edit @regression
   Scenario: Add a new Firearm accessory and check if we can edit fields from summary screen
     Given I go to exporter homepage and choose Test Org
-    When I create a standard application of a "permanent" export type
+    When I create a standard application
     When I click on the "goods" section
     And I choose to add a new product
     And I select product type "firearm_accessory"
