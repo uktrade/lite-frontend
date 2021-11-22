@@ -32,7 +32,7 @@ from core.auth.views import LoginRequiredMixin
 
 
 def document_switch(path):
-    # TODO: Let's remove this turd by creating separate views instead.
+    # TODO: Let's remove this by creating separate views instead.
     if "ultimate-end-user" in path:
         return {
             "optional": True,
