@@ -1,23 +1,30 @@
 import os
+from time import sleep
 from collections import OrderedDict
 
 import tests_common.tools.helpers as utils
+from ui_tests.step_defs import *
 
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
+STEP_VERBOSE = False  # Print steps as they happen
+STEP_DELAY = 0  # Delay in seconds between steps
 SCENARIO_HISTORY = OrderedDict()
 FEATURE_DIVIDER_LEN = 70
 
 
 def print_scenario_history(entry):
-    scenario = entry["scenario"]
-    steps = entry["steps"]
-    print("*******************************************\n")
-    print(f"FEATURE:  {scenario.feature.description}\n")
-    print(f"SCENARIO: {scenario.name}\n")
-    for step in steps:
-        print(f"\t{step.keyword.upper()} {step.name}")
-    print("\n*******************************************")
+    try:
+        scenario = entry["scenario"]
+        steps = entry["steps"]
+        print("*******************************************\n")
+        print(f"FEATURE:  {scenario.feature.description}\n")
+        print(f"SCENARIO: {scenario.name}\n")
+        for step in steps:
+            print(f"\t{step.keyword.upper()} {step.name}")
+        print("\n*******************************************")
+    except KeyError:
+        pass
 
 
 def print_scenario_history_last_entry():
@@ -29,22 +36,24 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
     Runs before each step
     """
     if feature not in SCENARIO_HISTORY:
-        print()
-        print("*"*FEATURE_DIVIDER_LEN)
-        print()
-        print(f"FEATURE: {scenario.feature.description}")
+        if STEP_VERBOSE or STEP_THROUGH:
+            print()
+            print("*"*FEATURE_DIVIDER_LEN)
+            print()
+            print(f"FEATURE: {scenario.feature.description}")
         SCENARIO_HISTORY[feature] = {}
 
     if scenario not in SCENARIO_HISTORY[feature]:
-        print()
-        print(f"SCENARIO: {scenario.name}")
-        print(f"STEPS:\n")
+        if STEP_VERBOSE or STEP_THROUGH:
+            print()
+            print(f"SCENARIO: {scenario.name}")
+            print(f"STEPS:")
         SCENARIO_HISTORY[feature][scenario] = {}
 
-    print(f"\t {step.keyword.upper()} {step.name}")
+    if STEP_VERBOSE or STEP_THROUGH:
+        print(f"\t {step.keyword.upper()} {step.name}")
 
     try:
-        # TODO: Add feature, scenario, steps
         SCENARIO_HISTORY[feature][scenario]["steps"].append(step)
     except KeyError:
         SCENARIO_HISTORY[feature][scenario] = {
@@ -58,11 +67,19 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
 
         IPython.embed(using=False)
 
+    sleep(STEP_DELAY)
+
 
 def pytest_configure(config):
     if config.option.step_through:
         global STEP_THROUGH  # pylint: disable=global-statement
         STEP_THROUGH = config.option.step_through
+    if config.option.step_verbose:
+        global STEP_VERBOSE  # pylint: disable=global-statement
+        STEP_VERBOSE = config.option.step_verbose
+    if config.option.step_delay:
+        global STEP_DELAY  # pylint: disable=global-statement
+        STEP_DELAY = float(config.option.step_delay)
 
 
 def pytest_addoption(parser):
@@ -72,6 +89,12 @@ def pytest_addoption(parser):
     parser.addoption("--headless", action="store_true", default=False)
     parser.addoption(
         "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
+    )
+    parser.addoption(
+        "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Print each step before executing it"
+    )
+    parser.addoption(
+        "--step-delay", action="store", default=STEP_DELAY, help="Delay in secs between steps"
     )
     if env == "local":
         parser.addoption(
