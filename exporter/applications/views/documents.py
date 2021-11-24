@@ -226,14 +226,15 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
     def get(self, request, **kwargs):
         self.init(request, **kwargs)
         step = kwargs.get("step", 1)
-        form = self.get_form(index=step)
+        form = self.get_form_by_index(step)
         return form_page(
             request, form, data=self.get_data(), extra_data={"form_pk": form.pk, **self.additional_context}
         )
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
-        form = self.get_form(0)  # First form
+        step = kwargs.get("step", 1)
+        form = self.get_form_by_index(step)  # First form
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
 
@@ -272,6 +273,7 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
                         "pk": str(kwargs["pk"]),
                         "obj_pk": str(kwargs["obj_pk"]),
                     })
+                    # TODO: Redirect to next form
                     return redirect(url)
 
             return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
