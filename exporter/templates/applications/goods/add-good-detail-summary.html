@@ -348,9 +348,9 @@
 					</dt>
 					<dd class="govuk-summary-list__value">
 						{% if good.firearm_details.has_identification_markings is not None %}
-								{{ good.firearm_details.has_identification_markings|friendly_boolean }}
+								{{ good.firearm_details.has_identification_markings|identification_markings_status }}
 								<span class="govuk-hint">
-									{% if good.firearm_details.has_identification_markings is False %}
+									{% if good.firearm_details.has_identification_markings == "no" %}
 										{{ good.firearm_details.no_identification_markings_details|default_na }}
 									{% endif %}
 								</span>
@@ -363,7 +363,7 @@
 					</dd>
 				</div>
 
-				{% if good.firearm_details.has_identification_markings %}
+				{% if good.firearm_details.has_identification_markings == "yes_available" %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							Serial numbers

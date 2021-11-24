@@ -158,3 +158,10 @@ def test_pluralise_quantity(good_on_app, quantity_display):
 )
 def test_highlight_text_sanitization(input, term, expected):
     assert expected == highlight_text(input, term)
+
+
+@pytest.mark.parametrize(
+    "input,expected", [("yes_available", "Yes"), ("yes_later", "Yes, add later"), ("no", "No"), ("anything_else", ""),],
+)
+def test_identification_markings_status(input, expected):
+    assert expected == custom_tags.identification_markings_status(input)
