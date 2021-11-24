@@ -141,6 +141,9 @@ class SingleFormView(FormView):
 class MultiFormView(FormView):
     """
     Takes a FormGroup as a parameter and handles getting and posting to forms in the group using supplied values.
+
+    Interface:
+        init(): Called on every GET and POST request prior to post() and get()
     """
 
     forms: FormGroup = None
