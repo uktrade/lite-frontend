@@ -164,22 +164,18 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
-    def get_form(self, form_pk=None, index=None):
+    def get_form_by_index(self, index):
+        for form in forms:
+            if form.index == index:
+                return form
+        valid_indice = [f.index for f in forms]
+        raise NoMatchingForm(f"No form with index {index}. Valid indice: {valid_indice}")
+
+    def get_form(self, form_pk):
         """
         Get form in group based on form_pk OR index
         """
         forms = self.forms.get_forms()
-
-        if (form_pk and index) or (not form_pk and not index):
-            raise Exception("You should get a form by either form_pk or index")
-
-        if index:
-            for form in forms:
-                if form.index == index:
-                    return form
-            valid_indice = [f.index for f in forms]
-            raise NoMatchingForm(f"No form with index {index}. Valid indice: {valid_indice}")
-
         if len(forms) < (form_pk + 1):
             raise AttributeError("Form index exceeds the number of forms in the form group")
         return forms[form_pk]
