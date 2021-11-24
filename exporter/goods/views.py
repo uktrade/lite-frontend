@@ -988,8 +988,7 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         draft_pk = str(kwargs.get("draft_pk", ""))
         good_id = str(kwargs["pk"])
         back_link = BackLink(
-            AttachDocumentForm.BACK_FORM_LINK,
-            reverse("goods:check_document_sensitivity", kwargs={"pk": good_id}),
+            AttachDocumentForm.BACK_FORM_LINK, reverse("goods:check_document_sensitivity", kwargs={"pk": good_id}),
         )
 
         data, error = add_document_data(request)
