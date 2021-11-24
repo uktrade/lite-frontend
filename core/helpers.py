@@ -19,3 +19,12 @@ def convert_value_to_query_param(key: str, value):
     if value is None:
         return ""
     return urlencode({key: value}, doseq=True, quote_via=dummy_quote)
+
+
+def parse_boolean(value):
+    if isinstance(value, str):
+        if value.lower() in ("yes", "true"):
+            return True
+        else:
+            return False
+    return value

@@ -1,4 +1,5 @@
 import copy
+from core.helpers import cached_property, cache
 from abc import ABC
 from typing import List
 
@@ -20,6 +21,7 @@ from lite_forms.helpers import (
     validate_data_unknown,
 )
 from lite_forms.submitters import submit_paged_form
+from lite_forms.exceptions import NoMatchingForm
 
 ACTION = "_action"
 VALIDATE_ONLY = "validate_only"
@@ -45,14 +47,6 @@ class FormView(TemplateView, ABC):
     object_pk = None
     success_url: str = ""
     success_message: str = ""
-
-    def parse_boolean(self, value):
-        if isinstance(value, str):
-            if value.lower() in ("yes", "true"):
-                return True
-            else:
-                return False
-        return value
 
     def get_data(self):
         data = getattr(self, "data", {})
@@ -164,8 +158,17 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
-    def get_form(self, form_pk):
-        forms = self.forms.get_forms()
+    def get_form(self, identifier):
+        """
+        Get form in group based on form_pk OR index
+        """
+        form_group = self.forms
+
+        if isinstance(identifier, str):
+            return form_group.get_form(identifier)
+
+        form_pk = identifier
+        forms = form_group.get_forms()
         if len(forms) < (form_pk + 1):
             raise AttributeError("Form index exceeds the number of forms in the form group")
         return forms[form_pk]

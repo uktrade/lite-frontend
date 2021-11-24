@@ -3,7 +3,9 @@ from enum import Enum
 from django.conf import settings
 from typing import List, Optional, Dict, Set
 
+from core.helpers import cached_property, cache
 from lite_forms.styles import ButtonStyle
+from lite_forms.exceptions import NoMatchingForm
 
 
 class _Component:
@@ -64,14 +66,70 @@ class FormGroup:
     """
     Container for multiple forms
     Automatically adds IDs to all forms to make it easier to reference them
+
+    Example:
+        forms = FormGroup([
+            form1,
+            form2,
+        ])
+        forms.first == form1
+        form1.next == form2
+
     """
 
+    MAX_FORMS = 32
+
     def __init__(self, forms: list, show_progress_indicators=False):
+        if len(forms) > self.MAX_FORMS:
+            raise Exception(f"Too many forms: Max is set to {self.MAX_FORMS}")
         self._forms = forms
         self.show_progress_indicators = show_progress_indicators
 
         self.update_progress_indicators()
         self.update_pks()
+
+        # Store by alias
+        self._form_by_alias = {}
+        for form in forms:
+            alias = getattr(form, "alias", None)
+            if alias:
+                assert (
+                    form.alias not in self._form_by_alias
+                ), f"Existing form found for alias '{alias}'. Every form must have a unique alias"
+                self._form_by_alias[form.alias] = form
+
+        # Add references to previous and next form
+        for i, form in enumerate(forms):
+            if form:  # sometimes is None
+                try:
+                    form.next = forms[i + 1]
+                except IndexError:
+                    form.next = None
+
+                if i == 0:
+                    form.prev = None
+                else:
+                    try:
+                        form.prev = forms[i - 1]
+                    except IndexError:
+                        form.prev = None
+
+    def __len__(self):
+        return len(self._forms)
+
+    def __iter__(self):
+        yield from self._forms
+
+    @property
+    def first(self):
+        return self._forms[0]
+
+    @property
+    def last(self):
+        return self._forms[-1]
+
+    def get_form(self, alias):
+        return self._form_by_alias[alias]
 
     def get_forms(self):
         return [x for x in self._forms if x is not None]
@@ -148,12 +206,14 @@ class Form:
         back_link=BackLink(),
         post_url=None,
         container: str = "two-pane",
+        alias=None,
+        url=None,
     ):
         from lite_forms.helpers import convert_to_markdown, heading_used_as_label
 
         self.title = title
         self.description = convert_to_markdown(description)
-        self.questions = questions
+        self.questions = questions or []
         self.caption = caption
         self.helpers = helpers
         self.footer_label = footer_label
@@ -165,6 +225,8 @@ class Form:
         self.post_url = post_url
         self.single_form_element = heading_used_as_label(questions)
         self.container = container
+        self.alias = alias
+        self.url = url
         from lite_forms.helpers import get_all_form_components
 
         if self.questions:
@@ -174,6 +236,14 @@ class Form:
 
     def __str__(self):
         return f'{self.__class__.__module__}.{self.__class__.__name__}(title="{self.title}")'
+
+    def __repr__(self):
+        type_ = type(self)
+        module = type_.__module__
+        qualname = type_.__qualname__
+        if self.alias:
+            return f"<{module}.{qualname}(alias={self.alias}) object at {hex(id(self))}>"
+        return f"<{module}.{qualname} object at {hex(id(self))}>"
 
 
 class DetailComponent:
