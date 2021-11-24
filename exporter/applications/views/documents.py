@@ -191,6 +191,7 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
     # attach = post_party_document
     # download = get_party_document
     # delete = delete_party_document
+
     def _get_form1(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
@@ -220,13 +221,19 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
         self.forms = FormGroup(forms=[
             self._get_form1(request, **kwargs),
         ])
-        self.action = self.post
-        # self.data = {"export_type": PERMANENT}
+
+    def get(self, request, **kwargs):
+        self.init(request, **kwargs)
+        form = self.get_form(0)  # First form
+        return form_page(
+            request, form, data=self.get_data(), extra_data={"form_pk": form.pk, **self.additional_context}
+        )
 
     def post(self, request, **kwargs):
+        self.init(request, **kwargs)
+        form = self.get_form(0)  # First form
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
-        form = self._get_form1(request, **kwargs)
 
         try:
             files = request.FILES
