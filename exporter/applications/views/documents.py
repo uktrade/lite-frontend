@@ -27,7 +27,8 @@ from exporter.applications.services import (
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page, confirm_form
 from lite_content.lite_exporter_frontend.applications import DeletePartyDocumentForm
-from lite_forms.components import Form, FileUpload, Label, TextArea, BackLink, Option, RadioButtons
+from lite_forms.components import Form, FormGroup, FileUpload, Label, TextArea, BackLink, Option, RadioButtons
+from lite_forms.views import MultiFormView
 from core.auth.views import LoginRequiredMixin
 
 
@@ -41,15 +42,6 @@ def document_switch(path):
             "delete": delete_party_document,
             "homepage": "applications:ultimate_end_users",
             "strings": strings.UltimateEndUser.Documents.AttachDocuments,
-        }
-    elif "end-user" in path:
-        return {
-            "optional": True,
-            "attach": post_party_document,
-            "download": get_party_document,
-            "delete": delete_party_document,
-            "homepage": "applications:end_user",
-            "strings": strings.EndUser.Documents.AttachDocuments,
         }
     elif "consignee" in path:
         return {
@@ -112,29 +104,6 @@ def attach_document_form(application_id, strings, back_link, is_file_upload_opti
     )
 
 
-def end_user_attach_document_form(application_id, strings, back_link, is_file_upload_optional):
-    return Form(
-        title=strings.TITLE,
-        description=strings.DESCRIPTION,
-        questions=[
-            FileUpload(optional=is_file_upload_optional),
-            TextArea(title=strings.DESCRIPTION_FIELD_TITLE, optional=True, name="description"),
-            RadioButtons(
-                name="is_content_english",
-                title=strings.Q1_TEXT,
-                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
-            ),
-            RadioButtons(
-                name="includes_company_letterhead",
-                title=strings.Q2_TEXT,
-                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
-            ),
-        ],
-        back_link=BackLink(strings.BACK, reverse_lazy(back_link, kwargs={"pk": application_id})),
-        default_button_name=strings.BUTTON_TEXT,
-    )
-
-
 def delete_document_confirmation_form(overview_url, strings):
     return confirm_form(
         title=DeletePartyDocumentForm.TITLE,
@@ -148,13 +117,6 @@ def get_upload_form(path, draft_id, is_permanent_application=False):
     paths = document_switch(path=path)
     is_document_optional = paths["optional"]
     # For standard permanent only - upload is mandatory
-    if "/end-user" in path:
-        return end_user_attach_document_form(
-            application_id=draft_id,
-            strings=paths["strings"],
-            back_link=paths["homepage"],
-            is_file_upload_optional=(not is_permanent_application),
-        )
     return attach_document_form(
         application_id=draft_id, strings=paths["strings"], back_link=paths["homepage"], is_file_upload_optional=is_document_optional
     )
@@ -224,8 +186,89 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         return get_homepage(request, draft_id)
 
 
-class AttachDocumentsEndUser(AttachDocuments):
-    pass
+class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
+    # optional = True
+    # attach = post_party_document
+    # download = get_party_document
+    # delete = delete_party_document
+    def _get_form1(self, request, **kwargs):
+        draft_id = str(kwargs["pk"])
+        application = get_application(request, draft_id)
+        application = get_application(request, draft_id)
+        is_permanent_application = is_application_export_type_permanent(application)  # ONLY USED ON POST
+        return Form(
+            title=strings.EndUser.Documents.AttachDocuments.TITLE,
+            description=strings.EndUser.Documents.AttachDocuments.DESCRIPTION,
+            questions=[
+                FileUpload(optional=(not is_permanent_application)),
+                TextArea(title=strings.EndUser.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE, optional=True, name="description"),
+                RadioButtons(
+                    name="is_content_english",
+                    title=strings.EndUser.Documents.AttachDocuments.Q1_TEXT,
+                    options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
+                ),
+                RadioButtons(
+                    name="includes_company_letterhead",
+                    title=strings.EndUser.Documents.AttachDocuments.Q2_TEXT,
+                    options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
+                ),
+            ],
+            back_link=BackLink(strings.EndUser.Documents.AttachDocuments.BACK, reverse_lazy("applications:end_user", kwargs={"pk": draft_id})),
+            default_button_name=strings.EndUser.Documents.AttachDocuments.BUTTON_TEXT,
+        )
+
+    def init(self, request, **kwargs):
+        self.forms = FormGroup(forms=[
+            self._get_form1(request, **kwargs),
+        ])
+        self.action = self.post
+        # self.data = {"export_type": PERMANENT}
+
+    def post(self, request, **kwargs):
+        draft_id = str(kwargs["pk"])
+        application = get_application(request, draft_id)
+        form = self._get_form1(request, **kwargs)
+
+        try:
+            files = request.FILES
+        except Exception:  # noqa
+            return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
+
+        # Only validate documents if there are any present or are mandatory in the following cases:
+        # standard permanent application end user section, additional documents section
+        if (
+            files
+            or ("/end-user" in request.path and is_application_export_type_permanent(application))
+            or "additional-document" in request.path
+        ):
+            logging.info(self.request)
+            data, error = add_document_data(request)
+
+            if error:
+                return form_page(request, form, extra_data={"draft_id": draft_id}, errors={"documents": [error]})
+
+            action = post_party_document
+            if len(signature(action).parameters) == 3:
+                # 3 params
+                _, status_code = action(request, draft_id, data)
+                if status_code == HTTPStatus.CREATED:
+                    url = reverse("applications:end_user", kwargs={
+                        "pk": str(kwargs["pk"]),
+                    })
+                    return redirect(url)
+            else:
+                # 4 params
+                _, status_code = action(request, draft_id, kwargs["obj_pk"], data)
+                if status_code == HTTPStatus.CREATED:
+                    url = reverse("applications:end_user", kwargs={
+                        "pk": str(kwargs["pk"]),
+                        "obj_pk": str(kwargs["obj_pk"]),
+                    })
+                    return redirect(url)
+
+            return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
+
+        return get_homepage(request, draft_id)
 
 
 class DownloadDocument(LoginRequiredMixin, TemplateView):
