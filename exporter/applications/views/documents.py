@@ -194,7 +194,6 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
     def _get_form1(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
-        application = get_application(request, draft_id)
         is_permanent_application = is_application_export_type_permanent(application)  # ONLY USED ON POST
         return Form(
             title=strings.EndUser.Documents.AttachDocuments.TITLE,
