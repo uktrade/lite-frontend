@@ -215,6 +215,7 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
             ],
             back_link=BackLink(strings.EndUser.Documents.AttachDocuments.BACK, reverse_lazy("applications:end_user", kwargs={"pk": draft_id})),
             default_button_name=strings.EndUser.Documents.AttachDocuments.BUTTON_TEXT,
+            index=1,
         )
 
     def init(self, request, **kwargs):
@@ -224,7 +225,8 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
 
     def get(self, request, **kwargs):
         self.init(request, **kwargs)
-        form = self.get_form(0)  # First form
+        step = kwargs.get("step", 1)
+        form = self.get_form(index=step)
         return form_page(
             request, form, data=self.get_data(), extra_data={"form_pk": form.pk, **self.additional_context}
         )
