@@ -19,6 +19,35 @@ def url(data_queue, data_standard_case):
     )
 
 
+@pytest.fixture(params=(None, "cd2263b4-a427-4f14-8552-505e1d192bb8"))
+def advice(request, current_user):
+    """This is a parametrized fixture that returns advice for 1/2 destinations
+    followed by advice for both destinations. Nothing clever here, for the former,
+    we just miss the consignee while keeping everything else the same.
+    """
+    return [
+        {
+            "consignee": request.param,
+            "country": None,
+            "created_at": "2021-10-16T23:48:39.486679+01:00",
+            "denial_reasons": [],
+            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+            "footnote": "footnotes",
+            "good": good_id,
+            "id": "429c5596-fe8b-4540-988b-c37805cd08de",
+            "level": "user",
+            "note": "additional notes",
+            "proviso": "no conditions",
+            "text": "meets the criteria",
+            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+            "type": {"key": "proviso", "value": "Proviso"},
+            "ultimate_end_user": None,
+            "user": current_user,
+        }
+        for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
+    ]
+
+
 def test_view_approve_advice_with_conditions_notes_and_nlr_products(
     authorized_client, requests_mock, data_standard_case, standard_case_with_advice, url
 ):
@@ -119,3 +148,26 @@ def test_view_refusal_advice_not_including_nlr_products(
     assert [case_data["case"]["data"]["goods"][1]["good"]["name"]] == [
         column.text for column in nlr_table_rows[1].find_all("td")
     ]
+
+
+def test_move_case_forward(authorized_client, requests_mock, data_standard_case, queue_pk, advice, url):
+    data_standard_case["case"]["advice"] = advice
+    case_id = data_standard_case["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov_users/{case_id}"),
+        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+    )
+    requests_mock.put(client._build_absolute_uri(f"/cases/{case_id}/assigned-queues/"), json={"queues": [queue_pk]})
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    advice_completed = advice.pop()["consignee"] is not None
+    assert response.context["advice_completed"] == advice_completed
+    # Check if the MoveCaseForwardForm is rendered only when advice_completed
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert len(soup.find_all("form")) == (1 if advice_completed else 0)
+    # We do not show the "Move Case Forward" button in the template when advice_completed
+    # is False but we haven't put any checks on the server that stops this, which is why
+    # the following works whether advice_completed is True or not -
+    response = authorized_client.post(url)
+    assert response.status_code == 302

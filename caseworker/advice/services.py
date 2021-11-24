@@ -1,3 +1,5 @@
+from requests.exceptions import HTTPError
+
 from core import client
 from caseworker.cases.services import put_case_queues
 
@@ -48,7 +50,11 @@ def get_advice_subjects(case, countries=None):
             if dest["country"]["id"] not in countries:
                 continue
         destinations.append((dest["type"], dest["id"]))
-    goods = [("good", good["id"]) for good in case.goods if good["is_good_controlled"]["key"] == "True"]
+    goods = [
+        ("good", good["id"])
+        for good in case.goods
+        if (good.get("is_good_controlled") or {"key": None})["key"] == "True"
+    ]
     return destinations + goods
 
 
@@ -124,3 +130,15 @@ def countersign_advice(request, case, caseworker, formset_data):
         put_case_queues(request, case_pk, json={"queues": queues})
 
     return response.json(), response.status_code
+
+
+def move_case_forward(request, case_id, queue_id):
+    """This utility function calls the /assigned-queues/ endpoint in the API.
+    In turn, /assigned-queues/ runs the routing rules and moves the case forward.
+    """
+    response = client.put(request, f"/cases/{case_id}/assigned-queues/", {"queues": [queue_id]})
+    try:
+        response.raise_for_status()
+    except HTTPError as e:
+        raise HTTPError(response=response) from e
+    return response.json()

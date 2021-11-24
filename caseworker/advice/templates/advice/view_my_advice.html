@@ -5,6 +5,20 @@
 <div class="govuk-width-container">
     <a href="#" class="govuk-back-link">Back</a>
     <main class="govuk-main-wrapper">
+        {% for error in form.non_field_errors %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+          <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+          </h2>
+          <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+              <li>
+                {{ error }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        {% endfor %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-three-quarters">
               <h1 class="govuk-heading-xl">View Advice</h1>
@@ -29,13 +43,8 @@
               {% endif %}
             </div>
             <div class="govuk-grid-column-one-quarter">
-              {% if my_advice|length %}
-                <a role="button" draggable="false" class="govuk-button" href="#move-forward">
-                    Move case forward
-                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
-                      <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-                    </svg>
-                </a>
+              {% if my_advice|length and advice_completed %}
+                {% crispy form %}
               {% endif %}
             </div>
         </div>
