@@ -165,6 +165,7 @@ class MultiFormView(FormView):
         super().init(request, **kwargs)
 
     def get_form_by_index(self, index):
+        forms = self.forms.get_forms()
         for form in forms:
             if form.index == index:
                 return form
