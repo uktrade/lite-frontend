@@ -86,7 +86,8 @@ class FormGroup:
         if self.show_progress_indicators:
             for form in self.forms:
                 if form:
-                    form.index = index
+                    if not getattr(self, "index"):
+                        form.index = index
                     form.caption = f"Step {index + 1} of {len(self.forms)}"
                     index += 1
 
@@ -149,6 +150,7 @@ class Form:
         back_link=BackLink(),
         post_url=None,
         container: str = "two-pane",
+        index=None,
     ):
         from lite_forms.helpers import convert_to_markdown, heading_used_as_label
 
@@ -166,6 +168,7 @@ class Form:
         self.post_url = post_url
         self.single_form_element = heading_used_as_label(questions)
         self.container = container
+        self.index = None
         from lite_forms.helpers import get_all_form_components
 
         if self.questions:
