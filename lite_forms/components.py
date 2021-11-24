@@ -168,7 +168,7 @@ class Form:
         self.post_url = post_url
         self.single_form_element = heading_used_as_label(questions)
         self.container = container
-        self.index = None
+        self.index = index
         from lite_forms.helpers import get_all_form_components
 
         if self.questions:
