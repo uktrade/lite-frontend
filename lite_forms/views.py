@@ -25,6 +25,11 @@ ACTION = "_action"
 VALIDATE_ONLY = "validate_only"
 
 
+class NoMatchingForm(Exception):
+    """ Raised when form can't be retrieved for some reason"""
+    pass
+
+
 class Actions:
     SUBMIT = "submit"
     RETURN = "return"
@@ -159,8 +164,22 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
-    def get_form(self, form_pk):
+    def get_form(self, form_pk=None, index=None):
+        """
+        Get form in group based on form_pk OR index
+        """
         forms = self.forms.get_forms()
+
+        if (form_pk and index) or (not form_pk and not index):
+            raise Exception("You should get a form by either form_pk or index")
+
+        if index:
+            for form in forms:
+                if form.index == index:
+                    return form
+            valid_indice = [f.index for f in forms]
+            raise NoMatchingForm(f"No form with index {index}. Valid indice: {valid_indice}")
+
         if len(forms) < (form_pk + 1):
             raise AttributeError("Form index exceeds the number of forms in the form group")
         return forms[form_pk]
