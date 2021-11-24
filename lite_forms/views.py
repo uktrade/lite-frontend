@@ -1,4 +1,5 @@
 import copy
+from core.helpers import cached_property, cache
 from abc import ABC
 from typing import List
 
@@ -20,6 +21,7 @@ from lite_forms.helpers import (
     validate_data_unknown,
 )
 from lite_forms.submitters import submit_paged_form
+from lite_forms.exceptions import NoMatchingForm
 
 ACTION = "_action"
 VALIDATE_ONLY = "validate_only"
@@ -141,6 +143,11 @@ class SingleFormView(FormView):
 class MultiFormView(FormView):
     """
     Takes a FormGroup as a parameter and handles getting and posting to forms in the group using supplied values.
+
+    Assuming the Form instances in the FormGroup have been given an index, you can use things like next_form, indexes, etc.
+
+    Interface:
+        init(): Called on every GET and POST request prior to post() and get()
     """
 
     forms: FormGroup = None
@@ -156,8 +163,16 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
-    def get_form(self, form_pk):
-        forms = self.forms.get_forms()
+    def get_form(self, identifier):
+        """
+        Get form in group based on form_pk OR index
+        """
+        forms = self.forms
+
+        if isinstance(identifier, str):
+            return forms.get_form(identifier)
+
+        form_pk = identifier
         if len(forms) < (form_pk + 1):
             raise AttributeError("Form index exceeds the number of forms in the form group")
         return forms[form_pk]
