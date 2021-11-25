@@ -3,6 +3,7 @@ from time import sleep
 from collections import OrderedDict
 
 import tests_common.tools.helpers as utils
+from ui_tests.step_defs import *
 
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
