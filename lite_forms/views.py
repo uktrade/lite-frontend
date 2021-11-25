@@ -174,14 +174,14 @@ class MultiFormView(FormView):
         """
         Return: all indexes for **indexed** forms (aka given an index explicitly)
         """
-        return [f.index for f in self.forms.get_forms()]
+        return [f.index for f in self.forms]
 
     @cache(MAX_FORMS)
     def next_form(self, current_index):
         """
         Return: the next form in the collection or None if end is reached
         """
-        for i, form in enumerate(self.forms.get_forms()):
+        for i, form in enumerate(self.forms):
             if not hasattr(form, "index"):
                 raise Exception(f"Form missing index: {form}")
             if form.index == current_index:
@@ -193,7 +193,7 @@ class MultiFormView(FormView):
 
     @cache(MAX_FORMS)
     def get_form_by_index(self, index):
-        for form in self.forms.get_forms():
+        for form in self.forms:
             if form.index == index:
                 return form
         raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
@@ -202,7 +202,7 @@ class MultiFormView(FormView):
         """
         Get form in group based on form_pk OR index
         """
-        forms = self.forms.get_forms()
+        forms = self.forms
         if len(forms) < (form_pk + 1):
             raise AttributeError("Form index exceeds the number of forms in the form group")
         return forms[form_pk]
