@@ -35,6 +35,11 @@ run_ui_tests:
 	PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -vv ./ui_tests/caseworker
 	PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -vv ./ui_tests/exporter
 
+run_all_unit_tests:
+	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest ./unit_tests/caseworker --cov=. --cov-config=.coveragerc --cov-report=html
+	PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest ./unit_tests/exporter --cov=. --cov-config=.coveragerc --cov-report=html
+	PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest ./unit_tests/core --cov=. --cov-config=.coveragerc --cov-report=html -vv $(ARGUMENTS)
+
 run_all_tests:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest ./unit_tests/caseworker --cov=. --cov-config=.coveragerc --cov-report=html
 	PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest ./unit_tests/exporter --cov=. --cov-config=.coveragerc --cov-report=html
@@ -45,3 +50,5 @@ run_all_tests:
 secrets:
 	cp example.caseworker.env caseworker.env
 	cp example.exporter.env exporter.env
+
+.PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
