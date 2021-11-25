@@ -102,7 +102,7 @@ class FormGroup:
                 raise Exception(f"Form missing index: {form}")
             if form.index == current_index:
                 try:
-                    return forms[i+1]
+                    return self._forms[i+1]
                 except IndexError:
                     return None
         raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
