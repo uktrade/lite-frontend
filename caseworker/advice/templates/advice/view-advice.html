@@ -16,6 +16,7 @@
   <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
   {% endif %}
 
+{% if not hide_advice %}
 <h2 class="govuk-heading-m">Other recommendations for this case</h2>
 
 {% for team_advice in grouped_advice %}
@@ -55,6 +56,7 @@
 		{% endfor %}
 	</details>
 {% endfor %}
+{% endif %}
 
 {% else %}
 <h2 class="govuk-heading-m">There is no advice for this case yet</h2>
