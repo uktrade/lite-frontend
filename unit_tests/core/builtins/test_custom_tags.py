@@ -1,6 +1,6 @@
 import pytest
 from core.builtins import custom_tags
-from core.builtins.custom_tags import highlight_text
+from core.builtins.custom_tags import highlight_text, verbose_goods_starting_point
 from exporter.core import constants
 from exporter.core.objects import Application
 
@@ -158,3 +158,11 @@ def test_pluralise_quantity(good_on_app, quantity_display):
 )
 def test_highlight_text_sanitization(input, term, expected):
     assert expected == highlight_text(input, term)
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [("GB", "Great Britain"), ("NI", "Northern Ireland"), ("", ""), (None, ""), ("Somewhere else", ""),],
+)
+def test_verbose_goods_starting_point(value, expected):
+    assert expected == verbose_goods_starting_point(value)

@@ -904,3 +904,11 @@ def divide(value, other):
 def full_name(user):
     user = user or {}
     return f"{user.get('first_name', '')} {user.get('last_name', '')}"
+
+
+@register.filter
+def verbose_goods_starting_point(value):
+    goods_starting_points = {"GB": "Great Britain", "NI": "Northern Ireland"}
+    if value:
+        goods_starting_points.get(value, "")
+    return ""
