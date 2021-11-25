@@ -910,3 +910,14 @@ def full_name(user):
 def identification_markings_status(has_markings):
     message = {"yes_available": "Yes", "yes_later": "Yes, add later", "no": "No"}
     return message.get(has_markings, "")
+
+
+@register.filter
+def verbose_goods_starting_point(value):
+    goods_starting_points = {"GB": "Great Britain", "NI": "Northern Ireland"}
+    if value:
+        try:
+            return goods_starting_points[value]
+        except KeyError:
+            pass
+    return ""
