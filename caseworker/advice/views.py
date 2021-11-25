@@ -374,4 +374,6 @@ class CountersignAdviceView(AdviceView):
 
 class ConsolidateAdviceView(AdviceView):
     def get_context(self, **kwargs):
-        return {**super().get_context(**kwargs), "consolidate": True}
+        # For LU, we do not want to show the advice summary
+        hide_advice = self.caseworker["team"]["name"] == "Licensing Unit"
+        return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
