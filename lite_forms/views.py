@@ -150,8 +150,6 @@ class MultiFormView(FormView):
         init(): Called on every GET and POST request prior to post() and get()
     """
 
-    MAX_FORMS = 32
-
     forms: FormGroup = None
     additional_context: dict = {}
     hide_unused_errors = True
@@ -165,34 +163,11 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
-    @cached_property
-    def indexes(self):
-        """
-        Return: all indexes for **indexed** forms (aka given an index explicitly)
-        """
-        return [f.index for f in self.forms]
-
-    @cache(MAX_FORMS)
     def next_form(self, current_index):
-        """
-        Return: the next form in the collection or None if end is reached
-        """
-        for i, form in enumerate(self.forms):
-            if not hasattr(form, "index"):
-                raise Exception(f"Form missing index: {form}")
-            if form.index == current_index:
-                try:
-                    return forms[i+1]
-                except IndexError:
-                    return None
-        raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
+        return self.forms.next_form(current_index)
 
-    @cache(MAX_FORMS)
     def get_form_by_index(self, index):
-        for form in self.forms:
-            if form.index == index:
-                return form
-        raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
+        return self.forms.get_form_by_index(index)
 
     def get_form(self, form_pk):
         """

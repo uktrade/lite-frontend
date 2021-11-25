@@ -3,7 +3,9 @@ from enum import Enum
 from django.conf import settings
 from typing import List, Optional, Dict, Set
 
+from core.helpers import cached_property, cache
 from lite_forms.styles import ButtonStyle
+from lite_forms.exceptions import NoMatchingForm
 
 
 class _Component:
@@ -66,7 +68,11 @@ class FormGroup:
     Automatically adds IDs to all forms to make it easier to reference them
     """
 
+    MAX_FORMS = 32
+
     def __init__(self, forms: list, show_progress_indicators=False):
+        if len(forms) > self.MAX_FORMS:
+            raise Exception(f"Too many forms: Max is set to {MAX_FORMS}")
         self._forms = forms
         self.show_progress_indicators = show_progress_indicators
 
@@ -78,6 +84,35 @@ class FormGroup:
 
     def __iter__(self):
         yield from self._forms
+
+    @cached_property
+    def indexes(self):
+        """
+        Return: all indexes from all forms in group
+        """
+        return [f.index for f in self._forms]
+
+    @cache(MAX_FORMS)
+    def next_form(self, current_index):
+        """
+        Return: the next form in the collection or None if end is reached
+        """
+        for i, form in enumerate(self._forms):
+            if not hasattr(form, "index"):
+                raise Exception(f"Form missing index: {form}")
+            if form.index == current_index:
+                try:
+                    return forms[i+1]
+                except IndexError:
+                    return None
+        raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
+
+    @cache(MAX_FORMS)
+    def get_form_by_index(self, index):
+        for form in self._forms:
+            if form.index == index:
+                return form
+        raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
 
     def get_forms(self):
         return [x for x in self._forms if x is not None]
