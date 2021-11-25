@@ -13,14 +13,17 @@ FEATURE_DIVIDER_LEN = 70
 
 
 def print_scenario_history(entry):
-    scenario = entry["scenario"]
-    steps = entry["steps"]
-    print("*******************************************\n")
-    print(f"FEATURE:  {scenario.feature.description}\n")
-    print(f"SCENARIO: {scenario.name}\n")
-    for step in steps:
-        print(f"\t{step.keyword.upper()} {step.name}")
-    print("\n*******************************************")
+    try:
+        scenario = entry["scenario"]
+        steps = entry["steps"]
+        print("*******************************************\n")
+        print(f"FEATURE:  {scenario.feature.description}\n")
+        print(f"SCENARIO: {scenario.name}\n")
+        for step in steps:
+            print(f"\t{step.keyword.upper()} {step.name}")
+        print("\n*******************************************")
+    except KeyError:
+        pass
 
 
 def print_scenario_history_last_entry():
