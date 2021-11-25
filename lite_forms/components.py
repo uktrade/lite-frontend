@@ -73,6 +73,12 @@ class FormGroup:
         self.update_progress_indicators()
         self.update_pks()
 
+    def __len__(self):
+        return len(self._forms)
+
+    def __iter__(self):
+        yield from self._forms
+
     def get_forms(self):
         return [x for x in self._forms if x is not None]
 
