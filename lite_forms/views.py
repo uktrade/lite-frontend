@@ -1,4 +1,5 @@
 import copy
+from core.helpers import cached_property, cache
 from abc import ABC
 from typing import List
 
@@ -147,9 +148,13 @@ class MultiFormView(FormView):
     """
     Takes a FormGroup as a parameter and handles getting and posting to forms in the group using supplied values.
 
+    Assuming the Form instances in the FormGroup have been given an index, you can use things like next_form, indexes, etc.
+
     Interface:
         init(): Called on every GET and POST request prior to post() and get()
     """
+
+    MAX_FORMS = 32
 
     forms: FormGroup = None
     additional_context: dict = {}
@@ -164,13 +169,34 @@ class MultiFormView(FormView):
     def init(self, request, **kwargs):
         super().init(request, **kwargs)
 
+    @cached_property
+    def indexes(self):
+        """
+        Return: all indexes for **indexed** forms (aka given an index explicitly)
+        """
+        return [f.index for f in self.forms.get_forms()]
+
+    @cache(MAX_FORMS)
+    def next_form(self, current_index):
+        """
+        Return: the next form in the collection or None if end is reached
+        """
+        for i, form in enumerate(self.forms.get_forms()):
+            if not hasattr(form, "index"):
+                raise Exception(f"Form missing index: {form}")
+            if form.index == current_index:
+                try:
+                    return forms[i+1]
+                except IndexError:
+                    return None
+        raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
+
+    @cache(MAX_FORMS)
     def get_form_by_index(self, index):
-        forms = self.forms.get_forms()
-        for form in forms:
+        for form in self.forms.get_forms():
             if form.index == index:
                 return form
-        valid_indice = [f.index for f in forms]
-        raise NoMatchingForm(f"No form with index {index}. Valid indice: {valid_indice}")
+        raise NoMatchingForm(f"No form with index {index}. Valid indice: {self.indexes}")
 
     def get_form(self, form_pk):
         """
