@@ -71,6 +71,24 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the end user summary
     And I logout
 
+  Scenario: Exporter uploads a end-user document in Spanish
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    And I click on the "End user" section
+    And I answer "No" for whether I want to reuse an existing party
+    And I select "government" as the type of end user
+    And I enter the "Foo Bar" as end user name
+    And I click submit
+    And I enter "Test Address" and "Belgium" for end user address
+    And I enter "Test signatory" for signatory name
+    And I attach "file_for_upload.pdf" into "file"
+    And I select "No" when asked "Is the end-user document in English?"
+    And I select "Yes" when asked "Does the document include at least one page on company letterhead?"
+    And I click "Continue"
+    Then I see "Upload an English translation"
+    And I logout
+
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
