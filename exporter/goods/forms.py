@@ -6,7 +6,7 @@ from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
-from exporter.goods.helpers import good_summary, get_category_display_string, get_sporting_shotgun_form_title
+from exporter.goods.helpers import good_summary, get_category_display_string
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.goods import (
@@ -345,7 +345,6 @@ def add_good_form_group(
         [
             conditional(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS, product_category_form(request)),
             conditional(is_category_firearms, group_two_product_type_form(back_link=base_form_back_link),),
-            conditional(is_firearm_ammunition_or_component, firearms_sporting_shotgun_form(request.POST.get("type"))),
             conditional(
                 is_firearm_ammunition_or_component and draft_pk, firearms_number_of_items(request.POST.get("type"))
             ),
@@ -577,24 +576,6 @@ def group_two_product_type_form(back_link=None):
         form.back_link = BackLink("Back", back_link)
 
     return form
-
-
-def firearms_sporting_shotgun_form(firearm_type):
-    title = get_sporting_shotgun_form_title(firearm_type)
-
-    return Form(
-        title=title,
-        questions=[
-            HiddenField("type", firearm_type),
-            HiddenField("sporting_shotgun_step", True),
-            RadioButtons(
-                title="",
-                name="is_sporting_shotgun",
-                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
-            ),
-        ],
-        default_button_name="Save and continue",
-    )
 
 
 def firearms_number_of_items(firearm_type):

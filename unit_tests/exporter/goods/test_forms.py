@@ -95,10 +95,9 @@ def pv_gradings(mock_pv_gradings, rf, client):
     [
         (
             {"is_firearm_ammunition_or_component": True},
-            5,
+            4,
             [
                 {"qindex": 1, "name": "type"},
-                {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 0, "name": "name"},
                 {"qindex": 0, "name": "firearm_calibre_step"},
                 {"qindex": 0, "name": "is_registered_firearm_dealer"},
@@ -106,10 +105,9 @@ def pv_gradings(mock_pv_gradings, rf, client):
         ),
         (
             {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": True},
-            10,
+            9,
             [
                 {"qindex": 1, "name": "type"},
-                {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 2, "name": "number_of_items"},
                 {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 0, "name": "name"},
@@ -122,10 +120,9 @@ def pv_gradings(mock_pv_gradings, rf, client):
         ),
         (
             {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": False},
-            8,
+            7,
             [
                 {"qindex": 1, "name": "type"},
-                {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 2, "name": "number_of_items"},
                 {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 0, "name": "name"},
@@ -176,11 +173,10 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
     [
         (
             {"is_firearm_ammunition_or_component": True},
-            6,
+            5,
             [
                 {"qindex": 0, "name": "item_category"},
                 {"qindex": 1, "name": "type"},
-                {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 0, "name": "name"},
                 {"qindex": 0, "name": "firearm_calibre_step"},
                 {"qindex": 0, "name": "is_registered_firearm_dealer"},
@@ -188,11 +184,10 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
         ),
         (
             {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": True},
-            11,
+            10,
             [
                 {"qindex": 0, "name": "item_category"},
                 {"qindex": 1, "name": "type"},
-                {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 2, "name": "number_of_items"},
                 {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 0, "name": "name"},
@@ -205,11 +200,10 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
         ),
         (
             {"is_firearm_ammunition_or_component": True, "draft_pk": "123", "is_firearm": False},
-            9,
+            8,
             [
                 {"qindex": 0, "name": "item_category"},
                 {"qindex": 1, "name": "type"},
-                {"qindex": 2, "name": "is_sporting_shotgun"},
                 {"qindex": 2, "name": "number_of_items"},
                 {"qindex": 1, "name": "has_identification_markings"},
                 {"qindex": 0, "name": "name"},

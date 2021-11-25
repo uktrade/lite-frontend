@@ -79,7 +79,6 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I select product type "firearm"
-    And I select sporting shotgun status as "No"
     And I add a good with description "9mm barrel" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "uk_official" suffix "def" issuing authority "MoD" reference "12345" Date of issue "10-05-2015"
     And I enter calibre as "0.45"
@@ -99,7 +98,6 @@ Feature: I want to edit and remove goods on the goods list
     When I click on goods link
     And I click add a good button
     And I select product type "firearm"
-    And I select sporting shotgun status as "No"
     And I add a good with description "9mm barrel" part number "321" controlled "True" control code "ML1a" and graded "yes"
     And I add the goods grading with prefix "abc" grading "uk_official" suffix "def" issuing authority "MoD" reference "12345" Date of issue "10-05-2015"
     And I enter calibre as "0.45"

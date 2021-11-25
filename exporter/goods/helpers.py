@@ -46,17 +46,6 @@ def get_category_display_string(category):
     return ""
 
 
-def get_sporting_shotgun_form_title(product_type):
-    if product_type == "firearms":
-        return "Is the product a sporting shotgun?"
-    elif product_type == "ammunition":
-        return "Is the product sporting shotgun ammunition?"
-    elif product_type == "components_for_firearms":
-        return "Is the product a component of a sporting shotgun?"
-    elif product_type == "components_for_ammunition":
-        return "Is the product a component of sporting shotgun ammunition?"
-
-
 def return_to_good_summary(kwargs, application_id, object_pk):
     if "good_pk" in kwargs:
         return reverse_lazy("applications:add_good_summary", kwargs={"pk": application_id, "good_pk": object_pk})

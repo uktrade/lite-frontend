@@ -126,7 +126,7 @@ def check_product_name_and_rating(driver, product_name, clc_rating):  # noqa
 @then(parsers.parse('I check the product part number is "{part_number}"'))
 def check_product_part_number(driver, part_number):  # noqa
     product_table = driver.find_element_by_class_name("govuk-table")
-    pn_element = product_table.find_element_by_xpath("//tbody/tr[5]/td")
+    pn_element = product_table.find_element_by_xpath("//tbody/tr[4]/td")
     assert pn_element.text == part_number
 
 

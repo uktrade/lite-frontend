@@ -23,29 +23,6 @@
 			<dd class="govuk-summary-list__actions">
 			</dd>
 		</div>
-		{% if good.item_category.key == 'group2_firearms' %}
-			{% with firearm_core_types="firearms ammunition components_for_firearms components_for_ammunition" %}
-			{% if good.firearm_details and good.firearm_details.type.key in firearm_core_types.split %}
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs "Goods.AddGoodSummary.FirearmDetails.SPORTING_SHOTGUN" %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.is_sporting_shotgun is not None %}
-							{{ good.firearm_details.is_sporting_shotgun|friendly_boolean }}
-						{% else %}
-							N/A
-						{% endif %}
-					</dd>
-					<dd class="govuk-summary-list__actions">
-						{% if good.status.key == 'draft' %}
-							<a id="change-is-sporting-shotgun" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:sporting-shotgun' application_id good.id %}">{% lcs 'generic.CHANGE' %} <span class="govuk-visually-hidden">{% lcs "Goods.AddGoodSummary.FirearmDetails.SPORTING_SHOTGUN" %}</span></a>
-						{% endif %}
-					</dd>
-				</div>
-			{% endif %}
-			{% endwith %}
-		{% endif %}
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
 				Name

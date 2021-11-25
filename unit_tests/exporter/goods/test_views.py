@@ -28,7 +28,6 @@ def good():
             "type": {"key": "firearms", "value": "Firearms"},
             "year_of_manufacture": 0,
             "calibre": "50mm",
-            "is_sporting_shotgun": False,
             "is_replica": False,
             "replica_description": "",
             "is_covered_by_firearm_act_section_one_two_or_five": "",

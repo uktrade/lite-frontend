@@ -8,7 +8,6 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
 from exporter.applications.helpers.date_fields import format_date
-from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.core.helpers import get_firearms_subcategory
 from exporter.applications.services import (
     get_application_ecju_queries,
@@ -46,7 +45,6 @@ from exporter.goods.forms import (
     upload_firearms_act_certificate_form,
     build_firearm_create_back,
     identification_markings_form,
-    firearms_sporting_shotgun_form,
     firearm_year_of_manufacture_details_form,
     firearm_replica_form,
 )
@@ -503,13 +501,12 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
     def get_success_url(self):
         firearm_type = self.request.POST.get("type")
         if firearm_type:
-            capture_sporting_shotgun = firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES
             if "good_pk" in self.kwargs:
-                url = "applications:sporting-shotgun" if capture_sporting_shotgun else "applications:edit_good"
-                return reverse_lazy(url, kwargs={"pk": self.application_id, "good_pk": self.object_pk})
+                return reverse_lazy(
+                    "applications:edit_good", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
+                )
             else:
-                url = "goods:sporting-shotgun" if capture_sporting_shotgun else "goods:edit"
-                return reverse_lazy(url, kwargs={"pk": self.object_pk})
+                return reverse_lazy("goods:edit", kwargs={"pk": self.object_pk})
         elif self.draft_pk:
             return reverse(
                 "goods:good_detail_application",
@@ -518,34 +515,6 @@ class EditFirearmProductType(LoginRequiredMixin, SingleFormView):
         # Edit
         else:
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
-
-
-class EditFirearmSportingShotgunStatus(LoginRequiredMixin, SingleFormView):
-    application_id = None
-
-    def init(self, request, **kwargs):
-        if "good_pk" in kwargs:
-            # coming from the application
-            self.object_pk = str(kwargs["good_pk"])
-            self.application_id = str(kwargs["pk"])
-        else:
-            self.object_pk = str(kwargs["pk"])
-        self.draft_pk = str(kwargs.get("draft_pk", ""))
-        self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
-        self.form = firearms_sporting_shotgun_form(self.data["type"]["key"])
-        self.action = edit_good_firearm_details
-
-    def get_success_url(self):
-        if self.draft_pk:
-            return reverse(
-                "goods:good_detail_application",
-                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
-            )
-        # coming from product summary screen when adding a new product to an application
-        elif self.application_id and self.object_pk:
-            return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
-        elif self.object_pk:
-            return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
 class EditYearOfManufacture(LoginRequiredMixin, SingleFormView):
