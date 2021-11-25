@@ -1158,7 +1158,7 @@ def i_see_product_location_journey_summary(driver):  # noqa
     heading = driver.find_element_by_tag_name("h1").text
     assert heading == "Product location and journey summary"
     elements = driver.find_elements_by_css_selector(".govuk-summary-list__value")
-    assert elements[0].text == "GB"
+    assert elements[0].text == "Great Britain"
     assert elements[1].text == "Yes"
     assert elements[2].text == "Yes"
     assert elements[3].text == "Direct to end user"
@@ -1169,7 +1169,7 @@ def i_see_product_location_journey_summary_temp_details(driver):  # noqa
     heading = driver.find_element_by_tag_name("h1").text
     assert heading == "Product location and journey summary"
     elements = driver.find_elements_by_css_selector(".govuk-summary-list__value")
-    assert elements[0].text == "GB"
+    assert elements[0].text == "Great Britain"
     assert elements[1].text == "No"
     assert elements[2].text == "Lorem ipsum"
     assert elements[3].text == "Yes"
