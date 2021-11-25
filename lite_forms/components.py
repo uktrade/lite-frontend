@@ -86,7 +86,7 @@ class FormGroup:
         if self.show_progress_indicators:
             for form in self.forms:
                 if form:
-                    if not getattr(self, "index"):
+                    if not hasattr(self, "index"):
                         form.index = index
                     form.caption = f"Step {index + 1} of {len(self.forms)}"
                     index += 1
