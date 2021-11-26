@@ -192,6 +192,7 @@ class Form:
         post_url=None,
         container: str = "two-pane",
         index=None,
+        url=None,
     ):
         from lite_forms.helpers import convert_to_markdown, heading_used_as_label
 
@@ -210,6 +211,7 @@ class Form:
         self.single_form_element = heading_used_as_label(questions)
         self.container = container
         self.index = index
+        self.url = url
         from lite_forms.helpers import get_all_form_components
 
         if self.questions:
