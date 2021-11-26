@@ -282,33 +282,22 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
             if error:
                 return form_page(request, form, extra_data={"draft_id": draft_id}, errors={"documents": [error]})
 
-            action = post_party_document
-            if len(signature(action).parameters) == 3:
-                # 3 params
-                _, status_code = action(request, draft_id, data)
-                if status_code == HTTPStatus.CREATED:
-                    url = reverse("applications:end_user", kwargs={
-                        "pk": str(kwargs["pk"]),
-                    })
-                    return redirect(url)
-            else:
-                # 4 params
-                _, status_code = action(request, draft_id, kwargs["obj_pk"], data)
-                if status_code == HTTPStatus.CREATED:
+            _, status_code = post_party_document(request, draft_id, kwargs["obj_pk"], data)
+            if status_code == HTTPStatus.CREATED:
 
-                    # Next form if required
-                    if step == 1 and not data["is_content_english"]:
-                        try:
-                            return HttpResponseRedirect(self.next_form(step).url)
-                        except NoMatchingForm:
-                            pass
+                # Redirect to next form
+                if step == 1 and not data["is_content_english"]:
+                    try:
+                        return HttpResponseRedirect(self.next_form(step).url)
+                    except NoMatchingForm:
+                        pass
 
-                    # Final page
-                    url = reverse("applications:end_user", kwargs={
-                        "pk": str(kwargs["pk"]),
-                        "obj_pk": str(kwargs["obj_pk"]),
-                    })
-                    return redirect(url)
+                # Final page
+                url = reverse("applications:end_user", kwargs={
+                    "pk": str(kwargs["pk"]),
+                    "obj_pk": str(kwargs["obj_pk"]),
+                })
+                return redirect(url)
 
             return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
 
