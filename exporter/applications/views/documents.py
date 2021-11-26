@@ -6,6 +6,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse, NoReverseMatch
 from django.views.generic import TemplateView
+from django.http import HttpResponseRedirect
 from s3chunkuploader.file_handler import s3_client
 
 from caseworker.cases.services import get_document
@@ -28,7 +29,7 @@ from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page, confirm_form
 from lite_content.lite_exporter_frontend.applications import DeletePartyDocumentForm
 from lite_forms.components import Form, FormGroup, FileUpload, Label, TextArea, BackLink, Option, RadioButtons
-from lite_forms.views import MultiFormView
+from lite_forms.views import MultiFormView, NoMatchingForm
 from core.auth.views import LoginRequiredMixin
 
 
@@ -216,11 +217,36 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
             back_link=BackLink(strings.EndUser.Documents.AttachDocuments.BACK, reverse_lazy("applications:end_user", kwargs={"pk": draft_id})),
             default_button_name=strings.EndUser.Documents.AttachDocuments.BUTTON_TEXT,
             index=1,
+            url=reverse("applications:end_user_attach_document", kwargs={
+                "pk": str(kwargs["pk"]),
+                "obj_pk": str(kwargs["obj_pk"]),
+                "step": 1,
+            }),
+        )
+
+    def _get_form2(self, request, **kwargs):
+        return Form(
+            title="Upload an English translation",
+            description="Exporters are responsible for verifying that translations are accurate.",
+            questions=[FileUpload(optional=False)],
+            back_link=BackLink(strings.EndUser.Documents.AttachDocuments.BACK, reverse("applications:end_user_attach_document", kwargs={
+                "pk": str(kwargs["pk"]),
+                "obj_pk": str(kwargs["obj_pk"]),
+                "step": 1,
+            })),
+            default_button_name="Continue",
+            index=2,
+            url=reverse("applications:end_user_attach_document", kwargs={
+                "pk": str(kwargs["pk"]),
+                "obj_pk": str(kwargs["obj_pk"]),
+                "step": 2,
+            }),
         )
 
     def init(self, request, **kwargs):
         self.forms = FormGroup(forms=[
             self._get_form1(request, **kwargs),
+            self._get_form2(request, **kwargs),
         ])
 
     def get(self, request, **kwargs):
@@ -269,11 +295,19 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
                 # 4 params
                 _, status_code = action(request, draft_id, kwargs["obj_pk"], data)
                 if status_code == HTTPStatus.CREATED:
+
+                    # Next form if required
+                    if step == 1 and not data["is_content_english"]:
+                        try:
+                            return HttpResponseRedirect(self.next_form(step).url)
+                        except NoMatchingForm:
+                            pass
+
+                    # Final page
                     url = reverse("applications:end_user", kwargs={
                         "pk": str(kwargs["pk"]),
                         "obj_pk": str(kwargs["obj_pk"]),
                     })
-                    # TODO: Redirect to next form
                     return redirect(url)
 
             return error_page(request, strings.applications.AttachDocumentPage.UPLOAD_FAILURE_ERROR)
