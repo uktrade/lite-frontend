@@ -41,6 +41,11 @@ def then_debug(context):
     import IPython; IPython.embed(using=False)
 
 
+@when("debug")
+def when_debug(context):
+    import IPython; IPython.embed(using=False)
+
+
 @when(parsers.parse("I select \"{selection_text}\" when asked \"{question_text}\""))
 def select_from_radio(selection_text, question_text, driver, context):
     element = get_child_by_visible_text(driver, question_text, selection_text)
