@@ -87,6 +87,9 @@ Feature: I want to be able to submit SIEL firearm applications
     And I select "Yes" when asked "Does the document include at least one page on company letterhead?"
     And I click "Continue"
     Then I see "Upload an English translation"
+    When I attach "file_for_upload.pdf" into "file"
+    And I click "Continue"
+    Then I see the end user summary
     And I logout
 
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application

@@ -9,6 +9,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from s3chunkuploader.file_handler import s3_client
 
+from core import client as api_client
 from caseworker.cases.services import get_document
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
 from exporter.applications.services import (
@@ -258,6 +259,10 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
         )
 
     def post(self, request, **kwargs):
+        """
+        Will POST data to appropriate endpoint depending on the form used. If there's a next form, it will be
+        redirected to that.
+        """
         self.init(request, **kwargs)
         step = kwargs.get("step", 1)
         form = self.get_form_by_index(step)  # First form
@@ -282,8 +287,10 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
             if error:
                 return form_page(request, form, extra_data={"draft_id": draft_id}, errors={"documents": [error]})
 
-            _, status_code = post_party_document(request, draft_id, kwargs["obj_pk"], data)
-            if status_code == HTTPStatus.CREATED:
+            # POST file
+            response = api_client.post(request, form.url, data=data)
+
+            if response.status_code == HTTPStatus.CREATED:
 
                 # Redirect to next form
                 if step == 1 and not data["is_content_english"]:
