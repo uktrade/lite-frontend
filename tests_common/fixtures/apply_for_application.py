@@ -86,7 +86,11 @@ def apply_for_standard_application(api_test_client, context):
             "is_suspected_wmd": False,
             "is_eu_military": False,
         },
-        route_of_goods={"is_shipped_waybill_or_lading": True},
+        route_of_goods={
+            "is_shipped_waybill_or_lading": True,
+            "goods_starting_point": "GB",
+            "goods_recipients": "via_consignee",
+        },
     )
     data = api_test_client.applications.submit_application(draft_id)
     save_application_data_to_context(api_test_client, context)
