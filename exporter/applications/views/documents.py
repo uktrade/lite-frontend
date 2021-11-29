@@ -189,11 +189,6 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
 
 
 class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
-    # optional = True
-    # attach = post_party_document
-    # download = get_party_document
-    # delete = delete_party_document
-
     def _get_form1(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
@@ -214,7 +209,6 @@ All products on the application must appear in the document.
                 "obj_pk": str(kwargs["obj_pk"]),
             }),
         )
-
 
     def _get_form2(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
@@ -324,15 +318,11 @@ All products on the application must appear in the document.
 
             # POST file
             response = api_client.post(request, form.url, data=data)
-
             if response.status_code == HTTPStatus.CREATED:
 
-                # Redirect to next form
+                # Request translatio document if primary document is in another language
                 if form.alias == "primary_document" and not data["is_content_english"]:
-                    try:
-                        return HttpResponseRedirect(form.next.url)
-                    except NoMatchingForm:
-                        pass
+                    return HttpResponseRedirect(form.next.url)
 
                 # Final page
                 url = reverse("applications:end_user", kwargs={
