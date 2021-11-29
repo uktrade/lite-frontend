@@ -17,11 +17,6 @@ class Documents:
         if includes_company_letterhead != None:
             document_data["includes_company_letterhead"] = includes_company_letterhead
 
-        if is_content_english != None:
-            document_data["is_content_english"] = is_content_english
-        if includes_company_letterhead != None:
-            document_data["includes_company_letterhead"] = includes_company_letterhead
-
         if multi_upload_endpoint:
             document_data = [document_data]
         response = self.api_client.make_request(
