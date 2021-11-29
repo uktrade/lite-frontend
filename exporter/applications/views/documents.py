@@ -199,6 +199,28 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
         application = get_application(request, draft_id)
         is_permanent_application = is_application_export_type_permanent(application)  # ONLY USED ON POST
         return Form(
+            title="End-user documents",
+            description="""
+You will be asked to upload either an <a href='https://www.gov.uk/government/publications/end-user-undertaking-euu-form'>end-user undertaking (EUU)</a> or <a href='https://www.gov.uk/government/publications/stockist-undertaking-su-form'>stockist undertaking (SU)</a> completed by the end-user or stockist.
+You must include at least one page on company letterhead. This can either be within the end-user document or on a separate document.
+Products listed in the document should match as closely as possible to the products listed in the application.
+All products on the application must appear in the document.
+            """,
+            back_link=BackLink(strings.EndUser.Documents.AttachDocuments.BACK, reverse_lazy("applications:end_user", kwargs={"pk": draft_id})),
+            default_button_name="Continue",
+            alias="intro",
+            url=reverse("applications:end_user_attach_document", kwargs={
+                "pk": str(kwargs["pk"]),
+                "obj_pk": str(kwargs["obj_pk"]),
+            }),
+        )
+
+
+    def _get_form2(self, request, **kwargs):
+        draft_id = str(kwargs["pk"])
+        application = get_application(request, draft_id)
+        is_permanent_application = is_application_export_type_permanent(application)  # ONLY USED ON POST
+        return Form(
             title=strings.EndUser.Documents.AttachDocuments.TITLE,
             description=strings.EndUser.Documents.AttachDocuments.DESCRIPTION,
             questions=[
@@ -225,7 +247,7 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
             }),
         )
 
-    def _get_form2(self, request, **kwargs):
+    def _get_form3(self, request, **kwargs):
         return Form(
             title="Upload an English translation",
             description="Exporters are responsible for verifying that translations are accurate.",
@@ -248,6 +270,7 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
         self.forms = FormGroup(forms=[
             self._get_form1(request, **kwargs),
             self._get_form2(request, **kwargs),
+            self._get_form3(request, **kwargs),
         ])
 
     def get(self, request, **kwargs):
@@ -276,7 +299,7 @@ class AttachDocumentsEndUser(LoginRequiredMixin, MultiFormView):
         elif step == 2:
             form = self.get_form("translation_document")
         else:
-            form = self.forms.first
+            return HttpResponseRedirect(self.get_form("primary_document").url)
 
         draft_id = str(kwargs["pk"])
         application = get_application(request, draft_id)
