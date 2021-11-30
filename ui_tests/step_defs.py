@@ -1,7 +1,7 @@
 import os.path
-from os.path import abspath, relpath, dirname
+from os.path import dirname
 
-from pytest_bdd import given, when, then, parsers
+from pytest_bdd import when, then, parsers
 
 RESOURCES_PATH = os.path.join(dirname(__file__), "resources")
 
