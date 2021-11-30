@@ -63,8 +63,8 @@ class GiveApprovalAdviceForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            "proviso",
             "approval_reasons",
+            "proviso",
             "instructions_to_exporter",
             "footnote_details",
             HTML.details(
@@ -159,8 +159,8 @@ class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "countries",
-            "proviso",
             "approval_reasons",
+            "proviso",
             "instructions_to_exporter",
             "footnote_details",
             HTML.details(
