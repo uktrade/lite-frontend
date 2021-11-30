@@ -203,7 +203,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
-class AdviceView(CaseContextMixin, TemplateView):
+class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/view-advice.html"
 
     @property
