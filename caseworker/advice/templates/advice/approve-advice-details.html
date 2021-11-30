@@ -15,7 +15,7 @@
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-        {% if case.data.consignee %}
+        {% if advice.consignee %}
             {% with consignee=case.data.consignee %}
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">{{ consignee.country.name }}</td>
@@ -25,7 +25,7 @@
                 </tr>
             {% endwith %}
         {% endif %}
-        {% if case.data.end_user %}
+        {% if advice.end_user %}
             {% with end_user=case.data.end_user %}
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">{{ end_user.country.name }}</td>
@@ -35,7 +35,7 @@
                 </tr>
             {% endwith %}
         {% endif %}
-        {% if case.data.ultimate_end_users %}
+        {% if advice.ultimate_end_users %}
             {% for ultimate_end_user in case.data.ultimate_end_users %}
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>

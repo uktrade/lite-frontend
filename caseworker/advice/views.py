@@ -29,9 +29,12 @@ class CaseContextMixin:
         return get_case(self.request, self.case_id)
 
     @property
+    def caseworker_id(self):
+        return str(self.request.session["lite_api_user_id"])
+
+    @property
     def caseworker(self):
-        user_id = str(self.request.session["lite_api_user_id"])
-        data, _ = get_gov_user(self.request, user_id)
+        data, _ = get_gov_user(self.request, self.caseworker_id)
         return data["user"]
 
     def unadvised_countries(self):
@@ -128,9 +131,8 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        case = context["case"]
-        my_advice = services.filter_current_user_advice(case.advice, str(self.request.session["lite_api_user_id"]))
-        nlr_products = services.filter_nlr_products(case["data"]["goods"])
+        my_advice = services.filter_current_user_advice(self.case.advice, str(self.caseworker_id))
+        nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = self.unadvised_countries() == {}
         return {**context, "my_advice": my_advice, "nlr_products": nlr_products, "advice_completed": advice_completed}
 
@@ -201,7 +203,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
-class AdviceView(CaseContextMixin, TemplateView):
+class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/view-advice.html"
 
     @property
