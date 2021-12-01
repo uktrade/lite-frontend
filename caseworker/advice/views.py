@@ -344,17 +344,14 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
 
 
 class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView):
-    template_name = "advice/review_countersign.html"
+    template_name = "advice/view_countersign.html"
 
     def get_context(self, **kwargs):
         context = super().get_context()
-        case = kwargs.get("case")
-        caseworker = self.caseworker
-
-        advice_to_countersign = services.get_advice_to_countersign(case, caseworker)
-        context["advice_to_countersign"] = advice_to_countersign
+        advice_to_countersign = services.get_advice_to_countersign(self.case, self.caseworker)
+        context["advice_to_countersign"] = advice_to_countersign.values()
         context["review"] = False
-        context["subtitle"] = f"Approved by {caseworker['team']['name']}"
+        context["subtitle"] = f"Approved by {self.caseworker['team']['name']}"
         return context
 
 
