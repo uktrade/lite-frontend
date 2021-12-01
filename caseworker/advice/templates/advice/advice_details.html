@@ -1,0 +1,157 @@
+{% with user=advice.0.user decision=advice.0.type.key %}
+<table id="table-licenceable-products-approve-all" class="govuk-table">
+    {% if decision == 'approve' or decision == 'proviso' %}
+    <h2 class="app-bg-colour--green govuk-heading-m govuk-!-padding-2">
+        Approved by {{ user|full_name }}
+    </h2>
+    {% elif decision == 'refuse' %}
+    <h2 class="govuk-heading-m app-bg-colour--red govuk-!-padding-2">
+        Refused by {{ user|full_name }}
+    </h2>
+    {% endif %}
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Country</th>
+            <th scope="col" class="govuk-table__header">Type</th>
+            <th scope="col" class="govuk-table__header">Name</th>
+            {% if decision == 'approve' or decision == 'proviso' %}
+            <th scope="col" class="govuk-table__header">Approved products</th>
+            {% elif decision == 'refuse' %}
+            <th scope="col" class="govuk-table__header">Refused products</th>
+            <th scope="col" class="govuk-table__header">Refusal criteria</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        {% for item in advice %}
+            {% if item.consignee %}
+            {% with consignee=case.data.consignee %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ consignee.country.name }}</td>
+                <td class="govuk-table__cell">{{ consignee.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ consignee.name }}</td>
+                <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
+            </tr>
+            {% endwith %}
+            {% endif %}
+            {% if item.end_user %}
+            {% with end_user=case.data.end_user %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ end_user.country.name }}</td>
+                <td class="govuk-table__cell">{{ end_user.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ end_user.name }}</td>
+                <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
+            </tr>
+            {% endwith %}
+            {% endif %}
+            {% if item.third_party %}
+            {% with third_party=case.data.third_party %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ third_party.country.name }}</td>
+                <td class="govuk-table__cell">{{ third_party.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ third_party.name }}</td>
+                <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
+            </tr>
+            {% endwith %}
+            {% endif %}
+            {% if item.ultimate_end_users %}
+            {% for ultimate_end_user in case.data.ultimate_end_users %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
+                <td class="govuk-table__cell">{{ ultimate_end_user.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+                <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+        {% if advice.0.countersigned_by %}
+        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-three-quarters">
+                    <h2 class="govuk-heading-m">Countersigned by {{ advice.0.countersigned_by|full_name }}</h2>
+                    <p class="govuk-body">{{ advice.0.countersign_comments }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if decision == 'approve' or decision == 'proviso' %}
+        <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Reason for approving">
+            <div class="govuk-cookie-banner__message govuk-width-container">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <h2 class="govuk-heading-m">Reason for approving</h2>
+                        <div class="govuk-cookie-banner__content">
+                            <p class="govuk-body">{{ advice.0.text }}</p>
+                        </div>
+                        {% if advice.0.proviso %}
+                        <h2 class="govuk-heading-m">Licence condition</h2>
+                        <div class="govuk-cookie-banner__content">
+                            <p class="govuk-body">{{ advice.0.proviso }}</p>
+                        </div>
+                        {% endif %}
+
+                        {% if advice.0.note %}
+                        <h2 class="govuk-heading-m">Additional instructions</h2>
+                        <div class="govuk-cookie-banner__content">
+                            <p class="govuk-body">{{ advice.0.note }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif decision == 'refuse' %}
+        <div class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Reason for refusing">
+            <div class="govuk-cookie-banner__message govuk-width-container">
+              <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-heading-m">Reason for refusing</h2>
+                    <div class="govuk-cookie-banner__content">
+                    <p class="govuk-body">{{ advice.0.text }}</p>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        {% endif %}
+        <br><br>
+        {% if nlr_products %}
+        <table id="table-nlr-products" class="govuk-table">
+            <caption class="govuk-table__caption govuk-table__caption--m">No licence required products</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Product name</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                {% for product in nlr_products %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">{{ product.good.name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h2 class="govuk-heading-m">No licence required products</h2>
+        <label class="govuk-label">None</label>
+        {% endif %}
+    </div>
+</div>
+{% endwith %}

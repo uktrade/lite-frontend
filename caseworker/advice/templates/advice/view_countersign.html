@@ -1,0 +1,38 @@
+{% extends 'layouts/case.html' %}
+{% load static custom_tags %}
+{% load static advice_tags %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="govuk-width-container">
+    {% if form.has_changed %}
+        <a href="{% url 'cases:view_my_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
+    {% else %}
+        <a href="{% url 'cases:select_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
+    {% endif %}
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div {% if review %} class="govuk-grid-column-two-thirds" {% else %} class="govuk-grid-column-three-quarters" {% endif %}>
+                <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="#">
+                    Edit recommendation
+                </a>
+                {% for advice in advice_to_countersign %}
+                    <br><br>
+                    {% include "advice/advice_details.html" %}
+                    <br>
+                {% endfor %}
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+                {% if advice_to_countersign %}
+                <a role="button" draggable="false" class="govuk-button" href="#move-forward">
+                    Move case forward
+                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
+                        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

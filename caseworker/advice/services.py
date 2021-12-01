@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from requests.exceptions import HTTPError
 
 from core import client
@@ -34,9 +36,35 @@ def filter_advice_by_users_team(all_advice, caseworker):
     return [advice for advice in all_advice if advice["user"]["team"]["id"] == caseworker["team"]["id"]]
 
 
-def get_advice_to_countersign(case, caseworker):
-    advice_by_team = filter_advice_by_users_team(case["advice"], caseworker)
-    return filter_advice_by_level(advice_by_team, ["user"])
+def group_advice_by_user(advice):
+    """E.g. A case with 2 destinations and 2 goods, has 4 distinct
+    advice-subjects. As a result, `post_approval_advice` &
+    `post_refusal_advice` would create 4 advice records - one for
+    each advice-subject and send it to the API.
+    The flip side to this is that e.g. the countersigner will need
+    to process each advice individually whereas according to the
+    designs, he should process the advice from a given advisor
+    as a whole.
+    This function groups the advice by users so that e.g. for
+    countersigning views etc. we can render this in a single block.
+    TODO: This is functionally similar to `group_user_advice`
+    method in `AdviceView`. We should delete that method and
+    move to this one.
+    TODO: This will break when we do approve-some-refuse-some.
+    In that case, we will need to group approve & refuse advice
+    from the same user separately i.e. group-by user & decision.
+    """
+    result = defaultdict(list)
+    for item in advice:
+        result[item["user"]["id"]].append(item)
+    return result
+
+
+def get_advice_to_countersign(advice, caseworker):
+    advice_by_team = filter_advice_by_users_team(advice, caseworker)
+    user_advice = filter_advice_by_level(advice_by_team, ["user"])
+    grouped_user_advice = group_advice_by_user(user_advice)
+    return grouped_user_advice
 
 
 def get_advice_subjects(case, countries=None):
@@ -109,9 +137,9 @@ def countersign_advice(request, case, caseworker, formset_data):
     data = []
     queues = []
     case_pk = case["id"]
-    advice_to_countersign = get_advice_to_countersign(case, caseworker)
+    advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
 
-    for index, advice in enumerate(advice_to_countersign):
+    for index, (_, user_advice) in enumerate(advice_to_countersign.items()):
         form_data = formset_data[index]
         comments = ""
         if form_data["agree_with_recommendation"] == "yes":
@@ -120,8 +148,8 @@ def countersign_advice(request, case, caseworker, formset_data):
             comments = form_data["refusal_reasons"]
             if form_data["queue_to_return"] not in queues:
                 queues.append(form_data["queue_to_return"])
-
-        data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
+        for advice in user_advice:
+            data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
 
     response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
     response.raise_for_status()
