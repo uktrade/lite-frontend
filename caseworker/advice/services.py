@@ -60,8 +60,8 @@ def group_advice_by_user(advice):
     return result
 
 
-def get_advice_to_countersign(case, caseworker):
-    advice_by_team = filter_advice_by_users_team(case.advice, caseworker)
+def get_advice_to_countersign(advice, caseworker):
+    advice_by_team = filter_advice_by_users_team(advice, caseworker)
     user_advice = filter_advice_by_level(advice_by_team, ["user"])
     grouped_user_advice = group_advice_by_user(user_advice)
     return grouped_user_advice
@@ -139,7 +139,7 @@ def countersign_advice(request, case, caseworker, formset_data):
     case_pk = case["id"]
     advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
 
-    for index, advice in enumerate(advice_to_countersign):
+    for index, (_, user_advice) in enumerate(advice_to_countersign.items()):
         form_data = formset_data[index]
         comments = ""
         if form_data["agree_with_recommendation"] == "yes":
@@ -148,8 +148,8 @@ def countersign_advice(request, case, caseworker, formset_data):
             comments = form_data["refusal_reasons"]
             if form_data["queue_to_return"] not in queues:
                 queues.append(form_data["queue_to_return"])
-
-        data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
+        for advice in user_advice:
+            data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
 
     response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
     response.raise_for_status()
