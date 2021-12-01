@@ -137,7 +137,7 @@ def countersign_advice(request, case, caseworker, formset_data):
     data = []
     queues = []
     case_pk = case["id"]
-    advice_to_countersign = get_advice_to_countersign(case, caseworker)
+    advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
 
     for index, advice in enumerate(advice_to_countersign):
         form_data = formset_data[index]

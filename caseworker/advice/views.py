@@ -305,7 +305,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
 
     def get_context(self, **kwargs):
         context = super().get_context()
-        advice_to_countersign = services.get_advice_to_countersign(self.case, self.caseworker)
+        advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         advice_users_pks = list(advice_to_countersign.keys())
         num_advice = len(advice_users_pks)
         CountersignAdviceFormsetFactory = formset_factory(
@@ -345,7 +345,7 @@ class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView
 
     def get_context(self, **kwargs):
         context = super().get_context()
-        advice_to_countersign = services.get_advice_to_countersign(self.case, self.caseworker)
+        advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["review"] = False
         context["subtitle"] = f"Approved by {self.caseworker['team']['name']}"
