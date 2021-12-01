@@ -91,10 +91,9 @@ class AddGoodDetails(BasePage):
             self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
 
     def set_identification_details(self, has_markings, details):
-        has_markings = self.true_or_false(has_markings)
         markings_id = f"has_identification_markings-{has_markings}"
         self.driver.find_element_by_id(markings_id).click()
-        if has_markings is False:
+        if has_markings == "no":
             self.enter_related_field_details("identification_markings_details", details)
 
     def enter_number_of_items(self, number_of_items):

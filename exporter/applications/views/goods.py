@@ -238,9 +238,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
         if is_rfd and self.covered_by_firearms_act:
             selected_section = "firearms_act_section5"
 
-        show_serial_numbers_form = True
-        if copied_request.get("has_identification_markings") == "False":
-            show_serial_numbers_form = False
+        show_serial_numbers_form = copied_request.get("has_identification_markings") == "yes_available"
 
         if firearm_act_status == "Yes":
             self.show_section_upload_form = is_firearm_certificate_needed(
@@ -590,9 +588,7 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
                 application=self.application, selected_section=selected_section
             )
 
-        show_serial_numbers_form = True
-        if copied_request.get("has_identification_markings") == "False":
-            show_serial_numbers_form = False
+        show_serial_numbers_form = copied_request.get("has_identification_markings") == "yes_available"
 
         (
             is_firearm,

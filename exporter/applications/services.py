@@ -148,7 +148,7 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
     if firearm_details:
         if not preexisting and good:
             firearm_details["number_of_items"] = good["firearm_details"]["number_of_items"]
-            if good["firearm_details"]["has_identification_markings"] is True:
+            if good["firearm_details"]["has_identification_markings"] == "yes_available":
                 firearm_details["serial_numbers"] = good["firearm_details"]["serial_numbers"]
             else:
                 firearm_details["serial_numbers"] = list()

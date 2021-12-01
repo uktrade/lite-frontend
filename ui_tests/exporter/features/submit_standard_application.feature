@@ -266,7 +266,7 @@ Feature: I want to indicate the standard licence I want
     And I choose to add a new product
     And I select product type "firearm"
     And I specify number of items as "4"
-    And I select "Yes" for serial number or other identification markings with details as " "
+    And I select "yes_available" for serial number or other identification markings with details as " "
     And I enter "4" serial numbers as "serial1,serial2,serial3,serial4"
     And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter firearm year of manufacture as "2020"
@@ -293,7 +293,7 @@ Feature: I want to indicate the standard licence I want
     And I choose to add a new product
     And I select product type "component_for_ammunition"
     And I specify number of items as "3"
-    And I select "Yes" for serial number or other identification markings with details as " "
+    And I select "yes_available" for serial number or other identification markings with details as " "
     And I enter "3" serial numbers as "serial1,serial2,serial3"
     And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter calibre as "0.22"
@@ -354,7 +354,7 @@ Feature: I want to indicate the standard licence I want
     And I choose to add a new product
     And I select product type "firearm"
     And I specify number of items as "3"
-    And I select "Yes" for serial number or other identification markings with details as "serial number FR8654-Z"
+    And I select "yes_available" for serial number or other identification markings with details as "serial number FR8654-Z"
     And I enter "3" serial numbers as "serial1,serial2,serial3"
     And I enter good name as "Rifle" description as "new firearm" part number "FR-123-M" controlled "True" control code "ML1a" and graded "no"
     And I enter firearm year of manufacture as "2020"

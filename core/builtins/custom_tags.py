@@ -903,3 +903,9 @@ def divide(value, other):
 @register.filter
 def full_name(user):
     return f"{user['first_name']} {user['last_name']}"
+
+
+@register.filter
+def identification_markings_status(has_markings):
+    message = {"yes_available": "Yes", "yes_later": "Yes, add later", "no": "No"}
+    return message.get(has_markings, "")
