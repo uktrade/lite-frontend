@@ -14,6 +14,6 @@ urlpatterns = [
     path("countersign/", views.CountersignAdviceView.as_view(), name="countersign_advice_view"),
     path("countersign/review-advice/", views.ReviewCountersignView.as_view(), name="countersign_review"),
     path("countersign/view-advice/", views.ViewCountersignedAdvice.as_view(), name="countersign_view"),
-    path("countersign/edit-advice", views.CountersignEditAdviceView.as_view(), name="countersign_edit"),
+    path("countersign/edit-advice/", views.CountersignEditAdviceView.as_view(), name="countersign_edit"),
     path("consolidate/", views.ConsolidateAdviceView.as_view(), name="consolidate_advice_view"),
 ]
