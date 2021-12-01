@@ -838,8 +838,8 @@ class EditIdentificationMarkings(LoginRequiredMixin, SingleFormView):
                 kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
             )
         elif self.application_id and self.object_pk:
-            has_identification_markings = self._validated_data["good"]["firearm_details"]["has_identification_markings"]
-            if has_identification_markings == "yes_available":
+            serial_numbers_available = self._validated_data["good"]["firearm_details"]["serial_numbers_available"]
+            if serial_numbers_available == "yes_available":
                 return reverse(
                     "applications:serial_numbers", kwargs={"pk": self.application_id, "good_pk": self.object_pk}
                 )

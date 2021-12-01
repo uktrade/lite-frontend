@@ -816,7 +816,7 @@ def identification_markings_form(draft_pk=None, good_id=None):
         HiddenField("identification_markings_step", True),
         RadioButtons(
             title="",
-            name="has_identification_markings",
+            name="serial_numbers_available",
             options=[
                 Option(key="yes_available", value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,),
                 Option(key="yes_later", value=CreateGoodForm.FirearmGood.IdentificationMarkings.LATER,),
@@ -827,7 +827,7 @@ def identification_markings_form(draft_pk=None, good_id=None):
                         TextArea(
                             title=CreateGoodForm.FirearmGood.IdentificationMarkings.NO_MARKINGS_DETAILS,
                             description="",
-                            name="no_identification_markings_details",
+                            name="no_serial_numbers_reason",
                             optional=False,
                         )
                     ],

@@ -324,11 +324,11 @@
 						{% lcs "Goods.AddGoodSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.has_identification_markings is not None %}
-								{{ good.firearm_details.has_identification_markings|identification_markings_status }}
+						{% if good.firearm_details.serial_numbers_available is not None %}
+								{{ good.firearm_details.serial_numbers_available|identification_markings_status }}
 								<span class="govuk-hint">
-									{% if good.firearm_details.has_identification_markings == "no" %}
-										{{ good.firearm_details.no_identification_markings_details|default_na }}
+									{% if good.firearm_details.serial_numbers_available == "no" %}
+										{{ good.firearm_details.no_serial_numbers_reason|default_na }}
 									{% endif %}
 								</span>
 						{% endif %}
@@ -340,7 +340,7 @@
 					</dd>
 				</div>
 
-				{% if good.firearm_details.has_identification_markings == "yes_available" %}
+				{% if good.firearm_details.serial_numbers_available == "yes_available" %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							Serial numbers

@@ -79,9 +79,8 @@ def add_identification_marking_details(firearm_details, json):
 
     if "identification_markings_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
-        firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
-        firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
-        del json["no_identification_markings_details"]
+        firearm_details["serial_numbers_available"] = json.get("serial_numbers_available", "")
+        firearm_details["no_serial_numbers_reason"] = json.get("no_serial_numbers_reason")
 
     if "capture_serial_numbers_step" in json:
         try:
