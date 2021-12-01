@@ -14,7 +14,12 @@
             <th scope="col" class="govuk-table__header">Country</th>
             <th scope="col" class="govuk-table__header">Type</th>
             <th scope="col" class="govuk-table__header">Name</th>
+            {% if decision == 'approve' or decision == 'proviso' %}
             <th scope="col" class="govuk-table__header">Approved products</th>
+            {% elif decision == 'refuse' %}
+            <th scope="col" class="govuk-table__header">Refused products</th>
+            <th scope="col" class="govuk-table__header">Refusal criteria</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -26,6 +31,9 @@
                 <td class="govuk-table__cell">{{ consignee.type|sentence_case }}</td>
                 <td class="govuk-table__cell">{{ consignee.name }}</td>
                 <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
             </tr>
             {% endwith %}
             {% endif %}
@@ -36,6 +44,9 @@
                 <td class="govuk-table__cell">{{ end_user.type|sentence_case }}</td>
                 <td class="govuk-table__cell">{{ end_user.name }}</td>
                 <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
             </tr>
             {% endwith %}
             {% endif %}
@@ -46,6 +57,9 @@
                 <td class="govuk-table__cell">{{ third_party.type|sentence_case }}</td>
                 <td class="govuk-table__cell">{{ third_party.name }}</td>
                 <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
             </tr>
             {% endwith %}
             {% endif %}
@@ -56,6 +70,9 @@
                 <td class="govuk-table__cell">{{ ultimate_end_user.type|sentence_case }}</td>
                 <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
                 <td class="govuk-table__cell">All</td>
+                {% if decision == 'refuse' %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                {% endif %}
             </tr>
             {% endfor %}
             {% endif %}
