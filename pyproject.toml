@@ -20,6 +20,4 @@ exclude = '''
   | build
   | dist
 )/
-|  tests_.*/
-|  .*_tests/
 '''
