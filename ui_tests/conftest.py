@@ -38,7 +38,7 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
     if feature not in SCENARIO_HISTORY:
         if STEP_VERBOSE or STEP_THROUGH:
             print()
-            print("*"*FEATURE_DIVIDER_LEN)
+            print("*" * FEATURE_DIVIDER_LEN)
             print()
             print(f"FEATURE: {scenario.feature.description}")
         SCENARIO_HISTORY[feature] = {}
@@ -93,9 +93,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Print each step before executing it"
     )
-    parser.addoption(
-        "--step-delay", action="store", default=STEP_DELAY, help="Delay in secs between steps"
-    )
+    parser.addoption("--step-delay", action="store", default=STEP_DELAY, help="Delay in secs between steps")
     if env == "local":
         parser.addoption(
             "--exporter_url", action="store", default=f"http://localhost:{str(os.environ.get('PORT'))}/", help="url"

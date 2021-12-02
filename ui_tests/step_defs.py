@@ -38,34 +38,38 @@ def get_child_by_visible_text(driver, parent_visible_text, child_visible_text):
 
 @then("debug")
 def then_debug(context):
-    import IPython; IPython.embed(using=False)
+    import IPython
+
+    IPython.embed(using=False)
 
 
 @when("debug")
 def when_debug(context):
-    import IPython; IPython.embed(using=False)
+    import IPython
+
+    IPython.embed(using=False)
 
 
-@when(parsers.parse("I select \"{selection_text}\" when asked \"{question_text}\""))
+@when(parsers.parse('I select "{selection_text}" when asked "{question_text}"'))
 def select_from_radio(selection_text, question_text, driver, context):
     element = get_child_by_visible_text(driver, question_text, selection_text)
     element.click()
 
 
-@when(parsers.parse("I attach \"{file_name}\" into \"{element_id}\""))
+@when(parsers.parse('I attach "{file_name}" into "{element_id}"'))
 def attach_file(file_name, element_id, driver, context):
     element = driver.find_element_by_id(element_id)
     file_path = os.path.join(RESOURCES_PATH, file_name)
     element.send_keys(file_path)
 
 
-@when(parsers.parse("I click \"{text}\""))
+@when(parsers.parse('I click "{text}"'))
 def click_element(text, driver, context):
     element = get_element_by_visible_text(driver, text)
     element.click()
 
 
-@then(parsers.parse("I see \"{text}\""))
+@then(parsers.parse('I see "{text}"'))
 def see_text(text, driver, context):
     if not get_elements_by_visible_text(driver, text):
         raise Exception(f"Expected at least one element with text '{text}', got 0.")

@@ -63,23 +63,28 @@ class ApiClient:
         if not response.ok:
             MAX_PAGE_DUMP = 1000
             if len(response.text) > MAX_PAGE_DUMP:
-                i1 = MAX_PAGE_DUMP//2
+                i1 = MAX_PAGE_DUMP // 2
                 i2 = -i1
                 trimmed_body = (
-                    response.text[:i1] +
-                    "\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n" +
-                    response.text[i2:]
+                    response.text[:i1]
+                    + "\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n"
+                    + response.text[i2:]
                 )
             else:
                 trimmed_body = response.text
-            error_message = f"{response.status_code} @ {response.request.method} {response.request.url}\n\n{trimmed_body}"
+            error_message = (
+                f"{response.status_code} @ {response.request.method} {response.request.url}\n\n{trimmed_body}"
+            )
 
             from conftest import DEBUG  # noqa
             from ui_tests.conftest import print_scenario_history_last_entry
+
             if DEBUG:
                 print_scenario_history_last_entry()
                 print(f"\n***** ERROR: {__file__} {error_message}")
-                import IPython; IPython.embed(using=False)
+                import IPython
+
+                IPython.embed(using=False)
 
             raise Exception(error_message)
         return response
