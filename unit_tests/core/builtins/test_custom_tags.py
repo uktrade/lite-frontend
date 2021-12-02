@@ -169,13 +169,7 @@ def test_identification_markings_status(input, expected):
 
 @pytest.mark.parametrize(
     "value,expected",
-    [
-        ("GB", "Great Britain"),
-        ("NI", "Northern Ireland"),
-        ("", ""),
-        (None, ""),
-        ("Somewhere else", ""),
-    ],
+    [("GB", "Great Britain"), ("NI", "Northern Ireland"), ("", ""), (None, ""), ("Somewhere else", ""),],
 )
 def test_verbose_goods_starting_point(value, expected):
     assert expected == verbose_goods_starting_point(value)
