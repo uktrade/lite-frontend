@@ -1,5 +1,3 @@
-from django.forms import formset_factory
-from django.forms.formsets import BaseFormSet
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
@@ -290,48 +288,34 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         }
 
 
-class CountersignAdviceFormSet(BaseFormSet):
-    def get_form_kwargs(self, index):
-        kwargs = super().get_form_kwargs(index)
-        request = kwargs.pop("request")
-        user_pks = kwargs.pop("user_pks")
-        queues, _ = services.get_users_team_queues(request, user_pks[index])
-        return {**kwargs, "queues": queues["queues"]}
-
-
 class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/review_countersign.html"
     form_class = forms.CountersignAdviceForm
+
+    def get_queues(self, users):
+        queues = []
+        for user in users:
+            queue, _ = services.get_users_team_queues(self.request, user)
+            queues.append(queue["queues"])
+        return queues
 
     def get_context(self, **kwargs):
         context = super().get_context()
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         advice_users_pks = list(advice_to_countersign.keys())
-        num_advice = len(advice_users_pks)
-        CountersignAdviceFormsetFactory = formset_factory(
-            self.form_class, formset=CountersignAdviceFormSet, extra=num_advice, min_num=num_advice, max_num=num_advice
-        )
-        context["formset"] = CountersignAdviceFormsetFactory(
-            form_kwargs={"request": self.request, "user_pks": advice_users_pks}
-        )
+        queues = self.get_queues(advice_users_pks)
+        context["formset"] = forms.get_queue_formset(self.form_class, queues)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["user_pks"] = advice_users_pks
-        context["review"] = True
         return context
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-        case = context["case"]
-        caseworker = self.caseworker
-        num_advice = len(context["user_pks"])
-        CountersignAdviceFormsetFactory = formset_factory(
-            self.form_class, formset=CountersignAdviceFormSet, extra=num_advice, min_num=num_advice, max_num=num_advice
-        )
-        formset = CountersignAdviceFormsetFactory(
-            data=request.POST, form_kwargs={"request": self.request, "user_pks": context["user_pks"]}
-        )
-        if all([form.is_valid() for form in formset]):
-            services.countersign_advice(request, case, caseworker, formset.cleaned_data)
+        advice_users_pks = context["user_pks"]
+        queues = self.get_queues(advice_users_pks)
+        formset = forms.get_queue_formset(self.form_class, queues, data=request.POST)
+        if formset.is_valid():
+            services.countersign_advice(request, self.case, self.caseworker, formset.cleaned_data)
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response({**context, "formset": formset})

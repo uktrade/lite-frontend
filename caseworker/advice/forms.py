@@ -154,10 +154,8 @@ class CountersignAdviceForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-
-        choices = [("", "")] + [(q[0], q[1]) for q in queues]
         self.fields["queue_to_return"] = forms.ChoiceField(
-            required=False, label="Choose where to return this recommendation", choices=choices
+            required=False, label="Choose where to return this recommendation", choices=queues
         )
 
     def clean(self):
