@@ -84,6 +84,13 @@
                     <p class="govuk-body">{{ advice.note }}</p>
                 </div>
                 {% endif %}
+
+                {% if advice.footnote %}
+                <h2 class="govuk-heading-m">Reporting footnote</h2>
+                <div class="govuk-cookie-banner__content">
+                    <p class="govuk-body">{{ advice.footnote }}</p>
+                </div>
+                {% endif %}
             </div>
           </div>
         </div>

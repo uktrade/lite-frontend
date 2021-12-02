@@ -3,6 +3,7 @@ from collections import defaultdict
 from django import forms
 from django.forms.formsets import BaseFormSet
 from django.forms.formsets import formset_factory
+from django.utils.html import format_html
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
@@ -88,11 +89,16 @@ class RefusalAdviceForm(forms.Form):
 
     def __init__(self, denial_reasons, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        refusal_criteria_link = (
+            "https://publications.parliament.uk/pa/cm201314/cmhansrd/cm140325/wmstext/140325m0001.htm#14032566000018"
+        )
         choices = self._group_denial_reasons(denial_reasons)
         self.fields["denial_reasons"] = forms.MultipleChoiceField(
             choices=choices,
             widget=GridmultipleSelect(),
-            label='Select all <a href="/">refusal criteria</a> that apply',
+            label=format_html(
+                f'Select all <a href={refusal_criteria_link} target="_blank">refusal criteria</a> that apply'
+            ),
         )
         self.fields["refusal_reasons"] = forms.CharField(
             label="What are your reasons for this refusal?",
