@@ -107,7 +107,9 @@ class RefusalAdviceForm(forms.Form):
         )
         self.fields["refusal_reasons"] = forms.CharField(
             label="What are your reasons for this refusal?",
-            help_text='<a href="/">Choose a refusal reason from the template list</a>',
+            help_text=mark_safe(
+                '<a class="govuk-link govuk-link--no-visited-state" href="#" target="refusal_reasons">Choose a refusal reason from the template list</a>'
+            ),
             widget=forms.Textarea(),
             error_messages={"required": "Enter a reason for refusing"},
         )
