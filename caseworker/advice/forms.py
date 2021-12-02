@@ -1,6 +1,5 @@
 from collections import defaultdict
 from django import forms
-from django.utils.safestring import mark_safe
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
@@ -43,19 +42,15 @@ class SelectAdviceForm(forms.Form):
 class GiveApprovalAdviceForm(forms.Form):
 
     approval_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "10", "style": "margin-top:20px"}),
+        widget=forms.Textarea(attrs={"rows": "10", "class": "govuk-!-margin-top-4"}),
         label="What are your reasons for approving?",
-        help_text=mark_safe(
-            '<a class="govuk-link govuk-link--no-visited-state" href="#" target="approval_reasons">Choose an approval reason from the template list</a>'
-        ),
+        help_text='<a class="govuk-link govuk-link--no-visited-state" href="#" target="approval_reasons">Choose an approval reason from the template list</a>',
         error_messages={"required": "Enter a reason for approving"},
     )
     proviso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "10", "style": "margin-top:20px"}),
+        widget=forms.Textarea(attrs={"rows": "10", "class": "govuk-!-margin-top-4"}),
         label="Add a licence condition (optional)",
-        help_text=mark_safe(
-            '<a class="govuk-link govuk-link--no-visited-state" href="#" target="proviso">Choose a licence condition from the template list</a>'
-        ),
+        help_text='<a class="govuk-link govuk-link--no-visited-state" href="#" target="proviso">Choose a licence condition from the template list</a>',
         required=False,
     )
     instructions_to_exporter = forms.CharField(
@@ -65,9 +60,9 @@ class GiveApprovalAdviceForm(forms.Form):
         required=False,
     )
     footnote_details = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "5", "style": "margin-top:20px"}),
+        widget=forms.Textarea(attrs={"rows": "5", "class": "govuk-!-margin-top-4"}),
         label="Add a reporting footnote (optional)",
-        help_text=mark_safe(
+        help_text=(
             '<a class="govuk-link govuk-link--no-visited-state" href="#" target="footnote_details">Choose a reporting footnote from the template list</a>'
         ),
         required=False,
@@ -107,10 +102,10 @@ class RefusalAdviceForm(forms.Form):
         )
         self.fields["refusal_reasons"] = forms.CharField(
             label="What are your reasons for this refusal?",
-            help_text=mark_safe(
+            help_text=(
                 '<a class="govuk-link govuk-link--no-visited-state" href="#" target="refusal_reasons">Choose a refusal reason from the template list</a>'
             ),
-            widget=forms.Textarea(),
+            widget=forms.Textarea(attrs={"rows": "10", "class": "govuk-!-margin-top-4"}),
             error_messages={"required": "Enter a reason for refusing"},
         )
         self.helper = FormHelper()

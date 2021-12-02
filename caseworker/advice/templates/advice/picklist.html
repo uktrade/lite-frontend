@@ -29,15 +29,17 @@
 
 {% block javascript %}
 <script nonce="{{ request.csp_nonce }}">
-    $("a[target={{ target }}]").click(function () {
-        LITECommon.Modal.showModal('Select a {{ picklist_name }} picklist item', $('#{{ target }}-picklist-picker').html(), false, true, { maxWidth: '600px' });
+    $("a[target={{ target }}]").on("click", {"picklist_name": `{{ picklist_name }}`, "target": `{{ target }}`}, showPickListItems);
+
+    function showPickListItems(event) {
+        LITECommon.Modal.showModal(`Select a ${event.data.name} picklist item`, $(`#${event.data.target}-picklist-picker`).html(), false, true, { maxWidth: '600px' });
         filter{{ target }}PicklistItems(true);
         $(".lite-modal .app-picklist__search-input").on('input propertychange paste', function () {
-            $(".lite-modal #{{ target }}-picklist-picker__container").addClass("app-picklist-picker__container--loading");
+            $(`.lite-modal #${event.data.target}-picklist-picker__container`).addClass("app-picklist-picker__container--loading");
             filter{{ target }}PicklistItems(true, $(this).val());
         });
         return false;
-    });
+    }
 
     function filter{{ target }}PicklistItems(setText, filter, page) {
         if (!filter) {
