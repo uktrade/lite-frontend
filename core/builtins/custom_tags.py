@@ -916,8 +916,5 @@ def identification_markings_status(has_markings):
 def verbose_goods_starting_point(value):
     goods_starting_points = {"GB": "Great Britain", "NI": "Northern Ireland"}
     if value:
-        try:
-            return goods_starting_points[value]
-        except KeyError:
-            pass
+        goods_starting_points.get(value, "")
     return ""
