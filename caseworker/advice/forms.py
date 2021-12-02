@@ -118,6 +118,7 @@ class QueueFormset(BaseFormSet):
     This class implements the functionality of passing the right list of
     queues through to the respective forms via the kwargs.
     """
+
     def get_form_kwargs(self, index):
         kwargs = super().get_form_kwargs(index)
         kwargs["queues"] = [("", "")] + kwargs["queues"][index]
