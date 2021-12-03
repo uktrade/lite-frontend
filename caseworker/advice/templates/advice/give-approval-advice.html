@@ -23,10 +23,7 @@
             </div>
         </div>
 
-        <!-- target is the field name in the form -->
-        {% include "advice/picklist.html" with target="approval_reasons" picklist_type="standard_advice" picklist_name="Standard Advice" %}
-        {% include "advice/picklist.html" with target="proviso" picklist_type="proviso" picklist_name="Proviso" %}
-        {% include "advice/picklist.html" with target="footnote_details" picklist_type="footnotes" picklist_name="Footnotes" %}
+        {% include "advice/picklist.html" %}
     </main>
 </div>
 {% endblock %}

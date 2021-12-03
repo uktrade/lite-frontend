@@ -1,8 +1,8 @@
 {% load svg %}
 
-<div id="{{ target }}-picklist-picker" class="app-hidden">
+<div id="picklist-picker" class="app-hidden">
     <div class="lite-search__container govuk-!-margin-bottom-3">
-        <input type="search" class="govuk-input app-picklist__search-input" id="{{ target }}-filter-box"
+        <input type="search" class="govuk-input app-picklist__search-input" id="filter-box"
             placeholder="{{ placeholder }}" autocomplete="off" autocorrect="off" autocapitalize="off"
             spellcheck="false">
         <button class="lite-search__button lite-search__button--instant-search" type="submit">
@@ -10,7 +10,7 @@
             <span>Search</span>
         </button>
     </div>
-    <div id="{{ target }}-picklist-picker__container" class="app-picklist-picker__container"></div>
+    <div id="picklist-picker__container" class="app-picklist-picker__container"></div>
     <div class="app-picklist-picker__no-results">
         There aren't any results.
     </div>
@@ -29,28 +29,40 @@
 
 {% block javascript %}
 <script nonce="{{ request.csp_nonce }}">
-    $("a[target={{ target }}]").on("click", {"picklist_name": `{{ picklist_name }}`, "target": `{{ target }}`}, showPickListItems);
 
     function showPickListItems(event) {
-        LITECommon.Modal.showModal(`Select a ${event.data.name} picklist item`, $(`#${event.data.target}-picklist-picker`).html(), false, true, { maxWidth: '600px' });
-        filter{{ target }}PicklistItems(true);
+        event.preventDefault()
+        LITECommon.Modal.showModal(`Select a ${event.currentTarget.picklist_name} picklist item`, $("#picklist-picker").html(), false, true, { maxWidth: '600px' });
+        filterPicklistItems(event.currentTarget.target, event.currentTarget.picklist_type, true);
         $(".lite-modal .app-picklist__search-input").on('input propertychange paste', function () {
-            $(`.lite-modal #${event.data.target}-picklist-picker__container`).addClass("app-picklist-picker__container--loading");
-            filter{{ target }}PicklistItems(true, $(this).val());
+            $(".lite-modal #picklist-picker__container").addClass("app-picklist-picker__container--loading");
+            filterPicklistItems(event.currentTarget.target, event.currentTarget.picklist_type, true, $(this).val());
         });
         return false;
     }
 
-    function filter{{ target }}PicklistItems(setText, filter, page) {
+    // document.links is the list of all <a> tags in the document
+    for (var i = 0; i < document.links.length; i++) {
+        if (document.links[i].hasAttribute("picklist_type")) {
+            picklist_link = document.links[i]
+            picklist_link.addEventListener("click", showPickListItems, false)
+            // these get passed to the callback in the event object
+            picklist_link.target = picklist_link.getAttribute("target")
+            picklist_link.picklist_type = picklist_link.getAttribute("picklist_type")
+            picklist_link.picklist_name = picklist_link.getAttribute("picklist_name")
+        }
+    }
+
+    function filterPicklistItems(target, picklist_type, setText, filter, page) {
         if (!filter) {
             filter = ""
         }
         if (!page) {
             page = 1;
         }
-        $.get("{% url 'picklists:picklists_json' %}?type={{ picklist_type }}&page=" + page + "&name=" + filter, function (data) {
-            $(".lite-modal #{{ target }}-picklist-picker__container").empty();
-            $(".lite-modal #{{ target }}-picklist-picker__container").removeClass("app-picklist-picker__container--loading");
+        $.get(`{% url 'picklists:picklists_json' %}?type=${picklist_type}&page=` + page + "&name=" + filter, function (data) {
+            $(".lite-modal #picklist-picker__container").empty();
+            $(".lite-modal #picklist-picker__container").removeClass("app-picklist-picker__container--loading");
 
             if (data.total_pages == 0 || data.count <= 25) {
                 $(".lite-modal .lite-pagination__container").addClass("app-hidden");
@@ -63,7 +75,7 @@
             } else {
                 $(".lite-modal #link-previous-page").removeClass("lite-pagination__navigation-link--disabled");
                 $(".lite-modal #link-previous-page").unbind("click").click(function () {
-                    filter{{ target }}PicklistItems(setText, filter, page - 1);
+                    filterPicklistItems(target, setText, filter, page - 1);
                 });
             }
 
@@ -72,22 +84,22 @@
             } else {
                 $(".lite-modal #link-next-page").removeClass("lite-pagination__navigation-link--disabled");
                 $(".lite-modal #link-next-page").unbind("click").click(function () {
-                    filter{{ target }}PicklistItems(setText, filter, page + 1);
+                    filterPicklistItems(target, setText, filter, page + 1);
                 });
             }
 
             $.each(data.results, function (i, item) {
                 var html = `
-						<div id="${item.id}" onclick="return showPreviewModal(this, '#{{ target }}', ${setText})" data-id="${item.id}" data-target="{{ target }}" data-title="${item.name}" data-text="${item.text}" data-last-updated="${item.updated_at}" class="app-picklist-picker__item">
+						<div id="${item.id}" onclick="return showPreviewModal(this, '#${target}', ${setText})" data-id="${item.id}" data-target="${target}" data-title="${item.name}" data-text="${item.text}" data-last-updated="${item.updated_at}" class="app-picklist-picker__item">
 							<h4 class="govuk-heading-s">${item.name}</h4>
 							<p class="govuk-caption-m">
 								${item.text}
 							</p>
 						</div>
 					`
-                $(".lite-modal #{{ target }}-picklist-picker__container").append(html)
+                $(".lite-modal #picklist-picker__container").append(html)
             });
-            notice = $(".lite-modal #{{ target }}-picklist-picker__container").next();
+            notice = $(".lite-modal #picklist-picker__container").next();
             if (data.results.length == 0) {
                 notice.css({ "visibility": "visible" });
             } else {
