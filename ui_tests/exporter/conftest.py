@@ -5,7 +5,6 @@ from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
 
 import tests_common.tools.helpers as utils
-from caseworker.flags.enums import FlagLevel
 from ui_tests.exporter.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_tests.exporter.fixtures.add_goods_query import add_goods_clc_query  # noqa
 from ui_tests.exporter.fixtures.add_party import add_end_user_to_application  # noqa
