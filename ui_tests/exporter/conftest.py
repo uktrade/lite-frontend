@@ -703,6 +703,7 @@ def i_remove_all_flags(context, api_test_client):  # noqa
     api_test_client.flags.assign_destination_flags(context.third_party["id"], [])
     api_test_client.gov_users.put_test_user_in_admin_team()
 
+
 @given("I put the test user in the admin team")
 def put_test_user_in_admin_team(api_test_client):  # noqa
     api_test_client.gov_users.put_test_user_in_admin_team()
