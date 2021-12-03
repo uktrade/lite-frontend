@@ -211,3 +211,35 @@ class MoveCaseForwardForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(Submit("submit", "Move case forward"))
+
+
+class ConsolidateAdviceForm(forms.Form):
+
+    return_recommendation = forms.BooleanField(
+        required=False, label="Return recommendation to advisor",
+    )
+    return_reasons = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": "10"}),
+        label="Explain why this recommendation needs to be sent back to the advisor",
+    )
+
+    def __init__(self, queues, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.fields["queue_to_return"] = forms.ChoiceField(
+            required=False, label="Choose where to return this recommendation", choices=queues
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data["return_recommendation"]:
+            if cleaned_data["return_reasons"] == "":
+                self.add_error("return_reasons", "Enter your reasons for returning this recommendation back to the advisor")
+            if cleaned_data.get("queue_to_return") == "":
+                self.add_error("queue_to_return", "Select where you want to return this recommendation")
+
+
+# class ConsolidateForm(forms.Form):
+

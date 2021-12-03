@@ -357,3 +357,20 @@ class ConsolidateAdviceView(AdviceView):
         # For LU, we do not want to show the advice summary
         hide_advice = self.caseworker["team"]["name"] == "Licensing Unit"
         return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
+
+
+class ReviewConsolidateView(ReviewCountersignView):
+    form_class = forms.ConsolidateAdviceForm
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        advice_users_pks = context["user_pks"]
+        queues = self.get_queues(advice_users_pks)
+        formset = forms.get_queue_formset(self.form_class, queues, data=request.POST)
+        if formset.is_valid():
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response({**context, "formset": formset})
+
+    def get_success_url(self):
+        return reverse("cases:advice_view", kwargs={**self.kwargs})
