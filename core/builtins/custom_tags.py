@@ -904,9 +904,3 @@ def divide(value, other):
 def full_name(user):
     user = user or {}
     return f"{user.get('first_name', '')} {user.get('last_name', '')}"
-
-
-@register.filter
-def identification_markings_status(has_markings):
-    message = {"yes_available": "Yes", "yes_later": "Yes, add later", "no": "No"}
-    return message.get(has_markings, "")
