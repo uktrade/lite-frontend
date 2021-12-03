@@ -256,13 +256,12 @@ class CreateGoodForm:
             DONT_KNOW = "I don't know"
 
         class IdentificationMarkings:
-            TITLE = "Will each product have a serial number or other identification marking?"
+            TITLE = "Has the product been marked with a serial number or other type of identification marking?"
             MARKINGS_DETAILS = "Serial number or other type of marking"
             MARKINGS_HELP_TEXT = "Enter one or more"
             NO_MARKINGS_DETAILS = "Explain why the product has not been marked"
-            YES = "Yes, I can add serial numbers now"
+            YES = "Yes"
             NO = "No"
-            LATER = "Yes, I can add serial numbers later"
 
             BUTTON_TEXT = "Continue"
 

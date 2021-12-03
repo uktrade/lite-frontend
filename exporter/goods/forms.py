@@ -818,10 +818,9 @@ def identification_markings_form(draft_pk=None, good_id=None):
             title="",
             name="has_identification_markings",
             options=[
-                Option(key="yes_available", value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,),
-                Option(key="yes_later", value=CreateGoodForm.FirearmGood.IdentificationMarkings.LATER,),
+                Option(key=True, value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,),
                 Option(
-                    key="no",
+                    key=False,
                     value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
                     components=[
                         TextArea(
