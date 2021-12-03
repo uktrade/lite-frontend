@@ -19,3 +19,19 @@ class GovUsers:
             headers=self.api_client.gov_headers,
             body={"team": team_id, "default_queue": "00000000-0000-0000-0000-000000000001"},
         )
+
+    def put_test_user_in_licensing_unit_team(self):
+        response = self.api_client.make_request(
+            method="GET", url="/teams/?disable_pagination=True", headers=self.api_client.gov_headers
+        )
+        team_list = response.json()["teams"]
+        team_id = None
+        for team in team_list:
+            if team["name"] == "Licensing Unit":
+                team_id = team["id"]
+        self.api_client.make_request(
+            method="PUT",
+            url=f"/gov-users/{self.api_client.context['gov_user_id']}/",
+            headers=self.api_client.gov_headers,
+            body={"team": team_id, "default_queue": "00000000-0000-0000-0000-000000000001"},
+        )

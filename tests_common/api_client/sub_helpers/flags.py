@@ -34,3 +34,17 @@ class Flags:
         self.api_client.make_request(
             method="PUT", url="/flags/assign/", headers=self.api_client.gov_headers, body=data,
         )
+
+    def assign_destination_flags(self, dest_pk, flags):
+
+        if not isinstance(dest_pk, list):
+            dest_pk = [dest_pk]
+
+        data = {
+            "level": FlagLevel.DESTINATIONS,
+            "objects": dest_pk,
+            "flags": flags,
+        }
+        self.api_client.make_request(
+            method="PUT", url="/flags/assign/", headers=self.api_client.gov_headers, body=data,
+        )

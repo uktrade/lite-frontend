@@ -5,6 +5,7 @@ from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
 
 import tests_common.tools.helpers as utils
+from caseworker.flags.enums import FlagLevel
 from ui_tests.exporter.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_tests.exporter.fixtures.add_goods_query import add_goods_clc_query  # noqa
 from ui_tests.exporter.fixtures.add_party import add_end_user_to_application  # noqa
@@ -699,7 +700,9 @@ def final_advice(context, decision, api_test_client):  # noqa
 @given("I remove the flags to finalise the licence")  # noqa
 def i_remove_all_flags(context, api_test_client):  # noqa
     api_test_client.flags.assign_case_flags(context.case_id, [])
-
+    api_test_client.gov_users.put_test_user_in_licensing_unit_team()
+    api_test_client.flags.assign_destination_flags(context.third_party["id"], [])
+    api_test_client.gov_users.put_test_user_in_admin_team()
 
 @given("I put the test user in the admin team")
 def put_test_user_in_admin_team(api_test_client):  # noqa
