@@ -14,6 +14,7 @@ Feature: I want to be able to view licences as an exporter user
     Then I see all the typical licence details
     And I see my standard application licence details
 
+  @skip
   Scenario: When a new licence is issued, an email is sent to notify LITE-HMRC
     Given I signin and go to exporter homepage and choose Test Org
     And Only my email is to be processed by LITE-HMRC
