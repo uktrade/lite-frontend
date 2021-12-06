@@ -11,22 +11,36 @@ from crispy_forms_gds.layout import Layout, Submit, HTML
 from core.forms.widgets import GridmultipleSelect
 
 
-def get_approval_advice_form_factory(advice):
-    data = {
-        "proviso": advice["proviso"],
-        "approval_reasons": advice["text"],
-        "instructions_to_exporter": advice["note"],
-        "footnote_details": advice["footnote"],
-    }
+def get_approval_advice_form_factory(request, advice):
+    if request.method == "POST":
+        data = {
+            "proviso": request.POST.get("proviso"),
+            "approval_reasons": request.POST.get("approval_reasons"),
+            "instructions_to_exporter": request.POST.get("instructions_to_exporter"),
+            "footnote_details": request.POST.get("footnote_details"),
+        }
+    else:
+        data = {
+            "proviso": advice["proviso"],
+            "approval_reasons": advice["text"],
+            "instructions_to_exporter": advice["note"],
+            "footnote_details": advice["footnote"],
+        }
 
     return GiveApprovalAdviceForm(data=data)
 
 
-def get_refusal_advice_form_factory(advice, denial_reasons_choices):
-    data = {
-        "refusal_reasons": advice["text"],
-        "denial_reasons": [r for r in advice["denial_reasons"]],
-    }
+def get_refusal_advice_form_factory(request, advice, denial_reasons_choices):
+    if request.method == "POST":
+        data = {
+            "refusal_reasons": request.POST.get("refusal_reasons"),
+            "denial_reasons": request.POST.getlist("denial_reasons"),
+        }
+    else:
+        data = {
+            "refusal_reasons": advice["text"],
+            "denial_reasons": [r for r in advice["denial_reasons"]],
+        }
 
     return RefusalAdviceForm(data=data, denial_reasons=denial_reasons_choices)
 

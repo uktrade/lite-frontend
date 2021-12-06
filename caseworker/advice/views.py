@@ -159,12 +159,12 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         if advice["type"]["key"] in ["approve", "proviso"]:
             self.advice_type = "approve"
             self.template_name = "advice/give-approval-advice.html"
-            return forms.get_approval_advice_form_factory(advice)
+            return forms.get_approval_advice_form_factory(self.request, advice)
         elif advice["type"]["key"] == "refuse":
             self.advice_type = "refuse"
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
-            return forms.get_refusal_advice_form_factory(advice, denial_reasons)
+            return forms.get_refusal_advice_form_factory(self.request, advice, denial_reasons)
         else:
             raise ValueError("Invalid advice type encountered")
 
@@ -172,7 +172,7 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         case = self.get_context_data()["case"]
         data = form.cleaned_data.copy()
         if self.advice_type == "approve":
-            for field in form.changed_data:
+            for field in form.fields:
                 data[field] = self.request.POST.get(field)
             services.post_approval_advice(self.request, case, data)
         elif self.advice_type == "refuse":
