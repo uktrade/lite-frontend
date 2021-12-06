@@ -378,8 +378,8 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context(self, **kwargs):
         context = super().get_context()
-        advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
-        context["advice_to_countersign"] = advice_to_countersign.values()
+        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice)
+        context["advice_to_consolidate"] = advice_to_consolidate.values()
         return context
 
     def form_valid(self, form):
