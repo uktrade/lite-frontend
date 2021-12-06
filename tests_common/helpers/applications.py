@@ -77,11 +77,7 @@ def create_standard_application(api_test_client, context, app_data, submit=True)
             "is_suspected_wmd": False,
             "is_eu_military": False,
         },
-        route_of_goods={
-            "is_shipped_waybill_or_lading": True,
-            "goods_starting_point": "GB",
-            "goods_recipients": "via_consignee",
-        },
+        route_of_goods={"is_shipped_waybill_or_lading": True},
     )
 
     if not submit:
