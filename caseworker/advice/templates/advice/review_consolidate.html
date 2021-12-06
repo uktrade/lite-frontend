@@ -1,0 +1,30 @@
+{% extends 'layouts/case.html' %}
+
+{% load static custom_tags %}
+{% load static advice_tags %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="govuk-width-container">
+    {% if form.has_changed %}
+        <a href="{% url 'cases:view_my_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
+    {% else %}
+        <a href="{% url 'cases:select_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
+    {% endif %}
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-xl">{{ subtitle|default:"Review and countersign" }}</h2>
+                    {% for advice in advice_to_countersign %}
+                    {% include "advice/advice_details.html" %}
+                    <br>
+                    {% endfor %}
+                    {% crispy form %}
+            </div>
+            <div class="govuk-grid-column-one-thirds">
+                {% include "advice/case_detail.html" %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

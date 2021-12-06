@@ -357,3 +357,44 @@ class ConsolidateAdviceView(AdviceView):
         # For LU, we do not want to show the advice summary
         hide_advice = self.caseworker["team"]["name"] == "Licensing Unit"
         return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
+
+
+class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/review_consolidate.html"
+
+    def is_advice_approve_only(self):
+        return all([a["type"]["key"] in ("approve", "proviso") for a in self.case.advice])
+
+    def get_form(self):
+        form_class = forms.ConsolidateSelectAdviceForm
+        form_kwargs = self.get_form_kwargs()
+        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
+            form_class = forms.ConsolidateApprovalForm
+        if self.kwargs.get("advice_type") == "refuse":
+            form_kwargs["denial_reasons"] = get_denial_reasons(self.request)
+            form_class = forms.RefusalAdviceForm
+        return form_class(**form_kwargs)
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
+        context["advice_to_countersign"] = advice_to_countersign.values()
+        return context
+
+    def form_valid(self, form):
+        if isinstance(form, forms.ConsolidateApprovalForm):
+            services.post_approval_advice(self.request, self.case, form.cleaned_data, level="team-advice")
+        if isinstance(form, forms.RefusalAdviceForm):
+            services.post_refusal_advice(self.request, self.case, form.cleaned_data, level="team-advice")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if self.kwargs.get("advice_type") is None:
+            recommendation = self.request.POST.get("recommendation")
+            if recommendation == "approve":
+                return f"{self.request.path}approve/"
+            else:
+                return f"{self.request.path}refuse/"
+        # TODO: We should probably chuck a banner here to let the user know that the
+        # consolidation has gone through without any issues.
+        return "/"
