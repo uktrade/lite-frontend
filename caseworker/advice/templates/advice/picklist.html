@@ -1,0 +1,154 @@
+{% load svg %}
+
+<div id="picklist-picker" class="app-hidden">
+    <div class="lite-search__container govuk-!-margin-bottom-3">
+        <input type="search" class="govuk-input app-picklist__search-input" id="filter-box"
+            placeholder="{{ placeholder }}" autocomplete="off" autocorrect="off" autocapitalize="off"
+            spellcheck="false">
+        <button class="lite-search__button lite-search__button--instant-search" type="submit">
+            {% svg 'search' %}
+            <span>Search</span>
+        </button>
+    </div>
+    <div id="picklist-picker__container" class="app-picklist-picker__container"></div>
+    <div class="app-picklist-picker__no-results">
+        There aren't any results.
+    </div>
+    <div class="lite-pagination__container govuk-!-margin-top-5 app-hidden">
+        <a id="link-previous-page" href="#" class="lite-pagination__navigation-link">
+            {% svg 'previous' %}
+            <span>Previous page</span>
+        </a>
+        <span></span>
+        <a id="link-next-page" href="#" class="lite-pagination__navigation-link">
+            <span>Next page</span>
+            {% svg 'next' %}
+        </a>
+    </div>
+</div>
+
+{% block javascript %}
+<script nonce="{{ request.csp_nonce }}">
+
+    function showPickListItems(event) {
+        event.preventDefault()
+        LITECommon.Modal.showModal(`Select a ${event.currentTarget.picklist_name} picklist item`, $("#picklist-picker").html(), false, true, { maxWidth: '600px' });
+        filterPicklistItems(event.currentTarget.target, event.currentTarget.picklist_type, true);
+        $(".lite-modal .app-picklist__search-input").on('input propertychange paste', function () {
+            $(".lite-modal #picklist-picker__container").addClass("app-picklist-picker__container--loading");
+            filterPicklistItems(event.currentTarget.target, event.currentTarget.picklist_type, true, $(this).val());
+        });
+        return false;
+    }
+
+    // document.links is the list of all <a> tags in the document
+    for (var i = 0; i < document.links.length; i++) {
+        if (document.links[i].hasAttribute("picklist_type")) {
+            picklist_link = document.links[i]
+            picklist_link.addEventListener("click", showPickListItems, false)
+            // these get passed to the callback in the event object
+            picklist_link.target = picklist_link.getAttribute("target")
+            picklist_link.picklist_type = picklist_link.getAttribute("picklist_type")
+            picklist_link.picklist_name = picklist_link.getAttribute("picklist_name")
+        }
+    }
+
+    function filterPicklistItems(target, picklist_type, setText, filter, page) {
+        if (!filter) {
+            filter = ""
+        }
+        if (!page) {
+            page = 1;
+        }
+        $.get(`{% url 'picklists:picklists_json' %}?type=${picklist_type}&page=` + page + "&name=" + filter, function (data) {
+            $(".lite-modal #picklist-picker__container").empty();
+            $(".lite-modal #picklist-picker__container").removeClass("app-picklist-picker__container--loading");
+
+            if (data.total_pages == 0 || data.count <= 25) {
+                $(".lite-modal .lite-pagination__container").addClass("app-hidden");
+            } else {
+                $(".lite-modal .lite-pagination__container").removeClass("app-hidden");
+            }
+
+            if (page == 1) {
+                $(".lite-modal #link-previous-page").addClass("lite-pagination__navigation-link--disabled");
+            } else {
+                $(".lite-modal #link-previous-page").removeClass("lite-pagination__navigation-link--disabled");
+                $(".lite-modal #link-previous-page").unbind("click").click(function () {
+                    filterPicklistItems(target, setText, filter, page - 1);
+                });
+            }
+
+            if (page == data.total_pages) {
+                $(".lite-modal #link-next-page").addClass("lite-pagination__navigation-link--disabled");
+            } else {
+                $(".lite-modal #link-next-page").removeClass("lite-pagination__navigation-link--disabled");
+                $(".lite-modal #link-next-page").unbind("click").click(function () {
+                    filterPicklistItems(target, setText, filter, page + 1);
+                });
+            }
+
+            $.each(data.results, function (i, item) {
+                var html = `
+						<div id="${item.id}" onclick="return showPreviewModal(this, '#${target}', ${setText})" data-id="${item.id}" data-target="${target}" data-title="${item.name}" data-text="${item.text}" data-last-updated="${item.updated_at}" class="app-picklist-picker__item">
+							<h4 class="govuk-heading-s">${item.name}</h4>
+							<p class="govuk-caption-m">
+								${item.text}
+							</p>
+						</div>
+					`
+                $(".lite-modal #picklist-picker__container").append(html)
+            });
+            notice = $(".lite-modal #picklist-picker__container").next();
+            if (data.results.length == 0) {
+                notice.css({ "visibility": "visible" });
+            } else {
+                notice.css({ "visibility": "hidden" });
+            }
+        });
+    }
+
+    function showPreviewModal(item, textarea, setText) {
+        var title = $(item).data('title');
+        var text = $('<div>').text($(item).data('text')).html();
+        var lastUpdated = $(item).data('last-updated');
+        var textareaId = `#id_${textarea.substring(1, textarea.length)}`;
+        var addText = setText ? "Add" : "Set";
+        var onclick = setText ? `onclick="setTextareaValue('${textareaId}');"` : `onclick="setId('${$(item).attr("id")}');"`;
+        var previewHtml = `<div class="app-picklist-picker-preview">
+								<div class="app-picklist-picker-preview__text">
+								<p id="picker-preview-text" class="govuk-body-m">${text}</p>
+								<p class="govuk-caption-m">Last updated ${lastUpdated}</p>
+							</div>
+							<div class="app-picklist-picker-preview__controls">
+								<button id="button-submit-${textareaId}" ${onclick} type="submit" class="govuk-button" data-module="govuk-button">
+									${addText}
+								</button>
+							</div>
+						</div>`
+
+        LITECommon.Modal.showModal(title, previewHtml, false, true);
+        return false;
+    };
+
+    function setId(itemId) {
+        var item = $("#" + itemId);
+        var target = item.data("target")
+        $("#" + target + "-text").removeClass("app-hidden");;
+        $("#" + target + "-text output")[0].value = item.data("text")
+        $("#" + target + "-input").val(item.data("text"));
+        $("#link-" + target + "-picklist-picker").hide();
+        $("#link-" + target + "-picklist-picker-change").removeClass("app-hidden");
+        LITECommon.Modal.closeAllModals();
+    }
+
+    function setTextareaValue(textareaId) {
+        if ($(textareaId).val()) {
+            $(textareaId).val($(textareaId).val() + "\n\n" + $('#picker-preview-text').text()).keyup();
+        } else {
+            $(textareaId).val($('#picker-preview-text').text()).keyup();
+        }
+        LITECommon.Modal.closeAllModals();
+    }
+</script>
+{% endblock %}

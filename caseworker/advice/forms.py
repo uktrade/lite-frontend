@@ -31,6 +31,18 @@ def get_refusal_advice_form_factory(advice, denial_reasons_choices):
     return RefusalAdviceForm(data=data, denial_reasons=denial_reasons_choices)
 
 
+class PicklistCharField(forms.CharField):
+    def get_help_link(self, picklist_attrs, help_text):
+        picklist_tags = f'picklist_type="{picklist_attrs.get("type")}" picklist_name="{picklist_attrs.get("name")}" target="{picklist_attrs.get("target")}"'
+        return f'<a class="govuk-link govuk-link--no-visited-state" href="#" {picklist_tags}>{help_text}</a>'
+
+    def __init__(self, picklist_attrs, label, help_text, **kwargs):
+        min_rows = kwargs.pop("min_rows", 10)
+        help_link = self.get_help_link(picklist_attrs, help_text)
+        widget = forms.Textarea(attrs={"rows": str(min_rows), "class": "govuk-!-margin-top-4"})
+        super().__init__(label=label, help_text=help_link, widget=widget, **kwargs)
+
+
 class SelectAdviceForm(forms.Form):
 
     CHOICES = [("approve_all", "Approve all"), ("refuse_all", "Refuse all")]
@@ -45,13 +57,17 @@ class SelectAdviceForm(forms.Form):
 
 class GiveApprovalAdviceForm(forms.Form):
 
-    proviso = forms.CharField(
-        label="Add a licence condition (optional)", widget=forms.Textarea(attrs={"rows": "10"}), required=False
-    )
-    approval_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "10"}),
+    approval_reasons = PicklistCharField(
+        picklist_attrs={"target": "approval_reasons", "type": "standard_advice", "name": "Standard Advice"},
         label="What are your reasons for approving?",
+        help_text="Choose an approval reason from the template list",
         error_messages={"required": "Enter a reason for approving"},
+    )
+    proviso = PicklistCharField(
+        picklist_attrs={"target": "proviso", "type": "proviso", "name": "Provisos"},
+        label="Add a licence condition (optional)",
+        help_text="Choose a licence condition from the template list",
+        required=False,
     )
     instructions_to_exporter = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
@@ -59,8 +75,12 @@ class GiveApprovalAdviceForm(forms.Form):
         help_text="These may be added to licence cover letter, subject to review by Licencing Unit.",
         required=False,
     )
-    footnote_details = forms.CharField(
-        label="Add a reporting footnote (optional)", widget=forms.Textarea(attrs={"rows": "5"}), required=False
+    footnote_details = PicklistCharField(
+        picklist_attrs={"target": "footnote_details", "type": "footnotes", "name": "Footnotes"},
+        label="Add a reporting footnote (optional)",
+        help_text="Choose a reporting footnote from the template list",
+        min_rows=5,
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
@@ -100,10 +120,10 @@ class RefusalAdviceForm(forms.Form):
                 f'Select all <a href={refusal_criteria_link} target="_blank">refusal criteria</a> that apply'
             ),
         )
-        self.fields["refusal_reasons"] = forms.CharField(
+        self.fields["refusal_reasons"] = PicklistCharField(
+            picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "Standard Advice"},
             label="What are your reasons for this refusal?",
-            help_text='<a href="/">Choose a refusal reason from the template list</a>',
-            widget=forms.Textarea(),
+            help_text="Choose a refusal reason from the template list",
             error_messages={"required": "Enter a reason for refusing"},
         )
         self.helper = FormHelper()
