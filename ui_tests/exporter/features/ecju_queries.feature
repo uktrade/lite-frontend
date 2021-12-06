@@ -11,7 +11,7 @@ So that I can quickly identify where action is required by me and respond to any
     And I click the ECJU Queries tab
     And I click to respond to the ecju query
     And I enter "This is my response" for ecju query and click submit
-    And I select option "Confirm and send the response" and click submit
+    And I select "Confirm and send the response" and click submit
     Then I see my ecju query is closed
 
     Examples:
