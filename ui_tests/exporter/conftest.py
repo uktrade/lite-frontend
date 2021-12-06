@@ -324,12 +324,6 @@ def choose_who_products_going_to(driver, choice):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I select option "{option_text}" and click submit'))
-def select_option_and_submit(driver, option_text):  # noqa
-    driver.find_element_by_xpath(f'//*[text()[contains(.,"{option_text}")]]').click()
-    functions.click_submit(driver)
-
-
 @when(parsers.parse('I select the site at position "{no}"'))  # noqa
 def select_the_site_at_position(driver, no):  # noqa
     sites = SitesPage(driver)
@@ -460,7 +454,7 @@ def click_button(driver, button_value):  # noqa
 def respond_to_query(driver, response):  # noqa
     response_page = RespondToEcjuQueryPage(driver)
     response_page.enter_form_response(response)
-    functions.click_button_with_name(driver, "submit")
+    functions.click_submit(driver)
 
 
 @then("I see my ecju query is closed")  # noqa

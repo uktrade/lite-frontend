@@ -18,12 +18,6 @@ def click_finish_button(driver: WebDriver):
     driver.execute_script("arguments[0].click();", element)
 
 
-def click_button_with_name(driver: WebDriver, name):
-    element = driver.find_element_by_css_selector(f"button[value='{name}']")
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    driver.execute_script("arguments[0].click();", element)
-
-
 def click_back_link(driver: WebDriver):
     driver.find_element_by_id("back-link").click()
 
