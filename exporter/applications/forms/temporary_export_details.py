@@ -1,22 +1,20 @@
+from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import TemporaryExportDetails
-from lite_forms.components import FormGroup, TextArea, Form, RadioButtons, Option, DateInput, BackLink
+from lite_forms.components import FormGroup, TextArea, Form, RadioButtons, Option, DateInput
 
 
-def temporary_export_details_form(back_link_url):
+def temporary_export_details_form():
     return FormGroup(
         [
-            provide_export_details_form(
-                caption=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION, back_link_url=back_link_url
-            ),
+            provide_export_details_form(caption=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
             is_temp_direct_control_form(caption=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
             proposed_product_return_date_form(TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
         ]
     )
 
 
-def provide_export_details_form(caption, back_link_url):
+def provide_export_details_form(caption):
     return Form(
-        back_link=BackLink("Back", back_link_url),
         caption=caption,
         title=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS,
         questions=[
@@ -27,7 +25,7 @@ def provide_export_details_form(caption, back_link_url):
                 optional=False,
             )
         ],
-        default_button_name="Continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )
 
 
@@ -58,7 +56,7 @@ def is_temp_direct_control_form(caption):
                 classes=["govuk-radios--inline"],
             )
         ],
-        default_button_name="Continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )
 
 
@@ -76,5 +74,5 @@ def proposed_product_return_date_form(caption):
                 optional=False,
             ),
         ],
-        default_button_name="Continue",
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )

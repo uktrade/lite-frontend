@@ -266,7 +266,7 @@ def suspected_wmd_end_use_details(driver, choice):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading'))  # noqa
+@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading and Save'))  # noqa
 def route_of_goods(driver, choice):  # noqa
     route_of_goods = RouteOfGoodsFormPage(driver)
     if choice == "No":
@@ -439,7 +439,7 @@ def click_the_ecju_query_tab(driver):  # noqa
     application_page.click_ecju_query_tab()
 
 
-@when("I click to respond to the ECJU query")  # noqa
+@when("I click to respond to the ecju query")  # noqa
 def respond_to_ecju_click(driver):  # noqa
     application_page = ApplicationPage(driver)
     application_page.respond_to_ecju_query(0)
@@ -463,7 +463,7 @@ def respond_to_query(driver, response):  # noqa
     functions.click_button_with_name(driver, "submit")
 
 
-@then("I see my ECJU query is closed")  # noqa
+@then("I see my ecju query is closed")  # noqa
 def determine_that_there_is_a_closed_query(driver):  # noqa
     application_page = ApplicationPage(driver)
     closed_queries = application_page.get_count_of_closed_ecju_queries()
@@ -490,6 +490,13 @@ def upload_a_file_with_description(driver, filename, description):  # noqa
 def get_missing_document_reason(driver, reason):  # noqa
     response_page = RespondToEcjuQueryPage(driver)
     assert response_page.get_missing_document_reason_text() == reason
+
+
+@when(parsers.parse('I select "{value}" for submitting response and click submit'))  # noqa
+def submit_response_confirmation(driver, value):  # noqa
+    # TODO get rid of this xpaths
+    driver.find_element_by_xpath('//input[@value="' + value + '"]').click()
+    driver.find_element_by_xpath('//button[@type="submit"]').click()
 
 
 @when(parsers.parse("I enter text for case note"))  # noqa
@@ -1159,31 +1166,6 @@ def i_see_end_user_summary(driver):  # noqa
     assert elements[4].text == "Test signatory"
 
 
-@then("I see the Product location and journey summary")  # noqa
-def i_see_product_location_journey_summary(driver):  # noqa
-    heading = driver.find_element_by_tag_name("h1").text
-    assert heading == "Product location and journey summary"
-    elements = driver.find_elements_by_css_selector(".govuk-summary-list__value")
-    assert elements[0].text == "GB"
-    assert elements[1].text == "Yes"
-    assert elements[2].text == "Yes"
-    assert elements[3].text == "Direct to end user"
-
-
-@then("I see the Product location and journey summary with temporary export details")  # noqa
-def i_see_product_location_journey_summary_temp_details(driver):  # noqa
-    heading = driver.find_element_by_tag_name("h1").text
-    assert heading == "Product location and journey summary"
-    elements = driver.find_elements_by_css_selector(".govuk-summary-list__value")
-    assert elements[0].text == "GB"
-    assert elements[1].text == "No"
-    assert elements[2].text == "Lorem ipsum"
-    assert elements[3].text == "Yes"
-    assert elements[4].text == "01 January 2030"
-    assert elements[5].text == "Yes"
-    assert elements[6].text == "Direct to end user"
-
-
 @then("I see the consignee summary")  # noqa
 def i_see_consignee_summary(driver):  # noqa
     heading = driver.find_element_by_tag_name("h1").text
@@ -1268,7 +1250,7 @@ def submit_application(
     applications.create_standard_application(api_test_client, context, app_data, submit=True)
 
 
-@given("I create an ECJU query")
+@given("I create an ecju query")
 def create_ecju_query(api_test_client, context):  # noqa
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
 

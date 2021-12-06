@@ -8,7 +8,7 @@ Feature: I want to create ECJU queries
   Scenario: Add an ECJU Query to a case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
-    And I create an ECJU query picklist
+    And I create an ecju query picklist
     When I go to application previously created
     And I go to the ECJU queries tab
     And I click new query

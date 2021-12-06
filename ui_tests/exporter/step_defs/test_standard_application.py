@@ -228,12 +228,13 @@ def create_a_draft(add_a_draft):  # noqa
     pass
 
 
-@when(parsers.parse("I create a standard application"))  # noqa
-def create_standard_application(driver, context):  # noqa
+@when(parsers.parse('I create a standard application of a "{export_type}" export type'))  # noqa
+def create_standard_application(driver, export_type, context):  # noqa
     ExporterHubPage(driver).click_apply_for_a_licence()
     ApplyForALicencePage(driver).select_licence_type("export_licence")
     functions.click_submit(driver)
     enter_type_of_application(driver, "siel", context)
+    enter_permanent_or_temporary(driver, export_type, context)
     enter_application_name(driver, context)
     enter_export_licence(driver, "yes", "123456", context)
 
