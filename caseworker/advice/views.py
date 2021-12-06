@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
@@ -395,6 +396,5 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
                 return f"{self.request.path}approve/"
             else:
                 return f"{self.request.path}refuse/"
-        # TODO: We should probably chuck a banner here to let the user know that the
-        # consolidation has gone through without any issues.
+        messages.add_message(self.request, messages.INFO, "Review successful.")
         return "/"
