@@ -48,7 +48,7 @@
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Security graded</th>
                 <td class="govuk-table__cell">
-                    {{ object.good.is_pv_graded|yesno|title }}
+                    {{ object.good.is_pv_graded|title }}
                     {% if object.good.grading_comment %}
                         - {{ object.good.grading_comment }}
                     {% endif %}
