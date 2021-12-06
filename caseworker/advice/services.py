@@ -67,6 +67,16 @@ def get_advice_to_countersign(advice, caseworker):
     return grouped_user_advice
 
 
+def get_advice_to_consolidate(advice):
+    """For MOD consolidate, we need to be able to review advice from other
+    teams - which is the only difference between this function and
+    `get_advice_to_countersign`.
+    """
+    user_advice = filter_advice_by_level(advice, ["user"])
+    grouped_user_advice = group_advice_by_user(user_advice)
+    return grouped_user_advice
+
+
 def get_advice_subjects(case, countries=None):
     """The "advice subject" is an item on a case (eg a good, end user, consignee etc)
     that can have advice related to it. See lite-api/api/cases/models.py for foreign
