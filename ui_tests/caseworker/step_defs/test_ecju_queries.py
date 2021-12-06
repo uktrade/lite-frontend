@@ -12,7 +12,7 @@ from tests_common import functions
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
 
 
-@given("I create an ECJU query picklist")
+@given("I create an ecju query picklist")
 def i_create_an_ecju_query_picklist(context, add_an_ecju_query_picklist):
     context.ecju_query_picklist_name = add_an_ecju_query_picklist["name"]
     context.ecju_query_picklist_question_text = add_an_ecju_query_picklist["text"]

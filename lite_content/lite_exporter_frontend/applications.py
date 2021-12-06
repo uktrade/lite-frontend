@@ -904,6 +904,6 @@ class HMRCQuery:
 
 
 class RouteOfGoods:
-    TITLE = "Are the products being shipped from the UK on an air waybill or bill of lading?"
+    TITLE = "Are the products being shipped on an air waybill or bill of lading?"
     NO_ANSWER_DESCRIPTION = "Provide details of the route of the products"
     SAVE_BUTTON = "Save"

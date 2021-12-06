@@ -56,12 +56,6 @@ def put_application(request, pk, json):
     return data.json(), data.status_code
 
 
-def put_application_simple(request, pk, json):
-    response = client.put(request, f"/applications/{pk}", json)
-    response.raise_for_status()
-    return response
-
-
 def put_application_route_of_goods(request, pk, json):
     data = client.put(request, f"/applications/{pk}/route-of-goods/", json)
     return data.json(), data.status_code

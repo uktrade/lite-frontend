@@ -4,42 +4,32 @@ Feature: I want to be able to submit SIEL firearm applications
 
   Scenario: Initiate an application for a SIEL firearm
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
+    When I create a standard application of a "temporary" export type
     When I am on the application overview page entitled "Standard Individual Export Licence"
     Then I see the application overview
     And I logout
 
   Scenario: Open a SIEL application
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
+    When I create a standard application of a "temporary" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
     Then I see the application overview
     And I logout
 
   Scenario: Temporary export details
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
+    When I create a standard application of a "temporary" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
-    When I click on the "Provide product location and journey" section
-    And I select "Great Britain" for where my goods will begin their export journey
-    And I select "No, this is a temporary export" when asked if the products are being permanently exported
+    And I click on "Temporary export details"
     And I provide details of why my export is temporary
     And I answer "Yes" for whether the products remain under my direct control
     And I enter the date "01", "01", "2030" when the products will return to the UK
-    And I answer "Yes" for shipping air waybill or lading
-    And I select "Directly to the end-user" when asked who the products are going to
-    Then I see the Product location and journey summary with temporary export details
+    Then I see the temporary export detail summary
     And I logout
 
   Scenario: Enter consignee details in the application
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
-    And I click on the "Provide product location and journey" section
-    And I select "Great Britain" for where my goods will begin their export journey
-    And I select "Yes" when asked if the products are being permanently exported
-    And I answer "Yes" for shipping air waybill or lading
-    And I select "To an end-user via a consignee" when asked who the products are going to
-    And I click submit
+    When I create a standard application of a "permanent" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
     And I click on the "Consignee" section
     And I answer "No" for whether I want to reuse an existing party
@@ -53,13 +43,7 @@ Feature: I want to be able to submit SIEL firearm applications
 
   Scenario: Associate application with existing consignee party
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
-    And I click on the "Provide product location and journey" section
-    And I select "Great Britain" for where my goods will begin their export journey
-    And I select "Yes" when asked if the products are being permanently exported
-    And I answer "Yes" for shipping air waybill or lading
-    And I select "To an end-user via a consignee" when asked who the products are going to
-    And I click submit
+    When I create a standard application of a "permanent" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
     And I click on the "Consignee" section
     And I answer "Yes" for whether I want to reuse an existing party
@@ -74,15 +58,7 @@ Feature: I want to be able to submit SIEL firearm applications
 
   Scenario: Enter details for the end user section in the application
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
-    And I am on the application overview page entitled "Standard Individual Export Licence"
-    When I click on the "Provide product location and journey" section
-    And I select "Great Britain" for where my goods will begin their export journey
-    And I select "Yes" when asked if the products are being permanently exported
-    And I answer "Yes" for shipping air waybill or lading
-    And I select "Directly to the end-user" when asked who the products are going to
-    Then I see the Product location and journey summary
-    When I click submit
+    When I create a standard application of a "permanent" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
     And I click on the "End user" section
     And I answer "No" for whether I want to reuse an existing party
@@ -97,7 +73,7 @@ Feature: I want to be able to submit SIEL firearm applications
 
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
+    When I create a standard application of a "permanent" export type
     When I click on the "Products" section
     And I choose to add a new product
     And I select product type "firearm"
@@ -124,7 +100,7 @@ Feature: I want to be able to submit SIEL firearm applications
 
   Scenario: Enter details for the End use details section in the application
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
+    When I create a standard application of a "permanent" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
     When I click on the "End use details" section
     And I provide details of the intended end use of the products
@@ -138,20 +114,28 @@ Feature: I want to be able to submit SIEL firearm applications
     And I logout
 
 
-  @product_journey
-  Scenario: Enter details for the product location and journey section in the application
+  Scenario: Enter details for the Route of goods section in the application
     Given I signin and go to exporter homepage and choose Test Org
-    When I create a standard application
+    When I create a standard application of a "permanent" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
-    When I click on the "Provide product location and journey" section
-    And I select "Great Britain" for where my goods will begin their export journey
-    And I select "Yes" when asked if the products are being permanently exported
-    And I answer "Yes" for shipping air waybill or lading
-    And I select "Directly to the end-user" when asked who the products are going to
-    Then I see the Product location and journey summary
-    When I click submit
+    When I click on the "Route of goods" section
+    And I answer "Yes" for shipping air waybill or lading and Save
     Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
-    And the section "Provide product location and journey" is now saved
+    And the section "Route of goods" is now saved
+    And I logout
+
+
+  Scenario: Enter details for the Location section in the application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I create a standard application of a "permanent" export type
+    And I am on the application overview page entitled "Standard Individual Export Licence"
+    When I click on the "Locations" section
+    And I select "organisation" for where my goods are located
+    And I select the site at position "1"
+    And I click continue
+    And I click the back link
+    Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
+    And the section "Locations" is now saved
     And I logout
 
 

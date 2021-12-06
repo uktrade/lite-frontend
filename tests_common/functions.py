@@ -7,9 +7,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 
 def click_submit(driver: WebDriver, button_value="submit"):
-    element = driver.find_element_by_css_selector(
-        f".govuk-button[value='{button_value}'], .govuk-button[type='{button_value}'], #submit"
-    )
+    element = driver.find_element_by_css_selector(f"button[value='{button_value}']")
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.execute_script("arguments[0].click();", element)
 
