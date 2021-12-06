@@ -86,7 +86,7 @@ def get_advice_subjects(case, countries=None):
     return destinations + goods
 
 
-def post_approval_advice(request, case, data):
+def post_approval_advice(request, case, data, level="user-advice"):
     json = [
         {
             "type": "proviso" if data["proviso"] else "approve",
@@ -100,12 +100,12 @@ def post_approval_advice(request, case, data):
         }
         for subject_name, subject_id in get_advice_subjects(case, data.get("countries"))
     ]
-    response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
+    response = client.post(request, f"/cases/{case['id']}/{level}/", json)
     response.raise_for_status()
     return response.json(), response.status_code
 
 
-def post_refusal_advice(request, case, data):
+def post_refusal_advice(request, case, data, level="user-advice"):
     json = [
         {
             "type": "refuse",
@@ -116,7 +116,7 @@ def post_refusal_advice(request, case, data):
         }
         for subject_name, subject_id, in get_advice_subjects(case, data.get("countries"))
     ]
-    response = client.post(request, f"/cases/{case['id']}/user-advice/", json)
+    response = client.post(request, f"/cases/{case['id']}/{level}/", json)
     response.raise_for_status()
     return response.json(), response.status_code
 
