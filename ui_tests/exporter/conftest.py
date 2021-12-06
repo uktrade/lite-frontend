@@ -320,7 +320,7 @@ def choose_location_type(driver, choice):  # noqa
 @when(parsers.parse('I select "{choice}" when asked if the products are being permanently exported'))
 @when(parsers.parse('I select "{choice}" when asked who the products are going to'))
 def choose_who_products_going_to(driver, choice):  # noqa
-    driver.find_element_by_xpath(f"//label[contains(text(), '{choice}')]").click()
+    driver.find_element_by_xpath(f"//label/span[contains(text(), '{choice}')]").click()
     functions.click_submit(driver)
 
 
