@@ -22,7 +22,7 @@
           <br>
             <div class="govuk-grid-column-three-quarters">
               <h1 class="govuk-heading-xl">View Advice</h1>
-              {% if my_advice|length %}
+              {% if my_advice %}
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">
                     Edit recommendation
                 </a>
@@ -30,18 +30,14 @@
                     Clear recommendation
                 </a>
                 {% for advice in my_advice %}
-                  {% if advice.type.key in 'approve,proviso' %}
-                    {% include "advice/approve-advice-details.html" %}
-                  {% elif advice.type.key == "refuse" %}
-                    {% include "advice/refuse-advice-details.html" %}
-                  {% endif %}
+                  {% include "advice/advice_details.html" %}
                 {% endfor %}
               {% else %}
                 <label class="govuk-label">No Advice is given for this case yet</label>
               {% endif %}
             </div>
             <div class="govuk-grid-column-one-quarter">
-              {% if my_advice|length and advice_completed %}
+              {% if my_advice and advice_completed %}
                 {% crispy form %}
               {% endif %}
             </div>

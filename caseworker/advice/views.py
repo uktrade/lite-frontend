@@ -129,10 +129,10 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        my_advice = services.filter_current_user_advice(self.case.advice, str(self.caseworker_id))
+        my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = self.unadvised_countries() == {}
-        return {**context, "my_advice": my_advice, "nlr_products": nlr_products, "advice_completed": advice_completed}
+        return {**context, "my_advice": my_advice.values(), "nlr_products": nlr_products, "advice_completed": advice_completed}
 
     def form_valid(self, form):
         queue_id = str(self.kwargs["queue_pk"])
@@ -177,7 +177,6 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
             services.post_refusal_advice(self.request, self.case, data)
         else:
             raise ValueError("Unknown advice type")
-
         return super().form_valid(form)
 
     def get_success_url(self):
