@@ -55,6 +55,11 @@ class SelectAdviceForm(forms.Form):
         self.helper.add_input(Submit("submit", "Continue"))
 
 
+class ConsolidateSelectAdviceForm(SelectAdviceForm):
+    CHOICES = [("approve", "Approve"), ("refuse", "Refuse")]
+    recommendation = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, label="")
+
+
 class GiveApprovalAdviceForm(forms.Form):
 
     approval_reasons = PicklistCharField(
@@ -98,6 +103,16 @@ class GiveApprovalAdviceForm(forms.Form):
             ),
             Submit("submit", "Submit"),
         )
+
+
+class ConsolidateApprovalForm(GiveApprovalAdviceForm):
+    """Approval form minus some fields.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout("approval_reasons", "proviso", Submit("submit", "Submit"))
 
 
 class RefusalAdviceForm(forms.Form):

@@ -2,11 +2,11 @@
 <table id="table-licenceable-products-approve-all" class="govuk-table">
     {% if decision == 'approve' or decision == 'proviso' %}
     <h2 class="app-bg-colour--green govuk-heading-m govuk-!-padding-2">
-        Approved by {{ user|full_name }}
+        {% if team %}Approved by {{ user.team.name }}{% else %}Approved by {{ user|full_name }}{% endif %}
     </h2>
     {% elif decision == 'refuse' %}
     <h2 class="govuk-heading-m app-bg-colour--red govuk-!-padding-2">
-        Refused by {{ user|full_name }}
+        {% if team %}Refused by {{ user.team.name }}{% else %}Refused by {{ user|full_name }}{% endif %}
     </h2>
     {% endif %}
     <thead class="govuk-table__head">

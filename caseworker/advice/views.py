@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
@@ -357,3 +358,43 @@ class ConsolidateAdviceView(AdviceView):
         # For LU, we do not want to show the advice summary
         hide_advice = self.caseworker["team"]["name"] == "Licensing Unit"
         return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
+
+
+class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/review_consolidate.html"
+
+    def is_advice_approve_only(self):
+        return all([a["type"]["key"] in ("approve", "proviso") for a in self.case.advice])
+
+    def get_form(self):
+        form_class = forms.ConsolidateSelectAdviceForm
+        form_kwargs = self.get_form_kwargs()
+        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
+            form_class = forms.ConsolidateApprovalForm
+        if self.kwargs.get("advice_type") == "refuse":
+            form_kwargs["denial_reasons"] = get_denial_reasons(self.request)
+            form_class = forms.RefusalAdviceForm
+        return form_class(**form_kwargs)
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice)
+        context["advice_to_consolidate"] = advice_to_consolidate.values()
+        return context
+
+    def form_valid(self, form):
+        if isinstance(form, forms.ConsolidateApprovalForm):
+            services.post_approval_advice(self.request, self.case, form.cleaned_data, level="team-advice")
+        if isinstance(form, forms.RefusalAdviceForm):
+            services.post_refusal_advice(self.request, self.case, form.cleaned_data, level="team-advice")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if self.kwargs.get("advice_type") is None:
+            recommendation = self.request.POST.get("recommendation")
+            if recommendation == "approve":
+                return f"{self.request.path}approve/"
+            else:
+                return f"{self.request.path}refuse/"
+        messages.add_message(self.request, messages.INFO, "Review successful.")
+        return "/"
