@@ -82,8 +82,9 @@ def test_view_approve_advice_with_conditions_notes_and_nlr_products(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-    table = soup.find("table", id="table-licenceable-products-approve-all")
+    table = soup.find("table", id="table-licenceable-products")
     assert [th.text for th in table.find_all("th")] == ["Country", "Type", "Name", "Approved products"]
+    # checking for 2 times because the same user gave advice twice
     assert [td.text for td in table.find_all("td")] == [
         "Abu Dhabi",
         "Consignee",
@@ -93,7 +94,11 @@ def test_view_approve_advice_with_conditions_notes_and_nlr_products(
         "End user",
         "End User",
         "All",
-    ]
+        "United Kingdom",
+        "Third party",
+        "Third party",
+        "All",
+    ] * 2
 
 
 def test_view_refusal_advice_not_including_nlr_products(
@@ -113,7 +118,7 @@ def test_view_refusal_advice_not_including_nlr_products(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-    table = soup.find("table", id="table-licenceable-products-refuse-all")
+    table = soup.find("table", id="table-licenceable-products")
     assert [th.text for th in table.find_all("th")] == [
         "Country",
         "Type",
@@ -132,7 +137,12 @@ def test_view_refusal_advice_not_including_nlr_products(
         "End User",
         "All",
         "['5a', '5b']",
-    ]
+        "United Kingdom",
+        "Third party",
+        "Third party",
+        "All",
+        "['5a', '5b']",
+    ] * 2
 
 
 def test_move_case_forward(

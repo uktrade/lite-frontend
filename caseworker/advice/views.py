@@ -132,7 +132,12 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
         my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = self.unadvised_countries() == {}
-        return {**context, "my_advice": my_advice.values(), "nlr_products": nlr_products, "advice_completed": advice_completed}
+        return {
+            **context,
+            "my_advice": my_advice.values(),
+            "nlr_products": nlr_products,
+            "advice_completed": advice_completed,
+        }
 
     def form_valid(self, form):
         queue_id = str(self.kwargs["queue_pk"])
@@ -173,7 +178,7 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         data = form.cleaned_data
         if isinstance(form, forms.GiveApprovalAdviceForm):
             services.post_approval_advice(self.request, self.case, data)
-        if isinstance(form, forms.RefusalAdviceForm):
+        elif isinstance(form, forms.RefusalAdviceForm):
             services.post_refusal_advice(self.request, self.case, data)
         else:
             raise ValueError("Unknown advice type")
