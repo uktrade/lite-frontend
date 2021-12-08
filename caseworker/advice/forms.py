@@ -192,6 +192,8 @@ class CountersignAdviceForm(forms.Form):
         label="Explain why this recommendation needs to be sent back to the advisor",
     )
 
+    conditional_radio = {"yes": ["approval_reasons"], "no": ["refusal_reasons", "queue_to_return"]}
+
     def __init__(self, queues, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()

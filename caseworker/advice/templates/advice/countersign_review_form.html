@@ -1,0 +1,26 @@
+{% load crispy_forms_tags %}
+{% load static advice_tags %}
+
+{% csrf_token %}
+<div class="govuk-form-group {% if form.errors.agree_with_recommendation %}govuk-form-group--error{% endif %}" id="div_id_form-{{index}}-agree_with_recommendation">
+    <fieldset class="govuk-fieldset">
+        {% if form.errors.agree_with_recommendation %}<span id="id_form-{{index}}-agree_with_recommendation_{{forloop.index}}-error" class="govuk-error-message">Select yes if you agree with the recommendation</span>{% endif %}
+        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+            {% for choice in form.agree_with_recommendation.field.choices %}
+            <div class="govuk-radios__item">
+                <input type="radio" name="form-{{index}}-agree_with_recommendation" class="govuk-radios__input" id="id_form-{{index}}-agree_with_recommendation_{{forloop.index}}" value="{{choice.0}}" data-aria-controls="conditional-{{index}}-{{choice.0}}" {% if form.cleaned_data.agree_with_recommendation == choice.0 %}checked{% endif %}>
+                <label class="govuk-label govuk-radios__label" for="id_form-{{index}}-agree_with_recommendation_{{forloop.index}}">{{choice.1}}</label>
+            </div>
+            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-{{index}}-{{choice.0}}">
+            {% with conditional_fields=form.conditional_radio|get_item:choice.0 %}
+            {% for field in form %}
+            {% if field.name in conditional_fields %}
+                {{field|as_crispy_field}}
+            {% endif %}
+            {% endfor %}
+            {% endwith %}
+            </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
