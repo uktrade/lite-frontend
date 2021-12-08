@@ -27,5 +27,10 @@ def index(array, i):
 
 
 @register.filter
+def get_item(dict, key):
+    return dict.get(key, "")
+
+
+@register.filter
 def countersigned_user_team(advice):
     return f"{advice['countersigned_by']['team']['name']}"
