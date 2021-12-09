@@ -84,9 +84,9 @@ def test_countersign_approve_all_put(
     assert len(history) == 1
     history = history.pop()
     assert history.method == "PUT"
-    assert history.json() == {
-        "queues": ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956"]
-    }
+    assert set(history.json()["queues"]) == set(
+        ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956"]
+    )
 
 
 def test_countersign_refuse_all_put(
@@ -159,6 +159,6 @@ def test_countersign_refuse_all_put(
     assert len(history) == 1
     history = history.pop()
     assert history.method == "PUT"
-    assert history.json() == {
-        "queues": ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956", queue_pk]
-    }
+    assert set(history.json()["queues"]) == set(
+        ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956", queue_pk]
+    )

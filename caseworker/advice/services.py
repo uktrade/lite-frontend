@@ -5,6 +5,8 @@ from requests.exceptions import HTTPError
 from core import client
 from caseworker.cases.services import put_case_queues
 
+FCDO_COUNTERSIGNING_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
+
 
 def filter_nlr_products(products):
     return [
@@ -145,7 +147,7 @@ def get_users_team_queues(request, user):
 
 def countersign_advice(request, case, caseworker, formset_data):
     data = []
-    queues_to_return = []
+    queues_to_return = set()
     case_pk = case["id"]
     advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
 
@@ -156,16 +158,16 @@ def countersign_advice(request, case, caseworker, formset_data):
             comments = form_data["approval_reasons"]
         elif form_data["agree_with_recommendation"] == "no":
             comments = form_data["refusal_reasons"]
-            if form_data["queue_to_return"] not in queues_to_return:
-                queues_to_return.append(form_data["queue_to_return"])
+            queues_to_return.add(form_data["queue_to_return"])
         for advice in user_advice:
             data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
 
     response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
     response.raise_for_status()
 
-    current_queues = [queue_id for queue_id in case.queues if queue_id != "FCO Counter-signing"]
-    put_case_queues(request, case_pk, json={"queues": current_queues + queues_to_return})
+    # Remove the case from the FCO countersigning queue
+    current_queues = set(case.queues) - {FCDO_COUNTERSIGNING_QUEUE}
+    put_case_queues(request, case_pk, json={"queues": list(current_queues | queues_to_return)})
 
     return response.json(), response.status_code
 
