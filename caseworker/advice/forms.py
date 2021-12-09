@@ -11,23 +11,21 @@ from crispy_forms_gds.layout import Layout, Submit, HTML
 from core.forms.widgets import GridmultipleSelect
 
 
-def get_approval_advice_form_factory(advice):
-    data = {
+def get_approval_advice_form_factory(advice, data=None):
+    data = data or {
         "proviso": advice["proviso"],
         "approval_reasons": advice["text"],
         "instructions_to_exporter": advice["note"],
         "footnote_details": advice["footnote"],
     }
-
     return GiveApprovalAdviceForm(data=data)
 
 
-def get_refusal_advice_form_factory(advice, denial_reasons_choices):
-    data = {
+def get_refusal_advice_form_factory(advice, denial_reasons_choices, data=None):
+    data = data or {
         "refusal_reasons": advice["text"],
         "denial_reasons": [r for r in advice["denial_reasons"]],
     }
-
     return RefusalAdviceForm(data=data, denial_reasons=denial_reasons_choices)
 
 

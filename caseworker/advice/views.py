@@ -130,10 +130,15 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        my_advice = services.filter_current_user_advice(self.case.advice, str(self.caseworker_id))
+        my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = self.unadvised_countries() == {}
-        return {**context, "my_advice": my_advice, "nlr_products": nlr_products, "advice_completed": advice_completed}
+        return {
+            **context,
+            "my_advice": my_advice.values(),
+            "nlr_products": nlr_products,
+            "advice_completed": advice_completed,
+        }
 
     def form_valid(self, form):
         queue_id = str(self.kwargs["queue_pk"])
@@ -153,36 +158,31 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     """
 
     def get_form(self):
-        case = get_case(self.request, self.kwargs["pk"])
-        my_advice = services.filter_current_user_advice(case.advice, str(self.request.session["lite_api_user_id"]))
+        my_advice = services.filter_current_user_advice(self.case.advice, self.caseworker_id)
+        # The form that we are about to render lets the users edit e.g. approval/refusal reason
+        # but the number of advice objects equals - destination x goods.
+        # That said, approval/refusal reasons are the same for all of these objects so we
+        # can take the first object and populate the form from it.
         advice = my_advice[0]
 
         if advice["type"]["key"] in ["approve", "proviso"]:
-            self.advice_type = "approve"
             self.template_name = "advice/give-approval-advice.html"
-            return forms.get_approval_advice_form_factory(advice)
+            return forms.get_approval_advice_form_factory(advice, self.request.POST)
         elif advice["type"]["key"] == "refuse":
-            self.advice_type = "refuse"
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
-            return forms.get_refusal_advice_form_factory(advice, denial_reasons)
+            return forms.get_refusal_advice_form_factory(advice, denial_reasons, self.request.POST)
         else:
             raise ValueError("Invalid advice type encountered")
 
     def form_valid(self, form):
-        case = self.get_context_data()["case"]
-        data = form.cleaned_data.copy()
-        if self.advice_type == "approve":
-            for field in form.changed_data:
-                data[field] = self.request.POST.get(field)
-            services.post_approval_advice(self.request, case, data)
-        elif self.advice_type == "refuse":
-            data["refusal_reasons"] = self.request.POST.get("refusal_reasons")
-            data["denial_reasons"] = self.request.POST.getlist("denial_reasons")
-            services.post_refusal_advice(self.request, case, data)
+        data = form.cleaned_data
+        if isinstance(form, forms.GiveApprovalAdviceForm):
+            services.post_approval_advice(self.request, self.case, data)
+        elif isinstance(form, forms.RefusalAdviceForm):
+            services.post_refusal_advice(self.request, self.case, data)
         else:
             raise ValueError("Unknown advice type")
-
         return super().form_valid(form)
 
     def get_success_url(self):

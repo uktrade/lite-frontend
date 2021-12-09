@@ -36,6 +36,13 @@ def filter_advice_by_users_team(all_advice, caseworker):
     return [advice for advice in all_advice if advice["user"]["team"]["id"] == caseworker["team"]["id"]]
 
 
+def get_my_advice(advice, caseworker):
+    user_level_advice = filter_advice_by_level(advice, ["user"])
+    user_advice = filter_current_user_advice(user_level_advice, caseworker)
+    grouped_user_advice = group_advice_by_user(user_advice)
+    return grouped_user_advice
+
+
 def group_advice_by_user(advice):
     """E.g. A case with 2 destinations and 2 goods, has 4 distinct
     advice-subjects. As a result, `post_approval_advice` &
