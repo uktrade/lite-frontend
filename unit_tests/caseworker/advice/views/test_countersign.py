@@ -44,6 +44,9 @@ def test_countersign_approve_all_put(
 
     advice_to_countersign = services.get_advice_to_countersign(advice_for_countersign, mock_gov_user["user"])
 
+    case_queues_url = client._build_absolute_uri(f"/cases/{case_id}/queues/")
+    requests_mock.put(case_queues_url, json={})
+
     data = {
         "form-TOTAL_FORMS": [f"{len(advice_to_countersign)}"],
         "form-INITIAL_FORMS": ["0"],
@@ -76,6 +79,14 @@ def test_countersign_approve_all_put(
             "countersign_comments": "reason0",
         },
     ]
+
+    history = [item for item in requests_mock.request_history if case_queues_url in item.url]
+    assert len(history) == 1
+    history = history.pop()
+    assert history.method == "PUT"
+    assert set(history.json()["queues"]) == set(
+        ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956"]
+    )
 
 
 def test_countersign_refuse_all_put(
@@ -148,4 +159,6 @@ def test_countersign_refuse_all_put(
     assert len(history) == 1
     history = history.pop()
     assert history.method == "PUT"
-    assert history.json() == {"queues": [queue_pk]}
+    assert set(history.json()["queues"]) == set(
+        ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956", queue_pk]
+    )
