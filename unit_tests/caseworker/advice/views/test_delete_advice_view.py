@@ -29,5 +29,5 @@ def test_delete_advice_post(authorized_client, url, data_queue, data_standard_ca
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "cases:view_my_advice", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+        "cases:select_advice", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
     )
