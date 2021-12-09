@@ -145,7 +145,7 @@ def get_users_team_queues(request, user):
 
 def countersign_advice(request, case, caseworker, formset_data):
     data = []
-    queues = []
+    queues_to_return = []
     case_pk = case["id"]
     advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
 
@@ -156,16 +156,16 @@ def countersign_advice(request, case, caseworker, formset_data):
             comments = form_data["approval_reasons"]
         elif form_data["agree_with_recommendation"] == "no":
             comments = form_data["refusal_reasons"]
-            if form_data["queue_to_return"] not in queues:
-                queues.append(form_data["queue_to_return"])
+            if form_data["queue_to_return"] not in queues_to_return:
+                queues_to_return.append(form_data["queue_to_return"])
         for advice in user_advice:
             data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
 
     response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
     response.raise_for_status()
 
-    if queues:
-        put_case_queues(request, case_pk, json={"queues": queues})
+    current_queues = [queue_id for queue_id in case.queues if queue_id != "FCO Counter-signing"]
+    put_case_queues(request, case_pk, json={"queues": current_queues + queues_to_return})
 
     return response.json(), response.status_code
 
