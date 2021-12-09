@@ -11,7 +11,7 @@
   {% if countersign %}
   <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review advice</a>
   {% elif consolidate %}
-  <a draggable="false" class="govuk-button govuk-button--primary" href="#put-link-to-consolidate-view-here-when-ready">Combine advice</a>
+  <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Combine advice</a>
   {% else %}
   <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
   {% endif %}
