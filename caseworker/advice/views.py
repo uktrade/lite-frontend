@@ -199,7 +199,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:view_my_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+        return reverse("cases:select_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
 class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
