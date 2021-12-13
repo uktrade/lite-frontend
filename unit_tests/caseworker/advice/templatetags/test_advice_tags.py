@@ -55,15 +55,25 @@ def test_get_clc(goods, expected_value):
     "goods, expected_value",
     (
         # Base case
-        ([{"good": {"pv_grading_details": "a"}}, {"good": {"pv_grading_details": "b"}}], ["a", "b"],),
-        # One of the pv_grading_details is None
-        ([{"good": {"pv_grading_details": "a"}}, {"good": {"pv_grading_details": None}}], ["a"],),
+        (
+            [
+                {"good": {"is_pv_graded": "yes", "pv_grading_details": "a"}},
+                {"good": {"is_pv_graded": "no", "pv_grading_details": "b"}},
+            ],
+            ["no", "yes"],
+        ),
         # Same pv_grading_details
-        ([{"good": {"pv_grading_details": "a"}}, {"good": {"pv_grading_details": "a"}}], ["a"],),
+        (
+            [
+                {"good": {"is_pv_graded": "yes", "pv_grading_details": "a"}},
+                {"is_pv_graded": "yes", "good": {"pv_grading_details": "a"}},
+            ],
+            ["yes"],
+        ),
         # Missing pv_grading_details key
-        ([{"good": {"pv_grading_details": "a"}}, {"good": {}}], ["a"],),
+        ([{"good": {"is_pv_graded": "no", "pv_grading_details": "a"}}, {"good": {}}], ["no"],),
         # Missing good key
-        ([{"good": {"pv_grading_details": "a"}}, {}], ["a"],),
+        ([{"good": {"is_pv_graded": "yes", "pv_grading_details": "a"}}, {}], ["yes"],),
     ),
 )
 def test_get_security_grading(goods, expected_value):
