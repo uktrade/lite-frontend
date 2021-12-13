@@ -37,11 +37,22 @@ class CaseContextMixin:
         return data["user"]
 
     def unadvised_countries(self):
-        """Returns a dict of countries for which advice has not been given"""
+        """Returns a dict of countries for which advice has not been given by the current user's team."""
         dest_types = ("end_user", "ultimate_end_user", "consignee", "third_party")
-        dests = {advice.get(dest_type) for dest_type in dest_types for advice in self.case.advice} - {None}
+
+        advised_on = {
+            # Map of destinations advised on -> team that gave the advice
+            advice.get(dest_type): advice["user"]["team"]["id"]
+            for dest_type in dest_types
+            for advice in self.case.advice
+            if advice.get(dest_type) is not None
+        }
+
         return {
-            dest["country"]["id"]: dest["country"]["name"] for dest in self.case.destinations if dest["id"] not in dests
+            dest["country"]["id"]: dest["country"]["name"]
+            for dest in self.case.destinations
+            # Don't include destinations already advised on by the current user's team
+            if (dest["id"], self.caseworker["team"]["id"]) not in advised_on.items()
         }
 
     def get_context(self, **kwargs):

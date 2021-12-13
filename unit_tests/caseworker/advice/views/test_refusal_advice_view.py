@@ -41,13 +41,42 @@ def test_refuse_all_post(authorized_client, url, denial_reasons, refusal_reasons
 
 @mock.patch("caseworker.advice.views.get_gov_user")
 def test_fco_give_refusal_advice_get(mock_get_gov_user, authorized_client, url):
-    mock_get_gov_user.return_value = ({"user": {"team": {"name": "FCO"}}}, None)
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        None,
+    )
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert "countries" in response.context_data["form"].fields
     assert response.context_data["form"].fields["countries"].choices == [
         ("GB", "United Kingdom"),
         ("AE-AZ", "Abu Dhabi"),
+    ]
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_fco_give_refusal_advice_existing_get(mock_get_gov_user, authorized_client, url, data_standard_case):
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        None,
+    )
+    data_standard_case["case"]["advice"] = [
+        # The GB destination has been advised on by MOD-DSTL
+        {
+            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+            "user": {"team": {"id": "809eba0f-f197-4f0f-949b-9af309a844fb", "name": "MOD-DSTL"}},
+        },
+        # The AE-AZ destination has been advised on by FCO (should therefore not be rendered)
+        {
+            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}},
+        },
+    ]
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert "countries" in response.context_data["form"].fields
+    assert response.context_data["form"].fields["countries"].choices == [
+        ("GB", "United Kingdom"),
     ]
 
 
@@ -77,7 +106,10 @@ def test_fco_give_approval_advice_post(
     refusal_reasons,
     expected_status_code,
 ):
-    mock_get_gov_user.return_value = ({"user": {"team": {"name": "FCO"}}}, None)
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        None,
+    )
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
     data = {"denial_reasons": ["1"], "refusal_reasons": refusal_reasons, "countries": countries}
     response = authorized_client.post(url, data=data)
