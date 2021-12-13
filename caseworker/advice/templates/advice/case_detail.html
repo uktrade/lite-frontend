@@ -99,7 +99,7 @@
                 <p class="govuk-body"><strong>Security grading</strong></p>
             </div>
             <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">{{ case.goods | get_security_grading | join:', ' }}<br></p>
+                <p class="govuk-body">{{ case.goods | get_security_grading | join:', ' | title }}<br></p>
             </div>
             <div class="govuk-grid-column-one-half">
                 <p class="govuk-body"><strong>Total value</strong></p>

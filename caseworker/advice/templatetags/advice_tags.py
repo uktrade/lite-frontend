@@ -17,7 +17,7 @@ def get_case_value(goods):
 
 @register.filter()
 def get_security_grading(goods):
-    gradings = {good.get("good", {}).get("pv_grading_details") for good in goods}
+    gradings = {good.get("good", {}).get("is_pv_graded") for good in goods}
     return sorted(gradings - {None})
 
 
