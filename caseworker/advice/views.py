@@ -409,3 +409,43 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
                 return f"{self.request.path}refuse/"
         messages.add_message(self.request, messages.INFO, "Review successful.")
         return "/"
+
+
+class ConsolidateEditView(ReviewConsolidateView):
+    """
+    Form to edit consolidated advice.
+    """
+
+    def setup(self, request, *args, **kwargs):
+        """User the setup method to pre-set kwargs["advice_type"] so
+        that we don't render the select-advice form.
+        """
+        super().setup(request, *args, **kwargs)
+        self.advice = services.get_my_team_advice(self.case.advice, self.caseworker)
+        self.advice_type = self.advice["type"]["key"]
+        self.kwargs["advice_type"] = self.advice_type
+
+    def get_approval_data(self):
+        return {
+            "proviso": self.advice["proviso"],
+            "approval_reasons": self.advice["text"],
+        }
+
+    def get_refusal_data(self):
+        return {
+            "refusal_reasons": self.advice["text"],
+            "denial_reasons": [r for r in self.advice["denial_reasons"]],
+        }
+
+    def get_data(self):
+        if self.advice_type == "refuse":
+            return self.get_refusal_data()
+        return self.get_approval_data()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["data"] = self.request.POST or self.get_data()
+        return kwargs
+
+    def get_success_url(self):
+        return "#replace-with-consolidate-view-advice"
