@@ -449,4 +449,15 @@ class ConsolidateEditView(ReviewConsolidateView):
         return kwargs
 
     def get_success_url(self):
-        return "#replace-with-consolidate-view-advice"
+        return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+
+
+class ViewConsolidatedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    template_name = "advice/view_consolidate.html"
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        consolidated_advice = services.get_consolidated_advice(self.case.advice, services.LICENSING_UNIT_TEAM_ID)
+        context["consolidated_advice"] = consolidated_advice
+        context["nlr_products"] = services.filter_nlr_products(self.case["data"]["goods"])
+        return context
