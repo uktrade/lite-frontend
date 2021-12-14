@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
+from django.utils.functional import cached_property
 from requests.exceptions import HTTPError
 
 from caseworker.advice import forms, services
@@ -23,7 +24,7 @@ class CaseContextMixin:
     def case_id(self):
         return str(self.kwargs["pk"])
 
-    @property
+    @cached_property
     def case(self):
         return get_case(self.request, self.case_id)
 
