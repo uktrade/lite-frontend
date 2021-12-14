@@ -460,4 +460,5 @@ class ViewConsolidatedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView)
         consolidated_advice = services.get_consolidated_advice(self.case.advice, services.LICENSING_UNIT_TEAM_ID)
         context["consolidated_advice"] = consolidated_advice
         context["nlr_products"] = services.filter_nlr_products(self.case["data"]["goods"])
+        context["user_can_finalise"] = self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM_ID
         return context

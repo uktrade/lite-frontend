@@ -9,17 +9,23 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row govuk-!-margin-top-6">
             <div class="govuk-grid-column-two-thirds">
-                <a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="#">
-                    Finalise case
-                </a>
-                <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
-                    Edit outcome
-                </a>
-                {% with advice=consolidated_advice %}
-                    <br><br>
-                    {% include "advice/advice_details.html" %}
-                    <br>
-                {% endwith %}
+                {% if consolidated_advice %}
+                    {% if user_can_finalise %}
+                        <a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="#">
+                            Finalise case
+                        </a>
+                        <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
+                                Edit outcome
+                        </a>
+                    {% endif %}
+                    {% with advice=consolidated_advice %}
+                        <br><br>
+                        {% include "advice/advice_details.html" %}
+                        <br>
+                    {% endwith %}
+                {% else %}
+                    <label>Advice not yet consolidated for this Case</label>
+                {% endif %}
             </div>
             <div class="govuk-grid-column-one-thirds">
                 {% include "advice/case_detail.html" %}
