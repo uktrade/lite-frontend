@@ -45,6 +45,12 @@ def get_my_advice(advice, caseworker):
     return grouped_user_advice
 
 
+def get_my_team_advice(advice, caseworker):
+    team_advice = filter_advice_by_level(advice, ["team"])
+    advice = filter_advice_by_users_team(team_advice, caseworker)
+    return advice[0]
+
+
 def group_advice_by_user(advice):
     """E.g. A case with 2 destinations and 2 goods, has 4 distinct
     advice-subjects. As a result, `post_approval_advice` &
