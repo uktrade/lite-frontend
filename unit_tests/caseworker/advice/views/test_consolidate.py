@@ -1,8 +1,11 @@
 import pytest
+
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
 from caseworker.advice import forms
+from caseworker.advice.services import LICENSING_UNIT_TEAM
 
 
 @pytest.fixture
@@ -20,6 +23,13 @@ def setup(mock_queue, mock_case, mock_denial_reasons, mock_post_team_advice):
 def url(data_queue, data_standard_case):
     return reverse(
         "cases:consolidate_review", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+
+
+@pytest.fixture
+def view_consolidate_outcome_url(data_queue, data_standard_case):
+    return reverse(
+        f"cases:consolidate_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
     )
 
 
@@ -49,11 +59,174 @@ def advice(current_user):
 
 
 @pytest.fixture
-def refusal_advice(advice):
+def consolidated_advice(current_user, team1_user):
+    current_user["team"]["id"] = LICENSING_UNIT_TEAM
+    return [
+        {
+            "id": "4f146dd1-a454-49ad-8c78-214552a45207",
+            "text": "Issue from Team M",
+            "note": "No additional instructions",
+            "type": {"key": "approve", "value": "Approve"},
+            "level": "user",
+            "proviso": None,
+            "denial_reasons": [],
+            "footnote": "firearms product for military use",
+            "user": team1_user,
+            "created_at": "2021-12-14T13:36:34.176613Z",
+            "good": None,
+            "goods_type": None,
+            "country": None,
+            "end_user": "94540537-d5e9-40c9-9d8e-8e28792665e1",
+            "ultimate_end_user": None,
+            "consignee": None,
+            "third_party": None,
+            "countersigned_by": None,
+            "countersign_comments": "",
+        },
+        {
+            "id": "ac914a37-ae50-4a8e-8ebb-0c31b98cfbd2",
+            "text": "Issue from Team M",
+            "note": "No additional instructions",
+            "type": {"key": "approve", "value": "Approve"},
+            "level": "user",
+            "proviso": None,
+            "denial_reasons": [],
+            "footnote": "firearms product for military use",
+            "user": team1_user,
+            "created_at": "2021-12-14T13:36:34.222814Z",
+            "good": None,
+            "goods_type": None,
+            "country": None,
+            "end_user": None,
+            "ultimate_end_user": None,
+            "consignee": "09d08d89-f2f4-4203-a465-11e7c597191c",
+            "third_party": None,
+            "countersigned_by": None,
+            "countersign_comments": "",
+        },
+        {
+            "id": "deb3e4f7-3704-4dad-aaa5-855a076bb16f",
+            "text": "Issue from Team M",
+            "note": "No additional instructions",
+            "type": {"key": "approve", "value": "Approve"},
+            "level": "user",
+            "proviso": None,
+            "denial_reasons": [],
+            "footnote": "firearms product for military use",
+            "user": team1_user,
+            "created_at": "2021-12-14T13:36:34.262769Z",
+            "good": "21f9f169-606d-40a6-91b4-88652d64167e",
+            "goods_type": None,
+            "country": None,
+            "end_user": None,
+            "ultimate_end_user": None,
+            "consignee": None,
+            "third_party": None,
+            "countersigned_by": None,
+            "countersign_comments": "",
+        },
+        {
+            "id": "56a3062a-6437-4e4f-8ce8-87ad76d5d903",
+            "text": "Issue from LU",
+            "note": "",
+            "type": {"key": "proviso", "value": "Proviso"},
+            "level": "team",
+            "proviso": "no other conditions",
+            "denial_reasons": [],
+            "footnote": "",
+            "user": current_user,
+            "created_at": "2021-12-14T14:26:36.082345Z",
+            "good": None,
+            "goods_type": None,
+            "country": None,
+            "end_user": "94540537-d5e9-40c9-9d8e-8e28792665e1",
+            "ultimate_end_user": None,
+            "consignee": None,
+            "third_party": None,
+            "countersigned_by": None,
+            "countersign_comments": "",
+        },
+        {
+            "id": "cdf5ac6d-f209-48c9-a6cd-6f7b8496f810",
+            "text": "Issue from LU",
+            "note": "",
+            "type": {"key": "proviso", "value": "Proviso"},
+            "level": "team",
+            "proviso": "no other conditions",
+            "denial_reasons": [],
+            "footnote": "",
+            "user": current_user,
+            "created_at": "2021-12-14T14:26:36.123966Z",
+            "good": None,
+            "goods_type": None,
+            "country": None,
+            "end_user": None,
+            "ultimate_end_user": None,
+            "consignee": "09d08d89-f2f4-4203-a465-11e7c597191c",
+            "third_party": None,
+            "countersigned_by": None,
+            "countersign_comments": "",
+        },
+        {
+            "id": "2f580ac6-07ec-46f0-836c-0bbb282e6886",
+            "text": "Issue from LU",
+            "note": "",
+            "type": {"key": "proviso", "value": "Proviso"},
+            "level": "team",
+            "proviso": "no other conditions",
+            "denial_reasons": [],
+            "footnote": "",
+            "user": current_user,
+            "created_at": "2021-12-14T14:26:36.161135Z",
+            "good": "21f9f169-606d-40a6-91b4-88652d64167e",
+            "goods_type": None,
+            "country": None,
+            "end_user": None,
+            "ultimate_end_user": None,
+            "consignee": None,
+            "third_party": "09d08d89-f2f4-4203-a465-11e7c597191c",
+            "countersigned_by": None,
+            "countersign_comments": "",
+        },
+        {
+            "id": "2f580ac6-07ec-46f0-836c-0bbb282e6886",
+            "text": "Issue from LU",
+            "note": "",
+            "type": {"key": "proviso", "value": "Proviso"},
+            "level": "team",
+            "proviso": "no other conditions",
+            "denial_reasons": [],
+            "footnote": "",
+            "user": current_user,
+            "created_at": "2021-12-14T14:26:36.161135Z",
+            "good": None,
+            "goods_type": None,
+            "country": None,
+            "end_user": None,
+            "ultimate_end_user": None,
+            "consignee": None,
+            "third_party": None,
+            "countersigned_by": None,
+            "countersign_comments": "",
+        },
+    ]
+
+
+def to_refusal_advice(advice):
     for item in advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
         item["denial_reasons"] = (["5a", "5b"],)
     return advice
+
+
+@pytest.fixture
+def refusal_advice(advice):
+    return to_refusal_advice(advice)
+
+
+@pytest.fixture
+def consolidated_refusal_outcome(consolidated_advice):
+    return to_refusal_advice(consolidated_advice)
 
 
 @pytest.mark.parametrize(
@@ -158,4 +331,69 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": "refuse",
         },
+    ]
+
+
+def test_view_consolidate_approve_outcome(
+    requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_advice
+):
+    data_standard_case["case"]["advice"] = consolidated_advice
+    case_id = data_standard_case["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    table = soup.find("table", id="table-licenceable-products")
+    assert [th.text for th in table.find_all("th")] == ["Country", "Type", "Name", "Approved products"]
+    assert [td.text for td in table.find_all("td")] == [
+        "Abu Dhabi",
+        "Consignee",
+        "Consignee",
+        "All",
+        "United Kingdom",
+        "End user",
+        "End User",
+        "All",
+        "United Kingdom",
+        "Third party",
+        "Third party",
+        "All",
+    ]
+
+
+def test_view_consolidate_refuse_outcome(
+    requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_refusal_outcome
+):
+    data_standard_case["case"]["advice"] = consolidated_refusal_outcome
+    case_id = data_standard_case["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    table = soup.find("table", id="table-licenceable-products")
+    assert [th.text for th in table.find_all("th")] == [
+        "Country",
+        "Type",
+        "Name",
+        "Refused products",
+        "Refusal criteria",
+    ]
+    assert [td.text for td in table.find_all("td")] == [
+        "Abu Dhabi",
+        "Consignee",
+        "Consignee",
+        "All",
+        "['5a', '5b']",
+        "United Kingdom",
+        "End user",
+        "End User",
+        "All",
+        "['5a', '5b']",
+        "United Kingdom",
+        "Third party",
+        "Third party",
+        "All",
+        "['5a', '5b']",
     ]

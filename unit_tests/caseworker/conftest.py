@@ -295,6 +295,19 @@ def current_user():
 
 
 @pytest.fixture
+def team1_user():
+    return {
+        "email": "team1.user@example.com",
+        "first_name": "Team1 Test",
+        "id": "9123453c-e938-4d4f-a71b-12345678e855",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {"id": "12345678-42c8-499f-a58d-94f945411234", "name": "Team1", "part_of_ecju": True, "is_ogd": False,},
+    }
+
+
+@pytest.fixture
 def refusal_advice(current_user):
     return [
         {

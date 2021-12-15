@@ -3,12 +3,14 @@ from unittest.mock import patch
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+from caseworker.advice.services import LICENSING_UNIT_TEAM
+
 
 @patch("caseworker.advice.views.get_gov_user")
 def test_no_advice_summary_for_lu(
     mock_get_gov_user, mock_queue, mock_case, authorized_client, data_queue, data_standard_case
 ):
-    mock_get_gov_user.return_value = ({"user": {"team": {"name": "Licensing Unit"}}}, None)
+    mock_get_gov_user.return_value = ({"user": {"team": {"id": LICENSING_UNIT_TEAM}}}, None)
     url = reverse(
         f"cases:consolidate_advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
     )
