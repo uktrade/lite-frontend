@@ -295,9 +295,15 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         return grouped_advice
 
     def get_context(self, **kwargs):
+        consolidated_advice = services.get_consolidated_advice(self.case.advice, services.LICENSING_UNIT_TEAM)
+        nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
+
         return {
             "queue": self.queue,
             "grouped_advice": self.grouped_advice,
+            "consolidated_advice": consolidated_advice,
+            "nlr_products": nlr_products,
+            "user_can_finalise": self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM,
         }
 
 
@@ -368,7 +374,7 @@ class CountersignAdviceView(AdviceView):
 class ConsolidateAdviceView(AdviceView):
     def get_context(self, **kwargs):
         # For LU, we do not want to show the advice summary
-        hide_advice = self.caseworker["team"]["name"] == "Licensing Unit"
+        hide_advice = self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM
         return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
 
 
@@ -409,7 +415,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             else:
                 return f"{self.request.path}refuse/"
         messages.add_message(self.request, messages.INFO, "Review successful.")
-        return "/"
+        return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
 class ConsolidateEditView(ReviewConsolidateView):
@@ -422,7 +428,8 @@ class ConsolidateEditView(ReviewConsolidateView):
         that we don't render the select-advice form.
         """
         super().setup(request, *args, **kwargs)
-        self.advice = services.get_my_team_advice(self.case.advice, self.caseworker)
+        team_advice = services.filter_advice_by_level(self.case.advice, ["team"])
+        self.advice = services.filter_advice_by_team(team_advice, self.caseworker["team"]["id"])[0]
         self.advice_type = self.advice["type"]["key"]
         self.kwargs["advice_type"] = self.advice_type
 
@@ -450,16 +457,3 @@ class ConsolidateEditView(ReviewConsolidateView):
 
     def get_success_url(self):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
-
-
-class ViewConsolidatedAdvice(AdviceView):
-    template_name = "advice/view_consolidate.html"
-
-    def get_context(self, **kwargs):
-        context = super().get_context()
-        consolidated_advice = services.get_consolidated_advice(self.case.advice, services.LICENSING_UNIT_TEAM_ID)
-        context["consolidated_advice"] = consolidated_advice
-        context["nlr_products"] = services.filter_nlr_products(self.case["data"]["goods"])
-        context["user_can_finalise"] = self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM_ID
-        context["grouped_advice"] = self.grouped_advice
-        return context

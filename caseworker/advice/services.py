@@ -6,7 +6,7 @@ from core import client
 from caseworker.cases.services import put_case_queues
 
 FCDO_COUNTERSIGNING_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
-LICENSING_UNIT_TEAM_ID = "58e77e47-42c8-499f-a58d-94f94541f8c6"
+LICENSING_UNIT_TEAM = "58e77e47-42c8-499f-a58d-94f94541f8c6"
 
 
 def filter_nlr_products(products):
@@ -50,12 +50,6 @@ def get_my_advice(advice, caseworker):
     return grouped_user_advice
 
 
-def get_my_team_advice(advice, caseworker):
-    team_advice = filter_advice_by_level(advice, ["team"])
-    advice = filter_advice_by_users_team(team_advice, caseworker)
-    return advice[0]
-
-
 def group_advice_by_user(advice):
     """E.g. A case with 2 destinations and 2 goods, has 4 distinct
     advice-subjects. As a result, `post_approval_advice` &
@@ -97,22 +91,21 @@ def get_advice_to_consolidate(advice):
     return grouped_user_advice
 
 
-def arrange_by_party_type(all_advice):
-    arranged_advice = []
+def order_by_party_type(all_advice):
+    ordered_advice = []
     party_types = ("consignee", "end_user", "ultimate_end_user", "third_party")
     for party_type in party_types:
-        for index, advice in enumerate(all_advice):
-            if advice.get(party_type):
-                arranged_advice.append(all_advice.pop(index))
+        for advice in all_advice:
+            if advice.get(party_type) and advice not in ordered_advice:
+                ordered_advice.append(advice)
 
-    return arranged_advice
+    return ordered_advice
 
 
 def get_consolidated_advice(advice, team_id):
     team_advice = filter_advice_by_level(advice, ["team"])
     consolidated_advice = filter_advice_by_team(team_advice, team_id)
-    consolidated_advice = arrange_by_party_type(consolidated_advice)
-    return consolidated_advice
+    return order_by_party_type(consolidated_advice)
 
 
 def get_advice_subjects(case, countries=None):
