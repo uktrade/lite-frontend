@@ -452,7 +452,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
-class ViewConsolidatedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class ViewConsolidatedAdvice(AdviceView):
     template_name = "advice/view_consolidate.html"
 
     def get_context(self, **kwargs):
@@ -461,4 +461,5 @@ class ViewConsolidatedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView)
         context["consolidated_advice"] = consolidated_advice
         context["nlr_products"] = services.filter_nlr_products(self.case["data"]["goods"])
         context["user_can_finalise"] = self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM_ID
+        context["grouped_advice"] = self.grouped_advice
         return context
