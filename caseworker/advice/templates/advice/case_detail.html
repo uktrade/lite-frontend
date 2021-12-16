@@ -2,6 +2,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-third">
+        {% with display_pv_grading=case.goods|is_case_pv_graded %}
         <h2 class="govuk-heading-m">Case Details</h2>
         <details class="govuk-details" data-module="govuk-details">
             <summary class="govuk-details__summary">
@@ -40,14 +41,24 @@
                         <p class="govuk-body">{{ case.goods | get_clc | join:', ' }}<br></p>
                     </div>
                 </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body"><strong>Security grading</strong></p>
+                {% if display_pv_grading %}
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-half">
+                            <p class="govuk-body"><strong>Security grading</strong></p>
+                        </div>
+                        <div class="govuk-grid-column-one-half">
+                            <p class="govuk-body">
+                                {% if good.good.is_pv_graded == "yes" %}
+                                    {% with grading=good.good.pv_grading_details %}
+                                        {{ grading.prefix }} {{ grading.grading.value }} {{ grading.suffix }}
+                                    {% endwith %}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </p>
+                        </div>
                     </div>
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body">{{ good.good.is_pv_graded | title }}</p>
-                    </div>
-                </div>
+                {% endif %}
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-one-half">
                         <p class="govuk-body"><strong>Annual report summary</strong></p>
@@ -104,10 +115,10 @@
                 <p class="govuk-body">{{ case.goods | get_clc | join:', ' }}<br></p>
             </div>
             <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>Security grading</strong></p>
+                <p class="govuk-body"><strong>Security graded</strong></p>
             </div>
             <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">{{ case.goods | get_security_grading | join:', ' | title }}<br></p>
+                <p class="govuk-body">{{ display_pv_grading|yesno|capfirst }}<br></p>
             </div>
             <div class="govuk-grid-column-one-half">
                 <p class="govuk-body"><strong>Total value</strong></p>
@@ -134,5 +145,6 @@
                 <p class="govuk-body">{{ case.data.denial_matches | join:', ' }}<br></p>
             </div>
         </div>
+        {% endwith %}
     </div>
 </div>
