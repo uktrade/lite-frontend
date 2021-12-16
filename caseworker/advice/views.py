@@ -138,7 +138,6 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/view_my_advice.html"
     form_class = forms.MoveCaseForwardForm
-    success_url = "/"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -162,6 +161,9 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
                 form.add_error(None, error)
             return super().form_invalid(form)
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
 class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
