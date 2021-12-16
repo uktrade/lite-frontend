@@ -1,47 +1,56 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-
-def triggerBuild(branch, environment, token)
+def triggerBuild(branch, environment)
 {
-    def body = JsonOutput.toJson([
-        branch: branch,
-        parameters: [run_ui_tests: true, run_unit_tests: false, environment: environment]
-    ])
-    def response = httpRequest (
-        consoleLogResponseBody: false,
-        contentType: 'APPLICATION_JSON',
-        acceptType: 'APPLICATION_JSON',
-        customHeaders: [[name: 'Circle-Token', value: token]],
-        httpMode: 'POST',
-        requestBody: body,
-        url: "https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/pipeline")
-    if (response.status >= 300){
-        throw new Exception("ERROR: triggerBuild() failed")
-    }
-    def json = new JsonSlurper().parseText(response.content)
-    return [json.status, json.number]
+    withCredentials([string(credentialsId: 'lite-circle-ci', variable: 'TOKEN')]) {
+
+        def body = JsonOutput.toJson([
+            branch: branch,
+            parameters: [run_ui_tests: true, run_unit_tests: false, environment: environment]
+        ])
+
+        def response = httpRequest (
+            consoleLogResponseBody: false,
+            contentType: 'APPLICATION_JSON',
+            acceptType: 'APPLICATION_JSON',
+            customHeaders: [[name: 'Circle-Token', value: TOKEN]],
+            httpMode: 'POST',
+            requestBody: body,
+            url: "https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/pipeline")
+
+        if (response.status >= 300){
+            throw new Exception("ERROR: triggerBuild() failed")
+        }
+        def json = new JsonSlurper().parseText(response.content)
+        return [json.state, json.id]
+   }
 }
 
-def getBuildStatus( number, token )
+def getBuildStatus(number)
 {
-    def response = httpRequest (
-        consoleLogResponseBody: false,
-        customHeaders: [[name: 'Circle-Token', value: token]],
-        acceptType: 'APPLICATION_JSON',
-        url: "https://circleci.com/api/v2/project/gh/uktrade/lite-frontend/job/$number")
-    if (response.status >= 300){
-        throw new Exception("ERROR: getBuildStatus() failed")
+    withCredentials([string(credentialsId: 'lite-circle-ci', variable: 'TOKEN')]) {
+        def response = httpRequest (
+            consoleLogResponseBody: false,
+            customHeaders: [[name: 'Circle-Token', value: TOKEN]],
+            acceptType: 'APPLICATION_JSON',
+            url: "https://circleci.com/api/v2/pipeline/$number/workflow")
+        if (response.status >= 300){
+            throw new Exception("ERROR: getBuildStatus() failed")
+        }
+
+        def json = new JsonSlurper().parseText(response.content)
+        return json.items[0].status
     }
-    def json = new JsonSlurper().parseText(response.content)
-    return [json.status, json.number]
 }
 
-def waitForBuildStatusToChange(number, current_status, wait_states, msg, token){
+def waitForBuildStatusToChange(number, status, wait_states, msg){
     println " ... $msg"
+
     while(status in wait_states){
         sleep(45)
-        (status, number) = getBuildStatus( number, token)
+        status = getBuildStatus(number)
+        println "Status = $status"
     }
     return status
 }
@@ -49,9 +58,8 @@ def waitForBuildStatusToChange(number, current_status, wait_states, msg, token){
 pipeline {
 
     parameters {
-        choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nqa\ndevpopcorn\ndevkoala\nsandbox\nstaging\nuat\ndevdata')
+        choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\ndevpopcorn\ndevkoala\nstaging\nuat\ndevdata')
         string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
-        string(name: 'CIRCLE_API_TOKEN')
     }
 
     agent any
@@ -61,11 +69,11 @@ pipeline {
             steps{
                 script{
                     println "Triggering UI tests"
-                    (status, number) = triggerBuild(params.BRANCH, params.ENVIRONMENT , params.CIRCLE_API_TOKEN)
+                    (status, number) = triggerBuild(params.BRANCH, params.ENVIRONMENT)
                     println "Triggered UI tests"
 
-                    status = waitForBuildStatusToChange( number, status, ['queued', 'not_running'], "waiting for job to start", params.CIRCLE_API_TOKEN)
-                    status = waitForBuildStatusToChange( number, status, ['running'], "waiting for job to finish", params.CIRCLE_API_TOKEN)
+                    status = waitForBuildStatusToChange(number, status, ['queued', 'not_running', 'pending'], "waiting for job to start")
+                    status = waitForBuildStatusToChange(number, status, ['running'], "waiting for job to finish")
 
                     println "Final status = $status"
                     currentBuild.result = status in ['success','fixed']? 'SUCCESS': 'FAILURE'
