@@ -19,5 +19,5 @@ urlpatterns = [
     path("consolidate/review/<advice_type>/", views.ReviewConsolidateView.as_view()),
     path("consolidate/review/", views.ReviewConsolidateView.as_view(), name="consolidate_review"),
     path("consolidate/edit/", views.ConsolidateEditView.as_view(), name="consolidate_edit"),
-    path("consolidate/view-advice/", views.AdviceView.as_view(), name="consolidate_view"),
+    path("consolidate/view-advice/", views.ViewConsolidatedAdviceView.as_view(), name="consolidate_view"),
 ]

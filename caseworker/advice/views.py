@@ -295,15 +295,9 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         return grouped_advice
 
     def get_context(self, **kwargs):
-        consolidated_advice = services.get_consolidated_advice(self.case.advice, services.LICENSING_UNIT_TEAM)
-        nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
-
         return {
             "queue": self.queue,
             "grouped_advice": self.grouped_advice,
-            "consolidated_advice": consolidated_advice,
-            "nlr_products": nlr_products,
-            "user_can_finalise": self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM,
         }
 
 
@@ -457,3 +451,16 @@ class ConsolidateEditView(ReviewConsolidateView):
 
     def get_success_url(self):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+
+
+class ViewConsolidatedAdviceView(AdviceView):
+    def get_context(self, **kwargs):
+        consolidated_advice = services.get_consolidated_advice(self.case.advice, services.LICENSING_UNIT_TEAM)
+        nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
+
+        return {
+            **super().get_context(**kwargs),
+            "consolidated_advice": consolidated_advice,
+            "nlr_products": nlr_products,
+            "user_can_finalise": self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM,
+        }
