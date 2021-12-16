@@ -340,6 +340,15 @@ def test_view_consolidate_approve_outcome(
     data_standard_case["case"]["advice"] = consolidated_advice
     case_id = data_standard_case["case"]["id"]
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json={
+            "user": {
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
+            }
+        },
+    )
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
@@ -368,6 +377,15 @@ def test_view_consolidate_refuse_outcome(
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
     case_id = data_standard_case["case"]["id"]
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json={
+            "user": {
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
+            }
+        },
+    )
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 

@@ -455,12 +455,15 @@ class ConsolidateEditView(ReviewConsolidateView):
 
 class ViewConsolidatedAdviceView(AdviceView):
     def get_context(self, **kwargs):
-        consolidated_advice = services.get_consolidated_advice(self.case.advice, services.LICENSING_UNIT_TEAM)
+        user_team_id = self.caseworker["team"]["id"]
+        consolidated_advice = []
+        if user_team_id in [services.LICENSING_UNIT_TEAM, services.MOD_ECJU_TEAM]:
+            consolidated_advice = services.get_consolidated_advice(self.case.advice, user_team_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
 
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,
             "nlr_products": nlr_products,
-            "user_can_finalise": self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM,
+            "user_can_finalise": user_team_id == services.LICENSING_UNIT_TEAM,
         }
