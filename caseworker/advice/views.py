@@ -91,9 +91,9 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_success_url(self):
         recommendation = self.request.POST.get("recommendation")
         if recommendation == "approve_all":
-            return reverse("cases:approve_all", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+            return reverse("cases:approve_all", kwargs=self.kwargs)
         else:
-            return reverse("cases:refuse_all", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+            return reverse("cases:refuse_all", kwargs=self.kwargs)
 
 
 class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -114,7 +114,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:view_my_advice", kwargs={**self.kwargs})
+        return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
 
 class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -132,7 +132,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:view_my_advice", kwargs={**self.kwargs})
+        return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
 
 class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -200,7 +200,7 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:view_my_advice", kwargs={**self.kwargs})
+        return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
 
 class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -213,7 +213,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:select_advice", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+        return reverse("cases:select_advice", kwargs=self.kwargs)
 
 
 class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -336,7 +336,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
             return self.render_to_response({**context, "formset": formset})
 
     def get_success_url(self):
-        return reverse("cases:countersign_view", kwargs={**self.kwargs})
+        return reverse("cases:countersign_view", kwargs=self.kwargs)
 
 
 class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView):
