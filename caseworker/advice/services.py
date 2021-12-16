@@ -6,6 +6,7 @@ from core import client
 from caseworker.cases.services import put_case_queues
 
 FCDO_COUNTERSIGNING_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
+LICENSING_UNIT_TEAM = "58e77e47-42c8-499f-a58d-94f94541f8c6"
 
 
 def filter_nlr_products(products):
@@ -38,17 +39,15 @@ def filter_advice_by_users_team(all_advice, caseworker):
     return [advice for advice in all_advice if advice["user"]["team"]["id"] == caseworker["team"]["id"]]
 
 
+def filter_advice_by_team(all_advice, team_id):
+    return [advice for advice in all_advice if advice["user"]["team"]["id"] == team_id]
+
+
 def get_my_advice(advice, caseworker):
     user_level_advice = filter_advice_by_level(advice, ["user"])
     user_advice = filter_current_user_advice(user_level_advice, caseworker)
     grouped_user_advice = group_advice_by_user(user_advice)
     return grouped_user_advice
-
-
-def get_my_team_advice(advice, caseworker):
-    team_advice = filter_advice_by_level(advice, ["team"])
-    advice = filter_advice_by_users_team(team_advice, caseworker)
-    return advice[0]
 
 
 def group_advice_by_user(advice):
@@ -90,6 +89,23 @@ def get_advice_to_consolidate(advice):
     user_advice = filter_advice_by_level(advice, ["user"])
     grouped_user_advice = group_advice_by_user(user_advice)
     return grouped_user_advice
+
+
+def order_by_party_type(all_advice):
+    ordered_advice = []
+    party_types = ("consignee", "end_user", "ultimate_end_user", "third_party")
+    for party_type in party_types:
+        for advice in all_advice:
+            if advice.get(party_type) and advice not in ordered_advice:
+                ordered_advice.append(advice)
+
+    return ordered_advice
+
+
+def get_consolidated_advice(advice, team_id):
+    team_advice = filter_advice_by_level(advice, ["team"])
+    consolidated_advice = filter_advice_by_team(team_advice, team_id)
+    return order_by_party_type(consolidated_advice)
 
 
 def get_advice_subjects(case, countries=None):
