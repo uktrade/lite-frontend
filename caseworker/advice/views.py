@@ -410,7 +410,6 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
                 return f"{self.request.path}approve/"
             if recommendation == "refuse":
                 return f"{self.request.path}refuse/"
-        messages.add_message(self.request, messages.INFO, "Review successful.")
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
