@@ -21,7 +21,15 @@
                         <p class="govuk-body"><strong>License required</strong></p>
                     </div>
                     <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body">{{ good.good.is_good_controlled.value }}</p>
+                        <p class="govuk-body">
+                        {% if good.is_good_controlled is not None %}
+                            {{ good.is_good_controlled.value }}
+                        {% elif good.good.is_good_controlled is not None %}
+                            {{ good.good.is_good_controlled.value }}
+                        {% else %}
+                            Not added
+                        {% endif %}
+                        </p>
                     </div>
                 </div>
                 <div class="govuk-grid-row">
