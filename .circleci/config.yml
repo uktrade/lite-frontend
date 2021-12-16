@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   run_ui_tests:
     type: boolean
-    default: true
+    default: false
   run_unit_tests:
     type: boolean
     default: true
@@ -253,13 +253,5 @@ workflows:
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
-      - caseworker_ui_test:
-          filters:
-            branches:
-              only:
-                - master
-      - exporter_ui_test:
-          filters:
-            branches:
-              only:
-                - master
+      - caseworker_ui_test
+      - exporter_ui_test
