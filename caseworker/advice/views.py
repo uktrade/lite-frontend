@@ -5,7 +5,7 @@ from django.utils.functional import cached_property
 from requests.exceptions import HTTPError
 
 from caseworker.advice import forms, services
-from caseworker.advice.constants import DECISION_TYPE_VERB_MAPPING
+from caseworker.advice import constants
 from core import client
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
@@ -243,21 +243,21 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         return self.group_advice()
 
     def create_destination_advice_item(self, user_advice, destination):
-        advice_item = next(a for a in user_advice if a[destination["type"]] is not None)
+        advice_item = [a for a in user_advice if a[destination["type"]] is not None][0]
         return {
-            "type": destination["name"],
+            "name": destination["name"],
             "address": destination["address"],
             "licence_condition": advice_item["proviso"],
             "country": destination["country"]["name"],
+            "denial_reasons": advice_item["denial_reasons"],
             "advice": advice_item,
         }
 
-    def group_user_decision_advice(self, user_advice, team_user, decision):
+    def group_user_advice_by_decision(self, user_advice, decision):
         user_advice_for_decision = [a for a in user_advice if a["type"]["value"] == decision and not a["good"]]
         return {
-            "user": team_user,
             "decision": decision,
-            "decision_verb": DECISION_TYPE_VERB_MAPPING[decision],
+            "decision_verb": constants.DECISION_TYPE_VERB_MAPPING[decision],
             "advice": [
                 self.create_destination_advice_item(user_advice_for_decision, destination)
                 for destination in sorted(self.case.destinations, key=lambda d: d["name"])
@@ -265,13 +265,13 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
             ],
         }
 
-    def group_team_user_advice(self, team, team_advice, team_user):
+    def group_team_advice_by_user(self, team_advice, team_user):
         user_advice = services.filter_advice_by_user(team_advice, team_user)
         decisions = sorted(set(advice["type"]["value"] for advice in user_advice))
         return {
-            "team": team,
+            "user": team_user,
             "advice": [
-                self.group_user_decision_advice(user_advice, team_user, decision)
+                self.group_user_advice_by_decision(user_advice, decision)
                 for decision in decisions
                 if [a for a in user_advice if a["type"]["value"] == decision]
             ],
@@ -283,13 +283,35 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
 
         for team in self.teams:
             team_advice = advice_by_team[team["id"]]
-            team_users = {
-                advice["user"]["id"]: advice["user"]
-                for advice in team_advice
-            }.values()
-            grouped_advice += [self.group_team_user_advice(team, team_advice, team_user) for team_user in team_users]
+
+            team_users = {advice["user"]["id"]: advice["user"] for advice in team_advice}.values()
+
+            grouped_advice.append(
+                {
+                    "team": team,
+                    "advice": [self.group_team_advice_by_user(team_advice, team_user) for team_user in team_users],
+                }
+            )
+
+        self.add_team_decisions(grouped_advice)
 
         return grouped_advice
+
+    def add_team_decisions(self, grouped_advice):
+        for grouped in grouped_advice:
+            for team_advice in grouped["advice"]:
+                decisions = set()
+                for user_advice in team_advice["advice"]:
+                    decisions.add(user_advice["decision"])
+
+                if decisions == {"Approve"}:
+                    team_advice["decision"] = constants.TEAM_DECISION_APPROVED
+                elif decisions == {"Proviso"} or decisions == {"Approve", "Proviso"}:
+                    team_advice["decision"] = constants.TEAM_DECISION_PROVISO
+                elif decisions == {"Refuse"}:
+                    team_advice["decision"] = constants.TEAM_DECISION_REFUSED
+                else:
+                    team_advice["decision"] = constants.TEAM_DECISION_APPROVED_REFUSED
 
     def get_context(self, **kwargs):
         return {
