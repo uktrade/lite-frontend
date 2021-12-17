@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
@@ -454,7 +453,9 @@ class ConsolidateEditView(ReviewConsolidateView):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
-class ViewConsolidatedAdviceView(AdviceView):
+class ViewConsolidatedAdviceView(AdviceView, FormView):
+    form_class = forms.MoveCaseForwardForm
+
     def get_context(self, **kwargs):
         user_team_id = self.caseworker["team"]["id"]
         consolidated_advice = []
@@ -462,9 +463,29 @@ class ViewConsolidatedAdviceView(AdviceView):
             consolidated_advice = services.get_consolidated_advice(self.case.advice, user_team_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
 
+        lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED, services.LU_SR_MGR_CHECK_REQUIRED}
+        case_flag_ids = {flag["id"] for flag in self.case.flags}
+        lu_countersign_required = bool(lu_countersign_flags.intersection(case_flag_ids))
+
+        finalise_case = user_team_id == services.LICENSING_UNIT_TEAM and not lu_countersign_required
+
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,
             "nlr_products": nlr_products,
-            "user_can_finalise": user_team_id == services.LICENSING_UNIT_TEAM,
+            "finalise_case": finalise_case,
+            "lu_countersign_required": lu_countersign_required,
         }
+
+    def form_valid(self, form):
+        try:
+            services.move_case_forward(self.request, self.case.id, self.queue_id)
+        except HTTPError as e:
+            errors = e.response.json()["errors"]["queues"]
+            for error in errors:
+                form.add_error(None, error)
+            return super().form_invalid(form)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
