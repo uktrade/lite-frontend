@@ -74,45 +74,7 @@
 	{% endif %}
 
 {% if not hide_advice %}
-<h2 class="govuk-heading-m">Other recommendations for this case</h2>
-
-{% for team_advice in grouped_advice %}
-	<details class="govuk-details" data-module="govuk-details">
-		<summary class="govuk-details__summary">
-			<span class="govuk-details__summary-text govuk-!-font-weight-bold">
-				{{ team_advice.team.name }}
-			</span>
-		</summary>
-
-		{% for user_decision_advice in team_advice.advice %}
-			<div class="govuk-details__text">
-					<h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 {% if user_decision_advice.decision == "Approve" or user_decision_advice.decision == "Proviso" %}app-bg-colour--green{% elif user_decision_advice.decision == "Refuse" %}app-bg-colour--red{% endif %}">{{ user_decision_advice.decision_verb|capfirst }} by {% if user_decision_advice.user.first_name %}{{ user_decision_advice.user.first_name|add:' '|add:user_decision_advice.user.last_name }}{% else %}{{ user_decision_advice.user.email }}{% endif %}</h2>
-					<table class="govuk-table">
-						<thead class="govuk-table__head">
-							<tr class="govuk-table__row">
-								<th scope="col" class="govuk-table__header">Country</th>
-								<th scope="col" class="govuk-table__header">Type</th>
-								<th scope="col" class="govuk-table__header">Address</th>
-								<th scope="col" class="govuk-table__header">Products</th>
-								<th scope="col" class="govuk-table__header">Licence condition added</th>
-							</tr>
-						</thead>
-						<tbody class="govuk-table__body">
-							{% for advice in user_decision_advice.advice %}
-							<tr class="govuk-table__row">
-								<td class="govuk-table__cell">{{ advice.country }}</td>
-								<td class="govuk-table__cell">{{ advice.type }}</td>
-								<td class="govuk-table__cell">{{ advice.address }}</td>
-								<td class="govuk-table__cell">No data</td>
-								<td class="govuk-table__cell">{{ advice.licence_condition|yesno:"Yes,No" }}</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-			</div>
-		{% endfor %}
-	</details>
-{% endfor %}
+{% include "advice/other-recommendations.html" %}
 {% endif %}
 
 {% else %}
