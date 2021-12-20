@@ -1,6 +1,7 @@
 {% extends 'layouts/case.html' %}
 
 {% load static custom_tags %}
+{% load crispy_forms_tags %}
 
 {% block header_tabs %}
 	{% include "advice/case-tabs.html" with case=case queue=queue %}
@@ -8,6 +9,20 @@
 
 {% block full_width %}
 {% if grouped_advice %}
+	{% for error in form.non_field_errors %}
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				There is a problem
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+				<li>
+					{{ error }}
+				</li>
+				</ul>
+			</div>
+		</div>
+	{% endfor %}
 
 	{% if not consolidated_advice %}
 		{% if countersign %}
@@ -21,24 +36,40 @@
 
 	{% if consolidated_advice %}
 		<div class="govuk-width-container">
-			<main class="govuk-main-wrapper">
-				<div class="govuk-grid-row govuk-!-margin-top-6">
-					<div class="govuk-grid-column-three-quarters">
-						{% if user_can_finalise %}
-							<a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="#">
-								Finalise case
-							</a>
-							<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
-									Edit outcome
-							</a>
-						{% endif %}
-		
-						<br><br>
-						{% include "advice/advice_details.html" with advice=consolidated_advice %}
-						<br>
-					</div>
+			<div class="govuk-grid-row govuk-!-margin-top-6">
+				<div class="govuk-grid-column-three-quarters">
+
+					{% if lu_countersign_required %}
+						<div class="govuk-warning-text">
+							<span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+							<strong class="govuk-warning-text__text">
+							<span class="govuk-warning-text__assistive">Warning</span>
+								This case requires countersigning. Moving this case on will pass it to the countersigning work queue.
+							</strong>
+						</div>
+					{% endif %}
+
+					{% if finalise_case %}
+						<a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="#">
+							Finalise case
+						</a>
+					{% endif %}
+
+					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
+						Edit outcome
+					</a>
+
+					<br><br>
+					{% include "advice/advice_details.html" with advice=consolidated_advice team=True %}
+					<br>
 				</div>
-			</main>
+
+				{% if not finalise_case %}
+					<div class="govuk-grid-column-one-quarter">
+						{% crispy form %}
+					</div>
+				{% endif %}
+			</div>
 		</div>
 	{% endif %}
 
