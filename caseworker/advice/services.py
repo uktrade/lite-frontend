@@ -108,7 +108,8 @@ def order_by_party_type(all_advice):
 
 
 def get_consolidated_advice(advice, team_id):
-    team_advice = filter_advice_by_level(advice, ["team"])
+    level = "final" if team_id == LICENSING_UNIT_TEAM else "team"
+    team_advice = filter_advice_by_level(advice, [level])
     consolidated_advice = filter_advice_by_team(team_advice, team_id)
     return order_by_party_type(consolidated_advice)
 

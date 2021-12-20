@@ -50,13 +50,13 @@
 					{% endif %}
 
 					{% if finalise_case %}
-						<a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="#">
+						<a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
 							Finalise case
 						</a>
 					{% endif %}
 
 					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
-						Edit outcome
+						Edit recommendation
 					</a>
 
 					<br><br>
