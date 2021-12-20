@@ -1,6 +1,6 @@
 import pytest
 
-from caseworker.advice.templatetags.advice_tags import get_clc, get_case_value, get_security_grading
+from caseworker.advice.templatetags.advice_tags import get_clc, get_case_value, is_case_pv_graded
 
 
 @pytest.mark.parametrize(
@@ -54,30 +54,13 @@ def test_get_clc(goods, expected_value):
 @pytest.mark.parametrize(
     "goods, expected_value",
     (
-        # Base case
-        (
-            [
-                {"good": {"is_pv_graded": "yes", "pv_grading_details": "a"}},
-                {"good": {"is_pv_graded": "no", "pv_grading_details": "b"}},
-            ],
-            ["no", "yes"],
-        ),
-        # Same pv_grading_details
-        (
-            [
-                {"good": {"is_pv_graded": "yes", "pv_grading_details": "a"}},
-                {"is_pv_graded": "yes", "good": {"pv_grading_details": "a"}},
-            ],
-            ["yes"],
-        ),
-        # Missing pv_grading_details key
-        ([{"good": {"is_pv_graded": "no", "pv_grading_details": "a"}}, {"good": {}}], ["no"],),
-        # Missing good key
-        ([{"good": {"is_pv_graded": "yes", "pv_grading_details": "a"}}, {}], ["yes"],),
+        ([{"good": {"is_pv_graded": "no"}}, {"good": {"is_pv_graded": "no"}},], False,),
+        ([{"good": {"is_pv_graded": "yes"}}, {"good": {"is_pv_graded": "no"}},], True,),
+        ([{"good": {"is_pv_graded": "yes"}}, {"good": {"is_pv_graded": "yes"}},], True,),
     ),
 )
-def test_get_security_grading(goods, expected_value):
-    result = get_security_grading(goods)
+def test_is_case_pv_graded(goods, expected_value):
+    result = is_case_pv_graded(goods)
     assert result == expected_value
 
 

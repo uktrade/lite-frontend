@@ -15,10 +15,11 @@ def get_case_value(goods):
     return sum([float(good.get("value") or "0") for good in goods])
 
 
-@register.filter()
-def get_security_grading(goods):
-    gradings = {good.get("good", {}).get("is_pv_graded") for good in goods}
-    return sorted(gradings - {None})
+@register.filter
+def is_case_pv_graded(products):
+    """Returns True if pv_grading is True for atleast one of the products on the application"""
+    gradings = {product.get("good", {}).get("is_pv_graded") for product in products}
+    return "yes" in gradings
 
 
 @register.filter
