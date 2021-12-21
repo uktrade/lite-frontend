@@ -195,7 +195,9 @@ class GoodsStartingPointForm(forms.Form):
         label="",
         widget=forms.RadioSelect,
         choices=[("GB", "Great Britain"), ("NI", "Northern Ireland"),],
-        error_messages={"required": ["Select a location"]},
+        error_messages={
+            "required": ["Select if the products will begin their export journey in Great Britain or Northern Ireland"]
+        },
     )
 
     def __init__(self, *args, **kwargs):
@@ -220,7 +222,7 @@ class PermanentOrTemporaryExportForm(forms.Form):
         label="",
         widget=forms.RadioSelect,
         choices=[("permanent", "Yes"), ("temporary", "No, this is a temporary export")],
-        error_messages={"required": ["Select an option"]},
+        error_messages={"required": ["Select yes if the products are being permanently exported"]},
     )
 
     def __init__(self, *args, **kwargs):
@@ -240,7 +242,7 @@ class GoodsRecipientsForm(forms.Form):
             ("via_consignee", "To an end-user via a consignee"),
             ("via_consignee_and_third_parties", "To an end-user via a consignee, with additional third parties"),
         ],
-        error_messages={"required": ["Select an option"]},
+        error_messages={"required": ["Select who the products are going to"]},
     )
 
     def __init__(self, *args, **kwargs):
