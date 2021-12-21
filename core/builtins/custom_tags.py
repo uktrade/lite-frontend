@@ -910,5 +910,5 @@ def full_name(user):
 def verbose_goods_starting_point(value):
     goods_starting_points = {"GB": "Great Britain", "NI": "Northern Ireland"}
     if value:
-        goods_starting_points.get(value, "")
+        return goods_starting_points.get(value, "")
     return ""

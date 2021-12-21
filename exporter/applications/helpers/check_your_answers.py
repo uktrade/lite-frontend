@@ -23,6 +23,9 @@ from core.builtins.custom_tags import (
     date_display,
     get_address,
     pluralise_quantity,
+    verbose_goods_starting_point,
+    str_date_only,
+    sentence_case,
 )
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
 from lite_content.lite_exporter_frontend import applications
@@ -94,16 +97,20 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     strings = applications.ApplicationSummaryPage
     pk = application["id"]
     url = reverse(f"applications:good_detail_summary", kwargs={"pk": pk})
+    old_locations = bool(application["goods_locations"])
     converted = {
         convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"]),
         strings.END_USE_DETAILS: _get_end_use_details(application),
-        strings.ROUTE_OF_GOODS: _get_route_of_goods(application),
-        strings.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         strings.END_USER: convert_party(application["end_user"], application, editable),
         strings.CONSIGNEE: convert_party(application["consignee"], application, editable),
         strings.THIRD_PARTIES: [convert_party(item, application, editable) for item in application["third_parties"]],
         strings.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(application["additional_documents"], pk),
     }
+    if old_locations:
+        converted[strings.ROUTE_OF_GOODS] = _get_route_of_goods(application)
+        converted[strings.GOODS_LOCATIONS] = _convert_goods_locations(application["goods_locations"])
+    else:
+        converted["Product location and journey"] = _get_product_location_and_journey(application)
     if _is_application_export_type_temporary(application):
         converted[strings.TEMPORARY_EXPORT_DETAILS] = _get_temporary_export_details(application)
     if has_incorporated_goods(application):
@@ -253,6 +260,31 @@ def _get_exhibition_details(application):
     if application["reason_for_clearance"]:
         data["Reason for clearance"] = application["reason_for_clearance"]
     return data
+
+
+def _get_product_location_and_journey(application):
+    is_permanent = application.export_type["key"] == "permanent"
+    locations_details = {
+        "Where will the products begin their export journey?": verbose_goods_starting_point(
+            application["goods_starting_point"]
+        ),
+        "Are the products being permanently exported?": friendly_boolean(is_permanent),
+    }
+    if not is_permanent:
+        locations_details["Temporary export details"] = application.temp_export_details
+        locations_details["Products remain under direct control"] = application.is_temp_direct_control
+        locations_details["Details"] = application.temp_direct_control_details
+        locations_details["Proposed return date"] = str_date_only(application.proposed_return_date)
+
+    locations_details[
+        "Are the products being shipped from the UK on an air waybill or bill of lading?"
+    ] = friendly_boolean(application.is_shipped_waybill_or_lading)
+
+    if not application.is_shipped_waybill_or_lading:
+        locations_details["Route details"] = application.non_waybill_or_lading_route_details
+
+    locations_details["Who are the products going to?"] = sentence_case(application.goods_recipients)
+    return locations_details
 
 
 def _convert_goods_types(goods_types):
