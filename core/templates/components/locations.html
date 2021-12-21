@@ -1,15 +1,38 @@
+{% if case.data.goods_locations %}
+{# Old locations data #}
+	<h2 class="govuk-heading-m">{{ case.data.goods_locations.data|length }} location{{ case.data.goods_locations.data|pluralize }}</h2>
+
+	<table class="govuk-table">
+		<thead class="govuk-table__head">
+			<tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header govuk-!-width-one-third">{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION_NAME' %}</th>
+				<th scope="col" class="govuk-table__header govuk-!-width-two-thirds">{% lcs 'cases.ApplicationPage.Goods.CASE_GOODS_LOCATION_ADDRESS' %}</th>
+			</tr>
+		</thead>
+		<tbody class="govuk-table__body">
+			{% for location in case.data.goods_locations.data %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header">{{ location.name }}</th>
+					<td class="govuk-table__cell">{{ location|get_address }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% else %}
+{# New locations data #}
 <h2 class="govuk-heading-m">Product location and journey</h2>
 
 <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-locations-summary">
 
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Goods starting point</dt>
+		<dt class="govuk-summary-list__key">Where will the products begin their export journey?</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.goods_starting_point|verbose_goods_starting_point }}</dd>
 		<dd class="govuk-summary-list__actions"></dd>
 	</div>
 
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Permanent export</dt>
+		<dt class="govuk-summary-list__key">Are the products being permanently exported?</dt>
 		<dd class="govuk-summary-list__value">{% if case.data.export_type.key == "permanent" %}Yes{% else %}No{% endif %}</dd>
 		<dd class="govuk-summary-list__actions"></dd>
 	</div>
@@ -43,7 +66,7 @@
 	{% endif %}
 
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Air waybill or bill of lading</dt>
+		<dt class="govuk-summary-list__key">Are the products being shipped from the UK on an air waybill or bill of lading?</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.is_shipped_waybill_or_lading|yesno|capfirst }}</dd>
 		<dd class="govuk-summary-list__actions"></dd>
 	</div>
@@ -57,9 +80,9 @@
 	{% endif %}
 
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">How products are being exported</dt>
+		<dt class="govuk-summary-list__key">Who are the products going to?</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.goods_recipients|sentence_case }}</dd>
-		<dd class="govuk-summary-list__actions">
-		</dd>
+		<dd class="govuk-summary-list__actions"></dd>
 	</div>
 </dl>
+{% endif %}
