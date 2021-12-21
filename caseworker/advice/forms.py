@@ -130,8 +130,9 @@ class RefusalAdviceForm(forms.Form):
             choices=choices,
             widget=GridmultipleSelect(),
             label=format_html(
-                f'Select all <a href={refusal_criteria_link} target="_blank">refusal criteria</a> that apply'
+                f'Select all <a href={refusal_criteria_link} target="_blank">refusal criteria (opens in new tab)</a> that apply'
             ),
+            error_messages={"required": "Select at least one refusal criteria"},
         )
         self.fields["refusal_reasons"] = PicklistCharField(
             picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "Standard Advice"},
@@ -187,7 +188,7 @@ class CountersignAdviceForm(forms.Form):
     refusal_reasons = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": "10"}),
-        label="Explain why this recommendation needs to be sent back to the advisor",
+        label="Explain why this recommendation needs to be sent back to an adviser",
     )
 
     conditional_radio = {"yes": ["approval_reasons"], "no": ["refusal_reasons", "queue_to_return"]}

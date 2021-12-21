@@ -26,11 +26,11 @@
 
 	{% if not consolidated_advice %}
 		{% if countersign %}
-		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review advice</a>
+		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
 		{% elif consolidate %}
-		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Combine advice</a>
+		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Review and combine</a>
 		{% else %}
-		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
+		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
 		{% endif %}
 	{% endif %}
 
@@ -116,7 +116,7 @@
 {% endif %}
 
 {% else %}
-<h2 class="govuk-heading-m">There is no advice for this case yet</h2>
+<h2 class="govuk-heading-m">There are no recommendations for this case yet</h2>
 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
 {% endif %}
 {% endblock %}
