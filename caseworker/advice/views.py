@@ -398,10 +398,15 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
     def form_valid(self, form):
         user_team_id = self.caseworker["team"]["id"]
         level = "final-advice" if user_team_id == services.LICENSING_UNIT_TEAM else "team-advice"
-        if isinstance(form, forms.ConsolidateApprovalForm):
-            services.post_approval_advice(self.request, self.case, form.cleaned_data, level=level)
-        if isinstance(form, forms.RefusalAdviceForm):
-            services.post_refusal_advice(self.request, self.case, form.cleaned_data, level=level)
+        try:
+            if isinstance(form, forms.ConsolidateApprovalForm):
+                services.post_approval_advice(self.request, self.case, form.cleaned_data, level=level)
+            if isinstance(form, forms.RefusalAdviceForm):
+                services.post_refusal_advice(self.request, self.case, form.cleaned_data, level=level)
+        except HTTPError as e:
+            errors = e.response.json()["errors"]
+            form.add_error(None, errors)
+            return super().form_invalid(form)
         return super().form_valid(form)
 
     def get_success_url(self):

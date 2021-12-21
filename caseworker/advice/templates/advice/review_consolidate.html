@@ -13,6 +13,20 @@
     {% endif %}
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
+            {% for error in form.non_field_errors %}
+            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list">
+                    <li>
+                        {{ error }}
+                    </li>
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-xl">{{ subtitle|default:"Review and combine" }}</h2>
                     {% for advice in advice_to_consolidate %}
