@@ -1,5 +1,7 @@
 from django import template
 
+from caseworker.advice import constants, services
+
 
 register = template.Library()
 
@@ -35,3 +37,94 @@ def get_item(dict, key):
 @register.filter
 def countersigned_user_team(advice):
     return f"{advice['countersigned_by']['team']['name']}"
+
+
+@register.inclusion_tag("advice/group-advice.html")
+def group_advice(case):
+    grouped_advice = []
+
+    if case.get("advice"):
+        advice_by_team = services.group_advice_by_team(case["advice"])
+        teams = sorted(
+            {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in case["advice"]}.values(),
+            key=lambda a: a["name"],
+        )
+
+        for team in teams:
+            team_advice = advice_by_team[team["id"]]
+
+            team_users = {advice["user"]["id"]: advice["user"] for advice in team_advice}.values()
+
+            grouped_advice.append(
+                {
+                    "team": team,
+                    "advice": [group_team_advice_by_user(case, team_advice, team_user) for team_user in team_users],
+                }
+            )
+
+        _add_team_decisions(grouped_advice)
+
+    return {"grouped_advice": grouped_advice}
+
+
+def group_team_advice_by_user(case, team_advice, team_user, level=None):
+    user_advice = services.filter_advice_by_user(team_advice, team_user)
+
+    if level is not None:
+        user_advice = services.filter_advice_by_level(user_advice, [level])
+
+    decisions = sorted(set(advice["type"]["value"] for advice in user_advice))
+    return {
+        "user": team_user,
+        "advice": [
+            group_user_advice_by_decision(case, user_advice, decision)
+            for decision in decisions
+            if [a for a in user_advice if a["type"]["value"] == decision]
+        ],
+    }
+
+
+def group_user_advice_by_decision(case, user_advice, decision, level=None):
+    user_advice_for_decision = [a for a in user_advice if a["type"]["value"] == decision and not a["good"]]
+
+    if level is not None:
+        user_advice_for_decision = services.filter_advice_by_level(user_advice, [level])
+
+    return {
+        "decision": decision,
+        "decision_verb": constants.DECISION_TYPE_VERB_MAPPING[decision],
+        "advice": [
+            create_destination_advice_item(user_advice_for_decision, destination)
+            for destination in sorted(case.destinations, key=lambda d: d["name"])
+            if [a for a in user_advice_for_decision if a[destination["type"]] is not None]
+        ],
+    }
+
+
+def create_destination_advice_item(user_advice, destination):
+    advice_item = [a for a in user_advice if a[destination["type"]] is not None][0]
+    return {
+        "name": destination["name"],
+        "address": destination["address"],
+        "licence_condition": advice_item["proviso"],
+        "country": destination["country"]["name"],
+        "denial_reasons": advice_item["denial_reasons"],
+        "advice": advice_item,
+    }
+
+
+def _add_team_decisions(grouped_advice):
+    for grouped in grouped_advice:
+        for team_advice in grouped["advice"]:
+            decisions = set()
+            for user_advice in team_advice["advice"]:
+                decisions.add(user_advice["decision"])
+
+            if decisions == {"Approve"}:
+                team_advice["decision"] = constants.TEAM_DECISION_APPROVED
+            elif decisions == {"Proviso"} or decisions == {"Approve", "Proviso"}:
+                team_advice["decision"] = constants.TEAM_DECISION_PROVISO
+            elif decisions == {"Refuse"}:
+                team_advice["decision"] = constants.TEAM_DECISION_REFUSED
+            else:
+                team_advice["decision"] = constants.TEAM_DECISION_APPROVED_REFUSED

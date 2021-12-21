@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block full_width %}
-{% if grouped_advice %}
+{% if case.advice %}
 	{% for error in form.non_field_errors %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -74,9 +74,8 @@
 	{% endif %}
 
 {% if not hide_advice %}
-{% include "advice/other-recommendations.html" %}
+{% include "advice/other-recommendations.html" with case=case %}
 {% endif %}
-
 {% else %}
 <h2 class="govuk-heading-m">There is no advice for this case yet</h2>
 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>

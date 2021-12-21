@@ -1,6 +1,7 @@
 import pytest
 
-from caseworker.advice.templatetags.advice_tags import get_clc, get_case_value, is_case_pv_graded
+from caseworker.advice.templatetags.advice_tags import get_clc, get_case_value, group_advice, is_case_pv_graded
+from caseworker.cases.objects import Case
 
 
 @pytest.mark.parametrize(
@@ -80,3 +81,158 @@ def test_is_case_pv_graded(goods, expected_value):
 def test_get_value(goods, expected_value):
     result = get_case_value(goods)
     assert result == expected_value
+
+
+def test_group_advice(
+    data_standard_case,
+    team1,
+    team2,
+    john_smith,
+    jane_doe,
+    end_user_advice1,
+    end_user_advice2,
+    consignee_advice1,
+    consignee_advice2,
+    third_party_advice1,
+    third_party_advice2,
+    goods_advice1,
+    goods_advice2,
+):
+
+    case_data = {**data_standard_case}
+    case_data["case"]["advice"] = [
+        end_user_advice1,
+        end_user_advice2,
+        consignee_advice1,
+        consignee_advice2,
+        third_party_advice1,
+        third_party_advice2,
+        goods_advice1,
+        goods_advice2,
+    ]
+
+    exp_advice = [
+        {
+            "team": team1,
+            "advice": [
+                {
+                    "user": john_smith,
+                    "advice": [
+                        {
+                            "decision": "Approve",
+                            "decision_verb": "approved",
+                            "advice": [
+                                {
+                                    "name": "Consignee",
+                                    "address": "44",
+                                    "licence_condition": None,
+                                    "country": "Abu Dhabi",
+                                    "denial_reasons": None,
+                                    "advice": consignee_advice1,
+                                },
+                                {
+                                    "name": "End User",
+                                    "address": "44",
+                                    "licence_condition": None,
+                                    "country": "United Kingdom",
+                                    "denial_reasons": None,
+                                    "advice": end_user_advice1,
+                                },
+                            ],
+                        },
+                        {
+                            "decision": "Refuse",
+                            "decision_verb": "refused",
+                            "advice": [
+                                {
+                                    "name": "Third party",
+                                    "address": "44",
+                                    "licence_condition": None,
+                                    "country": "United Kingdom",
+                                    "denial_reasons": None,
+                                    "advice": third_party_advice1,
+                                }
+                            ],
+                        },
+                    ],
+                    "decision": "has approved and refused",
+                }
+            ],
+        },
+        {
+            "team": team2,
+            "advice": [
+                {
+                    "user": jane_doe,
+                    "advice": [
+                        {
+                            "decision": "Approve",
+                            "decision_verb": "approved",
+                            "advice": [
+                                {
+                                    "name": "Consignee",
+                                    "address": "44",
+                                    "licence_condition": None,
+                                    "country": "Abu Dhabi",
+                                    "denial_reasons": None,
+                                    "advice": consignee_advice2,
+                                },
+                                {
+                                    "name": "End User",
+                                    "address": "44",
+                                    "licence_condition": None,
+                                    "country": "United Kingdom",
+                                    "denial_reasons": None,
+                                    "advice": end_user_advice2,
+                                },
+                                {
+                                    "name": "Third party",
+                                    "address": "44",
+                                    "licence_condition": None,
+                                    "country": "United Kingdom",
+                                    "denial_reasons": None,
+                                    "advice": third_party_advice2,
+                                },
+                            ],
+                        },
+                    ],
+                    "decision": "has approved",
+                }
+            ],
+        },
+    ]
+
+    grouped_advice = group_advice(Case(case_data["case"]))["grouped_advice"]
+
+    assert grouped_advice == exp_advice
+
+    # we sort teams by name so these should be alphabetical
+    assert grouped_advice[0]["team"] == team1
+    assert grouped_advice[1]["team"] == team2
+
+    team1_advice = grouped_advice[0]
+    team2_advice = grouped_advice[1]
+    john_smith_advice = team1_advice["advice"][0]
+    jane_doe_advice = team2_advice["advice"][0]
+
+    # team1 gave 2 different decisions, team2 only gave 1
+    assert len(john_smith_advice["advice"]) == 2
+    assert len(jane_doe_advice["advice"]) == 1
+
+    # team1 approved 2 destinations
+    assert john_smith_advice["advice"][0]["decision"] == "Approve"
+    assert len(john_smith_advice["advice"][0]["advice"]) == 2
+    assert john_smith_advice["advice"][0]["advice"][0]["name"] == "Consignee"
+    assert john_smith_advice["advice"][0]["advice"][1]["name"] == "End User"
+
+    # team1 refused 1 destination
+    assert john_smith_advice["advice"][1]["decision"] == "Refuse"
+    assert len(john_smith_advice["advice"][1]["advice"]) == 1
+    assert john_smith_advice["advice"][1]["advice"][0]["name"] == "Third party"
+
+    # team2 approved all three destinations
+    assert jane_doe_advice["advice"][0]["decision"] == "Approve"
+    assert len(jane_doe_advice["advice"][0]["advice"]) == 3
+    assert jane_doe_advice["advice"][0]["advice"][0]["name"] == "Consignee"
+    assert jane_doe_advice["advice"][0]["advice"][1]["name"] == "End User"
+    assert jane_doe_advice["advice"][0]["advice"][2]["name"] == "Third party"
