@@ -5,11 +5,6 @@
 
 {% block body %}
 <div class="govuk-width-container">
-    {% if form.has_changed %}
-        <a href="{% url 'cases:view_my_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
-    {% else %}
-        <a href="{% url 'cases:select_advice' queue_pk case.id %}" class="govuk-back-link">Back</a>
-    {% endif %}
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
