@@ -279,12 +279,22 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
 class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/view_countersign.html"
 
+    def can_edit(self, advice_to_countersign):
+        """Determine of the current user can edit the countersign comments.
+        This will be the case if the current user made those comments.
+        """
+        countersigned_by = set()
+        for user_advice in advice_to_countersign.values():
+            for advice in user_advice:
+                if advice["countersigned_by"]:
+                    countersigned_by.add(advice["countersigned_by"]["id"])
+        return self.caseworker_id in countersigned_by
+
     def get_context(self, **kwargs):
         context = super().get_context()
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
-        context["review"] = False
-        context["subtitle"] = f"Approved by {self.caseworker['team']['name']}"
+        context["can_edit"] = self.can_edit(advice_to_countersign)
         return context
 
 

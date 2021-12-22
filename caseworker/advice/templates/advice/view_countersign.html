@@ -8,9 +8,11 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
+                {% if can_edit %}
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_edit' queue_pk case.id %}">
                     Edit recommendation
                 </a>
+                {% endif %}
                 {% for advice in advice_to_countersign %}
                     <br><br>
                     {% include "advice/advice_details.html" %}
