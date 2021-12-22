@@ -276,7 +276,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         return reverse("cases:countersign_view", kwargs=self.kwargs)
 
 
-class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class ViewCountersignedAdvice(AdviceDetailView):
     template_name = "advice/view_countersign.html"
 
     def can_edit(self, advice_to_countersign):
@@ -290,8 +290,8 @@ class ViewCountersignedAdvice(LoginRequiredMixin, CaseContextMixin, TemplateView
                     countersigned_by.add(advice["countersigned_by"]["id"])
         return self.caseworker_id in countersigned_by
 
-    def get_context(self, **kwargs):
-        context = super().get_context()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
