@@ -1,0 +1,100 @@
+{% load parse_date from spire_tags %}
+
+{% for team_advice in grouped_advice %}
+    {% for user_advice in team_advice.advice %}
+	<details class="govuk-details" data-module="govuk-details">
+		<summary class="govuk-details__summary">
+			<span class="govuk-details__summary-text govuk-!-font-weight-bold">
+				{{ team_advice.team.name }} {{ user_advice.decision }}
+			</span>
+		</summary>
+        {% for decision_advice in user_advice.advice %}
+            <div class="govuk-details__text">
+                <h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}app-bg-colour--green{% elif decision_advice.decision == "Refuse" %}app-bg-colour--red{% endif %}">
+                    {{ decision_advice.decision_verb|capfirst }} by {% if user_advice.user.first_name %}{{ user_advice.user.first_name|add:' '|add:user_advice.user.last_name }}{% else %}{{ user_advice.user.email }}{% endif %}
+                    <!--<span class="govuk-!-font-weight-regular" style="float:right">{{ decision_advice.advice.0.advice.created_at|parse_date|date:"d F Y" }}</span>-->
+                </h2>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Country</th>
+                            <th scope="col" class="govuk-table__header">Type</th>
+                            <th scope="col" class="govuk-table__header">Name</th>
+                            {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
+                                <th scope="col" class="govuk-table__header">Approved products</th>
+                                <th scope="col" class="govuk-table__header">Licence condition added</th>
+                            {% elif decision_advice.decision == "Refuse" %}
+                                <th scope="col" class="govuk-table__header">Refused products</th>
+                                <th scope="col" class="govuk-table__header">Refusal criteria</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for advice in decision_advice.advice %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ advice.country }}</td>
+                            <td class="govuk-table__cell">
+                            {% if advice.advice.consignee %}
+                                Consignee
+                            {% elif advice.advice.end_user %}
+                                End-user
+                            {% elif advice.advice.third_party %}
+                                Third party
+                            {% elif advice.advice.ultimate_end_user %}
+                                Ultimate end-user
+                            {% endif %}
+                            </td>
+                            <td class="govuk-table__cell">{{ advice.name }}</td>
+                            <td class="govuk-table__cell">All</td>
+                            {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
+                                <td class="govuk-table__cell">{{ advice.licence_condition|yesno:"Yes,No" }}</td>
+                            {% elif decision_advice.decision == "Refuse" %}
+                                <td class="govuk-table__cell">{{ advice.denial_reasons|join:", " }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% with decision_advice.advice.0.advice as advice %}
+                <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Reasons for approving">
+                    <div class="govuk-cookie-banner__message govuk-width-container">
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-full">
+                                {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
+                                    <h3 class="govuk-heading-s">Reasons for approving</h3>
+                                {% elif decision_advice.decision == "Refuse" %}
+                                    <h3 class="govuk-heading-s">Reasons for refusing</h3>
+                                {% endif %}
+                                <div class="govuk-cookie-banner__content">
+                                    <p class="govuk-body">
+                                    {% if advice.reason %}
+                                        {{ advice.reason }}
+                                    {% else %}
+                                        No criteria concerns
+                                    {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if decision_advice.decision == "Proviso" %}
+                <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Licence condition">
+                    <div class="govuk-cookie-banner__message govuk-width-container">
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-full">
+                                <h3 class="govuk-heading-s">Licence condition</h3>
+                                <div class="govuk-cookie-banner__content">
+                                    <p class="govuk-body">{{ advice.proviso }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        {% endfor %}
+	</details>
+    {% endfor %}
+{% endfor %}

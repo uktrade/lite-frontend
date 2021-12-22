@@ -40,6 +40,10 @@ def filter_advice_by_level(all_advice, advice_levels):
     return [advice for advice in all_advice if advice["level"] in advice_levels]
 
 
+def filter_advice_by_user(all_advice, caseworker):
+    return [advice for advice in all_advice if advice["user"]["id"] == caseworker["id"]]
+
+
 def filter_advice_by_users_team(all_advice, caseworker):
     return [advice for advice in all_advice if advice["user"]["team"]["id"] == caseworker["team"]["id"]]
 
@@ -76,6 +80,14 @@ def group_advice_by_user(advice):
     result = defaultdict(list)
     for item in advice:
         result[item["user"]["id"]].append(item)
+    return result
+
+
+def group_advice_by_team(advice):
+    result = defaultdict(list)
+    for item in advice:
+        if not item["good"]:
+            result[item["user"]["team"]["id"]].append(item)
     return result
 
 
