@@ -69,13 +69,13 @@ def test_is_case_pv_graded(goods, expected_value):
     "goods, expected_value",
     (
         # Base case
-        ([{"value": "10"}, {"value": "10"}], 20.0,),
+        ([{"value": "10"}, {"value": "10"}], "20.00",),
         # One of the values is None
-        ([{"value": "10"}, {"value": None}], 10.0,),
+        ([{"value": "10"}, {"value": None}], "10.00",),
         # Missing value key
-        ([{"value": "10"}, {}], 10.0,),
+        ([{"value": "10"}, {}], "10.00",),
         # Missing good key
-        ([{"value": "10"}, {}], 10.0,),
+        ([{"value": "10"}, {}], "10.00",),
     ),
 )
 def test_get_value(goods, expected_value):

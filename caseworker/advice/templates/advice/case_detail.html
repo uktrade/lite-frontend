@@ -3,7 +3,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-third">
         {% with display_pv_grading=case.goods|is_case_pv_graded %}
-        <h2 class="govuk-heading-m">Case Details</h2>
+        <h2 class="govuk-heading-m">Case details</h2>
         <details class="govuk-details" data-module="govuk-details">
             <summary class="govuk-details__summary">
                 <span class="govuk-details__summary-text">
@@ -19,7 +19,7 @@
                 </div>
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body"><strong>License required</strong></p>
+                        <p class="govuk-body"><strong>Licence required</strong></p>
                     </div>
                     <div class="govuk-grid-column-one-half">
                         <p class="govuk-body">
@@ -133,7 +133,7 @@
                 <p class="govuk-body">{{ case.organisation.primary_site.address.country.name }}</p>
             </div>
             <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>End use</strong></p>
+                <p class="govuk-body"><strong>End-use</strong></p>
             </div>
             <div class="govuk-grid-column-one-half">
                 <p class="govuk-body">{{ case.data.intended_end_use }}</p>

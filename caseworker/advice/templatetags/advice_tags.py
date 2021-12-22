@@ -14,7 +14,7 @@ def get_clc(goods):
 
 @register.filter()
 def get_case_value(goods):
-    return sum([float(good.get("value") or "0") for good in goods])
+    return f'{sum([float(good.get("value") or "0") for good in goods]):.2f}'
 
 
 @register.filter

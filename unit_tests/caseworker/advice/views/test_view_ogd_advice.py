@@ -50,7 +50,7 @@ def test_advice_view_heading_no_advice(
 
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
-    assert "There is no advice for this case yet" in soup.find("h2")
+    assert "There are no recommendations for this case yet" in soup.find("h2")
 
 
 def test_advice_view_heading_ogd_advice(
