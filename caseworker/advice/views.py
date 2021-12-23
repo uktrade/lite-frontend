@@ -339,7 +339,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context(self, **kwargs):
         context = super().get_context()
-        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice)
+        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, self.caseworker["team"]["id"])
         context["advice_to_consolidate"] = advice_to_consolidate.values()
         return context
 

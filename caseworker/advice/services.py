@@ -6,9 +6,18 @@ from core import client
 from caseworker.cases.services import put_case_queues
 
 FCDO_COUNTERSIGNING_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
+
+# Teams
+FCDO_TEAM = "67b9a4a3-6f3d-4511-8a19-23ccff221a74"
 LICENSING_UNIT_TEAM = "58e77e47-42c8-499f-a58d-94f94541f8c6"
 MOD_ECJU_TEAM = "b7640925-2577-4c24-8081-b85bd635b62a"
-
+MOD_CONSOLIDATE_TEAMS = [
+    "2e5fab3c-4599-432e-9540-74ccfafb18ee",
+    "4c62ce4a-18f8-4ada-8d18-4b53a565250f",
+    "809eba0f-f197-4f0f-949b-9af309a844fb",
+    "a06aec31-47d7-443b-860d-66ab0c6d7cfd",
+]
+LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 # Flags
 LU_COUNTERSIGN_REQUIRED = "bbf29b42-0aae-4ebc-b77a-e502ddea30a8"
 LU_SR_MGR_CHECK_REQUIRED = "3e30f39c-ed82-41e9-b180-493a9fd0f169"
@@ -50,6 +59,14 @@ def filter_advice_by_users_team(all_advice, caseworker):
 
 def filter_advice_by_team(all_advice, team_id):
     return [advice for advice in all_advice if advice["user"]["team"]["id"] == team_id]
+
+
+def filter_advice_by_teams(all_advice, teams_list):
+    advice_from_teams = []
+    for team_id in teams_list:
+        advice_from_teams.extend(filter_advice_by_team(all_advice, team_id))
+
+    return advice_from_teams
 
 
 def get_my_advice(advice, caseworker):
@@ -98,14 +115,20 @@ def get_advice_to_countersign(advice, caseworker):
     return grouped_user_advice
 
 
-def get_advice_to_consolidate(advice):
+def get_advice_to_consolidate(advice, user_team_id):
     """For MOD consolidate, we need to be able to review advice from other
     teams - which is the only difference between this function and
     `get_advice_to_countersign`.
     """
     user_advice = filter_advice_by_level(advice, ["user"])
-    grouped_user_advice = group_advice_by_user(user_advice)
-    return grouped_user_advice
+    if user_team_id == LICENSING_UNIT_TEAM:
+        advice_from_teams = filter_advice_by_teams(user_advice, LU_CONSOLIDATE_TEAMS)
+    elif user_team_id == MOD_ECJU_TEAM:
+        advice_from_teams = filter_advice_by_teams(user_advice, MOD_CONSOLIDATE_TEAMS)
+    else:
+        raise Exception(f"Consolidate/combine operation not allowed for team {user_team_id}")
+
+    return group_advice_by_user(advice_from_teams)
 
 
 def order_by_party_type(all_advice):

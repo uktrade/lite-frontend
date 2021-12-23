@@ -237,8 +237,17 @@ def consolidated_refusal_outcome(consolidated_advice):
         ("refuse/", forms.RefusalAdviceForm),
     ),
 )
-def test_consolidate_review(authorized_client, data_standard_case, url, advice, path, form_class):
+def test_consolidate_review(requests_mock, authorized_client, data_standard_case, url, advice, path, form_class):
     data_standard_case["case"]["advice"] = advice
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json={
+            "user": {
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
+            }
+        },
+    )
     response = authorized_client.get(url + path)
     assert response.status_code == 200
     form = response.context["form"]
@@ -247,9 +256,18 @@ def test_consolidate_review(authorized_client, data_standard_case, url, advice, 
 
 @pytest.mark.parametrize("recommendation, redirect", [("approve", "approve"), ("refuse", "refuse")])
 def test_consolidate_review_refusal_advice(
-    authorized_client, data_standard_case, url, refusal_advice, recommendation, redirect
+    requests_mock, authorized_client, data_standard_case, url, refusal_advice, recommendation, redirect
 ):
     data_standard_case["case"]["advice"] = refusal_advice
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json={
+            "user": {
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
+            }
+        },
+    )
     response = authorized_client.get(url)
     assert response.status_code == 200
     form = response.context["form"]
@@ -435,3 +453,22 @@ def test_view_consolidate_refuse_outcome(
         "All",
         "['5a', '5b']",
     ]
+
+
+@pytest.mark.parametrize(
+    "path, form_class",
+    (
+        ("", forms.ConsolidateApprovalForm),
+        ("approve/", forms.ConsolidateApprovalForm),
+        ("refuse/", forms.RefusalAdviceForm),
+    ),
+)
+def test_consolidate_raises_exception_for_other_team(
+    authorized_client, data_standard_case, url, advice, path, form_class
+):
+    data_standard_case["case"]["advice"] = advice
+
+    with pytest.raises(Exception) as err:
+        authorized_client.get(url + path)
+
+    assert str(err.value) == "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001"
