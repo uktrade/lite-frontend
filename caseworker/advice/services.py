@@ -7,6 +7,7 @@ from caseworker.cases.services import put_case_queues
 
 FCDO_COUNTERSIGNING_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
 LICENSING_UNIT_TEAM = "58e77e47-42c8-499f-a58d-94f94541f8c6"
+FCO_TEAM = "67b9a4a3-6f3d-4511-8a19-23ccff221a74"
 MOD_ECJU_TEAM = "b7640925-2577-4c24-8081-b85bd635b62a"
 
 # Flags

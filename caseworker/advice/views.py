@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from requests.exceptions import HTTPError
 
-from caseworker.advice import forms, services
+from caseworker.advice import forms, services, constants
 from core import client
 from caseworker.cases.services import get_case
 from caseworker.core.services import get_denial_reasons
@@ -37,7 +37,7 @@ class CaseContextMixin:
 
     def unadvised_countries(self):
         """Returns a dict of countries for which advice has not been given by the current user's team."""
-        dest_types = ("end_user", "ultimate_end_user", "consignee", "third_party")
+        dest_types = constants.DESTINATION_TYPES
 
         advised_on = {
             # Map of destinations advised on -> team that gave the advice
@@ -102,7 +102,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/give-approval-advice.html"
 
     def get_form(self):
-        if self.caseworker["team"]["name"] == "FCO":
+        if self.caseworker["team"]["id"] == services.FCO_TEAM:
             return forms.FCDOApprovalAdviceForm(self.unadvised_countries(), **self.get_form_kwargs())
         else:
             return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
@@ -120,7 +120,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_form(self):
         denial_reasons = get_denial_reasons(self.request)
-        if self.caseworker["team"]["name"] == "FCO":
+        if self.caseworker["team"]["id"] == services.FCO_TEAM:
             return forms.FCDORefusalAdviceForm(denial_reasons, self.unadvised_countries(), **self.get_form_kwargs())
         else:
             return forms.RefusalAdviceForm(denial_reasons, **self.get_form_kwargs())
@@ -187,8 +187,21 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         else:
             raise ValueError("Invalid advice type encountered")
 
+    def advised_countries(self):
+        """Returns a list of countries for which advice has given by the current user."""
+        dest_types = constants.DESTINATION_TYPES
+        advice = services.filter_current_user_advice(self.case.advice, self.caseworker_id)
+        advised_on = {a.get(dest_type) for dest_type in dest_types for a in advice if a.get(dest_type) is not None}
+        return [dest["country"]["id"] for dest in self.case.destinations if dest["id"] in advised_on]
+
     def form_valid(self, form):
         data = form.cleaned_data
+        # When an FCO officer edits the advice, we don't allow for changing the countries
+        # & therefore, we render the normal forms and not the FCO ones.
+        # This means that here data here doesn't include the list of countries for which
+        # the advice should be applied and so we pop that in using a method.
+        if self.caseworker["team"]["name"] == "FCO":
+            data["countries"] = self.advised_countries()
         if isinstance(form, forms.GiveApprovalAdviceForm):
             services.post_approval_advice(self.request, self.case, data)
         elif isinstance(form, forms.RefusalAdviceForm):
