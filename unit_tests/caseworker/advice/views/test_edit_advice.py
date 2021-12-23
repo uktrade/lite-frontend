@@ -82,6 +82,16 @@ def test_edit_approve_advice_post(authorized_client, requests_mock, data_standar
             "text": "meets the requirements updated",
             "type": "approve",
         },
+        {
+            "denial_reasons": [],
+            "footnote": "",
+            "footnote_required": False,
+            "good": "d4feac1e-851d-41a5-b833-eb28addb8547",
+            "note": "",
+            "proviso": "",
+            "text": "",
+            "type": "no_licence_required",
+        },
     ]
 
 
