@@ -304,8 +304,15 @@ class CountersignEditAdviceView(ReviewCountersignView):
     def get_data(self, advice):
         return [{"approval_reasons": a[0].get("countersign_comments")} for a in advice]
 
+    def get_data(self, advice):
+        return [{"approval_reasons": a[0]["countersign_comments"]} for a in advice]
+
     def get_context(self, **kwargs):
-        return {**super().get_context(), "subtitle": self.subtitle, "edit": True}
+        context = super().get_context()
+        advice = context["advice_to_countersign"]
+        data = self.get_data(advice)
+        context["formset"] = forms.get_formset(self.form_class, len(advice), initial=data)
+        return context
 
 
 class CountersignAdviceView(AdviceView):
