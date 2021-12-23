@@ -174,43 +174,17 @@ def get_queue_formset(form_class, queues, data=None):
 
 
 class CountersignAdviceForm(forms.Form):
-    CHOICES = [("yes", "Yes"), ("no", "No")]
-
-    agree_with_recommendation = forms.ChoiceField(
-        choices=CHOICES,
-        widget=forms.RadioSelect,
-        label="",
-        error_messages={"required": "Select yes if you agree with the recommendation"},
-    )
     approval_reasons = forms.CharField(
-        required=False, widget=forms.Textarea(attrs={"rows": "10"}), label="Explain your reasons",
-    )
-    refusal_reasons = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": "10"}),
-        label="Explain why this recommendation needs to be sent back to an adviser",
+        label="Explain why you are agreeing with this recommendation",
     )
 
-    conditional_radio = {"yes": ["approval_reasons"], "no": ["refusal_reasons", "queue_to_return"]}
-
-    def __init__(self, queues, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.fields["queue_to_return"] = forms.ChoiceField(
-            required=False, label="Choose where to return this recommendation", choices=queues
-        )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        option_selected = cleaned_data.get("agree_with_recommendation")
-        if option_selected == "yes" and cleaned_data.get("approval_reasons") == "":
-            self.add_error("approval_reasons", "Enter your reasons for agreeing with the recommendation")
-        if option_selected == "no":
-            if cleaned_data.get("refusal_reasons") == "":
-                self.add_error("refusal_reasons", "Enter why you do not agree with the recommendation")
-            if cleaned_data.get("queue_to_return") == "":
-                self.add_error("queue_to_return", "Select where you want to return this recommendation")
+        self.helper.layout = Layout("approval_reasons")
 
 
 class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):

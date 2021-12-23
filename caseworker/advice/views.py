@@ -311,12 +311,9 @@ class ViewCountersignedAdvice(AdviceDetailView):
         return context
 
 
-class CountersignEditAdviceView(EditAdviceView):
-
-    subtitle = (
-        "Your changes as countersigner will be reflected on the recommendation that goes forward "
-        "to the Licensing Unit. The original version will be recorded in the case history"
-    )
+class CountersignEditAdviceView(ReviewCountersignView):
+    def get_data(self, advice):
+        return [{"approval_reasons": a[0]["countersign_comments"]} for a in advice]
 
     def get_context(self, **kwargs):
         return {**super().get_context(), "subtitle": self.subtitle, "edit": True}
