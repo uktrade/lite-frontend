@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from django import forms
-from django.forms.formsets import BaseFormSet
 from django.forms.formsets import formset_factory
 from django.utils.html import format_html
 
@@ -151,26 +150,9 @@ class DeleteAdviceForm(forms.Form):
         self.helper.add_input(Submit("confirm", "Confirm"))
 
 
-class QueueFormset(BaseFormSet):
-    """We have a few views that render a list of user-advice with formsets.
-    Each form in the formset renders a `ChoiceField` of queues that are
-    accessble to the user.
-    This class implements the functionality of passing the right list of
-    queues through to the respective forms via the kwargs.
-    """
-
-    def get_form_kwargs(self, index):
-        kwargs = super().get_form_kwargs(index)
-        kwargs["queues"] = [("", "")] + kwargs["queues"][index]
-        return kwargs
-
-
-def get_queue_formset(form_class, queues, data=None):
-    """This is a helper function for rendering QueueFormsets
-    """
-    num = len(queues)
-    factory = formset_factory(form_class, formset=QueueFormset, extra=num, min_num=num, max_num=num)
-    return factory(data=data, form_kwargs={"queues": queues})
+def get_formset(form_class, num=1, data=None, initial=None):
+    factory = formset_factory(form_class, extra=num, min_num=num, max_num=num)
+    return factory(data=data, initial=initial)
 
 
 class CountersignAdviceForm(forms.Form):
