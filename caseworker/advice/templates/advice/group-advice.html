@@ -59,7 +59,7 @@
                 <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Reasons for approving">
                     <div class="govuk-cookie-banner__message govuk-width-container">
                         <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-full">
+                            <div class="govuk-grid-column-full govuk-!-padding-left-1">
                                 {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
                                     <h3 class="govuk-heading-s">Reasons for approving</h3>
                                 {% elif decision_advice.decision == "Refuse" %}
@@ -82,7 +82,7 @@
                 <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Licence condition">
                     <div class="govuk-cookie-banner__message govuk-width-container">
                         <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-full">
+                            <div class="govuk-grid-column-full govuk-!-padding-left-1">
                                 <h3 class="govuk-heading-s">Licence condition</h3>
                                 <div class="govuk-cookie-banner__content">
                                     <p class="govuk-body">{{ advice.proviso }}</p>
