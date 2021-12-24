@@ -102,7 +102,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/give-approval-advice.html"
 
     def get_form(self):
-        if self.caseworker["team"]["id"] == services.FCO_TEAM:
+        if self.caseworker["team"]["id"] == services.FCDO_TEAM:
             return forms.FCDOApprovalAdviceForm(self.unadvised_countries(), **self.get_form_kwargs())
         else:
             return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
@@ -120,7 +120,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_form(self):
         denial_reasons = get_denial_reasons(self.request)
-        if self.caseworker["team"]["id"] == services.FCO_TEAM:
+        if self.caseworker["team"]["id"] == services.FCDO_TEAM:
             return forms.FCDORefusalAdviceForm(denial_reasons, self.unadvised_countries(), **self.get_form_kwargs())
         else:
             return forms.RefusalAdviceForm(denial_reasons, **self.get_form_kwargs())
