@@ -77,7 +77,9 @@
 {% include "advice/other-recommendations.html" with case=case %}
 {% endif %}
 {% else %}
-<h2 class="govuk-heading-m">There are no recommendations for this case yet</h2>
-<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Give advice</a>
+	<h2 class="govuk-heading-m">There are no recommendations for this case yet</h2>
+	{% if not countersign or not consolidate %}
+		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
+	{% endif %}
 {% endif %}
 {% endblock %}
