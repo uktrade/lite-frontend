@@ -239,6 +239,36 @@ def mock_get_application(requests_mock, data_standard_case, data_draft_standard_
 
 
 @pytest.fixture()
+def mock_get_application_documents(requests_mock, data_standard_case, data_draft_standard_application):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/documents/")
+    yield requests_mock.get(url=url, json={"documents": []})
+
+
+@pytest.fixture()
+def mock_get_application_sites(requests_mock, data_standard_case, data_draft_standard_application):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/sites/")
+    yield requests_mock.get(url=url, json={"sites": []})
+
+
+@pytest.fixture()
+def mock_get_application_external_locations(requests_mock, data_standard_case, data_draft_standard_application):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/external_locations/")
+    yield requests_mock.get(url=url, json={"external_locations": []})
+
+
+@pytest.fixture()
+def mock_get_application_goods(requests_mock, data_standard_case, data_draft_standard_application):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/goods/")
+    yield requests_mock.get(url=url, json={"goods": []})
+
+
+@pytest.fixture()
+def mock_get_application_case_notes(requests_mock, data_standard_case, data_draft_standard_application):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/case-notes/")
+    yield requests_mock.get(url=url, json={"case_notes": []})
+
+
+@pytest.fixture()
 def mock_put_application(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     yield requests_mock.put(url=url, json={})
