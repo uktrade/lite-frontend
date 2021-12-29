@@ -61,7 +61,14 @@ def data_open_case():
             "has_advice": {"user": False, "my_user": False, "team": False, "my_team": False, "final": False},
             "advice": [],
             "all_flags": [
-                {"name": "Item not verified", "label": None, "colour": "default", "priority": 0, "level": "Good"},
+                {
+                    "id": "0149b643-d38a-4d1a-b259-7f73ff4f7b97",
+                    "name": "Item not verified",
+                    "label": None,
+                    "colour": "default",
+                    "priority": 0,
+                    "level": "Good",
+                },
                 {
                     "name": "Destination20200629144727",
                     "label": "Test label",
@@ -70,9 +77,24 @@ def data_open_case():
                     "level": "Destination",
                     "removable_by": "Anyone",
                 },
-                {"name": "Enforcement Check Req", "label": None, "colour": "default", "priority": 0, "level": "Case"},
-                {"name": "Firearms", "label": None, "colour": "default", "priority": 0, "level": "Case"},
                 {
+                    "id": "564f2c59-13a0-4d28-b2d1-749ec45c7c7d",
+                    "name": "Enforcement Check Req",
+                    "label": None,
+                    "colour": "default",
+                    "priority": 0,
+                    "level": "Case",
+                },
+                {
+                    "id": "f097dab7-2b5d-49cd-a0a2-310e70ae0892",
+                    "name": "Firearms",
+                    "label": None,
+                    "colour": "default",
+                    "priority": 0,
+                    "level": "Case",
+                },
+                {
+                    "id": "de8fcf9f-15c1-447d-9144-adc484b4a1c5",
                     "name": "Organisation2020062916081",
                     "label": "Test label",
                     "colour": "pink",
@@ -339,6 +361,7 @@ def data_standard_case():
             "advice": [],
             "all_flags": [
                 {
+                    "id": "2d2ba1de-3178-4c94-a823-ef6a3dba79af",
                     "name": "Enforcement Check Req",
                     "label": None,
                     "colour": "default",

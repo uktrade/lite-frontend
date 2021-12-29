@@ -422,7 +422,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
 
         lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED, services.LU_SR_MGR_CHECK_REQUIRED}
-        case_flag_ids = {flag["id"] for flag in self.case.flags}
+        case_flag_ids = {flag["id"] for flag in self.case.all_flags}
         lu_countersign_required = bool(lu_countersign_flags.intersection(case_flag_ids))
 
         finalise_case = user_team_id == services.LICENSING_UNIT_TEAM and not lu_countersign_required
