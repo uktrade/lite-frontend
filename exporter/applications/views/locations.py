@@ -88,11 +88,10 @@ class GoodsLocationView(LoginRequiredMixin, ApplicationMixin, TemplateView):
     def dispatch(self, *args, **kwargs):
         has_old_locations = self.application["goods_locations"]
         has_new_locations = (
-            self.application["goods_recipients"]
-            and self.application["goods_starting_point"]
+            self.application.get("goods_recipients", False)
+            and self.application.get("goods_starting_point", False)
             and self.application["export_type"]
             and self.application["is_shipped_waybill_or_lading"]
-            and self.application["goods_recipients"]
         )
         task_list_url = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
         if has_old_locations:
