@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from django import forms
-from django.forms.formsets import BaseFormSet
 from django.forms.formsets import formset_factory
 from django.utils.html import format_html
 
@@ -151,66 +150,23 @@ class DeleteAdviceForm(forms.Form):
         self.helper.add_input(Submit("confirm", "Confirm"))
 
 
-class QueueFormset(BaseFormSet):
-    """We have a few views that render a list of user-advice with formsets.
-    Each form in the formset renders a `ChoiceField` of queues that are
-    accessble to the user.
-    This class implements the functionality of passing the right list of
-    queues through to the respective forms via the kwargs.
-    """
-
-    def get_form_kwargs(self, index):
-        kwargs = super().get_form_kwargs(index)
-        kwargs["queues"] = [("", "")] + kwargs["queues"][index]
-        return kwargs
-
-
-def get_queue_formset(form_class, queues, data=None):
-    """This is a helper function for rendering QueueFormsets
-    """
-    num = len(queues)
-    factory = formset_factory(form_class, formset=QueueFormset, extra=num, min_num=num, max_num=num)
-    return factory(data=data, form_kwargs={"queues": queues})
+def get_formset(form_class, num=1, data=None, initial=None):
+    factory = formset_factory(form_class, extra=num, min_num=num, max_num=num)
+    return factory(data=data, initial=initial)
 
 
 class CountersignAdviceForm(forms.Form):
-    CHOICES = [("yes", "Yes"), ("no", "No")]
-
-    agree_with_recommendation = forms.ChoiceField(
-        choices=CHOICES,
-        widget=forms.RadioSelect,
-        label="",
-        error_messages={"required": "Select yes if you agree with the recommendation"},
-    )
     approval_reasons = forms.CharField(
-        required=False, widget=forms.Textarea(attrs={"rows": "10"}), label="Explain your reasons",
-    )
-    refusal_reasons = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": "10"}),
-        label="Explain why this recommendation needs to be sent back to an adviser",
+        label="Explain why you are agreeing with this recommendation",
     )
 
-    conditional_radio = {"yes": ["approval_reasons"], "no": ["refusal_reasons", "queue_to_return"]}
-
-    def __init__(self, queues, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.fields["queue_to_return"] = forms.ChoiceField(
-            required=False, label="Choose where to return this recommendation", choices=queues
-        )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        option_selected = cleaned_data.get("agree_with_recommendation")
-        if option_selected == "yes" and cleaned_data.get("approval_reasons") == "":
-            self.add_error("approval_reasons", "Enter your reasons for agreeing with the recommendation")
-        if option_selected == "no":
-            if cleaned_data.get("refusal_reasons") == "":
-                self.add_error("refusal_reasons", "Enter why you do not agree with the recommendation")
-            if cleaned_data.get("queue_to_return") == "":
-                self.add_error("queue_to_return", "Select where you want to return this recommendation")
+        self.helper.layout = Layout("approval_reasons")
 
 
 class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):

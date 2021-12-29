@@ -3,7 +3,6 @@ from collections import defaultdict
 from requests.exceptions import HTTPError
 
 from core import client
-from caseworker.cases.services import put_case_queues
 
 FCDO_COUNTERSIGNING_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
 
@@ -230,29 +229,17 @@ def get_users_team_queues(request, user):
 
 def countersign_advice(request, case, caseworker, formset_data):
     data = []
-    queues_to_return = set()
     case_pk = case["id"]
     advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
 
     for index, (_, user_advice) in enumerate(advice_to_countersign.items()):
         form_data = formset_data[index]
-        comments = ""
-        if form_data["agree_with_recommendation"] == "yes":
-            comments = form_data["approval_reasons"]
-        elif form_data["agree_with_recommendation"] == "no":
-            comments = form_data["refusal_reasons"]
-            queues_to_return.add(form_data["queue_to_return"])
+        comments = form_data["approval_reasons"]
         for advice in user_advice:
             data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
 
     response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
     response.raise_for_status()
-
-    # Remove the case from the FCO countersigning queue
-    current_queues = set(case.queues) - {FCDO_COUNTERSIGNING_QUEUE}
-    put_case_queues(request, case_pk, json={"queues": list(current_queues | queues_to_return)})
-
-    return response.json(), response.status_code
 
 
 def move_case_forward(request, case_id, queue_id):

@@ -257,28 +257,17 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/review_countersign.html"
     form_class = forms.CountersignAdviceForm
 
-    def get_queues(self, users):
-        queues = []
-        for user in users:
-            queue, _ = services.get_users_team_queues(self.request, user)
-            queues.append(queue["queues"])
-        return queues
-
     def get_context(self, **kwargs):
         context = super().get_context()
-        advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
-        advice_users_pks = list(advice_to_countersign.keys())
-        queues = self.get_queues(advice_users_pks)
-        context["formset"] = forms.get_queue_formset(self.form_class, queues)
-        context["advice_to_countersign"] = advice_to_countersign.values()
-        context["user_pks"] = advice_users_pks
+        advice = services.get_advice_to_countersign(self.case.advice, self.caseworker)
+        context["formset"] = forms.get_formset(self.form_class, len(advice))
+        context["advice_to_countersign"] = advice.values()
         return context
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-        advice_users_pks = context["user_pks"]
-        queues = self.get_queues(advice_users_pks)
-        formset = forms.get_queue_formset(self.form_class, queues, data=request.POST)
+        advice = context["advice_to_countersign"]
+        formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
         if formset.is_valid():
             services.countersign_advice(request, self.case, self.caseworker, formset.cleaned_data)
             return HttpResponseRedirect(self.get_success_url())
@@ -311,15 +300,16 @@ class ViewCountersignedAdvice(AdviceDetailView):
         return context
 
 
-class CountersignEditAdviceView(EditAdviceView):
-
-    subtitle = (
-        "Your changes as countersigner will be reflected on the recommendation that goes forward "
-        "to the Licensing Unit. The original version will be recorded in the case history"
-    )
+class CountersignEditAdviceView(ReviewCountersignView):
+    def get_data(self, advice):
+        return [{"approval_reasons": a[0].get("countersign_comments")} for a in advice]
 
     def get_context(self, **kwargs):
-        return {**super().get_context(), "subtitle": self.subtitle, "edit": True}
+        context = super().get_context()
+        advice = context["advice_to_countersign"]
+        data = self.get_data(advice)
+        context["formset"] = forms.get_formset(self.form_class, len(advice), initial=data)
+        return context
 
 
 class CountersignAdviceView(AdviceView):
