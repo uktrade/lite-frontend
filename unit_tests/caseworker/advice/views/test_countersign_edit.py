@@ -25,7 +25,7 @@ def test_edit_post(authorized_client, requests_mock, data_standard_case, standar
     for advice in case_data["case"]["advice"]:
         advice["countersign_comments"] = "test"
 
-    case_id = data_standard_case['case']['id']
+    case_id = data_standard_case["case"]["id"]
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=case_data)
     requests_mock.get(
         client._build_absolute_uri(f"/gov_users/{case_id}"),
