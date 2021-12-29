@@ -73,7 +73,7 @@ def get_locations_page(request, application_id, **kwargs):
     return render(request, "applications/goods-locations/goods-locations.html", context,)
 
 
-class GoodsLocation(LoginRequiredMixin, ApplicationMixin, TemplateView):
+class GoodsLocationView(LoginRequiredMixin, ApplicationMixin, TemplateView):
     template_name = "applications/goods-locations/goods-locations.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -86,9 +86,22 @@ class GoodsLocation(LoginRequiredMixin, ApplicationMixin, TemplateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        if not self.application["goods_locations"]:
+        has_old_locations = self.application["goods_locations"]
+        has_new_locations = (
+            self.application["goods_recipients"]
+            and self.application["goods_starting_point"]
+            and self.application["export_type"]
+            and self.application["is_shipped_waybill_or_lading"]
+            and self.application["goods_recipients"]
+        )
+        task_list_url = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
+        if has_old_locations:
+            return super().dispatch(*args, **kwargs)
+        elif not has_old_locations and not has_new_locations:
             return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": self.kwargs["pk"]}))
-        return super().dispatch(*args, **kwargs)
+        elif has_new_locations:
+            summary_url = reverse_lazy("applications:locations_summary", kwargs={"pk": self.kwargs["pk"]})
+            return redirect(f"{summary_url}?return_to={task_list_url}")
 
 
 class GoodsStartingPointFormView(LoginRequiredMixin, ApplicationMixin, FormView):
