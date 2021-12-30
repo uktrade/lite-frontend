@@ -1,150 +1,129 @@
 {% load static advice_tags %}
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third">
         {% with display_pv_grading=case.goods|is_case_pv_graded %}
         <h2 class="govuk-heading-m">Case details</h2>
         <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                    Products
-                </span>
-            </summary>
-            <div class="govuk-details__text">
-                {% for good in case.goods %}
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-full">
-                        <p class="govuk-body"><strong>{{ forloop.counter }}. {{ good.good.name }}</strong></p>
-                    </div>
+          <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Products</span>
+          </summary>
+          <div class="govuk-details__text">
+            {% for good in case.goods %}
+            <dl class="govuk-summary-list govuk-summary-list--no-border">
+              <h3>{{ forloop.counter }}. {{ good.good.name }}</h2>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Licence required</dt>
+                <dd class="govuk-summary-list__value">
+                  {% if good.is_good_controlled is not None %}
+                      {{ good.is_good_controlled.value }}
+                  {% elif good.good.is_good_controlled is not None %}
+                      {{ good.good.is_good_controlled.value }}
+                  {% else %}
+                      Not added
+                  {% endif %}
+                </dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Control List Entry</dt>
+                <dd class="govuk-summary-list__value">{{ case.goods | get_clc | join:', ' }}</dd>
+              </div>
+              {% if display_pv_grading %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">Security grading</dt>
+                  <dd class="govuk-summary-list__value">
+                    {% if good.good.is_pv_graded == "yes" %}
+                        {% with grading=good.good.pv_grading_details %}
+                            {{ grading.prefix }} {{ grading.grading.value }} {{ grading.suffix }}
+                        {% endwith %}
+                    {% else %}
+                        None
+                    {% endif %}
+                  </dd>
                 </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body"><strong>Licence required</strong></p>
-                    </div>
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body">
-                        {% if good.is_good_controlled is not None %}
-                            {{ good.is_good_controlled.value }}
-                        {% elif good.good.is_good_controlled is not None %}
-                            {{ good.good.is_good_controlled.value }}
-                        {% else %}
-                            Not added
-                        {% endif %}
-                        </p>
-                    </div>
-                </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body"><strong>Control List Entry</strong></p>
-                    </div>
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body">{{ case.goods | get_clc | join:', ' }}<br></p>
-                    </div>
-                </div>
-                {% if display_pv_grading %}
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-one-half">
-                            <p class="govuk-body"><strong>Security grading</strong></p>
-                        </div>
-                        <div class="govuk-grid-column-one-half">
-                            <p class="govuk-body">
-                                {% if good.good.is_pv_graded == "yes" %}
-                                    {% with grading=good.good.pv_grading_details %}
-                                        {{ grading.prefix }} {{ grading.grading.value }} {{ grading.suffix }}
-                                    {% endwith %}
-                                {% else %}
-                                    None
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                {% endif %}
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body"><strong>Annual report summary</strong></p>
-                    </div>
-                    <div class="govuk-grid-column-one-half">
-                        <p class="govuk-body">{{ good.report_summary | title }}</p>
-                    </div>
-                </div>
-                <hr>
-                {% endfor %}
-            </div>
+              {% endif %}
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Annual report summary</dt>
+                <dd class="govuk-summary-list__value">{{ good.report_summary | title }}</dd>
+              </div>
+            </dl>
+            {% endfor %}
+          </div>
         </details>
 
         <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                    Destinations
-                </span>
-            </summary>
-            <div class="govuk-details__text">
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-third">
-                        <p class="govuk-body"><strong>Country</strong></p>
-                    </div>
-                    <div class="govuk-grid-column-one-third">
-                        <p class="govuk-body"><strong>Type</strong></p>
-                    </div>
-                    <div class="govuk-grid-column-one-third">
-                        <p class="govuk-body"><strong>Name</strong></p>
-                    </div>
-                </div>
-                <hr>
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">Destinations</span>
+          </summary>
+          <div class="govuk-details__text">
+            <table id="table-nlr-products" class="govuk-table">
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">Country</th>
+                  <th scope="col" class="govuk-table__header">Type</th>
+                  <th scope="col" class="govuk-table__header">Name</th>
+                </tr>
+              </thead>
+              <tbody class="govuk-table__body">
                 {% for destination in case.destinations %}
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-third">
-                        <p class="govuk-body">{{ destination.country.name }}</p>
-                    </div>
-                    <div class="govuk-grid-column-one-third">
-                        <p class="govuk-body">{{ destination.type | format_heading | title }}</p>
-                    </div>
-                    <div class="govuk-grid-column-one-third">
-                        <p class="govuk-body">{{ destination.name }}</p>
-                    </div>
-                </div>
-                <hr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell">{{ destination.country.name }}</td>
+                  <td class="govuk-table__cell">{{ destination.type | format_heading | title }}</td>
+                  <td class="govuk-table__cell">{{ destination.name }}</td>
+                </tr>
                 {% endfor %}
-            </div>
+              </tbody>
+            </table>
+          </div>
         </details>
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>Control list entries</strong></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">{{ case.goods | get_clc | join:', ' }}<br></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>Security graded</strong></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">{{ display_pv_grading|yesno|capfirst }}<br></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>Total value</strong></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">£{{ case.goods | get_case_value }}</p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>Location of products</strong></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">{{ case.organisation.primary_site.address.country.name }}</p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>End-use</strong></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">{{ case.data.intended_end_use }}</p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body"><strong>Denial matches</strong></p>
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <p class="govuk-body">{{ case.data.denial_matches | join:', ' }}<br></p>
-            </div>
-        </div>
+
+        <dl class="govuk-summary-list govuk-summary-list--no-border">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Control list entries
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ case.goods | get_clc | join:', ' }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Security graded
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ display_pv_grading|yesno|capfirst }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Total value
+            </dt>
+            <dd class="govuk-summary-list__value">
+              £{{ case.goods | get_case_value }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Location of products
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ case.organisation.primary_site.address.country.name }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              End-use
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ case.data.intended_end_use }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Denial matches
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ case.data.denial_matches | join:', ' }}
+            </dd>
+          </div>
+        </dl>
+
         {% endwith %}
-    </div>
-</div>
