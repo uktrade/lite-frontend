@@ -3,6 +3,7 @@ from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 from django.utils.functional import cached_property
 from requests.exceptions import HTTPError
+import sentry_sdk
 
 from caseworker.advice import forms, services, constants
 from core import client
@@ -175,6 +176,11 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         # but the number of advice objects equals - destination x goods.
         # That said, approval/refusal reasons are the same for all of these objects so we
         # can take the first object and populate the form from it.
+        # TODO: The following is a bit fragile and may result in an IndexError. We have
+        # put sentry context that includes self.caseworker and self.case.advice in order
+        # to debug when this goes south.
+        sentry_sdk.set_context("caseworker", self.caseworker)
+        sentry_sdk.set_context("advice", {"advice": self.case.advice})
         advice = my_advice[0]
 
         if advice["type"]["key"] in ["approve", "proviso"]:
@@ -380,7 +386,14 @@ class ConsolidateEditView(ReviewConsolidateView):
         that we don't render the select-advice form.
         """
         super().setup(request, *args, **kwargs)
-        team_advice = services.filter_advice_by_level(self.case.advice, ["team"])
+        user_team_id = self.caseworker["team"]["id"]
+        level = "final" if user_team_id == services.LICENSING_UNIT_TEAM else "team"
+        team_advice = services.filter_advice_by_level(self.case.advice, [level])
+        # TODO: The following is a bit fragile and may result in an IndexError. We have
+        # put sentry context that includes self.caseworker and self.case.advice in order
+        # to debug when this goes south.
+        sentry_sdk.set_context("caseworker", self.caseworker)
+        sentry_sdk.set_context("advice", {"advice": self.case.advice})
         self.advice = services.filter_advice_by_team(team_advice, self.caseworker["team"]["id"])[0]
         self.advice_type = self.advice["type"]["key"]
         self.kwargs["advice_type"] = self.advice_type
