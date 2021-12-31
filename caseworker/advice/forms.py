@@ -122,14 +122,14 @@ class RefusalAdviceForm(forms.Form):
     def __init__(self, denial_reasons, *args, **kwargs):
         super().__init__(*args, **kwargs)
         refusal_criteria_link = (
-            "https://publications.parliament.uk/pa/cm201314/cmhansrd/cm140325/wmstext/140325m0001.htm#14032566000018"
+            "https://questions-statements.parliament.uk/written-statements/detail/2021-12-08/hcws449"
         )
         choices = self._group_denial_reasons(denial_reasons)
         self.fields["denial_reasons"] = forms.MultipleChoiceField(
             choices=choices,
             widget=GridmultipleSelect(),
             label=format_html(
-                f'Select all <a href={refusal_criteria_link} target="_blank">refusal criteria (opens in new tab)</a> that apply'
+                f'Select all <a class="govuk-link" href={refusal_criteria_link} target="_blank">refusal criteria (opens in a new tab)</a> that apply'
             ),
             error_messages={"required": "Select at least one refusal criteria"},
         )
