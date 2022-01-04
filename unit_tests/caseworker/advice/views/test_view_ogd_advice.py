@@ -51,10 +51,6 @@ def test_advice_view_200(mock_queue, mock_case, authorized_client, data_queue, d
 def test_advice_view_heading_no_advice(
     requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, url
 ):
-    case_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
-    # data_standard_case has no advice
-    requests_mock.get(url=case_url, json=data_standard_case)
-
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     assert "There are no recommendations for this case yet" in soup.find("h2")
@@ -63,18 +59,10 @@ def test_advice_view_heading_no_advice(
 def test_advice_view_heading_ogd_advice(
     requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, data_case_advice, url
 ):
-    case_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
-    requests_mock.get(url=case_url, json=data_standard_case)
-
-    case_data = {**data_standard_case}
-    case_data["case"]["advice"] = data_case_advice
-    case_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
-    requests_mock.get(url=case_url, json=case_data)
-
+    data_standard_case["case"]["advice"] = data_case_advice
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     assert "Other recommendations for this case" in soup.find("h2")
-
     team_headings = {heading.text.strip() for heading in soup.select("details summary")}
     assert team_headings == {"A team has approved and refused", "B team has approved"}
 
