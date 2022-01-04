@@ -253,9 +253,16 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
             key=lambda a: a["name"],
         )
 
+    def can_advise(self):
+        if self.caseworker["team"]["id"] == services.FCDO_TEAM:
+            # FCO cannot advice when all the destinations are already covered
+            return self.unadvised_countries() != {}
+        return True
+
     def get_context(self, **kwargs):
         return {
             "queue": self.queue,
+            "can_advise": self.can_advise(),
         }
 
 

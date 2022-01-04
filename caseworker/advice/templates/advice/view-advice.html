@@ -30,8 +30,10 @@
 		{% elif consolidate %}
 		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Review and combine</a>
 		{% else %}
-		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
-		{% endif %}
+			{% if can_advise %}
+			<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
+			{% endif %}
+	{% endif %}
 	{% endif %}
 
 	{% if consolidated_advice %}
