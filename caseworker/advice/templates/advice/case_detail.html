@@ -23,7 +23,7 @@
                 </dd>
               </div>
               <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Control List Entry</dt>
+                <dt class="govuk-summary-list__key">Control list entries</dt>
                 <dd class="govuk-summary-list__value">{{ case.goods | get_clc | join:', ' }}</dd>
               </div>
               {% if display_pv_grading %}
@@ -66,7 +66,11 @@
                 {% for destination in case.destinations %}
                 <tr class="govuk-table__row">
                   <td class="govuk-table__cell">{{ destination.country.name }}</td>
-                  <td class="govuk-table__cell">{{ destination.type | format_heading | title }}</td>
+                  {% if 'type_display_value' in destination %}
+                    <td class="govuk-table__cell">{{ destination.type_display_value }}</td>
+                  {% else %}
+                    <td class="govuk-table__cell">{{ destination.type }}</td>
+                  {% endif %}
                   <td class="govuk-table__cell">{{ destination.name }}</td>
                 </tr>
                 {% endfor %}
@@ -121,7 +125,11 @@
               Denial matches
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ case.data.denial_matches | join:', ' }}
+                {% if case.data.denial_matches %}
+                    {{ case.data.denial_matches | join:', ' }}
+                {% else %}
+                    None
+                {% endif %}
             </dd>
           </div>
         </dl>
