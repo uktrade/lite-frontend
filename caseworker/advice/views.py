@@ -206,7 +206,7 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         # & therefore, we render the normal forms and not the FCO ones.
         # This means that here data here doesn't include the list of countries for which
         # the advice should be applied and so we pop that in using a method.
-        if self.caseworker["team"]["name"] == "FCO":
+        if self.caseworker["team"]["id"] == services.FCDO_TEAM:
             data["countries"] = self.advised_countries()
         if isinstance(form, forms.GiveApprovalAdviceForm):
             services.post_approval_advice(self.request, self.case, data)
