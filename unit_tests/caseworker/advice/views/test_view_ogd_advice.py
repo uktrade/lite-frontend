@@ -1,8 +1,15 @@
+from unittest import mock
+
 import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
+
+
+@pytest.fixture(autouse=True)
+def setup(mock_queue, mock_case):
+    yield
 
 
 @pytest.fixture
@@ -70,3 +77,34 @@ def test_advice_view_heading_ogd_advice(
 
     team_headings = {heading.text.strip() for heading in soup.select("details summary")}
     assert team_headings == {"A team has approved and refused", "B team has approved"}
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_fco_cannot_advice_when_all_dests_covered(mock_get_gov_user, authorized_client, data_queue, data_standard_case):
+    url = reverse("cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"},
+            }
+        },
+        None,
+    )
+    data_standard_case["case"]["advice"] = [
+        # The GB destination has been advised on by FCO
+        {
+            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+            "user": {
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"},
+            },
+            "type": {"value": "Approve"},
+        },
+    ]
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert not response.context_data["can_advise"]
