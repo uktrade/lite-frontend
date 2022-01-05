@@ -377,8 +377,6 @@ def test_view_consolidate_approve_outcome(
     requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_advice
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
-    case_id = data_standard_case["case"]["id"]
-    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
         json={
@@ -414,8 +412,6 @@ def test_view_consolidate_refuse_outcome(
     requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_refusal_outcome
 ):
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
-    case_id = data_standard_case["case"]["id"]
-    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
         json={
@@ -523,8 +519,6 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
         },
     ]
 
-    case_id = data_standard_case["case"]["id"]
-    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
         json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
