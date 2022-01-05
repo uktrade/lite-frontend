@@ -2,6 +2,7 @@ import pytest
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
+from caseworker.advice import services
 
 from core import client
 from caseworker.advice import forms
@@ -472,3 +473,69 @@ def test_consolidate_raises_exception_for_other_team(
         authorized_client.get(url + path)
 
     assert str(err.value) == "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001"
+
+
+@pytest.mark.parametrize(
+    "team_id, team_name", ((services.LICENSING_UNIT_TEAM, "LU Team"), (services.MOD_ECJU_TEAM, "MoD Team"),),
+)
+def test_view_consolidate_approve_outcome_countersign_warning_message(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_advice,
+    team_id,
+    team_name,
+):
+    data_standard_case["case"]["advice"] = consolidated_advice
+    data_standard_case["case"]["all_flags"] = [
+        {
+            "colour": "default",
+            "id": "318d9c76-f772-4517-bda8-296cdf3191c0",
+            "label": "",
+            "level": "Good",
+            "name": "Small Arms",
+            "priority": 0,
+        },
+        {
+            "colour": "default",
+            "id": "bbf29b42-0aae-4ebc-b77a-e502ddea30a8",
+            "label": "",
+            "level": "Destination",
+            "name": "LU Countersign Required",
+            "priority": 0,
+        },
+        {
+            "colour": "default",
+            "id": "a7736911-f604-4256-b109-dadd2f6bc316",
+            "label": "",
+            "level": "Destination",
+            "name": "Green Countries",
+            "priority": 20,
+        },
+        {
+            "colour": "default",
+            "id": "00000000-0000-0000-0000-000000000007",
+            "label": None,
+            "level": "Case",
+            "name": "Firearms",
+            "priority": 0,
+        },
+    ]
+
+    case_id = data_standard_case["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
+    )
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    if team_id == services.LICENSING_UNIT_TEAM:
+        assert response.context["lu_countersign_required"] == True
+        assert response.context["finalise_case"] == False
+    else:
+        assert response.context["lu_countersign_required"] == False
+        assert response.context["finalise_case"] == False
