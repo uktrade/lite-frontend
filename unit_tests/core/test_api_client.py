@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from core import client
 
 
-def test_zipkin_headers():
+def test_zipkin_headers(settings):
     request = Mock(headers={"x-b3-traceid": "123", "x-b3-spanid": "456"}, session={})
     request.requests_session = Mock()
     request.requests_session.request = Mock()
@@ -17,5 +17,5 @@ def test_zipkin_headers():
         },
         json={},
         method="GET",
-        url="http://127.0.0.1:8100/foo/",
+        url=f"{settings.LITE_API_URL}/foo/",
     )
