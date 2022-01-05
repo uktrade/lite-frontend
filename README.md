@@ -50,8 +50,8 @@ make run_exporter
 #### First time setup
 
   - Set up your local config file:
-    - `cp example.exporter.env caseworker.env` - you will want to set this up with valid values, ask another developer or get them from Vault.
-    - `cp example.caseworker.env exporter.env` - you will want to set this up with valid values, ask another developer or get them from Vault.
+    - `make secrets`
+    - populate the newly created `caseworker.env` and `exporter.env` with values from Vault.
 
   * Ensure docker is running
 
@@ -61,7 +61,7 @@ make run_exporter
     - `docker-compose build` - build the container image
 
 #### Starting the service
-- `docker-compose up` - to start the two frontend Django servers
+- `docker-compose up -d` - to start the two frontend Django servers
 
 - Ensure you have a working version of `lite-api` running, see [the instructions for running it
   in docker](https://github.com/uktrade/lite-api/blob/master/README.md#running-the-service-with-docker)
@@ -75,7 +75,9 @@ make run_exporter
 To run unit tests:
 
 ```
-make run_unit_tests
+make run_unit_tests_caseworker
+make run_unit_tests_exporter
+make run_unit_tests_core
 ```
 
 ## Helpful links
