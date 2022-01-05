@@ -443,7 +443,9 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
 
         lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED, services.LU_SR_MGR_CHECK_REQUIRED}
         case_flag_ids = {flag["id"] for flag in self.case.all_flags}
-        lu_countersign_required = bool(lu_countersign_flags.intersection(case_flag_ids))
+        lu_countersign_required = user_team_id == services.LICENSING_UNIT_TEAM and bool(
+            lu_countersign_flags.intersection(case_flag_ids)
+        )
 
         finalise_case = user_team_id == services.LICENSING_UNIT_TEAM and not lu_countersign_required
 
