@@ -85,7 +85,7 @@ def group_team_advice_by_user(case, team_advice, team_user, level=None):
 
 
 def group_user_advice_by_decision(case, user_advice, decision, level=None):
-    user_advice_for_decision = [a for a in user_advice if a["type"]["value"] == decision and not a["good"]]
+    user_advice_for_decision = [a for a in user_advice if a["type"]["value"] == decision and not a.get("good")]
 
     if level is not None:
         user_advice_for_decision = services.filter_advice_by_level(user_advice, [level])
@@ -96,19 +96,19 @@ def group_user_advice_by_decision(case, user_advice, decision, level=None):
         "advice": [
             create_destination_advice_item(user_advice_for_decision, destination)
             for destination in sorted(case.destinations, key=lambda d: d["name"])
-            if [a for a in user_advice_for_decision if a[destination["type"]] is not None]
+            if [a for a in user_advice_for_decision if a.get(destination["type"]) is not None]
         ],
     }
 
 
 def create_destination_advice_item(user_advice, destination):
-    advice_item = [a for a in user_advice if a[destination["type"]] is not None][0]
+    advice_item = [a for a in user_advice if a.get(destination["type"]) is not None][0]
     return {
         "name": destination["name"],
         "address": destination["address"],
-        "licence_condition": advice_item["proviso"],
+        "licence_condition": advice_item.get("proviso"),
         "country": destination["country"]["name"],
-        "denial_reasons": advice_item["denial_reasons"],
+        "denial_reasons": advice_item.get("denial_reasons"),
         "advice": advice_item,
     }
 
