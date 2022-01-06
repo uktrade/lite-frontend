@@ -295,7 +295,7 @@ def consolidated_advice(current_user, team1_user):
             "id": "2f580ac6-07ec-46f0-836c-0bbb282e6886",
             "text": "Issue from LU",
             "note": "",
-            "type": {"key": "proviso", "value": "Proviso"},
+            "type": {"key": "no_licence_required", "value": "No Licence Required"},
             "level": "team",
             "proviso": "no other conditions",
             "denial_reasons": [],
