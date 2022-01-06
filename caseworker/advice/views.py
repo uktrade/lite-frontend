@@ -341,7 +341,8 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/review_consolidate.html"
 
     def is_advice_approve_only(self):
-        return all([a["type"]["key"] in ("approve", "proviso") for a in self.case.advice])
+        approve_advice_types = ("approve", "proviso", "no_licence_required")
+        return all([a["type"]["key"] in approve_advice_types for a in self.case.advice])
 
     def get_form(self):
         form_class = forms.ConsolidateSelectAdviceForm
