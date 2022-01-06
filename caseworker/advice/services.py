@@ -119,10 +119,12 @@ def get_advice_to_consolidate(advice, user_team_id):
     teams - which is the only difference between this function and
     `get_advice_to_countersign`.
     """
-    user_advice = filter_advice_by_level(advice, ["user"])
     if user_team_id == LICENSING_UNIT_TEAM:
-        advice_from_teams = filter_advice_by_teams(user_advice, LU_CONSOLIDATE_TEAMS)
+        # LU needs to review the consolidated advice given by MOD which is at team level
+        user_team_advice = filter_advice_by_level(advice, ["user", "team"])
+        advice_from_teams = filter_advice_by_teams(user_team_advice, LU_CONSOLIDATE_TEAMS)
     elif user_team_id == MOD_ECJU_TEAM:
+        user_advice = filter_advice_by_level(advice, ["user"])
         advice_from_teams = filter_advice_by_teams(user_advice, MOD_CONSOLIDATE_TEAMS)
     else:
         raise Exception(f"Consolidate/combine operation not allowed for team {user_team_id}")

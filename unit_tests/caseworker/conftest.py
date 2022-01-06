@@ -8,6 +8,7 @@ from django.test import Client
 
 from core import client
 from core.helpers import convert_value_to_query_param
+from caseworker.advice.services import LICENSING_UNIT_TEAM
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
@@ -304,6 +305,78 @@ def team1_user():
         "role_name": "Super User",
         "status": "Active",
         "team": {"id": "12345678-42c8-499f-a58d-94f945411234", "name": "Team1", "part_of_ecju": True, "is_ogd": False,},
+    }
+
+
+@pytest.fixture
+def MOD_team1_user():
+    return {
+        "email": "mod.team1@example.com",
+        "first_name": "MoD Team1",
+        "id": "6543213c-e938-4d4f-a71b-12345678e855",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {
+            "id": "2e5fab3c-4599-432e-9540-74ccfafb18ee",
+            "name": "MoD Team1",
+            "part_of_ecju": False,
+            "is_ogd": True,
+        },
+    }
+
+
+@pytest.fixture
+def MOD_team2_user():
+    return {
+        "email": "mod.team2@example.com",
+        "first_name": "MoD Team2",
+        "id": "4523453c-e938-4d4f-a71b-12345678e855",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {
+            "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+            "name": "MoD Team2",
+            "part_of_ecju": False,
+            "is_ogd": True,
+        },
+    }
+
+
+@pytest.fixture
+def MOD_ECJU_team_user():
+    return {
+        "email": "mod.ecju.team@example.com",
+        "first_name": "MoD ECJU",
+        "id": "9123453c-e938-4d4f-a71b-12345678e855",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {
+            "id": "b7640925-2577-4c24-8081-b85bd635b62a",
+            "name": "MoD ECJU",
+            "part_of_ecju": False,
+            "is_ogd": True,
+        },
+    }
+
+
+@pytest.fixture
+def FCDO_team_user():
+    return {
+        "email": "fcdo.team@example.com",
+        "first_name": "FCDO Team",
+        "id": "123453c-e938-4d4f-a71b-12345678e8559",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {
+            "id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74",
+            "name": "FCDO Team",
+            "part_of_ecju": False,
+            "is_ogd": True,
+        },
     }
 
 

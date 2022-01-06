@@ -6,7 +6,7 @@ from caseworker.advice import services
 
 from core import client
 from caseworker.advice import forms
-from caseworker.advice.services import LICENSING_UNIT_TEAM
+from caseworker.advice.services import FCDO_TEAM, LICENSING_UNIT_TEAM, MOD_CONSOLIDATE_TEAMS, MOD_ECJU_TEAM
 
 
 @pytest.fixture
@@ -56,6 +56,108 @@ def advice(current_user):
             "user": current_user,
         }
         for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
+    ]
+
+
+@pytest.fixture
+def advice_to_consolidate(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_user):
+    return [
+        {
+            "consignee": None,
+            "countersign_comments": "",
+            "countersigned_by": None,
+            "created_at": "2022-01-05T11:18:57.172872Z",
+            "denial_reasons": [],
+            "end_user": "76de33f4-7834-4eb7-871a-66be3270fb59",
+            "footnote": "",
+            "good": None,
+            "goods_type": None,
+            "id": "ee47632b-5dd0-474b-a95d-86e975a95503",
+            "level": "user",
+            "note": "",
+            "proviso": "licence condition ABC",
+            "text": "approve no issues",
+            "third_party": None,
+            "type": {"key": "proviso", "value": "Proviso"},
+            "ultimate_end_user": None,
+            "user": MOD_team1_user,
+        },
+        {
+            "consignee": None,
+            "countersign_comments": "",
+            "countersigned_by": None,
+            "country": None,
+            "created_at": "2022-01-05T11:23:35.473052Z",
+            "denial_reasons": [],
+            "end_user": "76de33f4-7834-4eb7-871a-66be3270fb59",
+            "footnote": "Here is a reporting footnote",
+            "good": None,
+            "goods_type": None,
+            "id": "ebd57168-562f-455d-aa89-59e2f5df0367",
+            "level": "user",
+            "note": "Here is an exporter instruction",
+            "proviso": "No other licence conditions",
+            "text": "Approve from our team",
+            "third_party": None,
+            "type": {"key": "proviso", "value": "Proviso"},
+            "ultimate_end_user": None,
+            "user": MOD_team2_user,
+        },
+        {
+            "consignee": None,
+            "countersign_comments": "",
+            "countersigned_by": None,
+            "country": None,
+            "created_at": "2022-01-05T11:20:52.959163Z",
+            "denial_reasons": [],
+            "end_user": "76de33f4-7834-4eb7-871a-66be3270fb59",
+            "footnote": "",
+            "good": None,
+            "goods_type": None,
+            "id": "de9c95ad-b2e4-46fa-968f-1f2daf289327",
+            "level": "team",
+            "note": "",
+            "proviso": "Meets the criteria",
+            "text": "Meets the criteria for issuing the licence",
+            "third_party": None,
+            "type": {"key": "proviso", "value": "Proviso"},
+            "ultimate_end_user": None,
+            "user": MOD_ECJU_team_user,
+        },
+        {
+            "consignee": None,
+            "countersign_comments": "Agree with the recommendation",
+            "countersigned_by": {
+                "email": "countersigner@example.com",
+                "first_name": "Countersigner",
+                "id": "fad1db47-c5e1-4788-af3d-aea87523826b",
+                "last_name": "Team",
+                "role_name": "Super User",
+                "status": "Active",
+                "team": {
+                    "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+                    "is_ogd": True,
+                    "name": "FCO",
+                    "part_of_ecju": True,
+                },
+            },
+            "country": None,
+            "created_at": "2022-01-05T11:25:11.545878Z",
+            "denial_reasons": [],
+            "end_user": "76de33f4-7834-4eb7-871a-66be3270fb59",
+            "footnote": "",
+            "good": None,
+            "goods_type": None,
+            "id": "217e7264-7f28-46ff-bf01-dc64f4432786",
+            "level": "user",
+            "note": "",
+            "proviso": None,
+            "text": "Approve from our team",
+            "third_party": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "ultimate_end_user": None,
+            "user": FCDO_team_user,
+        },
     ]
 
 
@@ -231,28 +333,44 @@ def consolidated_refusal_outcome(consolidated_advice):
 
 
 @pytest.mark.parametrize(
-    "path, form_class",
+    "path, form_class, team_id, team_name",
     (
-        ("", forms.ConsolidateApprovalForm),
-        ("approve/", forms.ConsolidateApprovalForm),
-        ("refuse/", forms.RefusalAdviceForm),
+        ("", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
+        ("approve/", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("refuse/", forms.RefusalAdviceForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("approve/", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
+        ("refuse/", forms.RefusalAdviceForm, MOD_ECJU_TEAM, "MOD Team"),
     ),
 )
-def test_consolidate_review(requests_mock, authorized_client, data_standard_case, url, advice, path, form_class):
-    data_standard_case["case"]["advice"] = advice
+def test_consolidate_review(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    url,
+    advice_to_consolidate,
+    path,
+    form_class,
+    team_id,
+    team_name,
+):
+    data_standard_case["case"]["advice"] = advice_to_consolidate
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={
-            "user": {
-                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
-            }
-        },
+        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
     )
     response = authorized_client.get(url + path)
     assert response.status_code == 200
     form = response.context["form"]
     assert isinstance(form, form_class)
+
+    advice_to_review = list(response.context["advice_to_consolidate"])
+    advice_teams = {item[0]["user"]["team"]["id"] for item in advice_to_review}
+
+    if team_id == LICENSING_UNIT_TEAM:
+        assert advice_teams == {FCDO_TEAM, MOD_ECJU_TEAM}
+    elif team_id == MOD_ECJU_TEAM:
+        assert bool(advice_teams.intersection(MOD_CONSOLIDATE_TEAMS)) == True
 
 
 @pytest.mark.parametrize("recommendation, redirect", [("approve", "approve"), ("refuse", "refuse")])
