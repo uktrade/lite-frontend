@@ -148,6 +148,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
             "my_advice": my_advice.values(),
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
+            **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
     def form_valid(self, form):
@@ -263,6 +264,7 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         return {
             "queue": self.queue,
             "can_advise": self.can_advise(),
+            **services.get_advice_tab_context(self.case, self.caseworker, self.queue_id),
         }
 
 
@@ -298,11 +300,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         """Determine of the current user can edit the countersign comments.
         This will be the case if the current user made those comments.
         """
-        countersigned_by = set()
-        for user_advice in advice_to_countersign.values():
-            for advice in user_advice:
-                if advice["countersigned_by"]:
-                    countersigned_by.add(advice["countersigned_by"]["id"])
+        countersigned_by = services.get_countersigners(advice_to_countersign)
         return self.caseworker_id in countersigned_by
 
     def get_context_data(self, **kwargs):

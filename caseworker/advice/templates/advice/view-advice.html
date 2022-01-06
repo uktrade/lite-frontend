@@ -25,12 +25,12 @@
 	{% endfor %}
 
 	{% if not consolidated_advice %}
-		{% if countersign %}
+		{% if countersign and buttons.review_and_countersign %}
 		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
-		{% elif consolidate %}
+		{% elif consolidate and buttons.review_and_combine %}
 		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Review and combine</a>
 		{% else %}
-			{% if can_advise %}
+			{% if can_advise and buttons.make_recommendation %}
 			<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
 			{% endif %}
 	{% endif %}
@@ -57,16 +57,18 @@
 						</a>
 					{% endif %}
 
-					<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
-						Edit recommendation
-					</a>
+                    {% if buttons.edit_recommendation %}
+                        <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
+                            Edit recommendation
+                        </a>
+                    {% endif %}
 
 					<br><br>
 					{% include "advice/advice_details.html" with advice=consolidated_advice team=True %}
 					<br>
 				</div>
 
-				{% if not finalise_case %}
+				{% if not finalise_case and buttons.move_case_forward %}
 					<div class="govuk-grid-column-one-quarter">
 						{% crispy form %}
 					</div>
