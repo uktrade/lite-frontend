@@ -126,6 +126,7 @@ what those values should be or just try looking in Vault):
 * AUTHBROKER_CLIENT_SECRET
 * AUTHBROKER_URL - should be https://sso.trade.uat.uktrade.io for caseworker but https://great.uat.uktrade.digital
   for the exporter
+* TOKEN_SESSION_KEY - ensure different values for caseworker/exporter so there's no cookie clash when authenticated 
 * AWS_ACCESS_KEY_ID
 * AWS_SECRET_ACCESS_KEY
 * AWS_STORAGE_BUCKET_NAME
