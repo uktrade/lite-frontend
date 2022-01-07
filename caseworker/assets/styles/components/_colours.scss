@@ -6,4 +6,8 @@
   &--red {
     background: govuk-tint(govuk-colour("red"), 75);
   }
+
+  &--grey {
+    background: govuk-tint(govuk-colour("dark-grey"), 75);
+  }
 }
