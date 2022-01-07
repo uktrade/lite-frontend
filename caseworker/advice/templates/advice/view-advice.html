@@ -8,54 +8,53 @@
 {% endblock %}
 
 {% block full_width %}
-{% if case.advice %}
-	{% for error in form.non_field_errors %}
-		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				There is a problem
-			</h2>
-			<div class="govuk-error-summary__body">
-				<ul class="govuk-list govuk-error-summary__list">
-				<li>
-					{{ error }}
-				</li>
-				</ul>
-			</div>
-		</div>
-	{% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                <li>
+                    {{ error }}
+                </li>
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
 
-	{% if not consolidated_advice %}
-		{% if countersign and buttons.review_and_countersign %}
-		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
-		{% elif consolidate and buttons.review_and_combine %}
-		<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Review and combine</a>
-		{% else %}
-			{% if can_advise and buttons.make_recommendation %}
-			<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
-			{% endif %}
-	{% endif %}
-	{% endif %}
+    {% if not consolidated_advice %}
+        {% if countersign and buttons.review_and_countersign %}
+            <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
+        {% elif consolidate and buttons.review_and_combine %}
+            <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Review and combine</a>
+        {% else %}
+            {% if can_advise and buttons.make_recommendation %}
+                <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
+            {% endif %}
+        {% endif %}
+    {% endif %}
 
-	{% if consolidated_advice %}
-		<div class="govuk-width-container">
-			<div class="govuk-grid-row govuk-!-margin-top-6">
-				<div class="govuk-grid-column-three-quarters">
+    {% if consolidated_advice %}
+        <div class="govuk-width-container">
+            <div class="govuk-grid-row govuk-!-margin-top-6">
+                <div class="govuk-grid-column-three-quarters">
 
-					{% if lu_countersign_required %}
-						<div class="govuk-warning-text">
-							<span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-							<strong class="govuk-warning-text__text">
-							<span class="govuk-warning-text__assistive">Warning</span>
-								This case requires countersigning. Moving this case on will pass it to the countersigning work queue.
-							</strong>
-						</div>
-					{% endif %}
+                    {% if lu_countersign_required %}
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                                This case requires countersigning. Moving this case on will pass it to the countersigning work queue.
+                            </strong>
+                        </div>
+                    {% endif %}
 
-					{% if finalise_case %}
-						<a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
-							Finalise case
-						</a>
-					{% endif %}
+                    {% if finalise_case %}
+                        <a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
+                            Finalise case
+                        </a>
+                    {% endif %}
 
                     {% if buttons.edit_recommendation %}
                         <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
@@ -63,10 +62,10 @@
                         </a>
                     {% endif %}
 
-					<br><br>
-					{% include "advice/advice_details.html" with advice=consolidated_advice team=True %}
-					<br>
-				</div>
+                    <br><br>
+                    {% include "advice/advice_details.html" with advice=consolidated_advice team=True %}
+                    <br>
+                </div>
 
 				{% if not finalise_case and buttons.move_case_forward %}
 					<div class="govuk-grid-column-one-quarter">
@@ -77,10 +76,11 @@
 		</div>
 	{% endif %}
 
-{% if not hide_advice %}
-{% include "advice/other-recommendations.html" with case=case %}
-{% endif %}
-{% else %}
-	<h2 class="govuk-heading-m">There are no recommendations for this case yet</h2>
-{% endif %}
+    {% if case.advice %}
+        {% if not hide_advice %}
+            {% include "advice/other-recommendations.html" with case=case %}
+        {% endif %}
+    {% else %}
+        <h2 class="govuk-heading-m">There are no recommendations for this case yet</h2>
+    {% endif %}
 {% endblock %}
