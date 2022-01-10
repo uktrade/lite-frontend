@@ -16,7 +16,7 @@ class TeamPage:
 
     class Tabs:
         MEMBERS = "Members"
-        PICKLISTS = "Picklists"
+        PICKLISTS = "Templates"
 
     class Table:
         NAME = "Name"
