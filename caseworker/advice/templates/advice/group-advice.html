@@ -68,7 +68,7 @@
                                 <div class="govuk-cookie-banner__content">
                                     <p class="govuk-body">
                                     {% if advice.text %}
-                                        {{ advice.text }}
+                                        {{ advice.text|linebreaks }}
                                     {% else %}
                                         No criteria concerns
                                     {% endif %}
@@ -85,7 +85,7 @@
                             <div class="govuk-grid-column-full govuk-!-padding-left-1">
                                 <h3 class="govuk-heading-s">Licence condition</h3>
                                 <div class="govuk-cookie-banner__content">
-                                    <p class="govuk-body">{{ advice.proviso }}</p>
+                                    <p class="govuk-body">{{ advice.proviso|linebreaks }}</p>
                                 </div>
                             </div>
                         </div>
