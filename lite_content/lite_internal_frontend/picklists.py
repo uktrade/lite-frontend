@@ -11,19 +11,19 @@ class PicklistItem:
 
 
 class PicklistPicker:
-    NO_CONTENT_NOTICE = "There aren't any items in this picklist"
+    NO_CONTENT_NOTICE = "Templates have not been added yet"
 
 
 class NewPicklistForm:
     ECJU_QUERY = "Create an ECJU query"
-    PRE_VISIT_QUESTIONNAIRE = "Create a Pre-Visit Questionnaire Question (ECJU Query)"
-    COMPLIANCE_ACTIONS = "Create a Compliance Actions (ECJU Query)"
-    FOOTNOTES = "Create a footnote"
+    PRE_VISIT_QUESTIONNAIRE = "Create a pre-visit query (ECJU)"
+    COMPLIANCE_ACTIONS = "Create a compliance action (ECJU)"
+    FOOTNOTES = "Create a reporting footnote"
     LETTER_PARAGRAPH = "Create a letter paragraph"
-    PROVISO = "Create a proviso"
+    PROVISO = "Create a licence condition"
     REPORT_SUMMARY = "Create a report summary"
-    STANDARD_ADVICE = "Create standard advice"
-    BACK_LINK = "Back to picklists"
+    STANDARD_ADVICE = "Create an approval reason"
+    BACK_LINK = "Back to templates"
     HELP = "Help"
     EDIT_PREFIX = "Edit"
 
@@ -59,11 +59,11 @@ class DeactivatePicklistItem:
 
 
 class PicklistCategory:
-    PROVISO = "Provisos"
-    STANDARD_ECJU_QUERIES = "Standard ECJU Queries"
-    PRE_VISIT_QUESTIONNAIRES = "Pre-Visit Questionnaire questions (ECJU Query)"
-    COMPLIANCE_ACTIONS = "Compliance Actions (ECJU Query)"
-    LETTER_PARAGRAPHS = "Letter Paragraphs"
-    REPORT_SUMMARIES = "Report Summaries"
+    PROVISO = "Licence conditions"
+    STANDARD_ECJU_QUERIES = "Standard queries (ECJU)"
+    PRE_VISIT_QUESTIONNAIRES = "Pre-visit queries (ECJU)"
+    COMPLIANCE_ACTIONS = "Compliance action queries (ECJU)"
+    LETTER_PARAGRAPHS = "Letter paragraphs"
+    REPORT_SUMMARIES = "Report summaries"
     STANDARD_ADVICE = "Standard Advice"
-    FOOTNOTES = "Footnotes"
+    FOOTNOTES = "Reporting footnotes"

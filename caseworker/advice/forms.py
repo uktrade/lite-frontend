@@ -60,13 +60,13 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
 class GiveApprovalAdviceForm(forms.Form):
 
     approval_reasons = PicklistCharField(
-        picklist_attrs={"target": "approval_reasons", "type": "standard_advice", "name": "Standard Advice"},
+        picklist_attrs={"target": "approval_reasons", "type": "standard_advice", "name": "standard advice"},
         label="What are your reasons for approving?",
         help_text="Choose an approval reason from the template list",
         error_messages={"required": "Enter a reason for approving"},
     )
     proviso = PicklistCharField(
-        picklist_attrs={"target": "proviso", "type": "proviso", "name": "Provisos"},
+        picklist_attrs={"target": "proviso", "type": "proviso", "name": "licence condition"},
         label="Add a licence condition (optional)",
         help_text="Choose a licence condition from the template list",
         required=False,
@@ -78,7 +78,7 @@ class GiveApprovalAdviceForm(forms.Form):
         required=False,
     )
     footnote_details = PicklistCharField(
-        picklist_attrs={"target": "footnote_details", "type": "footnotes", "name": "Footnotes"},
+        picklist_attrs={"target": "footnote_details", "type": "footnotes", "name": "reporting footnote"},
         label="Add a reporting footnote (optional)",
         help_text="Choose a reporting footnote from the template list",
         min_rows=5,
@@ -134,7 +134,7 @@ class RefusalAdviceForm(forms.Form):
             error_messages={"required": "Select at least one refusal criteria"},
         )
         self.fields["refusal_reasons"] = PicklistCharField(
-            picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "Standard Advice"},
+            picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
             label="What are your reasons for this refusal?",
             help_text="Choose a refusal reason from the template list",
             error_messages={"required": "Enter a reason for refusing"},
