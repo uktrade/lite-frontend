@@ -98,7 +98,7 @@ class GiveApprovalAdviceForm(forms.Form):
                 "Footnotes explain why products to a destination have been approved or refused. "
                 "They will be publicly available in reports and data tables.",
             ),
-            Submit("submit", "Submit"),
+            Submit("submit", "Submit recommendation"),
         )
 
 
@@ -109,7 +109,7 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.layout = Layout("approval_reasons", "proviso", Submit("submit", "Submit"))
+        self.helper.layout = Layout("approval_reasons", "proviso", Submit("submit", "Submit recommendation"))
 
 
 class RefusalAdviceForm(forms.Form):
@@ -140,7 +140,7 @@ class RefusalAdviceForm(forms.Form):
             error_messages={"required": "Enter a reason for refusing"},
         )
         self.helper = FormHelper()
-        self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit"))
+        self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation"))
 
 
 class DeleteAdviceForm(forms.Form):
@@ -189,7 +189,7 @@ class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):
                 "Footnotes explain why products to a destination have been approved or refused. "
                 "They will be publicly available in reports and data tables.",
             ),
-            Submit("submit", "Submit"),
+            Submit("submit", "Submit recommendation"),
         )
 
 
@@ -201,7 +201,9 @@ class FCDORefusalAdviceForm(RefusalAdviceForm):
             widget=GridmultipleSelect(),
             label="Select countries for which you want to give advice",
         )
-        self.helper.layout = Layout("countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit"))
+        self.helper.layout = Layout(
+            "countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation")
+        )
 
 
 class MoveCaseForwardForm(forms.Form):
