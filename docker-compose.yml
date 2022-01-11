@@ -14,6 +14,8 @@ services:
     command: ./manage.py runserver 0.0.0.0:${PORT:-8200}
     networks:
       - lite
+    stdin_open: true
+    tty: true
 
   exporter:
     env_file:
@@ -28,6 +30,8 @@ services:
     command: ./manage.py runserver 0.0.0.0:${PORT:-8300}
     networks:
       - lite
+    stdin_open: true
+    tty: true
 
 networks:
   lite:
