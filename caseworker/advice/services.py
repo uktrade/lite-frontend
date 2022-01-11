@@ -329,7 +329,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
     elif team_id in (MOD_ECJU_TEAM, LICENSING_UNIT_TEAM):
-        consolidated_advice = filter_advice_by_level(case.advice, ["team", "final"])
+        consolidated_advice = get_consolidated_advice(case.advice, team_id)
 
         if queue_id in (MOD_CASES_TO_REVIEW_QUEUE, LU_POST_CIRC_FINALISE_QUEUE):
             if not consolidated_advice:
