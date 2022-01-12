@@ -160,4 +160,14 @@ def test_edit_refuse_advice_post(
             "text": "doesn't meet the requirement",
             "type": "refuse",
         },
+        {
+            "denial_reasons": [],
+            "footnote": "",
+            "footnote_required": False,
+            "good": "d4feac1e-851d-41a5-b833-eb28addb8547",
+            "note": "",
+            "proviso": "",
+            "text": "",
+            "type": "no_licence_required",
+        },
     ]

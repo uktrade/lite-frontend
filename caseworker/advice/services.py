@@ -212,7 +212,21 @@ def post_refusal_advice(request, case, data, level="user-advice"):
         }
         for subject_name, subject_id, in get_advice_subjects(case, data.get("countries"))
     ]
-    response = client.post(request, f"/cases/{case['id']}/{level}/", json)
+    json_nlr_products = [
+        {
+            "type": "no_licence_required",
+            "text": "",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "good": good["id"],
+            "denial_reasons": [],
+        }
+        for good in filter_nlr_products(case["data"]["goods"])
+    ]
+
+    response = client.post(request, f"/cases/{case['id']}/{level}/", json + json_nlr_products)
     response.raise_for_status()
     return response.json(), response.status_code
 
