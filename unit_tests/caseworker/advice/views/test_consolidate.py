@@ -510,17 +510,18 @@ def test_view_consolidate_approve_outcome(
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table", id="table-licenceable-products")
     assert [th.text for th in table.find_all("th")] == ["Country", "Type", "Name", "Approved products"]
+
     assert [td.text for td in table.find_all("td")] == [
         "Abu Dhabi",
-        "Consignee",
+        "",
         "Consignee",
         "All",
         "United Kingdom",
-        "End-user",
-        "End-User",
+        "",
+        "End User",
         "All",
         "United Kingdom",
-        "Third party",
+        "",
         "Third party",
         "All",
     ]
@@ -551,19 +552,20 @@ def test_view_consolidate_refuse_outcome(
         "Refused products",
         "Refusal criteria",
     ]
+
     assert [td.text for td in table.find_all("td")] == [
         "Abu Dhabi",
-        "Consignee",
+        "",
         "Consignee",
         "All",
         "['5a', '5b']",
         "United Kingdom",
-        "End-user",
-        "End-User",
+        "",
+        "End User",
         "All",
         "['5a', '5b']",
         "United Kingdom",
-        "Third party",
+        "",
         "Third party",
         "All",
         "['5a', '5b']",
