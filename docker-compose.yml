@@ -4,6 +4,8 @@ services:
   caseworker:
     env_file:
       - ./caseworker.env
+    environment:
+      - ADDITIONAL_PYTEST_UI_TEST_ARGS=--headless
     build: .
     volumes:
       - .:/app
@@ -20,6 +22,8 @@ services:
   exporter:
     env_file:
       - ./exporter.env
+    environment:
+      - ADDITIONAL_PYTEST_UI_TEST_ARGS=--headless
     build: .
     volumes:
       - .:/app
