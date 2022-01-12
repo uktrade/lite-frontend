@@ -63,7 +63,7 @@
             </tr>
             {% endfor %}
             {% endif %}
-            {% if item.ultimate_end_users %}
+            {% if item.ultimate_end_user %}
             {% for ultimate_end_user in case.data.ultimate_end_users %}
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
