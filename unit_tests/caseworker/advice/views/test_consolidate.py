@@ -488,6 +488,26 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": "refuse",
         },
+        {
+            "denial_reasons": [],
+            "footnote": "",
+            "footnote_required": False,
+            "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "note": "",
+            "proviso": "",
+            "text": "",
+            "type": "no_licence_required",
+        },
+        {
+            "denial_reasons": [],
+            "footnote": "",
+            "footnote_required": False,
+            "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "note": "",
+            "proviso": "",
+            "text": "",
+            "type": "no_licence_required",
+        },
     ]
 
 
