@@ -28,7 +28,7 @@
             {% with consignee=case.data.consignee %}
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">{{ consignee.country.name }}</td>
-                <td class="govuk-table__cell">{{ consignee.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ consignee.type_display_value }}</td>
                 <td class="govuk-table__cell">{{ consignee.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
@@ -41,7 +41,7 @@
             {% with end_user=case.data.end_user %}
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">{{ end_user.country.name }}</td>
-                <td class="govuk-table__cell">{{ end_user.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ end_user.type_display_value }}</td>
                 <td class="govuk-table__cell">{{ end_user.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
@@ -54,7 +54,7 @@
             {% for third_party in case.data.third_parties %}
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">{{ third_party.country.name }}</td>
-                <td class="govuk-table__cell">{{ third_party.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ third_party.type_display_value }}</td>
                 <td class="govuk-table__cell">{{ third_party.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
@@ -63,11 +63,11 @@
             </tr>
             {% endfor %}
             {% endif %}
-            {% if item.ultimate_end_users %}
+            {% if item.ultimate_end_user %}
             {% for ultimate_end_user in case.data.ultimate_end_users %}
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
-                <td class="govuk-table__cell">{{ ultimate_end_user.type|sentence_case }}</td>
+                <td class="govuk-table__cell">{{ ultimate_end_user.type_display_value }}</td>
                 <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
