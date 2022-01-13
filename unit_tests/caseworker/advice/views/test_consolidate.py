@@ -513,15 +513,15 @@ def test_view_consolidate_approve_outcome(
 
     assert [td.text for td in table.find_all("td")] == [
         "Abu Dhabi",
-        "",
+        "Consignee",
         "Consignee",
         "All",
         "United Kingdom",
-        "",
+        "End-user",
         "End User",
         "All",
         "United Kingdom",
-        "",
+        "Third party",
         "Third party",
         "All",
     ]
@@ -552,20 +552,19 @@ def test_view_consolidate_refuse_outcome(
         "Refused products",
         "Refusal criteria",
     ]
-
     assert [td.text for td in table.find_all("td")] == [
         "Abu Dhabi",
-        "",
+        "Consignee",
         "Consignee",
         "All",
         "['5a', '5b']",
         "United Kingdom",
-        "",
+        "End-user",
         "End User",
         "All",
         "['5a', '5b']",
         "United Kingdom",
-        "",
+        "Third party",
         "Third party",
         "All",
         "['5a', '5b']",
