@@ -404,7 +404,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         sentry_sdk.set_context("advice", {"advice": self.case.advice})
         self.advice = services.filter_advice_by_team(team_advice, self.caseworker["team"]["id"])[0]
         self.advice_type = self.advice["type"]["key"]
-        self.kwargs["advice_type"] = self.advice_type
+        self.kwargs["advice_type"] = "refuse" if self.advice_type == "refuse" else "approve"
 
     def get_approval_data(self):
         return {
