@@ -44,7 +44,12 @@ class SelectAdviceForm(forms.Form):
 
     CHOICES = [("approve_all", "Approve all"), ("refuse_all", "Refuse all")]
 
-    recommendation = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, label="")
+    recommendation = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={"required": "Enter a reason for approving"},
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -54,7 +59,12 @@ class SelectAdviceForm(forms.Form):
 
 class ConsolidateSelectAdviceForm(SelectAdviceForm):
     CHOICES = [("approve", "Approve"), ("refuse", "Refuse")]
-    recommendation = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, label="")
+    recommendation = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={"required": "Select if you approve or refuse"},
+    )
 
 
 class GiveApprovalAdviceForm(forms.Form):
@@ -157,9 +167,9 @@ def get_formset(form_class, num=1, data=None, initial=None):
 
 class CountersignAdviceForm(forms.Form):
     approval_reasons = forms.CharField(
-        required=False,
         widget=forms.Textarea(attrs={"rows": "10"}),
         label="Explain why you are agreeing with this recommendation",
+        error_messages={"required": "Enter why you agree with the recommendation"},
     )
 
     def __init__(self, *args, **kwargs):
@@ -176,6 +186,7 @@ class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):
             choices=countries.items(),
             widget=GridmultipleSelect(),
             label="Select countries for which you want to give advice",
+            error_messages={"required": "Select the destinations you want to make recommendations for"},
         )
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -200,6 +211,7 @@ class FCDORefusalAdviceForm(RefusalAdviceForm):
             choices=countries.items(),
             widget=GridmultipleSelect(),
             label="Select countries for which you want to give advice",
+            error_messages={"required": "Select the destinations you want to make recommendations for"},
         )
         self.helper.layout = Layout(
             "countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation")
