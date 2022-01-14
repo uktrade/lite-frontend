@@ -151,3 +151,28 @@ def test_edit_refuse_advice_post(
     ]
 
 
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_advice_get(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    standard_case_with_advice,
+    refusal_advice,
+    url,
+):
+    mock_get_gov_user.return_value = ({"user": {"team": {"id": services.LICENSING_UNIT_TEAM}}}, None)
+    case_data = data_standard_case
+    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
+    # Add conflicting user advice
+    case_data["case"]["advice"] = standard_case_with_advice["advice"] + refusal_advice
+    # Add final advice
+    for advice in standard_case_with_advice["advice"]:
+        advice["level"] = "final"
+        advice["user"]["team"]["id"] = services.LICENSING_UNIT_TEAM
+    case_data["case"]["advice"] += standard_case_with_advice["advice"]
+
+    response = authorized_client.get(url)
+    form = response.context["form"]
+    # The final advice was approval advice so we should see an approval form
+    assert isinstance(form, forms.ConsolidateApprovalForm)
