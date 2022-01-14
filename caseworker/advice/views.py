@@ -140,7 +140,9 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        denial_reasons_display = get_denial_reasons(self.request, convert_to_display_dict=True)
         my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
+
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = self.unadvised_countries() == {}
         return {
@@ -148,6 +150,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
             "my_advice": my_advice.values(),
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
+            "denial_reasons_display": denial_reasons_display,
         }
 
     def form_valid(self, form):
