@@ -44,11 +44,23 @@ def test_select_advice_form_valid(data, valid_status):
     ),
 )
 def test_consolidate_select_advice_form_valid(data, valid_status):
-    form = forms.ConsolidateSelectAdviceForm(data=data)
+    form = forms.ConsolidateSelectAdviceForm(team_name=None, data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert "recommendation" in form.errors.keys()
         assert "Select if you approve or refuse" in form.errors["recommendation"]
+
+
+@pytest.mark.parametrize(
+    "team_name, label",
+    (
+        (None, "What is the combined recommendation?"),
+        ("team name", "What is the combined recommendation for team name?"),
+    ),
+)
+def test_consolidate_select_advice_form_recommendation_label(team_name, label):
+    form = forms.ConsolidateSelectAdviceForm(team_name=team_name)
+    assert form.fields["recommendation"].label == label
 
 
 @pytest.mark.parametrize(

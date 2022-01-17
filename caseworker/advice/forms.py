@@ -66,6 +66,14 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
         error_messages={"required": "Select if you approve or refuse"},
     )
 
+    def __init__(self, team_name, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        recommendation_label = "What is the combined recommendation"
+        if team_name:
+            recommendation_label = f"{recommendation_label} for {team_name}"
+        self.fields["recommendation"].label = f"{recommendation_label}?"
+
 
 class GiveApprovalAdviceForm(forms.Form):
 

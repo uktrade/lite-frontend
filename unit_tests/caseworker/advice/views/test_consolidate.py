@@ -396,6 +396,33 @@ def test_consolidate_review_refusal_advice(
     assert redirect in response.url
 
 
+@pytest.mark.parametrize(
+    "team_id, team_name, recommendation_label",
+    [
+        (LICENSING_UNIT_TEAM, "Licensing Unit", "What is the combined recommendation for Licensing Unit?"),
+        (MOD_ECJU_TEAM, "MOD", "What is the combined recommendation for MOD?"),
+    ],
+)
+def test_consolidate_review_refusal_advice_recommendation_label(
+    requests_mock, authorized_client, data_standard_case, url, refusal_advice, team_id, team_name, recommendation_label
+):
+    data_standard_case["case"]["advice"] = refusal_advice
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json={
+            "user": {
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                "team": {"id": team_id, "name": team_name},
+            }
+        },
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, forms.ConsolidateSelectAdviceForm)
+    assert form.fields["recommendation"].label == recommendation_label
+
+
 def test_consolidate_review_approve(requests_mock, authorized_client, data_standard_case, url, advice):
     data_standard_case["case"]["advice"] = advice
     data = {"approval_reasons": "test", "countries": ["GB"]}
