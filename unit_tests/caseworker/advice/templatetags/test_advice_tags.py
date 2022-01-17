@@ -1,6 +1,8 @@
 import pytest
 
-from caseworker.advice.templatetags.advice_tags import get_clc, get_case_value, group_advice, is_case_pv_graded
+from caseworker.advice.templatetags.advice_tags import (
+    get_clc, get_case_value, group_advice, is_case_pv_graded, get_denial_reason_display_values
+)
 from caseworker.cases.objects import Case
 
 
@@ -236,3 +238,9 @@ def test_group_advice(
     assert jane_doe_advice["advice"][0]["advice"][0]["name"] == "Consignee"
     assert jane_doe_advice["advice"][0]["advice"][1]["name"] == "End User"
     assert jane_doe_advice["advice"][0]["advice"][2]["name"] == "Third party"
+
+
+def test_get_denial_reason_display_values():
+    display_dict = {'m': 'military', 'd': 'destruction'}
+
+    assert 'military, destruction, x' == get_denial_reason_display_values(['m', 'd', 'x'], display_dict)

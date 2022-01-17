@@ -550,6 +550,7 @@ def test_view_consolidate_approve_outcome(
 def test_view_consolidate_refuse_outcome(
     requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_refusal_outcome
 ):
+    data_standard_case['denial_reasons_display']= {}
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
@@ -560,6 +561,7 @@ def test_view_consolidate_refuse_outcome(
             }
         },
     )
+
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
@@ -569,25 +571,26 @@ def test_view_consolidate_refuse_outcome(
         "Country",
         "Type",
         "Name",
-        "Refused products",
+        'Refused products',
         "Refusal criteria",
     ]
+
     assert [td.text for td in table.find_all("td")] == [
         "Abu Dhabi",
         "Consignee",
         "Consignee",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
         "United Kingdom",
         "End-user",
         "End User",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
         "United Kingdom",
         "Third party",
         "Third party",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
     ]
 
 
