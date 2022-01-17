@@ -53,6 +53,14 @@ def test_get_clc(goods, expected_value):
 
 
 @pytest.mark.parametrize(
+    "good, expected_value", (({"good": {"control_list_entries": [{"rating": "a"}]}}, ["a"],),),
+)
+def test_get_clc_single_good(good, expected_value):
+    result = get_clc(good)
+    assert result == expected_value
+
+
+@pytest.mark.parametrize(
     "goods, expected_value",
     (
         ([{"good": {"is_pv_graded": "no"}}, {"good": {"is_pv_graded": "no"}},], False,),
