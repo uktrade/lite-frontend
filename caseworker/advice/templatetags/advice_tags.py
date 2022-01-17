@@ -69,13 +69,13 @@ def group_advice(case):
 
 @register.filter
 def get_denial_reason_display_values(denial_reasons, denial_reasons_display):
-    denial_reasons = denial_reasons[0] if len(denial_reasons) == 1 and isinstance(denial_reasons[0], list) else (
-        denial_reasons
+    denial_reasons = (
+        denial_reasons[0] if len(denial_reasons) == 1 and isinstance(denial_reasons[0], list) else (denial_reasons)
     )
     display_values = []
     for item in denial_reasons:
         display_values.append(denial_reasons_display.get(item, item))
-    return ', '.join(display_values)
+    return ", ".join(display_values)
 
 
 def group_team_advice_by_user(case, team_advice, team_user, level=None):
