@@ -1,7 +1,11 @@
 import pytest
 
 from caseworker.advice.templatetags.advice_tags import (
-    get_clc, get_case_value, group_advice, is_case_pv_graded, get_denial_reason_display_values
+    get_clc,
+    get_case_value,
+    group_advice,
+    is_case_pv_graded,
+    get_denial_reason_display_values,
 )
 from caseworker.cases.objects import Case
 
@@ -241,6 +245,6 @@ def test_group_advice(
 
 
 def test_get_denial_reason_display_values():
-    display_dict = {'m': 'military', 'd': 'destruction'}
+    display_dict = {"m": "military", "d": "destruction"}
 
-    assert 'military, destruction, x' == get_denial_reason_display_values(['m', 'd', 'x'], display_dict)
+    assert "military, destruction, x" == get_denial_reason_display_values(["m", "d", "x"], display_dict)

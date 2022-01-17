@@ -276,9 +276,9 @@ def mock_denial_reasons(requests_mock):
         "denial_reasons": [
             {"id": "1", "display_value": "one"},
             {"id": "1a", "display_value": "one a"},
-            {"id": "2", "display_value": 'two'},
-            {"id": "2a", "display_value": 'two a'},
-            {"id": "2b", "display_value": 'two b'},
+            {"id": "2", "display_value": "two"},
+            {"id": "2a", "display_value": "two a"},
+            {"id": "2b", "display_value": "two b"},
             {"id": "5a", "display_value": "five a"},
             {"id": "5b", "display_value": "five b"},
             {"id": "M", "display_value": "MMMM"},
