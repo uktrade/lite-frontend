@@ -7,7 +7,7 @@ manage_exporter:
 	PIPENV_DOTENV_LOCATION=exporter.env pipenv run ./manage.py $(ARGUMENTS)
 
 clean:
-	-find . -type f -name "*.pyc" -delete
+	-find . -type f -name "*.pyc" -deletelint
 	-find . -type d -name "__pycache__" -delete
 
 run_caseworker:

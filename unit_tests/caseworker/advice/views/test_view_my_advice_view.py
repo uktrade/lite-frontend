@@ -8,7 +8,7 @@ from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
+def setup(mock_queue, mock_denial_reasons, mock_case):
     yield
 
 
@@ -131,17 +131,17 @@ def test_view_refusal_advice_not_including_nlr_products(
         "Consignee",
         "Consignee",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
         "United Kingdom",
         "End-user",
         "End User",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
         "United Kingdom",
         "Third party",
         "Third party",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
     ] * 2
 
 
