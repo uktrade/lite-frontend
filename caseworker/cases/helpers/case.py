@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import TemplateView
 
+from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.constants import CaseStatusEnum
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.objects import Slice, Case
@@ -22,6 +23,7 @@ from caseworker.core.services import get_user_permissions, get_status_properties
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import CasePage, ApplicationPage
 from caseworker.queues.services import get_queue
+from caseworker.users.services import get_gov_user
 
 
 class Tabs:
@@ -33,7 +35,7 @@ class Tabs:
     ACTIVITY = Tab("activity", CasePage.Tabs.CASE_NOTES_AND_TIMELINE, "activity")
     ADVICE = TabCollection(
         "advice",
-        CasePage.Tabs.ADVICE_AND_DECISION,
+        "Recommendations and decision",
         children=[
             Tab("user-advice", CasePage.Tabs.USER_ADVICE, "user-advice"),
             Tab("team-advice", CasePage.Tabs.TEAM_ADVICE, "team-advice"),
@@ -150,3 +152,12 @@ class CaseView(TemplateView):
         ]
 
         return tabs
+
+    def get_advice_tab(self):
+        data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+        return Tab(
+            "advice",
+            "Recommendations and decision",
+            get_advice_tab_context(self.case, data["user"], str(self.kwargs["queue_pk"]))["url"],
+            has_template=False,
+        )
