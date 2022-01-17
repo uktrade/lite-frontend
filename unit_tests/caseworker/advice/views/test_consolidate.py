@@ -383,17 +383,20 @@ def test_consolidate_review(
     ],
 )
 def test_consolidate_review_refusal_advice(
-    requests_mock, authorized_client, data_standard_case, url, refusal_advice, team_id, team_name, recommendation, redirect
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    url,
+    refusal_advice,
+    team_id,
+    team_name,
+    recommendation,
+    redirect,
 ):
     data_standard_case["case"]["advice"] = refusal_advice
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={
-            "user": {
-                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": team_id, "name": team_name},
-            }
-        },
+        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
     )
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -417,12 +420,7 @@ def test_consolidate_review_refusal_advice_recommendation_label(
     data_standard_case["case"]["advice"] = refusal_advice
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={
-            "user": {
-                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": team_id, "name": team_name},
-            }
-        },
+        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
     )
     response = authorized_client.get(url)
     assert response.status_code == 200
