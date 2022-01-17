@@ -373,9 +373,17 @@ def test_consolidate_review(
         assert bool(advice_teams.intersection(MOD_CONSOLIDATE_TEAMS)) == True
 
 
-@pytest.mark.parametrize("recommendation, redirect", [("approve", "approve"), ("refuse", "refuse")])
+@pytest.mark.parametrize(
+    "team_id, team_name, recommendation, redirect",
+    [
+        (LICENSING_UNIT_TEAM, "Licensing Unit", "approve", "approve"),
+        (LICENSING_UNIT_TEAM, "Licensing Unit", "refuse", "refuse"),
+        (MOD_ECJU_TEAM, "MOD", "approve", "approve"),
+        (MOD_ECJU_TEAM, "MOD", "refuse", "refuse"),
+    ],
+)
 def test_consolidate_review_refusal_advice(
-    requests_mock, authorized_client, data_standard_case, url, refusal_advice, recommendation, redirect
+    requests_mock, authorized_client, data_standard_case, url, refusal_advice, team_id, team_name, recommendation, redirect
 ):
     data_standard_case["case"]["advice"] = refusal_advice
     requests_mock.get(
@@ -383,7 +391,7 @@ def test_consolidate_review_refusal_advice(
         json={
             "user": {
                 "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
+                "team": {"id": team_id, "name": team_name},
             }
         },
     )
