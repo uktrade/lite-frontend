@@ -550,7 +550,6 @@ def test_view_consolidate_approve_outcome(
 def test_view_consolidate_refuse_outcome(
     requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_refusal_outcome
 ):
-    data_standard_case["denial_reasons_display"] = {}
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),

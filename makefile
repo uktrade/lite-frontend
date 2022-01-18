@@ -7,8 +7,17 @@ manage_exporter:
 	PIPENV_DOTENV_LOCATION=exporter.env pipenv run ./manage.py $(ARGUMENTS)
 
 clean:
-	-find . -type f -name "*.pyc" -deletelint
+	-find . -type f -name "*.pyc" -delete
 	-find . -type d -name "__pycache__" -delete
+
+lint:
+	-pipenv run bandit -r . --skip=B101 --exclude=/ui_tests,/unit_tests,/tests_common
+	-pipenv run prospector exporter
+	-pipenv run prospector caseworker
+	-pipenv run black .
+
+autoformat:
+	-pipenv run black .
 
 run_caseworker:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py collectstatic --no-input && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py runserver localhost:8200

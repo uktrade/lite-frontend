@@ -29,7 +29,8 @@ class CaseContextMixin:
 
     @cached_property
     def denial_reasons_display(self):
-        return get_denial_reasons(self.request, convert_to_display_dict=True)
+        denial_reasons_data = get_denial_reasons(self.request)
+        return {denial_reason["id"]: denial_reason["display_value"] for denial_reason in denial_reasons_data}
 
     @property
     def caseworker_id(self):
@@ -266,11 +267,12 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         return True
 
     def get_context(self, **kwargs):
-        return {
+        context = {
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
         }
+        return context
 
 
 class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -336,14 +338,21 @@ class CountersignEditAdviceView(ReviewCountersignView):
 
 class CountersignAdviceView(AdviceView):
     def get_context(self, **kwargs):
-        return {**super().get_context(**kwargs), "countersign": True}
+        return {
+            **super().get_context(**kwargs),
+            "countersign": True,
+        }
 
 
 class ConsolidateAdviceView(AdviceView):
     def get_context(self, **kwargs):
         # For LU, we do not want to show the advice summary
         hide_advice = self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM
-        return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
+        return {
+            **super().get_context(**kwargs),
+            "consolidate": True,
+            "hide_advice": hide_advice,
+        }
 
 
 class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -466,6 +475,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "nlr_products": nlr_products,
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
+            "denial_reasons_display": self.denial_reasons_display,
         }
 
     def form_valid(self, form):

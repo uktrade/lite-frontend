@@ -1,5 +1,5 @@
 import pytest
-
+from django.template import Context
 from caseworker.advice.templatetags.advice_tags import (
     get_clc,
     get_case_value,
@@ -208,8 +208,8 @@ def test_group_advice(
         },
     ]
 
-    grouped_advice = group_advice(Case(case_data["case"]))["grouped_advice"]
-
+    ctx = Context({"case": Case(case_data["case"])})
+    grouped_advice = group_advice(ctx)["grouped_advice"]
     assert grouped_advice == exp_advice
 
     # we sort teams by name so these should be alphabetical

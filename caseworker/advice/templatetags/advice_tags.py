@@ -39,11 +39,11 @@ def countersigned_user_team(advice):
     return f"{advice['countersigned_by']['team']['name']}"
 
 
-@register.inclusion_tag("advice/group-advice.html")
-def group_advice(case):
+@register.inclusion_tag("advice/group-advice.html", takes_context=True)
+def group_advice(context):
     grouped_advice = []
-
-    if case.get("advice"):
+    if context and context.get("case", {}).get("advice"):
+        case = context.get("case")
         advice_by_team = services.group_advice_by_team(case["advice"])
         teams = sorted(
             {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in case["advice"]}.values(),
@@ -63,19 +63,22 @@ def group_advice(case):
             )
 
         _add_team_decisions(grouped_advice)
-
-    return {"grouped_advice": grouped_advice}
+    context["grouped_advice"] = grouped_advice
+    return context
 
 
 @register.filter
 def get_denial_reason_display_values(denial_reasons, denial_reasons_display):
-    denial_reasons = (
-        denial_reasons[0] if len(denial_reasons) == 1 and isinstance(denial_reasons[0], list) else (denial_reasons)
-    )
-    display_values = []
-    for item in denial_reasons:
-        display_values.append(denial_reasons_display.get(item, item))
-    return ", ".join(display_values)
+    if denial_reasons and denial_reasons_display:
+        denial_reasons = (
+            denial_reasons[0] if len(denial_reasons) == 1 and isinstance(denial_reasons[0], list) else (denial_reasons)
+        )
+        display_values = []
+        for item in denial_reasons:
+            display_values.append(denial_reasons_display.get(item, item))
+        return ", ".join(display_values)
+    else:
+        return ""
 
 
 def group_team_advice_by_user(case, team_advice, team_user, level=None):

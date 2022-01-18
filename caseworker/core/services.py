@@ -7,7 +7,7 @@ from caseworker.cases.constants import CaseType, CaseStatusEnum
 from lite_forms.components import Option
 
 
-def get_denial_reasons(request, convert_to_options=False, group=False, convert_to_display_dict=False):
+def get_denial_reasons(request, convert_to_options=False, group=False):
     data = client.get(request, "/static/denial-reasons/").json()["denial_reasons"]
 
     if convert_to_options:
@@ -20,10 +20,6 @@ def get_denial_reasons(request, convert_to_options=False, group=False, convert_t
             return dict(return_dict)
 
         return options
-
-    if convert_to_display_dict:
-        display_dict = {denial_reason["id"]: denial_reason["display_value"] for denial_reason in data}
-        return display_dict
 
     return data
 

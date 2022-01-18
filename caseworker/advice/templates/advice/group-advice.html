@@ -1,5 +1,5 @@
 {% load parse_date from spire_tags %}
-
+{% load get_denial_reason_display_values from advice_tags %}
 {% for team_advice in grouped_advice %}
     {% for user_advice in team_advice.advice %}
 	<details class="govuk-details" data-module="govuk-details">
@@ -49,7 +49,7 @@
                             {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
                                 <td class="govuk-table__cell">{{ advice.licence_condition|yesno:"Yes,No" }}</td>
                             {% elif decision_advice.decision == "Refuse" %}
-                                <td class="govuk-table__cell">{{ advice.denial_reasons|join:", " }}</td>
+                                <td class="govuk-table__cell">{{ advice.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
                             {% endif %}
                         </tr>
                         {% endfor %}
