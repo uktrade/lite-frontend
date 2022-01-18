@@ -23,12 +23,16 @@
             <div class="govuk-grid-column-three-quarters">
               <h1 class="govuk-heading-xl">View recommendation</h1>
               {% if my_advice %}
-                <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">
-                    Edit recommendation
-                </a>
-                <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:delete_advice' queue_pk case.id %}">
-                    Clear recommendation
-                </a>
+                  {% if buttons.edit_recommendation %}
+                    <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">
+                        Edit recommendation
+                    </a>
+                  {% endif %}
+                  {% if buttons.clear_recommendation %}
+                    <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:delete_advice' queue_pk case.id %}">
+                        Clear recommendation
+                    </a>
+                  {% endif %}
                 {% for advice in my_advice %}
                   {% include "advice/advice_details.html" %}
                 {% endfor %}
@@ -37,7 +41,7 @@
               {% endif %}
             </div>
             <div class="govuk-grid-column-one-quarter">
-              {% if my_advice and advice_completed %}
+              {% if my_advice and advice_completed and buttons.move_case_forward %}
                 {% crispy form %}
               {% endif %}
             </div>

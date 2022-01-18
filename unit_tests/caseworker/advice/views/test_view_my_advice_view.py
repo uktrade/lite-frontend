@@ -1,9 +1,9 @@
 import pytest
 
 from bs4 import BeautifulSoup
-from copy import deepcopy
 from django.urls import reverse
 
+from caseworker.advice.services import FCDO_CASES_TO_REVIEW_QUEUE, FCDO_TEAM
 from core import client
 
 
@@ -146,8 +146,13 @@ def test_view_refusal_advice_not_including_nlr_products(
 
 
 def test_move_case_forward(
-    authorized_client, requests_mock, data_standard_case, queue_pk, advice_with_and_without_consignee, url
+    mock_gov_user, authorized_client, requests_mock, data_standard_case, queue_pk, advice_with_and_without_consignee
 ):
+    url = reverse(
+        "cases:view_my_advice", kwargs={"queue_pk": FCDO_CASES_TO_REVIEW_QUEUE, "pk": data_standard_case["case"]["id"]}
+    )
+    mock_gov_user["user"]["team"]["id"] = FCDO_TEAM
+    advice_with_and_without_consignee[0]["user"]["team"]["id"] = FCDO_TEAM
     data_standard_case["case"]["advice"] = advice_with_and_without_consignee
     case_id = data_standard_case["case"]["id"]
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)

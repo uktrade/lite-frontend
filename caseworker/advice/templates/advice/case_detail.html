@@ -24,7 +24,15 @@
               </div>
               <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Control list entries</dt>
-                <dd class="govuk-summary-list__value">{{ case.goods | get_clc | join:', ' }}</dd>
+                <dd class="govuk-summary-list__value">
+                    {% with clc=good|get_clc %}
+                        {% if clc %}
+                            {{ clc|join:', ' }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    {% endwith %}
+                </dd>
               </div>
               {% if display_pv_grading %}
                 <div class="govuk-summary-list__row">

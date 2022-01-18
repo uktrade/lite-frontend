@@ -122,7 +122,7 @@
 					<div class="lite-tabs {% for tab in tabs %}{% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__container--fade{% endif %}{% endfor %}{% endfor %}">
 						{% for tab in tabs %}
 							{% if tab.url %}
-								<a id="{{ tab.id }}" href="{% url 'cases:case' queue.id case.id tab.url %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
+								<a id="{{ tab.id }}" href="{% if tab.has_template %}{% url 'cases:case' queue.id case.id tab.url %}{% else %}{% url tab.url queue.id case.id %}{% endif %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
 									{{ tab.name }} {% if tab.count %}<span class="lite-tabs__tab-notification">{{ tab.count }}</span>{% endif %}
 								</a>
 							{% else %}

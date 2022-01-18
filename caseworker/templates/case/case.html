@@ -2,7 +2,7 @@
 
 {% block details %}
 	{% for tab in tabs %}
-		{% if tab.url %}
+		{% if tab.url and tab.has_template %}
 			<div id="{{ tab.id }}-content" class="app-case-tab-view {% if tab.url == current_tab %}app-case-tab-view--visible{% endif %}">
 				{% include 'case/tabs/'|add:tab.url|add:'.html' %}
 			</div>
@@ -33,7 +33,7 @@
 				$(this).parent().parent().addClass("lite-tabs__container--fade");
 			}
 
-			return false;
+            return !$("#" + $(this).attr("id") + "-content").length;
 		})
 
 		$(".app-case-tab-bar .lite-tabs__tab-parent").click(function() {

@@ -158,7 +158,7 @@ class CaseDetail(CaseView):
     def get_standard_application(self):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
+        self.tabs.append(self.get_advice_tab())
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,

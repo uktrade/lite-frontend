@@ -4,7 +4,17 @@ from requests.exceptions import HTTPError
 
 from core import client
 
+# Queues
+FCDO_CASES_TO_REVIEW_QUEUE = "f458094c-1fed-4222-ac70-ff5fa20ff649"
 FCDO_COUNTERSIGNING_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
+MOD_CASES_TO_REVIEW_QUEUE = "a4c5bd9d-0d06-4856-abe1-c71d73abe636"
+MOD_CONSOLIDATE_QUEUES = [
+    "0dd6c6f0-8f8b-4c03-b68f-0d8b04225369",
+    "a84d6556-782e-4002-abe2-8bc1e5c2b162",
+    "1a5f47ee-ef5e-456b-914c-4fa629b4559c",
+    "93d1bc19-979d-4ba3-a57c-b0ce253c6237",
+]
+LU_POST_CIRC_FINALISE_QUEUE = "f0e7c2fa-100f-42ad-b740-bb072393e664"
 
 # Teams
 FCDO_TEAM = "67b9a4a3-6f3d-4511-8a19-23ccff221a74"
@@ -17,6 +27,7 @@ MOD_CONSOLIDATE_TEAMS = [
     "a06aec31-47d7-443b-860d-66ab0c6d7cfd",
 ]
 LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
+
 # Flags
 LU_COUNTERSIGN_REQUIRED = "bbf29b42-0aae-4ebc-b77a-e502ddea30a8"
 LU_SR_MGR_CHECK_REQUIRED = "3e30f39c-ed82-41e9-b180-493a9fd0f169"
@@ -112,6 +123,18 @@ def get_advice_to_countersign(advice, caseworker):
     user_advice = filter_advice_by_level(advice_by_team, ["user"])
     grouped_user_advice = group_advice_by_user(user_advice)
     return grouped_user_advice
+
+
+def get_countersigners(advice_to_countersign):
+    """Get a set of user ids representing the users that have already
+    countersigned the advice supplied by `advice_to_countersign`.
+    """
+    countersigned_by = set()
+    for user_advice in advice_to_countersign.values():
+        for advice in user_advice:
+            if advice["countersigned_by"]:
+                countersigned_by.add(advice["countersigned_by"]["id"])
+    return countersigned_by
 
 
 def get_advice_to_consolidate(advice, user_team_id):
@@ -268,3 +291,69 @@ def move_case_forward(request, case_id, queue_id):
     except HTTPError as e:
         raise HTTPError(response=response) from e
     return response.json()
+
+
+def get_advice_tab_context(case, caseworker, queue_id):
+    """Get contextual information for the advice tab such as the tab's URL and
+    button visibility, based off the case, the current user and current user's queue.
+    """
+    team_id = caseworker["team"]["id"]
+
+    # The default context
+    context = {
+        # The URL that the advice tab should go to when clicked
+        "url": "cases:advice_view",
+        # Booleans that determine button visibility
+        "buttons": {
+            "make_recommendation": False,
+            "edit_recommendation": False,
+            "clear_recommendation": False,
+            "review_and_countersign": False,
+            "review_and_combine": False,
+            "move_case_forward": False,
+        },
+    }
+
+    if team_id in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS):
+        if queue_id in (FCDO_CASES_TO_REVIEW_QUEUE, *MOD_CONSOLIDATE_QUEUES):
+            existing_advice = get_my_advice(case.advice, caseworker["id"])
+
+            if not existing_advice:
+                # An individual giving advice on a case for the first time
+                context["buttons"]["make_recommendation"] = True
+            else:
+                # An individual accessing a case again after having given advice
+                context["url"] = "cases:view_my_advice"
+                context["buttons"]["edit_recommendation"] = True
+                context["buttons"]["clear_recommendation"] = True
+                context["buttons"]["move_case_forward"] = True
+
+        elif queue_id == FCDO_COUNTERSIGNING_QUEUE:
+            advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
+            countersigned_by = get_countersigners(advice_to_countersign)
+
+            if caseworker["id"] not in countersigned_by:
+                # An individual countersigning advice on a case for the first time
+                context["url"] = "cases:countersign_advice_view"
+                context["buttons"]["review_and_countersign"] = True
+            else:
+                # An individual accessing the case after giving countersigned advice
+                context["url"] = "cases:countersign_view"
+                context["buttons"]["edit_recommendation"] = True
+                context["buttons"]["move_case_forward"] = True
+
+    elif team_id in (MOD_ECJU_TEAM, LICENSING_UNIT_TEAM):
+        consolidated_advice = get_consolidated_advice(case.advice, team_id)
+
+        if queue_id in (MOD_CASES_TO_REVIEW_QUEUE, LU_POST_CIRC_FINALISE_QUEUE):
+            if not consolidated_advice:
+                # An individual consolidating advice on a case for the first time
+                context["url"] = "cases:consolidate_advice_view"
+                context["buttons"]["review_and_combine"] = True
+            else:
+                # An individual accessing the case after consolidating advice
+                context["url"] = "cases:consolidate_view"
+                context["buttons"]["edit_recommendation"] = True
+                context["buttons"]["move_case_forward"] = True
+
+    return context
