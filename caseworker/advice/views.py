@@ -342,7 +342,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def is_advice_approve_only(self):
         approve_advice_types = ("approve", "proviso", "no_licence_required")
-        return all([a["type"]["key"] in approve_advice_types for a in self.case.advice])
+        return all(a["type"]["key"] in approve_advice_types for a in self.case.advice)
 
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
