@@ -344,15 +344,6 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         approve_advice_types = ("approve", "proviso", "no_licence_required")
         return all([a["type"]["key"] in approve_advice_types for a in self.case.advice])
 
-    def get_team_name(self):
-        user_team_id = self.caseworker["team"]["id"]
-        team_name_map = {
-            services.MOD_ECJU_TEAM: "MOD",
-            services.LICENSING_UNIT_TEAM: "Licensing Unit",
-        }
-        team_name = team_name_map.get(user_team_id)
-        return team_name
-
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
 
@@ -363,7 +354,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
             return forms.ConsolidateApprovalForm(**form_kwargs)
 
-        team_name = self.get_team_name()
+        team_name = self.caseworker["team"]["name"]
         return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
 
     def get_context(self, **kwargs):

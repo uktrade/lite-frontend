@@ -378,8 +378,8 @@ def test_consolidate_review(
     [
         (LICENSING_UNIT_TEAM, "Licensing Unit", "approve", "approve"),
         (LICENSING_UNIT_TEAM, "Licensing Unit", "refuse", "refuse"),
-        (MOD_ECJU_TEAM, "MOD", "approve", "approve"),
-        (MOD_ECJU_TEAM, "MOD", "refuse", "refuse"),
+        (MOD_ECJU_TEAM, "MOD-ECJU", "approve", "approve"),
+        (MOD_ECJU_TEAM, "MOD-ECJU", "refuse", "refuse"),
     ],
 )
 def test_consolidate_review_refusal_advice(
@@ -411,7 +411,7 @@ def test_consolidate_review_refusal_advice(
     "team_id, team_name, recommendation_label",
     [
         (LICENSING_UNIT_TEAM, "Licensing Unit", "What is the combined recommendation for Licensing Unit?"),
-        (MOD_ECJU_TEAM, "MOD", "What is the combined recommendation for MOD?"),
+        (MOD_ECJU_TEAM, "MOD-ECJU", "What is the combined recommendation for MOD-ECJU?"),
     ],
 )
 def test_consolidate_review_refusal_advice_recommendation_label(
