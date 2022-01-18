@@ -340,17 +340,20 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def is_advice_approve_only(self):
         approve_advice_types = ("approve", "proviso", "no_licence_required")
-        return all([a["type"]["key"] in approve_advice_types for a in self.case.advice])
+        return all(a["type"]["key"] in approve_advice_types for a in self.case.advice)
 
     def get_form(self):
-        form_class = forms.ConsolidateSelectAdviceForm
         form_kwargs = self.get_form_kwargs()
-        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
-            form_class = forms.ConsolidateApprovalForm
+
         if self.kwargs.get("advice_type") == "refuse":
-            form_kwargs["denial_reasons"] = get_denial_reasons(self.request)
-            form_class = forms.RefusalAdviceForm
-        return form_class(**form_kwargs)
+            denial_reasons = get_denial_reasons(self.request)
+            return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
+
+        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
+            return forms.ConsolidateApprovalForm(**form_kwargs)
+
+        team_name = self.caseworker["team"]["name"]
+        return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
 
     def get_context(self, **kwargs):
         context = super().get_context()
