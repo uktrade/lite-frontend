@@ -1,3 +1,4 @@
+{% load static advice_tags %}
 {% with user=advice.0.user decision=advice.0.type.key %}
 <table id="table-licenceable-products" class="govuk-table">
     {% if decision == 'approve' or decision == 'proviso' %}
@@ -32,8 +33,8 @@
                 <td class="govuk-table__cell">{{ consignee.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
-                {% endif %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
+				{% endif %}
             </tr>
             {% endwith %}
             {% endif %}
@@ -45,8 +46,8 @@
                 <td class="govuk-table__cell">{{ end_user.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
-                {% endif %}
+                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
+				{% endif %}
             </tr>
             {% endwith %}
             {% endif %}
@@ -58,7 +59,7 @@
                 <td class="govuk-table__cell">{{ third_party.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
                 {% endif %}
             </tr>
             {% endfor %}
@@ -71,7 +72,7 @@
                 <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|join:", "}}</td>
+                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
                 {% endif %}
             </tr>
             {% endfor %}

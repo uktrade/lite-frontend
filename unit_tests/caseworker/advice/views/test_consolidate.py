@@ -318,7 +318,7 @@ def consolidated_advice(current_user, team1_user):
 def to_refusal_advice(advice):
     for item in advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
-        item["denial_reasons"] = (["5a", "5b"],)
+        item["denial_reasons"] = ["5a", "5b"]
     return advice
 
 
@@ -593,6 +593,7 @@ def test_view_consolidate_refuse_outcome(
             }
         },
     )
+
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
@@ -605,22 +606,23 @@ def test_view_consolidate_refuse_outcome(
         "Refused products",
         "Refusal criteria",
     ]
+
     assert [td.text for td in table.find_all("td")] == [
         "Abu Dhabi",
         "Consignee",
         "Consignee",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
         "United Kingdom",
         "End-user",
         "End User",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
         "United Kingdom",
         "Third party",
         "Third party",
         "All",
-        "['5a', '5b']",
+        "five a, five b",
     ]
 
 

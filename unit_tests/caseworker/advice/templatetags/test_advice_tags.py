@@ -1,6 +1,12 @@
 import pytest
-
-from caseworker.advice.templatetags.advice_tags import get_clc, get_case_value, group_advice, is_case_pv_graded
+from django.template import Context
+from caseworker.advice.templatetags.advice_tags import (
+    get_clc,
+    get_case_value,
+    group_advice,
+    is_case_pv_graded,
+    get_denial_reason_display_values,
+)
 from caseworker.cases.objects import Case
 
 
@@ -210,8 +216,8 @@ def test_group_advice(
         },
     ]
 
-    grouped_advice = group_advice(Case(case_data["case"]))["grouped_advice"]
-
+    ctx = Context({"case": Case(case_data["case"])})
+    grouped_advice = group_advice(ctx)["grouped_advice"]
     assert grouped_advice == exp_advice
 
     # we sort teams by name so these should be alphabetical
@@ -244,3 +250,9 @@ def test_group_advice(
     assert jane_doe_advice["advice"][0]["advice"][0]["name"] == "Consignee"
     assert jane_doe_advice["advice"][0]["advice"][1]["name"] == "End User"
     assert jane_doe_advice["advice"][0]["advice"][2]["name"] == "Third party"
+
+
+def test_get_denial_reason_display_values():
+    display_dict = {"m": "military", "d": "destruction"}
+
+    assert "military, destruction" == get_denial_reason_display_values(["m", "d"], display_dict)

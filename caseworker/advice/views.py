@@ -27,6 +27,11 @@ class CaseContextMixin:
     def case(self):
         return get_case(self.request, self.case_id)
 
+    @cached_property
+    def denial_reasons_display(self):
+        denial_reasons_data = get_denial_reasons(self.request)
+        return {denial_reason["id"]: denial_reason["display_value"] for denial_reason in denial_reasons_data}
+
     @property
     def caseworker_id(self):
         return str(self.request.session["lite_api_user_id"])
@@ -65,6 +70,7 @@ class CaseContextMixin:
         # doesn't have anything to do with e.g. lite-forms
         # P.S. the case here is needed for rendering the base
         # template (layouts/case.html) from which we are inheriting.
+
         return {
             **context,
             **self.get_context(case=self.case),
@@ -148,6 +154,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
             "my_advice": my_advice.values(),
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
+            "denial_reasons_display": self.denial_reasons_display,
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
@@ -261,11 +268,13 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         return True
 
     def get_context(self, **kwargs):
-        return {
+        context = {
             "queue": self.queue,
             "can_advise": self.can_advise(),
+            "denial_reasons_display": self.denial_reasons_display,
             **services.get_advice_tab_context(self.case, self.caseworker, self.queue_id),
         }
+        return context
 
 
 class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -277,6 +286,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         advice = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["formset"] = forms.get_formset(self.form_class, len(advice))
         context["advice_to_countersign"] = advice.values()
+        context["denial_reasons_display"] = self.denial_reasons_display
         return context
 
     def post(self, request, *args, **kwargs):
@@ -308,6 +318,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
+        context["denial_reasons_display"] = self.denial_reasons_display
         return context
 
 
@@ -359,6 +370,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         context = super().get_context()
         advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, self.caseworker["team"]["id"])
         context["advice_to_consolidate"] = advice_to_consolidate.values()
+        context["denial_reasons_display"] = self.denial_reasons_display
         return context
 
     def form_valid(self, form):
@@ -457,6 +469,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "nlr_products": nlr_products,
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
+            "denial_reasons_display": self.denial_reasons_display,
         }
 
     def form_valid(self, form):
