@@ -59,7 +59,7 @@ def advice_with_and_without_consignee(request, advice):
 def refusal_advice(request, advice):
     for item in advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
-        item["denial_reasons"] = (["5a", "5b"],)
+        item["denial_reasons"] = ["5a", "5b"]
     return advice
 
 

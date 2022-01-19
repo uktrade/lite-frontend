@@ -318,7 +318,7 @@ def consolidated_advice(current_user, team1_user):
 def to_refusal_advice(advice):
     for item in advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
-        item["denial_reasons"] = (["5a", "5b"],)
+        item["denial_reasons"] = ["5a", "5b"]
     return advice
 
 
