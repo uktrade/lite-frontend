@@ -255,4 +255,4 @@ def test_group_advice(
 def test_get_denial_reason_display_values():
     display_dict = {"m": "military", "d": "destruction"}
 
-    assert "military, destruction, x" == get_denial_reason_display_values(["m", "d", "x"], display_dict)
+    assert "military, destruction" == get_denial_reason_display_values(["m", "d"], display_dict)
