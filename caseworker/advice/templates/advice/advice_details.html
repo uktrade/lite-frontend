@@ -34,7 +34,7 @@
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
                 <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
-                {% endif %}
+				{% endif %}
             </tr>
             {% endwith %}
             {% endif %}
@@ -47,7 +47,7 @@
                 <td class="govuk-table__cell">All</td>
                 {% if decision == 'refuse' %}
                 <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
-                {% endif %}
+				{% endif %}
             </tr>
             {% endwith %}
             {% endif %}
