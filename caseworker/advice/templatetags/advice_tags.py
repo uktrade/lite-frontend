@@ -73,9 +73,8 @@ def get_denial_reason_display_values(denial_reasons, denial_reasons_display):
         denial_reasons = (
             denial_reasons[0] if len(denial_reasons) == 1 and isinstance(denial_reasons[0], list) else (denial_reasons)
         )
-        display_values = []
-        for item in denial_reasons:
-            display_values.append(denial_reasons_display.get(item, item))
+        display_values = [denial_reasons_display.get(item, item) for item in denial_reasons]
+        
         return ", ".join(display_values)
     else:
         return ""
