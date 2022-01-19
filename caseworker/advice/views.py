@@ -336,14 +336,14 @@ class CountersignEditAdviceView(ReviewCountersignView):
 
 class CountersignAdviceView(AdviceView):
     def get_context(self, **kwargs):
-        return {**super().get_context(**kwargs), "countersign": True, }
+        return {**super().get_context(**kwargs), "countersign": True}
 
 
 class ConsolidateAdviceView(AdviceView):
     def get_context(self, **kwargs):
         # For LU, we do not want to show the advice summary
         hide_advice = self.caseworker["team"]["id"] == services.LICENSING_UNIT_TEAM
-        return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice, }
+        return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
 
 
 class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
