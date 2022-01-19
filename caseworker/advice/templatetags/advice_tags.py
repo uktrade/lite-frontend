@@ -78,8 +78,6 @@ def group_advice(context):
 def get_denial_reason_display_values(denial_reasons, denial_reasons_display):
     if denial_reasons and denial_reasons_display:
         return ", ".join([denial_reasons_display.get(item, item) for item in denial_reasons])
-    else:
-        return ""
 
 
 def group_team_advice_by_user(case, team_advice, team_user, level=None):
