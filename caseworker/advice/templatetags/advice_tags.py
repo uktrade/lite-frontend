@@ -8,6 +8,13 @@ register = template.Library()
 
 @register.filter()
 def get_clc(goods):
+    """Return a list of the unique control list entries for all goods in the supplied list.
+
+    A single good may be passed instead of a list of one item.
+    """
+    if not isinstance(goods, list):
+        goods = [goods]
+
     clcs = {clc["rating"] for good in goods for clc in good.get("good", {}).get("control_list_entries", []) if clc}
     return sorted(clcs - {None})
 

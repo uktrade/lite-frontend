@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class adviceConfig(AppConfig):
-    name = "advice"
+    name = "caseworker.advice"

@@ -23,7 +23,7 @@
         <div class="govuk-grid-row">
             <br>
             <div class="govuk-grid-column-two-thirds">
-                {% if can_edit %}
+                {% if can_edit and buttons.edit_recommendation %}
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_edit' queue_pk case.id %}">
                     Edit recommendation
                 </a>
@@ -35,7 +35,7 @@
                 {% endfor %}
             </div>
             <div class="govuk-grid-column-one-quarter">
-                {% if advice_to_countersign %}
+                {% if advice_to_countersign and buttons.move_case_forward %}
                     {% crispy form %}
                 {% endif %}
             </div>

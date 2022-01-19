@@ -16,7 +16,7 @@ def test_no_cache_middleware(rf):
     get_response = mock.Mock(return_value=Response())
     instance = middleware.NoCacheMiddleware(get_response)
     response = instance(request)
-    assert response["Cache-Control"] == "max-age=0, no-cache, no-store, must-revalidate"
+    assert response["Cache-Control"] == "max-age=0, no-cache, no-store, must-revalidate, private"
 
 
 @pytest.mark.parametrize(
@@ -134,4 +134,4 @@ def test_x_robots_tag_middleware(rf):
     # We should get a 200 and the token should be cached
     response = instance(request)
     assert response.status_code == status.HTTP_200_OK
-    assert response._headers.get("x-robots-tag", "") == ("X-Robots-Tag", "noindex,nofollow")
+    assert response.headers["x-robots-tag"] == "noindex,nofollow"

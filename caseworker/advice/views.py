@@ -155,6 +155,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
             "denial_reasons_display": self.denial_reasons_display,
+            **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
     def form_valid(self, form):
@@ -271,6 +272,7 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
+            **services.get_advice_tab_context(self.case, self.caseworker, self.queue_id),
         }
         return context
 
@@ -308,11 +310,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         """Determine of the current user can edit the countersign comments.
         This will be the case if the current user made those comments.
         """
-        countersigned_by = set()
-        for user_advice in advice_to_countersign.values():
-            for advice in user_advice:
-                if advice["countersigned_by"]:
-                    countersigned_by.add(advice["countersigned_by"]["id"])
+        countersigned_by = services.get_countersigners(advice_to_countersign)
         return self.caseworker_id in countersigned_by
 
     def get_context_data(self, **kwargs):
@@ -360,17 +358,20 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def is_advice_approve_only(self):
         approve_advice_types = ("approve", "proviso", "no_licence_required")
-        return all([a["type"]["key"] in approve_advice_types for a in self.case.advice])
+        return all(a["type"]["key"] in approve_advice_types for a in self.case.advice)
 
     def get_form(self):
-        form_class = forms.ConsolidateSelectAdviceForm
         form_kwargs = self.get_form_kwargs()
-        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
-            form_class = forms.ConsolidateApprovalForm
+
         if self.kwargs.get("advice_type") == "refuse":
-            form_kwargs["denial_reasons"] = get_denial_reasons(self.request)
-            form_class = forms.RefusalAdviceForm
-        return form_class(**form_kwargs)
+            denial_reasons = get_denial_reasons(self.request)
+            return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
+
+        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
+            return forms.ConsolidateApprovalForm(**form_kwargs)
+
+        team_name = self.caseworker["team"]["name"]
+        return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
 
     def get_context(self, **kwargs):
         context = super().get_context()
@@ -423,7 +424,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         sentry_sdk.set_context("advice", {"advice": self.case.advice})
         self.advice = services.filter_advice_by_team(team_advice, self.caseworker["team"]["id"])[0]
         self.advice_type = self.advice["type"]["key"]
-        self.kwargs["advice_type"] = self.advice_type
+        self.kwargs["advice_type"] = "refuse" if self.advice_type == "refuse" else "approve"
 
     def get_approval_data(self):
         return {
