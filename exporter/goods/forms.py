@@ -590,7 +590,7 @@ def firearms_number_of_items(firearm_type):
     )
 
 
-def firearms_capture_serial_numbers(number_of_items):
+def firearms_capture_serial_numbers(number_of_items, default_button_name="Save and continue"):
     if isinstance(number_of_items, str):
         try:
             number_of_items = int(number_of_items)
@@ -620,7 +620,7 @@ def firearms_capture_serial_numbers(number_of_items):
         title="Enter the serial numbers for this product",
         description="Enter one serial number in every row",
         questions=questions,
-        default_button_name="Save and continue",
+        default_button_name=default_button_name,
     )
 
 

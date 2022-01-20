@@ -61,3 +61,30 @@ def test_convert_goods_on_application_good_level_control_list_entries(data_good_
     assert len(actual) == 1
     assert actual[0]["Controlled"] == "No"
     assert actual[0]["Control list entries"] == '<span class="govuk-hint govuk-!-margin-0">N/A</span>'
+
+
+def test_convert_goods_on_application_add_serial_numbers_action(data_good_on_application):
+    actual = check_your_answers.convert_goods_on_application([data_good_on_application])
+    assert '<span class="govuk-visually-hidden">Actions</span>' not in actual[0]
+
+    data_good_on_application["good"]["firearm_details"] = None
+    actual = check_your_answers.convert_goods_on_application([data_good_on_application])
+    assert '<span class="govuk-visually-hidden">Actions</span>' not in actual[0]
+
+    data_good_on_application["good"]["firearm_details"] = {
+        "serial_numbers": ["", "", ""],
+    }
+    actual = check_your_answers.convert_goods_on_application([data_good_on_application])
+    assert '<span class="govuk-visually-hidden">Actions</span>' in actual[0]
+
+    data_good_on_application["good"]["firearm_details"] = {
+        "serial_numbers": ["12345", "", ""],
+    }
+    actual = check_your_answers.convert_goods_on_application([data_good_on_application])
+    assert '<span class="govuk-visually-hidden">Actions</span>' in actual[0]
+
+    data_good_on_application["good"]["firearm_details"] = {
+        "serial_numbers": ["12345", "12345", "12345"],
+    }
+    actual = check_your_answers.convert_goods_on_application([data_good_on_application])
+    assert '<span class="govuk-visually-hidden">Actions</span>' not in actual[0]

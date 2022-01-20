@@ -863,7 +863,7 @@ class EditSerialNumbers(LoginRequiredMixin, SingleFormView):
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
         for index, item in enumerate(self.data["serial_numbers"]):
             self.data[f"serial_number_input_{index}"] = item
-        self.form = firearms_capture_serial_numbers(self.data["number_of_items"])
+        self.form = self.get_form()
         self.action = edit_good_firearm_details
 
     def get_success_url(self):
@@ -876,6 +876,17 @@ class EditSerialNumbers(LoginRequiredMixin, SingleFormView):
             return return_to_good_summary(self.kwargs, self.application_id, self.object_pk)
         elif self.object_pk:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+
+    def get_form(self):
+        return firearms_capture_serial_numbers(self.data["number_of_items"])
+
+
+class AddSerialNumbers(EditSerialNumbers):
+    def get_form(self):
+        return firearms_capture_serial_numbers(self.data["number_of_items"], "Submit")
+
+    def get_success_url(self):
+        return reverse("applications:summary", kwargs={"pk": self.application_id})
 
 
 class DeleteGood(LoginRequiredMixin, TemplateView):

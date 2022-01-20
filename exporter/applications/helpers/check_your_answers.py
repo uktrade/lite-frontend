@@ -205,16 +205,30 @@ def _convert_hmrc_query(application, editable=False):
     }
 
 
+def _requires_serial_numbers(good):
+    try:
+        firearm_details = good["firearm_details"]
+    except KeyError:
+        return False
+
+    if not firearm_details:
+        return False
+
+    serial_numbers = firearm_details["serial_numbers"]
+    return not all(serial_numbers)
+
+
 def convert_goods_on_application(goods_on_application, is_exhibition=False):
     converted = []
     for good_on_application in goods_on_application:
+        good = good_on_application["good"]
         # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
-        if good_on_application["good"]["is_good_controlled"] is None:
+        if good["is_good_controlled"] is None:
             is_controlled = "N/A"
         else:
-            is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
+            is_controlled = good["is_good_controlled"]["value"]
 
-        control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
+        control_list_entries = convert_control_list_entries(good["control_list_entries"])
         if good_on_application["is_good_controlled"] is not None:
             is_controlled_application = good_on_application["is_good_controlled"]["value"]
             if is_controlled != is_controlled_application:
@@ -223,14 +237,14 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False):
             if control_list_entries != control_list_application:
                 control_list_entries = f"<span class='strike'>{control_list_entries}</span> {control_list_application}"
 
-        if good_on_application["good"].get("name"):
-            name = good_on_application["good"]["name"]
+        if good.get("name"):
+            name = good["name"]
         else:
-            name = good_on_application["good"]["description"]
+            name = good["description"]
 
         item = {
             "Name": name,
-            "Part number": default_na(good_on_application["good"]["part_number"]),
+            "Part number": default_na(good["part_number"]),
             "Controlled": mark_safe(is_controlled),  # nosec
             "Control list entries": mark_safe(control_list_entries),  # nosec
         }
@@ -240,6 +254,16 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False):
             item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
             item["Quantity"] = pluralise_quantity(good_on_application)
             item["Value"] = f"£{good_on_application['value']}"
+        if _requires_serial_numbers(good):
+            add_serial_numbers_url = reverse(
+                "applications:add_serial_numbers",
+                kwargs={"pk": good_on_application["application"], "good_pk": good["id"],},
+            )
+            actions_heading = mark_safe('<span class="govuk-visually-hidden">Actions</span>')  # nosec
+            actions = mark_safe(  # nosec
+                f'<a class="govuk-link" href="{add_serial_numbers_url}">Add serial numbers</a>'
+            )
+            item[actions_heading] = actions
         converted.append(item)
     return converted
 

@@ -20,6 +20,7 @@ from exporter.applications.views import (
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from exporter.applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
 from exporter.goods.views import (
+    AddSerialNumbers,
     EditGood,
     EditGrading,
     GoodMilitaryUse,
@@ -119,6 +120,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/serial_numbers/",
         EditSerialNumbers.as_view(),
         name="serial_numbers",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/add_serial_numbers/",
+        AddSerialNumbers.as_view(),
+        name="add_serial_numbers",
     ),
     path(
         "<uuid:pk>/goods/add-new/<uuid:good_pk>/good-detail-summary/",
