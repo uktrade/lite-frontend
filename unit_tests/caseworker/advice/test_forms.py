@@ -31,7 +31,7 @@ def test_select_advice_form_valid(data, valid_status):
     assert form.is_valid() == valid_status
     if not valid_status:
         assert "recommendation" in form.errors.keys()
-        assert "Enter a reason for approving" in form.errors["recommendation"]
+        assert "Select if you approve all or refuse all" in form.errors["recommendation"]
 
 
 @pytest.mark.parametrize(
