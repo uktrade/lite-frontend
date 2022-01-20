@@ -48,7 +48,7 @@ class SelectAdviceForm(forms.Form):
         choices=CHOICES,
         widget=forms.RadioSelect,
         label="",
-        error_messages={"required": "Enter a reason for approving"},
+        error_messages={"required": "Select if you approve all or refuse all"},
     )
 
     def __init__(self, *args, **kwargs):
