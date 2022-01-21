@@ -19,8 +19,6 @@ def enter_case_note_text(driver, text, context):
 @when("I click post note")
 def click_post_note(driver, context):
     application_page = ApplicationPage(driver)
-    # TODO Make this an implicit wait!
-    time.sleep(1)
     application_page.click_post_note_btn()
     context.date_time_of_post = utils.get_formatted_date_time_h_m_pm_d_m_y()
 

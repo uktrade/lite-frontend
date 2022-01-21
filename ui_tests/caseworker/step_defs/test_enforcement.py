@@ -1,7 +1,10 @@
 import os
-from tests_common import functions
 from pytest_bdd import when, scenarios, then, parsers
 import xml.etree.ElementTree as ET
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
@@ -87,7 +90,11 @@ def i_import_generated_enforcement_check_xml_file(driver):  # noqa
 
 @then(parsers.parse('the application is removed from "{queue}" queue'))
 def application_removed_from_queue(driver, queue):
-    queue_list = driver.find_element_by_id("assigned-queues").text.split("\n")
+    ASSIGNED_QUEUES_ID = "assigned-queues"
+    WebDriverWait(driver, 30).until(
+        expected_conditions.presence_of_element_located((By.ID, ASSIGNED_QUEUES_ID))
+    ).is_enabled()
+    queue_list = driver.find_element_by_id(ASSIGNED_QUEUES_ID).text.split("\n")
     assert queue not in queue_list
 
 
