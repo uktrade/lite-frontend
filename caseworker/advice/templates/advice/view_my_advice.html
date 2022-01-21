@@ -1,6 +1,10 @@
 {% extends 'layouts/case.html' %}
 {% load crispy_forms_tags %}
 
+{% block header_tabs %}
+	{% include "advice/case-tabs.html" with case=case queue=queue %}
+{% endblock %}
+
 {% block body %}
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper">
