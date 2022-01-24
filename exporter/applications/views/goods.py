@@ -4,11 +4,14 @@ from datetime import datetime
 from http import HTTPStatus
 
 from django.conf import settings
+from django.core.exceptions import SuspiciousOperation
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.functional import cached_property
+from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
+from formtools.wizard.forms import ManagementForm
 from formtools.wizard.views import SessionWizardView
 
 from exporter.applications.forms.goods import good_on_application_form_group
@@ -218,7 +221,11 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
 
         if errors:
             return {"errors": errors}, None
-        return validate_good(request, nested_data)
+        validation_response = validate_good(request, nested_data)
+
+        logger.debug("AddGood.validate_step: validation_response=%s", validation_response)
+
+        return validation_response
 
     def init(self, request, **kwargs):
         self.draft_pk = str(kwargs["pk"])
@@ -312,6 +319,64 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         FirearmsNumberOfItemsForm,
     ]
     template_name = "applications/goods/add-good.html"
+
+    def post(self, *args, **kwargs):
+        """
+        This method handles POST requests.
+        The wizard will render either the current step (if form validation
+        wasn't successful), the next step (if the current step was stored
+        successful) or the done view (if no more steps are available)
+        """
+        # Look for a wizard_goto_step element in the posted data which
+        # contains a valid step name. If one was found, render the requested
+        # form. (This makes stepping back a lot easier).
+        wizard_goto_step = self.request.POST.get('wizard_goto_step', None)
+        if wizard_goto_step and wizard_goto_step in self.get_form_list():
+            return self.render_goto_step(wizard_goto_step)
+
+        # Check if form was refreshed
+        management_form = ManagementForm(self.request.POST, prefix=self.prefix)
+        if not management_form.is_valid():
+            raise SuspiciousOperation(_('ManagementForm data is missing or has been tampered.'))
+
+        form_current_step = management_form.cleaned_data['current_step']
+        if (form_current_step != self.steps.current and
+                self.storage.current_step is not None):
+            # form refreshed, change current step
+            self.storage.current_step = form_current_step
+
+        # get the form for the current step
+        form = self.get_form(data=self.request.POST, files=self.request.FILES)
+        # and try to validate
+        if form.is_valid():
+            # We want to actually stop here and try the validation against the API
+            data_to_validate = self.get_all_cleaned_data()
+            data_to_validate.update(form.cleaned_data)
+            validation_results, _ = validate_good(
+                self.request,
+                {"firearm_details": data_to_validate.copy()},
+            )
+            errors = validation_results.get("errors", {})
+            logger.debug("NewAddGood.post: errors=%s", errors)
+            for field_name, field_errors in errors.items():
+                if field_name not in form.fields:
+                    continue
+                for field_error in field_errors:
+                    form.add_error(field_name, field_error)
+            
+        if form.is_valid():
+            # if the form is valid, store the cleaned data and files.
+            self.storage.set_step_data(self.steps.current, self.process_step(form))
+            self.storage.set_step_files(self.steps.current, self.process_step_files(form))
+
+            # check if the current step is the last step
+            if self.steps.current == self.steps.last:
+                # no more steps, render done view
+                return self.render_done(form, **kwargs)
+            else:
+                # proceed to the next step
+                return self.render_next_step(form)
+        return self.render(form)
 
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):

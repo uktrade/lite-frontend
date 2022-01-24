@@ -590,6 +590,7 @@ class GroupTwoProductTypeForm(forms.Form):
             ("software_related_to_firearms", CreateGoodForm.FirearmGood.ProductType.SOFTWARE_RELATED_TO_FIREARM),
             ("technology_related_to_firearms", CreateGoodForm.FirearmGood.ProductType.TECHNOLOGY_RELATED_TO_FIREARM),
         ),
+        required=False,
         widget=forms.RadioSelect,
     )
 
@@ -607,7 +608,7 @@ def firearms_number_of_items(firearm_type):
 
 
 class FirearmsNumberOfItemsForm(forms.Form):
-    number_of_items = forms.CharField()
+    number_of_items = forms.CharField(required=False)
 
 
 def firearms_capture_serial_numbers(number_of_items):
