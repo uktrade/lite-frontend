@@ -96,9 +96,7 @@ class CasePage(BasePage):
 
         self.driver.find_element_by_id("candy-flags").click()
 
-        WebDriverWait(self.driver, 30).until(
-            expected_conditions.presence_of_element_located((By.ID, POPUP_FLAGS_ID))
-        )
+        WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.ID, POPUP_FLAGS_ID)))
 
         return flag_name in self.driver.find_element_by_id(POPUP_FLAGS_ID).text
 

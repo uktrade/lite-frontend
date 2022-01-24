@@ -247,9 +247,7 @@ def case_list_page(driver, internal_url):  # noqa
 
 @when("I go to my profile page")  # noqa
 def get_profile_page(driver):  # noqa
-    WebDriverWait(driver, 30).until(
-        expected_conditions.presence_of_element_located((By.ID, "link-profile"))
-    ).click()
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "link-profile"))).click()
 
 
 @when(parsers.parse('I change my team to "{team}" and default queue to "{queue}"'))  # noqa

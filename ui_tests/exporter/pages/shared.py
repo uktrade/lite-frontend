@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
+
 class Shared(BasePage):
     ORG_NAME_HEADING_ID = "org_name"
     RADIO_BUTTONS = ".govuk-radios__label"  # CSS
