@@ -40,6 +40,7 @@ from exporter.goods.forms import (
     build_firearm_back_link_create,
     has_valid_rfd_certificate,
     has_valid_section_five_certificate,
+    FirearmsNumberOfItemsForm,
     GroupTwoProductTypeForm,
 )
 from exporter.goods.services import (
@@ -308,6 +309,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
     form_list = [
         GroupTwoProductTypeForm,
+        FirearmsNumberOfItemsForm,
     ]
     template_name = "applications/goods/add-good.html"
 

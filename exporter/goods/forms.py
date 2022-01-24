@@ -580,10 +580,6 @@ def group_two_product_type_form(back_link=None):
 
 
 class GroupTwoProductTypeForm(forms.Form):
-    product_type_step = forms.BooleanField(
-        initial=True,
-        widget=forms.HiddenInput,
-    )
     type = forms.ChoiceField(
         choices=(
             ("firearms", CreateGoodForm.FirearmGood.ProductType.FIREARM),
@@ -608,6 +604,10 @@ def firearms_number_of_items(firearm_type):
         ],
         default_button_name="Continue",
     )
+
+
+class FirearmsNumberOfItemsForm(forms.Form):
+    number_of_items = forms.CharField()
 
 
 def firearms_capture_serial_numbers(number_of_items):
