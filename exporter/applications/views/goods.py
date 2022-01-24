@@ -303,6 +303,10 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             )
 
 
+class NewAddGood(LoginRequiredMixin, TemplateView):
+    template_name = "applications/goods/add-good.html"
+
+
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, **kwargs):
         self.draft_pk = str(kwargs["pk"])
