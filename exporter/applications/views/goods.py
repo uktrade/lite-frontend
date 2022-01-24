@@ -9,6 +9,8 @@ from django.urls import reverse_lazy, reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
+from formtools.wizard.views import SessionWizardView
+
 from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.services import (
@@ -38,6 +40,7 @@ from exporter.goods.forms import (
     build_firearm_back_link_create,
     has_valid_rfd_certificate,
     has_valid_section_five_certificate,
+    GroupTwoProductTypeForm,
 )
 from exporter.goods.services import (
     get_goods,
@@ -302,8 +305,10 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
                 "applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]}
             )
 
-
-class NewAddGood(LoginRequiredMixin, TemplateView):
+class NewAddGood(LoginRequiredMixin, SessionWizardView):
+    form_list = [
+        GroupTwoProductTypeForm,
+    ]
     template_name = "applications/goods/add-good.html"
 
 

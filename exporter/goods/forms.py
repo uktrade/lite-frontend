@@ -1,3 +1,4 @@
+from django import forms
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
 
@@ -576,6 +577,25 @@ def group_two_product_type_form(back_link=None):
         form.back_link = BackLink("Back", back_link)
 
     return form
+
+
+class GroupTwoProductTypeForm(forms.Form):
+    product_type_step = forms.BooleanField(
+        initial=True,
+        widget=forms.HiddenInput,
+    )
+    type = forms.ChoiceField(
+        choices=(
+            ("firearms", CreateGoodForm.FirearmGood.ProductType.FIREARM),
+            ("ammunition", CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
+            ("components_for_firearms", CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_FIREARM),
+            ("components_for_ammunition", CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_AMMUNITION),
+            ("firearms_accessory", CreateGoodForm.FirearmGood.ProductType.FIREARMS_ACCESSORY),
+            ("software_related_to_firearms", CreateGoodForm.FirearmGood.ProductType.SOFTWARE_RELATED_TO_FIREARM),
+            ("technology_related_to_firearms", CreateGoodForm.FirearmGood.ProductType.TECHNOLOGY_RELATED_TO_FIREARM),
+        ),
+        widget=forms.RadioSelect,
+    )
 
 
 def firearms_number_of_items(firearm_type):
