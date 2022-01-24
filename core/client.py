@@ -88,7 +88,7 @@ def perform_request(method, request, appended_address, data=None):
     else:
         headers = _get_headers(request, content_type="application/json")
 
-    logger.debug("API request: %s %s %s %s", method, url, headers, data)
+    logger.debug("API request: method=%s url=%s headers=%s data=%s", method, url, headers, data)
 
     response = session.request(method=method, url=url, headers=headers, json=data)
 

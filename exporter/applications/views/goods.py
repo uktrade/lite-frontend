@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime
 from http import HTTPStatus
 
@@ -57,6 +59,9 @@ from lite_forms.helpers import get_form_by_pk
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
+
+
+logger = logging.getLogger(__name__)
 
 
 class SectionDocumentMixin:
@@ -192,8 +197,10 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
         return len(self.forms.get_forms()) - 1
 
     def validate_step(self, request, nested_data):
+        logger.debug("AddGood validate_step: request=%s nested_data=%s", request, nested_data)
         errors = {}
         current = get_form_by_pk(self.form_pk, self.forms)
+        logger.debug("AddGood validate_step: current=%s self.form_pk=%s", current, self.form_pk)
         if self.form_pk == self.STEP_ARE_YOU_RFD:
             if "is_registered_firearm_dealer" not in request.POST:
                 errors["is_registered_firearm_dealer"] = ["Select yes if you are a registered firearms dealer"]

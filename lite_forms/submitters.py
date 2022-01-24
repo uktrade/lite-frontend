@@ -1,3 +1,5 @@
+import logging
+
 from typing import Callable
 
 from django.http import QueryDict
@@ -15,6 +17,9 @@ from lite_forms.helpers import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 def submit_single_form(request, form: Form, action: Callable, object_pk=None, override_data=None):
     """
     Function to handle the submission of data for a single, supplied form.
@@ -26,20 +31,31 @@ def submit_single_form(request, form: Form, action: Callable, object_pk=None, ov
     :param override_data: Data to be used instead of the request's data, if applicable
     """
     data = request.POST.copy()
+    logger.debug(
+        "submit_single_form: form=%s action=%s data=%s object_pk=%s override_data=%s",
+        form, action, data, object_pk, override_data,
+    )
 
     if override_data:
         data = override_data
+
+    logger.debug("submit_single_form overridden data: %s", override_data)
 
     if object_pk:
         validated_data, _ = action(request, object_pk, data)
     else:
         validated_data, _ = action(request, data)
 
+    logger.debug("submit_single_form: validated_data=%s", validated_data)
+
     if "errors" in validated_data:
+        logger.debug("submit_single_form has errors: errors=%s validated_data=%s", validated_data.get("errors"), validated_data)
         return (
             form_page(request, form, data=data, errors=validated_data.get("errors")),
             None,
         )
+
+    logger.debug("submit_single_form: validated_data=%s", validated_data)
 
     return None, validated_data
 

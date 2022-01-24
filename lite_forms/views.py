@@ -1,4 +1,6 @@
 import copy
+import logging
+
 from abc import ABC
 from typing import List
 
@@ -20,6 +22,10 @@ from lite_forms.helpers import (
     validate_data_unknown,
 )
 from lite_forms.submitters import submit_paged_form
+
+
+logger = logging.getLogger(__name__)
+
 
 ACTION = "_action"
 VALIDATE_ONLY = "validate_only"
@@ -186,8 +192,9 @@ class MultiFormView(FormView):
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
-        submission = self.on_submission(request, **kwargs)  # noqa
 
+        submission = self.on_submission(request, **kwargs)  # noqa
+        logger.debug("MultiFormView.post: submission=%s", submission)
         if submission:
             return redirect(submission)
 
@@ -201,6 +208,7 @@ class MultiFormView(FormView):
             hide_unused_errors=self.hide_unused_errors,
         )
         # If there are more forms to go through, continue
+        logger.debug("MultiFormView.post: response=%s", response)
         if response:
             return response
 
@@ -208,7 +216,9 @@ class MultiFormView(FormView):
 
         self.post_success_step()
 
-        return redirect(self.get_success_url())
+        success_url = self.get_success_url()
+        logger.debug("MultiFormView.post: success_url=%s", success_url)
+        return redirect(success_url)
 
 
 class SummaryListFormView(FormView):
