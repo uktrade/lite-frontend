@@ -662,6 +662,10 @@ def firearm_year_of_manufacture_details_form(good_id=None):
     )
 
 
+class FirearmYearOfManufactureDetailsForm(forms.Form):
+    year_of_manufacture = forms.CharField(required=False)
+
+
 def firearm_replica_form(firearm_type):
     return Form(
         title=CreateGoodForm.FirearmGood.FirearmsReplica.TITLE,

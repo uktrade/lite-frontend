@@ -44,6 +44,7 @@ from exporter.goods.forms import (
     has_valid_rfd_certificate,
     has_valid_section_five_certificate,
     FirearmsNumberOfItemsForm,
+    FirearmYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
 )
 from exporter.goods.services import (
@@ -317,6 +318,7 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
     form_list = [
         GroupTwoProductTypeForm,
         FirearmsNumberOfItemsForm,
+        FirearmYearOfManufactureDetailsForm,
     ]
     template_name = "applications/goods/add-good.html"
 
