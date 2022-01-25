@@ -228,6 +228,11 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edit'] = True
+        return context
+
 
 class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/delete-advice.html"
