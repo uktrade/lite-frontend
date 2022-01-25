@@ -8,8 +8,8 @@ from crispy_forms_gds.layout import Submit, Layout, HTML
 from exporter.core.helpers import str_to_bool
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
-from exporter.core.services import get_control_list_entries
-from exporter.core.services import get_pv_gradings
+from exporter.core.services import get_control_list_entries, get_pv_gradings
+from exporter.goods.services import validate_good
 from exporter.goods.helpers import good_summary, get_category_display_string
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
@@ -582,7 +582,29 @@ def group_two_product_type_form(back_link=None):
     return form
 
 
-class GroupTwoProductTypeForm(forms.Form):
+class APIForm(forms.Form):
+
+    def __init__(self, *args, request, **kwargs):
+        self.request = request
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        validation_results, _ = validate_good(
+            self.request,
+            {"firearm_details": cleaned_data.copy()},
+        )
+        errors = validation_results.get("errors", {})
+        for field_name, field_errors in errors.items():
+            if field_name not in self.fields:
+                continue
+            for field_error in field_errors:
+                self.add_error(field_name, field_error)
+
+        return cleaned_data
+
+
+class GroupTwoProductTypeForm(APIForm):
     type = forms.ChoiceField(
         choices=(
             ("firearms", CreateGoodForm.FirearmGood.ProductType.FIREARM),
@@ -599,6 +621,7 @@ class GroupTwoProductTypeForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1("Select the type of product"),
@@ -619,8 +642,18 @@ def firearms_number_of_items(firearm_type):
     )
 
 
-class FirearmsNumberOfItemsForm(forms.Form):
+class FirearmsNumberOfItemsForm(APIForm):
     number_of_items = forms.CharField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1("Number of items"),
+            "number_of_items",
+            Submit("submit", "Continue"),
+        )
 
 
 def firearms_capture_serial_numbers(number_of_items):
@@ -674,7 +707,7 @@ def firearm_year_of_manufacture_details_form(good_id=None):
     )
 
 
-class FirearmYearOfManufactureDetailsForm(forms.Form):
+class FirearmYearOfManufactureDetailsForm(APIForm):
     year_of_manufacture = forms.CharField(required=False)
 
 
