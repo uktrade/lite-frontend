@@ -287,7 +287,7 @@ def consolidated_advice(current_user, team1_user):
             "end_user": None,
             "ultimate_end_user": None,
             "consignee": None,
-            "third_party": "09d08d89-f2f4-4203-a465-11e7c597191c",
+            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "countersigned_by": None,
             "countersign_comments": "",
         },
