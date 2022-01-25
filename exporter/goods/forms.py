@@ -50,12 +50,6 @@ from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
 
 
-class APIForm(forms.Form):
-
-    def serialize_data(self, cleaned_data):
-        raise NotImplementedError(f"Implement `serialize_data` in {self.__class__.__name__}")
-
-
 def product_category_form(request):
     return Form(
         title=CreateGoodForm.ProductCategory.TITLE,
@@ -77,7 +71,7 @@ def product_category_form(request):
     )
 
 
-class ProductCategoryForm(APIForm):
+class ProductCategoryForm(forms.Form):
     item_category = forms.ChoiceField(
         choices=(
             ("group1_platform", CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
@@ -101,11 +95,6 @@ class ProductCategoryForm(APIForm):
             "item_category",
             Submit("submit", "Continue"),
         )
-
-    def serialize_data(self, cleaned_data):
-        return {
-            "item_category": cleaned_data["item_category"],
-        }
 
 
 def software_technology_details_form(request, category_type):
@@ -619,7 +608,7 @@ def group_two_product_type_form(back_link=None):
     return form
 
 
-class GroupTwoProductTypeForm(APIForm):
+class GroupTwoProductTypeForm(forms.Form):
     type = forms.ChoiceField(
         choices=(
             ("firearms", CreateGoodForm.FirearmGood.ProductType.FIREARM),
@@ -662,7 +651,7 @@ def firearms_number_of_items(firearm_type):
     )
 
 
-class FirearmsNumberOfItemsForm(APIForm):
+class FirearmsNumberOfItemsForm(forms.Form):
     number_of_items = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
@@ -732,7 +721,7 @@ def firearm_year_of_manufacture_details_form(good_id=None):
     )
 
 
-class FirearmYearOfManufactureDetailsForm(APIForm):
+class FirearmYearOfManufactureDetailsForm(forms.Form):
     year_of_manufacture = forms.CharField(required=False)
 
     def clean(self):
