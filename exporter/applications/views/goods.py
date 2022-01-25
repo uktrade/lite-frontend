@@ -1,3 +1,4 @@
+import enum
 import logging
 
 from datetime import datetime
@@ -313,13 +314,30 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
                 "applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]}
             )
 
+
+class NewAddGoodFormSteps:
+    PRODUCT_CATEGORY = "product_category"
+    GROUP_TWO_PRODUCT_TYPE = "group_two_product_type"
+    FIREARMS_NUMBER_OF_ITEMS = "firearms_number_of_items"
+    FIREARMS_YEAR_OF_MANUFACTURE_DETAILS = "firearms_year_of_manufacture_details"
+
+
+def has_flag(value):
+    def _has_flag(wizard):
+        return value
+    return _has_flag
+
+
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
     form_list = [
-        ProductCategoryForm,
-        GroupTwoProductTypeForm,
-        FirearmsNumberOfItemsForm,
-        FirearmYearOfManufactureDetailsForm,
+        (NewAddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
+        (NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
+        (NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
+        (NewAddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmYearOfManufactureDetailsForm),
     ]
+    condition_dict = {
+        NewAddGoodFormSteps.PRODUCT_CATEGORY: has_flag(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS),
+    }
     template_name = "core/form-wizard.html"
 
     def get_form_kwargs(self, *args, **kwargs):
