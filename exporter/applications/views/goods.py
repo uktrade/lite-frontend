@@ -329,6 +329,36 @@ def has_flag(value):
     return _has_flag
 
 
+def is_category_firearms(wizard):
+    product_category_cleaned_data = wizard.get_cleaned_data_for_step(NewAddGoodFormSteps.PRODUCT_CATEGORY)
+    if not product_category_cleaned_data:
+        return True
+
+    item_category = product_category_cleaned_data["item_category"]
+    return item_category == constants.PRODUCT_CATEGORY_FIREARM or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
+
+
+def compose_with_and(*predicates):
+    def _and(wizard):
+        return all(func(wizard) for func in predicates)
+    return _and
+
+
+def is_draft(wizard):
+    return bool(str(wizard.kwargs["pk"]))
+
+
+def is_firearm_ammunition_or_component(wizard):
+    group_two_product_type_cleaned_data = wizard.get_cleaned_data_for_step(NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
+    if not group_two_product_type_cleaned_data:
+        return True
+
+    import_type = group_two_product_type_cleaned_data["type"]
+    _, is_firearm_ammunition_or_component, _, _ = get_firearms_subcategory(import_type)
+
+    return is_firearm_ammunition_or_component
+
+
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
     form_list = [
         (NewAddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
@@ -338,6 +368,8 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
     ]
     condition_dict = {
         NewAddGoodFormSteps.PRODUCT_CATEGORY: has_flag(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS),
+        NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
+        NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: compose_with_and(is_draft, is_firearm_ammunition_or_component),
     }
     template_name = "core/form-wizard.html"
 
