@@ -644,13 +644,10 @@ class GroupTwoProductTypeForm(APIForm):
             Submit("submit", "Continue"),
         )
 
-    def serialize_data(self, cleaned_data):
-        data = {
-            "firearm_details": {
-                "type": cleaned_data["type"],
-            },
-        }
-        return data
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["product_type_step"] = True
+        return cleaned_data
 
 
 def firearms_number_of_items(firearm_type):
@@ -678,13 +675,10 @@ class FirearmsNumberOfItemsForm(APIForm):
             Submit("submit", "Continue"),
         )
 
-    def serialize_data(self, cleaned_data):
-        data = {
-            "firearm_details": {
-                "number_of_items": cleaned_data["number_of_items"],
-            },
-        }
-        return data
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["number_of_items_step"] = True
+        return cleaned_data
 
 
 def firearms_capture_serial_numbers(number_of_items):
@@ -740,6 +734,11 @@ def firearm_year_of_manufacture_details_form(good_id=None):
 
 class FirearmYearOfManufactureDetailsForm(APIForm):
     year_of_manufacture = forms.CharField(required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["firearm_year_of_manufacture_step"] = True
+        return cleaned_data
 
 
 def firearm_replica_form(firearm_type):
