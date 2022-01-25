@@ -3,6 +3,10 @@
 {% load static advice_tags %}
 {% load crispy_forms_tags %}
 
+{% block header_tabs %}
+	{% include "advice/case-tabs.html" with case=case queue=queue %}
+{% endblock %}
+
 {% block body %}
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper">
@@ -23,6 +27,7 @@
         <div class="govuk-grid-row">
             <br>
             <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">View recommendation</h1>
                 {% if can_edit and buttons.edit_recommendation %}
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_edit' queue_pk case.id %}">
                     Edit recommendation
