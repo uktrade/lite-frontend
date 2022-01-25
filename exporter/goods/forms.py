@@ -52,25 +52,6 @@ from lite_forms.styles import ButtonStyle, HeadingStyle
 
 class APIForm(forms.Form):
 
-    def __init__(self, *args, request, **kwargs):
-        self.request = request
-        super().__init__(*args, **kwargs)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        validation_results, _ = validate_good(
-            self.request,
-            self.serialize_data(cleaned_data),
-        )
-        errors = validation_results.get("errors", {})
-        for field_name, field_errors in errors.items():
-            if field_name not in self.fields:
-                continue
-            for field_error in field_errors:
-                self.add_error(field_name, field_error)
-
-        return cleaned_data
-
     def serialize_data(self, cleaned_data):
         raise NotImplementedError(f"Implement `serialize_data` in {self.__class__.__name__}")
 

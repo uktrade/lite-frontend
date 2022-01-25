@@ -1,6 +1,6 @@
-import enum
 import logging
 
+from collections import OrderedDict
 from datetime import datetime
 from http import HTTPStatus
 
@@ -340,13 +340,70 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
     }
     template_name = "core/form-wizard.html"
 
+    @classmethod
+    def get_initkwargs(cls, *args, **kwargs):
+        initkwargs = super(NewAddGood, cls).get_initkwargs(*args, **kwargs)
+
+        form_list = initkwargs["form_list"]
+        overriden_forms = OrderedDict()
+        for form_id, form_class in form_list.items():
+            class ProxyForm(form_class):
+                def __init__(self, *args, wizard, **kwargs):
+                    self.wizard = wizard
+                    super().__init__(*args, **kwargs)
+
+                def clean(self):
+                    cleaned_data = super().clean()
+
+                    errors = self.wizard.validate(self)
+                    for field_name, field_errors in errors.items():
+                        if field_name not in self.fields:
+                            continue
+                        for field_error in field_errors:
+                            self.add_error(field_name, field_error)
+
+                    return cleaned_data
+
+                def __repr(self):
+                    return f"<ProxyForm: {form_class.__name__}>"
+
+            overriden_forms[form_id] = ProxyForm
+
+        initkwargs["form_list"] = overriden_forms
+
+        return initkwargs
+
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super().get_form_kwargs(*args, **kwargs)
 
-        kwargs["request"] = self.request
+        kwargs["wizard"] = self
 
         return kwargs
 
+    def validate(self, current_form):
+        cleaned_data = self.get_all_cleaned_data().copy()
+        cleaned_data.update(current_form.cleaned_data)
+
+        data_to_validate = {
+            "firearm_details": {},
+        }
+
+        if "item_category" in cleaned_data:
+            data_to_validate["item_category"] = cleaned_data["item_category"]
+
+        data_to_validate = {
+            "firearm_details": {
+                "type": cleaned_data.get("type"),
+            },
+        }
+
+        validation_results, _ = validate_good(
+            self.request,
+            data_to_validate,
+        )
+        errors = validation_results.get("errors", {})
+
+        return errors
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, **kwargs):
