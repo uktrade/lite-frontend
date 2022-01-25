@@ -1,5 +1,6 @@
-import time
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common import selectors
@@ -91,10 +92,13 @@ class CasePage(BasePage):
             destination.click()
 
     def is_flag_applied(self, flag_name):
+        POPUP_FLAGS_ID = "popup-flags"
+
         self.driver.find_element_by_id("candy-flags").click()
-        # TODO Make this an implicit wait!
-        time.sleep(0.5)
-        return flag_name in self.driver.find_element_by_id("popup-flags").text
+
+        WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.ID, POPUP_FLAGS_ID)))
+
+        return flag_name in self.driver.find_element_by_id(POPUP_FLAGS_ID).text
 
     def is_flag_in_applied_flags_list(self, flag_name):
         text = self.driver.find_element_by_id("checkbox-counter").text

@@ -2,6 +2,10 @@ from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
 import time
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.goods_queries_pages import StandardGoodsReviewPages, OpenGoodsReviewPages
@@ -243,7 +247,7 @@ def case_list_page(driver, internal_url):  # noqa
 
 @when("I go to my profile page")  # noqa
 def get_profile_page(driver):  # noqa
-    driver.find_element_by_id("link-profile").click()
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "link-profile"))).click()
 
 
 @when(parsers.parse('I change my team to "{team}" and default queue to "{queue}"'))  # noqa

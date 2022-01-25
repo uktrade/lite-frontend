@@ -1,5 +1,6 @@
-import time
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import Select
 
 from tests_common import functions
@@ -65,9 +66,9 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.CASE_COPY_OF_ID).get_attribute("href")
 
     def click_visible_to_exporter_checkbox(self):
-        # TODO Make this an implicit wait!
-        time.sleep(0.5)
-        self.driver.find_element_by_id(self.IS_VISIBLE_TO_EXPORTER_CHECKBOX_ID).click()
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, self.IS_VISIBLE_TO_EXPORTER_CHECKBOX_ID))
+        ).click()
 
     def enter_case_note(self, text):
         self.driver.execute_script(f'document.getElementById("{self.INPUT_CASE_NOTE_ID}").value = "{text[:-1]}"')
@@ -87,12 +88,16 @@ class ApplicationPage(BasePage):
         return self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).text
 
     def click_post_note_btn(self):
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, self.BUTTON_POST_NOTE_ID))
+        )
+
         self.driver.find_element_by_id(self.BUTTON_POST_NOTE_ID).click()
 
     def click_cancel_btn(self):
-        # TODO Make this an implicit wait!
-        time.sleep(0.5)
-        self.driver.find_element_by_id(self.LINK_CANCEL_NOTE_ID).click()
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, self.LINK_CANCEL_NOTE_ID))
+        ).click()
 
     def get_text_of_case_note(self, no):
         return self.driver.find_elements_by_css_selector(self.CASE_NOTES_TEXT)[no].text
@@ -147,9 +152,9 @@ class ApplicationPage(BasePage):
         self.driver.execute_script("arguments[0].click();", element)
 
     def click_move_case_button(self):
-        # TODO Make this an implicit wait!
-        time.sleep(0.5)
-        self.driver.find_element_by_id(self.MOVE_CASE_BUTTON).click()
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, self.MOVE_CASE_BUTTON))
+        ).click()
 
     def get_text_of_audit_trail_item(self, no):
         return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)[no].text

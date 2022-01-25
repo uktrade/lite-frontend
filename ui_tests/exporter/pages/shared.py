@@ -1,5 +1,9 @@
 from ui_tests.exporter.pages.BasePage import BasePage
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
 
 class Shared(BasePage):
     ORG_NAME_HEADING_ID = "org_name"
@@ -29,6 +33,10 @@ class Shared(BasePage):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW)
 
     def get_text_of_organisation_heading(self):
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, self.ORG_NAME_HEADING_ID))
+        )
+
         return self.driver.find_element_by_id(self.ORG_NAME_HEADING_ID).text
 
     def get_radio_buttons_elements(self):

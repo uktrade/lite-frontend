@@ -1,6 +1,10 @@
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common.tools.wait import wait_until_page_is_loaded
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
 
 class HeaderPage(BasePage):
     MENU_BUTTON = "link-menu"  # ID
@@ -17,7 +21,9 @@ class HeaderPage(BasePage):
         self.driver.find_element_by_id(self.MENU_BUTTON).click()
 
     def click_organisations(self):
-        self.driver.find_element_by_css_selector(self.ORGANISATIONS_LINK).click()
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.CSS_SELECTOR, self.ORGANISATIONS_LINK))
+        ).click()
 
     def click_letters(self):
         self.driver.find_element_by_css_selector(self.TEMPLATES_LINK).click()

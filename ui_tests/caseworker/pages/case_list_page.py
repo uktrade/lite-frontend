@@ -1,6 +1,7 @@
-import time
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.select import Select
 
 from ui_tests.caseworker.pages.BasePage import BasePage
@@ -143,12 +144,13 @@ class CaseListPage(BasePage):
         self.driver.find_element_by_id(self.LINK_CHANGE_QUEUE_ID).click()
 
     def search_for_queue(self, queue_name):
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, self.QUEUE_SEARCH_BOX))
+        )
         self.driver.find_element_by_id(self.QUEUE_SEARCH_BOX).send_keys(queue_name)
 
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
-        # TODO Make this an implicit wait!
-        time.sleep(0.5)
         self.search_for_queue(queue_name)
         self.driver.find_elements_by_css_selector('#queues .app-menu__item:not([style="display: none;"])')[0].click()
 
@@ -200,4 +202,6 @@ class CaseListPage(BasePage):
         return self.driver.find_element_by_id(self.SHOW_TEAM_ECJU_AND_HIDDEN_CASES).click()
 
     def click_export_enforcement_xml(self):
-        self.driver.find_element_by_id(self.EXPORT_ENFORCEMENT_XML_BUTTON_ID).click()
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, self.EXPORT_ENFORCEMENT_XML_BUTTON_ID))
+        ).click()

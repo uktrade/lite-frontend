@@ -1,5 +1,9 @@
 import time
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
 from tests_common import functions
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common.tools.helpers import scroll_to_element_by_id
@@ -110,6 +114,10 @@ class Shared(BasePage):
         self.driver.find_element_by_css_selector(self.FIRST_LINK_IN_ROW).click()
 
     def try_open_filters(self):
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.CLASS_NAME, "lite-filter-bar"))
+        )
+
         if not self.driver.find_element_by_class_name("lite-filter-bar").is_displayed():
             self.driver.find_element_by_id("show-filters-link").click()
             # Delay is necessary as driver can fail to click filters
