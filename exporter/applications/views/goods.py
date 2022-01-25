@@ -44,6 +44,7 @@ from exporter.goods.forms import (
     FirearmsNumberOfItemsForm,
     FirearmYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
+    ProductCategoryForm,
 )
 from exporter.goods.services import (
     get_goods,
@@ -314,6 +315,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
 
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
     form_list = [
+        ProductCategoryForm,
         GroupTwoProductTypeForm,
         FirearmsNumberOfItemsForm,
         FirearmYearOfManufactureDetailsForm,

@@ -50,6 +50,31 @@ from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle, HeadingStyle
 
 
+class APIForm(forms.Form):
+
+    def __init__(self, *args, request, **kwargs):
+        self.request = request
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        validation_results, _ = validate_good(
+            self.request,
+            self.serialize_data(cleaned_data),
+        )
+        errors = validation_results.get("errors", {})
+        for field_name, field_errors in errors.items():
+            if field_name not in self.fields:
+                continue
+            for field_error in field_errors:
+                self.add_error(field_name, field_error)
+
+        return cleaned_data
+
+    def serialize_data(self, cleaned_data):
+        raise NotImplementedError(f"Implement `serialize_data` in {self.__class__.__name__}")
+
+
 def product_category_form(request):
     return Form(
         title=CreateGoodForm.ProductCategory.TITLE,
@@ -69,6 +94,37 @@ def product_category_form(request):
             )
         ],
     )
+
+
+class ProductCategoryForm(APIForm):
+    item_category = forms.ChoiceField(
+        choices=(
+            ("group1_platform", CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
+            ("group1_device", CreateGoodForm.ProductCategory.GROUP1_DEVICE),
+            ("group1_components", CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
+            ("group1_materials", CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
+            (PRODUCT_CATEGORY_FIREARM, CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
+            ("group3_software", CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
+            ("group3_technology", CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
+        ),
+        required=False,
+        widget=forms.RadioSelect,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(CreateGoodForm.ProductCategory.TITLE),
+            "item_category",
+            Submit("submit", "Continue"),
+        )
+
+    def serialize_data(self, cleaned_data):
+        return {
+            "item_category": cleaned_data["item_category"],
+        }
 
 
 def software_technology_details_form(request, category_type):
@@ -580,28 +636,6 @@ def group_two_product_type_form(back_link=None):
         form.back_link = BackLink("Back", back_link)
 
     return form
-
-
-class APIForm(forms.Form):
-
-    def __init__(self, *args, request, **kwargs):
-        self.request = request
-        super().__init__(*args, **kwargs)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        validation_results, _ = validate_good(
-            self.request,
-            {"firearm_details": cleaned_data.copy()},
-        )
-        errors = validation_results.get("errors", {})
-        for field_name, field_errors in errors.items():
-            if field_name not in self.fields:
-                continue
-            for field_error in field_errors:
-                self.add_error(field_name, field_error)
-
-        return cleaned_data
 
 
 class GroupTwoProductTypeForm(APIForm):
