@@ -119,7 +119,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:select_advice", kwargs=self.kwargs)
+        return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
 
 class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -137,7 +137,8 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:select_advice", kwargs=self.kwargs)
+
+        return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
 
 class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
