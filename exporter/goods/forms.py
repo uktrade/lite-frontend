@@ -663,6 +663,14 @@ class GroupTwoProductTypeForm(APIForm):
             Submit("submit", "Continue"),
         )
 
+    def serialize_data(self, cleaned_data):
+        data = {
+            "firearm_details": {
+                "type": cleaned_data["type"],
+            },
+        }
+        return data
+
 
 def firearms_number_of_items(firearm_type):
     return Form(
@@ -688,6 +696,14 @@ class FirearmsNumberOfItemsForm(APIForm):
             "number_of_items",
             Submit("submit", "Continue"),
         )
+
+    def serialize_data(self, cleaned_data):
+        data = {
+            "firearm_details": {
+                "number_of_items": cleaned_data["number_of_items"],
+            },
+        }
+        return data
 
 
 def firearms_capture_serial_numbers(number_of_items):
