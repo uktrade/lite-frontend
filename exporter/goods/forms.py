@@ -9,7 +9,6 @@ from exporter.core.helpers import str_to_bool
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries, get_pv_gradings
-from exporter.goods.services import validate_good
 from exporter.goods.helpers import good_summary, get_category_display_string
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
