@@ -320,7 +320,7 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         FirearmsNumberOfItemsForm,
         FirearmYearOfManufactureDetailsForm,
     ]
-    template_name = "applications/goods/add-good.html"
+    template_name = "core/form-wizard.html"
 
     def post(self, *args, **kwargs):
         """

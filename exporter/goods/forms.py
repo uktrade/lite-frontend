@@ -2,6 +2,9 @@ from django import forms
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
 
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Submit, Layout, HTML
+
 from exporter.core.helpers import str_to_bool
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
@@ -593,6 +596,15 @@ class GroupTwoProductTypeForm(forms.Form):
         required=False,
         widget=forms.RadioSelect,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1("Select the type of product"),
+            "type",
+            Submit("submit", "Continue"),
+        )
 
 
 def firearms_number_of_items(firearm_type):
