@@ -274,14 +274,17 @@ def mock_denial_reasons(requests_mock):
     url = client._build_absolute_uri("/static/denial-reasons/")
     data = {
         "denial_reasons": [
-            {"id": "1", "display_value": "one"},
-            {"id": "1a", "display_value": "one a"},
-            {"id": "2", "display_value": "two"},
-            {"id": "2a", "display_value": "two a"},
-            {"id": "2b", "display_value": "two b"},
-            {"id": "5a", "display_value": "five a"},
-            {"id": "5b", "display_value": "five b"},
-            {"id": "M", "display_value": "MMMM"},
+            {"id": "1", "display_value": "one", "deprecated": False},
+            {"id": "1a", "display_value": "one a", "deprecated": False},
+            {"id": "2", "display_value": "two", "deprecated": False},
+            {"id": "2a", "display_value": "two a", "deprecated": False},
+            {"id": "2b", "display_value": "two b", "deprecated": False},
+            {"id": "3", "display_value": "two", "deprecated": False},
+            {"id": "4", "display_value": "two", "deprecated": False},
+            {"id": "5", "display_value": "two", "deprecated": False},
+            {"id": "5a", "display_value": "five a", "deprecated": False},
+            {"id": "5b", "display_value": "five b", "deprecated": False},
+            {"id": "M", "display_value": "MMMM", "deprecated": False},
         ]
     }
     yield requests_mock.get(url=url, json=data)
