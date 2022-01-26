@@ -723,6 +723,16 @@ def firearm_year_of_manufacture_details_form(good_id=None):
 class FirearmYearOfManufactureDetailsForm(forms.Form):
     year_of_manufacture = forms.CharField(required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1("What is the year of manufacture of the firearm?"),
+            "year_of_manufacture",
+            Submit("submit", "Continue"),
+        )
+
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data["firearm_year_of_manufacture_step"] = True
