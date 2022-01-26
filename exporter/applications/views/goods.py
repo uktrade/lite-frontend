@@ -13,6 +13,7 @@ from django.views.generic import TemplateView
 
 from formtools.wizard.forms import ManagementForm
 from formtools.wizard.views import SessionWizardView
+from storages.backends.s3boto3 import S3Boto3Storage, S3Boto3StorageFile
 
 from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
@@ -43,6 +44,7 @@ from exporter.goods.forms import (
     build_firearm_back_link_create,
     has_valid_rfd_certificate,
     has_valid_section_five_certificate,
+    AttachFirearmDealerCertificateForm,
     FirearmsNumberOfItemsForm,
     FirearmYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
@@ -305,6 +307,7 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             if not self.show_section_upload_form:
                 self.hide_unused_errors = False
                 return post_goods
+        import ipdb; ipdb.set_trace()
         return self.validate_step
 
     def get_success_url(self):
@@ -318,11 +321,12 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
 
 
 class NewAddGoodFormSteps:
-    PRODUCT_CATEGORY = "product_category"
-    GROUP_TWO_PRODUCT_TYPE = "group_two_product_type"
-    FIREARMS_NUMBER_OF_ITEMS = "firearms_number_of_items"
-    IDENFITICATION_MARKINGS = "identification_markings"
-    FIREARMS_YEAR_OF_MANUFACTURE_DETAILS = "firearms_year_of_manufacture_details"
+    PRODUCT_CATEGORY = "PRODUCT_CATEGORY"
+    GROUP_TWO_PRODUCT_TYPE = "GROUP_TWO_PRODUCT_TYPE"
+    FIREARMS_NUMBER_OF_ITEMS = "FIREARMS_NUMBER_OF_ITEMS"
+    IDENFITICATION_MARKINGS = "IDENFITICATION_MARKINGS"
+    FIREARMS_YEAR_OF_MANUFACTURE_DETAILS = "FIREARMS_YEAR_OF_MANUFACTURE_DETAILS"
+    ATTACH_FIREARM_DEALER_CERTIFICATE = "ATTACH_FIREARM_DEALER_CERTIFICATE"
 
 
 def has_flag(value):
@@ -361,13 +365,23 @@ def is_firearm_ammunition_or_component(wizard):
     return is_firearm_ammunition_or_component
 
 
+def remove_file_data(data):
+    return {
+        key: value
+        for key, value in data.items()
+        if not isinstance(value, S3Boto3StorageFile)
+    }
+
+
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
+    file_storage = S3Boto3Storage()
     form_list = [
         (NewAddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
         (NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
         (NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
         (NewAddGoodFormSteps.IDENFITICATION_MARKINGS, IdentificationMarkingsForm),
         (NewAddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmYearOfManufactureDetailsForm),
+        (NewAddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmDealerCertificateForm),
     ]
     condition_dict = {
         NewAddGoodFormSteps.PRODUCT_CATEGORY: has_flag(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS),
@@ -408,10 +422,12 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         if form.is_valid():
             # We want to actually stop here and try the validation against the API
             data_to_validate = self.get_all_cleaned_data()
+            data_to_validate = data_to_validate.copy()
             data_to_validate.update(form.cleaned_data)
+            data_to_validate = remove_file_data(data_to_validate)
             validation_results, _ = validate_good(
                 self.request,
-                data_to_validate.copy(),
+                data_to_validate,
             )
             errors = validation_results.get("errors", {})
             logger.debug("NewAddGood.post: errors=%s", errors)

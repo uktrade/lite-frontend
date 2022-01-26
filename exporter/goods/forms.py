@@ -988,6 +988,20 @@ def attach_firearm_dealer_certificate_form(back_url):
     )
 
 
+class AttachFirearmDealerCertificateForm(forms.Form):
+    file = forms.FileField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1("Attach your document"),
+            "file",
+            Submit("submit", "Continue"),
+        )
+
+
 def is_registered_firearm_dealer_field(back_url):
     questions = [
         RadioButtons(
