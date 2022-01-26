@@ -46,6 +46,7 @@ from exporter.goods.forms import (
     FirearmsNumberOfItemsForm,
     FirearmYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
+    IdentificationMarkingsForm,
     ProductCategoryForm,
 )
 from exporter.goods.services import (
@@ -320,6 +321,7 @@ class NewAddGoodFormSteps:
     PRODUCT_CATEGORY = "product_category"
     GROUP_TWO_PRODUCT_TYPE = "group_two_product_type"
     FIREARMS_NUMBER_OF_ITEMS = "firearms_number_of_items"
+    IDENFITICATION_MARKINGS = "identification_markings"
     FIREARMS_YEAR_OF_MANUFACTURE_DETAILS = "firearms_year_of_manufacture_details"
 
 
@@ -364,12 +366,14 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         (NewAddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
         (NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
         (NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
+        (NewAddGoodFormSteps.IDENFITICATION_MARKINGS, IdentificationMarkingsForm),
         (NewAddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmYearOfManufactureDetailsForm),
     ]
     condition_dict = {
         NewAddGoodFormSteps.PRODUCT_CATEGORY: has_flag(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS),
         NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
         NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: compose_with_and(is_draft, is_firearm_ammunition_or_component),
+        NewAddGoodFormSteps.IDENFITICATION_MARKINGS: compose_with_and(is_draft, is_firearm_ammunition_or_component),
     }
     template_name = "core/form-wizard.html"
 
@@ -430,6 +434,7 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
                 # proceed to the next step
                 return self.render_next_step(form)
         return self.render(form)
+
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, **kwargs):

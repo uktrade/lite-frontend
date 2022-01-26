@@ -932,6 +932,37 @@ def identification_markings_form(draft_pk=None, good_id=None):
     )
 
 
+class IdentificationMarkingsForm(forms.Form):
+    has_identification_markings = forms.ChoiceField(
+        choices=(
+            (CreateGoodForm.FirearmGood.IdentificationMarkings.YES, CreateGoodForm.FirearmGood.IdentificationMarkings.YES),
+            (CreateGoodForm.FirearmGood.IdentificationMarkings.NO, CreateGoodForm.FirearmGood.IdentificationMarkings.NO),
+        ),
+        required=False,
+        widget=forms.RadioSelect,
+    )
+    no_identification_markings_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE),
+            "has_identification_markings",
+            "no_identification_markings_details",
+            Submit("submit", CreateGoodForm.FirearmGood.IdentificationMarkings.BUTTON_TEXT),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["identification_markings_step"] = True
+        return cleaned_data
+
+
 def attach_firearm_dealer_certificate_form(back_url):
     return Form(
         title="Attach your registered firearms dealer certificate",
