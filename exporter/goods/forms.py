@@ -614,7 +614,11 @@ def group_two_product_type_form(back_link=None):
 
 
 class GroupTwoProductTypeForm(forms.Form):
-    type = forms.ChoiceField(
+    # Doing a typed choice field here seems redundant but it's so we can use
+    # `empty_value` in the case that someone hasn't selected an answer.
+    # This is how the API expects an empty answer (if you used ChoiceField you
+    # get an empty string which returns a different error message).
+    type = forms.TypedChoiceField(
         choices=(
             ("firearms", CreateGoodForm.FirearmGood.ProductType.FIREARM),
             ("ammunition", CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
@@ -624,6 +628,8 @@ class GroupTwoProductTypeForm(forms.Form):
             ("software_related_to_firearms", CreateGoodForm.FirearmGood.ProductType.SOFTWARE_RELATED_TO_FIREARM),
             ("technology_related_to_firearms", CreateGoodForm.FirearmGood.ProductType.TECHNOLOGY_RELATED_TO_FIREARM),
         ),
+        coerce=str,
+        empty_value=None,
         required=False,
         widget=forms.RadioSelect,
     )
