@@ -709,6 +709,34 @@ def firearms_capture_serial_numbers(number_of_items):
     )
 
 
+class SerialNumberForm(forms.Form):
+    serial_number = forms.CharField(required=False)
+
+
+class StaticNumberOfFormsFormSet(forms.BaseFormSet):
+    def __init__(self, number_of_forms, *args, **kwargs):
+        self.number_of_forms = number_of_forms
+        super().__init__(*args, **kwargs)
+
+    def total_form_count(self):
+        return self.number_of_forms
+
+    def initial_form_count(self):
+        return self.number_of_forms
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["capture_serial_numbers_step"] = True
+        return cleaned_data
+
+
+FirearmsCaptureSerialNumbersFormSet = forms.formset_factory(
+    SerialNumberForm,
+    extra=0,
+    formset=StaticNumberOfFormsFormSet,
+)
+
+
 def firearm_year_of_manufacture_details_form(good_id=None):
     return Form(
         title="What is the year of manufacture of the firearm?",

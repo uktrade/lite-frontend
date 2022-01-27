@@ -46,6 +46,7 @@ from exporter.goods.forms import (
     has_valid_rfd_certificate,
     has_valid_section_five_certificate,
     AttachFirearmDealerCertificateForm,
+    FirearmsCaptureSerialNumbersFormSet,
     FirearmsNumberOfItemsForm,
     FirearmYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
@@ -327,6 +328,7 @@ class NewAddGoodFormSteps:
     IDENFITICATION_MARKINGS = "IDENFITICATION_MARKINGS"
     FIREARMS_YEAR_OF_MANUFACTURE_DETAILS = "FIREARMS_YEAR_OF_MANUFACTURE_DETAILS"
     ATTACH_FIREARM_DEALER_CERTIFICATE = "ATTACH_FIREARM_DEALER_CERTIFICATE"
+    FIREARMS_CAPTURE_SERIAL_NUMBERS = "FIREARMS_CAPTURE_SERIAL_NUMBERS"
 
 
 def has_flag(value):
@@ -394,6 +396,7 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         (NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
         (NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
         (NewAddGoodFormSteps.IDENFITICATION_MARKINGS, IdentificationMarkingsForm),
+        (NewAddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS, FirearmsCaptureSerialNumbersFormSet),
         (NewAddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmYearOfManufactureDetailsForm),
         (NewAddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmDealerCertificateForm),
     ]
@@ -464,6 +467,18 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
                 # proceed to the next step
                 return self.render_next_step(form)
         return self.render(form)
+
+    def get_form_kwargs(self, step):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == NewAddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS:
+            firearms_number_of_items_cleaned_data = self.get_cleaned_data_for_step(NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS)
+            if firearms_number_of_items_cleaned_data:
+                kwargs["number_of_forms"] = int(firearms_number_of_items_cleaned_data["number_of_items"])
+            else:
+                kwargs["number_of_forms"] = 0
+
+        return kwargs
 
     def done(self, form_list, **kwargs):
         form = form_list[0]
