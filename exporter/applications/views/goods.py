@@ -387,6 +387,7 @@ class NoSaveStorage(S3Boto3Storage):
 
 
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
+    # Might actually be able to switch file_storage to S3Boto3Storage
     file_storage = NoSaveStorage()
     form_list = [
         (NewAddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmDealerCertificateForm),
