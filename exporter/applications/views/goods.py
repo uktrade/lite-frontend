@@ -307,7 +307,6 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             if not self.show_section_upload_form:
                 self.hide_unused_errors = False
                 return post_goods
-        import ipdb; ipdb.set_trace()
         return self.validate_step
 
     def get_success_url(self):
