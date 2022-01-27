@@ -71,7 +71,11 @@ def product_category_form(request):
 
 
 class ProductCategoryForm(forms.Form):
-    item_category = forms.ChoiceField(
+    # Doing a typed choice field here seems redundant but it's so we can use
+    # `empty_value` in the case that someone hasn't selected an answer.
+    # This is how the API expects an empty answer (if you used ChoiceField you
+    # get an empty string which returns a different error message).
+    item_category = forms.TypedChoiceField(
         choices=(
             ("group1_platform", CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
             ("group1_device", CreateGoodForm.ProductCategory.GROUP1_DEVICE),
@@ -81,6 +85,8 @@ class ProductCategoryForm(forms.Form):
             ("group3_software", CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
             ("group3_technology", CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
         ),
+        coerce=str,
+        empty_value=None,
         required=False,
         widget=forms.RadioSelect,
     )
