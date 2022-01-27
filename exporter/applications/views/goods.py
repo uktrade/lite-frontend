@@ -380,6 +380,9 @@ class NoSaveStorage(S3Boto3Storage):
         return content.obj.key
 
     def delete(self, name):
+        # We don't actually want to delete anything here as we'll be sending
+        # the key to the API that will pick this up so we want it to persist
+        # in the S3 bucket.
         pass
 
 
