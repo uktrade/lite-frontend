@@ -630,7 +630,9 @@ class GroupTwoProductTypeForm(forms.Form):
         ),
         coerce=str,
         empty_value=None,
-        required=False,
+        error_messages={
+            "required": "Select the type of product",
+        },
         widget=forms.RadioSelect,
     )
 
@@ -663,7 +665,12 @@ def firearms_number_of_items(firearm_type):
 
 
 class FirearmsNumberOfItemsForm(forms.Form):
-    number_of_items = forms.CharField(required=False)
+    number_of_items = forms.IntegerField(
+        error_messages={
+            "required": "Enter the number of items",
+        },
+        widget=forms.TextInput,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -988,7 +995,9 @@ class IdentificationMarkingsForm(forms.Form):
             (CreateGoodForm.FirearmGood.IdentificationMarkings.YES, CreateGoodForm.FirearmGood.IdentificationMarkings.YES),
             (CreateGoodForm.FirearmGood.IdentificationMarkings.NO, CreateGoodForm.FirearmGood.IdentificationMarkings.NO),
         ),
-        required=False,
+        error_messages={
+            "required": "Select yes if the product has identification markings",
+        },
         widget=forms.RadioSelect,
     )
     no_identification_markings_details = forms.CharField(
@@ -1010,6 +1019,13 @@ class IdentificationMarkingsForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data["identification_markings_step"] = True
+        if cleaned_data.get("has_identification_markings") == CreateGoodForm.FirearmGood.IdentificationMarkings.NO:
+            if not cleaned_data["no_identification_markings_details"]:
+                self.add_error(
+                    "no_identification_markings_details",
+                    "Enter a reason why the product has not been marked",
+                )
+
         return cleaned_data
 
 
