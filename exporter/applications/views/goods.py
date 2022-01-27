@@ -396,7 +396,7 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         (NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
         (NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
         (NewAddGoodFormSteps.IDENFITICATION_MARKINGS, IdentificationMarkingsForm),
-        (NewAddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS, FirearmsCaptureSerialNumbersFormSet),
+        # (NewAddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS, FirearmsCaptureSerialNumbersFormSet),
         (NewAddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmYearOfManufactureDetailsForm),
         (NewAddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmDealerCertificateForm),
     ]
