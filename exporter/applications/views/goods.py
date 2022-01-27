@@ -373,8 +373,15 @@ def remove_file_data(data):
     }
 
 
+class NoSaveStorage(S3Boto3Storage):
+    def save(self, name, content, max_length=None):
+        # We don't actually need to save anything here as our file is already
+        # on S3.
+        return content.obj.key
+
+
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
-    file_storage = DefaultStorage()
+    file_storage = NoSaveStorage()
     form_list = [
         (NewAddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmDealerCertificateForm),
         # (NewAddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
@@ -450,6 +457,9 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
                 # proceed to the next step
                 return self.render_next_step(form)
         return self.render(form)
+
+    def done(self, form_list, **kwargs):
+        import ipdb; ipdb.set_trace()
 
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
