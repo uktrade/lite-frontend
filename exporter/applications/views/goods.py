@@ -390,12 +390,12 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
     # Might actually be able to switch file_storage to S3Boto3Storage
     file_storage = NoSaveStorage()
     form_list = [
+        (NewAddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
+        (NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
+        (NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
+        (NewAddGoodFormSteps.IDENFITICATION_MARKINGS, IdentificationMarkingsForm),
+        (NewAddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmYearOfManufactureDetailsForm),
         (NewAddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmDealerCertificateForm),
-        # (NewAddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
-        # (NewAddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
-        # (NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
-        # (NewAddGoodFormSteps.IDENFITICATION_MARKINGS, IdentificationMarkingsForm),
-        # (NewAddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmYearOfManufactureDetailsForm),
     ]
     condition_dict = {
         NewAddGoodFormSteps.PRODUCT_CATEGORY: has_flag(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS),
