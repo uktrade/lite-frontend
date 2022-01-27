@@ -55,6 +55,8 @@ from lite_forms.components import FiltersBar, TextInput, BackLink
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import get_form_by_pk
 from lite_forms.views import SingleFormView, MultiFormView
+from formtools.wizard.views import SessionWizardView
+from exporter.goods.forms import GroupTwoProductTypeForm, FirearmsNumberOfItems
 
 from core.auth.views import LoginRequiredMixin
 
@@ -294,6 +296,22 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             return reverse_lazy(
                 "applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]}
             )
+
+
+class AddGood2(LoginRequiredMixin, SessionWizardView):
+    template_name = 'core/form-wizard.html'
+
+    form_list = [
+        GroupTwoProductTypeForm,
+        FirearmsNumberOfItems
+    ]
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        kwargs['request'] = self.request
+
+        return kwargs
 
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):

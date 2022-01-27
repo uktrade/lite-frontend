@@ -1,12 +1,20 @@
+from http import HTTPStatus
+
+from django import forms
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
+from django.core.exceptions import ValidationError
+from requests.exceptions import HTTPError
 
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Layout, Submit, HTML
 from exporter.core.helpers import str_to_bool
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from core.builtins.custom_tags import linkify
 from exporter.core.services import get_control_list_entries
 from exporter.core.services import get_pv_gradings
 from exporter.goods.helpers import good_summary, get_category_display_string
+from exporter.goods.services import post_goods
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.goods import (
@@ -576,6 +584,69 @@ def group_two_product_type_form(back_link=None):
         form.back_link = BackLink("Back", back_link)
 
     return form
+
+
+class BaseForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['validate_only'] = True
+        cleaned_data.update(self.get_form_data(cleaned_data))
+
+        result, status_code = post_goods(self.request, cleaned_data)
+
+        if status_code != HTTPStatus.OK:
+            for name, msg in result['errors'].items():
+                if name in self.fields:  # Filter out unused errors (lite forms hangover)
+                    self.add_error(name, msg)
+
+        return cleaned_data
+
+    def get_form_data(self, cleaned_data):
+        return cleaned_data
+
+
+class GroupTwoProductTypeForm(BaseForm):
+    firearms_type = forms.ChoiceField(
+        choices=[
+            ('firearms', CreateGoodForm.FirearmGood.ProductType.FIREARM),
+            ('ammunition', CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
+            ('components_for_firearms', CreateGoodForm.FirearmGood.ProductType.COMPONENTS_FOR_FIREARM),
+        ],
+        widget=forms.RadioSelect,
+        label=''
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper.layout = Layout(
+            HTML.h1(CreateGoodForm.FirearmGood.ProductType.TITLE),
+            "firearms_type",
+            Submit("submit", "Continue"),
+        )
+
+    def get_form_data(self, cleaned_data):
+        cleaned_data['type'] = cleaned_data.pop('firearms_type', '')
+        return cleaned_data
+
+
+class FirearmsNumberOfItems(BaseForm):
+    number_of_items = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper.layout = Layout(
+            HTML.h1("Number of items"),
+            "number_of_items",
+            Submit("submit", "Continue"),
+        )
 
 
 def firearms_number_of_items(firearm_type):
