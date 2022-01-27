@@ -379,6 +379,9 @@ class NoSaveStorage(S3Boto3Storage):
         # on S3.
         return content.obj.key
 
+    def delete(self, name):
+        pass
+
 
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
     file_storage = NoSaveStorage()
@@ -459,7 +462,23 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         return self.render(form)
 
     def done(self, form_list, **kwargs):
-        import ipdb; ipdb.set_trace()
+        form = form_list[0]
+        files = self.get_form_step_files(form)
+        file = files["ATTACH_FIREARM_DEALER_CERTIFICATE-file"]
+        data = {
+            "name": getattr(file, "original_name", file.name),
+            "s3_key": file.name,
+            "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
+            "document_on_organisation": {
+                "expiry_date": "2030-11-07",
+                "reference_code": "12345",
+                "document_type": "rfd-certificate",
+            },
+        }
+
+        _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=data)
+
+        assert status_code == 201
 
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
