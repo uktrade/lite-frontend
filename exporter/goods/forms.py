@@ -633,6 +633,7 @@ class GroupTwoProductTypeForm(forms.Form):
         error_messages={
             "required": "Select the type of product",
         },
+        required=False,
         widget=forms.RadioSelect,
     )
 

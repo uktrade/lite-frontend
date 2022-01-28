@@ -388,6 +388,13 @@ class NoSaveStorage(S3Boto3Storage):
         pass
 
 
+class RemoteValidationError(Exception):
+    
+    def __init__(self, form, *args, **kwargs):
+        self.form = form
+        super().__init__(*args, **kwargs)
+
+
 class NewAddGood(LoginRequiredMixin, SessionWizardView):
     # Might actually be able to switch file_storage to S3Boto3Storage
     file_storage = NoSaveStorage()
@@ -407,6 +414,46 @@ class NewAddGood(LoginRequiredMixin, SessionWizardView):
         NewAddGoodFormSteps.IDENFITICATION_MARKINGS: compose_with_and(is_draft, is_firearm_ammunition_or_component),
     }
     template_name = "core/form-wizard.html"
+
+    def post(self, *args, **kwargs):
+        try:
+            return super().post(*args, **kwargs)
+        except RemoteValidationError as e:
+            return self.render(e.form)
+
+    def process_step(self, form):
+        # We want to actually stop here and try the validation against the API
+        data_to_validate = self.get_all_cleaned_data()
+        data_to_validate = data_to_validate.copy()
+        data_to_validate.update(form.cleaned_data)
+        data_to_validate = remove_file_data(data_to_validate)
+        validation_results, _ = validate_good(
+            self.request,
+            data_to_validate,
+        )
+        errors = validation_results.get("errors", {})
+        for field_name, field_errors in errors.items():
+            if field_name not in form.fields:
+                continue
+            for field_error in field_errors:
+                form.add_error(field_name, field_error)
+
+        if form.errors:
+            raise RemoteValidationError(form)
+
+        return self.get_form_step_data(form)
+
+    def get_form_kwargs(self, step):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == NewAddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS:
+            firearms_number_of_items_cleaned_data = self.get_cleaned_data_for_step(NewAddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS)
+            if firearms_number_of_items_cleaned_data:
+                kwargs["number_of_forms"] = int(firearms_number_of_items_cleaned_data["number_of_items"])
+            else:
+                kwargs["number_of_forms"] = 0
+
+        return kwargs
 
     def done(self, form_list, **kwargs):
         form = form_list[0]
