@@ -134,6 +134,9 @@ class RefusalAdviceForm(forms.Form):
     def _group_denial_reasons(self, denial_reasons):
         grouped = defaultdict(list)
         for item in denial_reasons:
+            # skip the ones that are not active anymore
+            if item["deprecated"]:
+                continue
             grouped[item["id"][0]].append((item["id"], item.get("display_value") or item["id"]))
         return grouped.items()
 

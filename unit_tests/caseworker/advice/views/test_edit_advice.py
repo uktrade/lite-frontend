@@ -7,7 +7,7 @@ from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
+def setup(mock_queue, mock_case, mock_denial_reasons):
     yield
 
 
@@ -94,7 +94,13 @@ def test_edit_approve_advice_post(authorized_client, requests_mock, data_standar
 
 
 def test_edit_refuse_advice_post(
-    authorized_client, requests_mock, data_standard_case, standard_case_with_advice, refusal_advice, url
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    standard_case_with_advice,
+    refusal_advice,
+    url,
+    mock_denial_reasons,
 ):
     user_advice_create_url = f"/cases/{data_standard_case['case']['id']}/user-advice/"
     requests_mock.post(user_advice_create_url, json={})
@@ -106,20 +112,6 @@ def test_edit_refuse_advice_post(
     requests_mock.get(
         client._build_absolute_uri(f"/gov_users/{data_standard_case['case']['id']}"),
         json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
-    )
-    requests_mock.get(
-        client._build_absolute_uri("/static/denial-reasons/"),
-        json={
-            "denial_reasons": [
-                {"id": "1"},
-                {"id": "2"},
-                {"id": "3"},
-                {"id": "4"},
-                {"id": "5"},
-                {"id": "5a"},
-                {"id": "5b"},
-            ]
-        },
     )
 
     data = {
