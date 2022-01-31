@@ -306,12 +306,29 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
         FirearmsNumberOfItems
     ]
 
-    def get_form_kwargs(self, step=None):
-        kwargs = super().get_form_kwargs(step)
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
 
-        kwargs['request'] = self.request
+        for form_key in self.get_form_list():
+            data = self.storage.get_step_data(form_key)
+            if data:
+                initial.update(data)
 
-        return kwargs
+        return initial
+
+    def get_form(self, step=None, data=None, files=None):
+        form = super().get_form(step, data, files)
+
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            result, status_code = validate_good(self.request, cleaned_data)
+
+            if status_code != HTTPStatus.OK:
+                for name, msg in result['errors'].items():
+                    if name in form.fields:  # Filter out unused errors (lite forms hangover)
+                        form.add_error(name, msg)
+
+        return form
 
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):

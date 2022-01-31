@@ -589,30 +589,12 @@ def group_two_product_type_form(back_link=None):
 class BaseForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request')
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-    def clean(self):
-        cleaned_data = super().clean()
-        cleaned_data['validate_only'] = True
-        cleaned_data.update(self.get_form_data(cleaned_data))
-
-        result, status_code = post_goods(self.request, cleaned_data)
-
-        if status_code != HTTPStatus.OK:
-            for name, msg in result['errors'].items():
-                if name in self.fields:  # Filter out unused errors (lite forms hangover)
-                    self.add_error(name, msg)
-
-        return cleaned_data
-
-    def get_form_data(self, cleaned_data):
-        return cleaned_data
-
 
 class GroupTwoProductTypeForm(BaseForm):
-    firearms_type = forms.ChoiceField(
+    type = forms.ChoiceField(
         choices=[
             ('firearms', CreateGoodForm.FirearmGood.ProductType.FIREARM),
             ('ammunition', CreateGoodForm.FirearmGood.ProductType.AMMUNITION),
@@ -627,12 +609,13 @@ class GroupTwoProductTypeForm(BaseForm):
 
         self.helper.layout = Layout(
             HTML.h1(CreateGoodForm.FirearmGood.ProductType.TITLE),
-            "firearms_type",
+            "type",
             Submit("submit", "Continue"),
         )
 
-    def get_form_data(self, cleaned_data):
-        cleaned_data['type'] = cleaned_data.pop('firearms_type', '')
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['product_type_step'] = 'True'
         return cleaned_data
 
 
@@ -647,6 +630,13 @@ class FirearmsNumberOfItems(BaseForm):
             "number_of_items",
             Submit("submit", "Continue"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['number_of_items_step'] = 'True'
+        cleaned_data['item_category'] = 'group2_firearms'
+        cleaned_data['type'] = 'firearms'
+        return cleaned_data
 
 
 def firearms_number_of_items(firearm_type):
