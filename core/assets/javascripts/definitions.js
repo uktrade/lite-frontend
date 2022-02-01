@@ -60,3 +60,7 @@ $('[data-definition-title]').click(function() {
     LITECommon.Modal.showModal($(this).data("definition-title"), text || htmlList, false, true, {maxWidth: '500px'});
     return false;
 })
+
+var CookiePolicy = require("./modules/cookie-banner");
+var cookiePolicy = new CookiePolicy();
+cookiePolicy.initBanner(".app-cookie-banner", ".js-accept-cookie", "cookies");
