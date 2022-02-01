@@ -19,7 +19,7 @@ from caseworker.cases.services import (
 from caseworker.core.constants import GENERATED_DOCUMENT
 from caseworker.core.helpers import generate_activity_filters
 from caseworker.core.objects import Tab, TabCollection
-from caseworker.core.services import (get_user_permissions, get_status_properties, get_permissible_statuses,)
+from caseworker.core.services import get_user_permissions, get_status_properties, get_permissible_statuses
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import CasePage, ApplicationPage
 from caseworker.queues.services import get_queue
@@ -130,6 +130,7 @@ class CaseView(TemplateView):
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
+        
         self.permissions = get_user_permissions(self.request)
 
         if hasattr(self, "get_" + self.case.sub_type + "_" + self.case.type):
