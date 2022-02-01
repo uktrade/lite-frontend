@@ -8,7 +8,7 @@ def export_vars(request):
         "GOV_UK_URL": "https://www.gov.uk",
         "FEEDBACK_URL": settings.FEEDBACK_URL,
         "INTERNAL_URL": settings.INTERNAL_FRONTEND_URL,
-        "GOOGLE_ANALYTICS_KEY": settings.GOOGLE_ANALYTICS_KEY,
+        "GTM_ID": settings.GTM_ID,
         "CURRENT_PATH": request.get_full_path(),
         "CURRENT_PATH_WITHOUT_PARAMS": request.get_full_path().split("?")[0].split("#")[0],
         "USER_PERMISSIONS": Permissions,

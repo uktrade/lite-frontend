@@ -172,5 +172,5 @@
 {% endblock %}
 
 {% block footer_additions %}
-    {% render_bundle "cookie-policy-form" "js" %}
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'javascripts/cookie-policy-form.js' %}"></script>
 {% endblock %}
