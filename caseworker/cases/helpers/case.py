@@ -81,7 +81,6 @@ class CaseView(TemplateView):
     tabs = None
     slices = None
     additional_context = {}
-    flag_aliases = None
 
     def get_context(self):
         if not self.tabs:
@@ -131,8 +130,6 @@ class CaseView(TemplateView):
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
-        self.flag_aliases = get_flag_aliases(request)
-
         self.permissions = get_user_permissions(self.request)
 
         if hasattr(self, "get_" + self.case.sub_type + "_" + self.case.type):
