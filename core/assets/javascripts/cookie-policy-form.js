@@ -1,6 +1,4 @@
-var CookiePolicy = require("./modules/cookie-banner");
-
-var cookiePolicy = new CookiePolicy();
+var cookiePolicy = new CookieBanner();
 cookiePolicy.bindForm(
   "#cookie-preferences-form",
   ".cookie-settings__confirmation",

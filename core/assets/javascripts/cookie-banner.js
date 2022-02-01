@@ -204,5 +204,3 @@ function CookieBanner() {
     bindForm: bindCookiePolicyForm,
   };
 }
-
-module.exports = CookieBanner;
