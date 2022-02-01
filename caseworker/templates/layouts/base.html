@@ -1,5 +1,6 @@
 {% load svg from svg %}
 {% load static %}
+{% load gtm %}
 
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -28,20 +29,10 @@
 	<link rel="apple-touch-icon" href="{% static 'images/govuk-apple-touch-icon.png' %}">
 
 	<link href="{% static 'main.css' %}" rel="stylesheet" type="text/css" />
-
-	{% if ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY %}
-	<script nonce="{{ request.csp_nonce }}">
-		(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-		j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-		'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-		})(window,document,'script','dataLayer','{{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}');
-	</script>
-	{% endif %}
-
 	<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/govuk-opengraph-image.png' %}">
 
 	{% block head_common_javascript %}
+		{% google_tag_manager %}
 		<script nonce="{{ request.csp_nonce }}" src="{% static 'head.js' %}"></script>
 	{% endblock %}
 
@@ -49,11 +40,7 @@
 </head>
 
 <body class="govuk-template__body js-disabled {% block body_classes %}{% endblock %}">
-	{% if ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY %}
-	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ ENVIRONMENT_VARIABLES.GOOGLE_ANALYTICS_KEY }}"
-	height="0" width="0"></iframe></noscript>
-	{% endif %}
-
+	{% google_tag_manager_noscript %}
 	<script nonce="{{ request.csp_nonce }}">
 		document.body.className = (
 			(document.body.className) ?
@@ -64,6 +51,7 @@
 	</script>
 
 	<a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+	{% include "cookies/banner.html" %}
 	<header class="app-header" role="banner" data-module="header">
 		<div class="app-header__container govuk-width-container">
 			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
