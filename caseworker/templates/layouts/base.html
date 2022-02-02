@@ -51,7 +51,7 @@
 	</script>
 
 	<a href="#main-content" class="govuk-skip-link">Skip to main content</a>
-	{% include "cookies/banner.html" %}
+	{% if ENVIRONMENT_VARIABLES.GTM_ID %}{% include "cookies/banner.html" %}{% endif %}
 	<header class="app-header" role="banner" data-module="header">
 		<div class="app-header__container govuk-width-container">
 			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
