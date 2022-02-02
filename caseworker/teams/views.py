@@ -1,18 +1,20 @@
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, RedirectView
+from django.views.generic import TemplateView, RedirectView, FormView
 
 from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions
 from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_forms.views import SingleFormView
-from caseworker.teams.forms import add_team_form, edit_team_form
+from caseworker.teams.forms import add_team_form, EditTeamForm
 from caseworker.teams.services import get_team, get_teams, post_teams, get_users_by_team, put_team
 from caseworker.users.services import get_gov_user
 
 from core.auth.views import LoginRequiredMixin
 
+from django.contrib import messages
+from django.utils.translation import gettext as _
 
 class TeamsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
@@ -55,11 +57,39 @@ class AddTeam(LoginRequiredMixin, SingleFormView):
         return reverse("teams:teams")
 
 
-class EditTeam(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        team, _ = get_team(request, self.object_pk)
-        self.form = edit_team_form()
-        self.data = team["team"]
-        self.action = put_team
-        self.success_url = reverse("teams:teams")
+class EditTeam(LoginRequiredMixin, FormView):
+    template_name = "teams/team-edit.html"
+    form_class = EditTeamForm
+    success_url = reverse_lazy("teams:teams")
+
+    def get_form(self, *args, **kwargs):
+        self.object_pk = self.kwargs["pk"]
+        team, _ = get_team(self.request, self.object_pk)
+        part_of_ecju = team["team"]["part_of_ecju"]
+        is_ogd = team["team"]["is_ogd"]
+        form = super().get_form(*args, **kwargs)
+       
+        form.fields['name'].initial = team["team"]["name"]
+        form.fields['part_of_ecju'].initial = True if part_of_ecju == True else False
+        form.fields['is_ogd'].initial = True if is_ogd == True else False
+        
+        return form
+
+    def post(self, *args, **kwargs):
+        form = EditTeamForm(self.request.POST)
+        data_dict = self.request.POST.dict()
+        if form.is_valid():
+            response = put_team(self.request, self.kwargs["pk"], data_dict)
+            status_code = response[-1]
+            data_json = response[0]
+            print(response)
+            print(self.kwargs["pk"])
+            errors = data_json.get("errors", {})
+            for field_name, field_errors in errors.items():
+                if field_name not in form.fields:
+                    form.add_error(None, field_errors)
+                    continue
+                for field_error in field_errors:
+                    form.add_error(field_name, field_error)
+
+        return super().post(*args, **kwargs)

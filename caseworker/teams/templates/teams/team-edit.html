@@ -1,0 +1,20 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% block title %}My first title!{% endblock %}
+
+{% block body %}
+
+  {% error_summary form %}
+
+  <h1 class="govuk-heading-xl">
+    Edit team
+  </h1>
+
+  <div class="govuk-body">
+    {% csrf_token %}
+    
+    {% crispy form %}
+  </div>
+
+{% endblock %}
