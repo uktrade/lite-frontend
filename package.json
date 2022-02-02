@@ -9,7 +9,9 @@
     "watch_exporter": "parcel watch ./exporter/assets/javascripts/{main,head}.js --dist-dir exporter/assets/built --public-url /assets/",
     "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head}.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch": "npm-run-all --parallel watch_exporter watch_caseworker",
-    "build": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker"
+    "build": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
+    "test:e2e": "cypress run --browser chrome",
+    "test:e2e:watch": "cypress open"
   },
   "engines": {
     "node": ">=14.18.0"
@@ -34,6 +36,7 @@
     "accessible-autocomplete": "^2.0.3",
     "eslint": "^8.8.0",
     "cypress": "^9.3.1",
+    "dotenv": "^15.0.0",
     "fetch-polyfill": "^0.8.2",
     "govuk-frontend": "^3.13.0",
     "highlight-within-textarea": "^2.0.5",

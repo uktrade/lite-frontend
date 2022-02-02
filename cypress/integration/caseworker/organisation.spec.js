@@ -10,39 +10,46 @@ describe('Organisation', () => {
     cy.fixture('createOrganisation').then((organisationData) => {
       this.organisationData = organisationData
     })
-
-    cy.setCsrfTokenCookie()
-    cy.visit('/')
   })
 
-  it('should approve a newly created organisation', function () {
-    cy.createOrganisation(this.organisationData).then((response) => {
-      const organisation = response.body
-      
-      cy.visit('/organisations/')
+  it('login (this step will be irrelevant after we mock sso)', () => {
+    cy.login()
+  })
 
-      cy.findByText('In review').click()
-      filterOrganisation(cy, organisation.name)
-      cy.findByText('Review').click()
+  context('newly created organisation', () => {
+    beforeEach(() => {
+      cy.visit('/')
+    })
 
-      cy.get('.govuk-summary-list')
-        .should('contain', organisation.name)
-        .and('contain', organisation.eori_number)
-        .and('contain', organisation.sic_number)
-        .and('contain', organisation.vat_number)
-        .and('contain', organisation.registration_number)
-        .and('contain', organisation.type.value)
-
-      cy.get('#status-active').click()
-      cy.findByText('Save').click()
-      cy.findByText('Active').should('exist')
-      cy.findByText(`activated the organisation - '${organisation.name}'.`)
-        .should('exist')
-
-      cy.visit('/organisations/')
-
-      cy.findByText('Active').click()
-      filterOrganisation(cy, organisation.name)
+    it('should approve an organisation', function () {
+      cy.createOrganisation(this.organisationData).then((response) => {
+        const organisation = response.body
+        
+        cy.visit('/organisations/')
+  
+        cy.findByText('In review').click()
+        filterOrganisation(cy, organisation.name)
+        cy.findByText('Review').click()
+  
+        cy.get('.govuk-summary-list')
+          .should('contain', organisation.name)
+          .and('contain', organisation.eori_number)
+          .and('contain', organisation.sic_number)
+          .and('contain', organisation.vat_number)
+          .and('contain', organisation.registration_number)
+          .and('contain', organisation.type.value)
+  
+        cy.get('#status-active').click()
+        cy.findByText('Save').click()
+        cy.findByText('Active').should('exist')
+        cy.findByText(`activated the organisation - '${organisation.name}'.`)
+          .should('exist')
+  
+        cy.visit('/organisations/')
+  
+        cy.findByText('Active').click()
+        filterOrganisation(cy, organisation.name)
+      })
     })
   })
 })
