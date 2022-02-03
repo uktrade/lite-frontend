@@ -4,7 +4,7 @@
 			<h2 class="govuk-heading-m">{{ slice.title }}</h2>
 		{% endif %}
 		<div id="slice-{{ slice.file }}">
-			{% include 'case/slices/'|add:slice.file|add:'.html' %}
+			{% include slice.file %}
 		</div>
 		<div class="app-case-separator"></div>
 	{% endif %}

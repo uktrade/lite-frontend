@@ -190,8 +190,10 @@ urlpatterns = [
         name="goods_type_delete_document",
     ),
     # Goods locations
-    path("<uuid:pk>/goods-locations/", locations.GoodsLocation.as_view(), name="location"),
-    path("<uuid:pk>/goods-locations/edit/", locations.EditGoodsLocation.as_view(), name="edit_location"),
+    path("<uuid:pk>/goods-locations/", locations.GoodsLocationView.as_view(), name="location"),
+    path("<uuid:pk>/goods-locations/edit/", locations.GoodsStartingPointFormView.as_view(), name="edit_location"),
+    path("<uuid:pk>/goods-recipients/", locations.GoodsRecipientsFormView.as_view(), name="goods_recipients",),
+    path("<uuid:pk>/goods-locations-summary/", locations.LocationsSummaryView.as_view(), name="locations_summary"),
     path("<uuid:pk>/goods-locations/existing-sites/", locations.ExistingSites.as_view(), name="existing_sites"),
     path(
         "<uuid:pk>/goods-locations/external-locations/select/",
@@ -281,6 +283,12 @@ urlpatterns = [
     # End use details
     path("<uuid:pk>/end-use-details/", end_use_details.EndUseDetails.as_view(), name="end_use_details"),
     path("<uuid:pk>/route-of-goods/", route_of_goods.RouteOfGoods.as_view(), name="route_of_goods"),
+    # Temporary or permanent
+    path(
+        "<uuid:pk>/temporary-or-permanent/",
+        locations.TemporaryOrPermanentFormView.as_view(),
+        name="temporary_or_permanent",
+    ),
     # Temporary export details
     path(
         "<uuid:pk>/temporary-export-details/",

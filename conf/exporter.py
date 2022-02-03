@@ -19,6 +19,7 @@ TEMPLATES = [
         "DIRS": [
             os.path.join(BASE_DIR, "exporter/templates"),
             os.path.join(BASE_DIR, "core/forms/templates"),
+            os.path.join(BASE_DIR, "core/templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
