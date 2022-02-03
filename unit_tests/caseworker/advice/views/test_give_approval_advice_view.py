@@ -4,6 +4,8 @@ import pytest
 
 from django.urls import reverse
 
+from caseworker.advice import services
+
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case):
@@ -31,7 +33,7 @@ def test_select_advice_post(authorized_client, requests_mock, data_standard_case
 @mock.patch("caseworker.advice.views.get_gov_user")
 def test_fco_give_approval_advice_get(mock_get_gov_user, authorized_client, url):
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
         None,
     )
     response = authorized_client.get(url)
@@ -46,7 +48,7 @@ def test_fco_give_approval_advice_get(mock_get_gov_user, authorized_client, url)
 @mock.patch("caseworker.advice.views.get_gov_user")
 def test_fco_give_approval_advice_existing_get(mock_get_gov_user, authorized_client, url, data_standard_case):
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
         None,
     )
     data_standard_case["case"]["advice"] = [
@@ -58,7 +60,9 @@ def test_fco_give_approval_advice_existing_get(mock_get_gov_user, authorized_cli
         # The AE-AZ destination has been advised on by FCO (should therefore not be rendered)
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
-            "user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}},
+            "user": {
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}
+            },
         },
     ]
     response = authorized_client.get(url)
@@ -96,7 +100,7 @@ def test_fco_give_approval_advice_post(
     expected_status_code,
 ):
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
         None,
     )
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})

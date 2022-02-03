@@ -44,7 +44,6 @@ class CaseContextMixin:
     def unadvised_countries(self):
         """Returns a dict of countries for which advice has not been given by the current user's team."""
         dest_types = constants.DESTINATION_TYPES
-
         advised_on = {
             # Map of destinations advised on -> team that gave the advice
             advice.get(dest_type): advice["user"]["team"]["id"]
@@ -156,11 +155,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
             "denial_reasons_display": self.denial_reasons_display,
-            **services.get_advice_tab_context(
-                self.case,
-                self.caseworker,
-                str(self.kwargs["queue_pk"])
-            ),
+            **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
     def form_valid(self, form):
@@ -282,11 +277,7 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
-            **services.get_advice_tab_context(
-                self.case,
-                self.caseworker,
-                self.queue_id,
-            ),
+            **services.get_advice_tab_context(self.case, self.caseworker, self.queue_id,),
         }
         return context
 
@@ -382,7 +373,10 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context(self, **kwargs):
         context = super().get_context()
-        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, self.caseworker["team"]["alias"])
+        team_alias = (
+            self.caseworker["team"]["alias"] if self.caseworker["team"]["alias"] else self.caseworker["team"]["id"]
+        )
+        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, team_alias)
         context["advice_to_consolidate"] = advice_to_consolidate.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         return context
@@ -421,6 +415,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         that we don't render the select-advice form.
         """
         super().setup(request, *args, **kwargs)
+
         user_team_alias = self.caseworker["team"]["alias"]
         level = "final" if user_team_alias == services.LICENSING_UNIT_TEAM else "team"
         team_advice = services.filter_advice_by_level(self.case.advice, [level])
@@ -429,7 +424,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         # to debug when this goes south.
         sentry_sdk.set_context("caseworker", self.caseworker)
         sentry_sdk.set_context("advice", {"advice": self.case.advice})
-        self.advice = services.filter_advice_by_team(team_advice, self.caseworker["team"]["id"])[0]
+        self.advice = services.filter_advice_by_team(team_advice, user_team_alias)[0]
         self.advice_type = self.advice["type"]["key"]
         self.kwargs["advice_type"] = "refuse" if self.advice_type == "refuse" else "approve"
 
@@ -470,7 +465,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
 
         lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED, services.LU_SR_MGR_CHECK_REQUIRED}
-        case_flag_aliases = {flag["aliases"] for flag in self.case.all_flags}
+        case_flag_aliases = {flag["alias"] for flag in self.case.all_flags}
         lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
             lu_countersign_flags.intersection(case_flag_aliases)
         )

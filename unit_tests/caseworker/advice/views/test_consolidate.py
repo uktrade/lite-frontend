@@ -163,7 +163,8 @@ def advice_to_consolidate(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FC
 
 @pytest.fixture
 def consolidated_advice(current_user, team1_user):
-    current_user["team"]["id"] = LICENSING_UNIT_TEAM
+    current_user["team"]["id"] = "2132131d-2432-423424"
+    current_user["team"]["alias"] = LICENSING_UNIT_TEAM
     return [
         {
             "id": "4f146dd1-a454-49ad-8c78-214552a45207",
@@ -332,8 +333,18 @@ def consolidated_refusal_outcome(consolidated_advice):
     return to_refusal_advice(consolidated_advice)
 
 
+@pytest.fixture()
+def gov_user():
+    return {
+        "user": {
+            "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+            "team": {"id": "211111b-c111-11e1-1111-1111111111a", "name": "Test", "alias": "TEST_1",},
+        }
+    }
+
+
 @pytest.mark.parametrize(
-    "path, form_class, team_id, team_name",
+    "path, form_class, team_alias, team_name",
     (
         ("", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
         ("", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
@@ -349,32 +360,36 @@ def test_consolidate_review(
     data_standard_case,
     url,
     advice_to_consolidate,
+    gov_user,
     path,
     form_class,
-    team_id,
+    team_alias,
     team_name,
 ):
     data_standard_case["case"]["advice"] = advice_to_consolidate
+    gov_user["user"]["team"]["name"] = team_name
+    gov_user["user"]["team"]["alias"] = team_alias
+
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
     )
+
     response = authorized_client.get(url + path)
     assert response.status_code == 200
     form = response.context["form"]
     assert isinstance(form, form_class)
 
     advice_to_review = list(response.context["advice_to_consolidate"])
-    advice_teams = {item[0]["user"]["team"]["id"] for item in advice_to_review}
+    advice_teams = {item[0]["user"]["team"]["alias"] for item in advice_to_review}
 
-    if team_id == LICENSING_UNIT_TEAM:
+    if team_alias == LICENSING_UNIT_TEAM:
         assert advice_teams == {FCDO_TEAM, MOD_ECJU_TEAM}
-    elif team_id == MOD_ECJU_TEAM:
+    elif team_alias == MOD_ECJU_TEAM:
         assert bool(advice_teams.intersection(MOD_CONSOLIDATE_TEAMS)) == True
 
 
 @pytest.mark.parametrize(
-    "team_id, team_name, recommendation, redirect",
+    "team_alias, team_name, recommendation, redirect",
     [
         (LICENSING_UNIT_TEAM, "Licensing Unit", "approve", "approve"),
         (LICENSING_UNIT_TEAM, "Licensing Unit", "refuse", "refuse"),
@@ -388,15 +403,18 @@ def test_consolidate_review_refusal_advice(
     data_standard_case,
     url,
     refusal_advice,
-    team_id,
+    gov_user,
+    team_alias,
     team_name,
     recommendation,
     redirect,
 ):
     data_standard_case["case"]["advice"] = refusal_advice
+    gov_user["user"]["team"]["name"] = team_name
+    gov_user["user"]["team"]["alias"] = team_alias
+
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
     )
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -408,19 +426,29 @@ def test_consolidate_review_refusal_advice(
 
 
 @pytest.mark.parametrize(
-    "team_id, team_name, recommendation_label",
+    "team_alias, team_name, recommendation_label",
     [
         (LICENSING_UNIT_TEAM, "Licensing Unit", "What is the combined recommendation for Licensing Unit?"),
         (MOD_ECJU_TEAM, "MOD-ECJU", "What is the combined recommendation for MOD-ECJU?"),
     ],
 )
 def test_consolidate_review_refusal_advice_recommendation_label(
-    requests_mock, authorized_client, data_standard_case, url, refusal_advice, team_id, team_name, recommendation_label
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    url,
+    refusal_advice,
+    team_alias,
+    team_name,
+    recommendation_label,
+    gov_user,
 ):
     data_standard_case["case"]["advice"] = refusal_advice
+    gov_user["user"]["team"]["name"] = team_name
+    gov_user["user"]["team"]["alias"] = team_alias
+
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
     )
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -432,6 +460,7 @@ def test_consolidate_review_refusal_advice_recommendation_label(
 def test_consolidate_review_approve(requests_mock, authorized_client, data_standard_case, url, advice):
     data_standard_case["case"]["advice"] = advice
     data = {"approval_reasons": "test", "countries": ["GB"]}
+
     response = authorized_client.post(url + "approve/", data=data)
     assert response.status_code == 302
     request = requests_mock.request_history.pop()
@@ -545,18 +574,15 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
 
 
 def test_view_consolidate_approve_outcome(
-    requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_advice
+    requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_advice, gov_user,
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
+    gov_user["user"]["team"]["name"] = "Licensing Unit"
+    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={
-            "user": {
-                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
-            }
-        },
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
     )
+
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
@@ -581,17 +607,19 @@ def test_view_consolidate_approve_outcome(
 
 
 def test_view_consolidate_refuse_outcome(
-    requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_refusal_outcome
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_refusal_outcome,
+    gov_user,
 ):
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
+    gov_user["user"]["team"]["name"] = "Licensing Unit"
+    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
+
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={
-            "user": {
-                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": LICENSING_UNIT_TEAM, "name": "Licensing Unit"},
-            }
-        },
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
     )
 
     response = authorized_client.get(view_consolidate_outcome_url)
@@ -646,7 +674,7 @@ def test_consolidate_raises_exception_for_other_team(
 
 
 @pytest.mark.parametrize(
-    "team_id, team_name", ((services.LICENSING_UNIT_TEAM, "LU Team"), (services.MOD_ECJU_TEAM, "MoD Team"),),
+    "team_alias, team_name", ((services.LICENSING_UNIT_TEAM, "LU Team"), (services.MOD_ECJU_TEAM, "MoD Team"),),
 )
 def test_view_consolidate_approve_outcome_countersign_warning_message(
     requests_mock,
@@ -654,7 +682,8 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
     data_standard_case,
     view_consolidate_outcome_url,
     consolidated_advice,
-    team_id,
+    gov_user,
+    team_alias,
     team_name,
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
@@ -665,6 +694,7 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
             "label": "",
             "level": "Good",
             "name": "Small Arms",
+            "alias": None,
             "priority": 0,
         },
         {
@@ -673,6 +703,7 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
             "label": "",
             "level": "Destination",
             "name": "LU Countersign Required",
+            "alias": services.LU_COUNTERSIGN_REQUIRED,
             "priority": 0,
         },
         {
@@ -681,6 +712,7 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
             "label": "",
             "level": "Destination",
             "name": "Green Countries",
+            "alias": None,
             "priority": 20,
         },
         {
@@ -689,19 +721,22 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
             "label": None,
             "level": "Case",
             "name": "Firearms",
+            "alias": None,
             "priority": 0,
         },
     ]
 
+    gov_user["user"]["team"]["name"] = team_name
+    gov_user["user"]["team"]["alias"] = team_alias
+
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json={"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "team": {"id": team_id, "name": team_name},}},
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
     )
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
-    if team_id == services.LICENSING_UNIT_TEAM:
+    if team_alias == services.LICENSING_UNIT_TEAM:
         assert response.context["lu_countersign_required"] == True
         assert response.context["finalise_case"] == False
     else:

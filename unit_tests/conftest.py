@@ -64,6 +64,7 @@ def data_open_case():
                 {
                     "id": "0149b643-d38a-4d1a-b259-7f73ff4f7b97",
                     "name": "Item not verified",
+                    "alias": None,
                     "label": None,
                     "colour": "default",
                     "priority": 0,
@@ -71,6 +72,7 @@ def data_open_case():
                 },
                 {
                     "name": "Destination20200629144727",
+                    "alias": None,
                     "label": "Test label",
                     "colour": "blue",
                     "priority": 0,
@@ -88,6 +90,7 @@ def data_open_case():
                 {
                     "id": "f097dab7-2b5d-49cd-a0a2-310e70ae0892",
                     "name": "Firearms",
+                    "alias": None,
                     "label": None,
                     "colour": "default",
                     "priority": 0,
@@ -96,6 +99,7 @@ def data_open_case():
                 {
                     "id": "de8fcf9f-15c1-447d-9144-adc484b4a1c5",
                     "name": "Organisation2020062916081",
+                    "alias": None,
                     "label": "Test label",
                     "colour": "pink",
                     "priority": 0,
@@ -348,6 +352,7 @@ def data_standard_case():
                 {
                     "id": "00000000-0000-0000-0000-000000000014",
                     "name": "Enforcement Check Req",
+                    "alias": "ENF_CHECK_REQ",
                     "colour": "default",
                     "label": None,
                     "priority": 0,
@@ -356,6 +361,10 @@ def data_standard_case():
             ],
             "queues": ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956"],
             "queue_names": ["queue", "queue 20200818000000"],
+            "queue_details": [
+                {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "queue", "alias": "FCDO_CASES_TO_REVIEW"},
+                {"id": "c270b79b-370c-4c5e-b8b6-4d5210a58956", "name": "queue 20200818000000", "alias": "QUEUE_2"},
+            ],
             "assigned_users": {},
             "has_advice": {"user": False, "my_user": False, "team": False, "my_team": False, "final": False,},
             "advice": [],
@@ -363,6 +372,7 @@ def data_standard_case():
                 {
                     "id": "2d2ba1de-3178-4c94-a823-ef6a3dba79af",
                     "name": "Enforcement Check Req",
+                    "alias": "ENF_CHECK_REQ",
                     "label": None,
                     "colour": "default",
                     "priority": 0,

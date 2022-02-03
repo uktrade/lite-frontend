@@ -20,7 +20,12 @@ LU_POST_CIRC_FINALISE_QUEUE = "LU_POST_CIRC_FINALISE"
 FCDO_TEAM = "FCO"
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
 MOD_ECJU_TEAM = "MOD_ECJU"
-MOD_CONSOLIDATE_TEAMS = ["MOD_DI", "MOD_DSR", "MOD_DSTL", "MOD_WECA",]
+MOD_CONSOLIDATE_TEAMS = [
+    "MOD_DI",
+    "MOD_DSR",
+    "MOD_DSTL",
+    "MOD_WECA",
+]
 LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 
 # Flags
@@ -293,8 +298,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
     button visibility, based off the case, the current user and current user's queue.
     """
     team_alias = caseworker["team"]["alias"]
-    queue_alias = next((item["alias"] for item in case['queue_details'] if item["id"] == queue_id), None)
-    
+    queue_alias = next((item["alias"] for item in case["queue_details"] if item["id"] == queue_id), None)
     # The default context
     context = {
         # The URL that the advice tab should go to when clicked
