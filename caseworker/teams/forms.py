@@ -1,11 +1,12 @@
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Button, Field, Layout, Size
+
 from django.urls import reverse
 from django import forms
 
 from lite_content.lite_internal_frontend.teams import AddTeamForm
 from lite_forms.components import Form, TextInput, BackLink, Option, RadioButtons
 
-from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Button, Field, Layout, Size
 
 def add_team_form():
     return Form(
@@ -22,23 +23,20 @@ def add_team_form():
         back_link=BackLink(AddTeamForm.BACK_LINK, reverse("teams:teams")),
     )
 
+
 class EditTeamForm(forms.Form):
-    name = forms.CharField(
-        label="Name",
-        widget=forms.TextInput(),
-        required=True
-    )
+    name = forms.CharField(label="Name", widget=forms.TextInput(), required=True)
     part_of_ecju = forms.ChoiceField(
         choices=((False, "No"), (True, "Yes")),
         label="Is this team part of ECJU?",
         widget=forms.RadioSelect(),
-        required=False
+        required=False,
     )
     is_ogd = forms.ChoiceField(
         choices=((False, "No"), (True, "Yes")),
         label="Is this team part of OGD?",
         widget=forms.RadioSelect(),
-        required=False
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
@@ -50,4 +48,3 @@ class EditTeamForm(forms.Form):
             Field.radios("is_ogd", legend_size=Size.MEDIUM, legend_tag="h1", inline=True),
             Button("submit", "Save"),
         )
-    
