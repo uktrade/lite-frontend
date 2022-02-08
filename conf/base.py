@@ -191,6 +191,9 @@ LOGGING = {
     },
     "root": {"handlers": ["stdout", "ecs"], "level": env.str("LOG_LEVEL", "info").upper()},
 }
+additional_logger_config = env.json("ADDITIONAL_LOGGER_CONFIG", default=None)
+if additional_logger_config:
+    LOGGING["loggers"] = additional_logger_config
 
 # Enable security features in hosted environments
 

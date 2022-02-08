@@ -1,5 +1,6 @@
 from functools import partial
 import json
+import logging
 
 from django.core.cache import cache
 from mohawk import Sender
@@ -7,6 +8,9 @@ from mohawk.exc import AlreadyProcessed
 import sentry_sdk
 
 from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 def _build_absolute_uri(appended_address):
@@ -83,6 +87,8 @@ def perform_request(method, request, appended_address, data=None):
         headers = _get_headers(request, sender)
     else:
         headers = _get_headers(request, content_type="application/json")
+
+    logger.debug("API request: %s %s %s %s", method, url, headers, data)
 
     response = session.request(method=method, url=url, headers=headers, json=data)
 
