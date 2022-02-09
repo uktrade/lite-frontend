@@ -877,10 +877,10 @@ class TemporaryExportDetails:
     TEMPORARY_EXPORT_DETAILS_CAPTION = "Temporary export details"
     PROPOSED_DATE_HINT = "For example, 12 11 2020"
 
-    TEMPORARY_EXPORT_DETAILS = "Provide details of why the export is temporary"
+    TEMPORARY_EXPORT_DETAILS = "Enter why the products are being exported temporarily"
     PRODUCTS_UNDER_DIRECT_CONTROL = "Will the products remain under your direct control while overseas?"
     PRODUCTS_UNDER_DIRECT_CONTROL_DETAILS = (
-        "Provide details of who will be in control of the products while overseas and their relationship to you"
+        "Who will be in control of the products while overseas, and what is your relationship to them?"
     )
     PROPOSED_RETURN_DATE = "Proposed date the products will return to the UK"
 

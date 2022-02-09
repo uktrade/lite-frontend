@@ -24,7 +24,6 @@ def provide_export_details_form(caption, back_link_url):
             TextArea(
                 name="temp_export_details",
                 short_title=TemporaryExportDetails.SummaryList.TEMPORARY_EXPORT_DETAILS,
-                extras={"max_length": 2200},
                 optional=False,
             )
         ],
@@ -34,7 +33,6 @@ def provide_export_details_form(caption, back_link_url):
 
 def is_temp_direct_control_form(caption):
     return Form(
-        caption=caption,
         title=TemporaryExportDetails.PRODUCTS_UNDER_DIRECT_CONTROL,
         questions=[
             RadioButtons(
@@ -50,7 +48,6 @@ def is_temp_direct_control_form(caption):
                                 name="temp_direct_control_details",
                                 title=TemporaryExportDetails.PRODUCTS_UNDER_DIRECT_CONTROL_DETAILS,
                                 description="",
-                                extras={"max_length": 2200},
                                 optional=False,
                             )
                         ],
@@ -65,7 +62,6 @@ def is_temp_direct_control_form(caption):
 
 def proposed_product_return_date_form(caption):
     return Form(
-        caption=caption,
         title=TemporaryExportDetails.PROPOSED_RETURN_DATE,
         questions=[
             DateInput(
