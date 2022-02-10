@@ -101,8 +101,6 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     converted = {
         convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"]),
         strings.END_USE_DETAILS: _get_end_use_details(application),
-        strings.ROUTE_OF_GOODS: _get_route_of_goods(application),
-        strings.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         strings.END_USER: convert_party(application["end_user"], application, editable),
         strings.CONSIGNEE: convert_party(application["consignee"], application, editable),
         strings.THIRD_PARTIES: [convert_party(item, application, editable) for item in application["third_parties"]],
@@ -111,10 +109,10 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     if old_locations:
         converted[strings.ROUTE_OF_GOODS] = _get_route_of_goods(application)
         converted[strings.GOODS_LOCATIONS] = _convert_goods_locations(application["goods_locations"])
+        if _is_application_export_type_temporary(application):
+            converted[strings.TEMPORARY_EXPORT_DETAILS] = _get_temporary_export_details(application)
     else:
         converted["Product location and journey"] = _get_product_location_and_journey(application)
-    if _is_application_export_type_temporary(application):
-        converted[strings.TEMPORARY_EXPORT_DETAILS] = _get_temporary_export_details(application)
     if has_incorporated_goods(application):
         ultimate_end_users = [convert_party(item, application, editable) for item in application["ultimate_end_users"]]
         converted[strings.ULTIMATE_END_USERS] = ultimate_end_users
