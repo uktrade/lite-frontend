@@ -1,3 +1,5 @@
+import CookieBanner from "../../../core/assets/javascripts/cookie-banner";
+
 var cookiePolicy = new CookieBanner();
 cookiePolicy.bindForm(
   "#cookie-preferences-form",

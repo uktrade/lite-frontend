@@ -128,6 +128,10 @@ function CookieBanner() {
   }
 
   function enableCookieBanner(bannerClassName, acceptButtonClassName) {
+    var banner = document.querySelector(bannerClassName);
+    if (!banner) {
+      return;
+    }
     displayCookieBanner(bannerClassName);
     bindAcceptAllCookiesButton(acceptButtonClassName, function () {
       createPoliciesCookie(true, true, true);
@@ -204,3 +208,5 @@ function CookieBanner() {
     bindForm: bindCookiePolicyForm,
   };
 }
+
+export default CookieBanner;

@@ -172,6 +172,5 @@
 {% endblock %}
 
 {% block javascript %}
-<script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'javascripts/cookie-banner.js' %}"></script>
-<script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'javascripts/cookie-policy-form.js' %}"></script>
+<script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'cookie-policy-form.js' %}"></script>
 {% endblock %}
