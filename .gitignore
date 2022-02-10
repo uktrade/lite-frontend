@@ -171,3 +171,7 @@ open_licence_returns.csv
 node_modules/
 
 .python-version
+
+# Cypress
+cypress/videos
+ui_tests/screenshots
