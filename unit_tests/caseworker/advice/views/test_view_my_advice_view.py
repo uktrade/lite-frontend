@@ -149,10 +149,11 @@ def test_move_case_forward(
     mock_gov_user, authorized_client, requests_mock, data_standard_case, queue_pk, advice_with_and_without_consignee
 ):
     url = reverse(
-        "cases:view_my_advice", kwargs={"queue_pk": FCDO_CASES_TO_REVIEW_QUEUE, "pk": data_standard_case["case"]["id"]}
+        "cases:view_my_advice",
+        kwargs={"queue_pk": "f458094c-1fed-4222-ac70-ff5fa20ff649", "pk": data_standard_case["case"]["id"]},
     )
-    mock_gov_user["user"]["team"]["id"] = FCDO_TEAM
-    advice_with_and_without_consignee[0]["user"]["team"]["id"] = FCDO_TEAM
+    mock_gov_user["user"]["team"]["alias"] = FCDO_TEAM
+    advice_with_and_without_consignee[0]["user"]["team"]["alias"] = FCDO_TEAM
     data_standard_case["case"]["advice"] = advice_with_and_without_consignee
     case_id = data_standard_case["case"]["id"]
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
@@ -161,6 +162,7 @@ def test_move_case_forward(
         json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
     )
     requests_mock.put(client._build_absolute_uri(f"/cases/{case_id}/assigned-queues/"), json={"queues": [queue_pk]})
+
     response = authorized_client.get(url)
     assert response.status_code == 200
     advice_completed = advice_with_and_without_consignee.pop()["consignee"] is not None

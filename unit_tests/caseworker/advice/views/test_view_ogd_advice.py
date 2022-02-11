@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
+from caseworker.advice import services
 
 
 @pytest.fixture(autouse=True)
@@ -74,7 +75,7 @@ def test_fco_cannot_advice_when_all_dests_covered(mock_get_gov_user, authorized_
         {
             "user": {
                 "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"},
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM},
             }
         },
         None,
@@ -87,12 +88,11 @@ def test_fco_cannot_advice_when_all_dests_covered(mock_get_gov_user, authorized_
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "user": {
                 "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"},
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM},
             },
             "type": {"value": "Approve"},
         },
     ]
-
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert not response.context_data["can_advise"]

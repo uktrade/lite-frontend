@@ -3,6 +3,8 @@ import pytest
 
 from django.urls import reverse
 
+from caseworker.advice import services
+
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case, mock_denial_reasons, mock_post_refusal_advice):
@@ -42,7 +44,7 @@ def test_refuse_all_post(authorized_client, url, denial_reasons, refusal_reasons
 @mock.patch("caseworker.advice.views.get_gov_user")
 def test_fco_give_refusal_advice_get(mock_get_gov_user, authorized_client, url):
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
         None,
     )
     response = authorized_client.get(url)
@@ -57,19 +59,21 @@ def test_fco_give_refusal_advice_get(mock_get_gov_user, authorized_client, url):
 @mock.patch("caseworker.advice.views.get_gov_user")
 def test_fco_give_refusal_advice_existing_get(mock_get_gov_user, authorized_client, url, data_standard_case):
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
         None,
     )
     data_standard_case["case"]["advice"] = [
         # The GB destination has been advised on by MOD-DSTL
         {
             "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
-            "user": {"team": {"id": "809eba0f-f197-4f0f-949b-9af309a844fb", "name": "MOD-DSTL"}},
+            "user": {"team": {"id": "809eba0f-f197-4f0f-949b-9af309a844fb", "name": "MOD-DSTL", "alias": "MOD_DSTL"}},
         },
         # The AE-AZ destination has been advised on by FCO (should therefore not be rendered)
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
-            "user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}},
+            "user": {
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}
+            },
         },
     ]
     response = authorized_client.get(url)
@@ -107,7 +111,7 @@ def test_fco_give_approval_advice_post(
     expected_status_code,
 ):
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO"}}},
+        {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
         None,
     )
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
