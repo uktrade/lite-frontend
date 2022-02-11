@@ -1,21 +1,23 @@
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, Fieldset, HTML, Layout, Submit
+
 from django import forms
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
-from exporter.core.helpers import str_to_bool
-from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
-from core.builtins.custom_tags import linkify
-from exporter.core.services import get_control_list_entries
-from exporter.core.services import get_pv_gradings
+from core.builtins.custom_tags import default_na, linkify
+from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
+from exporter.core.helpers import convert_control_list_entries, str_to_bool
+from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES, PRODUCT_CATEGORY_FIREARM
+from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import good_summary, get_category_display_string
-from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend import generic
+from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend.goods import (
+    AddGoodToApplicationForm,
     CreateGoodForm,
     GoodsQueryForm,
     EditGoodForm,
@@ -1074,7 +1076,7 @@ class IdentificationMarkingsForm(forms.Form):
                     {
                         "form": self,
                         "choice_field_name": "has_identification_markings",
-                        "details": {False: "no_identification_markings_details"},
+                        "details": {False: ["no_identification_markings_details"],},
                     },
                 )
             ),
@@ -1176,7 +1178,7 @@ class ProductUsesInformationSecurityForm(forms.Form):
                     {
                         "form": self,
                         "choice_field_name": "uses_information_security",
-                        "details": {True: "information_security_details"},
+                        "details": {True: ["information_security_details"],},
                     },
                 )
             ),
@@ -1250,7 +1252,7 @@ class AddGoodsQuestionsForm(forms.Form):
                     {
                         "form": self,
                         "choice_field_name": "is_good_controlled",
-                        "details": {True: "control_list_entries"},
+                        "details": {True: ["control_list_entries"],},
                     },
                 )
             ),
@@ -1390,7 +1392,7 @@ class FirearmsReplicaForm(forms.Form):
             HTML(
                 render_to_string(
                     "goods/choice-with-details.html",
-                    {"form": self, "choice_field_name": "is_replica", "details": {True: "replica_description"}},
+                    {"form": self, "choice_field_name": "is_replica", "details": {True: ["replica_description"],}},
                 )
             ),
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
@@ -1517,6 +1519,7 @@ class FirearmsActConfirmationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.is_rfd = kwargs.pop("is_rfd")
+
         super().__init__(*args, **kwargs)
 
         if self.is_rfd:
@@ -1564,7 +1567,7 @@ class FirearmsActConfirmationForm(forms.Form):
                     {
                         "form": self,
                         "choice_field_name": "is_covered_by_firearm_act_section_one_two_or_five",
-                        "details": {"Yes": "firearms_act_section"},
+                        "details": {"Yes": ["firearms_act_section"],},
                     },
                 )
             ),
@@ -1643,12 +1646,411 @@ class ProductComponentForm(forms.Form):
                         "form": self,
                         "choice_field_name": "is_component",
                         "details": {
-                            "yes_designed": "designed_details",
-                            "yes_modified": "modified_details",
-                            "yes_general": "general_details",
+                            "yes_designed": ["designed_details"],
+                            "yes_modified": ["modified_details"],
+                            "yes_general": ["general_details"],
                         },
                     },
                 )
             ),
+            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+        )
+
+
+def get_unit_quantity_value_summary_list_items(good):
+    summary_list_items = [
+        ("Name", good["description"] if not good["name"] else good["name"]),
+        ("Control list entries", convert_control_list_entries(good["control_list_entries"])),
+        ("Part number", default_na(good["part_number"])),
+    ]
+
+    if good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
+        firearm_type = good["firearm_details"]["type"]["key"]
+
+        if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:
+            summary_list_items.append(("Number of items", str(good["firearm_details"].get("number_of_items"))),)
+
+    return summary_list_items
+
+
+class FirearmsUnitQuantityValueForm(forms.Form):
+    title = AddGoodToApplicationForm.TITLE
+
+    value = forms.CharField(error_messages={"required": "Enter the total value of the products",}, label="Total value",)
+
+    is_good_incorporated = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select yes if the product will be incorporated into another product",},
+        label="Will the product be incorporated into another product?",
+        widget=forms.RadioSelect(),
+    )
+
+    is_deactivated = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select yes if the product has been deactivated",},
+        label="Has the product been deactivated?",
+        widget=forms.RadioSelect(),
+    )
+
+    date_of_deactivation = DateInputField(label="Date of deactivation", required=False,)
+
+    is_deactivated_to_standard = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        label="Has the product been deactivated to UK/EU proof house standards?",
+        required=False,
+        widget=forms.RadioSelect(),
+    )
+
+    deactivation_standard = forms.ChoiceField(
+        choices=(("", "Select"), ("UK", "UK"), ("EU", "EU"),), label="Proof house standard", required=False,
+    )
+
+    deactivation_standard_other = forms.CharField(
+        label="Describe who deactivated the product and to what standard it was done",
+        widget=forms.Textarea,
+        required=False,
+    )
+
+    has_proof_mark = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select whether the product has valid UK proof marks",},
+        label="Does the product have valid UK proof marks?",
+        widget=forms.RadioSelect(),
+    )
+
+    no_proof_mark_details = forms.CharField(label="Please give details why not", widget=forms.Textarea, required=False,)
+
+    def __init__(self, *args, **kwargs):
+        good = kwargs.pop("good")
+
+        super().__init__(*args, **kwargs)
+
+        convert_to_number_input(self.fields["date_of_deactivation"])
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            Field("value", template="forms/currency_field.html"),
+            Field.radios("is_good_incorporated", inline=True),
+            ConditionalRadios(
+                "is_deactivated",
+                ConditionalQuestion(
+                    "Yes",
+                    "date_of_deactivation",
+                    ConditionalRadios(
+                        "is_deactivated_to_standard",
+                        ConditionalQuestion("Yes", "deactivation_standard",),
+                        ConditionalQuestion("No", "deactivation_standard_other",),
+                    ),
+                ),
+                "No",
+            ),
+            ConditionalRadios("has_proof_mark", "Yes", ConditionalQuestion("No", "no_proof_mark_details",),),
+            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("is_deactivated") is True:
+            if not cleaned_data["date_of_deactivation"]:
+                self.add_error("date_of_deactivation", "Enter a valid date of deactivation")
+
+            if cleaned_data["is_deactivated_to_standard"] == "":
+                self.add_error(
+                    "is_deactivated_to_standard",
+                    "Select yes if the product has been deactivated to UK/EU proof house standards",
+                )
+            elif cleaned_data["is_deactivated_to_standard"] is True:
+                if not cleaned_data["deactivation_standard"]:
+                    self.add_error("deactivation_standard", "Select yes if the product has valid UK proof marks")
+            elif cleaned_data["is_deactivated_to_standard"] is False:
+                if not cleaned_data["deactivation_standard_other"]:
+                    self.add_error(
+                        "deactivation_standard_other",
+                        "Enter details of who deactivated the product and to what standard it was done",
+                    )
+
+        if cleaned_data.get("has_proof_mark") is False and not cleaned_data["no_proof_mark_details"]:
+            self.add_error(
+                "no_proof_mark_details", "Enter details of why the product does not have valid UK proof marks"
+            )
+
+        return cleaned_data
+
+
+class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
+    title = AddGoodToApplicationForm.TITLE
+
+    value = forms.CharField(error_messages={"required": "Enter the total value of the products",}, label="Total value",)
+
+    is_good_incorporated = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select yes if the product will be incorporated into another product",},
+        label="Will the product be incorporated into another product?",
+        widget=forms.RadioSelect(),
+    )
+
+    is_deactivated = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select yes if the product has been deactivated",},
+        label="Has the product been deactivated?",
+        widget=forms.RadioSelect(),
+    )
+
+    date_of_deactivation = DateInputField(label="Date of deactivation", required=False,)
+
+    is_deactivated_to_standard = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        label="Has the product been deactivated to UK/EU proof house standards?",
+        required=False,
+        widget=forms.RadioSelect(),
+    )
+
+    deactivation_standard = forms.ChoiceField(
+        choices=(("", "Select"), ("UK", "UK"), ("EU", "EU"),), label="Proof house standard", required=False,
+    )
+
+    deactivation_standard_other = forms.CharField(
+        label="Describe who deactivated the product and to what standard it was done",
+        widget=forms.Textarea,
+        required=False,
+    )
+
+    is_gun_barrel = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select whether the product is a gun barrel or the action of a gun",},
+        label="Is the product a gun barrel or the action of a gun?",
+        widget=forms.RadioSelect(),
+    )
+
+    has_proof_mark = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select whether the product has valid UK proof marks",},
+        label="Does the product have valid UK proof marks?",
+        required=False,
+        widget=forms.RadioSelect(),
+    )
+
+    no_proof_mark_details = forms.CharField(label="Please give details why not", widget=forms.Textarea, required=False,)
+
+    def __init__(self, *args, **kwargs):
+        good = kwargs.pop("good")
+
+        super().__init__(*args, **kwargs)
+
+        convert_to_number_input(self.fields["date_of_deactivation"])
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            Field("value", template="forms/currency_field.html"),
+            Field.radios("is_good_incorporated", inline=True),
+            ConditionalRadios(
+                "is_deactivated",
+                ConditionalQuestion(
+                    "Yes",
+                    "date_of_deactivation",
+                    ConditionalRadios(
+                        "is_deactivated_to_standard",
+                        ConditionalQuestion("Yes", "deactivation_standard",),
+                        ConditionalQuestion("No", "deactivation_standard_other",),
+                    ),
+                ),
+                "No",
+            ),
+            ConditionalRadios(
+                "is_gun_barrel",
+                ConditionalQuestion(
+                    "Yes",
+                    ConditionalRadios("has_proof_mark", "Yes", ConditionalQuestion("No", "no_proof_mark_details",),),
+                ),
+                "No",
+            ),
+            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("is_deactivated") is True:
+            if not cleaned_data["date_of_deactivation"]:
+                self.add_error("date_of_deactivation", "Enter a valid date of deactivation")
+
+            if cleaned_data["is_deactivated_to_standard"] == "":
+                self.add_error(
+                    "is_deactivated_to_standard",
+                    "Select yes if the product has been deactivated to UK/EU proof house standards",
+                )
+            elif cleaned_data["is_deactivated_to_standard"] is True:
+                if not cleaned_data["deactivation_standard"]:
+                    self.add_error("deactivation_standard", "Select yes if the product has valid UK proof marks")
+            elif cleaned_data["is_deactivated_to_standard"] is False:
+                if not cleaned_data["deactivation_standard_other"]:
+                    self.add_error(
+                        "deactivation_standard_other",
+                        "Enter details of who deactivated the product and to what standard it was done",
+                    )
+
+        if cleaned_data.get("is_gun_barrel") is True:
+            if cleaned_data.get("has_proof_mark") is False and not cleaned_data["no_proof_mark_details"]:
+                self.add_error(
+                    "no_proof_mark_details", "Enter details of why the product does not have valid UK proof marks"
+                )
+
+        return cleaned_data
+
+
+class ComponentOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
+    title = AddGoodToApplicationForm.TITLE
+
+    value = forms.CharField(error_messages={"required": "Enter the total value of the products",}, label="Total value",)
+
+    is_good_incorporated = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select yes if the product will be incorporated into another product",},
+        label="Will the product be incorporated into another product?",
+        widget=forms.RadioSelect(),
+    )
+
+    is_deactivated = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select yes if the product has been deactivated",},
+        label="Has the product been deactivated?",
+        widget=forms.RadioSelect(),
+    )
+
+    date_of_deactivation = DateInputField(label="Date of deactivation", required=False,)
+
+    is_deactivated_to_standard = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        label="Has the product been deactivated to UK/EU proof house standards?",
+        required=False,
+        widget=forms.RadioSelect(),
+    )
+
+    deactivation_standard = forms.ChoiceField(
+        choices=(("", "Select"), ("UK", "UK"), ("EU", "EU"),), label="Proof house standard", required=False,
+    )
+
+    deactivation_standard_other = forms.CharField(
+        label="Describe who deactivated the product and to what standard it was done",
+        widget=forms.Textarea,
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        good = kwargs.pop("good")
+
+        super().__init__(*args, **kwargs)
+
+        convert_to_number_input(self.fields["date_of_deactivation"])
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            Field("value", template="forms/currency_field.html"),
+            Field.radios("is_good_incorporated", inline=True),
+            ConditionalRadios(
+                "is_deactivated",
+                ConditionalQuestion(
+                    "Yes",
+                    "date_of_deactivation",
+                    ConditionalRadios(
+                        "is_deactivated_to_standard",
+                        ConditionalQuestion("Yes", "deactivation_standard",),
+                        ConditionalQuestion("No", "deactivation_standard_other",),
+                    ),
+                ),
+                "No",
+            ),
+            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("is_deactivated") is True:
+            if not cleaned_data["date_of_deactivation"]:
+                self.add_error("date_of_deactivation", "Enter a valid date of deactivation")
+
+            if cleaned_data["is_deactivated_to_standard"] == "":
+                self.add_error(
+                    "is_deactivated_to_standard",
+                    "Select yes if the product has been deactivated to UK/EU proof house standards",
+                )
+            elif cleaned_data["is_deactivated_to_standard"] is True:
+                if not cleaned_data["deactivation_standard"]:
+                    self.add_error("deactivation_standard", "Select yes if the product has valid UK proof marks")
+            elif cleaned_data["is_deactivated_to_standard"] is False:
+                if not cleaned_data["deactivation_standard_other"]:
+                    self.add_error(
+                        "deactivation_standard_other",
+                        "Enter details of who deactivated the product and to what standard it was done",
+                    )
+
+        return cleaned_data
+
+
+class UnitQuantityValueForm(forms.Form):
+    title = AddGoodToApplicationForm.TITLE
+
+    unit = forms.ChoiceField(
+        choices=[("", "Select"),],  # This will get appended to in init
+        error_messages={"required": "Select a unit of measurement",},
+        label=AddGoodToApplicationForm.Units.TITLE,
+    )
+
+    quantity = forms.CharField(error_messages={"required": "Enter a quantity",}, label="Quantity",)
+
+    value = forms.CharField(error_messages={"required": "Enter the total value of the products",}, label="Total value",)
+
+    is_good_incorporated = forms.TypedChoiceField(
+        choices=((True, "Yes"), (False, "No")),
+        coerce=lambda x: x == "True",
+        error_messages={"required": "Select yes if the product will be incorporated into another product",},
+        label="Will the product be incorporated into another product?",
+        widget=forms.RadioSelect(),
+    )
+
+    def __init__(self, *args, **kwargs):
+        good = kwargs.pop("good")
+        request = kwargs.pop("request")
+
+        super().__init__(*args, **kwargs)
+
+        unit_field = self.fields["unit"]
+        units = get_units(request)
+        unit_field.choices += list(units.items())
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            "unit",
+            Field(
+                "quantity",
+                autocomplete="off",
+                autocorrect="off",
+                css_class="govuk-input--width-20",
+                pattern="^[0-9]*.{0,1}[0-9]{0,6}$",
+            ),
+            Field("value", template="forms/currency_field.html"),
+            Field.radios("is_good_incorporated", inline=True),
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
         )

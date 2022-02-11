@@ -183,7 +183,7 @@ def test_good_on_application_form_not_firearm(default_request, good_widget, mock
     assert form.questions[-1].title != goods.firearm_proof_mark_field().title
 
 
-def test_good_on_application_form_group_good_without_number_of_items(default_request, good_ammo):
+def test_good_on_application_form_group_good_without_number_of_items(default_request, good_ammo, mock_units):
     application = {}
     good_data = deepcopy(good_ammo)
     del good_data["firearm_details"]["number_of_items"]
@@ -208,7 +208,7 @@ def test_good_on_application_form_group_good_without_number_of_items(default_req
     assert len(form_group.forms) == 6
 
 
-def test_good_on_application_form_group_user_is_rfd(default_request, good_ammo):
+def test_good_on_application_form_group_user_is_rfd(default_request, good_ammo, mock_units):
     application = {}
     form_group = goods.good_on_application_form_group(
         request=default_request,

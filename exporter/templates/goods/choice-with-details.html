@@ -26,17 +26,19 @@
         {% if choice_field.errors %}<span id="id_{{ form.prefix }}-{{ choice_field_name }}-error" class="govuk-error-message">{% for error in choice_field.errors %}{{ error }}{% endfor %}</span>{% endif %}
         <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
             {% for choice in choice_field.field.choices %}
-            {% with details_field_name=details|get:choice.0 %}
+            {% with details_field_names=details|get:choice.0 %}
             <div class="govuk-radios__item">
                 <input type="radio" name="{{ form.prefix }}-{{ choice_field_name }}" class="govuk-radios__input" id="id_{{ form.prefix }}-{{ choice_field_name }}_{{ forloop.counter0 }}" value="{{ choice.0 }}" data-aria-controls="conditional-0-{{ choice.0 }}" {% if choice_field.data == choice.0|stringformat:"s" %}checked{% endif %}>
                 <label class="govuk-label govuk-radios__label" for="id_{{ form.prefix }}-{{ choice_field_name }}_{{ forloop.counter0 }}">{{ choice.1 }}</label>
             </div>
-            {% if details_field_name %}
-            {% with details_field=form|getitem:details_field_name %}
+            {% if details_field_names %}
             <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-0-{{choice.0}}">
-                {{ details_field|as_crispy_field }}
-            </div>
+            {% for details_field_name in details_field_names %}
+            {% with details_field=form|getitem:details_field_name %}
+            {{ details_field|as_crispy_field }}
             {% endwith %}
+            {% endfor %}
+            </div>
             {% endif %}
             {% endwith %}
             {% endfor %}
