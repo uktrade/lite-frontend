@@ -195,7 +195,10 @@ class GoodsStartingPointForm(forms.Form):
     goods_starting_point = forms.ChoiceField(
         label="",
         widget=forms.RadioSelect,
-        choices=[("GB", "Great Britain"), ("NI", "Northern Ireland"),],
+        choices=[
+            ("GB", "Great Britain"),
+            ("NI", "Northern Ireland"),
+        ],
         error_messages={
             "required": ["Select if the products will begin their export journey in Great Britain or Northern Ireland"]
         },
@@ -230,7 +233,9 @@ class PermanentOrTemporaryExportForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1("Are the products being permanently exported?"), "export_type", Submit("submit", "Continue"),
+            HTML.h1("Are the products being permanently exported?"),
+            "export_type",
+            Submit("submit", "Continue"),
         )
 
 

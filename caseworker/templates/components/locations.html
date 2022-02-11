@@ -39,27 +39,27 @@
 
 	{% if case.data.export_type.key == "temporary" %}
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Temporary export details</dt>
+		<dt class="govuk-summary-list__key">Enter why the products are being exported temporarily</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.temp_export_details }}</dd>
 		<dd class="govuk-summary-list__value"></dd>
 	</div>
 
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Products remain under direct control</dt>
+		<dt class="govuk-summary-list__key">Will the products remain under your direct control while overseas?</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.is_temp_direct_control|yesno|capfirst }}</dd>
 		<dd class="govuk-summary-list__value"></dd>
 	</div>
 
 	{% if not case.data.is_temp_direct_control %}
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Details</dt>
+		<dt class="govuk-summary-list__key">Who will be in control of the products while overseas, and what is your relationship to them?</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.temp_direct_control_details }}</dd>
 		<dd class="govuk-summary-list__value"></dd>
 	</div>
 	{% endif %}
 
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Proposed return date</dt>
+		<dt class="govuk-summary-list__key">Proposed date the products will return to the UK</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.proposed_return_date|str_date_only }}</dd>
 		<dd class="govuk-summary-list__value"></dd>
 	</div>
@@ -73,7 +73,7 @@
 
 	{% if not case.data.is_shipped_waybill_or_lading %}
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Route details</dt>
+		<dt class="govuk-summary-list__key">Provide details of the route of the products</dt>
 		<dd class="govuk-summary-list__value">{{ case.data.non_waybill_or_lading_route_details }}</dd>
 		<dd class="govuk-summary-list__actions"></dd>
 	</div>

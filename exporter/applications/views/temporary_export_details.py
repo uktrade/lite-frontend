@@ -14,7 +14,7 @@ class TemporaryExportDetails(LoginRequiredMixin, MultiFormView):
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
         self.forms = temporary_export_details_form(
-            back_link_url=reverse("applications:location", kwargs={"pk": kwargs["pk"]})
+            back_link_url=reverse("applications:temporary_or_permanent", kwargs={"pk": kwargs["pk"]})
         )
         self.action = put_temporary_export_details
         self.data = self._parse_temporary_export_details(application)

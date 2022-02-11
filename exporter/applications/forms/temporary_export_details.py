@@ -1,37 +1,37 @@
+import datetime
+
+from exporter.core.constants import TemporaryExportDetails
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.applications import TemporaryExportDetails
 from lite_forms.components import FormGroup, TextArea, Form, RadioButtons, Option, DateInput, BackLink
 
 
 def temporary_export_details_form(back_link_url):
     return FormGroup(
         [
-            provide_export_details_form(
-                caption=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION, back_link_url=back_link_url
-            ),
-            is_temp_direct_control_form(caption=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
-            proposed_product_return_date_form(TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS_CAPTION),
+            provide_export_details_form(back_link_url=back_link_url),
+            is_temp_direct_control_form(),
+            proposed_product_return_date_form(),
         ]
     )
 
 
-def provide_export_details_form(caption, back_link_url):
+def provide_export_details_form(back_link_url):
     return Form(
         back_link=BackLink("Back", back_link_url),
-        caption=caption,
         title=TemporaryExportDetails.TEMPORARY_EXPORT_DETAILS,
         questions=[
             TextArea(
                 name="temp_export_details",
                 short_title=TemporaryExportDetails.SummaryList.TEMPORARY_EXPORT_DETAILS,
                 optional=False,
+                rows=5,
             )
         ],
-        default_button_name="Continue",
+        default_button_name=generic.CONTINUE,
     )
 
 
-def is_temp_direct_control_form(caption):
+def is_temp_direct_control_form():
     return Form(
         title=TemporaryExportDetails.PRODUCTS_UNDER_DIRECT_CONTROL,
         questions=[
@@ -49,6 +49,7 @@ def is_temp_direct_control_form(caption):
                                 title=TemporaryExportDetails.PRODUCTS_UNDER_DIRECT_CONTROL_DETAILS,
                                 description="",
                                 optional=False,
+                                rows=5,
                             )
                         ],
                     ),
@@ -56,22 +57,22 @@ def is_temp_direct_control_form(caption):
                 classes=["govuk-radios--inline"],
             )
         ],
-        default_button_name="Continue",
+        default_button_name=generic.CONTINUE,
     )
 
 
-def proposed_product_return_date_form(caption):
+def proposed_product_return_date_form():
     return Form(
         title=TemporaryExportDetails.PROPOSED_RETURN_DATE,
         questions=[
             DateInput(
                 title="",
                 short_title=TemporaryExportDetails.SummaryList.PROPOSED_RETURN_DATE,
-                description=TemporaryExportDetails.PROPOSED_DATE_HINT,
+                description=f"For example, 12 11 {datetime.datetime.now().year + 1}",
                 name="proposed_return_date",
                 prefix="",
                 optional=False,
             ),
         ],
-        default_button_name=generic.SAVE_AND_CONTINUE,
+        default_button_name=generic.CONTINUE,
     )

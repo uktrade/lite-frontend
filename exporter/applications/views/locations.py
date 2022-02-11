@@ -106,9 +106,9 @@ class GoodsLocationView(LoginRequiredMixin, ApplicationMixin, TemplateView):
         if has_old_locations:
             return super().dispatch(*args, **kwargs)
         elif not has_old_locations and not has_new_locations:
-            return redirect(reverse_lazy("applications:edit_location", kwargs={"pk": self.kwargs["pk"]}))
+            return redirect(reverse("applications:edit_location", kwargs={"pk": self.kwargs["pk"]}))
         elif has_new_locations:
-            summary_url = reverse_lazy("applications:locations_summary", kwargs={"pk": self.kwargs["pk"]})
+            summary_url = reverse("applications:locations_summary", kwargs={"pk": self.kwargs["pk"]})
             return redirect(f"{summary_url}?return_to={task_list_url}")
 
 
@@ -160,7 +160,7 @@ class GoodsRecipientsFormView(LoginRequiredMixin, ApplicationMixin, FormView):
 
     def get_initial(self):
         return {
-            "goods_recipients": self.application.get("goods_recipients", False),    # TODO check why the value is missing
+            "goods_recipients": self.application.get("goods_recipients", False),
         }
 
     def get_context_data(self, *args, **kwargs):

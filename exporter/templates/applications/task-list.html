@@ -13,9 +13,6 @@
 {% block subtitle %}
 	{% if application_type|application_type_in_list:"HAS_LICENCE_TYPE" %}
 			{% if is_editing %}Licence type: {{ licence_type }} - {% endif %}
-			{% if application.export_type.value %}
-				Export type: {{ application.export_type.value }}
-			{% endif %}
 			{% if application.goodstype_category.key %}
 				<br> OIEL Type: {{ application.goodstype_category.value }}
 			{% endif %}
@@ -120,7 +117,11 @@
 
 				{# Product location and journey #}
 				{% if application_type|application_type_in_list:"HAS_PRODUCT_JOURNEY" %}
-					{% url 'applications:location' application.id as product_journey_url %}
+					{% if locations %}
+						{% url 'applications:locations_summary' application.id as product_journey_url %}
+					{% else %}
+						{% url 'applications:location' application.id as product_journey_url %}
+					{% endif %}
 					{% include "includes/task-list-item.html" with id='product-journey' title="Provide product location and journey" url=product_journey_url status=locations|task_list_item_status description=location_description %}
 				{% endif %}
 

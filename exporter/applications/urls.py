@@ -50,11 +50,7 @@ urlpatterns = [
     path("<uuid:pk>/submit/", common.Submit.as_view(), name="submit"),
     path("<uuid:pk>/copy/", common.ApplicationCopy.as_view(), name="copy"),
     # Standard and Open Licence
-    path(
-        "<uuid:pk>/edit/reference-name/",
-        edit.EditReferenceName.as_view(),
-        name="edit_reference_name",
-    ),
+    path("<uuid:pk>/edit/reference-name/", edit.EditReferenceName.as_view(), name="edit_reference_name"),
     path(
         "<uuid:pk>/edit/told-by-an-official/",
         told_by_an_official.ApplicationEditToldByAnOfficial.as_view(),
@@ -98,11 +94,7 @@ urlpatterns = [
         EditYearOfManufacture.as_view(),
         name="year-of-manufacture",
     ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/replica/",
-        EditFirearmReplica.as_view(),
-        name="replica",
-    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/replica/", EditFirearmReplica.as_view(), name="replica"),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/firearms-act/",
         EditFirearmActDetails.as_view(),
@@ -147,11 +139,7 @@ urlpatterns = [
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/attach/", goods.AttachDocument.as_view(), name="attach_documents"),
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/add/",
-        goods.AddGoodToApplication.as_view(),
-        name="add_good_to_application",
-    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application"),
     path(
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),
@@ -192,7 +180,7 @@ urlpatterns = [
     # Goods locations
     path("<uuid:pk>/goods-locations/", locations.GoodsLocationView.as_view(), name="location"),
     path("<uuid:pk>/goods-locations/edit/", locations.GoodsStartingPointFormView.as_view(), name="edit_location"),
-    path("<uuid:pk>/goods-recipients/", locations.GoodsRecipientsFormView.as_view(), name="goods_recipients",),
+    path("<uuid:pk>/goods-recipients/", locations.GoodsRecipientsFormView.as_view(), name="goods_recipients"),
     path("<uuid:pk>/goods-locations-summary/", locations.LocationsSummaryView.as_view(), name="locations_summary"),
     path("<uuid:pk>/goods-locations/existing-sites/", locations.ExistingSites.as_view(), name="existing_sites"),
     path(

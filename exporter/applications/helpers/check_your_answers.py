@@ -112,7 +112,8 @@ def _convert_standard_application(application, editable=False, is_summary=False)
         if _is_application_export_type_temporary(application):
             converted[strings.TEMPORARY_EXPORT_DETAILS] = _get_temporary_export_details(application)
     else:
-        converted["Product location and journey"] = _get_product_location_and_journey(application)
+        product_location = {"Product location and journey": _get_product_location_and_journey(application)}
+        converted = {**product_location, **converted}
     if has_incorporated_goods(application):
         ultimate_end_users = [convert_party(item, application, editable) for item in application["ultimate_end_users"]]
         converted[strings.ULTIMATE_END_USERS] = ultimate_end_users
@@ -281,10 +282,16 @@ def _get_product_location_and_journey(application):
         "Are the products being permanently exported?": friendly_boolean(is_permanent),
     }
     if not is_permanent:
-        locations_details["Temporary export details"] = application.temp_export_details
-        locations_details["Products remain under direct control"] = application.is_temp_direct_control
-        locations_details["Details"] = application.temp_direct_control_details
-        locations_details["Proposed return date"] = str_date_only(application.proposed_return_date)
+        locations_details["Explain why the products are being exported temporarily"] = application.temp_export_details
+        locations_details[
+            "Will the products remain under your direct control while overseas?"
+        ] = application.is_temp_direct_control
+        locations_details[
+            "Who will be in control of the products while overseas, and what is your relationship to them?"
+        ] = application.temp_direct_control_details
+        locations_details["Proposed date the products will return to the UK"] = str_date_only(
+            application.proposed_return_date
+        )
 
     locations_details[
         "Are the products being shipped from the UK on an air waybill or bill of lading?"

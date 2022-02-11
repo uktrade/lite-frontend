@@ -158,7 +158,7 @@ def str_date(value):
 @stringfilter
 def str_date_only(value):
     if value != "None":
-        return localtime(parse(value)).strftime("%d %B %Y")
+        return localtime(parse(value)).strftime("%-d %B %Y")
 
 
 @register.filter
@@ -909,6 +909,4 @@ def full_name(user):
 @register.filter
 def verbose_goods_starting_point(value):
     goods_starting_points = {"GB": "Great Britain", "NI": "Northern Ireland"}
-    if value:
-        return goods_starting_points.get(value, "")
-    return ""
+    return goods_starting_points.get(value, "")
