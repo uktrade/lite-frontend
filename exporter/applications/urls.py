@@ -142,6 +142,9 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
     path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application",),
     path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add2/", goods.AddGoodToApplication2.as_view(), name="add_good_to_application2",
+    ),
+    path(
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),
         name="remove_preexisting_good",

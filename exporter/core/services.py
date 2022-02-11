@@ -15,10 +15,8 @@ def get_units(request, units=[]):  # noqa
         return units
     response = client.get(request, "/static/units/")
     response.raise_for_status()
-    parsed = response.json()
+    units = response.json()["units"]
 
-    for key, value in parsed["units"].items():
-        units.append(Option(key, value))
     return units
 
 

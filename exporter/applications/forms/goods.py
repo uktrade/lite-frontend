@@ -84,6 +84,14 @@ def good_on_application_form_group(
     )
 
 
+def get_units_options(request):
+    parsed = get_units(request)
+    units = []
+    for key, value in parsed.items():
+        units.append(components.Option(key, value))
+    return units
+
+
 def unit_quantity_value(request, good, sub_case_type, application_id, back_url):
     if sub_case_type["key"] == constants.EXHIBITION:
         return exhibition_item_type(request, good.get("id"), application_id)
@@ -95,7 +103,7 @@ def unit_quantity_value(request, good, sub_case_type, application_id, back_url):
                 title=AddGoodToApplicationForm.Units.TITLE,
                 description="<noscript>" + AddGoodToApplicationForm.Units.DESCRIPTION + "</noscript>",
                 name="unit",
-                options=get_units(request),
+                options=get_units_options(request),
             ),
             components.QuantityInput(
                 title=AddGoodToApplicationForm.Quantity.TITLE,
