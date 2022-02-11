@@ -1197,3 +1197,12 @@ def goods_advice2(data_standard_case, jane_doe):
     goods_advice2["user"] = jane_doe
     goods_advice2["good"] = data_standard_case["case"]["data"]["goods"][0]["id"]
     return goods_advice2
+
+
+@pytest.fixture
+def form_team_data():
+    return {
+        "name": "Test",
+        "part_of_ecju": True,
+        "is_ogd": True,
+    }
