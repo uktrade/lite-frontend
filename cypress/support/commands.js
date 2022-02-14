@@ -19,14 +19,3 @@ Cypress.Commands.add('setCsrfTokenCookie', () => {
     secure: false,
   })
 })
-
-Cypress.Commands.add('createOrganisation', (fixture) => {
-  const URI = 'organisations/'
-  fixture.name = `Org-2022${Math.floor(Math.random() * 10000000000000)}`
-  return cy.request({
-    method: 'POST',
-    url: `${Cypress.env('api_url')}${URI}`,
-    json: true,
-    body: fixture,
-  })
-})
