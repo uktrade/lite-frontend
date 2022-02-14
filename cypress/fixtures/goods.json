@@ -1,0 +1,17 @@
+{
+  "name": "Ammunition",
+  "description": "Sporting shotgun ammunition",
+  "is_good_controlled": true,
+  "control_list_entries": [
+    "ML1a"
+  ],
+  "part_number": "EQ-NHTJ-76234416",
+  "validate_only": false,
+  "is_pv_graded": "no",
+  "item_category": "group1_device",
+  "is_military_use": "yes_designed",
+  "modified_military_use_details": "",
+  "is_component": "no",
+  "uses_information_security": true,
+  "information_security_details": ""
+}

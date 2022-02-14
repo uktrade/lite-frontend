@@ -9,7 +9,7 @@ const filterOrganisation = (cy, organisationName) => {
 }
 
 describe('Organisation', () => {
-  it('login (this step will be irrelevant after we mock sso)', () => {
+  it('login', () => {
     cy.login()
   })
 
@@ -17,7 +17,7 @@ describe('Organisation', () => {
     let organisation
 
     before(async function () {
-      const response = await helper.post('organisations/', fixtures.organisation)
+      const response = await helper.post('organisations/', fixtures.organisation())
       organisation = response.body
     })
 
