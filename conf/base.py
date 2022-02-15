@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "crispy_forms_gds",
     "core.feedback",
     "formtools",
+    "core.cookies",
 ]
 
 MIDDLEWARE = [
