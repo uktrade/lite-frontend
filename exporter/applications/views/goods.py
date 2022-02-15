@@ -11,7 +11,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 from formtools.wizard.views import SessionWizardView
-from storages.backends.s3boto3 import S3Boto3Storage, S3Boto3StorageFile
+from storages.backends.s3boto3 import S3Boto3Storage
 
 from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
@@ -555,7 +555,7 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
             request=self.request, application_pk=str(self.kwargs["pk"]), clc_list=self.control_list_entries
         )
 
-        if step not in (
+        if step not in (  # Guard condition to prevent infinite recursion
             AddGoodFormSteps.PRODUCT_CATEGORY,
             AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS,
             AddGoodFormSteps.REGISTERED_FIREARMS_DEALER,
@@ -563,9 +563,11 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
             form_context.category_type = self.get_cleaned_data_for_step(AddGoodFormSteps.PRODUCT_CATEGORY).get(
                 "item_category"
             )
+
             form_context.number_of_items = self.get_cleaned_data_for_step(
                 AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS
             ).get("number_of_items", 0)
+
             form_context.is_rfd = str_to_bool(
                 self.get_cleaned_data_for_step(AddGoodFormSteps.REGISTERED_FIREARMS_DEALER).get(
                     "is_registered_firearm_dealer"
@@ -595,7 +597,7 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
             if is_rfd and str_to_bool(all_data.get("is_covered_by_firearm_act_section_one_two_or_five")):
                 all_data["firearms_act_section"] = "firearms_act_section5"
 
-        # post_goods modifies the data, so pass a copy as we need it unaltered later on
+        # post_goods() modifies the data dict, so pass a copy as we need it unaltered later on
         api_resp_data, status_code = post_goods(self.request, dict(all_data))
 
         if status_code != HTTPStatus.CREATED:
