@@ -31,7 +31,10 @@ class LetterParagraphs(LoginRequiredMixin, TemplateView):
     @staticmethod
     def _error_page():
         return error_page(
-            None, title=LetterTemplatesPage.TITLE, description=LetterTemplatesPage.ERROR, show_back_link=True,
+            None,
+            title=LetterTemplatesPage.TITLE,
+            description=LetterTemplatesPage.ERROR,
+            show_back_link=True,
         )
 
     @staticmethod

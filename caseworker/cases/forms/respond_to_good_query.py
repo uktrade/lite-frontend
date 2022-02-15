@@ -76,11 +76,21 @@ def respond_to_clc_query_form(request, queue_pk, case):
                 ],
             ),
             DetailComponent(
-                title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,},),],
+                title=PVGradingForm.COMMENT,
+                components=[
+                    TextArea(
+                        name="comment",
+                        extras={
+                            "max_length": 500,
+                        },
+                    ),
+                ],
             ),
         ],
         default_button_name=CLCReviewGoods.SUBMIT_BUTTON,
-        back_link=BackLink(url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]}),),
+        back_link=BackLink(
+            url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]}),
+        ),
         container="case",
     )
 
@@ -123,10 +133,20 @@ def respond_to_grading_query_form(request, queue_pk, case):
                 classes=["app-pv-grading-inputs"],
             ),
             DetailComponent(
-                title=PVGradingForm.COMMENT, components=[TextArea(name="comment", extras={"max_length": 500,},),],
+                title=PVGradingForm.COMMENT,
+                components=[
+                    TextArea(
+                        name="comment",
+                        extras={
+                            "max_length": 500,
+                        },
+                    ),
+                ],
             ),
         ],
         default_button_name=PVGradingForm.SUBMIT_BUTTON,
-        back_link=BackLink(url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]}),),
+        back_link=BackLink(
+            url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case["id"]}),
+        ),
         container="case",
     )

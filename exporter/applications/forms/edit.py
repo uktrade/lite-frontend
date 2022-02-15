@@ -9,7 +9,9 @@ def reference_name_form(application_id=None):
     return Form(
         title=applications.InitialApplicationQuestionsForms.ReferenceNameQuestion.TITLE,
         description=applications.InitialApplicationQuestionsForms.ReferenceNameQuestion.DESCRIPTION,
-        questions=[TextInput(name="name"),],
+        questions=[
+            TextInput(name="name"),
+        ],
         back_link=back_to_task_list(application_id),
         default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.CONTINUE),
     )
@@ -22,7 +24,10 @@ def firearms_form(application_id=None):
         questions=[
             RadioButtons(
                 name="contains_firearm_goods",
-                options=[Option(key="True", value=strings.YES), Option(key="False", value=strings.NO),],
+                options=[
+                    Option(key="True", value=strings.YES),
+                    Option(key="False", value=strings.NO),
+                ],
             ),
         ],
         back_link=back_to_task_list(application_id),

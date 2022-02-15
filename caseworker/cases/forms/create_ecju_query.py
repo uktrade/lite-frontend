@@ -31,7 +31,11 @@ def new_ecju_query_form(queue_pk, pk, query_type):
         questions=[
             HiddenField("query_type", query_type),
             TextArea(
-                description=cases.EcjuQueries.AddQuery.DESCRIPTION, name="question", extras={"max_length": 5000,},
+                description=cases.EcjuQueries.AddQuery.DESCRIPTION,
+                name="question",
+                extras={
+                    "max_length": 5000,
+                },
             ),
             PicklistPicker(target="question", type=query_type),
         ],

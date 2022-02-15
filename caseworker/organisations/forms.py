@@ -87,7 +87,10 @@ def register_organisation_forms(request):
             ),
             conditional(is_individual, register_individual_form(in_uk), register_commercial_form(in_uk)),
             create_default_site_form(request, is_individual, in_uk),
-            conditional(not is_individual, create_admin_user_form(),),
+            conditional(
+                not is_individual,
+                create_admin_user_form(),
+            ),
         ],
         show_progress_indicators=True,
     )

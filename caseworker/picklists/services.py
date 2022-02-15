@@ -22,7 +22,8 @@ def get_picklists_list(request, type, page=1, name=None, disable_pagination=Fals
 
 def get_picklists_for_input(request, picklist_type, show_deactivated=False, convert_to_options=False):
     data = client.get(
-        request, f"/picklist/?type={picklist_type}&show_deactivated={show_deactivated}&disable_pagination=True",
+        request,
+        f"/picklist/?type={picklist_type}&show_deactivated={show_deactivated}&disable_pagination=True",
     ).json()["results"]
 
     if convert_to_options:

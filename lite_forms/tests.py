@@ -71,7 +71,14 @@ class FormTests(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_remove_unused_errors(self):
-        form = Form(questions=[TextInput("name"), TextInput("age"), TextInput("password"), DetailComponent("", ""),])
+        form = Form(
+            questions=[
+                TextInput("name"),
+                TextInput("age"),
+                TextInput("password"),
+                DetailComponent("", ""),
+            ]
+        )
 
         errors = {
             "name": "This field must not be empty",
@@ -105,9 +112,16 @@ class FormTests(TestCase):
                 "reference": "conversation_16",
                 "organisation": {
                     "name": "Live on coffee and flowers inc.",
-                    "site": {"address": {"city": "London",}, "name": "Lemonworld",},
+                    "site": {
+                        "address": {
+                            "city": "London",
+                        },
+                        "name": "Lemonworld",
+                    },
                 },
-                "user": {"first_name": "Matthew",},
+                "user": {
+                    "first_name": "Matthew",
+                },
             },
         )
 
@@ -116,9 +130,16 @@ class FormTests(TestCase):
             "reference": "conversation_16",
             "organisation": {
                 "name": "Live on coffee and flowers inc.",
-                "site": {"address": {"city": "London",}, "name": "Lemonworld",},
+                "site": {
+                    "address": {
+                        "city": "London",
+                    },
+                    "name": "Lemonworld",
+                },
             },
-            "user": {"first_name": "Matthew",},
+            "user": {
+                "first_name": "Matthew",
+            },
         }
 
         data = flatten_data(value)
@@ -158,7 +179,10 @@ class FormTests(TestCase):
         self.assertEqual(len(components), 3)
 
     def test_insert_hidden_fields(self):
-        form = Form(title="I Am Easy to Find", questions=[],)
+        form = Form(
+            title="I Am Easy to Find",
+            questions=[],
+        )
         insert_hidden_fields({"matt": "berninger"}, form)
         self.assertEqual(len(form.questions), 1)
 
@@ -216,28 +240,49 @@ class SingleQuestionFormAccessibilityTest(TestCase):
         self.assertIsNone(form.single_form_element)
 
     def test_no_user_inputs_no_title_label(self):
-        form = Form(questions=[BackLink(), Label("abc"), HiddenField("abc", "123"),])
+        form = Form(
+            questions=[
+                BackLink(),
+                Label("abc"),
+                HiddenField("abc", "123"),
+            ]
+        )
         self.assertIsNone(form.single_form_element)
 
     def test_single_user_input_with_other_questions_has_title_label(self):
         name = "Test"
-        form = Form(questions=[BackLink(), Label("abc"), TextInput(name), HiddenField("abc", "123"),])
+        form = Form(
+            questions=[
+                BackLink(),
+                Label("abc"),
+                TextInput(name),
+                HiddenField("abc", "123"),
+            ]
+        )
         self.assertEqual(form.single_form_element.name, name)
 
     def test_single_user_input_alone_has_title_label(self):
         name = "Test"
-        form = Form(questions=[TextInput(name),])
+        form = Form(
+            questions=[
+                TextInput(name),
+            ]
+        )
         self.assertEqual(form.single_form_element.name, name)
 
     def test_multiple_user_inputs_no_title_label(self):
-        form = Form(questions=[TextInput("abc"), NumberInput("def"),])
+        form = Form(
+            questions=[
+                TextInput("abc"),
+                NumberInput("def"),
+            ]
+        )
         self.assertIsNone(form.single_form_element)
 
 
 class FileUploadTest(TestCase):
     def test_file_upload_accept_props(self):
-        """Test that vanilla FileUpload component is rendered with the right accept props.
-        """
+        """Test that vanilla FileUpload component is rendered with the right accept props."""
         form = Form("test-file-upload", "A form to test file upload component", [FileUpload()])
         html = render_to_string("form.html", {"page": form})
         soup = BeautifulSoup(html, "html.parser")

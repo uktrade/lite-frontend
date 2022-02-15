@@ -6,7 +6,10 @@ class Picklists:
 
     def post_picklist(self, key):
         return self.api_client.make_request(
-            method="POST", url="/picklist/", body=self.request_data[key], headers=self.api_client.gov_headers,
+            method="POST",
+            url="/picklist/",
+            body=self.request_data[key],
+            headers=self.api_client.gov_headers,
         ).json()["picklist_item"]
 
     def add_ecju_query_picklist(self):

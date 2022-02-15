@@ -160,7 +160,11 @@ def does_firearm_component_require_proof_marks_field():
         title="Is the product a gun barrel or the action of a gun?",
         name="is_gun_barrel",
         options=[
-            components.Option(key=True, value="Yes", components=[firearm_proof_mark_field()],),
+            components.Option(
+                key=True,
+                value="Yes",
+                components=[firearm_proof_mark_field()],
+            ),
             components.Option(key=False, value="No"),
         ],
     )
@@ -198,7 +202,9 @@ def firearm_is_deactivated_field():
                 value="Yes",
                 components=[
                     components.DateInput(
-                        title="Date of deactivation", name="date_of_deactivation", prefix="date_of_deactivation",
+                        title="Date of deactivation",
+                        name="date_of_deactivation",
+                        prefix="date_of_deactivation",
                     ),
                     components.RadioButtons(
                         title="Has the product been deactivated to UK/EU proof house standards?",

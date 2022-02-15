@@ -9,7 +9,10 @@ class Queues:
         data = self.request_data["queue"]
         data["name"] = queue_name
         queue = self.api_client.make_request(
-            method="POST", url="/queues/", headers=self.api_client.gov_headers, body=data,
+            method="POST",
+            url="/queues/",
+            headers=self.api_client.gov_headers,
+            body=data,
         ).json()["queue"]
         self.api_client.add_to_context("queue_id", queue["id"])
         self.api_client.add_to_context("queue_name", queue["name"])

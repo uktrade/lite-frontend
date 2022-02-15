@@ -116,7 +116,8 @@ def get_homepage(request, draft_id, obj_pk=None):
 def get_delete_confirmation_page(path, pk):
     paths = document_switch(path)
     return delete_document_confirmation_form(
-        overview_url=reverse(paths["homepage"], kwargs={"pk": pk}), strings=paths["strings"],
+        overview_url=reverse(paths["homepage"], kwargs={"pk": pk}),
+        strings=paths["strings"],
     )
 
 
@@ -188,7 +189,10 @@ class DownloadGeneratedDocument(LoginRequiredMixin, TemplateView):
         client = s3_client()
         signed_url = client.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": document["document"]["s3_key"],},
+            Params={
+                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
+                "Key": document["document"]["s3_key"],
+            },
             ExpiresIn=15,
         )
         return redirect(signed_url)

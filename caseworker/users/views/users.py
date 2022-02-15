@@ -42,7 +42,10 @@ class UsersList(TemplateView):
         ]
 
         filters = FiltersBar(
-            [Select(name="status", title="status", options=statuses), TextInput(name="email", title="email"),]
+            [
+                Select(name="status", title="status", options=statuses),
+                TextInput(name="email", title="email"),
+            ]
         )
 
         context = {

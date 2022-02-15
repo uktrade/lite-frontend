@@ -257,7 +257,12 @@ def data_open_case():
                         "description": "tool to assist peasants seize the means of production",
                         "is_good_controlled": {"key": "False", "value": "No"},
                         "is_good_incorporated": True,
-                        "control_list_entries": [{"rating": "ML1a", "text": "Outmoded bourgeois reactionaries",}],
+                        "control_list_entries": [
+                            {
+                                "rating": "ML1a",
+                                "text": "Outmoded bourgeois reactionaries",
+                            }
+                        ],
                         "countries": [{"id": "US", "name": "United States", "type": "gov.uk Country", "is_eu": False}],
                         "document": None,
                         "end_use_control": ["MEND"],
@@ -366,7 +371,13 @@ def data_standard_case():
                 {"id": "c270b79b-370c-4c5e-b8b6-4d5210a58956", "name": "queue 20200818000000", "alias": "QUEUE_2"},
             ],
             "assigned_users": {},
-            "has_advice": {"user": False, "my_user": False, "team": False, "my_team": False, "final": False,},
+            "has_advice": {
+                "user": False,
+                "my_user": False,
+                "team": False,
+                "my_team": False,
+                "final": False,
+            },
             "advice": [],
             "all_flags": [
                 {
@@ -402,7 +413,12 @@ def data_standard_case():
                             "city": "jim",
                             "region": "Richardaho",
                             "postcode": "Dn22 6uh",
-                            "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True,},
+                            "country": {
+                                "id": "GB",
+                                "name": "United Kingdom",
+                                "type": "gov.uk Country",
+                                "is_eu": True,
+                            },
                         },
                         "records_located_at": {
                             "id": "c86d3df2-5f48-40cd-a720-e76322df71a9",
@@ -460,7 +476,12 @@ def data_standard_case():
                     "id": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
                     "name": "End User",
                     "address": "44",
-                    "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True,},
+                    "country": {
+                        "id": "GB",
+                        "name": "United Kingdom",
+                        "type": "gov.uk Country",
+                        "is_eu": True,
+                    },
                     "website": "",
                     "type": "end_user",
                     "type_display_value": "End-user",
@@ -503,7 +524,12 @@ def data_standard_case():
                     "id": "cd2263b4-a427-4f14-8552-505e1d192bb8",
                     "name": "Consignee",
                     "address": "44",
-                    "country": {"id": "AE-AZ", "name": "Abu Dhabi", "type": "gov.uk Territory", "is_eu": False,},
+                    "country": {
+                        "id": "AE-AZ",
+                        "name": "Abu Dhabi",
+                        "type": "gov.uk Territory",
+                        "is_eu": False,
+                    },
                     "website": "",
                     "type": "consignee",
                     "type_display_value": "Consignee",
@@ -628,7 +654,12 @@ def data_standard_case():
                         "id": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
                         "name": "End User",
                         "address": "44",
-                        "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True,},
+                        "country": {
+                            "id": "GB",
+                            "name": "United Kingdom",
+                            "type": "gov.uk Country",
+                            "is_eu": True,
+                        },
                         "website": "",
                         "type": "end_user",
                         "organisation": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",

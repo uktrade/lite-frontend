@@ -29,8 +29,16 @@ tabs = [
         name=LicencesList.Tabs.OGLS,
         url=reverse_lazy("licences:list-open-general-licences"),
     ),
-    Tab(id="no_licence_required", name=LicencesList.Tabs.NLR, url=reverse_lazy("licences:list-no-licence-required"),),
-    Tab(id="clearances", name=LicencesList.Tabs.CLEARANCE, url=reverse_lazy("licences:list-clearances"),),
+    Tab(
+        id="no_licence_required",
+        name=LicencesList.Tabs.NLR,
+        url=reverse_lazy("licences:list-no-licence-required"),
+    ),
+    Tab(
+        id="clearances",
+        name=LicencesList.Tabs.CLEARANCE,
+        url=reverse_lazy("licences:list-clearances"),
+    ),
 ]
 
 

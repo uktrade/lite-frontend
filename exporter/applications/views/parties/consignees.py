@@ -58,7 +58,10 @@ class SetConsignee(LoginRequiredMixin, SetParty):
 class RemoveConsignee(LoginRequiredMixin, DeleteParty):
     def __init__(self, **kwargs):
         super().__init__(
-            url="applications:add_consignee", action=delete_party, error=ConsigneePage.DELETE_ERROR, **kwargs,
+            url="applications:add_consignee",
+            action=delete_party,
+            error=ConsigneePage.DELETE_ERROR,
+            **kwargs,
         )
 
 

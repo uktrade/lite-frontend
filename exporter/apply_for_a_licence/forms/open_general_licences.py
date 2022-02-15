@@ -173,7 +173,8 @@ def open_general_licence_forms(request, **kwargs):
                     ],
                     buttons=[
                         conditional(
-                            selected_open_general_licence.get("registration_required"), Button("Register", "submit"),
+                            selected_open_general_licence.get("registration_required"),
+                            Button("Register", "submit"),
                         )
                     ],
                 ),

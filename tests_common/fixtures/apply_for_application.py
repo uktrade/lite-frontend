@@ -494,7 +494,11 @@ def apply_for_standard_transhipment_application(api_test_client, context):
             "is_eu_military": False,
         },
         route_of_goods={"is_shipped_waybill_or_lading": True},
-        external_location={"name": fake.name(), "address": fake.street_address(), "country": "FR",},
+        external_location={
+            "name": fake.name(),
+            "address": fake.street_address(),
+            "country": "FR",
+        },
         has_external_location=True,
         has_location=False,
     )

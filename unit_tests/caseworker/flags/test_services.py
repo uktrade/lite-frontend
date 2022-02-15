@@ -9,7 +9,13 @@ from caseworker.flags.services import _add_flag_permissions
         ([], 3),
         (["REMOVE_AUTHORISED_COUNTERSIGNER_FLAGS"], 2),
         (["REMOVE_HEAD_OF_LICENSING_UNIT_FLAGS"], 1),
-        (["REMOVE_AUTHORISED_COUNTERSIGNER_FLAGS", "REMOVE_HEAD_OF_LICENSING_UNIT_FLAGS",], 0),
+        (
+            [
+                "REMOVE_AUTHORISED_COUNTERSIGNER_FLAGS",
+                "REMOVE_HEAD_OF_LICENSING_UNIT_FLAGS",
+            ],
+            0,
+        ),
     ],
 )
 def test_get_flags_permissions(permissions, num_unremovable):

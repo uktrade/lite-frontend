@@ -61,7 +61,11 @@ def get_locations_page(request, application_id, **kwargs):
     if kwargs.get("errors"):
         context["errors"] = kwargs["errors"]
 
-    return render(request, "applications/goods-locations/goods-locations.html", context,)
+    return render(
+        request,
+        "applications/goods-locations/goods-locations.html",
+        context,
+    )
 
 
 class GoodsLocation(LoginRequiredMixin, TemplateView):

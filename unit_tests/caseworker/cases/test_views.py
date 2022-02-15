@@ -189,7 +189,9 @@ def test_standard_review_goods(
     expected["current_object"] = good_on_application_pk
 
     step_data = build_wizard_step_data(
-        view_name="review_standard_application_good_wizard_view", step_name=good_on_application_pk, data=data,
+        view_name="review_standard_application_good_wizard_view",
+        step_name=good_on_application_pk,
+        data=data,
     )
     url = reverse("cases:review_standard_application_goods", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
 
@@ -219,7 +221,9 @@ def test_open_review_goods(
     requests_mock_instance = requests_mock.post(f"/goods/control-list-entries/{open_case_pk}/", json={})
     good_pk = data_open_case["case"]["data"]["goods_types"][0]["id"]
     step_data = build_wizard_step_data(
-        view_name="review_open_application_good_wizard_view", step_name=good_pk, data=data,
+        view_name="review_open_application_good_wizard_view",
+        step_name=good_pk,
+        data=data,
     )
     url = reverse("cases:review_open_application_goods", kwargs={"queue_pk": queue_pk, "pk": open_case_pk})
 
@@ -404,7 +408,11 @@ def test_good_on_application_detail_clc_entries(
 
 
 def test_good_on_application_detail_security_graded_check(
-    authorized_client, queue_pk, standard_case_pk, good_on_application_pk, data_good_on_application,
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
 ):
     for expected_value in ["no", "yes"]:
         data_good_on_application["good"]["is_pv_graded"] = expected_value

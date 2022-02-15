@@ -38,7 +38,7 @@
 				</thead>
 				<tbody class="govuk-table__body">
 					{% for application in results %}
-						
+
 						<tr class="govuk-table__row">
 							<td class="govuk-table__cell">
 								<a href="{% url 'spire:application-detail' id=application.id %}" class="govuk-link">{{ application.application_ref }}</a>

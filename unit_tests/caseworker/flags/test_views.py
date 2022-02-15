@@ -8,7 +8,10 @@ from lite_content.lite_internal_frontend.flags import SetFlagsForm
 
 @pytest.fixture(autouse=True)
 def setup(
-    mock_queue, mock_put_flags, mock_case, mock_get_organisation,
+    mock_queue,
+    mock_put_flags,
+    mock_case,
+    mock_get_organisation,
 ):
     yield
 

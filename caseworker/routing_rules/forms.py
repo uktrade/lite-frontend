@@ -40,7 +40,9 @@ additional_rules = [
 def select_a_team(request):
     return Form(
         title=Forms.TEAM,
-        questions=[RadioButtons(name="team", options=get_teams(request, True)),],
+        questions=[
+            RadioButtons(name="team", options=get_teams(request, True)),
+        ],
         back_link=BackLink(Forms.BACK_BUTTON, reverse_lazy("routing_rules:list")),
     )
 
@@ -67,7 +69,11 @@ def initial_routing_rule_questions(request, select_team, team_id, is_editing: bo
             ),
             TextInput(title=Forms.TIER, name="tier"),
             HiddenField(name="additional_rules[]", value=None),
-            Checkboxes(title=Forms.ADDITIONAL_RULES, name="additional_rules[]", options=additional_rules,),
+            Checkboxes(
+                title=Forms.ADDITIONAL_RULES,
+                name="additional_rules[]",
+                options=additional_rules,
+            ),
         ],
         back_link=BackLink(Forms.BACK_BUTTON, reverse_lazy("routing_rules:list")),
         javascript_imports={"/javascripts/routing-rules-teams.js"},
@@ -171,7 +177,12 @@ def select_flags(request, team_id, flags_to_include, flags_to_exclude, is_editin
 def select_country(request):
     return Form(
         title=Forms.COUNTRY,
-        questions=[AutocompleteInput(name="country", options=get_countries(request, convert_to_options=True),)],
+        questions=[
+            AutocompleteInput(
+                name="country",
+                options=get_countries(request, convert_to_options=True),
+            )
+        ],
     )
 
 
@@ -180,7 +191,8 @@ def select_team_member(request, team_id):
         title=Forms.USER,
         questions=[
             RadioButtons(
-                name="user", options=get_users_by_team(request, team_id, convert_to_options=True) if team_id else [],
+                name="user",
+                options=get_users_by_team(request, team_id, convert_to_options=True) if team_id else [],
             )
         ],
     )

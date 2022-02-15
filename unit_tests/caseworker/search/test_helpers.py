@@ -146,7 +146,14 @@ def test_highlight_results_nested_missing_fields():
         ],
         "name": "20200429_E2E-00101a",
         "queues": [],
-        "highlight": {"goods.control_list_entries.text": ["<b>software</b>",], "wildcard": ["<b>software</b>",]},
+        "highlight": {
+            "goods.control_list_entries.text": [
+                "<b>software</b>",
+            ],
+            "wildcard": [
+                "<b>software</b>",
+            ],
+        },
         "score": 17.466608,
     }
     helpers.highlight_results([result])
@@ -184,7 +191,12 @@ def test_highlight_results_nested_dicts():
                 "control_list_entries": [],
             }
         ],
-        "highlight": {"case_officer.email.raw": ["<b>foo@example.com</b>"], "goods.description": ["<b>software</b>",],},
+        "highlight": {
+            "case_officer.email.raw": ["<b>foo@example.com</b>"],
+            "goods.description": [
+                "<b>software</b>",
+            ],
+        },
         "score": 108.375305,
     }
     helpers.highlight_results([result])

@@ -11,8 +11,16 @@ def country_question(countries, prefix="address."):
 def address_questions(countries, is_individual, prefix="address."):
     phone_number_title = "Phone number" if is_individual else "Organisation phone number"
     return [
-        TextInput(title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",),
-        TextInput(title="", accessible_description="line 2 of 2", name=prefix + "address_line_2",),
+        TextInput(
+            title="Building and street",
+            accessible_description="line 1 of 2",
+            name=prefix + "address_line_1",
+        ),
+        TextInput(
+            title="",
+            accessible_description="line 2 of 2",
+            name=prefix + "address_line_2",
+        ),
         TextInput(title="Town or city", name=prefix + "city"),
         TextInput(title="County or state", name=prefix + "region"),
         TextInput(title="Postcode", name=prefix + "postcode"),
@@ -48,9 +56,15 @@ def edit_address_questions_form(is_commercial, in_uk, countries, prefix="site.ad
             TextInput(title=RegisterAnOrganisation.NAME_OF_SITE, name="site.name"),
             Heading(RegisterAnOrganisation.WhereIsTheExporterBased.TITLE, HeadingStyle.M),
             TextInput(
-                title="Building and street", accessible_description="line 1 of 2", name=prefix + "address_line_1",
+                title="Building and street",
+                accessible_description="line 1 of 2",
+                name=prefix + "address_line_1",
             ),
-            TextInput(title="", accessible_description="line 2 of 2", name=prefix + "address_line_2",),
+            TextInput(
+                title="",
+                accessible_description="line 2 of 2",
+                name=prefix + "address_line_2",
+            ),
             TextInput(title="Town or city", name=prefix + "city"),
             TextInput(title="County or state", name=prefix + "region"),
             TextInput(title="Postcode", name=prefix + "postcode"),
@@ -83,10 +97,18 @@ def control_list_entries_question(
     description="Type to get suggestions. For example, ML1a.",
     name="control_list_entries",
 ):
-    return TokenBar(title=title, name=name, description=description, options=control_list_entries,)
+    return TokenBar(
+        title=title,
+        name=name,
+        description=description,
+        options=control_list_entries,
+    )
 
 
 def pv_grading_question(
-    pv_gradings, title="PV grading", description="For example, UK OFFICIAL-SENSITIVE", name="pv_grading",
+    pv_gradings,
+    title="PV grading",
+    description="For example, UK OFFICIAL-SENSITIVE",
+    name="pv_grading",
 ):
     return AutocompleteInput(title=title, name=name, description=description, options=pv_gradings)

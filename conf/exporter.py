@@ -16,7 +16,10 @@ INSTALLED_APPS += [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "exporter/templates"), os.path.join(BASE_DIR, "core/forms/templates"),],
+        "DIRS": [
+            os.path.join(BASE_DIR, "exporter/templates"),
+            os.path.join(BASE_DIR, "core/forms/templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -88,7 +91,9 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": REDIS_URL,
-        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient",},
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     }
 }
 

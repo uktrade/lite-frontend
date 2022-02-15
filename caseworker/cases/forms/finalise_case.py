@@ -23,7 +23,13 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
                 ),
             ),
             HiddenField(name="action", value="approve"),
-            conditional(goods, Custom(goods_html, data=goods,)),
+            conditional(
+                goods,
+                Custom(
+                    goods_html,
+                    data=goods,
+                ),
+            ),
         ],
         container="case",
         back_link=conditional(

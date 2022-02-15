@@ -169,7 +169,7 @@ class AddGoodDetails(BasePage):
             details_element.send_keys(text)
 
     def select_firearm_product_type(self, option):
-        """ Only applicable to firearm goods """
+        """Only applicable to firearm goods"""
         if option == "firearm":
             self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_ID).click()
         if option == "components_for_firearm":

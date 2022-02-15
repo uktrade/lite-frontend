@@ -121,8 +121,7 @@ class GiveApprovalAdviceForm(forms.Form):
 
 
 class ConsolidateApprovalForm(GiveApprovalAdviceForm):
-    """Approval form minus some fields.
-    """
+    """Approval form minus some fields."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
