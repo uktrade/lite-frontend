@@ -1,3 +1,7 @@
+import 'url-search-params-polyfill'
+import 'fetch-polyfill'
+import Tokenfield from './lite-tokenfield.js'
+
 plural = []
 
 $("#unit > option").each(function () {
@@ -75,3 +79,65 @@ function populateUploadedCertificate() {
 	populateUploadedCertificate()
 	showHideCertificateMissingReason()
 })();
+
+export default function initAddGood() {
+    var controlListEntriesField = document.getElementById('control_list_entries')
+    console.log('Control list entry field ' + controlListEntriesField)
+    if (!controlListEntriesField) {
+        return;
+    }
+
+    // adding place for "rating may need alternative CLC"
+    var controlListEntriesTokenFieldInfo = document.createElement('div')
+    controlListEntriesField.parentElement.appendChild(controlListEntriesTokenFieldInfo)
+
+    var controlListEntriesTokenField = progressivelyEnhanceMultipleSelectField(controlListEntriesField)
+
+    // faking the feature so we can get user fedback: for some ratings show the message about alternative CLCs
+    controlListEntriesTokenField.on('change', function (tokenField) {
+        var note = " may need an alternative control list entry because of its destination"
+        var messages = tokenField.getItems()
+            .filter(function (item) {
+                return item.name.match(/[a-zA-Z]$/) !== null
+            })
+            .map(function (item) {
+                return "<div>" + item.name + note + "</div>"
+            })
+        if (messages.length > 0) {
+            controlListEntriesTokenFieldInfo.innerHTML = "<div class='govuk-inset-text'>" + messages.join('') + "</div>"
+        } else {
+            controlListEntriesTokenFieldInfo.innerHTML = ""
+        }
+    })
+
+    function progressivelyEnhanceMultipleSelectField(element) {
+        element.parentElement.classList.add('tokenfield-container')
+
+        var items = []
+        var selected = []
+        for (var i = 0; i < element.options.length; i++) {
+            var option = element.options.item(i)
+            var item = {'id': option.value, 'name': option.value, 'classes': []}
+            if (option.selected) {
+                selected.push(item)
+            }
+            items.push(item)
+        }
+        var tokenField = new Tokenfield({
+            el: element,
+            items: items,
+            newItems: false,
+            addItemOnBlur: true,
+            filterSetItems: false,
+            addItemsOnPaste: true,
+            minChars: 1,
+            itemName: element.name,
+            setItems: selected,
+            keepItemsOrder: false,
+        });
+        tokenField._renderItems()
+        tokenField._html.container.id = element.id
+        element.remove()
+        return tokenField
+    }
+}
