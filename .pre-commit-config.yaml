@@ -1,4 +1,4 @@
-exclude: ^exporter/assets/built/
+exclude: (exporter/assets/built/|caseworker/assets/built/)
 repos:
     - repo: https://github.com/psf/black
       rev: 19.10b0
