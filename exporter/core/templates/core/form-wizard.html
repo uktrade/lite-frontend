@@ -20,7 +20,7 @@
 		</p>
 	</div>
 
-	<form action="" method="post">
+	<form action="" method="post"{% if form.helper.attrs.enctype %} enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
 		{% csrf_token %}
 
 		<section aria-label="banner">
@@ -32,9 +32,25 @@
 		</section>
 
 		<div class="govuk-main-wrapper " id="main-content" role="main">
+            {% for error in form.non_field_errors %}
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                        <li>
+                            {{ error }}
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
 			<div class="govuk-grid-row">
 				<div class="govuk-grid-column-two-thirds">
-						<span class="govuk-caption-xl">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
+                        {% if not hide_step_count %}
+						    <span class="govuk-caption-xl">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
+                        {% endif %}
 						{{ wizard.management_form }}
 						{% if wizard.form.forms %}
 								{{ wizard.form.management_form }}

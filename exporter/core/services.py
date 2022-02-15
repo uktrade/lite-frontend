@@ -247,7 +247,7 @@ def get_pv_gradings(request, convert_to_options=False):
         return converted_units
 
     data = client.get(request, "/static/private-venture-gradings/")
-    return data.json().get("pv-gradings")
+    return data.json().get("pv_gradings")
 
 
 def get_control_list_entry(request, rating):

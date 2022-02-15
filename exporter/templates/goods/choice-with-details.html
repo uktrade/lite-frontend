@@ -1,0 +1,46 @@
+{% comment %}
+    Render a radio button component that reveals additional form fields when a radio
+    option is selected. The display of the hidden fields works similarly to the
+    GDS Details component: https://design-system.service.gov.uk/components/details/
+
+    This template fragment requires the following context variables:
+        form:
+            An instance of the form being rendered.
+        choice_field_name:
+            The name of the choice field as declared in the form. This is rendered
+            as a radio component.
+        details:
+            A dictionary specifying a mapping between the choice value and the
+            name of the form field to display.
+{% endcomment %}
+
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% csrf_token %}
+
+{% with choice_field=form|getitem:choice_field_name %}
+<div class="govuk-form-group {% if choice_field.errors %}govuk-form-group--error{% endif %}" id="div_id_{{ form.prefix }}-{{ choice_field_name }}">
+    {% if choice_field.label %}<label class="govuk-label">{{ choice_field.label }}</label>{% endif %}
+    {% if choice_field.help_text %}<span class="govuk-hint">{{ choice_field.help_text|markdown }}</span>{% endif %}
+    <fieldset class="govuk-fieldset">
+        {% if choice_field.errors %}<span id="id_{{ form.prefix }}-{{ choice_field_name }}-error" class="govuk-error-message">{% for error in choice_field.errors %}{{ error }}{% endfor %}</span>{% endif %}
+        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+            {% for choice in choice_field.field.choices %}
+            {% with details_field_name=details|get:choice.0 %}
+            <div class="govuk-radios__item">
+                <input type="radio" name="{{ form.prefix }}-{{ choice_field_name }}" class="govuk-radios__input" id="id_{{ form.prefix }}-{{ choice_field_name }}_{{ forloop.counter0 }}" value="{{ choice.0 }}" data-aria-controls="conditional-0-{{ choice.0 }}" {% if choice_field.data == choice.0|stringformat:"s" %}checked{% endif %}>
+                <label class="govuk-label govuk-radios__label" for="id_{{ form.prefix }}-{{ choice_field_name }}_{{ forloop.counter0 }}">{{ choice.1 }}</label>
+            </div>
+            {% if details_field_name %}
+            {% with details_field=form|getitem:details_field_name %}
+            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-0-{{choice.0}}">
+                {{ details_field|as_crispy_field }}
+            </div>
+            {% endwith %}
+            {% endif %}
+            {% endwith %}
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+{% endwith %}
