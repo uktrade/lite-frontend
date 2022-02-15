@@ -23,7 +23,7 @@ def validate_register_organisation_triage(_, json):
 
 
 def validate_expiry_date(request, field_name):
-    """ Validate that the section certificate expiry date is
+    """Validate that the section certificate expiry date is
     not in the past or > 5y in the future.
     """
     iso_date = format_date(request.POST, field_name)

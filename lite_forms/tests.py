@@ -236,8 +236,7 @@ class SingleQuestionFormAccessibilityTest(TestCase):
 
 class FileUploadTest(TestCase):
     def test_file_upload_accept_props(self):
-        """Test that vanilla FileUpload component is rendered with the right accept props.
-        """
+        """Test that vanilla FileUpload component is rendered with the right accept props."""
         form = Form("test-file-upload", "A form to test file upload component", [FileUpload()])
         html = render_to_string("form.html", {"page": form})
         soup = BeautifulSoup(html, "html.parser")

@@ -28,7 +28,7 @@ def assign_users_form(request: HttpRequest, team_id, queue, multiple: bool):
         description=cases.Manage.AssignUsers.DESCRIPTION,
         questions=[
             Filter(),
-            Checkboxes("users", options=get_gov_users(request, params, convert_to_options=True,), filterable=True),
+            Checkboxes("users", options=get_gov_users(request, params, convert_to_options=True,), filterable=True,),
             DetailComponent(
                 title=cases.Manage.AssignUsers.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
             ),

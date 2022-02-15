@@ -33,7 +33,7 @@ def edit_picklist_item_form(picklist_item):
         questions=[
             TextInput(title="Name", name="name"),
             HiddenField("type", picklist_item["type"]["key"]),
-            TextArea(title="Text", name="text", extras={"max_length": 5000,}),
+            TextArea(title="Text", name="text", extras={"max_length": 5000,},),
         ],
         back_link=BackLink(
             "Back to " + picklist_item["name"],

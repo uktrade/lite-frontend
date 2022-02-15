@@ -119,8 +119,8 @@ def flatten_advice_data(request, case: Case, items: List[Dict], level):
 
 
 def check_user_permitted_to_give_final_advice(case_type, permissions):
-    """ Check if the user is permitted to give final advice on the case based on their
-    permissions and the case type. """
+    """Check if the user is permitted to give final advice on the case based on their
+    permissions and the case type."""
     if case_type in APPLICATION_CASE_TYPES and Permission.MANAGE_LICENCE_FINAL_ADVICE.value in permissions:
         return True
     elif case_type in CLEARANCE_CASE_TYPES and Permission.MANAGE_CLEARANCE_FINAL_ADVICE.value in permissions:
@@ -130,7 +130,7 @@ def check_user_permitted_to_give_final_advice(case_type, permissions):
 
 
 def can_advice_be_finalised(case):
-    """Check that there is no conflicting advice and that the advice can be finalised. """
+    """Check that there is no conflicting advice and that the advice can be finalised."""
     for advice in filter_advice_by_level(case["advice"], "final"):
         if advice["type"]["key"] == AdviceType.CONFLICTING:
             return False
@@ -139,7 +139,7 @@ def can_advice_be_finalised(case):
 
 
 def can_user_create_and_edit_advice(case, permissions):
-    """Check that the user can create and edit advice. """
+    """Check that the user can create and edit advice."""
     return Permission.MANAGE_TEAM_CONFIRM_OWN_ADVICE.value in permissions or (
         Permission.MANAGE_TEAM_ADVICE.value in permissions and not case.get("has_advice").get("my_user")
     )

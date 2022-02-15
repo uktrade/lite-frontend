@@ -146,7 +146,7 @@ def test_highlight_results_nested_missing_fields():
         ],
         "name": "20200429_E2E-00101a",
         "queues": [],
-        "highlight": {"goods.control_list_entries.text": ["<b>software</b>",], "wildcard": ["<b>software</b>",]},
+        "highlight": {"goods.control_list_entries.text": ["<b>software</b>",], "wildcard": ["<b>software</b>",],},
         "score": 17.466608,
     }
     helpers.highlight_results([result])

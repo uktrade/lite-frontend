@@ -157,7 +157,7 @@ def pv_gradings(mock_pv_gradings, rf, client):
 )
 @override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=True)
 def test_core_firearm_product_form_group(rf, client, params, num_forms, question_checks):
-    """ Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
+    """Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
     kwargs = {"is_pv_graded": False, **params}
     request = post_request(rf, client, data={})
     form_parts = forms.add_good_form_group(request, **kwargs).forms
@@ -240,7 +240,7 @@ def test_core_firearm_product_form_group(rf, client, params, num_forms, question
 )
 @override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=False)
 def test_core_firearm_product_form_group_firearms_feature_off(rf, client, params, num_forms, question_checks):
-    """ Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
+    """Test to ensure correct set of questions are asked in adding a firearm product journey depending on the firearm_type."""
     kwargs = {"is_pv_graded": False, **params}
     request = post_request(rf, client, data={"item_category": PRODUCT_CATEGORY_FIREARM})
     form_parts = forms.add_good_form_group(request, **kwargs).forms

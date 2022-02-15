@@ -26,7 +26,7 @@ def confirm_organisation_form(organisation):
 def query_explanation_form(application_id):
     return Form(
         title=strings.Hmrc.QueryExplanation.TITLE,
-        questions=[TextArea(name="reasoning", optional=True, extras={"max_length": 1000,})],
+        questions=[TextArea(name="reasoning", optional=True, extras={"max_length": 1000,},)],
         default_button_name=strings.Hmrc.QueryExplanation.BUTTON_TEXT,
         back_link=back_to_task_list(application_id),
     )
