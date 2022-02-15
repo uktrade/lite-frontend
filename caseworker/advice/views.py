@@ -277,7 +277,11 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
-            **services.get_advice_tab_context(self.case, self.caseworker, self.queue_id,),
+            **services.get_advice_tab_context(
+                self.case,
+                self.caseworker,
+                self.queue_id,
+            ),
         }
         return context
 

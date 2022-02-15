@@ -115,7 +115,9 @@ def _convert_standard_application(application, editable=False, is_summary=False)
 def _convert_open_application(application, editable=False):
     return {
         **(
-            {applications.ApplicationSummaryPage.GOODS_CATEGORIES: _get_goods_categories(application),}
+            {
+                applications.ApplicationSummaryPage.GOODS_CATEGORIES: _get_goods_categories(application),
+            }
             if application.case_type["reference"]["key"] == CaseTypes.OIEL
             and application.goodstype_category["key"]
             in [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF]
@@ -123,17 +125,25 @@ def _convert_open_application(application, editable=False):
         ),
         applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
         **(
-            {applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),}
+            {
+                applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
+            }
             if not is_application_oiel_of_type("cryptographic", application)
             else {}
         ),
         **(
-            {applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),}
+            {
+                applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),
+            }
             if not is_application_oiel_of_type("cryptographic", application)
             else {}
         ),
         **(
-            {applications.ApplicationSummaryPage.TEMPORARY_EXPORT_DETAILS: _get_temporary_export_details(application),}
+            {
+                applications.ApplicationSummaryPage.TEMPORARY_EXPORT_DETAILS: _get_temporary_export_details(
+                    application
+                ),
+            }
             if _is_application_export_type_temporary(application)
             else {}
         ),
@@ -462,7 +472,10 @@ def _convert_goods_locations(goods_locations):
         return [{"Site": site["name"], "Address": get_address(site)} for site in goods_locations["data"]]
     else:
         return [
-            {"Name": external_location["name"], "Address": get_address(external_location),}
+            {
+                "Name": external_location["name"],
+                "Address": get_address(external_location),
+            }
             for external_location in goods_locations["data"]
         ]
 

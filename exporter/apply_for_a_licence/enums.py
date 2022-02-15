@@ -12,10 +12,14 @@ class OpenGeneralExportLicenceTypes:
         "00000000-0000-0000-0000-000000000002", "Open General Export Licence", "OGEL"
     )
     open_general_trade_control_licence = OpenGeneralLicenceType(
-        "00000000-0000-0000-0000-000000000013", "Open General Trade Control Licence", "OGTCL",
+        "00000000-0000-0000-0000-000000000013",
+        "Open General Trade Control Licence",
+        "OGTCL",
     )
     open_general_transhipment_licence = OpenGeneralLicenceType(
-        "00000000-0000-0000-0000-000000000014", "Open General Transhipment Licence", "OGTL",
+        "00000000-0000-0000-0000-000000000014",
+        "Open General Transhipment Licence",
+        "OGTL",
     )
 
     @classmethod

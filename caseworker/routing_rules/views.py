@@ -51,7 +51,9 @@ class RoutingRulesList(LoginRequiredMixin, TemplateView):
                     [
                         Select(title=Filter.TEAM, name="team", options=get_teams(request, True)),
                         AutocompleteInput(
-                            title=Filter.QUEUE, name="queue", options=get_queues(request, convert_to_options=True),
+                            title=Filter.QUEUE,
+                            name="queue",
+                            options=get_queues(request, convert_to_options=True),
                         ),
                     ],
                     [
@@ -64,7 +66,9 @@ class RoutingRulesList(LoginRequiredMixin, TemplateView):
                 ),
                 TextInput(title=Filter.TIER, name="tier"),
                 Checkboxes(
-                    name="only_active", options=[Option(True, Filter.ACTIVE_ONLY)], classes=["govuk-checkboxes--small"],
+                    name="only_active",
+                    options=[Option(True, Filter.ACTIVE_ONLY)],
+                    classes=["govuk-checkboxes--small"],
                 ),
             ]
         )
@@ -88,7 +92,12 @@ class CreateRoutingRule(LoginRequiredMixin, MultiFormView):
         flags_to_include = request.POST.getlist("flags_to_include")
         flags_to_exclude = request.POST.getlist("flags_to_exclude")
         self.forms = routing_rule_form_group(
-            request, additional_rules, team_id, flags_to_include, flags_to_exclude, select_team=select_team,
+            request,
+            additional_rules,
+            team_id,
+            flags_to_include,
+            flags_to_exclude,
+            select_team=select_team,
         )
         self.success_url = reverse("routing_rules:list")
         self.action = post_routing_rule

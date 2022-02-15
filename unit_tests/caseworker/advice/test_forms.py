@@ -65,7 +65,11 @@ def test_consolidate_select_advice_form_recommendation_label(team_name, label):
 
 @pytest.mark.parametrize(
     "data, valid_status",
-    (({"approval_reasons": "some reason"}, True), ({"approval_reasons": None}, False), ({}, False),),
+    (
+        ({"approval_reasons": "some reason"}, True),
+        ({"approval_reasons": None}, False),
+        ({}, False),
+    ),
 )
 def test_countersign_advice_form_valid(data, valid_status):
     form = forms.CountersignAdviceForm(data=data)

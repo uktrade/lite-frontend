@@ -162,7 +162,8 @@ def test_edit_refuse_advice_post(
 
 
 @pytest.mark.parametrize(
-    "team, advice_level", ((services.LICENSING_UNIT_TEAM, "final"), (services.MOD_ECJU_TEAM, "team")),
+    "team, advice_level",
+    ((services.LICENSING_UNIT_TEAM, "final"), (services.MOD_ECJU_TEAM, "team")),
 )
 @patch("caseworker.advice.views.get_gov_user")
 def test_edit_advice_get(

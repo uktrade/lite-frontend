@@ -43,7 +43,8 @@ def edit_type_form(application_id):
             )
         ],
         back_link=BackLink(
-            strings.BACK_TO_APPLICATION, reverse_lazy("applications:application", kwargs={"pk": application_id}),
+            strings.BACK_TO_APPLICATION,
+            reverse_lazy("applications:application", kwargs={"pk": application_id}),
         ),
         default_button_name=strings.CONTINUE,
     )
@@ -66,7 +67,10 @@ def application_success_page(request, application_reference_code):
 
 def application_copy_form(application_type=None):
     return FormGroup(
-        forms=[reference_name_form(), conditional((application_type == STANDARD), told_by_an_official_form()),]
+        forms=[
+            reference_name_form(),
+            conditional((application_type == STANDARD), told_by_an_official_form()),
+        ]
     )
 
 
@@ -95,7 +99,8 @@ def exhibition_details_form(application_id):
             ),
         ],
         back_link=BackLink(
-            strings.BACK_TO_APPLICATION, reverse_lazy("applications:task_list", kwargs={"pk": application_id}),
+            strings.BACK_TO_APPLICATION,
+            reverse_lazy("applications:task_list", kwargs={"pk": application_id}),
         ),
     )
 
@@ -111,10 +116,18 @@ def declaration_form(application_id):
             Label(strings.declaration.Declaration.PARAGRAPH_FOUR),
             Checkboxes(
                 name="agreed_to_foi",
-                options=[Option(key="True", value=strings.declaration.FOI.INFORMATION_DISCLOSURE_TITLE,),],
+                options=[
+                    Option(
+                        key="True",
+                        value=strings.declaration.FOI.INFORMATION_DISCLOSURE_TITLE,
+                    ),
+                ],
                 classes=["govuk-checkboxes--small"],
             ),
-            TextArea(title=strings.declaration.FOI.INFORMATION_DISCLOSURE_DETAILS, name="foi_reason",),
+            TextArea(
+                title=strings.declaration.FOI.INFORMATION_DISCLOSURE_DETAILS,
+                name="foi_reason",
+            ),
             Label(strings.declaration.Declaration.FOI_MORE_ADVICE),
             Label(strings.declaration.Declaration.FOI_GUIDANCE),
             TextInput(
@@ -129,7 +142,8 @@ def declaration_form(application_id):
         ],
         default_button_name=strings.declaration.Declaration.BUTTON_TITLE,
         back_link=BackLink(
-            strings.declaration.Declaration.BACK, reverse_lazy("applications:summary", kwargs={"pk": application_id}),
+            strings.declaration.Declaration.BACK,
+            reverse_lazy("applications:summary", kwargs={"pk": application_id}),
         ),
         javascript_imports={"/javascripts/declaration.js"},
     )

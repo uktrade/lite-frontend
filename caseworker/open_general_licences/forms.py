@@ -33,7 +33,11 @@ def open_general_licence_forms(request, licence, strings):
                 description=strings.SelectType.DESCRIPTION,
                 caption=strings.Steps.STEP_1,
                 questions=[
-                    RadioButtons(short_title="Type", name="case_type", options=OpenGeneralExportLicences.as_options(),),
+                    RadioButtons(
+                        short_title="Type",
+                        name="case_type",
+                        options=OpenGeneralExportLicences.as_options(),
+                    ),
                 ],
                 default_button_name=generic.CONTINUE,
             ),

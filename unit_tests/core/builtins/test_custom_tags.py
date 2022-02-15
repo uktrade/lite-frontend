@@ -47,7 +47,14 @@ from exporter.core.objects import Application
             ),
             constants.IN_PROGRESS,
         ),
-        (Application({"case_type": {"sub_type": {"key": constants.STANDARD}},}), constants.NOT_STARTED,),
+        (
+            Application(
+                {
+                    "case_type": {"sub_type": {"key": constants.STANDARD}},
+                }
+            ),
+            constants.NOT_STARTED,
+        ),
         (
             Application(
                 {
@@ -84,7 +91,14 @@ from exporter.core.objects import Application
             ),
             constants.IN_PROGRESS,
         ),
-        (Application({"case_type": {"sub_type": {"key": constants.OPEN}},}), constants.NOT_STARTED,),
+        (
+            Application(
+                {
+                    "case_type": {"sub_type": {"key": constants.OPEN}},
+                }
+            ),
+            constants.NOT_STARTED,
+        ),
     ],
 )
 def test_get_end_use_details_status(application, expected):

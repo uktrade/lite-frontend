@@ -73,7 +73,9 @@ class SetEndUser(LoginRequiredMixin, SetParty):
 class RemoveEndUser(LoginRequiredMixin, DeleteParty):
     def __init__(self):
         super().__init__(
-            url="applications:add_end_user", action=delete_party, error=EndUserPage.DELETE_ERROR,
+            url="applications:add_end_user",
+            action=delete_party,
+            error=EndUserPage.DELETE_ERROR,
         )
 
 

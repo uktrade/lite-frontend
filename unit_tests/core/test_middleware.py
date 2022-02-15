@@ -105,7 +105,8 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
 
 
 @pytest.mark.parametrize(
-    "error", (OAuth2Error, TokenExpiredError),
+    "error",
+    (OAuth2Error, TokenExpiredError),
 )
 @mock.patch("core.middleware.cache")
 def test_sso_introspection_middleware_oauth_error(mock_cache, error, rf):

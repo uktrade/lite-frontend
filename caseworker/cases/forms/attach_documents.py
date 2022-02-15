@@ -15,7 +15,9 @@ def attach_documents_form(case_url):
                 title=cases.Manage.Documents.AttachDocuments.DESCRIPTION_FIELD_TITLE,
                 optional=True,
                 name="description",
-                extras={"max_length": 280,},
+                extras={
+                    "max_length": 280,
+                },
             ),
         ],
         back_link=BackLink(cases.Manage.Documents.AttachDocuments.BACK_TO_CASE_DOCUMENTS, case_url),
@@ -27,6 +29,8 @@ def upload_document_form(queue_pk):
     return Form(
         UploadEnforcementXML.TITLE,
         UploadEnforcementXML.DESCRIPTION,
-        [FileUpload(name="file"),],
+        [
+            FileUpload(name="file"),
+        ],
         back_link=BackLink(UploadEnforcementXML.BACK_LINK, reverse_lazy("queues:cases", kwargs={"queue_pk": queue_pk})),
     )

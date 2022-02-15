@@ -55,8 +55,22 @@ def test_upload_section_five_certificate_form(mock_timezone, requests_mock):
 @pytest.mark.parametrize(
     "expiry_date,error",
     (
-        ({"expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": 2010,}, ["Expiry date must be in the future"],),
-        ({"expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": 2030,}, ["Expiry date is too far in the future"],),
+        (
+            {
+                "expiry_date_0": 1,
+                "expiry_date_1": 1,
+                "expiry_date_2": 2010,
+            },
+            ["Expiry date must be in the future"],
+        ),
+        (
+            {
+                "expiry_date_0": 1,
+                "expiry_date_1": 1,
+                "expiry_date_2": 2030,
+            },
+            ["Expiry date is too far in the future"],
+        ),
     ),
 )
 def test_upload_firearm_registered_dealer_certificate_error(mock_timezone, authorized_client, expiry_date, error):
@@ -78,8 +92,22 @@ def test_upload_firearm_registered_dealer_certificate_error(mock_timezone, autho
 @pytest.mark.parametrize(
     "expiry_date,error",
     (
-        ({"expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": 2010,}, ["Expiry date must be in the future"],),
-        ({"expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": 2030,}, ["Expiry date is too far in the future"],),
+        (
+            {
+                "expiry_date_0": 1,
+                "expiry_date_1": 1,
+                "expiry_date_2": 2010,
+            },
+            ["Expiry date must be in the future"],
+        ),
+        (
+            {
+                "expiry_date_0": 1,
+                "expiry_date_1": 1,
+                "expiry_date_2": 2030,
+            },
+            ["Expiry date is too far in the future"],
+        ),
     ),
 )
 def test_upload_section_five_certificate_error(mock_timezone, authorized_client, expiry_date, error):
@@ -165,8 +193,14 @@ def test_new_site_form_uk_address(mock_request, mock_exporter_user_me, mock_post
 @pytest.mark.parametrize(
     "api_errors,form_errors",
     [
-        ({"name": ["Enter the site name"]}, {"name": ["Enter the site name"]},),
-        ({"address": {"address_line_1": ["Enter the address"]}}, {"address_line_1": ["Enter the address"]},),
+        (
+            {"name": ["Enter the site name"]},
+            {"name": ["Enter the site name"]},
+        ),
+        (
+            {"address": {"address_line_1": ["Enter the address"]}},
+            {"address_line_1": ["Enter the address"]},
+        ),
         ({"name": ["Enter the site name"], "address": ["This field is required"]}, {"name": ["Enter the site name"]}),
     ],
 )
@@ -211,7 +245,10 @@ def test_new_site_form_overseas_address(mock_request, mock_exporter_user_me, moc
         "name": "Test site",
         "phone_number": "+4401234567",
         "website": "https://example.com",
-        "address": {"address": "HQ,\nTest Street\nTest city\nSome postcode", "country": "FR",},
+        "address": {
+            "address": "HQ,\nTest Street\nTest city\nSome postcode",
+            "country": "FR",
+        },
     }
     form = site_forms.NewSiteInternationalAddressForm(data=data, request=mock_request)
     assert form.is_valid()
@@ -224,7 +261,12 @@ def test_new_site_form_existing_sites(
     data = {"are_you_sure": "True"}
     postcode = "SW1 7ES"
     url = f"/organisations/{organisation_pk}/sites/?exclude=&get_total_users=False&postcode=SW1+7ES"
-    json = {"sites": [{"name": "Site 1"}, {"name": "Site 2"},]}
+    json = {
+        "sites": [
+            {"name": "Site 1"},
+            {"name": "Site 2"},
+        ]
+    }
     requests_mock.get(client._build_absolute_uri(url), json=json)
     form = site_forms.NewSiteConfirmForm(data=data, request=mock_request, postcode=postcode)
     assert form.is_valid()
@@ -239,8 +281,18 @@ def test_new_site_form_assign_users(
 ):
     data = {"users": ["some-user-id", "another-user-id"]}
     json = [
-        {"email": "john.smith@example.com", "id": "some-user-id", "first_name": "John", "last_name": "Smith",},
-        {"email": "jane.doe@example.com", "id": "another-user-id", "first_name": "Jane", "last_name": "Doe",},
+        {
+            "email": "john.smith@example.com",
+            "id": "some-user-id",
+            "first_name": "John",
+            "last_name": "Smith",
+        },
+        {
+            "email": "jane.doe@example.com",
+            "id": "another-user-id",
+            "first_name": "Jane",
+            "last_name": "Doe",
+        },
     ]
     url = f"/organisations/{organisation_pk}/users/?disable_pagination=True&exclude_permission=ADMINISTER_SITES"
     requests_mock.get(client._build_absolute_uri(url), json=json)
@@ -266,7 +318,12 @@ def test_new_site_form_assign_users(
 )
 def test_new_site_form_conditionals(func, return_value, exp, mock_request, requests_mock, organisation_pk):
     url = f"/organisations/{organisation_pk}/sites/?exclude=&get_total_users=False&postcode=SW1+7ES"
-    json = {"sites": [{"name": "Site 1"}, {"name": "Site 2"},]}
+    json = {
+        "sites": [
+            {"name": "Site 1"},
+            {"name": "Site 2"},
+        ]
+    }
     requests_mock.get(client._build_absolute_uri(url), json=json)
     wizard = views.NewSiteWizardView(request=mock_request)
     wizard.get_cleaned_data_for_step = MagicMock(return_value=return_value)
@@ -297,7 +354,12 @@ def test_new_site_form_redirect_if_not_confirm(mock_request, requests_mock, mock
     data = {"are_you_sure": "False"}
     postcode = "SW1 7ES"
     url = f"/organisations/{organisation_pk}/sites/?exclude=&get_total_users=False&postcode=SW1+7ES"
-    json = {"sites": [{"name": "Site 1"}, {"name": "Site 2"},]}
+    json = {
+        "sites": [
+            {"name": "Site 1"},
+            {"name": "Site 2"},
+        ]
+    }
     requests_mock.get(client._build_absolute_uri(url), json=json)
     form = site_forms.NewSiteConfirmForm(data=data, request=mock_request, postcode=postcode)
     form.is_valid()
@@ -312,7 +374,12 @@ def test_new_site_form_request_postcode(mock_request, requests_mock, mock_post_s
     data = {"are_you_sure": "False"}
     postcode = "SW1 7ES"
     url = f"/organisations/{organisation_pk}/sites/?exclude=&get_total_users=False&postcode=SW1+7ES"
-    json = {"sites": [{"name": "Site 1"}, {"name": "Site 2"},]}
+    json = {
+        "sites": [
+            {"name": "Site 1"},
+            {"name": "Site 2"},
+        ]
+    }
     requests_mock.get(client._build_absolute_uri(url), json=json)
     form = site_forms.NewSiteConfirmForm(data=data, request=mock_request, postcode=postcode)
     form.is_valid()

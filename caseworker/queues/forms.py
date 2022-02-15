@@ -13,7 +13,11 @@ def new_queue_form(request):
         title=AddQueueForm.TITLE,
         description=AddQueueForm.DESCRIPTION,
         questions=[
-            TextInput(title=AddQueueForm.Name.TITLE, description=AddQueueForm.Name.DESCRIPTION, name="name",),
+            TextInput(
+                title=AddQueueForm.Name.TITLE,
+                description=AddQueueForm.Name.DESCRIPTION,
+                name="name",
+            ),
             Select(
                 title=AddQueueForm.CountersigningQueue.TITLE,
                 description=AddQueueForm.CountersigningQueue.DESCRIPTION,
@@ -42,7 +46,11 @@ def edit_queue_form(request, queue_id):
         title=EditQueueForm.TITLE,
         description=EditQueueForm.DESCRIPTION,
         questions=[
-            TextInput(title=EditQueueForm.Name.TITLE, description=EditQueueForm.Name.DESCRIPTION, name="name",),
+            TextInput(
+                title=EditQueueForm.Name.TITLE,
+                description=EditQueueForm.Name.DESCRIPTION,
+                name="name",
+            ),
             Select(
                 title=EditQueueForm.CountersigningQueue.TITLE,
                 description=EditQueueForm.CountersigningQueue.DESCRIPTION,

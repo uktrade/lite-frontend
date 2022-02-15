@@ -92,7 +92,10 @@ def confirm_form(
         conditional(summary is not None, summary),
         RadioButtons(
             name=confirmation_name,
-            options=[Option(key="yes", value=yes_label), Option(key="no", value=no_label),],
+            options=[
+                Option(key="yes", value=yes_label),
+                Option(key="no", value=no_label),
+            ],
             classes=["govuk-radios--inline"] if side_by_side else [],
         ),
         conditional(hidden_field is not None, HiddenField(name="form_name", value=hidden_field)),

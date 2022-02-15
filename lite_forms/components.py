@@ -36,7 +36,13 @@ class _Component:
 
 class Button:
     def __init__(
-        self, value, action, style=ButtonStyle.DEFAULT, id=None, link=None, float_right=False,
+        self,
+        value,
+        action,
+        style=ButtonStyle.DEFAULT,
+        id=None,
+        link=None,
+        float_right=False,
     ):
         self.value = value
         self.action = action
@@ -100,7 +106,10 @@ class FormGroup:
 
 class Label:
     def __init__(
-        self, text: str, id: str = None, classes: Optional[List] = None,
+        self,
+        text: str,
+        id: str = None,
+        classes: Optional[List] = None,
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -112,7 +121,9 @@ class Label:
 
 class EmptyLabel:
     def __init__(
-        self, id: str = None, classes: Optional[List] = None,
+        self,
+        id: str = None,
+        classes: Optional[List] = None,
     ):
 
         self.id = id
@@ -123,7 +134,11 @@ class EmptyLabel:
 
 class GroupWithLabel(_Component):
     def __init__(
-        self, text: str = None, id: str = None, components: Optional[List] = None, classes: Optional[List] = None,
+        self,
+        text: str = None,
+        id: str = None,
+        components: Optional[List] = None,
+        classes: Optional[List] = None,
     ):
         super().__init__(text, classes)
         self.id = id
@@ -594,7 +609,11 @@ class List:
         NUMBERED = 3
 
     def __init__(
-        self, items: [], title: str = None, type: ListType = ListType.DEFAULT, classes: Optional[List] = None,
+        self,
+        items: [],
+        title: str = None,
+        type: ListType = ListType.DEFAULT,
+        classes: Optional[List] = None,
     ):
         self.items = items
         self.title = title

@@ -113,7 +113,9 @@ def site_form(request, is_individual, location):
         title=conditional(
             not is_individual,
             conditional(
-                is_in_uk, RegisterAnOrganisation.Headquarters.TITLE, RegisterAnOrganisation.Headquarters.TITLE_FOREIGN,
+                is_in_uk,
+                RegisterAnOrganisation.Headquarters.TITLE,
+                RegisterAnOrganisation.Headquarters.TITLE_FOREIGN,
             ),
             conditional(
                 is_in_uk,

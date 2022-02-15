@@ -187,7 +187,11 @@ def build_request_data(exporter_user, gov_user):
         "case_note": {"text": fake.bs(), "is_visible_to_exporter": True},
         "edit_case_app": {"name": fake.bs()},
         "ecju_query": {"question": fake.bs() + "?", "query_type": "ecju_query"},
-        "ecju_query_picklist": {"name": fake.bs(), "text": fake.bs() + "?", "type": "ecju_query",},
+        "ecju_query_picklist": {
+            "name": fake.bs(),
+            "text": fake.bs() + "?",
+            "type": "ecju_query",
+        },
         "flag": {
             "colour": random_colour(),
             "label": "Test label",
@@ -203,7 +207,12 @@ def build_request_data(exporter_user, gov_user):
             "content_type": "draft",
         },
         "queue": {"team": "00000000-0000-0000-0000-000000000001"},
-        "proviso_picklist": build_picklist_data("Misc", fake.bs(), "proviso", proviso="My proviso would be this.",),
+        "proviso_picklist": build_picklist_data(
+            "Misc",
+            fake.bs(),
+            "proviso",
+            proviso="My proviso would be this.",
+        ),
         "standard_advice_picklist": build_picklist_data("More advice", fake.bs(), "standard_advice"),
         "report_picklist": build_picklist_data(fake.bs(), fake.bs(), "report_summary"),
         "letter_paragraph_picklist": build_picklist_data("Letter Paragraph 1", fake.bs(), "letter_paragraph"),

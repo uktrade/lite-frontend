@@ -53,7 +53,10 @@ class PeoplePresent(LoginRequiredMixin, SingleFormView):
 
         for i in range(len(data.getlist("name[]"))):
             data["people_present"].append(
-                {"name": data.getlist("name[]")[i], "job_title": data.getlist("job_title[]")[i],}
+                {
+                    "name": data.getlist("name[]")[i],
+                    "job_title": data.getlist("job_title[]")[i],
+                }
             )
 
         data["visit_case"] = str(kwargs["pk"])

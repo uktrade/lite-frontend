@@ -22,7 +22,10 @@ def good_summary(good):
         if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:
             values["Number of items"] = str(good["firearm_details"].get("number_of_items"))
 
-    return Summary(values=values, classes=["govuk-summary-list--no-border"],)
+    return Summary(
+        values=values,
+        classes=["govuk-summary-list--no-border"],
+    )
 
 
 COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP = {

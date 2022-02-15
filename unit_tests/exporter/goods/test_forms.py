@@ -12,7 +12,8 @@ from exporter.goods import forms
 
 @pytest.fixture(autouse=True)
 def setup(
-    mock_control_list_entries, mock_pv_gradings,
+    mock_control_list_entries,
+    mock_pv_gradings,
 ):
     yield
 

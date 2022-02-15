@@ -20,7 +20,11 @@ class Add(LoginRequiredMixin, TemplateView):
 
     @staticmethod
     def post(request):
-        next_form, _ = submit_paged_form(request, add_letter_template(request), post_letter_template,)
+        next_form, _ = submit_paged_form(
+            request,
+            add_letter_template(request),
+            post_letter_template,
+        )
 
         if next_form:
             return next_form

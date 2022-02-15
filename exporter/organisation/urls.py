@@ -12,7 +12,9 @@ urlpatterns = [
     path("details/", views.Details.as_view(), name="details"),
     path("document/<uuid:pk>/", views.DocumentOnOrganisation.as_view(), name="document"),
     path(
-        "upload/firearms-certificate/", views.UploadFirearmsCertificate.as_view(), name="upload-firearms-certificate",
+        "upload/firearms-certificate/",
+        views.UploadFirearmsCertificate.as_view(),
+        name="upload-firearms-certificate",
     ),
     path(
         "upload/section-five-certificate/",

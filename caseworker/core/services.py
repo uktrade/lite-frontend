@@ -99,7 +99,13 @@ def get_permissible_statuses(request, case):
     elif case_type == CaseType.COMPLIANCE.value:
         if case_sub_type == CaseType.COMPLIANCE_SITE.value:
             case_type_applicable_statuses = [
-                status for status in statuses if status["key"] in [CaseStatusEnum.OPEN, CaseStatusEnum.CLOSED,]
+                status
+                for status in statuses
+                if status["key"]
+                in [
+                    CaseStatusEnum.OPEN,
+                    CaseStatusEnum.CLOSED,
+                ]
             ]
         elif case_sub_type == CaseType.COMPLIANCE_VISIT.value:
             case_type_applicable_statuses = [

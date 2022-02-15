@@ -15,7 +15,9 @@ def default_request(rf, client):
 
 def test_get_document_on_organisation(requests_mock, default_request):
 
-    requests_mock.get(client._build_absolute_uri(f"/organisations/1/document/2/"),)
+    requests_mock.get(
+        client._build_absolute_uri(f"/organisations/1/document/2/"),
+    )
 
     response = services.get_document_on_organisation(request=default_request, organisation_id=1, document_id=2)
 

@@ -55,7 +55,11 @@ def party_name_form(title, button):
 
 
 def party_website_form(title, button):
-    return Form(title=title, questions=[TextInput("website")], default_button_name=button,)
+    return Form(
+        title=title,
+        questions=[TextInput("website")],
+        default_button_name=button,
+    )
 
 
 def party_address_form(request, title, button, is_gb_excluded=False):

@@ -45,7 +45,9 @@ def save_screenshot(driver, name):
     location = path.join(screen_path(), str(name) + ".png")
     driver.get_screenshot_as_file(location)
     attach(
-        driver.get_screenshot_as_png(), now, attachment_type=attachment_type.PNG,
+        driver.get_screenshot_as_png(),
+        now,
+        attachment_type=attachment_type.PNG,
     )
 
 

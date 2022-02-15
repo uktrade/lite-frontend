@@ -70,7 +70,11 @@ class CreateView(LoginRequiredMixin, SummaryListFormView):
         licence = OpenGeneralExportLicences.get_by_id(
             request.POST.get("case_type", OpenGeneralExportLicences.open_general_export_licence.id)
         )
-        self.forms = open_general_licence_forms(request, licence, open_general_licences_strings.Create,)
+        self.forms = open_general_licence_forms(
+            request,
+            licence,
+            open_general_licences_strings.Create,
+        )
         self.action = post_open_general_licences
         self.summary_list_title = open_general_licences_strings.Create.SUMMARY_TITLE + licence.name
         self.summary_list_button = open_general_licences_strings.Create.SUBMIT_BUTTON

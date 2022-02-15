@@ -31,7 +31,8 @@ class UltimateEndUsers(LoginRequiredMixin, TemplateView):
 class AddUltimateEndUser(LoginRequiredMixin, AddParty):
     def __init__(self):
         super().__init__(
-            new_url="applications:set_ultimate_end_user", copy_url="applications:ultimate_end_users_copy",
+            new_url="applications:set_ultimate_end_user",
+            copy_url="applications:ultimate_end_users_copy",
         )
 
 

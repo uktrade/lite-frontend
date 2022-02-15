@@ -29,7 +29,9 @@ def expedited_form():
                     Option(
                         key=True,
                         value="Yes",
-                        components=[DateInput(title=F680Questions.Expedited.DATE, name="expedited_date", prefix=""),],
+                        components=[
+                            DateInput(title=F680Questions.Expedited.DATE, name="expedited_date", prefix=""),
+                        ],
                     ),
                     Option(key=False, value="No"),
                 ],

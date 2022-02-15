@@ -45,7 +45,16 @@ class AddParty(TemplateView):
 
 class SetParty(MultiFormView):
     def __init__(
-        self, url, form, party_type, back_url, strings, validate_action, post_action, copy_existing=False, **kwargs,
+        self,
+        url,
+        form,
+        party_type,
+        back_url,
+        strings,
+        validate_action,
+        post_action,
+        copy_existing=False,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.url = url
@@ -76,7 +85,11 @@ class SetParty(MultiFormView):
             )
         else:
             self.forms = self.form(
-                request, self.application, self.strings, self.back_url, clearance_options=clearance_options,
+                request,
+                self.application,
+                self.strings,
+                self.back_url,
+                clearance_options=clearance_options,
             )
 
         self.data = {"type": self.party_type}
@@ -173,5 +186,9 @@ class CopyAndSetParty(SetParty):
             )
         else:
             self.forms = self.form(
-                request, self.application, self.strings, self.back_url, clearance_options=clearance_options,
+                request,
+                self.application,
+                self.strings,
+                self.back_url,
+                clearance_options=clearance_options,
             )

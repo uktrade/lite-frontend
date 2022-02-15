@@ -18,7 +18,10 @@ def control_list_entries(mock_control_list_entries, rf, client):
 def test_export_control_characteristics_form_no_clc(control_list_entries):
     form = review_goods.ExportControlCharacteristicsForm(
         control_list_entries_choices=control_list_entries,
-        data={"control_list_entries": [], "report_summary": "Foo bar",},
+        data={
+            "control_list_entries": [],
+            "report_summary": "Foo bar",
+        },
     )
     assert form.is_valid() is False
     assert form.errors["does_not_have_control_list_entries"] == [form.MESSAGE_NO_CLC_REQUIRED]
@@ -40,11 +43,17 @@ def test_export_control_characteristics_form_mutex(control_list_entries):
 @pytest.mark.parametrize(
     "data",
     [
-        {"control_list_entries": ["ML1"], "report_summary": "Foo bar",},
+        {
+            "control_list_entries": ["ML1"],
+            "report_summary": "Foo bar",
+        },
         {"control_list_entries": ["ML1"], "report_summary": "Foo bar", "is_precedent": True},
         {"control_list_entries": ["ML1"], "report_summary": "Foo bar", "is_precedent": False},
     ],
 )
 def test_export_control_characteristics_form_ok(control_list_entries, data):
-    form = review_goods.ExportControlCharacteristicsForm(control_list_entries_choices=control_list_entries, data=data,)
+    form = review_goods.ExportControlCharacteristicsForm(
+        control_list_entries_choices=control_list_entries,
+        data=data,
+    )
     assert form.is_valid() is True
