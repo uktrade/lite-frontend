@@ -1,3 +1,4 @@
-import { post } from "./post";
-
-export default { post }
+module.exports = {
+  post: require('./request').post,
+  put: require('./request').put,
+}

@@ -1,8 +1,8 @@
-export const post = async (uri, fixture, headers) => {
+const request = async (uri, fixture, headers, method) => {
   let data
   await new Promise((generateData) => {
     cy.request({
-      method: 'POST',
+      method,
       url: `${Cypress.env('api_url')}${uri}`,
       json: true,
       body: fixture,
@@ -13,4 +13,12 @@ export const post = async (uri, fixture, headers) => {
     })
   })
   return data
+}
+
+exports.post = async (uri, fixture, headers) => {
+  return request(uri, fixture, headers, 'POST')
+}
+
+exports.put = async (uri, fixture, headers) => {
+  return request(uri, fixture, headers, 'PUT')
 }

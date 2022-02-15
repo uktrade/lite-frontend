@@ -4,4 +4,5 @@ module.exports = {
   goods: require('./goods'),
   organisation: require('./organisation').organisation,
   exporterHeader: require('./exporterHeader').exporterHeader,
+  userToOrg: require('./userToOrg').userToOrg,
 }
