@@ -47,4 +47,3 @@ Feature: I want to generate and view compliance cases on approval and proviso of
     Then I see knowledge of controlled product details
     When I go to the ECJU queries tab
     Then I see different ecju query buttons
-    

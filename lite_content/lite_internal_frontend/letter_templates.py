@@ -86,16 +86,16 @@ class VariableHelpPageTables(Enum):
     """
 
     Applications = """
-        End use details|{{ details.end_use_details }}|As entered by applicant 
+        End use details|{{ details.end_use_details }}|As entered by applicant
         Informed by ECJU to apply for a licence|{{ details.military_end_use_controls }}|‘Yes’ or ‘No’
         Reference on ECJU letter|{{ details.military_end_use_controls_reference }}|
         Informed by ECJU that goods may be used in WMD|{{ details.informed_wmd }}|‘Yes’ or ‘No’
         Reference on ECJU letter|{{ details.informed_wmd_reference }}|
         Exporter suspects goods may be used in WMD|{{ details.suspected_wmd }}|‘Yes’ or ‘No’
-        Details of suspected WMD goods|{{ details.suspected_wmd_reference }}|As entered by applicant 
+        Details of suspected WMD goods|{{ details.suspected_wmd_reference }}|As entered by applicant
         European military goods received under a transfer licence|{{ details.eu_military }}|‘Yes’ or ‘No’
         Exporter compliant with terms of export limitations or obtained consent|{{ details.compliant_limitations_eu }}|‘Yes’ or ‘No’
-        Details of not compliant|{{ details.compliant_limitations_eu_reference }}|As entered by applicant 
+        Details of not compliant|{{ details.compliant_limitations_eu_reference }}|As entered by applicant
     """  # noqa
 
     Standard_applications = """
@@ -109,7 +109,7 @@ class VariableHelpPageTables(Enum):
         Other trade control activity|{{ details.trade_control_activity_other }}|
         Trade control product category|{{ details.trade_control_product_categories }}|
         Goods type category|{{ details.goodstype_category }}|
-        Reason it’s a temporary export|{{ details.temporary_export_details.temp_export_details }}|As entered by applicant 
+        Reason it’s a temporary export|{{ details.temporary_export_details.temp_export_details }}|As entered by applicant
         Goods to remain under exporters direct control|{{ details.temporary_export_details.is_temp_direct_control }}|‘Yes’ or ‘No’
         Details of who will be in control of the products|{{ details.temporary_export_details.temp_direct_control_details }}|As entered by applicant
         Proposed date the goods to return to the UK|{{ details.temporary_export_details.proposed_return_date }}|20 June 2020
@@ -164,7 +164,7 @@ class VariableHelpPageTables(Enum):
     """
 
     F680_clearance = """
-        Clearance type|{{ details.clearance_types }}|‘Market survey’, ‘Initial discussions and promotions’, 
+        Clearance type|{{ details.clearance_types }}|‘Market survey’, ‘Initial discussions and promotions’,
         ‘Demonstration in the UK to overseas customers’, ‘Demonstration overseas’, ‘Training’ or ‘Through life support’
         Expedited|{{ details.expedited }}|‘Yes’ or ‘No’
         Date the clearance is needed|{{ details.expedited_date }}|20 June 2020

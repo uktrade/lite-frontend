@@ -107,7 +107,7 @@
 								{% if line.control_entry %}
 									{{ line.control_entry }}
 								{% else %}
-									{% for line in licence.application.control_list_good_set %} 
+									{% for line in licence.application.control_list_good_set %}
 										{% if item.description == line.description %}
 											{{ item.export_control_entry }}
 										{% endif %}

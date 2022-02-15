@@ -15,4 +15,3 @@ import '../scss/styles.scss';
 $(document).ready(function() {
 	initAll();
 });
-

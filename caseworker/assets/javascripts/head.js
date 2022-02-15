@@ -5,4 +5,3 @@ import 'mark.js/dist/jquery.mark.es6'
 
 window.tippy = tippy;
 window.Popper = createPopper;
-
