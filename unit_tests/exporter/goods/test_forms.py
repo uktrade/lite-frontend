@@ -2,8 +2,9 @@ from unittest.mock import patch
 
 import pytest
 import requests
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings
+from django.test import override_settings, RequestFactory
 
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from exporter.core.services import get_pv_gradings
@@ -530,9 +531,13 @@ def test_product_uses_information_security_form(data, valid):
     ),
 )
 def test_add_goods_questions_form(data, application_pk, valid, error_field, error_message):
-    form = forms.AddGoodsQuestionsForm(
-        data=data, application_pk=application_pk, clc_list=[{"rating": "ML1"}, {"rating": "ML1a"}]
-    )
+    request = RequestFactory().get("/")
+    middleware = SessionMiddleware()
+    middleware.process_request(request)
+    request.session.save()
+    request.session["clc_list"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+
+    form = forms.AddGoodsQuestionsForm(data=data, application_pk=application_pk, request=request,)
 
     assert form.is_valid() == valid
     if application_pk is not None:
