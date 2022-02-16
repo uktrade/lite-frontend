@@ -1,11 +1,8 @@
 import logging
-from dataclasses import dataclass
 from datetime import datetime
 from http import HTTPStatus
-from typing import Optional
 
 from django.conf import settings
-from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.functional import cached_property
@@ -31,7 +28,6 @@ from exporter.applications.services import (
 )
 from exporter.core import constants
 from exporter.core.helpers import get_firearms_subcategory
-from exporter.core.services import get_control_list_entries
 from core.helpers import convert_dict_to_query_params
 from exporter.core.helpers import str_to_bool
 from exporter.goods.forms import (
@@ -455,20 +451,6 @@ class NoSaveStorage(S3Boto3Storage):
         pass
 
 
-@dataclass
-class AddGoodFormContext:
-    """Class that keeps track of data items as a user progresses through
-    the AddGood sequence of forms.
-    """
-
-    request: HttpRequest
-    application_pk: str
-    clc_list: list  # List of control list entries
-    category_type: Optional[str] = None
-    number_of_items: Optional[int] = 0
-    is_rfd: bool = False  # Whether the user is a registered firearms dealer
-
-
 class AddGood2(LoginRequiredMixin, SessionWizardView):
     """This view manages the sequence of forms that are used to capture a new product."""
 
@@ -535,10 +517,6 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
 
-    @cached_property
-    def control_list_entries(self):
-        return get_control_list_entries(self.request)
-
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
         context["title"] = form.title
@@ -551,31 +529,30 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        form_context = AddGoodFormContext(
-            request=self.request, application_pk=str(self.kwargs["pk"]), clc_list=self.control_list_entries
-        )
-
-        if step not in (  # Guard condition to prevent infinite recursion
-            AddGoodFormSteps.PRODUCT_CATEGORY,
-            AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS,
-            AddGoodFormSteps.REGISTERED_FIREARMS_DEALER,
-        ):
-            form_context.category_type = self.get_cleaned_data_for_step(AddGoodFormSteps.PRODUCT_CATEGORY).get(
-                "item_category"
+        if step == AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS:
+            kwargs["number_of_items"] = self.get_cleaned_data_for_step(AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS).get(
+                "number_of_items", 0
             )
 
-            form_context.number_of_items = self.get_cleaned_data_for_step(
-                AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS
-            ).get("number_of_items", 0)
+        if step == AddGoodFormSteps.ADD_GOODS_QUESTIONS:
+            kwargs["request"] = self.request
+            kwargs["application_pk"] = str(self.kwargs["pk"])
 
-            form_context.is_rfd = str_to_bool(
+        if step == AddGoodFormSteps.PV_DETAILS:
+            kwargs["request"] = self.request
+
+        if step == AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION:
+            kwargs["is_rfd"] = str_to_bool(
                 self.get_cleaned_data_for_step(AddGoodFormSteps.REGISTERED_FIREARMS_DEALER).get(
                     "is_registered_firearm_dealer"
                 )
                 or has_valid_rfd_certificate(self.application)
             )
 
-        kwargs["form_context"] = form_context
+        if step == AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS:
+            kwargs["category_type"] = self.get_cleaned_data_for_step(AddGoodFormSteps.PRODUCT_CATEGORY).get(
+                "item_category"
+            )
 
         return kwargs
 

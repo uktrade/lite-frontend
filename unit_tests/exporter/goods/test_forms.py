@@ -340,7 +340,7 @@ def test_goods_firearms_capture_serial_numbers_form():
     "data, valid", (({"item_category": "group2_firearms"}, True), ({"instructions_to_exporter": ""}, False),),
 )
 def test_product_category_form(data, valid):
-    form = forms.ProductCategoryForm(data=data, form_context=None)
+    form = forms.ProductCategoryForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -352,7 +352,7 @@ def test_product_category_form(data, valid):
     "data, valid", (({"type": "firearms"}, True), ({"type": ""}, False),),
 )
 def test_group_two_product_type_form(data, valid):
-    form = forms.GroupTwoProductTypeForm(data=data, form_context=None)
+    form = forms.GroupTwoProductTypeForm(data=data)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["product_type_step"]
@@ -370,7 +370,7 @@ def test_group_two_product_type_form(data, valid):
     ),
 )
 def test_firearms_number_of_items_form(data, valid, error_field, error_message):
-    form = forms.FirearmsNumberOfItemsForm(data=data, form_context=None)
+    form = forms.FirearmsNumberOfItemsForm(data=data)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["number_of_items_step"]
@@ -404,7 +404,7 @@ def test_firearms_number_of_items_form(data, valid, error_field, error_message):
     ),
 )
 def test_identification_markings_form(data, valid, error_field, error_message):
-    form = forms.IdentificationMarkingsForm(data=data, form_context=None)
+    form = forms.IdentificationMarkingsForm(data=data)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["identification_markings_step"]
@@ -421,10 +421,7 @@ def test_identification_markings_form(data, valid, error_field, error_message):
     ),
 )
 def test_firearms_capture_serial_numbers_form(data, valid):
-    class FormContext:
-        number_of_items = 3
-
-    form = forms.FirearmsCaptureSerialNumbersForm(data=data, form_context=FormContext())
+    form = forms.FirearmsCaptureSerialNumbersForm(data=data, number_of_items=3)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["capture_serial_numbers_step"]
@@ -437,7 +434,7 @@ def test_firearms_capture_serial_numbers_form(data, valid):
     "data, valid", (({"is_military_use": "yes_designed"}, True), ({"is_military_use": ""}, False),),
 )
 def test_product_military_use_form(data, valid):
-    form = forms.ProductMilitaryUseForm(data=data, form_context=None)
+    form = forms.ProductMilitaryUseForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -449,7 +446,7 @@ def test_product_military_use_form(data, valid):
     "data, valid", (({"uses_information_security": "True"}, True), ({"uses_information_security": ""}, False),),
 )
 def test_product_uses_information_security_form(data, valid):
-    form = forms.ProductUsesInformationSecurityForm(data=data, form_context=None)
+    form = forms.ProductUsesInformationSecurityForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -533,13 +530,9 @@ def test_product_uses_information_security_form(data, valid):
     ),
 )
 def test_add_goods_questions_form(data, application_pk, valid, error_field, error_message):
-    class FormContext:
-        def __init__(self):
-            self.application_pk = application_pk
-
-        clc_list = [{"rating": "ML1"}, {"rating": "ML1a"}]
-
-    form = forms.AddGoodsQuestionsForm(data=data, form_context=FormContext())
+    form = forms.AddGoodsQuestionsForm(
+        data=data, application_pk=application_pk, clc_list=[{"rating": "ML1"}, {"rating": "ML1a"}]
+    )
 
     assert form.is_valid() == valid
     if application_pk is not None:
@@ -641,16 +634,13 @@ def test_add_goods_questions_form(data, application_pk, valid, error_field, erro
 )
 @patch("exporter.goods.forms.get_pv_gradings")
 def test_pv_details_form(mock_get_pv_gradings, data, valid, error_field, error_message):
-    class FormContext:
-        request = "test request"
-
     mock_get_pv_gradings.return_value = [{"key1": "display1"}, {"key2": "display2"}]
 
-    form = forms.PvDetailsForm(data=data, form_context=FormContext())
+    form = forms.PvDetailsForm(data=data, request="test request")
 
     assert form.is_valid() == valid
     assert form.fields["grading"].choices == [("Select", "Select"), ("key1", "display1"), ("key2", "display2")]
-    mock_get_pv_gradings.assert_called_once_with(FormContext.request)
+    mock_get_pv_gradings.assert_called_once_with("test request")
 
     if valid:
         assert form.cleaned_data["date_of_issue"] == "2021-01-01"
@@ -672,7 +662,7 @@ def test_pv_details_form(mock_get_pv_gradings, data, valid, error_field, error_m
     ),
 )
 def test_firearms_year_of_manufacture_details_form(data, valid, error_message):
-    form = forms.FirearmsYearOfManufactureDetailsForm(data=data, form_context=None)
+    form = forms.FirearmsYearOfManufactureDetailsForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -689,7 +679,7 @@ def test_firearms_year_of_manufacture_details_form(data, valid, error_message):
     ),
 )
 def test_firearms_replica_form_form(data, valid, error_field, error_message):
-    form = forms.FirearmsReplicaForm(data=data, form_context=None)
+    form = forms.FirearmsReplicaForm(data=data)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["is_replica_step"]
@@ -703,7 +693,7 @@ def test_firearms_replica_form_form(data, valid, error_field, error_message):
     (({"calibre": "22"}, True, None, None), ({"calibre": ""}, False, "calibre", "Enter the calibre"),),
 )
 def test_firearms_calibre_details_form(data, valid, error_field, error_message):
-    form = forms.FirearmsCalibreDetailsForm(data=data, form_context=None)
+    form = forms.FirearmsCalibreDetailsForm(data=data)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["firearm_calibre_step"]
@@ -720,7 +710,7 @@ def test_firearms_calibre_details_form(data, valid, error_field, error_message):
     ),
 )
 def test_firearms_calibre_details_form(data, valid, error_field, error_message):
-    form = forms.RegisteredFirearmsDealerForm(data=data, form_context=None)
+    form = forms.RegisteredFirearmsDealerForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -769,7 +759,7 @@ def test_firearms_calibre_details_form(data, valid, error_field, error_message):
     ),
 )
 def test_attach_fiream_dealer_certificate_form(data, files, valid, error_field, error_message):
-    form = forms.AttachFirearmsDealerCertificateForm(data=data, files=files, form_context=None)
+    form = forms.AttachFirearmsDealerCertificateForm(data=data, files=files)
 
     assert form.is_valid() == valid
 
@@ -808,12 +798,7 @@ def test_attach_fiream_dealer_certificate_form(data, files, valid, error_field, 
     ),
 )
 def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_message):
-    class FormContext:
-        def __init__(self):
-            self.is_rfd = is_rfd
-
-    form_context = FormContext()
-    form = forms.FirearmsActConfirmationForm(data=data, form_context=FormContext())
+    form = forms.FirearmsActConfirmationForm(data=data, is_rfd=is_rfd)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["section_certificate_step"]
@@ -821,7 +806,7 @@ def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_
     if not valid:
         assert form.errors[error_field][0] == error_message
 
-    if form_context.is_rfd:
+    if is_rfd:
         assert form.title == "Is the product covered by section 5 of the Firearms Act 1968?"
     else:
         assert form.title == CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE
@@ -835,7 +820,7 @@ def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_
     ),
 )
 def test_product_component_form(data, valid, error_field, error_message):
-    form = forms.ProductComponentForm(data=data, form_context=None)
+    form = forms.ProductComponentForm(data=data)
 
     assert form.is_valid() == valid
 

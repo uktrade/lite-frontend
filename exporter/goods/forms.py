@@ -967,13 +967,7 @@ def has_valid_section_five_certificate(application):
     return False
 
 
-class FormContextMixin:
-    def __init__(self, *args, **kwargs):
-        self.form_context = kwargs.pop("form_context")
-        super().__init__(*args, **kwargs)
-
-
-class ProductCategoryForm(FormContextMixin, forms.Form):
+class ProductCategoryForm(forms.Form):
     title = CreateGoodForm.ProductCategory.TITLE
 
     item_category = forms.ChoiceField(
@@ -1000,7 +994,7 @@ class ProductCategoryForm(FormContextMixin, forms.Form):
         )
 
 
-class GroupTwoProductTypeForm(FormContextMixin, forms.Form):
+class GroupTwoProductTypeForm(forms.Form):
     title = CreateGoodForm.FirearmGood.ProductType.TITLE
 
     type = forms.TypedChoiceField(
@@ -1030,7 +1024,7 @@ class GroupTwoProductTypeForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class FirearmsNumberOfItemsForm(FormContextMixin, forms.Form):
+class FirearmsNumberOfItemsForm(forms.Form):
     title = "Number of items"
 
     number_of_items = forms.IntegerField(
@@ -1051,7 +1045,7 @@ class FirearmsNumberOfItemsForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class IdentificationMarkingsForm(FormContextMixin, forms.Form):
+class IdentificationMarkingsForm(forms.Form):
     title = CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE
 
     has_identification_markings = forms.ChoiceField(
@@ -1100,13 +1094,14 @@ class IdentificationMarkingsForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class FirearmsCaptureSerialNumbersForm(FormContextMixin, forms.Form):
+class FirearmsCaptureSerialNumbersForm(forms.Form):
     title = "Enter the serial numbers for this product"
 
     def __init__(self, *args, **kwargs):
+        number_of_items = kwargs.pop("number_of_items")
         super().__init__(*args, **kwargs)
 
-        for i in range(self.form_context.number_of_items):
+        for i in range(number_of_items):
             field_name = f"serial_number_input_{i}"
             self.fields[field_name] = forms.CharField(label=f"Serial number {i + 1}", required=False)
 
@@ -1114,7 +1109,7 @@ class FirearmsCaptureSerialNumbersForm(FormContextMixin, forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             HTML.h4("Enter one serial number in every row"),
-            HTML.p(f"Number of items: {self.form_context.number_of_items}"),
+            HTML.p(f"Number of items: {number_of_items}"),
             *self.fields,
             Submit("submit", "Save and continue"),
         )
@@ -1130,7 +1125,7 @@ class FirearmsCaptureSerialNumbersForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class ProductMilitaryUseForm(FormContextMixin, forms.Form):
+class ProductMilitaryUseForm(forms.Form):
     title = CreateGoodForm.MilitaryUse.TITLE
 
     is_military_use = forms.ChoiceField(
@@ -1153,7 +1148,7 @@ class ProductMilitaryUseForm(FormContextMixin, forms.Form):
         )
 
 
-class ProductUsesInformationSecurityForm(FormContextMixin, forms.Form):
+class ProductUsesInformationSecurityForm(forms.Form):
     title = CreateGoodForm.ProductInformationSecurity.TITLE
 
     uses_information_security = forms.ChoiceField(
@@ -1189,7 +1184,7 @@ class ProductUsesInformationSecurityForm(FormContextMixin, forms.Form):
         )
 
 
-class AddGoodsQuestionsForm(FormContextMixin, forms.Form):
+class AddGoodsQuestionsForm(forms.Form):
 
     name = forms.CharField(
         help_text="Give your product a name so it is easier to find in your product list",
@@ -1226,16 +1221,22 @@ class AddGoodsQuestionsForm(FormContextMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
+        application_pk = kwargs.pop("application_pk")
         super().__init__(*args, **kwargs)
 
-        if self.form_context.application_pk is not None:
+        if application_pk is not None:
             self.title = CreateGoodForm.TITLE_APPLICATION
         else:
             self.title = CreateGoodForm.TITLE_GOODS_LIST
 
-        self.fields["control_list_entries"].choices = [
-            (entry["rating"], entry["rating"]) for entry in self.form_context.clc_list
-        ]
+        try:
+            clc_list = request.session["clc_list"]
+        except KeyError:
+            clc_list = get_control_list_entries(request)
+            request.session["clc_list"] = clc_list
+
+        self.fields["control_list_entries"].choices = [(entry["rating"], entry["rating"]) for entry in clc_list]
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -1264,7 +1265,7 @@ class AddGoodsQuestionsForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class PvDetailsForm(FormContextMixin, forms.Form):
+class PvDetailsForm(forms.Form):
     title = GoodGradingForm.TITLE
 
     prefix = forms.CharField(required=False, label=f"{GoodGradingForm.PREFIX} (optional)")
@@ -1286,11 +1287,10 @@ class PvDetailsForm(FormContextMixin, forms.Form):
     date_of_issue = DateInputField(label=GoodGradingForm.DATE_OF_ISSUE)
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
-        gradings = [
-            (key, display) for grading in get_pv_gradings(self.form_context.request) for key, display in grading.items()
-        ]
+        gradings = [(key, display) for grading in get_pv_gradings(request) for key, display in grading.items()]
         gradings.insert(0, ("Select", "Select"))
 
         self.fields["grading"] = forms.ChoiceField(required=False, label=GoodGradingForm.GRADING, choices=gradings)
@@ -1334,7 +1334,7 @@ def convert_to_number_input(date_field):
     date_field.widget.widgets = [forms.NumberInput(attrs=w.attrs) for w in date_field.widget.widgets]
 
 
-class FirearmsYearOfManufactureDetailsForm(FormContextMixin, forms.Form):
+class FirearmsYearOfManufactureDetailsForm(forms.Form):
     title = "What is the year of manufacture of the firearm?"
 
     year_of_manufacture = forms.CharField(label="", error_messages={"required": "Enter the year of manufacture",},)
@@ -1367,7 +1367,7 @@ class FirearmsYearOfManufactureDetailsForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class FirearmsReplicaForm(FormContextMixin, forms.Form):
+class FirearmsReplicaForm(forms.Form):
     title = CreateGoodForm.FirearmGood.FirearmsReplica.TITLE
 
     is_replica = forms.ChoiceField(
@@ -1406,7 +1406,7 @@ class FirearmsReplicaForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class FirearmsCalibreDetailsForm(FormContextMixin, forms.Form):
+class FirearmsCalibreDetailsForm(forms.Form):
     title = "What is the calibre of the product?"
 
     calibre = forms.CharField(label="", error_messages={"required": "Enter the calibre",},)
@@ -1423,7 +1423,7 @@ class FirearmsCalibreDetailsForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class RegisteredFirearmsDealerForm(FormContextMixin, forms.Form):
+class RegisteredFirearmsDealerForm(forms.Form):
     title = "Are you a registered firearms dealer?"
 
     is_registered_firearm_dealer = forms.ChoiceField(
@@ -1442,7 +1442,7 @@ class RegisteredFirearmsDealerForm(FormContextMixin, forms.Form):
         )
 
 
-class AttachFirearmsDealerCertificateForm(FormContextMixin, forms.Form):
+class AttachFirearmsDealerCertificateForm(forms.Form):
     title = "Attach your registered firearms dealer certificate"
 
     file = forms.FileField(
@@ -1490,7 +1490,7 @@ class AttachFirearmsDealerCertificateForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class FirearmsActConfirmationForm(FormContextMixin, forms.Form):
+class FirearmsActConfirmationForm(forms.Form):
 
     is_covered_by_firearm_act_section_one_two_or_five = forms.ChoiceField(
         choices=(
@@ -1516,9 +1516,10 @@ class FirearmsActConfirmationForm(FormContextMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        self.is_rfd = kwargs.pop("is_rfd")
         super().__init__(*args, **kwargs)
 
-        if self.form_context.is_rfd:
+        if self.is_rfd:
             self.title = "Is the product covered by section 5 of the Firearms Act 1968?"
 
             details = [
@@ -1556,7 +1557,7 @@ class FirearmsActConfirmationForm(FormContextMixin, forms.Form):
             HTML.h1(self.title),
             HTML.details(*details),
             "is_covered_by_firearm_act_section_one_two_or_five"
-            if self.form_context.is_rfd
+            if self.is_rfd
             else HTML(
                 render_to_string(
                     "goods/choice-with-details.html",
@@ -1575,7 +1576,7 @@ class FirearmsActConfirmationForm(FormContextMixin, forms.Form):
         cleaned_data["section_certificate_step"] = True
 
         if (
-            not self.form_context.is_rfd
+            not self.is_rfd
             and cleaned_data.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes"
             and not cleaned_data.get("firearms_act_section")
         ):
@@ -1584,15 +1585,16 @@ class FirearmsActConfirmationForm(FormContextMixin, forms.Form):
         return cleaned_data
 
 
-class SoftwareTechnologyDetailsForm(FormContextMixin, forms.Form):
+class SoftwareTechnologyDetailsForm(forms.Form):
     software_or_technology_details = forms.CharField(
         label="", widget=forms.Textarea, error_messages={"required": "Enter the purpose of the technology",},
     )
 
     def __init__(self, *args, **kwargs):
+        category_type = kwargs.pop("category_type")
         super().__init__(*args, **kwargs)
 
-        category_text = get_category_display_string(self.form_context.category_type)
+        category_text = get_category_display_string(category_type)
         self.title = CreateGoodForm.TechnologySoftware.TITLE + category_text
 
         self.helper = FormHelper()
@@ -1601,7 +1603,7 @@ class SoftwareTechnologyDetailsForm(FormContextMixin, forms.Form):
         )
 
 
-class ProductComponentForm(FormContextMixin, forms.Form):
+class ProductComponentForm(forms.Form):
     title = CreateGoodForm.ProductComponent.TITLE
 
     is_component = forms.ChoiceField(
