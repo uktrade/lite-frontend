@@ -15,7 +15,10 @@ def change_status_form(queue, case, statuses):
                 include_default_select=False,
             ),
             DetailComponent(
-                title=cases.ChangeStatusPage.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+                title=cases.ChangeStatusPage.NOTE,
+                components=[
+                    TextArea(name="note", classes=["govuk-!-margin-0"]),
+                ],
             ),
         ],
         back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"]})),

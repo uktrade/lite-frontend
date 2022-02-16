@@ -7,7 +7,9 @@ from lite_forms import common
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_get_countries,):
+def setup(
+    mock_get_countries,
+):
     yield
 
 
@@ -28,7 +30,11 @@ def countries(mock_get_countries, rf, client):
 
 
 @pytest.mark.parametrize(
-    "type, location, num_forms", [("commercial", "united_kingdom", 5), ("individual", "united_kingdom", 4),]
+    "type, location, num_forms",
+    [
+        ("commercial", "united_kingdom", 5),
+        ("individual", "united_kingdom", 4),
+    ],
 )
 def test_register_organisation_form(rf, client, type, location, num_forms):
     data = {"type": type, "location": location}
@@ -38,7 +44,13 @@ def test_register_organisation_form(rf, client, type, location, num_forms):
 
 
 @pytest.mark.parametrize(
-    "is_individual, in_uk, num_questions", [(False, False, 6), (False, True, 10), (True, False, 6), (True, True, 10),]
+    "is_individual, in_uk, num_questions",
+    [
+        (False, False, 6),
+        (False, True, 10),
+        (True, False, 6),
+        (True, True, 10),
+    ],
 )
 def test_create_default_site_form(rf, client, is_individual, in_uk, num_questions):
     request = rf.get("/")
@@ -65,7 +77,13 @@ def test_create_admin_user_form():
 
 
 @pytest.mark.parametrize(
-    "is_commercial, in_uk, num_questions", [(False, False, 6), (False, True, 10), (True, False, 6), (True, True, 10),]
+    "is_commercial, in_uk, num_questions",
+    [
+        (False, False, 6),
+        (False, True, 10),
+        (True, False, 6),
+        (True, True, 10),
+    ],
 )
 def test_edit_address_questions_form(countries, is_commercial, in_uk, num_questions):
     form = common.edit_address_questions_form(is_commercial, in_uk, countries)

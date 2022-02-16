@@ -11,7 +11,13 @@ def goods_type_form(request, application_type: str):
         title=CreateGoodsTypeForm.TITLE,
         description=CreateGoodsTypeForm.DESCRIPTION,
         questions=[
-            TextArea(title=CreateGoodsTypeForm.Description.TITLE, name="description", extras={"max_length": 2000,}),
+            TextArea(
+                title=CreateGoodsTypeForm.Description.TITLE,
+                name="description",
+                extras={
+                    "max_length": 2000,
+                },
+            ),
             *conditional(
                 application_type != HMRC,
                 [

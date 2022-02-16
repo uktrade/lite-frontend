@@ -61,7 +61,11 @@ class GiveAdvice(LoginRequiredMixin, SingleFormView):
             self.tab,
         )
         self.form = give_advice_form(
-            request, self.case, self.tab, kwargs["queue_pk"], get_denial_reasons(request, True, True),
+            request,
+            self.case,
+            self.tab,
+            kwargs["queue_pk"],
+            get_denial_reasons(request, True, True),
         )
         self.context = {
             "case": self.case,
@@ -279,7 +283,10 @@ class Finalise(LoginRequiredMixin, TemplateView):
             return form_page(request, form, data=form_data, errors=res.json()["errors"], extra_data={"case": case})
 
         return redirect(
-            reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case["id"]},)
+            reverse_lazy(
+                "cases:finalise_documents",
+                kwargs={"queue_pk": kwargs["queue_pk"], "pk": case["id"]},
+            )
         )
 
 

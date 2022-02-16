@@ -110,11 +110,15 @@ def test_case_goods_has_conflicting_advice(product_1_advice, product_2_advice, i
 
     product_1 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {"id": product_1_id,},
+        "good": {
+            "id": product_1_id,
+        },
     }
     product_2 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {"id": product_2_id,},
+        "good": {
+            "id": product_2_id,
+        },
     }
 
     goods = [product_1, product_2]
@@ -165,15 +169,21 @@ def test_goods_list_can_finalise(advice_types, can_finalise):
 
     product_1 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {"id": product_1_id,},
+        "good": {
+            "id": product_1_id,
+        },
     }
     product_2 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {"id": product_2_id,},
+        "good": {
+            "id": product_2_id,
+        },
     }
     product_3 = {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "good": {"id": product_3_id,},
+        "good": {
+            "id": product_3_id,
+        },
     }
 
     goods = [product_1, product_2, product_3]

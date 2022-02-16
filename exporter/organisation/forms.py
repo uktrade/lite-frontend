@@ -25,7 +25,8 @@ class UploadSectionFiveCertificateForm(forms.Form):
         error_messages={"required": "Select certificate file to upload"},
     )
     reference_code = forms.CharField(
-        label="Certificate number", error_messages={"required": "Enter the certificate number"},
+        label="Certificate number",
+        error_messages={"required": "Enter the certificate number"},
     )
     expiry_date = DateInputField(
         label="Expiry date",
@@ -56,7 +57,8 @@ class UploadFirearmsCertificateForm(forms.Form):
         error_messages={"required": "Select certificate file to upload"},
     )
     reference_code = forms.CharField(
-        label="Certificate number", error_messages={"required": "Enter the certificate number"},
+        label="Certificate number",
+        error_messages={"required": "Enter the certificate number"},
     )
     expiry_date = DateInputField(
         label="Expiry date",

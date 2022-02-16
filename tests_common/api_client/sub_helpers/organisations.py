@@ -46,19 +46,25 @@ class Organisations:
             self.request_data["organisation_for_switching_organisations"]["name"],
         )
         self.api_client.add_to_context(
-            "hmrc_org_id", org_id,
+            "hmrc_org_id",
+            org_id,
         )
         self.api_client.add_to_context("hmrc_primary_site_id", self.get_org_primary_site_id(org_id))
 
     def add_test_user_to_exporter_org(self, org_id):
         data = self.request_data["export_user"]
         return self.api_client.make_request(
-            method="POST", url=f"/organisations/{org_id}/users/", body=data, headers=self.api_client.gov_headers,
+            method="POST",
+            url=f"/organisations/{org_id}/users/",
+            body=data,
+            headers=self.api_client.gov_headers,
         ).json()
 
     def find_org_by_name(self, org_name):
         organisations = self.api_client.make_request(
-            method="GET", url="/organisations/?search_term=" + org_name, headers=self.api_client.gov_headers,
+            method="GET",
+            url="/organisations/?search_term=" + org_name,
+            headers=self.api_client.gov_headers,
         ).json()["results"]
         organisation = next((item for item in organisations if item["name"] == org_name), None)
         return organisation
@@ -74,17 +80,25 @@ class Organisations:
 
     def add_org(self, key):
         return self.api_client.make_request(
-            method="POST", url="/organisations/", body=self.request_data[key], headers=self.api_client.gov_headers,
+            method="POST",
+            url="/organisations/",
+            body=self.request_data[key],
+            headers=self.api_client.gov_headers,
         ).json()
 
     def anonymous_user_create_org(self, data):
         return self.api_client.make_request(
-            method="POST", url="/organisations/", body=data, headers=self.api_client.anonymous_headers,
+            method="POST",
+            url="/organisations/",
+            body=data,
+            headers=self.api_client.anonymous_headers,
         ).json()
 
     def get_org_primary_site_id(self, org_id):
         organisation = self.api_client.make_request(
-            method="GET", url="/organisations/" + org_id, headers=self.api_client.gov_headers,
+            method="GET",
+            url="/organisations/" + org_id,
+            headers=self.api_client.gov_headers,
         ).json()
         return organisation["primary_site"]["id"]
 

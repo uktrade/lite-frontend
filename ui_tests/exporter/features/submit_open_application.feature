@@ -195,4 +195,3 @@ Feature: I want to indicate the open licence I want
     When I go to exporter homepage
     And I click on applications
     Then I see submitted application
-

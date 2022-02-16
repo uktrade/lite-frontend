@@ -73,7 +73,11 @@ def add_flag_form():
                     Option("pink", "Pink", classes=["app-radios__item--pink"]),
                 ],
             ),
-            TextInput(name="label", title=CreateFlagForm.Label.TITLE, description=CreateFlagForm.Label.DESCRIPTION,),
+            TextInput(
+                name="label",
+                title=CreateFlagForm.Label.TITLE,
+                description=CreateFlagForm.Label.DESCRIPTION,
+            ),
             NumberInput(
                 name="priority", title=CreateFlagForm.Priority.TITLE, description=CreateFlagForm.Priority.DESCRIPTION
             ),
@@ -178,7 +182,12 @@ def edit_flag_form():
 def select_flagging_rule_type():
     return Form(
         title=strings.FlaggingRules.Create.Type.TITLE,
-        questions=[RadioButtons(name="level", options=_levels,)],
+        questions=[
+            RadioButtons(
+                name="level",
+                options=_levels,
+            )
+        ],
         back_link=BackLink(strings.FlaggingRules.Create.BACKLINK, reverse_lazy("flags:flagging_rules")),
         default_button_name=strings.FlaggingRules.Create.Type.SAVE,
     )
@@ -239,15 +248,30 @@ def select_condition_and_flag(request, type: str):
                 combined_entries.append(item)
 
         clc_nodes_options = [
-            Option(key=item["rating"], value=item["rating"], description=item["text"],) for item in clc_nodes
+            Option(
+                key=item["rating"],
+                value=item["rating"],
+                description=item["text"],
+            )
+            for item in clc_nodes
         ]
 
         clc_groups_options = [
-            Option(key=item["rating"], value=item["rating"], description=item["text"],) for item in clc_groups
+            Option(
+                key=item["rating"],
+                value=item["rating"],
+                description=item["text"],
+            )
+            for item in clc_groups
         ]
 
         clc_combined_options = [
-            Option(key=item["rating"], value=item["rating"], description=item["text"],) for item in combined_entries
+            Option(
+                key=item["rating"],
+                value=item["rating"],
+                description=item["text"],
+            )
+            for item in combined_entries
         ]
 
         return Form(
@@ -318,7 +342,9 @@ def select_condition_and_flag(request, type: str):
 
 
 def create_flagging_rules_formGroup(request=None, type=None):
-    return FormGroup([select_flagging_rule_type(), select_condition_and_flag(request=request, type=type)],)
+    return FormGroup(
+        [select_flagging_rule_type(), select_condition_and_flag(request=request, type=type)],
+    )
 
 
 def deactivate_or_activate_flagging_rule_form(title, description, confirm_text, status):
@@ -348,7 +374,9 @@ def set_flags_form(flags, level, show_case_header=False, show_sidebar=False):
             ),
             DetailComponent(
                 title=getattr(SetFlagsForm, level).Note.TITLE,
-                components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+                components=[
+                    TextArea(name="note", classes=["govuk-!-margin-0"]),
+                ],
             ),
         ],
         default_button_name=getattr(SetFlagsForm, level).SUBMIT_BUTTON,

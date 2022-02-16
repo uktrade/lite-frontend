@@ -71,4 +71,3 @@ Feature: I want to define new work queues and the teams they belong to
     Then my case is not in the queue
     When I go to the countersigning queue
     Then I should see my case in the cases list
-

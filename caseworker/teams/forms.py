@@ -17,7 +17,10 @@ def add_team_form():
             RadioButtons(
                 title="Is this team part of ECJU?",
                 name="part_of_ecju",
-                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
+                options=[
+                    Option(key=True, value="Yes"),
+                    Option(key=False, value="No"),
+                ],
             ),
         ],
         back_link=BackLink(AddTeamForm.BACK_LINK, reverse("teams:teams")),

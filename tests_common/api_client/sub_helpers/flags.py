@@ -14,14 +14,19 @@ class Flags:
         data["level"] = level
         data["blocks_finalising"] = blocks_finalising
         flag = self.api_client.make_request(
-            method="POST", url="/flags/", headers=self.api_client.gov_headers, body=data,
+            method="POST",
+            url="/flags/",
+            headers=self.api_client.gov_headers,
+            body=data,
         ).json()
         self.api_client.add_to_context("flag_id", flag["id"])
         return flag
 
     def get_list_of_flags(self):
         flags = self.api_client.make_request(
-            method="GET", url="/flags/?disable_pagination=True", headers=self.api_client.gov_headers,
+            method="GET",
+            url="/flags/?disable_pagination=True",
+            headers=self.api_client.gov_headers,
         ).json()
         return flags
 
@@ -32,7 +37,10 @@ class Flags:
             "flags": flags,
         }
         self.api_client.make_request(
-            method="PUT", url="/flags/assign/", headers=self.api_client.gov_headers, body=data,
+            method="PUT",
+            url="/flags/assign/",
+            headers=self.api_client.gov_headers,
+            body=data,
         )
 
     def assign_destination_flags(self, dest_pk, flags):
@@ -46,5 +54,8 @@ class Flags:
             "flags": flags,
         }
         self.api_client.make_request(
-            method="PUT", url="/flags/assign/", headers=self.api_client.gov_headers, body=data,
+            method="PUT",
+            url="/flags/assign/",
+            headers=self.api_client.gov_headers,
+            body=data,
         )

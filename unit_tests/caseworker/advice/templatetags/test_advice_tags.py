@@ -22,7 +22,10 @@ from caseworker.cases.objects import Case
             ["a", "b"],
         ),
         # One of the CLC is empty
-        ([{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {"control_list_entries": []}}], ["a"],),
+        (
+            [{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {"control_list_entries": []}}],
+            ["a"],
+        ),
         # Same control_list_entry
         (
             [
@@ -48,9 +51,15 @@ from caseworker.cases.objects import Case
             ["a", "b"],
         ),
         # Missing control_list_entries key
-        ([{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {}}], ["a"],),
+        (
+            [{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {}}],
+            ["a"],
+        ),
         # Missing good key
-        ([{"good": {"control_list_entries": [{"rating": "a"}]}}, {}], ["a"],),
+        (
+            [{"good": {"control_list_entries": [{"rating": "a"}]}}, {}],
+            ["a"],
+        ),
     ),
 )
 def test_get_clc(goods, expected_value):
@@ -59,7 +68,13 @@ def test_get_clc(goods, expected_value):
 
 
 @pytest.mark.parametrize(
-    "good, expected_value", (({"good": {"control_list_entries": [{"rating": "a"}]}}, ["a"],),),
+    "good, expected_value",
+    (
+        (
+            {"good": {"control_list_entries": [{"rating": "a"}]}},
+            ["a"],
+        ),
+    ),
 )
 def test_get_clc_single_good(good, expected_value):
     result = get_clc(good)
@@ -69,9 +84,27 @@ def test_get_clc_single_good(good, expected_value):
 @pytest.mark.parametrize(
     "goods, expected_value",
     (
-        ([{"good": {"is_pv_graded": "no"}}, {"good": {"is_pv_graded": "no"}},], False,),
-        ([{"good": {"is_pv_graded": "yes"}}, {"good": {"is_pv_graded": "no"}},], True,),
-        ([{"good": {"is_pv_graded": "yes"}}, {"good": {"is_pv_graded": "yes"}},], True,),
+        (
+            [
+                {"good": {"is_pv_graded": "no"}},
+                {"good": {"is_pv_graded": "no"}},
+            ],
+            False,
+        ),
+        (
+            [
+                {"good": {"is_pv_graded": "yes"}},
+                {"good": {"is_pv_graded": "no"}},
+            ],
+            True,
+        ),
+        (
+            [
+                {"good": {"is_pv_graded": "yes"}},
+                {"good": {"is_pv_graded": "yes"}},
+            ],
+            True,
+        ),
     ),
 )
 def test_is_case_pv_graded(goods, expected_value):
@@ -83,13 +116,25 @@ def test_is_case_pv_graded(goods, expected_value):
     "goods, expected_value",
     (
         # Base case
-        ([{"value": "10"}, {"value": "10"}], "20.00",),
+        (
+            [{"value": "10"}, {"value": "10"}],
+            "20.00",
+        ),
         # One of the values is None
-        ([{"value": "10"}, {"value": None}], "10.00",),
+        (
+            [{"value": "10"}, {"value": None}],
+            "10.00",
+        ),
         # Missing value key
-        ([{"value": "10"}, {}], "10.00",),
+        (
+            [{"value": "10"}, {}],
+            "10.00",
+        ),
         # Missing good key
-        ([{"value": "10"}, {}], "10.00",),
+        (
+            [{"value": "10"}, {}],
+            "10.00",
+        ),
     ),
 )
 def test_get_value(goods, expected_value):

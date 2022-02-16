@@ -170,7 +170,11 @@ class RegisteredFirearmDealersMixin:
     def post_success_step(self):
         data = self.request.session.pop(self.SESSION_KEY_RFD_CERTIFICATE, None)
         if data:
-            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=data,)
+            _, status_code = post_additional_document(
+                request=self.request,
+                pk=str(self.kwargs["pk"]),
+                json=data,
+            )
             assert status_code == HTTPStatus.CREATED
 
 
@@ -211,7 +215,11 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
 
     def init(self, request, **kwargs):
         self.draft_pk = str(kwargs["pk"])
-        self.forms = add_good_form_group(request=request, draft_pk=self.draft_pk, application=self.application,)
+        self.forms = add_good_form_group(
+            request=request,
+            draft_pk=self.draft_pk,
+            application=self.application,
+        )
         self.show_section_upload_form = False
 
     def on_submission(self, request, **kwargs):
@@ -354,13 +362,16 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         copied_request = {k: request.POST.get(k) for k in request.POST}
         data = {**old_post, **copied_request}
         back_link = build_firearm_back_link_create(
-            form_url=reverse("applications:new_good", kwargs={"pk": kwargs["pk"]}), form_data=old_post,
+            form_url=reverse("applications:new_good", kwargs={"pk": kwargs["pk"]}),
+            form_data=old_post,
         )
 
         errors = validate_expiry_date(request, "section_certificate_date_of_expiry")
         if errors:
             form = upload_firearms_act_certificate_form(
-                section="section", filename=self.certificate_filename, back_link=back_link,
+                section="section",
+                filename=self.certificate_filename,
+                back_link=back_link,
             )
             return form_page(request, form, data=data, errors={"section_certificate_date_of_expiry": errors})
 
@@ -370,7 +381,9 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
                 if doc_error:
                     response["errors"]["file"] = ["Select certificate file to upload"]
                 form = upload_firearms_act_certificate_form(
-                    section="section", filename=self.certificate_filename, back_link=back_link,
+                    section="section",
+                    filename=self.certificate_filename,
+                    back_link=back_link,
                 )
                 return form_page(request, form, data=data, errors=response["errors"])
 
@@ -382,7 +395,9 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
                 if doc_error:
                     response["errors"]["file"] = ["Select certificate file to upload"]
                 form = upload_firearms_act_certificate_form(
-                    section="section", filename=self.certificate_filename, back_link=back_link,
+                    section="section",
+                    filename=self.certificate_filename,
+                    back_link=back_link,
                 )
                 return form_page(request, form, data=data, errors=response["errors"])
 

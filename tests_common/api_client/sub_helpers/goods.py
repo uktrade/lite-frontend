@@ -12,7 +12,10 @@ class Goods:
 
     def post_good(self, data):
         item = self.api_client.make_request(
-            method="POST", url="/goods/", headers=self.api_client.exporter_headers, body=data,
+            method="POST",
+            url="/goods/",
+            headers=self.api_client.exporter_headers,
+            body=data,
         ).json()["good"]
         self.add_goods_document(item["id"])
         return item

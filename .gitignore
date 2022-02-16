@@ -175,3 +175,6 @@ node_modules/
 # Cypress
 cypress/videos
 ui_tests/screenshots
+
+# pii file
+.pii-secret-hook

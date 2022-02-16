@@ -15,13 +15,22 @@ class OpenGeneralExportLicences:
             self.acronym = acronym
 
     open_general_export_licence = OpenGeneralLicence(
-        "00000000-0000-0000-0000-000000000002", "Open General Export Licence", OGEL_DESCRIPTION, "OGEL",
+        "00000000-0000-0000-0000-000000000002",
+        "Open General Export Licence",
+        OGEL_DESCRIPTION,
+        "OGEL",
     )
     open_general_trade_control_licence = OpenGeneralLicence(
-        "00000000-0000-0000-0000-000000000013", "Open General Trade Control Licence", OGTCL_DESCRIPTION, "OGTCL",
+        "00000000-0000-0000-0000-000000000013",
+        "Open General Trade Control Licence",
+        OGTCL_DESCRIPTION,
+        "OGTCL",
     )
     open_general_transhipment_licence = OpenGeneralLicence(
-        "00000000-0000-0000-0000-000000000014", "Open General Transhipment Licence", OGTL_DESCRIPTION, "OGTL",
+        "00000000-0000-0000-0000-000000000014",
+        "Open General Transhipment Licence",
+        OGTL_DESCRIPTION,
+        "OGTL",
     )
 
     @classmethod

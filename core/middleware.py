@@ -137,7 +137,9 @@ class AuthBrokerTokenIntrospectionMiddleware:
             self.introspect(request)
         except (OAuth2Error, RequestException) as e:
             logger.warning(
-                "Introspecting with SSO failed for user %s: %s", request.session.get("lite_api_user_id"), str(e),
+                "Introspecting with SSO failed for user %s: %s",
+                request.session.get("lite_api_user_id"),
+                str(e),
             )
             request.session.flush()
             return redirect(settings.LOGOUT_URL)

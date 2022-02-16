@@ -24,7 +24,12 @@ class OpenToAnonymousUsersChecker(BaseChecker):
     options = (
         (
             "anonymous-users-allowed",
-            {"default": [], "type": "csv", "metavar": "<csv>", "help": "Views that users can view without logging in",},
+            {
+                "default": [],
+                "type": "csv",
+                "metavar": "<csv>",
+                "help": "Views that users can view without logging in",
+            },
         ),
     )
 

@@ -10,7 +10,9 @@ class CookiesPreferencesView(TemplateView):
 
         prev_page = self.request.GET.get("from")
         url_is_safe = url_has_allowed_host_and_scheme(
-            url=prev_page, allowed_hosts={self.request.get_host()}, require_https=self.request.is_secure(),
+            url=prev_page,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
         )
         if prev_page and url_is_safe:
             ctx["prev_page"] = prev_page

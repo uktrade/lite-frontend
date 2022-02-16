@@ -338,7 +338,11 @@ def gov_user():
     return {
         "user": {
             "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-            "team": {"id": "211111b-c111-11e1-1111-1111111111a", "name": "Test", "alias": "TEST_1",},
+            "team": {
+                "id": "211111b-c111-11e1-1111-1111111111a",
+                "name": "Test",
+                "alias": "TEST_1",
+            },
         }
     }
 
@@ -371,7 +375,8 @@ def test_consolidate_review(
     gov_user["user"]["team"]["alias"] = team_alias
 
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
     )
 
     response = authorized_client.get(url + path)
@@ -414,7 +419,8 @@ def test_consolidate_review_refusal_advice(
     gov_user["user"]["team"]["alias"] = team_alias
 
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
     )
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -448,7 +454,8 @@ def test_consolidate_review_refusal_advice_recommendation_label(
     gov_user["user"]["team"]["alias"] = team_alias
 
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
     )
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -574,13 +581,19 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
 
 
 def test_view_consolidate_approve_outcome(
-    requests_mock, authorized_client, data_standard_case, view_consolidate_outcome_url, consolidated_advice, gov_user,
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_advice,
+    gov_user,
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
     gov_user["user"]["team"]["name"] = "Licensing Unit"
     gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
     )
 
     response = authorized_client.get(view_consolidate_outcome_url)
@@ -619,7 +632,8 @@ def test_view_consolidate_refuse_outcome(
     gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
 
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
     )
 
     response = authorized_client.get(view_consolidate_outcome_url)
@@ -674,7 +688,11 @@ def test_consolidate_raises_exception_for_other_team(
 
 
 @pytest.mark.parametrize(
-    "team_alias, team_name", ((services.LICENSING_UNIT_TEAM, "LU Team"), (services.MOD_ECJU_TEAM, "MoD Team"),),
+    "team_alias, team_name",
+    (
+        (services.LICENSING_UNIT_TEAM, "LU Team"),
+        (services.MOD_ECJU_TEAM, "MoD Team"),
+    ),
 )
 def test_view_consolidate_approve_outcome_countersign_warning_message(
     requests_mock,
@@ -730,7 +748,8 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
     gov_user["user"]["team"]["alias"] = team_alias
 
     requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"), json=gov_user,
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
     )
 
     response = authorized_client.get(view_consolidate_outcome_url)

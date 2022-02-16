@@ -34,4 +34,3 @@ Feature: I want to manage my organisation's members
     And I change what sites they're assigned to
     And I change their role to Super User
     Then role is changed
-

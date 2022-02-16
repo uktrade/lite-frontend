@@ -16,7 +16,11 @@ class LetterTemplatesList(LoginRequiredMixin, TemplateView):
         params = {"page": int(request.GET.get("page", 1)), "name": request.GET.get("name", "")}
 
         data, _ = get_letter_templates(request, convert_dict_to_query_params(params))
-        filters = FiltersBar([TextInput(name="name", title="name"),])
+        filters = FiltersBar(
+            [
+                TextInput(name="name", title="name"),
+            ]
+        )
         context = {
             "data": data,
             "filters": filters,

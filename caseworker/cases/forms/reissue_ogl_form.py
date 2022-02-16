@@ -15,7 +15,8 @@ def reissue_ogl_confirmation_form(case_id, queue_id):
                 classes=["govuk-checkboxes--inline"],
             ),
             DetailComponent(
-                title=Manage.ReissueOGL.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"])],
+                title=Manage.ReissueOGL.NOTE,
+                components=[TextArea(name="note", classes=["govuk-!-margin-0"])],
             ),
         ],
         back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_id, "pk": case_id})),

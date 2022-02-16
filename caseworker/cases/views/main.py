@@ -232,10 +232,17 @@ class CaseDetail(CaseView):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
         self.slices = [Slices.COMPLIANCE_VISITS, Slices.OPEN_LICENCE_RETURNS]
-        filters = FiltersBar([TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),])
+        filters = FiltersBar(
+            [
+                TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),
+            ]
+        )
         self.additional_context = {
             "data": get_compliance_licences(
-                self.request, self.case.id, self.request.GET.get("reference", ""), self.request.GET.get("page", 1),
+                self.request,
+                self.case.id,
+                self.request.GET.get("reference", ""),
+                self.request.GET.get("page", 1),
             ),
             "licences_filters": filters,
         }
@@ -244,7 +251,11 @@ class CaseDetail(CaseView):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
         self.slices = [Slices.COMPLIANCE_VISIT_DETAILS]
-        filters = FiltersBar([TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),])
+        filters = FiltersBar(
+            [
+                TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),
+            ]
+        )
         self.additional_context = {
             "data": get_compliance_licences(
                 self.request,
@@ -383,7 +394,10 @@ class Document(TemplateView):
         client = s3_client()
         signed_url = client.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": document["document"]["s3_key"],},
+            Params={
+                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
+                "Key": document["document"]["s3_key"],
+            },
             ExpiresIn=15,
         )
         return redirect(signed_url)
@@ -510,7 +524,10 @@ class NextReviewDate(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_case(request, self.object_pk)
-        self.form = set_next_review_date_form(self.kwargs["queue_pk"], self.object_pk,)
+        self.form = set_next_review_date_form(
+            self.kwargs["queue_pk"],
+            self.object_pk,
+        )
         self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
     def get_action(self):

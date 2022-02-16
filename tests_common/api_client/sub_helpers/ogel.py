@@ -31,6 +31,8 @@ class Ogel:
             method="POST",
             url="/licences/open-general-licences/",
             headers=self.api_client.exporter_headers,
-            body={"open_general_licence": ogel_id,},
+            body={
+                "open_general_licence": ogel_id,
+            },
         ).json()
         return response["registrations"][0]

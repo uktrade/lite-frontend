@@ -74,7 +74,12 @@ def software_technology_details_form(request, category_type):
         title=CreateGoodForm.TechnologySoftware.TITLE + category_text,
         questions=[
             HiddenField("is_software_or_technology_step", True),
-            TextArea(title="", description="", name="software_or_technology_details", optional=False,),
+            TextArea(
+                title="",
+                description="",
+                name="software_or_technology_details",
+                optional=False,
+            ),
         ],
     )
 
@@ -232,7 +237,13 @@ def add_goods_questions(control_list_entries, application_pk=None):
                 description=("Give your product a name so it is easier to find in your product list"),
                 name="name",
             ),
-            TextArea(title="Description", name="description", extras={"max_length": 280}, rows=5, optional=True,),
+            TextArea(
+                title="Description",
+                name="description",
+                extras={"max_length": 280},
+                rows=5,
+                optional=True,
+            ),
             TextInput(title="Part number", name="part_number", optional=True),
             RadioButtons(
                 title="Is the product on the control list?",
@@ -344,7 +355,10 @@ def add_good_form_group(
     return FormGroup(
         [
             conditional(not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS, product_category_form(request)),
-            conditional(is_category_firearms, group_two_product_type_form(back_link=base_form_back_link),),
+            conditional(
+                is_category_firearms,
+                group_two_product_type_form(back_link=base_form_back_link),
+            ),
             conditional(
                 is_firearm_ammunition_or_component and draft_pk, firearms_number_of_items(request.POST.get("type"))
             ),
@@ -459,7 +473,10 @@ def document_grading_form(back_url):
                         value=DocumentSensitivityForm.Options.YES,
                         components=[Label(text=DocumentSensitivityForm.ECJU_HELPLINE)],
                     ),
-                    Option(key="no", value=DocumentSensitivityForm.Options.NO,),
+                    Option(
+                        key="no",
+                        value=DocumentSensitivityForm.Options.NO,
+                    ),
                 ],
             ),
         ],
@@ -501,7 +518,11 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
                 name="clc_control_code",
                 optional=True,
             ),
-            TextArea(title=GoodsQueryForm.CLCQuery.Details.TITLE, name="clc_raised_reasons", optional=True,),
+            TextArea(
+                title=GoodsQueryForm.CLCQuery.Details.TITLE,
+                name="clc_raised_reasons",
+                optional=True,
+            ),
         ]
 
     if raise_a_pv:
@@ -510,7 +531,11 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
                 Heading(GoodsQueryForm.PVGrading.TITLE, HeadingStyle.M),
             ]
         questions += [
-            TextArea(title=GoodsQueryForm.PVGrading.Details.TITLE, name="pv_grading_raised_reasons", optional=True,),
+            TextArea(
+                title=GoodsQueryForm.PVGrading.Details.TITLE,
+                name="pv_grading_raised_reasons",
+                optional=True,
+            ),
         ]
 
     return Form(
@@ -634,7 +659,11 @@ def firearm_year_of_manufacture_details_form(good_id=None):
                 [
                     HiddenField("good_id", good_id) if good_id else None,
                     HiddenField("firearm_year_of_manufacture_step", True),
-                    TextInput(description="", name="year_of_manufacture", optional=False,),
+                    TextInput(
+                        description="",
+                        name="year_of_manufacture",
+                        optional=False,
+                    ),
                 ],
             )
         ),
@@ -664,7 +693,10 @@ def firearm_replica_form(firearm_type):
                             ),
                         ],
                     ),
-                    Option(key=False, value="No",),
+                    Option(
+                        key=False,
+                        value="No",
+                    ),
                 ],
             ),
         ],
@@ -677,13 +709,27 @@ def firearm_calibre_details_form():
         default_button_name="Save and continue",
         questions=[
             HiddenField("firearm_calibre_step", True),
-            TextInput(title="", description="", name="calibre", optional=False,),
+            TextInput(
+                title="",
+                description="",
+                name="calibre",
+                optional=False,
+            ),
         ],
     )
 
 
 def format_list_item(link, name, description):
-    return "<br>" + "<li>" + linkify(link, name=name,) + f"&nbsp;&nbsp;{description}" + "</li>"
+    return (
+        "<br>"
+        + "<li>"
+        + linkify(
+            link,
+            name=name,
+        )
+        + f"&nbsp;&nbsp;{description}"
+        + "</li>"
+    )
 
 
 def firearms_act_confirmation_form(is_rfd):
@@ -786,7 +832,12 @@ def upload_firearms_act_certificate_form(section, filename, back_link):
             Label(text="Or"),
             Checkboxes(
                 name="section_certificate_missing",
-                options=[Option(key="True", value=f"I do not have a Firearms Act 1968 {section} certificate",)],
+                options=[
+                    Option(
+                        key="True",
+                        value=f"I do not have a Firearms Act 1968 {section} certificate",
+                    )
+                ],
             ),
             TextArea(
                 title="Provide a reason why you do not have a certificate",
@@ -802,7 +853,11 @@ def upload_firearms_act_certificate_form(section, filename, back_link):
 
 def build_firearm_back_link_create(form_url, form_data):
     return Custom(
-        data={**form_data, "form_pk": int(form_data["form_pk"]) + 1, "form_url": form_url,},
+        data={
+            **form_data,
+            "form_pk": int(form_data["form_pk"]) + 1,
+            "form_url": form_url,
+        },
         template="applications/firearm_upload_back_link.html",
     )
 
@@ -818,7 +873,10 @@ def identification_markings_form(draft_pk=None, good_id=None):
             title="",
             name="has_identification_markings",
             options=[
-                Option(key=True, value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,),
+                Option(
+                    key=True,
+                    value=CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
+                ),
                 Option(
                     key=False,
                     value=CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
@@ -850,7 +908,10 @@ def attach_firearm_dealer_certificate_form(back_url):
         description="The file must be smaller than 50MB",
         questions=[
             FileUpload(),
-            TextInput(name="reference_code", title="Certificate number",),
+            TextInput(
+                name="reference_code",
+                title="Certificate number",
+            ),
             DateInput(
                 prefix="expiry_date_", name="expiry_date", title="Expiry date", description="For example 12 3 2021"
             ),
@@ -864,7 +925,10 @@ def is_registered_firearm_dealer_field(back_url):
         RadioButtons(
             title="",
             name="is_registered_firearm_dealer",
-            options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
+            options=[
+                Option(key=True, value="Yes"),
+                Option(key=False, value="No"),
+            ],
         )
     ]
     return Form(

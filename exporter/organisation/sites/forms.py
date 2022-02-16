@@ -147,7 +147,10 @@ class NewSiteInternationalAddressForm(SiteFormMixin, forms.Form):
             "name": data.get("name"),
             "phone_number": data.get("phone_number"),
             "website": data.get("website"),
-            "address": {"address": data.get("address"), "country": data.get("country"),},
+            "address": {
+                "address": data.get("address"),
+                "country": data.get("country"),
+            },
         }
 
     def __init__(self, *args, **kwargs):
@@ -192,7 +195,10 @@ class NewSiteConfirmForm(SiteFormMixin, forms.Form):
 
 class NewSiteAssignUsersForm(SiteFormMixin, forms.Form):
     users = forms.MultipleChoiceField(
-        label="", choices=[], widget=forms.CheckboxSelectMultiple(), required=False,  # populated in __init__
+        label="",
+        choices=[],
+        widget=forms.CheckboxSelectMultiple(),
+        required=False,  # populated in __init__
     )
 
     def __init__(self, *args, **kwargs):
@@ -221,7 +227,9 @@ class NewSiteAssignUsersForm(SiteFormMixin, forms.Form):
 def edit_site_name_form(site):
     return Form(
         title=strings.sites.SitesPage.EDIT + site["name"],
-        questions=[TextInput(title="Name", name="name"),],
+        questions=[
+            TextInput(title="Name", name="name"),
+        ],
         back_link=BackLink(
             strings.sites.SitesPage.BACK_TO + site["name"],
             reverse_lazy("organisation:sites:site", kwargs={"pk": site["id"]}),

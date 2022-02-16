@@ -28,9 +28,20 @@ def assign_users_form(request: HttpRequest, team_id, queue, multiple: bool):
         description=cases.Manage.AssignUsers.DESCRIPTION,
         questions=[
             Filter(),
-            Checkboxes("users", options=get_gov_users(request, params, convert_to_options=True,), filterable=True),
+            Checkboxes(
+                "users",
+                options=get_gov_users(
+                    request,
+                    params,
+                    convert_to_options=True,
+                ),
+                filterable=True,
+            ),
             DetailComponent(
-                title=cases.Manage.AssignUsers.NOTE, components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+                title=cases.Manage.AssignUsers.NOTE,
+                components=[
+                    TextArea(name="note", classes=["govuk-!-margin-0"]),
+                ],
             ),
         ],
         caption=queue["name"],
@@ -93,7 +104,9 @@ def users_team_queues(request, queue_pk, case_pk, user_pk):
             HiddenField("case_pk", case_pk),
             DetailComponent(
                 title=cases.Manage.AssignUserAndQueue.NOTE,
-                components=[TextArea(name="note", classes=["govuk-!-margin-0"]),],
+                components=[
+                    TextArea(name="note", classes=["govuk-!-margin-0"]),
+                ],
             ),
         ],
         back_link=BackLink(url=reverse_lazy("cases:assign_user", kwargs={"queue_pk": queue_pk, "pk": case_pk})),

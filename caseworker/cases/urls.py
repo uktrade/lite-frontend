@@ -17,9 +17,21 @@ urlpatterns = [
     path("advice/", include("caseworker.advice.urls")),
     path("documents/<str:file_pk>/", main.Document.as_view(), name="document"),
     path("assign-flags/", AssignFlags.as_view(), name="assign_flags"),
-    path("remove-matching-denials/", external_data.RemoveMatchingDenials.as_view(), name="remove-matching-denials",),
-    path("remove-matching-sanction/", external_data.SanctionRevokeView.as_view(), name="remove-matching-sanctions",),
-    path("matching-denials/<str:category>/", external_data.MatchingDenials.as_view(), name="matching-denials",),
+    path(
+        "remove-matching-denials/",
+        external_data.RemoveMatchingDenials.as_view(),
+        name="remove-matching-denials",
+    ),
+    path(
+        "remove-matching-sanction/",
+        external_data.SanctionRevokeView.as_view(),
+        name="remove-matching-sanctions",
+    ),
+    path(
+        "matching-denials/<str:category>/",
+        external_data.MatchingDenials.as_view(),
+        name="matching-denials",
+    ),
     path("coalesce-user-advice/", advice.CoalesceUserAdvice.as_view(), name="coalesce_user_advice"),
     path("coalesce-team-advice/", advice.CoalesceTeamAdvice.as_view(), name="coalesce_team_advice"),
     path("team-advice-view/", advice.ClearTeamAdvice.as_view(), name="team_advice_view"),
@@ -45,7 +57,9 @@ urlpatterns = [
     path("ecju-queries/new/", ecju.NewECJUQueryView.as_view(), name="new_ecju_query"),
     path("respond-to-clc-query/", goods_query.RespondCLCQuery.as_view(), name="respond_to_clc_query"),
     path(
-        "respond-to-pv-grading-query/", goods_query.RespondPVGradingQuery.as_view(), name="respond_to_pv_grading_query",
+        "respond-to-pv-grading-query/",
+        goods_query.RespondPVGradingQuery.as_view(),
+        name="respond_to_pv_grading_query",
     ),
     path(
         "review-standard-application-goods/",
@@ -77,8 +91,16 @@ urlpatterns = [
     path("review-date/", main.NextReviewDate.as_view(), name="review_date"),
     path("assign-user/", main.UserWorkQueue.as_view(), name="assign_user"),
     path("assign-user-queue/<uuid:user_pk>/", main.UserTeamQueue.as_view(), name="assign_user_queue"),
-    path("rerun-routing-rules/", main.RerunRoutingRules.as_view(), name="rerun_routing_rules",),
-    path("reissue-ogl/", main.ReissueOGL.as_view(), name="reissue_ogl",),
+    path(
+        "rerun-routing-rules/",
+        main.RerunRoutingRules.as_view(),
+        name="rerun_routing_rules",
+    ),
+    path(
+        "reissue-ogl/",
+        main.ReissueOGL.as_view(),
+        name="reissue_ogl",
+    ),
     path("good/<uuid:good_pk>/", goods.GoodDetails.as_view(), name="good"),
     # Compliance
     path("create-visit-report/", compliance.CreateVisitReport.as_view(), name="create_visit_report"),

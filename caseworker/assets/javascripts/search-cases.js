@@ -96,7 +96,7 @@ import Lightpick from './lightpick.js'
     maxResults: 5,
     onSelection: function(feedback) {
       if (feedback.selection.value.field == 'wildcard') {
-        var appendValue = feedback.selection.value.value 
+        var appendValue = feedback.selection.value.value
       } else {
         var appendValue = feedback.selection.value.field + ':"' + feedback.selection.value.value + '"'
       }

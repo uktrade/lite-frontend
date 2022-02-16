@@ -17,7 +17,9 @@ def add_picklist_item_form(picklist_type):
                 title=picklists.NewPicklistForm.Text.TITLE,
                 name="text",
                 rows=20,
-                extras={"max_length": 5000,},
+                extras={
+                    "max_length": 5000,
+                },
                 classes=["govuk-!-width-three-quarters"],
             ),
         ],
@@ -33,7 +35,13 @@ def edit_picklist_item_form(picklist_item):
         questions=[
             TextInput(title="Name", name="name"),
             HiddenField("type", picklist_item["type"]["key"]),
-            TextArea(title="Text", name="text", extras={"max_length": 5000,}),
+            TextArea(
+                title="Text",
+                name="text",
+                extras={
+                    "max_length": 5000,
+                },
+            ),
         ],
         back_link=BackLink(
             "Back to " + picklist_item["name"],
@@ -49,7 +57,13 @@ def add_letter_paragraph_form(picklist_type):
         questions=[
             HiddenField("type", picklist_type),
             TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-full"]),
-            MarkdownArea(title=picklists.NewPicklistForm.Text.TITLE, name="text", extras={"max_length": 5000,},),
+            MarkdownArea(
+                title=picklists.NewPicklistForm.Text.TITLE,
+                name="text",
+                extras={
+                    "max_length": 5000,
+                },
+            ),
         ],
         helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],
     )
@@ -61,7 +75,13 @@ def edit_letter_paragraph_form(picklist_item):
         questions=[
             HiddenField("type", picklist_item["type"]["key"]),
             TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-full"]),
-            MarkdownArea(title=picklists.NewPicklistForm.Text.TITLE, name="text", extras={"max_length": 5000,},),
+            MarkdownArea(
+                title=picklists.NewPicklistForm.Text.TITLE,
+                name="text",
+                extras={
+                    "max_length": 5000,
+                },
+            ),
         ],
         helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],
     )

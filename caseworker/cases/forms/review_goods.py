@@ -15,10 +15,14 @@ def review_goods_form(control_list_entries, back_url):
             RadioButtons(
                 title=goods.ReviewGoods.IS_GOOD_CONTROLLED,
                 name="is_good_controlled",
-                options=[Option(key=True, value="Yes"), Option(key=False, value="No"),],
+                options=[
+                    Option(key=True, value="Yes"),
+                    Option(key=False, value="No"),
+                ],
             ),
             control_list_entries_question(
-                control_list_entries=control_list_entries, title=goods.ReviewGoods.ControlListEntries.TITLE,
+                control_list_entries=control_list_entries,
+                title=goods.ReviewGoods.ControlListEntries.TITLE,
             ),
             PicklistPicker(
                 target="report_summary",
@@ -54,20 +58,29 @@ class ExportControlCharacteristicsForm(forms.Form):
         widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
     )
     does_not_have_control_list_entries = forms.BooleanField(
-        label="This product does not have a control list entry", required=False,
+        label="This product does not have a control list entry",
+        required=False,
     )
     is_precedent = forms.BooleanField(label="Mark this product rating as a precedent", required=False)
     is_good_controlled = forms.TypedChoiceField(
         label="Is a licence required?",
         coerce=lambda x: x == "True",
-        choices=[(True, "Yes"), (False, "No"),],
+        choices=[
+            (True, "Yes"),
+            (False, "No"),
+        ],
         widget=forms.RadioSelect,
         required=False,
     )
     end_use_control = forms.MultipleChoiceField(
         label="What is the end use control rating for this product?",
         help_text="Type to get suggestions. For example MEND.",
-        choices=[("MEND", "MEND"), ("END", "END"), ("ENDTA", "ENDTA"), ("MEND1", "MEND1"),],
+        choices=[
+            ("MEND", "MEND"),
+            ("END", "END"),
+            ("ENDTA", "ENDTA"),
+            ("MEND1", "MEND1"),
+        ],
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"id": "control_rating"}),
@@ -78,7 +91,11 @@ class ExportControlCharacteristicsForm(forms.Form):
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": "report_summary"}),
     )
-    comment = forms.CharField(label="Comment (optional)", required=False, widget=forms.Textarea,)
+    comment = forms.CharField(
+        label="Comment (optional)",
+        required=False,
+        widget=forms.Textarea,
+    )
 
     def __init__(self, control_list_entries_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)

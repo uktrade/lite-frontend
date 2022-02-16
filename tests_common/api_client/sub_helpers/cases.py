@@ -31,7 +31,9 @@ class Cases:
 
     def assign_test_cases_to_bin(self, bin_queue_id, new_cases_queue_id):
         cases = self.api_client.make_request(
-            method="GET", url="/queues/" + new_cases_queue_id + "/", headers=self.api_client.gov_headers,
+            method="GET",
+            url="/queues/" + new_cases_queue_id + "/",
+            headers=self.api_client.gov_headers,
         ).json()["queue"]["cases"]
         for case in cases:
             self.api_client.make_request(
@@ -45,14 +47,20 @@ class Cases:
         data = self.request_data["case_note"]
         context.case_note_text = self.request_data["case_note"]["text"]
         self.api_client.make_request(
-            method="POST", url="/cases/" + case_id + "/case-notes/", headers=self.api_client.gov_headers, body=data,
+            method="POST",
+            url="/cases/" + case_id + "/case-notes/",
+            headers=self.api_client.gov_headers,
+            body=data,
         )
 
     def edit_case(self, app_id):
         data = self.request_data["edit_case_app"]
         self.api_client.context["edit_case_app"] = self.request_data["edit_case_app"]
         self.api_client.make_request(
-            method="PUT", url="/applications/" + app_id + "/", headers=self.api_client.exporter_headers, body=data,
+            method="PUT",
+            url="/applications/" + app_id + "/",
+            headers=self.api_client.exporter_headers,
+            body=data,
         )
 
     def add_generated_document(self, case_id, template_id, advice_type=None):
@@ -71,7 +79,9 @@ class Cases:
 
     def finalise_licence(self, case_id, save_licence=True):
         response = self.api_client.make_request(
-            method="PUT", url="/cases/" + case_id + "/finalise/", headers=self.api_client.gov_headers,
+            method="PUT",
+            url="/cases/" + case_id + "/finalise/",
+            headers=self.api_client.gov_headers,
         ).json()
         if save_licence:
             self.api_client.add_to_context("licence", response["licence"])
@@ -102,7 +112,10 @@ class Cases:
 
     def create_user_advice(self, case_id, data):
         self.api_client.make_request(
-            method="POST", url="/cases/" + case_id + "/user-advice/", headers=self.api_client.gov_headers, body=data,
+            method="POST",
+            url="/cases/" + case_id + "/user-advice/",
+            headers=self.api_client.gov_headers,
+            body=data,
         )
 
     def add_good_country_decisions(self, case_id, data):
@@ -115,12 +128,18 @@ class Cases:
 
     def create_team_advice(self, case_id, data):
         self.api_client.make_request(
-            method="POST", url="/cases/" + case_id + "/team-advice/", headers=self.api_client.gov_headers, body=data,
+            method="POST",
+            url="/cases/" + case_id + "/team-advice/",
+            headers=self.api_client.gov_headers,
+            body=data,
         )
 
     def create_final_advice(self, case_id, data):
         self.api_client.make_request(
-            method="POST", url="/cases/" + case_id + "/final-advice/", headers=self.api_client.gov_headers, body=data,
+            method="POST",
+            url="/cases/" + case_id + "/final-advice/",
+            headers=self.api_client.gov_headers,
+            body=data,
         )
 
     def get_compliance_id_for_case(self, case_id):

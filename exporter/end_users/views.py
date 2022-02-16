@@ -30,7 +30,11 @@ class EndUsersList(LoginRequiredMixin, TemplateView):
         )
         end_users = get_end_user_advisories(request, params)
 
-        filters = FiltersBar([TextInput(title="name", name="name"),])
+        filters = FiltersBar(
+            [
+                TextInput(title="name", name="name"),
+            ]
+        )
 
         context = {
             "filters": filters,

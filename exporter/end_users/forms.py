@@ -58,12 +58,22 @@ def apply_for_an_end_user_advisory_form(request, individual, commercial):
                     conditional(individual, TextInput(title="Email address", name="contact_email")),
                     conditional(individual, TextInput(title="Telephone number", name="contact_telephone")),
                     conditional(
-                        commercial, TextInput(title="Nature of the end user's business", name="nature_of_business"),
+                        commercial,
+                        TextInput(title="Nature of the end user's business", name="nature_of_business"),
                     ),
                     conditional(not individual, TextInput(title="Contact's name", name="contact_name")),
-                    conditional(not individual, TextInput(title="Job title", name="contact_job_title"),),
-                    conditional(not individual, TextInput(title="Email address", name="contact_email"),),
-                    conditional(not individual, TextInput(title="Telephone number", name="contact_telephone"),),
+                    conditional(
+                        not individual,
+                        TextInput(title="Job title", name="contact_job_title"),
+                    ),
+                    conditional(
+                        not individual,
+                        TextInput(title="Email address", name="contact_email"),
+                    ),
+                    conditional(
+                        not individual,
+                        TextInput(title="Telephone number", name="contact_telephone"),
+                    ),
                     TextInput(title="Website address", name="end_user.website", optional=True),
                     TextArea(
                         title="Address",
@@ -110,12 +120,22 @@ def copy_end_user_advisory_form(request, individual, commercial):
                     conditional(individual, TextInput(title="Email address", name="contact_email")),
                     conditional(individual, TextInput(title="Telephone number", name="contact_telephone")),
                     conditional(
-                        commercial, TextInput(title="Nature of the end user's business", name="nature_of_business"),
+                        commercial,
+                        TextInput(title="Nature of the end user's business", name="nature_of_business"),
                     ),
                     conditional(not individual, TextInput(title="Contact's name", name="contact_name")),
-                    conditional(not individual, TextInput(title="Job title", name="contact_job_title"),),
-                    conditional(not individual, TextInput(title="Email address", name="contact_email"),),
-                    conditional(not individual, TextInput(title="Telephone number", name="contact_telephone"),),
+                    conditional(
+                        not individual,
+                        TextInput(title="Job title", name="contact_job_title"),
+                    ),
+                    conditional(
+                        not individual,
+                        TextInput(title="Email address", name="contact_email"),
+                    ),
+                    conditional(
+                        not individual,
+                        TextInput(title="Telephone number", name="contact_telephone"),
+                    ),
                     TextInput(title="Website address", name="end_user.website", optional=True),
                     TextArea(
                         title="Address",
@@ -138,7 +158,9 @@ def copy_end_user_advisory_form(request, individual, commercial):
                         title="What's your reasoning behind this query?",
                         optional=True,
                         name="reasoning",
-                        extras={"max_length": 2000,},
+                        extras={
+                            "max_length": 2000,
+                        },
                     ),
                     TextArea(
                         title="Is there any other information you can provide about the end user?",

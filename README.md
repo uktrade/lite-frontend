@@ -23,6 +23,12 @@
     $ git submodule update
     $ pipenv install --dev
 
+#### Git Hub pre-commit setup
+- Install pre-commit (e.g MAC pip install pre-commit)
+- pre-commit install
+* run following to scan all files for issues
+  - pre-commit run --all-files
+
 ### Configuration
 
 Secrets such as API keys and environment specific configurations are placed in `caseworker.env` and `exporter.env` - a file that is not added to version control. To create a template secrets file with dummy values run:
@@ -108,7 +114,7 @@ Run all tests
 PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest ui_tests/
 make run_ui_tests
 ```
-Run all Unit and UI tests 
+Run all Unit and UI tests
 ```
 make run_all_tests
 ```
@@ -122,7 +128,7 @@ These copy the `example.caseworker.env` and `example.exporter.env` files to `cas
 respectively. In each file, the following variables need to have different values (see development team members for
 what those values should be or just try looking in Vault):
 
-* AUTHBROKER_CLIENT_ID 
+* AUTHBROKER_CLIENT_ID
 * AUTHBROKER_CLIENT_SECRET
 * AUTHBROKER_URL - should be https://sso.trade.uat.uktrade.io for caseworker but https://great.uat.uktrade.digital
   for the exporter
@@ -136,7 +142,7 @@ what those values should be or just try looking in Vault):
 * NOTIFY_KEY
 * NOTIFY_FEEDBACK_TEMPLATE_ID
 * NOTIFY_FEEDBACK_EMAIL
-* ENVIRONMENT - set to "local" if the tests are targeting the local caseworker 
+* ENVIRONMENT - set to "local" if the tests are targeting the local caseworker
   and exporter. If not set the UI tests will try talking to devdata
 * DIRECTORY_SSO_API_CLIENT_BASE_URL - Needed by the UI tests but not the caseworker or exporter, available
   in Vault
@@ -159,8 +165,8 @@ PIPENV_DOTENV_LOCATION=caseworker.env pipenv run python ./manage.py runserver 82
 PIPENV_DOTENV_LOCATION=exporter.env pipenv run python ./manage.py runserver 8300
 ```
 
-You will also need to seed the lite-api database with the TEST_SSO_EMAIL (as well as running **seedall** 
-command - see https://github.com/uktrade/lite-api). If the email was `fake@fake.com` the 
+You will also need to seed the lite-api database with the TEST_SSO_EMAIL (as well as running **seedall**
+command - see https://github.com/uktrade/lite-api). If the email was `fake@fake.com` the
 command would be (run against the lite-api virtual environment):
 
 ```bash

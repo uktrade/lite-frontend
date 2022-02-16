@@ -26,7 +26,7 @@
 						<a href="{% url 'spire:licence-detail' id=application.licence.id %}" class="govuk-link">View licence</a>
 					{% endif %}
 				</td>
-			</tr>	
+			</tr>
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header">Case closed Date</th>
 				<td class="govuk-table__cell">{{ application.case_closed_datetime|parse_date|date:"d M Y" }}</td>

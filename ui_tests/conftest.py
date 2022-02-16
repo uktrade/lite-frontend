@@ -49,9 +49,15 @@ def pytest_addoption(parser):
         parser.addoption(
             "--internal_url", action="store", default="http://localhost:" + str(os.environ.get("PORT")), help="url"
         )
-        lite_api_url = os.environ.get("LOCAL_LITE_API_URL", os.environ.get("LITE_API_URL"),)
+        lite_api_url = os.environ.get(
+            "LOCAL_LITE_API_URL",
+            os.environ.get("LITE_API_URL"),
+        )
         parser.addoption(
-            "--lite_api_url", action="store", default=lite_api_url, help="url",
+            "--lite_api_url",
+            action="store",
+            default=lite_api_url,
+            help="url",
         )
     else:
         parser.addoption(
@@ -67,7 +73,10 @@ def pytest_addoption(parser):
             help="url",
         )
         parser.addoption(
-            "--lite_api_url", action="store", default=f"https://lite-api-{env}.london.cloudapps.digital/", help="url",
+            "--lite_api_url",
+            action="store",
+            default=f"https://lite-api-{env}.london.cloudapps.digital/",
+            help="url",
         )
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
