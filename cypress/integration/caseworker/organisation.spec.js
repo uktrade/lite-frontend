@@ -18,7 +18,7 @@ describe('Organisation', () => {
 
     before(async function () {
       const response = await helper.post('organisations/', fixtures.organisation())
-      organisation = response.body
+      organisation = response
     })
 
     beforeEach(() => {

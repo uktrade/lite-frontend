@@ -13,5 +13,9 @@
   "modified_military_use_details": "",
   "is_component": "no",
   "uses_information_security": true,
-  "information_security_details": ""
+  "information_security_details": "",
+  "unit": "MTR",
+  "value": "10.55",
+  "quantity": "1234",
+  "is_good_incorporated": true
 }

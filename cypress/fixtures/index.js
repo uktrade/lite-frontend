@@ -3,7 +3,12 @@ module.exports = {
   authUser: require('./authUser').authUser,
   exportAuthUser: require('./exportAuthUser').exportAuthUser,
   goods: require('./goods'),
+  parties: require('./parties'),
+  document: require('./document').document,
+  goodsToDraft: require('./goodsToDraft'),
   organisation: require('./organisation').organisation,
-  exporterHeader: require('./exporterHeader').exporterHeader,
+  headers: require('./headers'),
   userToOrg: require('./userToOrg').userToOrg,
+  endUseDetails: require('./endUseDetails'),
+  routeOfGoods: require('./routeOfGoods'),
 }
