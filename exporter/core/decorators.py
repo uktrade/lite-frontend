@@ -1,7 +1,10 @@
+import logging
 from django.utils.functional import wraps
 
-from core.exceptions import PermissionDeniedError
 from exporter.core import helpers
+
+
+logger = logging.getLogger(__name__)
 
 
 def has_permission(permission):
@@ -16,11 +19,13 @@ def has_permission(permission):
             if has_permission_bool:
                 return view_func(request, *args, **kwargs, permissions=permissions)
 
-            raise PermissionDeniedError(
-                f"You don't have the permission '{permission}' to view this, "
+            logger.warning(
+                "You don't have the permission '%s' to view this, "
                 "check urlpatterns or the function decorator if you want to change "
-                "this functionality."
+                "this functionality.",
+                permission,
             )
+            return
 
         return _wrapped_view
 
