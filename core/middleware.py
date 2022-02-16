@@ -136,7 +136,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
         try:
             self.introspect(request)
         except (OAuth2Error, RequestException) as e:
-            logger.error(
+            logger.warning(
                 "Introspecting with SSO failed for user %s: %s",
                 request.session.get("lite_api_user_id"),
                 str(e),

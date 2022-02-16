@@ -1,8 +1,11 @@
+import logging
 from django.utils.functional import wraps
 
 from caseworker.core.constants import Permission
-from core.exceptions import PermissionDeniedError
 from caseworker.core import helpers
+
+
+logger = logging.getLogger(__name__)
 
 
 def has_permission(permission: Permission):
@@ -16,11 +19,13 @@ def has_permission(permission: Permission):
             if helpers.has_permission(request, permission):
                 return view_func(request, *args, **kwargs)
 
-            raise PermissionDeniedError(
-                f"You don't have the permission '{permission.value}' to view this, "
+            logger.warning(
+                "You don't have the permission '%s' to view this, "
                 "check urlpatterns or the function decorator if you want to change "
-                "this functionality."
+                "this functionality.",
+                permission.value,
             )
+            return
 
         return _wrapped_view
 
