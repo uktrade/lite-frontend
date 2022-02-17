@@ -1422,7 +1422,7 @@ class FirearmsCalibreDetailsForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.layout = Layout(HTML.h1(self.title), "calibre", Submit("submit", CreateGoodForm.SUBMIT_BUTTON),)
+        self.helper.layout = Layout(HTML.h1(self.title), "calibre", Submit("submit", "Save and continue"),)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -1445,7 +1445,7 @@ class RegisteredFirearmsDealerForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1(self.title), "is_registered_firearm_dealer", Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            HTML.h1(self.title), "is_registered_firearm_dealer", Submit("submit", "Save and continue"),
         )
 
 
@@ -1474,7 +1474,7 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
             "file",
             "reference_code",
             "expiry_date",
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            Submit("submit", "Save"),
         )
 
     def clean(self):
@@ -1566,7 +1566,7 @@ class FirearmsActConfirmationForm(forms.Form):
                 CreateGoodForm.FirearmGood.FirearmsActCertificate.NO,
                 CreateGoodForm.FirearmGood.FirearmsActCertificate.DONT_KNOW,
             ),
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            Submit("submit", "Save and continue"),
         )
 
     def clean(self):
@@ -1641,7 +1641,7 @@ class ProductComponentForm(forms.Form):
                 ConditionalQuestion(CreateGoodForm.ProductComponent.YES_GENERAL_PURPOSE, "general_details",),
                 CreateGoodForm.ProductComponent.NO,
             ),
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            Submit("submit", "Save"),
         )
 
 
