@@ -1149,15 +1149,14 @@ class ProductMilitaryUseForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            HTML(
-                render_to_string(
-                    "goods/choice-with-details.html",
-                    {
-                        "form": self,
-                        "choice_field_name": "is_military_use",
-                        "details": {"yes_modified": ["modified_military_use_details"],},
-                    },
-                )
+            ConditionalRadios(
+                "is_military_use",
+                CreateGoodForm.MilitaryUse.YES_DESIGNED,
+                ConditionalQuestion(
+                    CreateGoodForm.MilitaryUse.YES_MODIFIED,
+                    "modified_military_use_details",
+                ),
+                CreateGoodForm.MilitaryUse.NO,
             ),
             Submit("submit", "Save"),
         )
@@ -1322,10 +1321,6 @@ class PvDetailsForm(forms.Form):
 
         gradings = [(key, display) for grading in get_pv_gradings(request) for key, display in grading.items()]
         self.fields["grading"].choices += gradings
-
-        # The date field is styled correctly when the input type is 'number'.
-        # This workaround switches the underlying widgets to 'number' type.
-        convert_to_number_input(self.fields["date_of_issue"])
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
