@@ -186,6 +186,14 @@ def test_add_good_capture_serial_numbers(url, authorized_client):
             f"{AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS}-number_of_items": "3",
         },
     )
+    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.IDENTIFICATION_MARKINGS})
+    authorized_client.post(
+        url,
+        data={
+            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.IDENTIFICATION_MARKINGS,
+            f"{AddGoodFormSteps.IDENTIFICATION_MARKINGS}-has_identification_markings": "True",
+        },
+    )
 
     title = b"Enter the serial numbers for this product"
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS})
@@ -370,6 +378,15 @@ def test_add_good_registered_firearms_dealer(url, authorized_client):
 
 
 def test_add_good_attach_firearm_dealer_certificate(url, authorized_client):
+    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.REGISTERED_FIREARMS_DEALER})
+    authorized_client.post(
+        url,
+        data={
+            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.REGISTERED_FIREARMS_DEALER,
+            f"{AddGoodFormSteps.REGISTERED_FIREARMS_DEALER}-is_registered_firearm_dealer": "True",
+        },
+    )
+
     title = b"Attach your registered firearms dealer certificate"
     response = authorized_client.post(
         url, data={"wizard_goto_step": AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE}
