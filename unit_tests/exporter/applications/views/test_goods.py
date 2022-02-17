@@ -512,6 +512,7 @@ def test_add_good_api_submission(url, authorized_client, requests_mock, data_sta
         "firearm_calibre_step": True,
         "is_registered_firearm_dealer": "True",
         "reference_code": "12345",
+        "expiry_date": "2030-1-1",
         "expiry_date_day": "1",
         "expiry_date_month": "1",
         "expiry_date_year": "2030",
