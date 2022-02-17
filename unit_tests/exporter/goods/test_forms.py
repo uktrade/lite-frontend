@@ -652,7 +652,7 @@ def test_pv_details_form(mock_get_pv_gradings, data, valid, error_field, error_m
     form = forms.PvDetailsForm(data=data, request="test request")
 
     assert form.is_valid() == valid
-    assert form.fields["grading"].choices == [("Select", "Select"), ("key1", "display1"), ("key2", "display2")]
+    assert form.fields["grading"].choices == [("", "Select"), ("key1", "display1"), ("key2", "display2")]
     mock_get_pv_gradings.assert_called_once_with("test request")
 
     if valid:
