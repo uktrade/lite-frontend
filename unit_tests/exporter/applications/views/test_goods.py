@@ -433,12 +433,12 @@ def test_add_good_firearms_act_confirmation(url, authorized_client):
 
 
 def test_add_good_software_technology_details(url, authorized_client):
-    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_CATEGORY})
+    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE})
     authorized_client.post(
         url,
         data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_CATEGORY,
-            f"{AddGoodFormSteps.PRODUCT_CATEGORY}-item_category": "group3_software",
+            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE,
+            f"{AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE}-type": "software_related_to_firearms",
         },
     )
 

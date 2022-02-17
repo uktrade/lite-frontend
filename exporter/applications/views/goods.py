@@ -563,8 +563,8 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
             )
 
         if step == AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS:
-            kwargs["category_type"] = self.get_cleaned_data_for_step(AddGoodFormSteps.PRODUCT_CATEGORY).get(
-                "item_category"
+            kwargs["product_type"] = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE).get(
+                "type"
             )
 
         return kwargs

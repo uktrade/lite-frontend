@@ -1589,15 +1589,15 @@ class SoftwareTechnologyDetailsForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        category_type = kwargs.pop("category_type")
+        product_type = kwargs.pop("product_type")
         super().__init__(*args, **kwargs)
 
-        category_text = get_category_display_string(category_type)
+        category_text = get_category_display_string(product_type)
         self.title = CreateGoodForm.TechnologySoftware.TITLE + category_text
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1(self.title), "software_or_technology_details", Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            HTML.h1(self.title), "software_or_technology_details", Submit("submit", "Save"),
         )
 
 
