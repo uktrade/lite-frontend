@@ -1141,13 +1141,36 @@ class ProductMilitaryUseForm(forms.Form):
         error_messages={"required": "Select an option",},
     )
 
+    modified_military_use_details = forms.CharField(
+        required=False, widget=forms.Textarea, label=CreateGoodForm.MilitaryUse.MODIFIED_MILITARY_USE_DETAILS,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1(self.title), "is_military_use", Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            HTML.h1(self.title),
+            HTML(
+                render_to_string(
+                    "goods/choice-with-details.html",
+                    {
+                        "form": self,
+                        "choice_field_name": "is_military_use",
+                        "details": {"yes_modified": ["modified_military_use_details"],},
+                    },
+                )
+            ),
+            Submit("submit", "Save"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("is_military_use") == "yes_modified" and not cleaned_data.get(
+            "modified_military_use_details"
+        ):
+            self.add_error("modified_military_use_details", "Enter the details of the modifications")
 
 
 class ProductUsesInformationSecurityForm(forms.Form):

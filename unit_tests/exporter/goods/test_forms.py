@@ -432,15 +432,23 @@ def test_firearms_capture_serial_numbers_form(data, valid):
 
 
 @pytest.mark.parametrize(
-    "data, valid", (({"is_military_use": "yes_designed"}, True), ({"is_military_use": ""}, False),),
+    "data, valid",
+    (
+        ({"is_military_use": "yes_designed"}, True),
+        ({"is_military_use": "yes_modified", "modified_military_use_details": "details"}, True),
+        ({"is_military_use": ""}, False),
+        ({"is_military_use": "yes_modified", "modified_military_use_details": ""}, False),
+    ),
 )
 def test_product_military_use_form(data, valid):
     form = forms.ProductMilitaryUseForm(data=data)
 
     assert form.is_valid() == valid
 
-    if not valid:
-        assert form.errors["is_military_use"][0] == "Select an option"
+    if "is_military_use" not in data:
+        assert not valid and form.errors["is_military_use"][0] == "Select an option"
+    elif data["is_military_use"] == "yes_modified" and not data["modified_military_use_details"]:
+        assert not valid and form.errors["modified_military_use_details"][0] == "Enter the details of the modifications"
 
 
 @pytest.mark.parametrize(
