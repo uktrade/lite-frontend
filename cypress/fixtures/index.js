@@ -11,4 +11,5 @@ module.exports = {
   userToOrg: require('./userToOrg').userToOrg,
   endUseDetails: require('./endUseDetails'),
   routeOfGoods: require('./routeOfGoods'),
+  site: require('./site'),
 }

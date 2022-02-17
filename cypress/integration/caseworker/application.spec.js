@@ -2,9 +2,9 @@ import helper from '../../helpers'
 import fixtures from '../../fixtures'
 
 describe('Application', () => {
-  // it('login', () => {
-  //   cy.login()
-  // })
+  it('login', () => {
+    cy.login()
+  })
 
   context('newly created application', () => {
     let organisationId
@@ -13,6 +13,7 @@ describe('Application', () => {
     let applicationId
     let goodId
     let endUserId
+    let siteId
 
     before(async () => {
       // Retrieve user token
@@ -51,6 +52,14 @@ describe('Application', () => {
         fixtures.headers.caseworker(userToken),
       )
 
+      // Create site for organisation
+      const siteResponse = await helper.post(
+        `organisations/${organisationId}/sites/`,
+        fixtures.site,
+        fixtures.headers.caseworker(userToken),
+      )
+      siteId = siteResponse.site.id
+
       // Create an application
       const applicationResponse = await helper.post(
         'applications/',
@@ -80,13 +89,13 @@ describe('Application', () => {
         {...fixtures.goods, good_id: goodId},
         fixtures.headers.exporter(exportUserToken, organisationId)
       )
-      
-      // // Add external location to application
-      // const addLocationToDraftResponse = await helper.post(
-      //   `applications/${applicationId}/sites/`,
-      //   { sites: ['f2ce553e-c1df-4650-86ac-c89028a1459a'] },
-      //   fixtures.headers.exporter(exportUserToken, organisationId)
-      // )
+
+      // Add location to application
+      await helper.post(
+        `applications/${applicationId}/sites/`,
+        {'sites': [siteId]},
+        fixtures.headers.exporter(exportUserToken, organisationId)
+      )
 
       // Add end user to application
       const addEndUserToDraftResponse = await helper.post(
@@ -160,7 +169,7 @@ describe('Application', () => {
         fixtures.headers.exporter(exportUserToken, organisationId)
       )
 
-      cy.pause()
+      console.log(submitApplicationResponse)
     })
 
     beforeEach(() => {
