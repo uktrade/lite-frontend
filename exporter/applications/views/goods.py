@@ -1027,14 +1027,16 @@ def show_attach_rfd_question(wizard):
 
 def is_product_category(category):
     def _is_product_category(wizard):
-        return wizard.good["item_category"]["key"] == category
+        good = wizard.good
+        return good["item_category"]["key"] == category
 
     return _is_product_category
 
 
 def is_firearm_type_in(firearm_types):
     def _is_firearm_type_in(wizard):
-        firearm_type = wizard.good["firearm_details"]["type"]["key"]
+        good = wizard.good
+        firearm_type = good["firearm_details"]["type"]["key"]
         return firearm_type in firearm_types
 
     return _is_firearm_type_in
