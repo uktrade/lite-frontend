@@ -532,6 +532,7 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
         # The back_link_url is used for the first form in the sequence. For subsequent forms,
         # the wizard automatically generates the back link to the previous form.
         context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        context["back_link_text"] = "Back"
         return context
 
     def get_form_kwargs(self, step=None):

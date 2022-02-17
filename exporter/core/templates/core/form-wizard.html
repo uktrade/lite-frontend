@@ -25,7 +25,7 @@
 
 		<section aria-label="banner">
 			{% if wizard.steps.prev %}
-				<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="govuk-back-link">Previous step</button>
+				<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="govuk-back-link">{{ back_link_text|default:"Previous step" }}</button>
 			{% elif back_link_url %}
 				<a href="{{ back_link_url }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
 			{% endif %}
