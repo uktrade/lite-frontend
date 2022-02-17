@@ -1,4 +1,4 @@
-from crispy_forms.layout import LayoutObject
+from crispy_forms.layout import TemplateNameMixin
 from crispy_forms.utils import render_field, TEMPLATE_PACK
 
 from crispy_forms_gds.layout import HTML
@@ -22,7 +22,7 @@ def summary_list(items):
     return HTML(snippet)
 
 
-class ConditionalQuestion(LayoutObject):
+class ConditionalQuestion(TemplateNameMixin):
     template = "%s/layout/conditional_question.html"
 
     def __init__(self, value, *fields):
@@ -50,7 +50,7 @@ class ConditionalQuestion(LayoutObject):
         return render_to_string(template, context.flatten())
 
 
-class ConditionalRadios(LayoutObject):
+class ConditionalRadios(TemplateNameMixin):
     template = "%s/layout/conditional_radios.html"
 
     def __init__(self, field, *choices):
