@@ -1343,10 +1343,6 @@ class PvDetailsForm(forms.Form):
         return cleaned_data
 
 
-def convert_to_number_input(date_field):
-    date_field.widget.widgets = [forms.NumberInput(attrs=w.attrs) for w in date_field.widget.widgets]
-
-
 class FirearmsYearOfManufactureDetailsForm(forms.Form):
     title = "What is the year of manufacture of the firearm?"
 
@@ -1467,10 +1463,6 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # The date field is styled correctly when the input type is 'number'.
-        # This workaround switches the underlying widgets to 'number' type.
-        convert_to_number_input(self.fields["expiry_date"])
 
         self.helper = FormHelper()
         self.helper.attrs = {"enctype": "multipart/form-data"}
@@ -1722,8 +1714,6 @@ class FirearmsUnitQuantityValueForm(forms.Form):
 
         super().__init__(*args, **kwargs)
 
-        convert_to_number_input(self.fields["date_of_deactivation"])
-
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
@@ -1846,8 +1836,6 @@ class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
 
         super().__init__(*args, **kwargs)
 
-        convert_to_number_input(self.fields["date_of_deactivation"])
-
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
@@ -1958,8 +1946,6 @@ class ComponentOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
         good = kwargs.pop("good")
 
         super().__init__(*args, **kwargs)
-
-        convert_to_number_input(self.fields["date_of_deactivation"])
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
