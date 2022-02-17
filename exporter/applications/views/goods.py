@@ -396,10 +396,12 @@ def is_pv_graded(wizard):
     return str_to_bool(add_goods_cleaned_data.get("is_pv_graded"))
 
 
-def show_serial_numbers_form(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.IDENTIFICATION_MARKINGS)
+def show_serial_numbers_form(indentification_markings_step_name):
+    def _show_serial_numbers_form(wizard):
+        cleaned_data = wizard.get_cleaned_data_for_step(indentification_markings_step_name)
+        return str_to_bool(cleaned_data.get("has_identification_markings"))
 
-    return str_to_bool(cleaned_data.get("has_identification_markings"))
+    return _show_serial_numbers_form
 
 
 def is_preexisting(default):
@@ -490,7 +492,9 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
             is_draft, is_product_type("ammunition_or_component")
         ),
         AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: compose_with_and(
-            is_draft, is_product_type("ammunition_or_component"), show_serial_numbers_form
+            is_draft,
+            is_product_type("ammunition_or_component"),
+            show_serial_numbers_form(AddGoodFormSteps.IDENTIFICATION_MARKINGS),
         ),
         AddGoodFormSteps.PRODUCT_MILITARY_USE: lambda w: not is_category_firearms(w),
         AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: lambda w: not is_category_firearms(w),
@@ -1079,7 +1083,9 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
             is_preexisting(True), is_product_type("ammunition_or_component")
         ),
         AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: compose_with_and(
-            is_preexisting(True), is_product_type("ammunition_or_component"), show_serial_numbers_form
+            is_preexisting(True),
+            is_product_type("ammunition_or_component"),
+            show_serial_numbers_form(AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS),
         ),
         AddGoodToApplicationFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: compose_with_and(
             is_preexisting(True), is_product_type("firearm")
@@ -1130,6 +1136,12 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
         # the wizard automatically generates the back link to the previous form.
         context["back_link_url"] = reverse_lazy("applications:preexisting_good", kwargs={"pk": self.kwargs["pk"]})
         return context
+
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        if cleaned_data is None:
+            return {}
+        return cleaned_data
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
