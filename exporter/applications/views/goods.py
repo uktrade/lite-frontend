@@ -533,7 +533,7 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
         context["hide_step_count"] = True
         # The back_link_url is used for the first form in the sequence. For subsequent forms,
         # the wizard automatically generates the back link to the previous form.
-        context["back_link_url"] = reverse_lazy("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
         return context
 
     def get_form_kwargs(self, step=None):
@@ -617,11 +617,11 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
                 self.request.session[firearms_data_id] = all_data
 
                 return redirect(
-                    reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
+                    reverse("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
                 )
 
         return redirect(
-            reverse_lazy(
+            reverse(
                 "applications:add_good_summary",
                 kwargs={"pk": self.kwargs["pk"], "good_pk": api_resp_data["good"]["id"]},
             )
