@@ -1330,6 +1330,11 @@ class PvDetailsForm(forms.Form):
 
         if not cleaned_data.get("grading") and not cleaned_data.get("custom_grading"):
             self.add_error("custom_grading", "Enter the grading if it's not listed in the dropdown list")
+        elif cleaned_data.get("grading") and cleaned_data.get("custom_grading"):
+            self.add_error(
+                "custom_grading",
+                "Check if this grading or the grading selected on the dropdown list is the correct one for the product",
+            )
 
         date_of_issue = cleaned_data.get("date_of_issue")
         if date_of_issue:
