@@ -1283,7 +1283,7 @@ class PvDetailsForm(forms.Form):
 
     prefix = forms.CharField(required=False, label=f"{GoodGradingForm.PREFIX} (optional)")
 
-    grading = forms.ChoiceField(required=False, label=GoodGradingForm.GRADING,)
+    grading = forms.ChoiceField(required=False, label=GoodGradingForm.GRADING, choices=[("", "Select")])
 
     suffix = forms.CharField(required=False, label=f"{GoodGradingForm.SUFFIX} (optional)")
 
@@ -1304,9 +1304,7 @@ class PvDetailsForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         gradings = [(key, display) for grading in get_pv_gradings(request) for key, display in grading.items()]
-        gradings.insert(0, ("Select", "Select"))
-
-        self.fields["grading"] = forms.ChoiceField(required=False, label=GoodGradingForm.GRADING, choices=gradings)
+        self.fields["grading"].choices += gradings
 
         # The date field is styled correctly when the input type is 'number'.
         # This workaround switches the underlying widgets to 'number' type.
@@ -1329,7 +1327,7 @@ class PvDetailsForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        if cleaned_data["grading"] == "Select" and not cleaned_data["custom_grading"]:
+        if not cleaned_data["grading"] and not cleaned_data["custom_grading"]:
             self.add_error("custom_grading", "Enter the grading if it's not listed in the dropdown list")
 
         date_of_issue = cleaned_data.get("date_of_issue")
