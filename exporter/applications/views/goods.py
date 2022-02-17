@@ -362,18 +362,9 @@ def is_category_firearms(wizard):
     return item_category == constants.PRODUCT_CATEGORY_FIREARM or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
 
 
-def get_product_type(wizard):
-    group_two_product_type_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
-
-    if group_two_product_type_cleaned_data:
-        return group_two_product_type_cleaned_data["type"]
-
-    return None
-
-
 def is_product_type(product_type):
     def _is_product_type(wizard):
-        type_ = get_product_type(wizard)
+        type_ = wizard.get_product_type()
 
         if not type_:
             return True
@@ -527,6 +518,14 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
     @cached_property
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
+
+    def get_product_type(self):
+        group_two_product_type_cleaned_data = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
+
+        if group_two_product_type_cleaned_data:
+            return group_two_product_type_cleaned_data["type"]
+
+        return None
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
@@ -1012,7 +1011,7 @@ class AddGoodToApplicationFormSteps:
 
 
 def show_rfd_question(wizard):
-    is_firearm_ammunition_or_component = is_product_type("ammunication_or_component")(wizard)
+    is_firearm_ammunition_or_component = is_product_type("ammunition_or_component")(wizard)
 
     return is_firearm_ammunition_or_component and not has_valid_rfd_certificate(wizard.application)
 
@@ -1120,6 +1119,9 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
     def good(self):
         good, _ = get_good(self.request, self.kwargs["good_pk"])
         return good
+
+    def get_product_type(self):
+        return self.good["firearm_details"]["type"]["key"]
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
