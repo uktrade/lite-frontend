@@ -33,6 +33,9 @@ class ConditionalQuestion(TemplateNameMixin):
         template = self.get_template_name(template_pack)
 
         mapped_choices = {choice[1]: choice for choice in bound_field.field.choices}
+        value = self.value
+        choice = mapped_choices[value]
+        position = list(mapped_choices.keys()).index(self.value)
 
         conditional_content = ""
         for field in self.fields:
@@ -40,9 +43,9 @@ class ConditionalQuestion(TemplateNameMixin):
 
         context.update(
             {
-                "choice": mapped_choices[self.value],
+                "choice": choice,
                 "field": bound_field,
-                "position": list(mapped_choices.keys()).index(self.value),
+                "position": position,
                 "conditional_content": conditional_content,
             }
         )
