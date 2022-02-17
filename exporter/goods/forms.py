@@ -1267,6 +1267,17 @@ class AddGoodsQuestionsForm(forms.Form):
         return cleaned_data
 
 
+def decompose_date(field_name, field_data, joiner=""):
+    decomposed_data = {}
+
+    decomposed_data[field_name] = field_data.strftime("%Y-%m-%d")
+    decomposed_data[f"{field_name}{joiner}day"] = str(field_data.day)
+    decomposed_data[f"{field_name}{joiner}month"] = str(field_data.month)
+    decomposed_data[f"{field_name}{joiner}year"] = str(field_data.year)
+
+    return decomposed_data
+
+
 class PvDetailsForm(forms.Form):
     title = GoodGradingForm.TITLE
 
@@ -1322,12 +1333,8 @@ class PvDetailsForm(forms.Form):
             self.add_error("custom_grading", "Enter the grading if it's not listed in the dropdown list")
 
         date_of_issue = cleaned_data.get("date_of_issue")
-
         if date_of_issue:
-            cleaned_data["date_of_issue"] = date_of_issue.strftime("%Y-%m-%d")
-            cleaned_data["date_of_issueday"] = str(date_of_issue.day)
-            cleaned_data["date_of_issuemonth"] = str(date_of_issue.month)
-            cleaned_data["date_of_issueyear"] = str(date_of_issue.year)
+            cleaned_data.update(decompose_date("date_of_issue", date_of_issue))
 
         return cleaned_data
 
@@ -1485,9 +1492,7 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
             if expiry_date < timezone.now().date():
                 self.add_error("expiry_date", "Expiry date must be in the future")
             else:
-                cleaned_data["expiry_date_day"] = str(expiry_date.day)
-                cleaned_data["expiry_date_month"] = str(expiry_date.month)
-                cleaned_data["expiry_date_year"] = str(expiry_date.year)
+                cleaned_data.update(decompose_date("expiry_date", expiry_date, joiner="_"))
 
         return cleaned_data
 
@@ -1781,6 +1786,10 @@ class FirearmsUnitQuantityValueForm(forms.Form):
                 "no_proof_mark_details", "Enter details of why the product does not have valid UK proof marks"
             )
 
+        date_of_deactivation = cleaned_data.get("date_of_deactivation")
+        if date_of_deactivation:
+            cleaned_data.update(decompose_date("date_of_deactivation", date_of_deactivation))
+
         return cleaned_data
 
 
@@ -1909,6 +1918,10 @@ class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
                     "no_proof_mark_details", "Enter details of why the product does not have valid UK proof marks"
                 )
 
+        date_of_deactivation = cleaned_data.get("date_of_deactivation")
+        if date_of_deactivation:
+            cleaned_data.update(decompose_date("date_of_deactivation", date_of_deactivation))
+
         return cleaned_data
 
 
@@ -2003,6 +2016,10 @@ class ComponentOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
                         "deactivation_standard_other",
                         "Enter details of who deactivated the product and to what standard it was done",
                     )
+
+        date_of_deactivation = cleaned_data.get("date_of_deactivation")
+        if date_of_deactivation:
+            cleaned_data.update(decompose_date("date_of_deactivation", date_of_deactivation))
 
         return cleaned_data
 
