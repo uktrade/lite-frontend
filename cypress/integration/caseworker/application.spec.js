@@ -137,6 +137,21 @@ describe('Application', () => {
         fixtures.routeOfGoods,
         fixtures.headers.exporter(exportUserToken, organisationId)
       )
+      
+      // Wait until document has been scanned
+      await helper.waitForDocumentToBeScanned(
+        `goods/${goodId}/documents/`,
+        exportUserToken,
+        organisationId,
+      )
+
+      // Wait until document has been scanned
+      await helper.waitForDocumentToBeScanned(
+        `applications/${applicationId}/parties/${endUserId}/document/`,
+        exportUserToken,
+        organisationId,
+        false,
+      )
 
       // Submit an application
       const submitApplicationResponse = await helper.put(

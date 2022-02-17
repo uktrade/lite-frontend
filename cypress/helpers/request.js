@@ -22,3 +22,7 @@ exports.post = async (uri, fixture, headers) => {
 exports.put = async (uri, fixture, headers) => {
   return request(uri, fixture, headers, 'PUT')
 }
+
+exports.get = async (uri, headers) => {
+  return request(uri, {}, headers, 'GET')
+}
