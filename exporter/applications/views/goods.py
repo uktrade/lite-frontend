@@ -614,9 +614,7 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
                 all_data["form_pk"] = 0  # Temporary until attach-firearms-certificate is converted to Django form
                 self.request.session[firearms_data_id] = all_data
 
-                return redirect(
-                    reverse("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
-                )
+                return redirect(reverse("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]}))
 
         return redirect(
             reverse(

@@ -1074,8 +1074,7 @@ class IdentificationMarkingsForm(forms.Form):
                 "has_identification_markings",
                 CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
                 ConditionalQuestion(
-                    CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
-                    "no_identification_markings_details",
+                    CreateGoodForm.FirearmGood.IdentificationMarkings.NO, "no_identification_markings_details",
                 ),
             ),
             Submit("submit", CreateGoodForm.FirearmGood.IdentificationMarkings.BUTTON_TEXT),
@@ -1152,10 +1151,7 @@ class ProductMilitaryUseForm(forms.Form):
             ConditionalRadios(
                 "is_military_use",
                 CreateGoodForm.MilitaryUse.YES_DESIGNED,
-                ConditionalQuestion(
-                    CreateGoodForm.MilitaryUse.YES_MODIFIED,
-                    "modified_military_use_details",
-                ),
+                ConditionalQuestion(CreateGoodForm.MilitaryUse.YES_MODIFIED, "modified_military_use_details",),
                 CreateGoodForm.MilitaryUse.NO,
             ),
             Submit("submit", "Save"),
@@ -1194,10 +1190,7 @@ class ProductUsesInformationSecurityForm(forms.Form):
             HTML.h1(self.title),
             ConditionalRadios(
                 "uses_information_security",
-                ConditionalQuestion(
-                    "Yes",
-                    "information_security_details",
-                ),
+                ConditionalQuestion("Yes", "information_security_details",),
                 CreateGoodForm.ProductInformationSecurity.NO,
             ),
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
@@ -1266,10 +1259,7 @@ class AddGoodsQuestionsForm(forms.Form):
             "part_number",
             ConditionalRadios(
                 "is_good_controlled",
-                ConditionalQuestion(
-                    CreateGoodForm.IsControlled.YES,
-                    "control_list_entries",
-                ),
+                ConditionalQuestion(CreateGoodForm.IsControlled.YES, "control_list_entries",),
                 CreateGoodForm.IsControlled.NO,
             ),
             "is_pv_graded",
@@ -1406,14 +1396,7 @@ class FirearmsReplicaForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            ConditionalRadios(
-                "is_replica",
-                ConditionalQuestion(
-                    "Yes",
-                    "replica_description",
-                ),
-                "No",
-            ),
+            ConditionalRadios("is_replica", ConditionalQuestion("Yes", "replica_description",), "No",),
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
         )
 
@@ -1580,10 +1563,7 @@ class FirearmsActConfirmationForm(forms.Form):
             if self.is_rfd
             else ConditionalRadios(
                 "is_covered_by_firearm_act_section_one_two_or_five",
-                ConditionalQuestion(
-                    CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
-                    "firearms_act_section",
-                ),
+                ConditionalQuestion(CreateGoodForm.FirearmGood.FirearmsActCertificate.YES, "firearms_act_section",),
                 CreateGoodForm.FirearmGood.FirearmsActCertificate.NO,
                 CreateGoodForm.FirearmGood.FirearmsActCertificate.DONT_KNOW,
             ),
@@ -1657,18 +1637,9 @@ class ProductComponentForm(forms.Form):
             HTML.h1(self.title),
             ConditionalRadios(
                 "is_component",
-                ConditionalQuestion(
-                    CreateGoodForm.ProductComponent.YES_DESIGNED,
-                    "designed_details",
-                ),
-                ConditionalQuestion(
-                    CreateGoodForm.ProductComponent.YES_MODIFIED,
-                    "modified_details",
-                ),
-                ConditionalQuestion(
-                    CreateGoodForm.ProductComponent.YES_GENERAL_PURPOSE,
-                    "general_details",
-                ),
+                ConditionalQuestion(CreateGoodForm.ProductComponent.YES_DESIGNED, "designed_details",),
+                ConditionalQuestion(CreateGoodForm.ProductComponent.YES_MODIFIED, "modified_details",),
+                ConditionalQuestion(CreateGoodForm.ProductComponent.YES_GENERAL_PURPOSE, "general_details",),
                 CreateGoodForm.ProductComponent.NO,
             ),
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),

@@ -42,12 +42,7 @@ class ConditionalQuestion(TemplateNameMixin):
             conditional_content += render_field(field, form, form_style, context, template_pack=template_pack, **kwargs)
 
         context.update(
-            {
-                "choice": choice,
-                "field": bound_field,
-                "position": position,
-                "conditional_content": conditional_content,
-            }
+            {"choice": choice, "field": bound_field, "position": position, "conditional_content": conditional_content}
         )
 
         return render_to_string(template, context.flatten())
