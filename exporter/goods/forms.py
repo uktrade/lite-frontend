@@ -1203,9 +1203,7 @@ class AddGoodsQuestionsForm(forms.Form):
         error_messages={"required": "Enter a product name",},
     )
 
-    description = forms.CharField(
-        required=False, label="Description (optional)", widget=forms.Textarea(attrs={"rows": 5, "max_length": 280}),
-    )
+    description = forms.CharField(required=False, label="Description (optional)", widget=forms.Textarea)
 
     part_number = forms.CharField(required=False, label="Part number (optional)")
 
@@ -1254,7 +1252,12 @@ class AddGoodsQuestionsForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             "name",
-            "description",
+            Field.textarea(
+                "description",
+                aria_describedby="",  # Required as there's a bug in gds crispy forms if this isn't set and you set max_characters
+                max_characters=280,
+                rows=5,
+            ),
             "part_number",
             ConditionalRadios(
                 "is_good_controlled",
