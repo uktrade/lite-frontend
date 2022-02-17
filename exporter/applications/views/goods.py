@@ -393,17 +393,11 @@ def is_draft(wizard):
 def is_pv_graded(wizard):
     add_goods_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.ADD_GOODS_QUESTIONS)
 
-    if not add_goods_cleaned_data:
-        return True
-
     return str_to_bool(add_goods_cleaned_data.get("is_pv_graded"))
 
 
 def show_serial_numbers_form(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.IDENTIFICATION_MARKINGS)
-
-    if not cleaned_data:
-        return True
 
     return str_to_bool(cleaned_data.get("has_identification_markings"))
 
@@ -427,9 +421,6 @@ def show_rfd_form(wizard):
 def show_attach_rfd_form(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.REGISTERED_FIREARMS_DEALER)
 
-    if not cleaned_data:
-        return True
-
     return str_to_bool(cleaned_data.get("is_registered_firearm_dealer"))
 
 
@@ -438,6 +429,13 @@ def compose_with_and(*predicates):
         return all(func(wizard) for func in predicates)
 
     return _and
+
+
+def compose_with_or(*predicates):
+    def _or(wizard):
+        return any(func(wizard) for func in predicates)
+
+    return _or
 
 
 class NoSaveStorage(S3Boto3Storage):
@@ -506,11 +504,11 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
             is_draft, is_product_type("ammunition_or_component")
         ),
         AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS: is_product_type("firearms_software_or_tech"),
-        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: compose_with_and(
+        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: compose_with_or(
             is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
         ),
         AddGoodFormSteps.PRODUCT_COMPONENT: is_product_type("firearms_accessory"),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: compose_with_and(
+        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: compose_with_or(
             is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
         ),
     }
