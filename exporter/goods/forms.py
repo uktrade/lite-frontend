@@ -1106,7 +1106,7 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
             HTML.h1(self.title),
             HTML.h4("Enter one serial number in every row"),
             HTML.p(f"Number of items: {number_of_items}"),
-            *self.fields,
+            *[Field(field, context={"prefix": f"{i}"}, template="forms/prefixed_and_suffixed.html") for i, field in enumerate(self.fields, 1)],
             Submit("submit", "Save and continue"),
         )
 
