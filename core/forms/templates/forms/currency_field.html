@@ -14,7 +14,7 @@
         <input class="govuk-input govuk-input--width-10 {% if field.errors %}govuk-input--error{% endif %}"
             id="{{ field.id_for_label }}"
             type="text"
-            name="{% if form.prefix %}{{ form.prefix }}-{% endif %}{{ field.name }}"
+            name="{{ field.html_name }}"
             value="{% if field.value %}{{ field.value }}{% endif %}"
             aria-describedby="{{ field.name }}"
             autocomplete="off"
