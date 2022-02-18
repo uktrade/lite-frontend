@@ -1747,7 +1747,7 @@ class FirearmsUnitQuantityValueForm(forms.Form):
                     "Select yes if the product has been deactivated to UK/EU proof house standards",
                 )
             elif cleaned_data["is_deactivated_to_standard"] is True:
-                if not cleaned_data["deactivation_standard"]:
+                if not cleaned_data.get("deactivation_standard"):
                     self.add_error("deactivation_standard", "Select yes if the product has valid UK proof marks")
             elif cleaned_data["is_deactivated_to_standard"] is False:
                 if not cleaned_data["deactivation_standard_other"]:

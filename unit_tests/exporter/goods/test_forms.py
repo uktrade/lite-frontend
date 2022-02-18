@@ -2,9 +2,8 @@ from unittest.mock import patch
 
 import pytest
 import requests
-from django.contrib.sessions.middleware import SessionMiddleware
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings, RequestFactory
+from django.test import override_settings
 
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM
 from exporter.core.services import get_pv_gradings
@@ -538,14 +537,11 @@ def test_product_uses_information_security_form(data, valid):
         ),
     ),
 )
-def test_add_goods_questions_form(data, application_pk, valid, error_field, error_message):
-    request = RequestFactory().get("/")
-    middleware = SessionMiddleware()
-    middleware.process_request(request)
-    request.session.save()
+def test_add_goods_questions_form(rf, client, data, application_pk, valid, error_field, error_message):
+    request = post_request(rf, client)
     request.session["clc_list"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
 
-    form = forms.AddGoodsQuestionsForm(data=data, application_pk=application_pk, request=request,)
+    form = forms.AddGoodsQuestionsForm(data=data, application_pk=application_pk, request=request)
 
     assert form.is_valid() == valid
     if application_pk is not None:
@@ -807,3 +803,410 @@ def test_product_component_form(data, valid, error_field, error_message):
 
     if not valid:
         assert form.errors[error_field][0] == error_message
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "has_proof_mark": ["Select whether the product has valid UK proof marks"],
+                "is_deactivated": ["Select yes if the product has been deactivated"],
+                "is_good_incorporated": ["Select yes if the product will be incorporated into another product"],
+                "value": ["Enter the total value of the products"],
+            },
+        ),
+        (
+            {"has_proof_mark": True, "is_deactivated": True, "is_good_incorporated": True, "value": "150",},
+            False,
+            {
+                "date_of_deactivation": ["Enter a valid date of deactivation"],
+                "is_deactivated_to_standard": [
+                    "Select yes if the product has been deactivated to UK/EU proof house standards"
+                ],
+            },
+        ),
+        (
+            {
+                "has_proof_mark": True,
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "is_deactivated_to_standard": True,
+                "is_good_incorporated": True,
+                "value": "150",
+            },
+            False,
+            {"deactivation_standard": ["Select yes if the product has valid UK proof marks"],},
+        ),
+        (
+            {
+                "has_proof_mark": True,
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard": "UK",
+                "is_deactivated_to_standard": True,
+                "is_good_incorporated": True,
+                "value": "150",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "has_proof_mark": True,
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "is_deactivated_to_standard": False,
+                "is_good_incorporated": True,
+                "value": "150",
+            },
+            False,
+            {
+                "deactivation_standard_other": [
+                    "Enter details of who deactivated the product and to what standard it was done"
+                ]
+            },
+        ),
+        (
+            {
+                "has_proof_mark": True,
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard_other": "other",
+                "is_deactivated_to_standard": False,
+                "is_good_incorporated": True,
+                "value": "150",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "has_proof_mark": False,
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard_other": "other",
+                "is_deactivated_to_standard": False,
+                "is_good_incorporated": True,
+                "value": "150",
+            },
+            False,
+            {"no_proof_mark_details": ["Enter details of why the product does not have valid UK proof marks"]},
+        ),
+        (
+            {
+                "has_proof_mark": False,
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard_other": "other",
+                "is_deactivated_to_standard": False,
+                "is_good_incorporated": True,
+                "no_proof_mark_details": "no proof mark details",
+                "value": "150",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearms_unit_quantity_value_form(data, valid, errors):
+    good = {
+        "name": "good name",
+        "control_list_entries": [],
+        "part_number": "",
+        "item_category": {"key": "",},
+    }
+
+    form = forms.FirearmsUnitQuantityValueForm(data=data, good=good)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "is_deactivated": ["Select yes if the product has been deactivated"],
+                "is_good_incorporated": ["Select yes if the product will be incorporated into another product"],
+                "is_gun_barrel": ["Select whether the product is a gun barrel or the action of a gun"],
+                "value": ["Enter the total value of the products"],
+            },
+        ),
+        (
+            {"is_deactivated": True, "is_good_incorporated": True, "is_gun_barrel": False, "value": "150",},
+            False,
+            {
+                "date_of_deactivation": ["Enter a valid date of deactivation"],
+                "is_deactivated_to_standard": [
+                    "Select yes if the product has been deactivated to UK/EU proof house standards"
+                ],
+            },
+        ),
+        (
+            {"is_deactivated": True, "is_good_incorporated": True, "is_gun_barrel": False, "value": "150",},
+            False,
+            {
+                "date_of_deactivation": ["Enter a valid date of deactivation"],
+                "is_deactivated_to_standard": [
+                    "Select yes if the product has been deactivated to UK/EU proof house standards"
+                ],
+            },
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "is_good_incorporated": True,
+                "is_gun_barrel": False,
+                "value": "150",
+            },
+            False,
+            {
+                "is_deactivated_to_standard": [
+                    "Select yes if the product has been deactivated to UK/EU proof house standards"
+                ],
+            },
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "is_deactivated_to_standard": True,
+                "is_good_incorporated": True,
+                "is_gun_barrel": False,
+                "value": "150",
+            },
+            False,
+            {"deactivation_standard": ["Select yes if the product has valid UK proof marks"]},
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard": "UK",
+                "is_deactivated_to_standard": True,
+                "is_good_incorporated": True,
+                "is_gun_barrel": False,
+                "value": "150",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard": "UK",
+                "has_proof_mark": False,
+                "is_deactivated_to_standard": True,
+                "is_good_incorporated": True,
+                "is_gun_barrel": True,
+                "value": "150",
+            },
+            False,
+            {"no_proof_mark_details": ["Enter details of why the product does not have valid UK proof marks"]},
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard": "UK",
+                "has_proof_mark": False,
+                "is_deactivated_to_standard": True,
+                "is_good_incorporated": True,
+                "is_gun_barrel": True,
+                "no_proof_mark_details": "no proof mark details",
+                "value": "150",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_component_of_a_firearm_unit_quantity_value_form(data, valid, errors):
+    good = {
+        "name": "good name",
+        "control_list_entries": [],
+        "part_number": "",
+        "item_category": {"key": "",},
+    }
+
+    form = forms.ComponentOfAFirearmUnitQuantityValueForm(data=data, good=good)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "is_deactivated": ["Select yes if the product has been deactivated"],
+                "is_good_incorporated": ["Select yes if the product will be incorporated into another product"],
+                "value": ["Enter the total value of the products"],
+            },
+        ),
+        (
+            {"is_deactivated": True, "is_good_incorporated": True, "value": "150",},
+            False,
+            {
+                "date_of_deactivation": ["Enter a valid date of deactivation"],
+                "is_deactivated_to_standard": [
+                    "Select yes if the product has been deactivated to UK/EU proof house standards"
+                ],
+            },
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "is_deactivated_to_standard": True,
+                "value": "150",
+            },
+            False,
+            {"deactivation_standard": ["Select yes if the product has valid UK proof marks"],},
+        ),
+        (
+            {
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard": "UK",
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "is_deactivated_to_standard": True,
+                "value": "150",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "is_deactivated_to_standard": False,
+                "value": "150",
+            },
+            False,
+            {
+                "deactivation_standard_other": [
+                    "Enter details of who deactivated the product and to what standard it was done"
+                ]
+            },
+        ),
+        (
+            {
+                "date_of_deactivation_0": "1",
+                "date_of_deactivation_1": "2",
+                "date_of_deactivation_2": "2020",
+                "deactivation_standard_other": "other",
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "is_deactivated_to_standard": False,
+                "value": "150",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid, errors):
+    good = {
+        "name": "good name",
+        "control_list_entries": [],
+        "part_number": "",
+        "item_category": {"key": "",},
+    }
+
+    form = forms.ComponentOfAFirearmAmmunitionUnitQuantityValueForm(data=data, good=good)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "is_good_incorporated": ["Select yes if the product will be incorporated into another product"],
+                "quantity": ["Enter a quantity"],
+                "unit": ["Select a unit of measurement"],
+                "value": ["Enter the total value of the products"],
+            },
+        ),
+        ({"is_good_incorporated": True, "quantity": "100", "unit": "GRM", "value": "150",}, True, {},),
+    ),
+)
+def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
+    good = {
+        "name": "good name",
+        "control_list_entries": [],
+        "part_number": "",
+        "item_category": {"key": "",},
+    }
+
+    request = post_request(rf, client)
+
+    form = forms.UnitQuantityValueForm(data=data, good=good, request=request)
+    assert form.fields["unit"].choices == [
+        ("", "Select"),
+        ("GRM", "Gram(s)"),
+        ("KGM", "Kilogram(s)"),
+        ("NAR", "Number of articles"),
+        ("MTK", "Square metre(s)"),
+        ("MTR", "Metre(s)"),
+        ("LTR", "Litre(s)"),
+        ("MTQ", "Cubic metre(s)"),
+        ("ITG", "Intangible"),
+    ]
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
