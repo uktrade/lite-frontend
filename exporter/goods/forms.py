@@ -812,7 +812,6 @@ def firearms_act_confirmation_form(is_rfd):
                 ],
             ),
         ],
-        javascript_imports={"/javascripts/add-good.js"},
     )
 
 
@@ -854,7 +853,6 @@ def upload_firearms_act_certificate_form(section, filename, back_link):
         ],
         back_link=back_link,
         buttons=[Button("Save and continue", "submit")],
-        javascript_imports={"/javascripts/add-good.js"},
     )
 
 

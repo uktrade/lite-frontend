@@ -159,7 +159,6 @@ def unit_quantity_value(request, good, sub_case_type, application_id, back_url):
             description=AddGoodToApplicationForm.DESCRIPTION,
             questions=questions,
             back_link=components.BackLink(strings.BACK_TO_APPLICATION, back_url),
-            javascript_imports={"/javascripts/add-good.js"},
         )
 
 
