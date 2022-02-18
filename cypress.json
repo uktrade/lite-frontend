@@ -5,6 +5,7 @@
   "screenshotOnRunFailure": false,
   "defaultCommandTimeout": 50000,
   "requestTimeout": 50000,
+  "chromeWebSecurity": false,
   "env": {
     "sso_url": "https://sso.trade.uat.uktrade.io/login/",
     "api_url": "https://lite-api-devdata.london.cloudapps.digital/"
