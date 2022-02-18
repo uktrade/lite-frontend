@@ -2002,9 +2002,9 @@ class UnitQuantityValueForm(forms.Form):
         label=AddGoodToApplicationForm.Units.TITLE,
     )
 
-    quantity = forms.CharField(error_messages={"required": "Enter a quantity",}, label="Quantity",)
+    quantity = forms.CharField(label="Quantity", required=False)
 
-    value = forms.CharField(error_messages={"required": "Enter the total value of the products",}, label="Total value",)
+    value = forms.CharField(label="Total value", required=False)
 
     is_good_incorporated = forms.TypedChoiceField(
         choices=((True, "Yes"), (False, "No")),
@@ -2040,3 +2040,14 @@ class UnitQuantityValueForm(forms.Form):
             Field.radios("is_good_incorporated", inline=True),
             Submit("submit", "Save"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("unit") != "ITG":
+            if not cleaned_data.get("quantity"):
+                self.add_error("quantity", "Enter a quantity")
+            if not cleaned_data.get("value"):
+                self.add_error("value", "Enter the total value of the products")
+
+        return cleaned_data
