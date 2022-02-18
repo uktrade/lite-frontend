@@ -1470,11 +1470,7 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
         self.helper = FormHelper()
         self.helper.attrs = {"enctype": "multipart/form-data"}
         self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "file",
-            "reference_code",
-            "expiry_date",
-            Submit("submit", "Save"),
+            HTML.h1(self.title), "file", "reference_code", "expiry_date", Submit("submit", "Save"),
         )
 
     def clean(self):
@@ -1596,9 +1592,7 @@ class SoftwareTechnologyDetailsForm(forms.Form):
         self.title = CreateGoodForm.TechnologySoftware.TITLE + category_text
 
         self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title), "software_or_technology_details", Submit("submit", "Save"),
-        )
+        self.helper.layout = Layout(HTML.h1(self.title), "software_or_technology_details", Submit("submit", "Save"),)
 
 
 class ProductComponentForm(forms.Form):
