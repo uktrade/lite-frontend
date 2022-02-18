@@ -2040,5 +2040,5 @@ class UnitQuantityValueForm(forms.Form):
             ),
             Field("value", template="forms/currency_field.html"),
             Field.radios("is_good_incorporated", inline=True),
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            Submit("submit", "Save"),
         )
