@@ -589,7 +589,12 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
         api_resp_data, status_code = post_goods(self.request, dict(all_data))
 
         if status_code != HTTPStatus.CREATED:
-            log.error("Error creating good - response was: %s", api_resp_data)
+            log.error(
+                "Error creating good - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
+            )
             return error_page(self.request, "Unexpected error adding good")
 
         if cert_file:
@@ -1250,7 +1255,12 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
         api_resp_data, status_code = post_good_on_application(self.request, self.application["id"], all_data)
 
         if status_code != HTTPStatus.CREATED:
-            log.error("Error creating good - response was: %s", api_resp_data)
+            log.error(
+                "Error adding good to application - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
+            )
             return error_page(self.request, "Unexpected error adding good")
 
         if cert_file:
