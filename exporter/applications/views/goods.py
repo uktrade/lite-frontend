@@ -1050,7 +1050,7 @@ def is_firearm_type_not_in(firearm_types):
     return _is_firearm_type_not_in
 
 
-class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
+class AddGoodToApplication2(SectionDocumentMixin, LoginRequiredMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
 
     file_storage = NoSaveStorage()
@@ -1183,7 +1183,8 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
 
         firearm_type = None
         if good.get("firearm_details"):
-            all_data["number_of_items"] = good["firearm_details"]["number_of_items"]
+            if not all_data.get("number_of_items"):
+                all_data["number_of_items"] = good["firearm_details"]["number_of_items"]
             firearm_type = good["firearm_details"]["type"]["key"]
         all_data["type"] = firearm_type
 
@@ -1205,6 +1206,22 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
             selected_section = "firearms_act_section5"
 
         return selected_section
+
+    def get_section_document(self, all_data):
+        documents = {item["document_type"]: item for item in self.application["organisation"]["documents"]}
+        good_firearms_details = self.good.get("firearm_details")
+
+        good_firearms_details_act_section = None
+        if good_firearms_details:
+            good_firearms_details_act_section = good_firearms_details.get("firearms_act_section")
+
+        firearm_section = all_data.get("firearms_act_section") or good_firearms_details_act_section
+        if firearm_section == "firearms_act_section1":
+            return documents["section-one-certificate"]
+        elif firearm_section == "firearms_act_section2":
+            return documents["section-two-certificate"]
+        elif firearm_section == "firearms_act_section5":
+            return documents["section-five-certificate"]
 
     def done(self, form_list, **kwargs):
         all_data = self.get_good_on_application_data(form_list)
@@ -1235,7 +1252,7 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
 
         if not is_firearm_certificate_needed(application=self.application, selected_section=section):
             if section == "firearms_act_section5":
-                document = self.get_section_document()
+                document = self.get_section_document(all_data)
                 expiry_date = datetime.strptime(document["expiry_date"], "%d %B %Y")
                 all_data.update(
                     {

@@ -1350,7 +1350,7 @@ class PvDetailsForm(forms.Form):
 class FirearmsYearOfManufactureDetailsForm(forms.Form):
     title = "What is the year of manufacture of the firearm?"
 
-    year_of_manufacture = forms.CharField(label="", error_messages={"required": "Enter the year of manufacture",},)
+    year_of_manufacture = forms.CharField(label="", error_messages={"required": "Enter the year of manufacture"})
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
