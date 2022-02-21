@@ -10,6 +10,25 @@ from django.urls import reverse
 
 from core import client
 from exporter.applications.views.goods import AddGoodFormSteps
+from exporter.goods.forms import (
+    AddGoodsQuestionsForm,
+    AttachFirearmsDealerCertificateForm,
+    FirearmsActConfirmationForm,
+    FirearmsCalibreDetailsForm,
+    FirearmsCaptureSerialNumbersForm,
+    FirearmsNumberOfItemsForm,
+    FirearmsReplicaForm,
+    FirearmsYearOfManufactureDetailsForm,
+    GroupTwoProductTypeForm,
+    IdentificationMarkingsForm,
+    ProductCategoryForm,
+    ProductComponentForm,
+    ProductMilitaryUseForm,
+    ProductUsesInformationSecurityForm,
+    PvDetailsForm,
+    RegisteredFirearmsDealerForm,
+    SoftwareTechnologyDetailsForm,
+)
 from lite_content.lite_exporter_frontend.goods import CreateGoodForm, GoodGradingForm
 
 
@@ -60,6 +79,7 @@ def url(data_standard_case):
 def test_add_good_start(url, authorized_client):
     response = authorized_client.get(url)
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductCategoryForm)
     assert CreateGoodForm.ProductCategory.TITLE.encode("utf-8") in response.content
     assert b"Step 1 of" not in response.content
 
@@ -67,6 +87,7 @@ def test_add_good_start(url, authorized_client):
 def test_add_good_product_category(url, authorized_client):
     title = CreateGoodForm.ProductCategory.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_CATEGORY})
+    assert isinstance(response.context["form"], ProductCategoryForm)
     assert title in response.content
     response = authorized_client.post(
         url,
@@ -76,12 +97,14 @@ def test_add_good_product_category(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], GroupTwoProductTypeForm)
     assert title not in response.content
 
 
 def test_add_good_product_type(url, authorized_client):
     title = CreateGoodForm.FirearmGood.ProductType.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE})
+    assert isinstance(response.context["form"], GroupTwoProductTypeForm)
     assert title in response.content
     response = authorized_client.post(
         url,
@@ -91,12 +114,14 @@ def test_add_good_product_type(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmsNumberOfItemsForm)
     assert title not in response.content
 
 
 def test_add_good_number_of_items(url, authorized_client):
     title = b"Number of items"
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS})
+    assert isinstance(response.context["form"], FirearmsNumberOfItemsForm)
     assert title in response.content
     response = authorized_client.post(
         url,
@@ -106,12 +131,14 @@ def test_add_good_number_of_items(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], IdentificationMarkingsForm)
     assert title not in response.content
 
 
 def test_add_good_identification_markings(url, authorized_client):
     title = CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.IDENTIFICATION_MARKINGS})
+    assert isinstance(response.context["form"], IdentificationMarkingsForm)
     assert title in response.content
     response = authorized_client.post(
         url,
@@ -121,10 +148,19 @@ def test_add_good_identification_markings(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmsCaptureSerialNumbersForm)
     assert title not in response.content
 
 
 def test_add_good_capture_serial_numbers(url, authorized_client):
+    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_CATEGORY})
+    authorized_client.post(
+        url,
+        data={
+            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_CATEGORY,
+            f"{AddGoodFormSteps.PRODUCT_CATEGORY}-item_category": "group1_platform",
+        },
+    )
     authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS})
     authorized_client.post(
         url,
@@ -144,6 +180,7 @@ def test_add_good_capture_serial_numbers(url, authorized_client):
 
     title = b"Enter the serial numbers for this product"
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS})
+    assert isinstance(response.context["form"], FirearmsCaptureSerialNumbersForm)
     assert title in response.content
     assert b"serial_number_input_0" in response.content
     assert b"serial_number_input_1" in response.content
@@ -159,6 +196,7 @@ def test_add_good_capture_serial_numbers(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductMilitaryUseForm)
     assert title not in response.content
 
 
@@ -174,6 +212,7 @@ def test_add_good_product_military_use(url, authorized_client):
 
     title = CreateGoodForm.MilitaryUse.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_MILITARY_USE})
+    assert isinstance(response.context["form"], ProductMilitaryUseForm)
     assert title in response.content
     response = authorized_client.post(
         url,
@@ -183,6 +222,7 @@ def test_add_good_product_military_use(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
     assert title not in response.content
 
 
@@ -201,6 +241,7 @@ def test_add_good_product_uses_information_security(url, authorized_client):
         url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY}
     )
     assert title in response.content
+    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
     response = authorized_client.post(
         url,
         data={
@@ -209,6 +250,7 @@ def test_add_good_product_uses_information_security(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], AddGoodsQuestionsForm)
     assert title not in response.content
 
 
@@ -216,6 +258,7 @@ def test_add_good_goods_questions(url, authorized_client):
     title = CreateGoodForm.TITLE_APPLICATION.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.ADD_GOODS_QUESTIONS})
     assert title in response.content
+    assert isinstance(response.context["form"], AddGoodsQuestionsForm)
     response = authorized_client.post(
         url,
         data={
@@ -227,6 +270,7 @@ def test_add_good_goods_questions(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], PvDetailsForm)
     assert title not in response.content
 
 
@@ -246,6 +290,7 @@ def test_add_good_pv_details(url, authorized_client):
     title = GoodGradingForm.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PV_DETAILS})
     assert title in response.content
+    assert isinstance(response.context["form"], PvDetailsForm)
     response = authorized_client.post(
         url,
         data={
@@ -259,6 +304,7 @@ def test_add_good_pv_details(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmsYearOfManufactureDetailsForm)
     assert title not in response.content
 
 
@@ -268,6 +314,7 @@ def test_add_good_firearms_year_of_manufacture(url, authorized_client):
         url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS}
     )
     assert title in response.content
+    assert isinstance(response.context["form"], FirearmsYearOfManufactureDetailsForm)
     response = authorized_client.post(
         url,
         data={
@@ -276,6 +323,7 @@ def test_add_good_firearms_year_of_manufacture(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmsReplicaForm)
     assert title not in response.content
 
 
@@ -283,6 +331,7 @@ def test_add_good_firearms_replica(url, authorized_client):
     title = CreateGoodForm.FirearmGood.FirearmsReplica.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_REPLICA})
     assert title in response.content
+    assert isinstance(response.context["form"], FirearmsReplicaForm)
     response = authorized_client.post(
         url,
         data={
@@ -291,6 +340,7 @@ def test_add_good_firearms_replica(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmsCalibreDetailsForm)
     assert title not in response.content
 
 
@@ -298,6 +348,7 @@ def test_add_good_firearms_calibre(url, authorized_client):
     title = b"What is the calibre of the product?"
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_CALIBRE_DETAILS})
     assert title in response.content
+    assert isinstance(response.context["form"], FirearmsCalibreDetailsForm)
     response = authorized_client.post(
         url,
         data={
@@ -306,6 +357,7 @@ def test_add_good_firearms_calibre(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], RegisteredFirearmsDealerForm)
     assert title not in response.content
 
 
@@ -313,6 +365,7 @@ def test_add_good_registered_firearms_dealer(url, authorized_client):
     title = b"Are you a registered firearms dealer?"
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.REGISTERED_FIREARMS_DEALER})
     assert title in response.content
+    assert isinstance(response.context["form"], RegisteredFirearmsDealerForm)
     response = authorized_client.post(
         url,
         data={
@@ -321,6 +374,7 @@ def test_add_good_registered_firearms_dealer(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], AttachFirearmsDealerCertificateForm)
     assert title not in response.content
 
 
@@ -339,6 +393,7 @@ def test_add_good_attach_firearm_dealer_certificate(url, authorized_client):
         url, data={"wizard_goto_step": AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE}
     )
     assert title in response.content
+    assert isinstance(response.context["form"], AttachFirearmsDealerCertificateForm)
     certificate = SimpleUploadedFile("test.pdf", b"file_content", content_type="application/pdf")
     response = authorized_client.post(
         url,
@@ -352,6 +407,7 @@ def test_add_good_attach_firearm_dealer_certificate(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmsActConfirmationForm)
     assert title not in response.content
 
 
@@ -368,6 +424,7 @@ def test_add_good_firearms_act_confirmation(url, authorized_client):
     title = b"Is the product covered by section 5 of the Firearms Act 1968?"
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION})
     assert title in response.content
+    assert isinstance(response.context["form"], FirearmsActConfirmationForm)
     response = authorized_client.post(
         url,
         data={
@@ -376,6 +433,7 @@ def test_add_good_firearms_act_confirmation(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], SoftwareTechnologyDetailsForm)
     assert title not in response.content
 
 
@@ -392,6 +450,7 @@ def test_add_good_software_technology_details(url, authorized_client):
     title = (CreateGoodForm.TechnologySoftware.TITLE + "software").encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS})
     assert title in response.content
+    assert isinstance(response.context["form"], SoftwareTechnologyDetailsForm)
     response = authorized_client.post(
         url,
         data={
@@ -400,6 +459,7 @@ def test_add_good_software_technology_details(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductMilitaryUseForm)
     assert title not in response.content
 
 
@@ -407,6 +467,7 @@ def test_add_good_product_component(url, authorized_client):
     title = CreateGoodForm.ProductComponent.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_COMPONENT})
     assert title in response.content
+    assert isinstance(response.context["form"], ProductComponentForm)
     response = authorized_client.post(
         url,
         data={
@@ -415,6 +476,7 @@ def test_add_good_product_component(url, authorized_client):
         },
     )
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
     assert title not in response.content
 
 
