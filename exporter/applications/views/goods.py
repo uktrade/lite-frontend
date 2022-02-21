@@ -590,10 +590,7 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
 
         if status_code != HTTPStatus.CREATED:
             log.error(
-                "Error creating good - response was: %s - %s",
-                status_code,
-                api_resp_data,
-                exc_info=True,
+                "Error creating good - response was: %s - %s", status_code, api_resp_data, exc_info=True,
             )
             return error_page(self.request, "Unexpected error adding good")
 
@@ -1256,10 +1253,7 @@ class AddGoodToApplication2(LoginRequiredMixin, SessionWizardView):
 
         if status_code != HTTPStatus.CREATED:
             log.error(
-                "Error adding good to application - response was: %s - %s",
-                status_code,
-                api_resp_data,
-                exc_info=True,
+                "Error adding good to application - response was: %s - %s", status_code, api_resp_data, exc_info=True,
             )
             return error_page(self.request, "Unexpected error adding good")
 

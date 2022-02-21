@@ -1181,9 +1181,7 @@ def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid,
             },
         ),
         ({"is_good_incorporated": True, "quantity": "100", "unit": "GRM", "value": "150",}, True, {}),
-        (
-            {"is_good_incorporated": True, "unit": "ITG"}, True, {}
-        )
+        ({"is_good_incorporated": True, "unit": "ITG"}, True, {}),
     ),
 )
 def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
