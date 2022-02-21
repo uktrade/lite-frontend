@@ -1104,8 +1104,8 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            HTML.h4("Enter one serial number in every row"),
-            HTML.p(f"Number of items: {number_of_items}"),
+            HTML.p("Enter one serial number for every row."),
+            HTML.p(f"{number_of_items} items"),
             *[
                 Field(field, context={"prefix": f"{i}"}, template="forms/prefixed_and_suffixed.html")
                 for i, field in enumerate(self.fields, 1)
