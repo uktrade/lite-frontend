@@ -1106,7 +1106,10 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
             HTML.h1(self.title),
             HTML.h4("Enter one serial number in every row"),
             HTML.p(f"Number of items: {number_of_items}"),
-            *[Field(field, context={"prefix": f"{i}"}, template="forms/prefixed_and_suffixed.html") for i, field in enumerate(self.fields, 1)],
+            *[
+                Field(field, context={"prefix": f"{i}"}, template="forms/prefixed_and_suffixed.html")
+                for i, field in enumerate(self.fields, 1)
+            ],
             Submit("submit", "Save and continue"),
         )
 
@@ -1190,7 +1193,7 @@ class ProductUsesInformationSecurityForm(forms.Form):
                 ConditionalQuestion("Yes", "information_security_details",),
                 CreateGoodForm.ProductInformationSecurity.NO,
             ),
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            Submit("submit", "Save"),
         )
 
 
@@ -1398,7 +1401,7 @@ class FirearmsReplicaForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             ConditionalRadios("is_replica", ConditionalQuestion("Yes", "replica_description",), "No",),
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            Submit("submit", "Save and continue"),
         )
 
     def clean(self):

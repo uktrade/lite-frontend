@@ -22,19 +22,19 @@ from exporter.applications.views.parties import consignees, end_users, third_par
 from exporter.goods.views import (
     EditGood,
     EditGrading,
-    GoodComponent,
-    GoodInformationSecurity,
+    GoodComponentView,
+    GoodInformationSecurityView,
     GoodMilitaryUseView,
-    GoodSoftwareTechnology,
+    GoodSoftwareTechnologyView,
     EditFirearmProductTypeView,
-    EditCalibre,
-    EditFirearmActDetails,
+    EditCalibreView,
+    EditFirearmActDetailsView,
     EditNumberOfItemsView,
     EditIdentificationMarkingsView,
     EditSerialNumbersView,
-    EditYearOfManufacture,
-    EditFirearmReplica,
+    EditFirearmReplicaView,
     EditFirearmActCertificateDetails,
+    EditYearOfManufactureView,
 )
 
 app_name = "applications"
@@ -74,14 +74,14 @@ urlpatterns = [
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
-        GoodSoftwareTechnology.as_view(),
+        GoodSoftwareTechnologyView.as_view(),
         name="good_software_technology",
     ),
     path("<uuid:pk>/goods/<uuid:good_pk>/edit-military-use/", GoodMilitaryUseView.as_view(), name="good_military_use"),
-    path("<uuid:pk>/goods/<uuid:good_pk>/edit-good-component/", GoodComponent.as_view(), name="good_component"),
+    path("<uuid:pk>/goods/<uuid:good_pk>/edit-good-component/", GoodComponentView.as_view(), name="good_component"),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-information-security/",
-        GoodInformationSecurity.as_view(),
+        GoodInformationSecurityView.as_view(),
         name="good_information_security",
     ),
     path(
@@ -89,16 +89,20 @@ urlpatterns = [
         EditFirearmProductTypeView.as_view(),
         name="firearm_type",
     ),
-    path("<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/calibre/", EditCalibre.as_view(), name="calibre"),
+    path("<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/calibre/", EditCalibreView.as_view(), name="calibre"),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/year-of-manufacture/",
-        EditYearOfManufacture.as_view(),
+        EditYearOfManufactureView.as_view(),
         name="year-of-manufacture",
     ),
-    path("<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/replica/", EditFirearmReplica.as_view(), name="replica"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/replica/",
+        EditFirearmReplicaView.as_view(),
+        name="replica",
+    ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/firearms-act/",
-        EditFirearmActDetails.as_view(),
+        EditFirearmActDetailsView.as_view(),
         name="firearms_act",
     ),
     path(
