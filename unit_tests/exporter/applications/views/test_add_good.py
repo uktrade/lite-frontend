@@ -54,7 +54,7 @@ def pv_gradings_url(requests_mock, data_standard_case):
 
 @pytest.fixture
 def url(data_standard_case):
-    return reverse("applications:new_good2", kwargs={"pk": data_standard_case["case"]["id"]})
+    return reverse("applications:new_good", kwargs={"pk": data_standard_case["case"]["id"]})
 
 
 def test_add_good_start(url, authorized_client):
