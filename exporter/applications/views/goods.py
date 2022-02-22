@@ -590,7 +590,10 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
 
         if status_code != HTTPStatus.CREATED:
             log.error(
-                "Error creating good - response was: %s - %s", status_code, api_resp_data, exc_info=True,
+                "Error creating good - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
             )
             return error_page(self.request, "Unexpected error adding good")
 
@@ -606,7 +609,11 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
                 },
             }
 
-            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert,)
+            _, status_code = post_additional_document(
+                request=self.request,
+                pk=str(self.kwargs["pk"]),
+                json=rfd_cert,
+            )
             assert status_code == HTTPStatus.CREATED
 
         if str_to_bool(all_data.get("is_covered_by_firearm_act_section_one_two_or_five")):
@@ -1240,7 +1247,10 @@ class AddGoodToApplication2(SectionDocumentMixin, LoginRequiredMixin, SessionWiz
             return redirect(
                 reverse(
                     "applications:attach-firearms-certificate-existing-good",
-                    kwargs={"pk": self.kwargs["pk"], "good_pk": self.good["id"],},
+                    kwargs={
+                        "pk": self.kwargs["pk"],
+                        "good_pk": self.good["id"],
+                    },
                 ),
             )
 
@@ -1270,7 +1280,10 @@ class AddGoodToApplication2(SectionDocumentMixin, LoginRequiredMixin, SessionWiz
 
         if status_code != HTTPStatus.CREATED:
             log.error(
-                "Error adding good to application - response was: %s - %s", status_code, api_resp_data, exc_info=True,
+                "Error adding good to application - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
             )
             return error_page(self.request, "Unexpected error adding good")
 
@@ -1289,7 +1302,14 @@ class AddGoodToApplication2(SectionDocumentMixin, LoginRequiredMixin, SessionWiz
             _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert)
             assert status_code == HTTPStatus.CREATED
 
-        return redirect(reverse("applications:goods", kwargs={"pk": self.kwargs["pk"],},),)
+        return redirect(
+            reverse(
+                "applications:goods",
+                kwargs={
+                    "pk": self.kwargs["pk"],
+                },
+            ),
+        )
 
 
 class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):

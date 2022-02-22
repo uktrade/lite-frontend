@@ -337,7 +337,11 @@ def test_goods_firearms_capture_serial_numbers_form():
 
 
 @pytest.mark.parametrize(
-    "data, valid", (({"item_category": "group2_firearms"}, True), ({"instructions_to_exporter": ""}, False),),
+    "data, valid",
+    (
+        ({"item_category": "group2_firearms"}, True),
+        ({"instructions_to_exporter": ""}, False),
+    ),
 )
 def test_product_category_form(data, valid):
     form = forms.ProductCategoryForm(data=data)
@@ -349,7 +353,11 @@ def test_product_category_form(data, valid):
 
 
 @pytest.mark.parametrize(
-    "data, valid", (({"type": "firearms"}, True), ({"type": ""}, False),),
+    "data, valid",
+    (
+        ({"type": "firearms"}, True),
+        ({"type": ""}, False),
+    ),
 )
 def test_group_two_product_type_form(data, valid):
     form = forms.GroupTwoProductTypeForm(data=data)
@@ -451,7 +459,11 @@ def test_product_military_use_form(data, valid):
 
 
 @pytest.mark.parametrize(
-    "data, valid", (({"uses_information_security": "True"}, True), ({"uses_information_security": ""}, False),),
+    "data, valid",
+    (
+        ({"uses_information_security": "True"}, True),
+        ({"uses_information_security": ""}, False),
+    ),
 )
 def test_product_uses_information_security_form(data, valid):
     form = forms.ProductUsesInformationSecurityForm(data=data)
@@ -667,7 +679,10 @@ def test_firearms_replica_form_form(data, valid, error_field, error_message):
 
 @pytest.mark.parametrize(
     "data, valid, error_field, error_message",
-    (({"calibre": "22"}, True, None, None), ({"calibre": ""}, False, "calibre", "Enter the calibre"),),
+    (
+        ({"calibre": "22"}, True, None, None),
+        ({"calibre": ""}, False, "calibre", "Enter the calibre"),
+    ),
 )
 def test_firearms_calibre_details_form(data, valid, error_field, error_message):
     form = forms.FirearmsCalibreDetailsForm(data=data)
@@ -819,7 +834,12 @@ def test_product_component_form(data, valid, error_field, error_message):
             },
         ),
         (
-            {"has_proof_mark": True, "is_deactivated": True, "is_good_incorporated": True, "value": "150",},
+            {
+                "has_proof_mark": True,
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "value": "150",
+            },
             False,
             {
                 "date_of_deactivation": ["Enter a valid date of deactivation"],
@@ -840,7 +860,9 @@ def test_product_component_form(data, valid, error_field, error_message):
                 "value": "150",
             },
             False,
-            {"deactivation_standard": ["Select yes if the product has valid UK proof marks"],},
+            {
+                "deactivation_standard": ["Select yes if the product has valid UK proof marks"],
+            },
         ),
         (
             {
@@ -928,7 +950,9 @@ def test_firearms_unit_quantity_value_form(data, valid, errors):
         "name": "good name",
         "control_list_entries": [],
         "part_number": "",
-        "item_category": {"key": "",},
+        "item_category": {
+            "key": "",
+        },
     }
 
     form = forms.FirearmsUnitQuantityValueForm(data=data, good=good)
@@ -953,7 +977,12 @@ def test_firearms_unit_quantity_value_form(data, valid, errors):
             },
         ),
         (
-            {"is_deactivated": True, "is_good_incorporated": True, "is_gun_barrel": False, "value": "150",},
+            {
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "is_gun_barrel": False,
+                "value": "150",
+            },
             False,
             {
                 "date_of_deactivation": ["Enter a valid date of deactivation"],
@@ -963,7 +992,12 @@ def test_firearms_unit_quantity_value_form(data, valid, errors):
             },
         ),
         (
-            {"is_deactivated": True, "is_good_incorporated": True, "is_gun_barrel": False, "value": "150",},
+            {
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "is_gun_barrel": False,
+                "value": "150",
+            },
             False,
             {
                 "date_of_deactivation": ["Enter a valid date of deactivation"],
@@ -1058,7 +1092,9 @@ def test_component_of_a_firearm_unit_quantity_value_form(data, valid, errors):
         "name": "good name",
         "control_list_entries": [],
         "part_number": "",
-        "item_category": {"key": "",},
+        "item_category": {
+            "key": "",
+        },
     }
 
     form = forms.ComponentOfAFirearmUnitQuantityValueForm(data=data, good=good)
@@ -1082,7 +1118,11 @@ def test_component_of_a_firearm_unit_quantity_value_form(data, valid, errors):
             },
         ),
         (
-            {"is_deactivated": True, "is_good_incorporated": True, "value": "150",},
+            {
+                "is_deactivated": True,
+                "is_good_incorporated": True,
+                "value": "150",
+            },
             False,
             {
                 "date_of_deactivation": ["Enter a valid date of deactivation"],
@@ -1102,7 +1142,9 @@ def test_component_of_a_firearm_unit_quantity_value_form(data, valid, errors):
                 "value": "150",
             },
             False,
-            {"deactivation_standard": ["Select yes if the product has valid UK proof marks"],},
+            {
+                "deactivation_standard": ["Select yes if the product has valid UK proof marks"],
+            },
         ),
         (
             {
@@ -1156,7 +1198,9 @@ def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid,
         "name": "good name",
         "control_list_entries": [],
         "part_number": "",
-        "item_category": {"key": "",},
+        "item_category": {
+            "key": "",
+        },
     }
 
     form = forms.ComponentOfAFirearmAmmunitionUnitQuantityValueForm(data=data, good=good)
@@ -1180,7 +1224,16 @@ def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid,
                 "value": ["Enter the total value of the products"],
             },
         ),
-        ({"is_good_incorporated": True, "quantity": "100", "unit": "GRM", "value": "150",}, True, {}),
+        (
+            {
+                "is_good_incorporated": True,
+                "quantity": "100",
+                "unit": "GRM",
+                "value": "150",
+            },
+            True,
+            {},
+        ),
         ({"is_good_incorporated": True, "unit": "ITG"}, True, {}),
     ),
 )
@@ -1189,7 +1242,9 @@ def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
         "name": "good name",
         "control_list_entries": [],
         "part_number": "",
-        "item_category": {"key": "",},
+        "item_category": {
+            "key": "",
+        },
     }
 
     request = post_request(rf, client)
