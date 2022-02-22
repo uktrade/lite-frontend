@@ -125,7 +125,7 @@ class GoodsStartingPointFormView(LoginRequiredMixin, ApplicationMixin, FormView)
         return {"goods_starting_point": self.application["goods_starting_point"]}
 
     def get_success_url(self):
-        return reverse("applications:temporary_or_permanent", kwargs={"pk": self.kwargs["pk"]})
+        return reverse("applications:export_details", kwargs={"pk": self.kwargs["pk"]})
 
     def form_valid(self, form):
         put_application_simple(self.request, self.kwargs["pk"], form.cleaned_data)

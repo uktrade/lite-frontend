@@ -75,6 +75,9 @@ DEFAULT_USER_ROLE_ID = "00000000-0000-0000-0000-000000000004"
 # CLC
 UNSURE = "unsure"
 
+SAVE_BUTTON = "Save"
+CONTINUE = "Continue"
+
 
 class Permissions:
     EXPORTER_ADMINISTER_ROLES = "EXPORTER_ADMINISTER_ROLES"
@@ -136,6 +139,12 @@ FIREARMS_ALL_TYPES = [
 ]
 
 
+class GoodsStartingPoint:
+    TITLE = "Are the products being permanently exported?"
+    YES = "Yes"
+    NO = "No, this is a temporary export"
+
+
 class TemporaryExportDetails:
     TEMPORARY_EXPORT_DETAILS_CAPTION = "Temporary export details"
     PROPOSED_DATE_HINT = "For example, 12 11 2020"
@@ -162,5 +171,3 @@ class TemporaryExportDetails:
 class RouteOfGoods:
     TITLE = "Are the products being shipped from the UK on an air waybill or bill of lading?"
     NO_ANSWER_DESCRIPTION = "Provide details of the route of the products"
-    SAVE_BUTTON = "Save"
-    CONTINUE = "Continue"

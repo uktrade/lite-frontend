@@ -1,4 +1,4 @@
-from exporter.core.constants import RouteOfGoods
+from exporter.core.constants import CONTINUE, RouteOfGoods
 from lite_forms.components import Form, Option, TextArea, RadioButtons, BackLink, HiddenField, HTMLBlock
 
 
@@ -53,5 +53,5 @@ def route_of_goods_form(back_link):
                 "<br>"
             ),
         ],
-        default_button_name=RouteOfGoods.CONTINUE,
+        default_button_name=CONTINUE,
     )

@@ -15,7 +15,7 @@ from exporter.applications.views import (
     questions,
     end_use_details,
     route_of_goods,
-    temporary_export_details,
+    export_details,
 )
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from exporter.applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
@@ -279,9 +279,9 @@ urlpatterns = [
     ),
     # Temporary export details
     path(
-        "<uuid:pk>/temporary-export-details/",
-        temporary_export_details.TemporaryExportDetails.as_view(),
-        name="temporary_export_details",
+        "<uuid:pk>/export-details/",
+        export_details.ExportDetails.as_view(),
+        name="export_details",
     ),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),
