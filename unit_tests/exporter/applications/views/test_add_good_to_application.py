@@ -13,6 +13,8 @@ from core import client
 from exporter.applications.views.goods import AddGoodToApplicationFormSteps
 from exporter.goods.forms import (
     AttachFirearmsDealerCertificateForm,
+    ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
+    ComponentOfAFirearmUnitQuantityValueForm,
     FirearmsActConfirmationForm,
     FirearmsCaptureSerialNumbersForm,
     FirearmsNumberOfItemsForm,
@@ -20,6 +22,7 @@ from exporter.goods.forms import (
     FirearmsYearOfManufactureDetailsForm,
     IdentificationMarkingsForm,
     RegisteredFirearmsDealerForm,
+    UnitQuantityValueForm,
 )
 
 
@@ -82,25 +85,30 @@ def case_without_documents(case):
 
 
 @pytest.fixture
-def good():
+def good_data():
     return {
-        "good": {
-            "id": str(uuid.uuid4()),
-            "name": "good name",
-            "description": "good description",
-            "part_number": "12345",
-            "firearm_details": {
-                "type": {
-                    "key": "firearms",
-                },
-                "section_certificate_missing": "certification missing",
-                "section_certificate_missing_reason": "missing reason",
+        "id": str(uuid.uuid4()),
+        "name": "good name",
+        "description": "good description",
+        "part_number": "12345",
+        "firearm_details": {
+            "type": {
+                "key": "firearms",
             },
-            "item_category": {
-                "key": "group2_firearms",
-            },
-            "control_list_entries": [],
+            "section_certificate_missing": "certification missing",
+            "section_certificate_missing_reason": "missing reason",
         },
+        "item_category": {
+            "key": "group2_firearms",
+        },
+        "control_list_entries": [],
+    }
+
+
+@pytest.fixture
+def good(good_data):
+    return {
+        "good": good_data,
     }
 
 
@@ -112,6 +120,16 @@ def preexisting_url(case, good):
     )
 
     return f"{url}?preexisting=True"
+
+
+@pytest.fixture
+def not_preexisting_url(case, good):
+    url = reverse(
+        "applications:add_good_to_application",
+        kwargs={"pk": case["case"]["id"], "good_pk": good["good"]["id"]},
+    )
+
+    return f"{url}?preexisting=False"
 
 
 @pytest.fixture(autouse=True)
@@ -152,10 +170,37 @@ def goto_step_preexisting(preexisting_url, authorized_client):
 
 
 @pytest.fixture()
+def goto_step_not_preexisting(not_preexisting_url, authorized_client):
+    def _goto_step(step_name):
+        return authorized_client.post(
+            not_preexisting_url,
+            data={
+                "wizard_goto_step": step_name,
+            },
+        )
+
+    return _goto_step
+
+
+@pytest.fixture()
 def post_to_step_preexisting(preexisting_url, authorized_client):
     def _post_to_step(step_name, data):
         return authorized_client.post(
             preexisting_url,
+            data={
+                f"{ADD_GOOD_TO_APPLICATION_VIEW}-current_step": step_name,
+                **{f"{step_name}-{key}": value for key, value in data.items()},
+            },
+        )
+
+    return _post_to_step
+
+
+@pytest.fixture()
+def post_to_step_not_preexisting(not_preexisting_url, authorized_client):
+    def _post_to_step(step_name, data):
+        return authorized_client.post(
+            not_preexisting_url,
             data={
                 f"{ADD_GOOD_TO_APPLICATION_VIEW}-current_step": step_name,
                 **{f"{step_name}-{key}": value for key, value in data.items()},
@@ -557,3 +602,80 @@ def test_add_good_to_application_api_submission_without_documents_preexisting(
         "value": "120",
         "year_of_manufacture": "2020",
     }
+
+
+def test_add_good_to_application_not_preexisting_start(
+    mock_application_with_documents_request, not_preexisting_url, authorized_client
+):
+    response = authorized_client.get(not_preexisting_url)
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmsUnitQuantityValueForm)
+    assertNotContains(response, "Step 1 of", html=True)
+
+
+def test_add_good_to_application_component_of_a_firearm_not_preexisting_start(
+    mock_application_with_documents_request,
+    requests_mock,
+    good_data,
+    not_preexisting_url,
+    authorized_client,
+):
+    good = {"good": good_data.copy()}
+    good["good"]["firearm_details"]["type"]["key"] = "components_for_firearms"
+
+    good_pk = good["good"]["id"]
+    path = f"/goods/{good_pk}/?pk={good_pk}&full_detail=False"
+    app_url = client._build_absolute_uri(path)
+    requests_mock.get(url=app_url, json=good)
+
+    response = authorized_client.get(not_preexisting_url)
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ComponentOfAFirearmUnitQuantityValueForm)
+    assertNotContains(response, "Step 1 of", html=True)
+
+
+def test_add_good_to_application_component_of_a_firearm_ammunition_not_preexisting_start(
+    mock_application_with_documents_request,
+    requests_mock,
+    good_data,
+    not_preexisting_url,
+    authorized_client,
+):
+    good = {"good": good_data.copy()}
+    good["good"]["firearm_details"]["type"]["key"] = "components_for_ammunition"
+
+    good_pk = good["good"]["id"]
+    path = f"/goods/{good_pk}/?pk={good_pk}&full_detail=False"
+    app_url = client._build_absolute_uri(path)
+    requests_mock.get(url=app_url, json=good)
+
+    response = authorized_client.get(not_preexisting_url)
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ComponentOfAFirearmAmmunitionUnitQuantityValueForm)
+    assertNotContains(response, "Step 1 of", html=True)
+
+
+def test_add_good_to_application_software_not_preexisting_start(
+    mock_application_with_documents_request,
+    requests_mock,
+    good_data,
+    not_preexisting_url,
+    authorized_client,
+    mock_units,
+):
+    good = {"good": good_data.copy()}
+    good["good"]["firearm_details"]["type"]["key"] = "software_related_to_firearms"
+
+    good_pk = good["good"]["id"]
+    path = f"/goods/{good_pk}/?pk={good_pk}&full_detail=False"
+    app_url = client._build_absolute_uri(path)
+    requests_mock.get(url=app_url, json=good)
+
+    response = authorized_client.get(not_preexisting_url)
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], UnitQuantityValueForm)
+    assertNotContains(response, "Step 1 of", html=True)
