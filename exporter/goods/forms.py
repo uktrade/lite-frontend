@@ -1141,7 +1141,7 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
         number_of_items = kwargs.pop("number_of_items")
         super().__init__(*args, **kwargs)
 
-        self.fields["serial_numbers"] = SerialNumbersField(number_of_items, required=False)
+        self.fields["serial_numbers"] = SerialNumbersField(number_of_items, label="", required=False)
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
