@@ -15,7 +15,7 @@ from exporter.core.helpers import (
     convert_control_list_entries,
     has_expired_rfd_certificate,
     has_valid_rfd_certificate,
-    str_to_bool
+    str_to_bool,
 )
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
@@ -30,7 +30,7 @@ from lite_content.lite_exporter_frontend.goods import (
     EditGoodForm,
     GoodGradingForm,
     GoodsList,
-    GoodsQueryForm
+    GoodsQueryForm,
 )
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
@@ -53,7 +53,7 @@ from lite_forms.components import (
     RadioButtons,
     Select,
     TextArea,
-    TextInput
+    TextInput,
 )
 from lite_forms.helpers import conditional, convert_to_markdown
 from lite_forms.styles import ButtonStyle, HeadingStyle

@@ -26,7 +26,7 @@ from exporter.applications.services import (
     post_additional_document,
     post_application_document,
     post_good_on_application,
-    validate_good_on_application
+    validate_good_on_application,
 )
 from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps
@@ -44,7 +44,7 @@ from exporter.core.helpers import (
     show_attach_rfd_form,
     show_rfd_form,
     show_serial_numbers_form,
-    str_to_bool
+    str_to_bool,
 )
 from exporter.core.validators import validate_expiry_date
 from exporter.goods.forms import (
@@ -75,7 +75,7 @@ from exporter.goods.forms import (
     check_document_available_form,
     document_grading_form,
     has_valid_section_five_certificate,
-    upload_firearms_act_certificate_form
+    upload_firearms_act_certificate_form,
 )
 from exporter.goods.services import (
     get_good,
@@ -86,7 +86,7 @@ from exporter.goods.services import (
     post_good_document_sensitivity,
     post_good_documents,
     post_goods,
-    validate_good
+    validate_good,
 )
 from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page

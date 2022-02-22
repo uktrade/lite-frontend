@@ -21,7 +21,7 @@ from exporter.goods.forms import (
     ProductUsesInformationSecurityForm,
     PvDetailsForm,
     RegisteredFirearmsDealerForm,
-    SoftwareTechnologyDetailsForm
+    SoftwareTechnologyDetailsForm,
 )
 from lite_content.lite_exporter_frontend.goods import CreateGoodForm, GoodGradingForm
 
