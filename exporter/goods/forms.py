@@ -1,3 +1,5 @@
+import json
+
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, Fieldset, HTML, Layout, Submit
@@ -2257,6 +2259,8 @@ class UnitQuantityValueForm(forms.Form):
         widget=forms.RadioSelect(),
     )
 
+    OPTIONAL_VALUE = "ITG"
+
     def __init__(self, *args, **kwargs):
         good = kwargs.pop("good")
         request = kwargs.pop("request")
@@ -2271,7 +2275,16 @@ class UnitQuantityValueForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             summary_list(get_unit_quantity_value_summary_list_items(good)),
-            "unit",
+            Field(
+                "unit",
+                data_unit_toggle=json.dumps(
+                    {
+                        "quantity_id": self["quantity"].id_for_label,
+                        "value_id": self["value"].id_for_label,
+                        "optional_value": self.OPTIONAL_VALUE,
+                    }
+                ),
+            ),
             Field(
                 "quantity",
                 autocomplete="off",
@@ -2287,7 +2300,7 @@ class UnitQuantityValueForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        if cleaned_data.get("unit") != "ITG":
+        if cleaned_data.get("unit") != self.OPTIONAL_VALUE:
             if not cleaned_data.get("quantity"):
                 self.add_error("quantity", "Enter a quantity")
             if not cleaned_data.get("value"):

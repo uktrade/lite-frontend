@@ -10,13 +10,13 @@ export default function initAddGood() {
 			plural.push($(this).val());
 		}
 	});
-	
+
 	for (var i = 0; i < plural.length; i++) {
 		key = plural[i]
 		option = $('#unit > option[value=' + key + ']')
 		option.text(option.text().substring(0, option.text().length - 3) + 's')
 	}
-	
+
 	$('#quantity').on('input propertychange paste', function () {
 		for (var i = 0; i < plural.length; i++) {
 			key = plural[i]
@@ -32,15 +32,20 @@ export default function initAddGood() {
 			}
 		}
 	});
-	
-	$('#unit').on('input', function () {
-		let quantity_for = "quantity";
-		let quantity_label = $('label[for=' + quantity_for + ']');
-		let value_for = "value";
-		let value_label = $('label[for=' + value_for + ']');
-	
+
+	console.log("HERE");
+
+	$('[data-unit-toggle]').on('input', function () {
+		const self = $(this);
+		const config = self.data("unit-toggle");
+		const quantity_for = config.quantity_id;
+		const quantity_label = $('label[for=' + quantity_for + ']');
+		const value_for = config.value_id;
+		const value_label = $('label[for=' + value_for + ']');
+		const optional_value = config.optional_value;
+
 		// if Intangible is selected, add (optional) to the quantity and value titles
-		if ($(this).val() === 'ITG') {
+		if (self.val() === optional_value) {
 			if (!quantity_label.children().is('span')) {
 				quantity_label.append('<span class="lite-form-optional">(optional)</span>');
 				value_label.append('<span class="lite-form-optional">(optional)</span>');
@@ -50,11 +55,11 @@ export default function initAddGood() {
 			value_label.children().remove();
 		}
 	});
-	
+
 	function showHideCertificateMissingReason() {
 		var textarea = $("#section_certificate_missing_reason")
 		var label = $('label[for="section_certificate_missing_reason"]');
-	
+
 		if ($("input[name='section_certificate_missing']").is(":checked")) {
 			label.show()
 			textarea.show()
@@ -63,19 +68,19 @@ export default function initAddGood() {
 			textarea.hide()
 		}
 	}
-	
+
 	$("input[name='section_certificate_missing']").change(function () {
 		showHideCertificateMissingReason()
 	});
-	
-	
+
+
 	function populateUploadedCertificate() {
 		var existingCertificate = $("input[name='uploaded_file_name']").val();
 		if (existingCertificate) {
 			$("input[type=file]").next().html(existingCertificate + "<br><span class='lite-file-upload__or-label'>Drag and drop your document here or <span class='lite-file-upload__link'>click to browse</span> to replace it</span>");
 		}
 	}
-	
+
 	(function () {
 		populateUploadedCertificate()
 		showHideCertificateMissingReason()
@@ -86,15 +91,15 @@ export default function initAddGood() {
 		if (!controlListEntriesField) {
 			return;
 		}
-	
+
 		var controlListEntriesTokenFieldInfo = document.createElement('div')
 		controlListEntriesField.parentElement.appendChild(controlListEntriesTokenFieldInfo)
-	
+
 		progressivelyEnhanceMultipleSelectField(controlListEntriesField)
-	
+
 		function progressivelyEnhanceMultipleSelectField(element) {
 			element.parentElement.classList.add('tokenfield-container')
-	
+
 			var items = []
 			var selected = []
 			for (var i = 0; i < element.options.length; i++) {
