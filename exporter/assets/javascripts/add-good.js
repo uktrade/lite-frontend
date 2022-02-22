@@ -33,8 +33,6 @@ export default function initAddGood() {
 		}
 	});
 
-	console.log("HERE");
-
 	$('[data-unit-toggle]').on('input', function () {
 		const self = $(this);
 		const config = self.data("unit-toggle");
