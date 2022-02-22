@@ -1,4 +1,3 @@
-import datetime
 import pytest
 import uuid
 
@@ -9,7 +8,6 @@ from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.urls import reverse
-from django.utils import timezone
 
 from core import client
 from exporter.applications.views.goods import AddGoodToApplicationFormSteps
@@ -370,24 +368,15 @@ def test_add_good_to_application_api_submission_preexisting(
     case,
     good,
 ):
-    requests_mock.post(f"/applications/{case['id']}/goods/", status_code=201, json={})
-    requests_mock.post(f"/applications/{case['case']['id']}/documents/", status_code=201, json={})
+    goods_matcher = requests_mock.post(f"/applications/{case['id']}/goods/", status_code=201, json={})
+    documents_matcher = requests_mock.post(f"/applications/{case['case']['id']}/documents/", status_code=201, json={})
 
     _submit_good_to_application(preexisting_url, authorized_client, post_to_step_preexisting, case)
 
-    rfd_cert_data = requests_mock.request_history.pop().json()
-    assert rfd_cert_data == {
-        "name": f'{rfd_cert_data["name"]}',
-        "s3_key": f'{rfd_cert_data["s3_key"]}',
-        "size": 0,
-        "document_on_organisation": {
-            "expiry_date": "2030-01-01",
-            "reference_code": "12345",
-            "document_type": "rfd-certificate",
-        },
-    }
+    assert goods_matcher.called_once
+    assert documents_matcher.called_once
 
-    good_to_application_data = requests_mock.request_history.pop().json()
+    good_to_application_data = goods_matcher.last_request.json()
     assert good_to_application_data == {
         "number_of_items": 3,
         "number_of_items_step": True,
@@ -440,4 +429,16 @@ def test_add_good_to_application_api_submission_preexisting(
         },
         "quantity": 3,
         "unit": "NAR",
+    }
+
+    rfd_cert_data = documents_matcher.last_request.json()
+    assert rfd_cert_data == {
+        "name": f'{rfd_cert_data["name"]}',
+        "s3_key": f'{rfd_cert_data["s3_key"]}',
+        "size": 0,
+        "document_on_organisation": {
+            "expiry_date": "2030-01-01",
+            "reference_code": "12345",
+            "document_type": "rfd-certificate",
+        },
     }

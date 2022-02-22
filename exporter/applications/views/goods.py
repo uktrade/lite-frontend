@@ -985,7 +985,6 @@ class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, Se
             section = None
             if details:
                 section = self.request.POST.get("firearms_act_section") or details["firearms_act_section"]
-
             if not is_firearm_certificate_needed(application=self.application, selected_section=section):
                 if section == "firearms_act_section5":
                     document = self.get_section_document()
@@ -1234,11 +1233,26 @@ class AddGoodToApplication2(SectionDocumentMixin, LoginRequiredMixin, SessionWiz
         all_data = self.get_good_on_application_data(form_list)
         cert_file = all_data.pop("file", None)
 
+        if cert_file:
+            rfd_cert = {
+                "name": getattr(cert_file, "original_name", cert_file.name),
+                "s3_key": cert_file.name,
+                "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
+                "document_on_organisation": {
+                    "expiry_date": format_date(all_data, "expiry_date_"),
+                    "reference_code": all_data["reference_code"],
+                    "document_type": "rfd-certificate",
+                },
+            }
+
+            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert)
+            assert status_code == HTTPStatus.CREATED
+
         selected_section = self.get_selected_section(all_data)
         if self.should_show_section_upload_form(all_data, selected_section):
             firearms_data_id = f"post_{self.request.session['lite_api_user_id']}_{self.kwargs['pk']}_{self.good['id']}"
 
-            if "firearms_act_section" not in all_data:
+            if "firearms_act_section" not in all_data or not all_data.get("firearms_act_section"):
                 all_data["firearms_act_section"] = selected_section
 
             all_data["form_pk"] = 1
@@ -1286,21 +1300,6 @@ class AddGoodToApplication2(SectionDocumentMixin, LoginRequiredMixin, SessionWiz
                 exc_info=True,
             )
             return error_page(self.request, "Unexpected error adding good")
-
-        if cert_file:
-            rfd_cert = {
-                "name": getattr(cert_file, "original_name", cert_file.name),
-                "s3_key": cert_file.name,
-                "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
-                "document_on_organisation": {
-                    "expiry_date": format_date(all_data, "expiry_date_"),
-                    "reference_code": all_data["reference_code"],
-                    "document_type": "rfd-certificate",
-                },
-            }
-
-            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert)
-            assert status_code == HTTPStatus.CREATED
 
         return redirect(
             reverse(
