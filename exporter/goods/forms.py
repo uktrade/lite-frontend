@@ -1146,7 +1146,7 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            HTML.p("Enter one serial number for every row."),
+            HTML.p("Enter at least one serial number."),
             HTML.p(f"{number_of_items} items"),
             "serial_numbers",
             Submit("submit", "Save and continue"),
