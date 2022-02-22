@@ -22,23 +22,20 @@ from exporter.applications.services import (
     get_case_notes,
     get_status_properties,
     post_application_document,
-    post_case_notes
+    post_case_notes,
 )
 from exporter.applications.views.goods import is_firearm_certificate_needed
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     NoSaveStorage,
-    compose_with_and,
     compose_with_or,
     get_firearms_subcategory,
     has_valid_rfd_certificate,
     is_category_firearms,
-    is_draft,
     is_product_type,
     is_pv_graded,
     show_attach_rfd_form,
     show_rfd_form,
-    show_serial_numbers_form
 )
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
@@ -79,12 +76,12 @@ from exporter.goods.forms import (
     product_uses_information_security,
     raise_a_goods_query,
     software_technology_details_form,
-    upload_firearms_act_certificate_form
+    upload_firearms_act_certificate_form,
 )
 from exporter.goods.helpers import (
     COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP,
     is_firearms_act_status_changed,
-    return_to_good_summary
+    return_to_good_summary,
 )
 from exporter.goods.services import (
     delete_good,
@@ -103,7 +100,7 @@ from exporter.goods.services import (
     post_good_documents,
     post_goods,
     raise_goods_query,
-    validate_good
+    validate_good,
 )
 from lite_content.lite_exporter_frontend import goods
 from lite_content.lite_exporter_frontend.goods import AttachDocumentForm
@@ -357,20 +354,12 @@ class AddGood2(LoginRequiredMixin, SessionWizardView):
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS:
-            kwargs["number_of_items"] = self.get_cleaned_data_for_step(AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS).get(
-                "number_of_items", 0
-            )
-
         if step == AddGoodFormSteps.ADD_GOODS_QUESTIONS:
             kwargs["request"] = self.request
             kwargs["application_pk"] = None
 
         if step == AddGoodFormSteps.PV_DETAILS:
             kwargs["request"] = self.request
-
-        if step == AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION:
-            kwargs["is_rfd"] = False
 
         if step == AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS:
             kwargs["product_type"] = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE).get("type")
