@@ -6,7 +6,7 @@ from exporter.goods import views
 app_name = "goods"
 urlpatterns = [
     path("", views.Goods.as_view(), name="goods"),
-    path("add/", views.AddGood.as_view(), name="add"),
+    path("add/", views.AddGood2.as_view(), name="add"),
     path("<uuid:pk>/edit/", views.EditGood.as_view(), name="edit"),
     path("<uuid:pk>/software-technology/", views.GoodSoftwareTechnology.as_view(), name="good_software_technology"),
     path("<uuid:pk>/military-use/", views.GoodMilitaryUse.as_view(), name="good_military_use"),

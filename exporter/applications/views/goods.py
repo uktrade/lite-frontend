@@ -3,54 +3,62 @@ from datetime import datetime
 from http import HTTPStatus
 
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 from formtools.wizard.views import SessionWizardView
-from storages.backends.s3boto3 import S3Boto3Storage
 
+from core.auth.views import LoginRequiredMixin
+from core.helpers import convert_dict_to_query_params
 from exporter.applications.forms.goods import good_on_application_form_group
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
+from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
-    get_application,
-    get_application_goods,
-    post_good_on_application,
-    delete_application_preexisting_good,
     add_document_data,
-    validate_good_on_application,
-    post_application_document,
-    post_additional_document,
     delete_application_document_data,
-    get_application_documents,
-    get_application_document,
+    delete_application_preexisting_good,
     download_document_from_s3,
+    get_application,
+    get_application_document,
+    get_application_documents,
+    get_application_goods,
+    post_additional_document,
+    post_application_document,
+    post_good_on_application,
+    validate_good_on_application
 )
 from exporter.core import constants
-from exporter.core.helpers import get_firearms_subcategory
-from core.helpers import convert_dict_to_query_params
-from exporter.core.helpers import str_to_bool
-from exporter.goods.forms import (
-    check_document_available_form,
-    document_grading_form,
-    attach_documents_form,
-    add_good_form_group,
-    upload_firearms_act_certificate_form,
-    build_firearm_back_link_create,
-    has_expired_rfd_certificate,
+from exporter.core.constants import AddGoodFormSteps
+from exporter.core.helpers import (
+    NoSaveStorage,
+    compose_with_and,
+    compose_with_or,
+    get_firearms_subcategory,
     has_valid_rfd_certificate,
-    has_valid_section_five_certificate,
+    is_category_firearms,
+    is_draft,
+    is_preexisting,
+    is_product_type,
+    is_pv_graded,
+    show_attach_rfd_form,
+    show_rfd_form,
+    show_serial_numbers_form,
+    str_to_bool
+)
+from exporter.core.validators import validate_expiry_date
+from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
-    ComponentOfAFirearmUnitQuantityValueForm,
     ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
+    ComponentOfAFirearmUnitQuantityValueForm,
     FirearmsActConfirmationForm,
     FirearmsCalibreDetailsForm,
     FirearmsCaptureSerialNumbersForm,
     FirearmsNumberOfItemsForm,
     FirearmsReplicaForm,
-    FirearmsYearOfManufactureDetailsForm,
     FirearmsUnitQuantityValueForm,
+    FirearmsYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
     IdentificationMarkingsForm,
     ProductCategoryForm,
@@ -61,27 +69,29 @@ from exporter.goods.forms import (
     RegisteredFirearmsDealerForm,
     SoftwareTechnologyDetailsForm,
     UnitQuantityValueForm,
+    add_good_form_group,
+    attach_documents_form,
+    build_firearm_back_link_create,
+    check_document_available_form,
+    document_grading_form,
+    has_valid_section_five_certificate,
+    upload_firearms_act_certificate_form
 )
 from exporter.goods.services import (
-    get_goods,
     get_good,
-    post_goods,
-    post_good_documents,
     get_good_document_availability,
-    post_good_document_availability,
     get_good_document_sensitivity,
+    get_goods,
+    post_good_document_availability,
     post_good_document_sensitivity,
-    validate_good,
+    post_good_documents,
+    post_goods,
+    validate_good
 )
-
-from exporter.applications.helpers.date_fields import format_date
-from exporter.core.validators import validate_expiry_date
-from lite_forms.components import FiltersBar, TextInput, BackLink
+from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import get_form_by_pk
-from lite_forms.views import SingleFormView, MultiFormView
-
-from core.auth.views import LoginRequiredMixin
+from lite_forms.views import MultiFormView, SingleFormView
 
 log = logging.getLogger(__name__)
 
@@ -331,130 +341,10 @@ class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
             )
 
 
-class AddGoodFormSteps:
-    PRODUCT_CATEGORY = "PRODUCT_CATEGORY"
-    GROUP_TWO_PRODUCT_TYPE = "GROUP_TWO_PRODUCT_TYPE"
-    FIREARMS_NUMBER_OF_ITEMS = "FIREARMS_NUMBER_OF_ITEMS"
-    IDENTIFICATION_MARKINGS = "IDENTIFICATION_MARKINGS"
-    FIREARMS_CAPTURE_SERIAL_NUMBERS = "FIREARMS_CAPTURE_SERIAL_NUMBERS"
-    PRODUCT_MILITARY_USE = "PRODUCT_MILITARY_USE"
-    PRODUCT_USES_INFORMATION_SECURITY = "PRODUCT_USES_INFORMATION_SECURITY"
-    ADD_GOODS_QUESTIONS = "ADD_GOODS_QUESTIONS"
-    PV_DETAILS = "PV_DETAILS"
-    FIREARMS_YEAR_OF_MANUFACTURE_DETAILS = "FIREARMS_YEAR_OF_MANUFACTURE_DETAILS"
-    FIREARMS_REPLICA = "FIREARMS_REPLICA"
-    FIREARMS_CALIBRE_DETAILS = "FIREARMS_CALIBRE_DETAILS"
-    REGISTERED_FIREARMS_DEALER = "REGISTERED_FIREARMS_DEALER"
-    ATTACH_FIREARM_DEALER_CERTIFICATE = "ATTACH_FIREARM_DEALER_CERTIFICATE"
-    FIREARMS_ACT_CONFIRMATION = "FIREARMS_ACT_CONFIRMATION"
-    SOFTWARE_TECHNOLOGY_DETAILS = "SOFTWARE_TECHNOLOGY_DETAILS"
-    PRODUCT_MILITARY_USE_ACC_TECH = "PRODUCT_MILITARY_USE_ACC_TECH"
-    PRODUCT_COMPONENT = "PRODUCT_COMPONENT"
-    PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH = "PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH"
-
-
-def is_category_firearms(wizard):
-    product_category_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.PRODUCT_CATEGORY)
-    if not product_category_cleaned_data:
-        return True
-
-    item_category = product_category_cleaned_data["item_category"]
-    return item_category == constants.PRODUCT_CATEGORY_FIREARM or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
-
-
-def is_product_type(product_type):
-    def _is_product_type(wizard):
-        type_ = wizard.get_product_type()
-
-        if not type_:
-            return True
-
-        (
-            is_firearm,
-            is_ammunition_or_component,
-            is_firearms_accessory,
-            is_firearms_software_or_tech,
-        ) = get_firearms_subcategory(type_)
-
-        return {
-            "firearm": is_firearm,
-            "ammunition_or_component": is_ammunition_or_component,
-            "firearms_accessory": is_firearms_accessory,
-            "firearms_software_or_tech": is_firearms_software_or_tech,
-        }[product_type]
-
-    return _is_product_type
-
-
-def is_draft(wizard):
-    return bool(str(wizard.kwargs["pk"]))
-
-
-def is_pv_graded(wizard):
-    add_goods_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.ADD_GOODS_QUESTIONS)
-
-    return str_to_bool(add_goods_cleaned_data.get("is_pv_graded"))
-
-
-def show_serial_numbers_form(indentification_markings_step_name):
-    def _show_serial_numbers_form(wizard):
-        cleaned_data = wizard.get_cleaned_data_for_step(indentification_markings_step_name)
-        return str_to_bool(cleaned_data.get("has_identification_markings"))
-
-    return _show_serial_numbers_form
-
-
-def is_preexisting(default):
-    def _is_preexisting(wizard):
-        return str_to_bool(wizard.request.GET.get("preexisting", default))
-
-    return _is_preexisting
-
-
-def show_rfd_form(wizard):
-    preexisting = is_preexisting(False)(wizard)
-
-    if preexisting:
-        return is_product_type("ammunition_or_component")(wizard) and has_expired_rfd_certificate(wizard.application)
-
-    return is_product_type("ammunition_or_component")(wizard) and not has_valid_rfd_certificate(wizard.application)
-
-
-def show_attach_rfd_form(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.REGISTERED_FIREARMS_DEALER)
-
-    return str_to_bool(cleaned_data.get("is_registered_firearm_dealer"))
-
-
-def compose_with_and(*predicates):
-    def _and(wizard):
-        return all(func(wizard) for func in predicates)
-
-    return _and
-
-
-def compose_with_or(*predicates):
-    def _or(wizard):
-        return any(func(wizard) for func in predicates)
-
-    return _or
-
-
-class NoSaveStorage(S3Boto3Storage):
-    def save(self, name, content, max_length=None):
-        # We don't actually need to save anything here as our file is already
-        # on S3.
-        return content.obj.key
-
-    def delete(self, name):
-        # We don't actually want to delete anything here as we'll be sending
-        # the key to the API that will pick this up so we want it to persist
-        # in the S3 bucket.
-        pass
-
-
 class AddGood2(LoginRequiredMixin, SessionWizardView):
-    """This view manages the sequence of forms that are used to capture a new product."""
+    """This view manages the sequence of forms that are used add a new product
+    to an existing application.
+    """
 
     template_name = "core/form-wizard.html"
 

@@ -2,8 +2,7 @@ import json
 
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Field, Fieldset, HTML, Layout, Submit
-
+from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
 from django import forms
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
@@ -11,45 +10,50 @@ from django.utils import timezone
 
 from core.builtins.custom_tags import default_na, linkify
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
-from exporter.core.helpers import convert_control_list_entries, str_to_bool
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES, PRODUCT_CATEGORY_FIREARM
+from exporter.core.helpers import (
+    convert_control_list_entries,
+    has_expired_rfd_certificate,
+    has_valid_rfd_certificate,
+    str_to_bool
+)
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
-from exporter.goods.helpers import good_summary, get_category_display_string
+from exporter.goods.helpers import get_category_display_string, good_summary
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 from lite_content.lite_exporter_frontend.goods import (
     AddGoodToApplicationForm,
+    AttachDocumentForm,
     CreateGoodForm,
-    GoodsQueryForm,
-    EditGoodForm,
     DocumentAvailabilityForm,
     DocumentSensitivityForm,
-    AttachDocumentForm,
-    GoodsList,
+    EditGoodForm,
     GoodGradingForm,
+    GoodsList,
+    GoodsQueryForm
 )
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import (
-    Form,
-    HTMLBlock,
-    TextArea,
-    RadioButtons,
-    Option,
     BackLink,
-    Custom,
-    FileUpload,
-    TextInput,
-    HiddenField,
-    Button,
-    DateInput,
-    Label,
-    Select,
-    Group,
     Breadcrumbs,
-    FormGroup,
-    Heading,
+    Button,
     Checkboxes,
+    Custom,
+    DateInput,
+    FileUpload,
+    Form,
+    FormGroup,
+    Group,
     GroupWithLabel,
+    Heading,
+    HiddenField,
+    HTMLBlock,
+    Label,
+    Option,
+    RadioButtons,
+    Select,
+    TextArea,
+    TextInput
 )
 from lite_forms.helpers import conditional, convert_to_markdown
 from lite_forms.styles import ButtonStyle, HeadingStyle
@@ -946,21 +950,6 @@ def is_registered_firearm_dealer_field(back_url):
     )
 
 
-def has_expired_rfd_certificate(application):
-    document = get_rfd_certificate(application)
-    return bool(document) and document["is_expired"]
-
-
-def has_valid_rfd_certificate(application):
-    document = get_rfd_certificate(application)
-    return bool(document) and not document["is_expired"]
-
-
-def get_rfd_certificate(application):
-    documents = {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
-    return documents.get("rfd-certificate")
-
-
 def has_valid_section_five_certificate(application):
     documents = {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
     if "section-five-certificate" in documents:
@@ -1384,7 +1373,7 @@ class PvDetailsForm(forms.Form):
             "issuing_authority",
             "reference",
             "date_of_issue",
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+            Submit("submit", "Save and continue"),
         )
 
     def clean(self):
