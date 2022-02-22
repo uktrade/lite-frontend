@@ -1101,6 +1101,39 @@ class IdentificationMarkingsForm(forms.Form):
         return cleaned_data
 
 
+class SerialNumbersWidget(forms.MultiWidget):
+    template_name = "forms/widgets/serial_numbers.html"
+
+    def __init__(self, number_of_inputs, **kwargs):
+        widgets = [forms.TextInput() for i in range(number_of_inputs)]
+
+        super().__init__(widgets, **kwargs)
+
+    def decompress(self, value):
+        if value:
+            return value
+        return []
+
+
+class SerialNumbersField(forms.MultiValueField):
+    def __init__(self, number_of_inputs, **kwargs):
+        error_messages = {}
+
+        fields = [forms.CharField(label=f"Serial number {i + 1}") for i in range(number_of_inputs)]
+
+        self.widget = SerialNumbersWidget(number_of_inputs)
+
+        super().__init__(error_messages=error_messages, fields=fields, require_all_fields=False, **kwargs)
+
+    def clean(self, value):
+        if not any(value):
+            raise forms.ValidationError("Enter at least one serial number")
+        return value
+
+    def compress(self, data_list):
+        return data_list
+
+
 class FirearmsCaptureSerialNumbersForm(forms.Form):
     title = "Enter the serial numbers for this product"
 
@@ -1108,29 +1141,29 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
         number_of_items = kwargs.pop("number_of_items")
         super().__init__(*args, **kwargs)
 
-        for i in range(number_of_items):
-            field_name = f"serial_number_input_{i}"
-            self.fields[field_name] = forms.CharField(label=f"Serial number {i + 1}", required=False)
+        self.fields["serial_numbers"] = SerialNumbersField(number_of_items, required=False)
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
             HTML.p("Enter one serial number for every row."),
             HTML.p(f"{number_of_items} items"),
-            *[
-                Field(field, context={"prefix": f"{i}"}, template="forms/prefixed_and_suffixed.html")
-                for i, field in enumerate(self.fields, 1)
-            ],
+            "serial_numbers",
             Submit("submit", "Save and continue"),
         )
 
     def clean(self):
         cleaned_data = super().clean()
 
-        if not any(cleaned_data.values()):
-            self.add_error(None, "Enter at least one serial number")
-
         cleaned_data["capture_serial_numbers_step"] = True
+
+        try:
+            serial_numbers = cleaned_data.pop("serial_numbers")
+        except KeyError:
+            return cleaned_data
+
+        for i, serial_number in enumerate(serial_numbers):
+            cleaned_data[f"serial_number_input_{i}"] = serial_number
 
         return cleaned_data
 

@@ -422,20 +422,22 @@ def test_identification_markings_form(data, valid, error_field, error_message):
 
 
 @pytest.mark.parametrize(
-    "data, valid",
+    "data, valid, errors",
     (
-        ({"serial_number_input_0": "abc", "serial_number_input_1": "def", "serial_number_input_2": "ghi"}, True),
-        ({"serial_number_input_0": "", "serial_number_input_1": "", "serial_number_input_2": ""}, False),
+        ({"serial_numbers_0": "abc", "serial_numbers_1": "def", "serial_numbers_2": "ghi"}, True, {}),
+        (
+            {"serial_numbers_0": "", "serial_numbers_1": "", "serial_numbers_2": ""},
+            False,
+            {"serial_numbers": ["Enter at least one serial number"]},
+        ),
     ),
 )
-def test_firearms_capture_serial_numbers_form(data, valid):
+def test_firearms_capture_serial_numbers_form(data, valid, errors):
     form = forms.FirearmsCaptureSerialNumbersForm(data=data, number_of_items=3)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["capture_serial_numbers_step"]
-
-    if not valid:
-        assert form.errors["__all__"][0] == "Enter at least one serial number"
+    assert form.errors == errors
 
 
 @pytest.mark.parametrize(

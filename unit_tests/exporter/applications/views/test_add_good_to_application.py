@@ -269,9 +269,9 @@ def test_firearms_capture_serial_numbers_preexisting(
     response = post_to_step_preexisting(
         AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS,
         {
-            "serial_number_input_0": "abcdef",
-            "serial_number_input_1": "abcdef",
-            "serial_number_input_2": "abcdef",
+            "serial_numbers_0": "abcdef",
+            "serial_numbers_1": "abcdef",
+            "serial_numbers_2": "abcdef",
         },
     )
     assert response.status_code == 200
@@ -391,9 +391,9 @@ def _submit_good_to_application(prexisting_url, authorized_client, post_to_step_
     response = post_to_step_preexisting(
         AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS,
         {
-            "serial_number_input_0": "abcdef",
-            "serial_number_input_1": "abcdef",
-            "serial_number_input_2": "abcdef",
+            "serial_numbers_0": "abcdef",
+            "serial_numbers_1": "abcdef",
+            "serial_numbers_2": "abcdef",
         },
     )
     assert not response.context["form"].errors

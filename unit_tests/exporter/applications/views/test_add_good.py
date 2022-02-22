@@ -182,17 +182,17 @@ def test_add_good_capture_serial_numbers(url, authorized_client):
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS})
     assert isinstance(response.context["form"], FirearmsCaptureSerialNumbersForm)
     assert title in response.content
-    assert b"serial_number_input_0" in response.content
-    assert b"serial_number_input_1" in response.content
-    assert b"serial_number_input_2" in response.content
+    assert b"serial_numbers_0" in response.content
+    assert b"serial_numbers_1" in response.content
+    assert b"serial_numbers_2" in response.content
 
     response = authorized_client.post(
         url,
         data={
             f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS,
-            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_number_input_0": "abcdef",
-            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_number_input_1": "abcdef",
-            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_number_input_2": "abcdef",
+            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_0": "abcdef",
+            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_1": "abcdef",
+            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_2": "abcdef",
         },
     )
     assert response.status_code == 200
@@ -645,9 +645,9 @@ def _submit_good(url, authorized_client, is_rfd=True, firearms_act="Yes"):
         url,
         data={
             f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS,
-            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_number_input_0": "abcdef",
-            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_number_input_1": "ghijkl",
-            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_number_input_2": "mnopqr",
+            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_0": "abcdef",
+            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_1": "ghijkl",
+            f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_2": "mnopqr",
         },
     )
     assert not response.context["form"].errors
