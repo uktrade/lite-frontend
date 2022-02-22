@@ -51,17 +51,34 @@ def case():
         "case": {
             "id": str(uuid.uuid4()),
         },
-        "organisation": {
-            "documents": [
-                {
-                    "document_type": "section-five-certificate",
-                    "is_expired": False,
-                    "expiry_date": "01 January 2030",
-                    "reference_code": "12345",
-                },
-            ],
-        },
     }
+
+
+@pytest.fixture
+def case_with_documents(case):
+    case = case.copy()
+    case["organisation"] = {
+        "documents": [
+            {
+                "document_type": "section-five-certificate",
+                "is_expired": False,
+                "expiry_date": "01 January 2030",
+                "reference_code": "12345",
+            },
+        ],
+    }
+
+    return case
+
+
+@pytest.fixture
+def case_without_documents(case):
+    case = case.copy()
+    case["organisation"] = {
+        "documents": [],
+    }
+
+    return case
 
 
 @pytest.fixture
@@ -105,12 +122,20 @@ def mock_good_request(requests_mock, good):
     return requests_mock.get(url=app_url, json=good)
 
 
-@pytest.fixture(autouse=True)
-def mock_application_request(requests_mock, case):
-    case_pk = case["case"]["id"]
+@pytest.fixture
+def mock_application_with_documents_request(requests_mock, case_with_documents):
+    case_pk = case_with_documents["case"]["id"]
     path = f"/applications/{case_pk}/"
     app_url = client._build_absolute_uri(path)
-    return requests_mock.get(url=app_url, json=case)
+    return requests_mock.get(url=app_url, json=case_with_documents)
+
+
+@pytest.fixture
+def mock_application_without_documents_request(requests_mock, case_without_documents):
+    case_pk = case_without_documents["case"]["id"]
+    path = f"/applications/{case_pk}/"
+    app_url = client._build_absolute_uri(path)
+    return requests_mock.get(url=app_url, json=case_without_documents)
 
 
 @pytest.fixture()
@@ -140,7 +165,9 @@ def post_to_step_preexisting(preexisting_url, authorized_client):
     return _post_to_step
 
 
-def test_add_good_to_application_preexisting_start(preexisting_url, authorized_client):
+def test_add_good_to_application_preexisting_start(
+    mock_application_with_documents_request, preexisting_url, authorized_client
+):
     response = authorized_client.get(preexisting_url)
 
     assert response.status_code == 200
@@ -148,7 +175,9 @@ def test_add_good_to_application_preexisting_start(preexisting_url, authorized_c
     assertNotContains(response, "Step 1 of", html=True)
 
 
-def test_add_number_of_items_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_add_number_of_items_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS)
     assert isinstance(response.context["form"], FirearmsNumberOfItemsForm)
 
@@ -160,7 +189,9 @@ def test_add_number_of_items_preexisting(goto_step_preexisting, post_to_step_pre
     assert isinstance(response.context["form"], IdentificationMarkingsForm)
 
 
-def test_identification_markings_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_identification_markings_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS)
     assert isinstance(response.context["form"], IdentificationMarkingsForm)
 
@@ -172,7 +203,9 @@ def test_identification_markings_preexisting(goto_step_preexisting, post_to_step
     assert isinstance(response.context["form"], FirearmsCaptureSerialNumbersForm)
 
 
-def test_firearms_capture_serial_numbers_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_firearms_capture_serial_numbers_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     goto_step_preexisting(AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS)
     post_to_step_preexisting(
         AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS,
@@ -200,7 +233,9 @@ def test_firearms_capture_serial_numbers_preexisting(goto_step_preexisting, post
     assert isinstance(response.context["form"], FirearmsYearOfManufactureDetailsForm)
 
 
-def test_firearms_year_of_manufacture_details_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_firearms_year_of_manufacture_details_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS)
     assert isinstance(response.context["form"], FirearmsYearOfManufactureDetailsForm)
 
@@ -214,7 +249,9 @@ def test_firearms_year_of_manufacture_details_preexisting(goto_step_preexisting,
     assert isinstance(response.context["form"], FirearmsUnitQuantityValueForm)
 
 
-def test_firearms_unit_quantity_value_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_firearms_unit_quantity_value_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE)
     assert isinstance(response.context["form"], FirearmsUnitQuantityValueForm)
 
@@ -231,7 +268,9 @@ def test_firearms_unit_quantity_value_preexisting(goto_step_preexisting, post_to
     assert isinstance(response.context["form"], RegisteredFirearmsDealerForm)
 
 
-def test_registered_firearms_dealer_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_registered_firearms_dealer_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER)
     assert isinstance(response.context["form"], RegisteredFirearmsDealerForm)
 
@@ -245,7 +284,9 @@ def test_registered_firearms_dealer_preexisting(goto_step_preexisting, post_to_s
     assert isinstance(response.context["form"], AttachFirearmsDealerCertificateForm)
 
 
-def test_attach_firearms_dealer_certificate_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_attach_firearms_dealer_certificate_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     goto_step_preexisting(AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER)
     post_to_step_preexisting(
         AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER,
@@ -271,7 +312,9 @@ def test_attach_firearms_dealer_certificate_preexisting(goto_step_preexisting, p
     assert isinstance(response.context["form"], FirearmsActConfirmationForm)
 
 
-def test_firearms_act_confirmation_preexisting(goto_step_preexisting, post_to_step_preexisting):
+def test_firearms_act_confirmation_preexisting(
+    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+):
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.FIREARMS_ACT_CONFIRMATION)
     assert isinstance(response.context["form"], FirearmsActConfirmationForm)
 
@@ -357,10 +400,12 @@ def _submit_good_to_application(prexisting_url, authorized_client, post_to_step_
         },
     )
     assert response.status_code == 302
-    assert response.url == f"/applications/{case['case']['id']}/goods/"
+
+    return response
 
 
-def test_add_good_to_application_api_submission_preexisting(
+def test_add_good_to_application_api_submission_with_documents_preexisting(
+    mock_application_with_documents_request,
     preexisting_url,
     authorized_client,
     post_to_step_preexisting,
@@ -371,7 +416,8 @@ def test_add_good_to_application_api_submission_preexisting(
     goods_matcher = requests_mock.post(f"/applications/{case['id']}/goods/", status_code=201, json={})
     documents_matcher = requests_mock.post(f"/applications/{case['case']['id']}/documents/", status_code=201, json={})
 
-    _submit_good_to_application(preexisting_url, authorized_client, post_to_step_preexisting, case)
+    response = _submit_good_to_application(preexisting_url, authorized_client, post_to_step_preexisting, case)
+    assert response.url == f"/applications/{case['case']['id']}/goods/"
 
     assert goods_matcher.called_once
     assert documents_matcher.called_once
@@ -441,4 +487,73 @@ def test_add_good_to_application_api_submission_preexisting(
             "reference_code": "12345",
             "document_type": "rfd-certificate",
         },
+    }
+
+
+def test_add_good_to_application_api_submission_without_documents_preexisting(
+    mock_application_without_documents_request,
+    preexisting_url,
+    authorized_client,
+    post_to_step_preexisting,
+    requests_mock,
+    case,
+    good,
+    lite_api_user_id,
+):
+    goods_matcher = requests_mock.post(f"/applications/{case['id']}/goods/", status_code=201, json={})
+    documents_matcher = requests_mock.post(f"/applications/{case['case']['id']}/documents/", status_code=201, json={})
+
+    response = _submit_good_to_application(preexisting_url, authorized_client, post_to_step_preexisting, case)
+    assert response.url == f'/applications/{case["case"]["id"]}/goods/{good["good"]["id"]}/add-firearms-certificate/'
+
+    assert not goods_matcher.called
+
+    assert documents_matcher.called_once
+    rfd_cert_data = documents_matcher.last_request.json()
+    assert rfd_cert_data == {
+        "name": f'{rfd_cert_data["name"]}',
+        "s3_key": f'{rfd_cert_data["s3_key"]}',
+        "size": 0,
+        "document_on_organisation": {
+            "expiry_date": "2030-01-01",
+            "reference_code": "12345",
+            "document_type": "rfd-certificate",
+        },
+    }
+
+    stored_data = authorized_client.session[f"post_{lite_api_user_id}_{case['case']['id']}_{good['good']['id']}"]
+    assert stored_data == {
+        "capture_serial_numbers_step": True,
+        "date_of_deactivation": None,
+        "deactivation_standard": "",
+        "deactivation_standard_other": "",
+        "expiry_date": "2030-01-01",
+        "expiry_date_day": "1",
+        "expiry_date_month": "1",
+        "expiry_date_year": "2030",
+        "firearm_year_of_manufacture_step": True,
+        "firearms_act_section": "firearms_act_section5",
+        "form_pk": 1,
+        "good_id": good["good"]["id"],
+        "has_identification_markings": "True",
+        "has_proof_mark": True,
+        "identification_markings_step": True,
+        "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+        "is_deactivated": False,
+        "is_deactivated_to_standard": "",
+        "is_good_incorporated": True,
+        "is_registered_firearm_dealer": "True",
+        "no_identification_markings_details": "",
+        "no_proof_mark_details": "",
+        "number_of_items": 3,
+        "number_of_items_step": True,
+        "pk": case["case"]["id"],
+        "reference_code": "12345",
+        "section_certificate_step": True,
+        "serial_number_input_0": "abcdef",
+        "serial_number_input_1": "abcdef",
+        "serial_number_input_2": "abcdef",
+        "type": "firearms",
+        "value": "120",
+        "year_of_manufacture": "2020",
     }
