@@ -56,7 +56,7 @@ def case():
                 {
                     "document_type": "section-five-certificate",
                     "is_expired": False,
-                    "expiry_date": (datetime.date.today() + datetime.timedelta(weeks=1)).strftime("%d %B %Y"),
+                    "expiry_date": "01 January 2030",
                     "reference_code": "12345",
                 },
             ],
@@ -86,7 +86,7 @@ def good():
 @pytest.fixture
 def preexisting_url(case, good):
     url = reverse(
-        "applications:add_good_to_application2", kwargs={"pk": case["case"]["id"], "good_pk": good["good"]["id"]},
+        "applications:add_good_to_application", kwargs={"pk": case["case"]["id"], "good_pk": good["good"]["id"]},
     )
 
     return f"{url}?preexisting=True"
@@ -230,7 +230,7 @@ def test_attach_firearms_dealer_certificate_preexisting(goto_step_preexisting, p
         {
             "expiry_date_0": 1,
             "expiry_date_1": 1,
-            "expiry_date_2": timezone.now().year + 1,
+            "expiry_date_2": 2030,
             "reference_code": "12345",
             "file": SimpleUploadedFile("file.txt", b"abc", content_type="text/plain"),
         },
@@ -291,7 +291,7 @@ def _submit_good_to_application(prexisting_url, authorized_client, post_to_step_
         {
             "expiry_date_0": 1,
             "expiry_date_1": 1,
-            "expiry_date_2": timezone.now().year + 1,
+            "expiry_date_2": 2030,
             "reference_code": "12345",
             "file": SimpleUploadedFile("file.txt", b"abc", content_type="text/plain"),
         },
@@ -320,7 +320,7 @@ def test_add_good_to_application_api_submission_preexisting(
         "s3_key": f'{rfd_cert_data["s3_key"]}',
         "size": 0,
         "document_on_organisation": {
-            "expiry_date": "2023-01-01",
+            "expiry_date": "2030-01-01",
             "reference_code": "12345",
             "document_type": "rfd-certificate",
         },
@@ -341,10 +341,10 @@ def test_add_good_to_application_api_submission_preexisting(
         "is_good_incorporated": True,
         "is_registered_firearm_dealer": "True",
         "reference_code": "12345",
-        "expiry_date": "2023-01-01",
+        "expiry_date": "2030-01-01",
         "expiry_date_day": "1",
         "expiry_date_month": "1",
-        "expiry_date_year": "2023",
+        "expiry_date_year": "2030",
         "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
         "firearms_act_section": "firearms_act_section5",
         "section_certificate_step": True,
@@ -354,9 +354,9 @@ def test_add_good_to_application_api_submission_preexisting(
         "section_certificate_missing": "certification missing",
         "section_certificate_missing_reason": "missing reason",
         "section_certificate_number": "12345",
-        "section_certificate_date_of_expiryday": "28",
-        "section_certificate_date_of_expirymonth": "02",
-        "section_certificate_date_of_expiryyear": "2022",
+        "section_certificate_date_of_expiryday": "01",
+        "section_certificate_date_of_expirymonth": "01",
+        "section_certificate_date_of_expiryyear": "2030",
         "firearms_certificate_uploaded": True,
         "firearm_details": {
             "number_of_items": 3,
