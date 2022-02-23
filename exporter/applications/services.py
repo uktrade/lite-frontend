@@ -43,7 +43,8 @@ def has_existing_applications_and_licences_and_nlrs(request):
 def get_application(request, pk) -> Application:
     response = client.get(request, f"/applications/{pk}")
     response.raise_for_status()
-    return Application(response.json())
+    app = Application(response.json())
+    return app
 
 
 def post_applications(request, json):
@@ -54,6 +55,12 @@ def post_applications(request, json):
 def put_application(request, pk, json):
     data = client.put(request, f"/applications/{pk}", json)
     return data.json(), data.status_code
+
+
+def put_application_simple(request, pk, json):
+    response = client.put(request, f"/applications/{pk}", json)
+    response.raise_for_status()
+    return response
 
 
 def put_application_route_of_goods(request, pk, json):

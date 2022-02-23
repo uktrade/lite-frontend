@@ -158,7 +158,7 @@ def str_date(value):
 @stringfilter
 def str_date_only(value):
     if value != "None":
-        return localtime(parse(value)).strftime("%d %B %Y")
+        return localtime(parse(value)).strftime("%-d %B %Y")
 
 
 @register.filter
@@ -904,3 +904,9 @@ def divide(value, other):
 def full_name(user):
     user = user or {}
     return f"{user.get('first_name', '')} {user.get('last_name', '')}"
+
+
+@register.filter
+def verbose_goods_starting_point(value):
+    goods_starting_points = {"GB": "Great Britain", "NI": "Northern Ireland"}
+    return goods_starting_points.get(value, "")

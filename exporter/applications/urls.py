@@ -15,7 +15,7 @@ from exporter.applications.views import (
     questions,
     end_use_details,
     route_of_goods,
-    temporary_export_details,
+    export_details,
 )
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from exporter.applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
@@ -50,11 +50,7 @@ urlpatterns = [
     path("<uuid:pk>/submit/", common.Submit.as_view(), name="submit"),
     path("<uuid:pk>/copy/", common.ApplicationCopy.as_view(), name="copy"),
     # Standard and Open Licence
-    path(
-        "<uuid:pk>/edit/reference-name/",
-        edit.EditReferenceName.as_view(),
-        name="edit_reference_name",
-    ),
+    path("<uuid:pk>/edit/reference-name/", edit.EditReferenceName.as_view(), name="edit_reference_name"),
     path(
         "<uuid:pk>/edit/told-by-an-official/",
         told_by_an_official.ApplicationEditToldByAnOfficial.as_view(),
@@ -98,11 +94,7 @@ urlpatterns = [
         EditYearOfManufacture.as_view(),
         name="year-of-manufacture",
     ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/replica/",
-        EditFirearmReplica.as_view(),
-        name="replica",
-    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/replica/", EditFirearmReplica.as_view(), name="replica"),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/firearms-act/",
         EditFirearmActDetails.as_view(),
@@ -147,11 +139,7 @@ urlpatterns = [
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/attach/", goods.AttachDocument.as_view(), name="attach_documents"),
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/add/",
-        goods.AddGoodToApplication.as_view(),
-        name="add_good_to_application",
-    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application"),
     path(
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),
@@ -190,8 +178,10 @@ urlpatterns = [
         name="goods_type_delete_document",
     ),
     # Goods locations
-    path("<uuid:pk>/goods-locations/", locations.GoodsLocation.as_view(), name="location"),
-    path("<uuid:pk>/goods-locations/edit/", locations.EditGoodsLocation.as_view(), name="edit_location"),
+    path("<uuid:pk>/goods-locations/", locations.GoodsLocationView.as_view(), name="location"),
+    path("<uuid:pk>/goods-locations/edit/", locations.GoodsStartingPointFormView.as_view(), name="edit_location"),
+    path("<uuid:pk>/goods-recipients/", locations.GoodsRecipientsFormView.as_view(), name="goods_recipients"),
+    path("<uuid:pk>/goods-locations-summary/", locations.LocationsSummaryView.as_view(), name="locations_summary"),
     path("<uuid:pk>/goods-locations/existing-sites/", locations.ExistingSites.as_view(), name="existing_sites"),
     path(
         "<uuid:pk>/goods-locations/external-locations/select/",
@@ -281,11 +271,17 @@ urlpatterns = [
     # End use details
     path("<uuid:pk>/end-use-details/", end_use_details.EndUseDetails.as_view(), name="end_use_details"),
     path("<uuid:pk>/route-of-goods/", route_of_goods.RouteOfGoods.as_view(), name="route_of_goods"),
+    # Temporary or permanent
+    path(
+        "<uuid:pk>/temporary-or-permanent/",
+        locations.TemporaryOrPermanentFormView.as_view(),
+        name="temporary_or_permanent",
+    ),
     # Temporary export details
     path(
-        "<uuid:pk>/temporary-export-details/",
-        temporary_export_details.TemporaryExportDetails.as_view(),
-        name="temporary_export_details",
+        "<uuid:pk>/export-details/",
+        export_details.ExportDetails.as_view(),
+        name="export_details",
     ),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),

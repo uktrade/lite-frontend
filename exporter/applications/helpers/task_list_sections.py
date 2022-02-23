@@ -64,3 +64,43 @@ def get_temporary_export_details(application):
         if application.get(field) is None:
             return False
     return True
+
+
+def get_product_location_and_journey_details(application):
+    """
+    Determines if Product Location adn Journey section is complete or not
+    """
+    fields = [
+        "goods_starting_point",
+        "export_type",
+        "is_shipped_waybill_or_lading",
+        "goods_recipients",
+    ]
+    export_type_temporary = [
+        "temp_export_details",
+        "is_temp_direct_control",
+        "proposed_return_date",
+    ]
+    temp_direct_control_false = [
+        "temp_direct_control_details",
+    ]
+    is_shipped_waybill_or_lading_false = [
+        "non_waybill_or_lading_route_details",
+    ]
+    for field in fields:
+        if application.get(field) is None:
+            return False
+
+    if application["export_type"] == "temporary":
+        for field in export_type_temporary:
+            if application.get(field) is None:
+                return False
+        if not application["is_temp_direct_control"]:
+            for field in temp_direct_control_false:
+                if application.get(field) is None:
+                    return False
+    if not application["is_shipped_waybill_or_lading"]:
+        for field in is_shipped_waybill_or_lading_false:
+            if application.get(field) is None:
+                return False
+    return True

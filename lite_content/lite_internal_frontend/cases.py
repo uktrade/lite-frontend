@@ -395,9 +395,9 @@ class ApplicationPage:
         NUMBER_COLUMN = "#"
         DESCRIPTION_COLUMN = "Description"
         ANSWER_COLUMN = "Answer"
-        TEMPORARY_EXPORT_DETAILS_TITLE = "Temporary export details"
-        PRODUCTS_UNDER_DIRECT_CONTROL_TITLE = "Products remaining under direct control"
-        PROPOSED_RETURN_DATE_TITLE = "Date products returning to the UK"
+        TEMPORARY_EXPORT_DETAILS_TITLE = "Explain why the products are being exported temporarily"
+        PRODUCTS_UNDER_DIRECT_CONTROL_TITLE = "Will the products remain under your direct control while overseas?"
+        PROPOSED_RETURN_DATE_TITLE = "Proposed date the products will return to the UK"
 
     class AdditionalInformation:
         TITLE = "Additional Information"
