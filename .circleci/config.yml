@@ -133,18 +133,10 @@ commands:
 
   lint:
     steps:
-      - run:
-          command: pip install pre-commit
-      - restore_cache:
-          keys:
-            - pre-commit-cache-{{ arch }}-{{ .Branch }}
-      - run:
-          name: Formatting checks
-          command: pre-commit run --from-ref origin/HEAD --to-ref HEAD
-      - save_cache:
-          key: pre-commit-cache-{{ arch }}-{{ .Branch }}
-          paths:
-            - ~/.cache/pre-commit
+      - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
+
+      - run: pipenv run prospector
+      - run: pipenv run black . --check --diff
 
 ###############################################################################
 # Jobs
