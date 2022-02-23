@@ -8,7 +8,7 @@ from exporter.applications.services import (
     put_application_route_of_goods,
     put_temporary_export_details,
 )
-from exporter.core.constants import GoodsStartingPoint, RouteOfGoods
+from exporter.core.constants import GoodsStartingPoint, PERMANENT, RouteOfGoods, TEMPORARY
 from lite_forms.helpers import get_form_by_pk
 from lite_forms.views import MultiFormView
 
@@ -20,7 +20,7 @@ class ExportDetails(LoginRequiredMixin, MultiFormView):
         self.success_url = reverse("applications:goods_recipients", kwargs={"pk": kwargs["pk"]})
         self.object_pk = kwargs["pk"]
         application = get_application(request, self.object_pk)
-        is_temporary = request.POST.get("export_type", GoodsStartingPoint.PERMANENT) == GoodsStartingPoint.TEMPORARY
+        is_temporary = request.POST.get("export_type", PERMANENT) == TEMPORARY
         self.forms = export_details_form(
             back_link_url=reverse("applications:edit_location", kwargs={"pk": kwargs["pk"]}),
             is_temporary=is_temporary,
