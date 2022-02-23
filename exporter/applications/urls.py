@@ -60,7 +60,7 @@ urlpatterns = [
     path("<uuid:pk>/optional-note/", optional_note.ApplicationOptionalNote.as_view(), name="optional_note"),
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
-    path("<uuid:pk>/goods/add-new/", goods.AddGood2.as_view(), name="new_good"),
+    path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
     path(
         "<uuid:pk>/goods/add-firearms-certificate/",
         goods.AttachFirearmActSectionDocument.as_view(),
@@ -143,7 +143,7 @@ urlpatterns = [
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/attach/", goods.AttachDocument.as_view(), name="attach_documents"),
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
-    path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication2.as_view(), name="add_good_to_application"),
+    path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application"),
     path(
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),

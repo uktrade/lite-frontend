@@ -26,7 +26,7 @@ from exporter.goods.forms import (
 )
 
 
-ADD_GOOD_TO_APPLICATION_VIEW = "add_good_to_application2"
+ADD_GOOD_TO_APPLICATION_VIEW = "add_good_to_application"
 
 
 @pytest.fixture(autouse=True)
@@ -42,7 +42,7 @@ def setup():
             pass
 
     with override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=False), patch(
-        "exporter.applications.views.goods.AddGoodToApplication2.file_storage", new=NoOpStorage()
+        "exporter.applications.views.goods.AddGoodToApplication.file_storage", new=NoOpStorage()
     ):
         yield
 

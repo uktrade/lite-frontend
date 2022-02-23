@@ -25,7 +25,7 @@ from exporter.goods.forms import (
 )
 from lite_content.lite_exporter_frontend.goods import CreateGoodForm, GoodGradingForm
 
-ADD_GOOD_VIEW = "add_good2"
+ADD_GOOD_VIEW = "add_good"
 
 
 @pytest.fixture(autouse=True)
@@ -41,7 +41,7 @@ def setup():
             pass
 
     with override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=False), patch(
-        "exporter.goods.views.AddGood2.file_storage", new=NoOpStorage()
+        "exporter.goods.views.AddGood.file_storage", new=NoOpStorage()
     ):
         yield
 
