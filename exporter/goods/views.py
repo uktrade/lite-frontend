@@ -1438,12 +1438,7 @@ class EditSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
         return get_good_details(self.request, self.object_id)[0]["firearm_details"]
 
     def get_initial(self):
-        initial = {
-            f"serial_number_input_{i}": self.firearm_details["serial_numbers"][i]
-            for i in range(int(self.firearm_details["number_of_items"]))
-        }
-
-        return initial
+        return {"serial_numbers": self.firearm_details["serial_numbers"]}
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
