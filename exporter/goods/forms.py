@@ -1622,9 +1622,6 @@ class FirearmsActConfirmationForm(forms.Form):
         ),
         label="",
         widget=forms.RadioSelect,
-        error_messages={
-            "required": "Select an option",
-        },
     )
 
     firearms_act_section = forms.ChoiceField(
@@ -1700,6 +1697,21 @@ class FirearmsActConfirmationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data["section_certificate_step"] = True
+
+        if not cleaned_data.get("is_covered_by_firearm_act_section_one_two_or_five"):
+            # Remove the default error as the message depends on whether is_rfd is set
+            self.errors.pop("is_covered_by_firearm_act_section_one_two_or_five", None)
+
+            if self.is_rfd:
+                self.add_error(
+                    "is_covered_by_firearm_act_section_one_two_or_five",
+                    "Select yes if the product covered by section 5 of the Firearms Act 1968",
+                )
+            else:
+                self.add_error(
+                    "is_covered_by_firearm_act_section_one_two_or_five",
+                    "Select yes if the product is covered by Section 1, Section 2 or Section 5 of the Firearms Act 1968",
+                )
 
         if (
             not self.is_rfd
