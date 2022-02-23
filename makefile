@@ -11,10 +11,13 @@ clean:
 	-find . -type d -name "__pycache__" -delete
 
 lint:
-	-pipenv run pre-commit run -a
+	-pipenv run bandit -r . --skip=B101 --exclude=/ui_tests,/unit_tests,/tests_common
+	-pipenv run prospector exporter
+	-pipenv run prospector caseworker
+	-pipenv run black .
 
 autoformat:
-	-pipenv run pre-commit run black -a
+	-pipenv run black .
 
 run_caseworker:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py collectstatic --no-input && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py runserver localhost:8200
