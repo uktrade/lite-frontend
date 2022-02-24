@@ -52,22 +52,20 @@ def test_edit_identification_markings_view(authorized_client, requests_mock, goo
     url = reverse("goods:identification_markings", kwargs={"pk": good_pk})
     requests_mock.get(
         f"/goods/{good_pk}/details/?pk={good_pk}",
-        json={
-            "good": {"firearm_details": {"has_identification_markings": "", "no_identification_markings_details": ""}}
-        },
+        json={"good": {"firearm_details": {"serial_numbers_available": "", "no_identification_markings_details": ""}}},
     )
     requests_mock.put(f"/goods/{good_pk}/details/", json={})
 
     response = authorized_client.post(
         url,
         data={
-            "has_identification_markings": True,
+            "serial_numbers_available": "AVAILABLE",
         },
     )
 
     assert response.status_code == 302
     assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
-    assert requests_mock.last_request.json()["has_identification_markings"]
+    assert requests_mock.last_request.json()["serial_numbers_available"]
 
 
 def test_edit_serial_numbers_view(authorized_client, requests_mock, good_pk):

@@ -148,17 +148,19 @@
 																	<tr class="govuk-table__row app-table__row">
 																			<th scope="row" class="govuk-table__header">Identification markings</th>
 																			<td class="govuk-table__cell">
-																				{% if firearm_details.has_identification_markings %}
-																					Yes
+																				{% if firearm_details.serial_numbers_available == "AVAILABLE" %}
+																					Yes, I can add serial numbers now
+																				{% elif firearm_details.serial_numbers_available == "LATER" %}
+																					Yes, I can add serial numbers later
 																				{% else %}
-																					No <br>
+																					No
 																					<span class="govuk-hint">
-																						 {{ firearm_details.no_identification_markings_details }}
+																						{{ firearm_details.no_identification_markings_details|default_na }}
 																					</span>
 																				{% endif %}
 																			</td>
 																	</tr>
-																	{% if firearm_details.has_identification_markings is True %}
+																	{% if firearm_details.serial_numbers_available == "AVAILABLE" %}
 																		<tr class="govuk-table__row app-table__row">
 																			<th scope="row" class="govuk-table__header">Serial numbers</th>
 																			<td class="govuk-table__cell">

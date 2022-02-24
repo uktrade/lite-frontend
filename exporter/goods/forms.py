@@ -443,13 +443,14 @@ class FirearmsNumberOfItemsForm(forms.Form):
 class IdentificationMarkingsForm(forms.Form):
     title = CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE
 
-    has_identification_markings = forms.ChoiceField(
+    serial_numbers_available = forms.ChoiceField(
         choices=(
-            (True, CreateGoodForm.FirearmGood.IdentificationMarkings.YES),
-            (False, CreateGoodForm.FirearmGood.IdentificationMarkings.NO),
+            ("AVAILABLE", CreateGoodForm.FirearmGood.IdentificationMarkings.YES_NOW),
+            ("LATER", CreateGoodForm.FirearmGood.IdentificationMarkings.YES_LATER),
+            ("NOT_AVAILABLE", CreateGoodForm.FirearmGood.IdentificationMarkings.NO),
         ),
         error_messages={
-            "required": "Select yes if the product has identification markings",
+            "required": "Select whether you can enter serial numbers now, later or the product does not have them.",
         },
         label="",
     )
@@ -466,8 +467,9 @@ class IdentificationMarkingsForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             ConditionalRadios(
-                "has_identification_markings",
-                CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
+                "serial_numbers_available",
+                CreateGoodForm.FirearmGood.IdentificationMarkings.YES_NOW,
+                CreateGoodForm.FirearmGood.IdentificationMarkings.YES_LATER,
                 ConditionalQuestion(
                     CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
                     "no_identification_markings_details",
@@ -480,7 +482,7 @@ class IdentificationMarkingsForm(forms.Form):
         cleaned_data = super().clean()
         cleaned_data["identification_markings_step"] = True
 
-        if cleaned_data.get("has_identification_markings") == "False":
+        if cleaned_data.get("serial_numbers_available") == "NOT_AVAILABLE":
             if not cleaned_data.get("no_identification_markings_details"):
                 self.add_error(
                     "no_identification_markings_details",

@@ -174,37 +174,45 @@ def test_firearms_number_of_items_form(data, valid, error_field, error_message):
 
 
 @pytest.mark.parametrize(
-    "data, valid, error_field, error_message",
+    "data, valid, errors",
     (
-        ({"has_identification_markings": "True"}, True, None, None),
         (
-            {"has_identification_markings": "False", "no_identification_markings_details": "test details"},
+            {},
+            False,
+            {
+                "serial_numbers_available": [
+                    "Select whether you can enter serial numbers now, later or the product does not have them."
+                ]
+            },
+        ),
+        (
+            {"serial_numbers_available": "AVAILABLE"},
             True,
-            None,
-            None,
+            {},
         ),
         (
-            {"has_identification_markings": "False", "no_identification_markings_details": ""},
-            False,
-            "no_identification_markings_details",
-            "Enter a reason why the product has not been marked",
+            {"serial_numbers_available": "LATER"},
+            True,
+            {},
         ),
         (
-            {"has_identification_markings": ""},
+            {"serial_numbers_available": "NOT_AVAILABLE", "no_identification_markings_details": "test details"},
+            True,
+            {},
+        ),
+        (
+            {"serial_numbers_available": "NOT_AVAILABLE", "no_identification_markings_details": ""},
             False,
-            "has_identification_markings",
-            "Select yes if the product has identification markings",
+            {"no_identification_markings_details": ["Enter a reason why the product has not been marked"]},
         ),
     ),
 )
-def test_identification_markings_form(data, valid, error_field, error_message):
+def test_identification_markings_form(data, valid, errors):
     form = forms.IdentificationMarkingsForm(data=data)
 
     assert form.is_valid() == valid
     assert form.cleaned_data["identification_markings_step"]
-
-    if not valid:
-        assert form.errors[error_field][0] == error_message
+    assert form.errors == errors
 
 
 @pytest.mark.parametrize(

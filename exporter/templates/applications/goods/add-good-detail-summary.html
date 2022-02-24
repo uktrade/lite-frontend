@@ -324,13 +324,15 @@
 						{% lcs "Goods.AddGoodSummary.FirearmDetails.IDENTIFICATION_MARKINGS" %}
 					</dt>
 					<dd class="govuk-summary-list__value">
-						{% if good.firearm_details.has_identification_markings is not None %}
-								{{ good.firearm_details.has_identification_markings|friendly_boolean }}
-								<span class="govuk-hint">
-									{% if good.firearm_details.has_identification_markings is False %}
-										{{ good.firearm_details.no_identification_markings_details|default_na }}
-									{% endif %}
-								</span>
+						{% if good.firearm_details.serial_numbers_available == "AVAILABLE" %}
+							Yes, I can add serial numbers now
+						{% elif good.firearm_details.serial_numbers_available == "LATER" %}
+							Yes, I can add serial numbers later
+						{% else %}
+							No
+							<span class="govuk-hint">
+								{{ good.firearm_details.no_identification_markings_details|default_na }}
+							</span>
 						{% endif %}
 					</dd>
 					<dd class="govuk-summary-list__actions">
@@ -340,7 +342,7 @@
 					</dd>
 				</div>
 
-				{% if good.firearm_details.has_identification_markings %}
+				{% if good.firearm_details.serial_numbers_available == "AVAILABLE" %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							Serial numbers
