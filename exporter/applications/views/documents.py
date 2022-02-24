@@ -1,9 +1,11 @@
 import logging
+
 from http import HTTPStatus
 from inspect import signature
 
 from django.conf import settings
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.urls import reverse, NoReverseMatch
 from django.views.generic import TemplateView
 from s3chunkuploader.file_handler import s3_client
