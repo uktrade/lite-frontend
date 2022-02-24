@@ -134,13 +134,13 @@ commands:
   lint:
     steps:
       - run:
-          command: pip install pre-commit
+          command: pipenv install --dev pre-commit
       - restore_cache:
           keys:
             - pre-commit-cache-{{ arch }}-{{ .Branch }}
       - run:
           name: Formatting checks
-          command: pre-commit run --from-ref origin/HEAD --to-ref HEAD
+          command: pipenv run pre-commit run --from-ref origin/HEAD --to-ref HEAD
       - save_cache:
           key: pre-commit-cache-{{ arch }}-{{ .Branch }}
           paths:
