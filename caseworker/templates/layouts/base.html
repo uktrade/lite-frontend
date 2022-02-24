@@ -128,17 +128,31 @@
 	</div>
 
 	{% block footer %}
-		<footer class="app-footer" role="contentinfo">
-			<div class="govuk-width-container app-footer__container">
-				<div>
-					{% svg 'crest' %}
-					Department for International Trade
-				</div>
-				<div>
-					© Crown copyright
-				</div>
+	<footer class="govuk-footer" role="contentinfo">
+		<div class="govuk-width-container ">
+		  <div class="govuk-footer__meta">
+			<div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+			  <h2 class="govuk-visually-hidden">Support links</h2>
+			  <ul class="govuk-footer__inline-list">
+				{% if ENVIRONMENT_VARIABLES.GTM_ID %}
+				<li class="govuk-footer__inline-list-item">
+				  <a class="govuk-footer__link" href="/cookies">
+					Cookies
+				  </a>
+				</li>
+				{% endif %}
+			  </ul>
+
+			  <span class="govuk-footer__licence-description">
+				Built by the DIT Digital, Data and Technology team
+			  </span>
 			</div>
-		</footer>
+			<div class="govuk-footer__meta-item">
+			  <a class="govuk-footer__link govuk-footer__copyright-logo" href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/">© Crown copyright</a>
+			</div>
+		  </div>
+		</div>
+	  </footer>
 	{% endblock %}
 
 	{# TODO: eventually this should all be migrated into main.js file #}
