@@ -240,8 +240,8 @@ def test_product_military_use_form(data, valid):
 
     assert form.is_valid() == valid
 
-    if "is_military_use" not in data:
-        assert not valid and form.errors["is_military_use"][0] == "Select an option"
+    if not data.get("is_military_use"):
+        assert not valid and form.errors["is_military_use"][0] == "Select no if the product is not for military use"
     elif data["is_military_use"] == "yes_modified" and not data["modified_military_use_details"]:
         assert not valid and form.errors["modified_military_use_details"][0] == "Enter the details of the modifications"
 
@@ -259,7 +259,10 @@ def test_product_uses_information_security_form(data, valid):
     assert form.is_valid() == valid
 
     if not valid:
-        assert form.errors["uses_information_security"][0] == "Select an option"
+        assert (
+            form.errors["uses_information_security"][0]
+            == "Select yes if the product is designed to employ information security features"
+        )
 
 
 @pytest.mark.parametrize(
@@ -602,8 +605,26 @@ def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_
 @pytest.mark.parametrize(
     "data, valid, error_field, error_message",
     (
-        ({"is_component": "yes_designed"}, True, None, None),
-        ({"is_component": ""}, False, "is_component", "Select an option"),
+        ({"is_component": "yes_designed", "designed_details": "Test details"}, True, None, None),
+        ({"is_component": ""}, False, "is_component", "Select no if the product is not a component"),
+        (
+            {"is_component": "yes_designed", "designed_details": ""},
+            False,
+            "designed_details",
+            "Enter the details of the hardware",
+        ),
+        (
+            {"is_component": "yes_modified", "modified_details": ""},
+            False,
+            "modified_details",
+            "Enter the details of the modifications and the hardware",
+        ),
+        (
+            {"is_component": "yes_general", "general_details": ""},
+            False,
+            "general_details",
+            "Enter the details of the types of applications the component is intended to be used in",
+        ),
     ),
 )
 def test_product_component_form(data, valid, error_field, error_message):

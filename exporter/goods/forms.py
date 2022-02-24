@@ -569,7 +569,7 @@ class ProductMilitaryUseForm(forms.Form):
         label="",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select an option",
+            "required": "Select no if the product is not for military use",
         },
     )
 
@@ -617,7 +617,7 @@ class ProductUsesInformationSecurityForm(forms.Form):
         label="",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select an option",
+            "required": "Select yes if the product is designed to employ information security features",
         },
     )
 
@@ -1149,7 +1149,7 @@ class ProductComponentForm(forms.Form):
         label="",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select an option",
+            "required": "Select no if the product is not a component",
         },
     )
 
@@ -1195,6 +1195,21 @@ class ProductComponentForm(forms.Form):
             ),
             Submit("submit", "Save"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("is_component") == "yes_designed" and not cleaned_data.get("designed_details"):
+            self.add_error("designed_details", "Enter the details of the hardware")
+        elif cleaned_data.get("is_component") == "yes_modified" and not cleaned_data.get("modified_details"):
+            self.add_error("modified_details", "Enter the details of the modifications and the hardware")
+        elif cleaned_data.get("is_component") == "yes_general" and not cleaned_data.get("general_details"):
+            self.add_error(
+                "general_details",
+                "Enter the details of the types of applications the component is intended to be used in",
+            )
+
+        return cleaned_data
 
 
 def get_unit_quantity_value_summary_list_items(good):

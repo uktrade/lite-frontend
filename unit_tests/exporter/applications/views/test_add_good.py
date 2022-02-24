@@ -473,6 +473,7 @@ def test_add_good_product_component(url, authorized_client):
         data={
             f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_COMPONENT,
             f"{AddGoodFormSteps.PRODUCT_COMPONENT}-is_component": "yes_designed",
+            f"{AddGoodFormSteps.PRODUCT_COMPONENT}-designed_details": "Test details",
         },
     )
     assert response.status_code == 200
