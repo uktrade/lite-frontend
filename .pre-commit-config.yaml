@@ -47,6 +47,7 @@ repos:
       rev: 1.6.2
       hooks:
           - id: bandit
+            args: ["--skip=B101", "--exclude=/.venv,/ui_tests,/unit_tests,/tests_common"]
     - repo: https://github.com/PyCQA/prospector
       rev: 1.2.0
       hooks:
