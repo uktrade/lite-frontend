@@ -601,6 +601,7 @@ def test_add_good_to_application_api_submission_without_documents_preexisting(
         "type": "firearms",
         "value": "120",
         "year_of_manufacture": "2020",
+        "wizard_goto_step": "FIREARMS_ACT_CONFIRMATION",
     }
 
 
