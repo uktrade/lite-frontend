@@ -741,7 +741,9 @@ class EditFirearmActDetailsView(LoginRequiredMixin, GoodCommonMixin, FormView):
 
         edit_good_firearm_details(self.request, self.object_id, form.cleaned_data)
 
-        show_upload_form = is_firearm_certificate_needed(
+        show_upload_form = str_to_bool(
+            form.cleaned_data["is_covered_by_firearm_act_section_one_two_or_five"]
+        ) and is_firearm_certificate_needed(
             application=self.application, selected_section=form.cleaned_data["firearms_act_section"]
         )
 
