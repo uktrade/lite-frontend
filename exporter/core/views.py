@@ -2,9 +2,10 @@ from json import JSONDecodeError
 
 from django.conf import settings
 from django.http import Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy, reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+from django.http import HttpResponseRedirect
 
 from exporter.applications.services import has_existing_applications_and_licences_and_nlrs
 from exporter.auth.services import authenticate_exporter_user
@@ -14,6 +15,7 @@ from exporter.core.forms import (
     register_a_commercial_organisation_group,
     register_triage,
     register_an_individual_group,
+    RegisterNameForm,
 )
 from exporter.core.services import (
     get_notifications,
@@ -38,14 +40,16 @@ from core.auth.views import LoginRequiredMixin
 
 class Home(TemplateView):
     def get(self, request, **kwargs):
-        if not request.authbroker_client.authorized:
-            return render(request, "core/start.html")
+        if not request.authbroker_client.token:
+            context = {
+                "FEATURE_FLAG_GOVUK_SIGNIN_ENABLED": settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED,
+            }
+            return render(request, "core/start.html", context)
         try:
             user = get_user(request)
             user_permissions = user["role"]["permissions"]
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
-
         organisation = get_organisation(request, str(request.session["organisation"]))
         notifications, _ = get_notifications(request)
         existing = has_existing_applications_and_licences_and_nlrs(request)
@@ -105,13 +109,14 @@ class RegisterAnOrganisationTriage(MultiFormView):
         self.forms = register_triage()
         self.action = validate_register_organisation_triage
         self.additional_context = {"user_in_limbo": True}
-        if not request.authbroker_client.authorized:
+        if not request.authbroker_client.token:
             raise Http404
         else:
             profile = get_profile(request.authbroker_client)
             request.session["email"] = profile["email"]
-            request.session["first_name"] = profile.get("user_profile", {}).get("first_name")
-            request.session["last_name"] = profile.get("user_profile", {}).get("last_name")
+            if not settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
+                request.session["first_name"] = profile.get("user_profile", {}).get("first_name")
+                request.session["last_name"] = profile.get("user_profile", {}).get("last_name")
         if "user_token" in request.session and get_user(request)["organisations"]:
             raise Http404
 
@@ -136,7 +141,7 @@ class RegisterAnOrganisation(SummaryListFormView):
         self.hide_components = ["site.address.address_line_2"]
         self.additional_context = {"user_in_limbo": True}
 
-        if not request.authbroker_client.authorized:
+        if not request.authbroker_client.token:
             raise Http404
         if "user_token" in request.session and get_user(request)["organisations"]:
             raise Http404
@@ -196,6 +201,37 @@ class RegisterAnOrganisationConfirmation(TemplateView):
             animated=True,
             additional_context={"user_in_limbo": True},
         )
+
+
+class RegisterName(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = RegisterNameForm
+
+    def get_success_url(self):
+        return resolve_url(settings.LOGIN_URL)
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.session.get("first_name") and self.request.session.get("last_name"):
+            return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        profile = get_profile(self.request.authbroker_client)
+        # attempt to update user
+        authenticate_exporter_user(
+            self.request,
+            {
+                "email": profile["email"],
+                "user_profile": {
+                    "first_name": form.cleaned_data["first_name"],
+                    "last_name": form.cleaned_data["last_name"],
+                },
+            },
+        )
+        # Hold in session
+        self.request.session["first_name"] = form.cleaned_data["first_name"]
+        self.request.session["last_name"] = form.cleaned_data["last_name"]
+        return super().form_valid(form)
 
 
 class SignatureHelp(LoginRequiredMixin, TemplateView):
