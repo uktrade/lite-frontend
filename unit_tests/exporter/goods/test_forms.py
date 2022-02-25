@@ -322,7 +322,7 @@ def test_product_uses_information_security_form(data, valid):
             None,
             False,
             "is_good_controlled",
-            "Select an option",
+            "This field is required.",
         ),
         (
             {
@@ -454,7 +454,7 @@ def test_firearms_year_of_manufacture_details_form(data, valid, error_message):
     "data, valid, error_field, error_message",
     (
         ({"is_replica": "True", "replica_description": "test desc"}, True, None, None),
-        ({"is_replica": ""}, False, "is_replica", "Select an option"),
+        ({"is_replica": ""}, False, "is_replica", "Select yes if the product is a replica firearm"),
         ({"is_replica": "True", "replica_description": ""}, False, "replica_description", "Enter a description"),
     ),
 )
@@ -489,10 +489,15 @@ def test_firearms_calibre_details_form(data, valid, error_field, error_message):
     "data, valid, error_field, error_message",
     (
         ({"is_registered_firearm_dealer": "True"}, True, None, None),
-        ({"is_registered_firearm_dealer": ""}, False, "is_registered_firearm_dealer", "Select an option"),
+        (
+            {"is_registered_firearm_dealer": ""},
+            False,
+            "is_registered_firearm_dealer",
+            "Select yes if you are a registered firearms dealer",
+        ),
     ),
 )
-def test_firearms_calibre_details_form(data, valid, error_field, error_message):
+def test_registered_firearms_dealer_form(data, valid, error_field, error_message):
     form = forms.RegisteredFirearmsDealerForm(data=data)
 
     assert form.is_valid() == valid
@@ -583,7 +588,7 @@ def test_attach_fiream_dealer_certificate_form(data, files, valid, error_field, 
             False,
             False,
             "firearms_act_section",
-            "Select an option",
+            "Select which section the product is covered by",
         ),
     ),
 )

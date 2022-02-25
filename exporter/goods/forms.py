@@ -665,9 +665,6 @@ class AddGoodsQuestionsForm(forms.Form):
         ),
         label=CreateGoodForm.IsControlled.TITLE,
         help_text=convert_to_markdown(CreateGoodForm.IsControlled.DESCRIPTION),
-        error_messages={
-            "required": "Select an option",
-        },
     )
 
     control_list_entries = forms.MultipleChoiceField(
@@ -862,7 +859,7 @@ class FirearmsReplicaForm(forms.Form):
         label="",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select an option",
+            "required": "Select yes if the product is a replica firearm",
         },
     )
 
@@ -936,7 +933,7 @@ class RegisteredFirearmsDealerForm(forms.Form):
         label="",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select an option",
+            "required": "Select yes if you are a registered firearms dealer",
         },
     )
 
@@ -1022,7 +1019,7 @@ class FirearmsActConfirmationForm(forms.Form):
         label="Select section",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select an option",
+            "required": "Select which section the product is covered by",
         },
         required=False,
     )
@@ -1107,7 +1104,7 @@ class FirearmsActConfirmationForm(forms.Form):
             and cleaned_data.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes"
             and not cleaned_data.get("firearms_act_section")
         ):
-            self.add_error("firearms_act_section", "Select an option")
+            self.add_error("firearms_act_section", "Select which section the product is covered by")
 
         return cleaned_data
 
