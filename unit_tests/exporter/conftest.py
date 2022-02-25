@@ -3,6 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 from django.conf import settings
+from conf import exporter
 from django.test import Client
 
 from core import client
@@ -109,6 +110,18 @@ def authorized_client_factory(client: Client, settings, organisation_pk):
 @pytest.fixture
 def authorized_client(authorized_client_factory, mock_exporter_user):
     return authorized_client_factory(mock_exporter_user["user"])
+
+
+@pytest.fixture()
+def mock_get_profile(requests_mock, mock_exporter_user):
+    url = exporter.AUTHBROKER_PROFILE_URL
+    yield requests_mock.get(url=url, json={"sub": "123456789xyzqpr", "email": mock_exporter_user["user"]["email"]})
+
+
+@pytest.fixture(autouse=True)
+def mock_authenticate_user_save(requests_mock, mock_exporter_user):
+    url = client._build_absolute_uri("/user/authenticate/")
+    yield requests_mock.post(url=url)
 
 
 @pytest.fixture
