@@ -34,13 +34,22 @@ TEMPLATES = [
     },
 ]
 
-
-LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 LOGOUT_URL = f"{AUTHBROKER_URL}/sso/accounts/logout/?next="
 AUTHBROKER_SCOPE = "profile"
 AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/authorize/")
 AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/token/")
 AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "sso/oauth2/user-profile/v1/")
+LOGIN_REDIRECT_URL = reverse_lazy("core:home")
+
+FEATURE_FLAG_GOVUK_SIGNIN_ENABLED = env.bool("FEATURE_FLAG_GOVUK_SIGNIN_ENABLED", False)
+
+if FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
+    LOGOUT_URL = AUTHBROKER_URL
+    AUTHBROKER_SCOPE = "openid,email"
+    AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "authorize/")
+    AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "token")
+    AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "userinfo")
+
 
 AUTHENTICATION_BACKENDS = []
 
