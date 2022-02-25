@@ -35,6 +35,7 @@ from exporter.core.helpers import (
     is_pv_graded,
     show_attach_rfd_form,
     show_rfd_form,
+    str_to_bool,
 )
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
@@ -947,7 +948,7 @@ class EditIdentificationMarkingsView(LoginRequiredMixin, GoodCommonMixin, FormVi
             )
         elif self.application_id and self.object_id:
             has_identification_markings = form.cleaned_data["has_identification_markings"]
-            if has_identification_markings is True:
+            if str_to_bool(has_identification_markings) is True:
                 success_url = reverse(
                     "applications:serial_numbers", kwargs={"pk": self.application_id, "good_pk": self.object_id}
                 )
