@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
+from formtools.wizard.storage.session import SessionStorage
 from formtools.wizard.views import SessionWizardView
 
 from core.auth.views import LoginRequiredMixin
@@ -209,6 +210,23 @@ class RegisteredFirearmDealersMixin:
             assert status_code == HTTPStatus.CREATED
 
 
+class SkipResetSessionStorage(SessionStorage):
+    """This gives clients the ability to skip the reset (deletion) of
+    data that has been collected by the wizard.
+    """
+
+    def skip_reset(self):
+        """Tell the storage to skip the next reset() operation."""
+        self.request.session["skip_reset"] = True
+
+    def reset(self):
+        """Resets the storage and deletes any data unless unless
+        skip_reset() has been called beforehand.
+        """
+        if not self.request.session.pop("skip_reset", None):
+            super().reset()
+
+
 class AddGood(LoginRequiredMixin, SessionWizardView):
     """This view manages the sequence of forms that are used add a new product
     to an existing application.
@@ -217,6 +235,8 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
 
     file_storage = NoSaveStorage()
+
+    storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
 
     form_list = [
         (AddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
@@ -382,7 +402,12 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
                 firearms_data_id = f"post_{self.request.session['lite_api_user_id']}_{pk}"
 
                 all_data["form_pk"] = 0  # Temporary until attach-firearms-certificate is converted to Django form
+                all_data["wizard_goto_step"] = AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION
                 self.request.session[firearms_data_id] = all_data
+
+                # Don't reset the data in case a user re-enters this wizard from the 'Back' link.
+                # Note that data does get reset when a user re-enters the wizard from fresh.
+                self.storage.skip_reset()
 
                 return redirect(reverse("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]}))
 
@@ -667,6 +692,8 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, SessionWiza
 
     file_storage = NoSaveStorage()
 
+    storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
+
     form_list = [
         (AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
         (AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS, IdentificationMarkingsForm),
@@ -862,7 +889,12 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, SessionWiza
                 all_data["firearms_act_section"] = selected_section
 
             all_data["form_pk"] = 1
+            all_data["wizard_goto_step"] = AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION
             self.request.session[firearms_data_id] = all_data
+
+            # Don't reset the data in case a user re-enters this wizard from the 'Back' link.
+            # Note that data does get reset when a user re-enters the wizard from fresh.
+            self.storage.skip_reset()
 
             return redirect(
                 reverse(
