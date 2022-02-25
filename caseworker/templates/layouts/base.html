@@ -32,7 +32,7 @@
 	<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/govuk-opengraph-image.png' %}">
 
 	{% block head_common_javascript %}
-		{% google_tag_manager %}
+		{% if ENVIRONMENT_VARIABLES.GTM_ID %}{% google_tag_manager %}{% endif %}
 		<script nonce="{{ request.csp_nonce }}" src="{% static 'head.js' %}"></script>
 	{% endblock %}
 
@@ -40,7 +40,7 @@
 </head>
 
 <body class="govuk-template__body js-disabled {% block body_classes %}{% endblock %}">
-	{% google_tag_manager_noscript %}
+	{% if ENVIRONMENT_VARIABLES.GTM_ID %}{% google_tag_manager_noscript %}{% endif %}
 	<script nonce="{{ request.csp_nonce }}">
 		document.body.className = (
 			(document.body.className) ?
