@@ -8,27 +8,31 @@ urlpatterns = [
     path("", views.Goods.as_view(), name="goods"),
     path("add/", views.AddGood.as_view(), name="add"),
     path("<uuid:pk>/edit/", views.EditGood.as_view(), name="edit"),
-    path("<uuid:pk>/software-technology/", views.GoodSoftwareTechnology.as_view(), name="good_software_technology"),
-    path("<uuid:pk>/military-use/", views.GoodMilitaryUse.as_view(), name="good_military_use"),
-    path("<uuid:pk>/good-component/", views.GoodComponent.as_view(), name="good_component"),
-    path("<uuid:pk>/information-security/", views.GoodInformationSecurity.as_view(), name="good_information_security"),
+    path("<uuid:pk>/software-technology/", views.GoodSoftwareTechnologyView.as_view(), name="good_software_technology"),
+    path("<uuid:pk>/military-use/", views.GoodMilitaryUseView.as_view(), name="good_military_use"),
+    path("<uuid:pk>/good-component/", views.GoodComponentView.as_view(), name="good_component"),
+    path(
+        "<uuid:pk>/information-security/", views.GoodInformationSecurityView.as_view(), name="good_information_security"
+    ),
     path("<uuid:pk>/edit-grading/", views.EditGrading.as_view(), name="edit_grading"),
-    path("<uuid:pk>/edit-firearm-details/type/", views.EditFirearmProductType.as_view(), name="firearm_type"),
+    path("<uuid:pk>/edit-firearm-details/type/", views.EditFirearmProductTypeView.as_view(), name="firearm_type"),
     path(
         "<uuid:pk>/edit-firearm-details/year-of-manufacture/",
-        views.EditYearOfManufacture.as_view(),
+        views.EditYearOfManufactureView.as_view(),
         name="year-of-manufacture",
     ),
     path(
         "<uuid:pk>/edit-firearm-details/replica/",
-        views.EditFirearmReplica.as_view(),
+        views.EditFirearmReplicaView.as_view(),
         name="replica",
     ),
-    path("<uuid:pk>/edit-firearm-details/calibre/", views.EditCalibre.as_view(), name="calibre"),
-    path("<uuid:pk>/edit-firearm-details/firearms-act/", views.EditFirearmActDetails.as_view(), name="firearms_act"),
+    path("<uuid:pk>/edit-firearm-details/calibre/", views.EditCalibreView.as_view(), name="calibre"),
+    path(
+        "<uuid:pk>/edit-firearm-details/firearms-act/", views.EditFirearmActDetailsView.as_view(), name="firearms_act"
+    ),
     path(
         "<uuid:pk>/edit-firearm-details/identification_markings/",
-        views.EditIdentificationMarkings.as_view(),
+        views.EditIdentificationMarkingsView.as_view(),
         name="identification_markings",
     ),
     path("<uuid:pk>/delete/", views.DeleteGood.as_view(), name="delete"),
@@ -54,47 +58,47 @@ if settings.FEATURE_FLAG_FIREARMS_ENABLED:
         path("<uuid:pk>/edit/application/<uuid:draft_pk>/", views.EditGood.as_view(), name="edit-add-application"),
         path(
             "<uuid:pk>/edit-firearm-details/year-of-manufacture/application/<uuid:draft_pk>/",
-            views.EditCalibre.as_view(),
+            views.EditCalibreView.as_view(),
             name="year-of-manufacture-add-application",
         ),
         path(
             "<uuid:pk>/edit-firearm-details/calibre/application/<uuid:draft_pk>/",
-            views.EditCalibre.as_view(),
+            views.EditCalibreView.as_view(),
             name="calibre-add-application",
         ),
         path(
             "<uuid:pk>/software-technology/application/<uuid:draft_pk>/",
-            views.GoodSoftwareTechnology.as_view(),
+            views.GoodSoftwareTechnologyView.as_view(),
             name="good_software_technology_add_application",
         ),
         path(
             "<uuid:pk>/military-use/application/<uuid:draft_pk>/",
-            views.GoodMilitaryUse.as_view(),
+            views.GoodMilitaryUseView.as_view(),
             name="good_military_use_add_application",
         ),
         path(
             "<uuid:pk>/good-component/application/<uuid:draft_pk>/",
-            views.GoodComponent.as_view(),
+            views.GoodComponentView.as_view(),
             name="good_component_add_application",
         ),
         path(
             "<uuid:pk>/information-security/application/<uuid:draft_pk>/",
-            views.GoodInformationSecurity.as_view(),
+            views.GoodInformationSecurityView.as_view(),
             name="good_information_security_add_application",
         ),
         path(
             "<uuid:pk>/edit-firearm-details/type/application/<uuid:draft_pk>/",
-            views.EditFirearmProductType.as_view(),
+            views.EditFirearmProductTypeView.as_view(),
             name="firearm_type_add_application",
         ),
         path(
             "<uuid:pk>/edit-firearm-details/firearms-act/application/<uuid:draft_pk>/",
-            views.EditFirearmActDetails.as_view(),
+            views.EditFirearmActDetailsView.as_view(),
             name="firearms_act_add_application",
         ),
         path(
             "<uuid:pk>/edit-firearm-details/identification_markings/application/<uuid:draft_pk>/",
-            views.EditIdentificationMarkings.as_view(),
+            views.EditIdentificationMarkingsView.as_view(),
             name="identification_markings_add_application",
         ),
         path(

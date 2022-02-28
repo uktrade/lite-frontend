@@ -1,0 +1,23 @@
+<div class="govuk-form-group{% if field.errors %} govuk-form-group--error{% endif %}">
+    <label class="govuk-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <span class="govuk-error-message" id="error-{{ field.name }}" for="{{ field.id_for_label }}">
+                <span class="govuk-visually-hidden">Error:</span>
+                {{ error }}
+            </span>
+        {% endfor %}
+    {% endif %}
+    <div class="govuk-visually-hidden">in pounds</div>
+    <div class="lite-currency-input">
+        <div class="lite-currency-input__symbol {% if field.errors %}lite-currency--error{% endif %}" aria-hidden="true">£</div>
+        <input class="govuk-input govuk-input--width-10 {% if field.errors %}govuk-input--error{% endif %}"
+            id="{{ field.id_for_label }}"
+            type="text"
+            name="{{ field.html_name }}"
+            value="{% if field.value %}{{ field.value }}{% endif %}"
+            aria-describedby="{{ field.name }}"
+            autocomplete="off"
+            autocorrect="off"/>
+    </div>
+</div>
