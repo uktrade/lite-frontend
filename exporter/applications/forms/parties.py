@@ -1,5 +1,9 @@
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Layout, Submit, HTML
+from django import forms
 from django.urls import reverse_lazy
 
+from core.forms.layouts import ConditionalRadios, ConditionalQuestion
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
@@ -129,3 +133,260 @@ def new_party_form_group(request, application, strings, back_url, clearance_opti
         forms.append(party_signatory_name_form("Signatory name", "Save and continue"))
 
     return FormGroup(forms)
+
+
+class PartyReuseForm(forms.Form):
+    title = "Do you want to reuse an existing party?"
+
+    reuse_party = forms.ChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if you want to reuse an existing party",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            "reuse_party",
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyTypeSelectForm(forms.Form):
+    title = "Select the type of end user"
+
+    sub_type = forms.ChoiceField(
+        choices=(
+            ("government", PartyForm.Options.GOVERNMENT),
+            ("commercial", PartyForm.Options.COMMERCIAL),
+            ("individual", PartyForm.Options.INDIVIDUAL),
+            ("other", PartyForm.Options.OTHER),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select what type of party you're creating",
+        },
+    )
+    sub_type_other = forms.CharField(required=False, label="")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            ConditionalRadios(
+                "sub_type",
+                PartyForm.Options.GOVERNMENT,
+                PartyForm.Options.COMMERCIAL,
+                PartyForm.Options.INDIVIDUAL,
+                ConditionalQuestion(PartyForm.Options.OTHER, "sub_type_other"),
+            ),
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyNameForm(forms.Form):
+    title = "End user name"
+    name = forms.CharField(label="", error_messages={"required": "Enter a name"})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            "name",
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyWebsiteForm(forms.Form):
+    title = "End user website address (optional)"
+    website = forms.CharField(required=False, label="")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            "website",
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyAddressForm(forms.Form):
+    title = "End user address"
+    address = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "10"}), error_messages={"required": "Enter an address"}
+    )
+    country = forms.CharField(error_messages={"required": "Select the country"})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            "address",
+            "country",
+            Submit("submit", "Save and continue"),
+        )
+
+
+class PartySignatoryNameForm(forms.Form):
+    title = "Signatory name"
+    signatory_name_euu = forms.CharField(
+        label="",
+        help_text="This is the name of the person who signed the end user undertaking or stockist undertaking",
+        error_messages={"required": "Enter a name"},
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            "signatory_name_euu",
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyDocuments(forms.Form):
+    title = "End-user documents"
+    text_p1 = """
+        You will be asked to upload either an <a class="govuk-link" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form"> end-user undertaking (EUU)</a> or
+         <a class="govuk-link" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">stockist undertaking (SU)</a> completed by the end-user or stockist.
+    """
+    text_p2 = "You must include at least one page on company letterhead. This can either be within the end-user document or on a separate document."
+    text_p3 = (
+        "Products listed in the document should match as closely as possible to the products listed in the application."
+    )
+    text_p4 = "All products on the application must appear in the document."
+    undertaking_not_available = forms.BooleanField(
+        label="I do not have an end-user undertaking or stockist undertaking",
+        required=False,
+    )
+    undertaking_not_available_reason = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        help_text="Explain why you do not have an end-user undertaking or stockist undertaking.",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            HTML.p(self.text_p1),
+            HTML.p(self.text_p2),
+            HTML.p(self.text_p3),
+            HTML.p(self.text_p4),
+            "undertaking_not_available",
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyDocumentUploadForm(forms.Form):
+    title = "Upload an end-user document"
+    file = forms.FileField(
+        label="",
+        error_messages={
+            "required": "Select an end-user document",
+        },
+    )
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Describe any differences between products listed in the document and products on the application (optional)",
+        required=False,
+    )
+    document_in_english = forms.ChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label="Is the end-user document in English?",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the end-user document is in English",
+        },
+    )
+    document_on_letterhead = forms.ChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label="Does the document include at least one page on company letterhead?",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the document includes at least one page on company letterhead",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            "file",
+            "description",
+            "document_in_english",
+            "document_on_letterhead",
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyEnglishTranslationDocumentUploadForm(forms.Form):
+    title = "Upload an English translation"
+    file = forms.FileField(
+        label="",
+        error_messages={
+            "required": "Select an English translation",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            HTML.p("Exporters are responsible for verifying that translations are accurate."),
+            "file",
+            Submit("submit", "Continue"),
+        )
+
+
+class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
+    title = "Upload a document on company letterhead"
+    file = forms.FileField(
+        label="",
+        error_messages={
+            "required": "Select a document on company letterhead",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            HTML.p("The document only needs to include the end-user's name and signature."),
+            "file",
+            Submit("submit", "Continue"),
+        )

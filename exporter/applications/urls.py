@@ -248,6 +248,9 @@ urlpatterns = [
         documents.DeleteDocument.as_view(),
         name="end_user_delete_document",
     ),
+    # End user with django forms
+    path("<uuid:pk>/end-user/add2/", end_users.AddEndUserForm.as_view(), name="add_end_user2"),
+
     # Consignee
     path("<uuid:pk>/consignee/", consignees.Consignee.as_view(), name="consignee"),
     path("<uuid:pk>/consignee/add/", consignees.AddConsignee.as_view(), name="add_consignee"),

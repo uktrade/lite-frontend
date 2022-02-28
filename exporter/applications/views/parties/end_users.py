@@ -1,12 +1,26 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+from formtools.wizard.views import SessionWizardView
 
 from exporter.applications.forms.parties import new_party_form_group
+from exporter.applications.forms.parties import (
+    PartyReuseForm,
+    PartyTypeSelectForm,
+    PartyNameForm,
+    PartyWebsiteForm,
+    PartyAddressForm,
+    PartySignatoryNameForm,
+    PartyDocuments,
+    PartyDocumentUploadForm,
+    PartyEnglishTranslationDocumentUploadForm,
+    PartyCompanyLetterheadDocumentUploadForm,
+)
 from exporter.applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
 from exporter.applications.services import get_application, post_party, validate_party, delete_party
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
-from exporter.core.constants import OPEN
+from exporter.core.constants import OPEN, EndUserFormSteps
+from exporter.core.helpers import NoSaveStorage, str_to_bool, compose_with_and, compose_with_or
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 
 from core.auth.views import LoginRequiredMixin
@@ -116,3 +130,37 @@ class EditEndUser(LoginRequiredMixin, CopyAndSetParty):
             validate_action=validate_party,
             post_action=post_party,
         )
+
+
+class PartyReuseView(LoginRequiredMixin, FormView):
+    # template_name = "advice/select_advice.html"
+    form_class = PartyReuseForm
+
+    def get_success_url(self):
+        reuse_party = self.request.POST.get("reuse_party")
+        if reuse_party == "yes":
+            return reverse("applications:end_users_copy", kwargs=self.kwargs)
+        else:
+            return reverse("applications:add_end_user2", kwargs=self.kwargs)
+
+
+class AddEndUserForm(LoginRequiredMixin, SessionWizardView):
+    template_name = "core/form-wizard.html"
+
+    file_storage = NoSaveStorage()
+
+    storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
+
+    form_list = [
+        (EndUserFormSteps.PARTY_TYPE, PartyTypeSelectForm),
+        (EndUserFormSteps.PARTY_NAME, PartyNameForm),
+        (EndUserFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
+        (EndUserFormSteps.PARTY_ADDRESS, PartyAddressForm),
+        (EndUserFormSteps.PARTY_SIGNATORY_NAME, PartySignatoryNameForm),
+        (EndUserFormSteps.PARTY_DOCUMENTS, PartyDocuments),
+        (EndUserFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
+        (EndUserFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
+        (EndUserFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, PartyCompanyLetterheadDocumentUploadForm)
+    ]
+
+    condition_dict = {}
