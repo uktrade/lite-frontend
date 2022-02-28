@@ -1113,17 +1113,14 @@ class SoftwareTechnologyDetailsForm(forms.Form):
     software_or_technology_details = forms.CharField(
         label="",
         widget=forms.Textarea,
-        error_messages={
-            "required": "Enter the purpose of the technology",
-        },
     )
 
     def __init__(self, *args, **kwargs):
         product_type = kwargs.pop("product_type")
         super().__init__(*args, **kwargs)
 
-        category_text = get_category_display_string(product_type)
-        self.title = CreateGoodForm.TechnologySoftware.TITLE + category_text
+        self.category_text = get_category_display_string(product_type)
+        self.title = CreateGoodForm.TechnologySoftware.TITLE + self.category_text
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -1131,6 +1128,15 @@ class SoftwareTechnologyDetailsForm(forms.Form):
             "software_or_technology_details",
             Submit("submit", "Save"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if not cleaned_data.get("software_or_technology_details"):
+            self.errors.clear()
+            self.add_error("software_or_technology_details", f"Enter the purpose of the {self.category_text}")
+
+        return cleaned_data
 
 
 class ProductComponentForm(forms.Form):
