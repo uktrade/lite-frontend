@@ -659,6 +659,24 @@ def test_software_technology_details_form(data, product_type, valid, error_field
             "general_details",
             "Enter the details of the types of applications the component is intended to be used in",
         ),
+        (
+            {"is_component": "yes_designed", "designed_details": "x" * 2001},
+            False,
+            "designed_details",
+            "Ensure this field has no more than 2000 characters",
+        ),
+        (
+            {"is_component": "yes_modified", "modified_details": "x" * 2001},
+            False,
+            "modified_details",
+            "Ensure this field has no more than 2000 characters",
+        ),
+        (
+            {"is_component": "yes_general", "general_details": "x" * 2001},
+            False,
+            "general_details",
+            "Ensure this field has no more than 2000 characters",
+        ),
     ),
 )
 def test_product_component_form(data, valid, error_field, error_message):

@@ -1202,15 +1202,26 @@ class ProductComponentForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        if cleaned_data.get("is_component") == "yes_designed" and not cleaned_data.get("designed_details"):
-            self.add_error("designed_details", "Enter the details of the hardware")
-        elif cleaned_data.get("is_component") == "yes_modified" and not cleaned_data.get("modified_details"):
-            self.add_error("modified_details", "Enter the details of the modifications and the hardware")
-        elif cleaned_data.get("is_component") == "yes_general" and not cleaned_data.get("general_details"):
-            self.add_error(
+        component_details = (
+            ("yes_designed", "designed_details", "Enter the details of the hardware"),
+            ("yes_modified", "modified_details", "Enter the details of the modifications and the hardware"),
+            (
+                "yes_general",
                 "general_details",
                 "Enter the details of the types of applications the component is intended to be used in",
-            )
+            ),
+        )
+
+        max_chars = 2000
+
+        for is_component, details_field, empty_field_msg in component_details:
+            details = cleaned_data.get(details_field, "")
+
+            if cleaned_data.get("is_component") == is_component and not details:
+                self.add_error(details_field, empty_field_msg)
+
+            if len(details) > max_chars:
+                self.add_error(details_field, f"Ensure this field has no more than {max_chars} characters")
 
         return cleaned_data
 
