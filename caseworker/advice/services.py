@@ -7,13 +7,15 @@ from core import client
 # Queues
 FCDO_CASES_TO_REVIEW_QUEUE = "FCDO_CASES_TO_REVIEW"
 FCDO_COUNTERSIGNING_QUEUE = "FCDO_COUNTER_SIGNING"
-MOD_CASES_TO_REVIEW_QUEUE = "MOD_CASES_TO_REVIEW"
+MOD_CASES_TO_REVIEW_QUEUES = [
+    "MOD_CASES_TO_REVIEW",
+    "MOD_ECJU_REVIEW_AND_COMBINE",
+]
 MOD_CONSOLIDATE_QUEUES = [
     "MOD_DI_CASES_TO_REVIEW",
     "MOD_DSR_CASES_TO_REVIEW",
     "MOD_DSTL_CASES_TO_REVIEW",
     "MOD_WECA_CASES_TO_REVIEW",
-    "MOD_ECJU_REVIEW_AND_COMBINE",
 ]
 LU_POST_CIRC_FINALISE_QUEUE = "LU_POST_CIRC_FINALISE"
 
@@ -345,7 +347,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
 
     elif team_alias in (MOD_ECJU_TEAM, LICENSING_UNIT_TEAM):
         consolidated_advice = get_consolidated_advice(case.advice, team_alias)
-        if queue_alias in (MOD_CASES_TO_REVIEW_QUEUE, LU_POST_CIRC_FINALISE_QUEUE):
+        if queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES):
             if not consolidated_advice:
                 # An individual consolidating advice on a case for the first time
                 context["url"] = "cases:consolidate_advice_view"
