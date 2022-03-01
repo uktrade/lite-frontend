@@ -72,7 +72,7 @@ class ExportDetails(LoginRequiredMixin, MultiFormView):
             data["export_type"] = export_type
 
         data["is_temp_direct_control"] = None
-        if application.get("is_temp_direct_control"):
+        if application.get("is_temp_direct_control") is not None:
             data["is_temp_direct_control"] = application.get("is_temp_direct_control")
 
         proposed_return_date = application.get("proposed_return_date")
