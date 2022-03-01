@@ -6,7 +6,7 @@ from caseworker.advice.services import (
     FCDO_TEAM,
     LICENSING_UNIT_TEAM,
     LU_POST_CIRC_FINALISE_QUEUE,
-    MOD_CASES_TO_REVIEW_QUEUE,
+    MOD_CASES_TO_REVIEW_QUEUES,
     MOD_CONSOLIDATE_QUEUES,
     MOD_CONSOLIDATE_TEAMS,
     MOD_ECJU_TEAM,
@@ -66,10 +66,12 @@ advice_tab_test_data = [
     # An individual accessing the case after giving countersigned advice
     (True, "user", True, FCDO_TEAM, FCDO_COUNTERSIGNING_QUEUE, "cases:countersign_view", {"edit_recommendation": True, "move_case_forward": True},),
     # An individual consolidating advice on a case for the first time
-    (True, "user", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUE, "cases:consolidate_advice_view", {"review_and_combine": True},),
+    (True, "user", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUES[0], "cases:consolidate_advice_view", {"review_and_combine": True},),
+    (True, "user", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUES[1], "cases:consolidate_advice_view", {"review_and_combine": True},),
     (True, "user", True, LICENSING_UNIT_TEAM, LU_POST_CIRC_FINALISE_QUEUE, "cases:consolidate_advice_view", {"review_and_combine": True},),
     # An individual accessing the case after consolidating advice
-    (True, "team", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUE, "cases:consolidate_view", {"edit_recommendation": True, "move_case_forward": True},),
+    (True, "team", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUES[0], "cases:consolidate_view", {"edit_recommendation": True, "move_case_forward": True},),
+    (True, "team", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUES[1], "cases:consolidate_view", {"edit_recommendation": True, "move_case_forward": True},),
     (True, "final", True, LICENSING_UNIT_TEAM, LU_POST_CIRC_FINALISE_QUEUE, "cases:consolidate_view", {"edit_recommendation": True, "move_case_forward": True},),
     # Any individual accessing a case from any other queue (the fallback position)
     (True, "user", False, "any_team", "any_queue", "cases:advice_view", {},),
