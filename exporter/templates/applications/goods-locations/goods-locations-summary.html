@@ -14,7 +14,7 @@
 		<dt class="govuk-summary-list__key">Where will the products begin their export journey?</dt>
 		<dd class="govuk-summary-list__value">{{ application.goods_starting_point|verbose_goods_starting_point }}</dd>
 		<dd class="govuk-summary-list__actions">
-			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:location' application.id %}">
+			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_location' application.id %}">
 				Change <span class="govuk-visually-hidden">goods starting point</span>
 			</a>
 		</dd>
@@ -70,7 +70,7 @@
 
 	{% if not application.is_shipped_waybill_or_lading %}
 	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">Route details</dt>
+		<dt class="govuk-summary-list__key">Provide details of the route of the products</dt>
 		<dd class="govuk-summary-list__value">{{ application.non_waybill_or_lading_route_details }}</dd>
 		<dd class="govuk-summary-list__actions"></dd>
 	</div>

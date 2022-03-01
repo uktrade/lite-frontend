@@ -66,9 +66,12 @@ class ExportDetails(LoginRequiredMixin, MultiFormView):
 
         data = {}
 
-        if application.get("export_type") is not None:
-            data["export_type"] = application.get("export_type")
+        data["export_type"] = None
+        export_type = application.get("export_type")
+        if export_type.get("key", "") != "":
+            data["export_type"] = export_type
 
+        data["is_temp_direct_control"] = None
         if application.get("is_temp_direct_control") is not None:
             data["is_temp_direct_control"] = application.get("is_temp_direct_control")
 
@@ -77,6 +80,7 @@ class ExportDetails(LoginRequiredMixin, MultiFormView):
             # Pre-populate the date fields
             data["year"], data["month"], data["day"] = split_date_into_components(proposed_return_date, "-")
 
+        data["is_shipped_waybill_or_lading"] = None
         if application.get("is_shipped_waybill_or_lading") is not None:
             data["is_shipped_waybill_or_lading"] = application.get("is_shipped_waybill_or_lading")
 

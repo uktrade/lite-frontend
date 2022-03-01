@@ -149,7 +149,7 @@ class TemporaryOrPermanentFormView(LoginRequiredMixin, ApplicationMixin, FormVie
     def form_valid(self, form):
         put_application_simple(self.request, self.kwargs["pk"], form.cleaned_data)
         if form.cleaned_data["export_type"] == "temporary":
-            return redirect(reverse("applications:temporary_export_details", kwargs={"pk": self.kwargs["pk"]}))
+            return redirect(reverse("applications:export_details", kwargs={"pk": self.kwargs["pk"]}))
         else:
             return redirect(reverse("applications:route_of_goods", kwargs={"pk": self.kwargs["pk"]}))
 
