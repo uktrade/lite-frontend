@@ -161,7 +161,7 @@ class PartyReuseForm(forms.Form):
         )
 
 
-class PartyTypeSelectForm(forms.Form):
+class PartySubTypeSelectForm(forms.Form):
     title = "Select the type of end user"
 
     sub_type = forms.ChoiceField(
@@ -302,7 +302,7 @@ class PartyDocuments(forms.Form):
 
 class PartyDocumentUploadForm(forms.Form):
     title = "Upload an end-user document"
-    file = forms.FileField(
+    party_document = forms.FileField(
         label="",
         error_messages={
             "required": "Select an end-user document",
@@ -340,9 +340,10 @@ class PartyDocumentUploadForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
+        self.helper.attrs = {"enctype": "multipart/form-data"}
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            "file",
+            "party_document",
             "description",
             "document_in_english",
             "document_on_letterhead",
@@ -352,7 +353,7 @@ class PartyDocumentUploadForm(forms.Form):
 
 class PartyEnglishTranslationDocumentUploadForm(forms.Form):
     title = "Upload an English translation"
-    file = forms.FileField(
+    party_eng_translation_document = forms.FileField(
         label="",
         error_messages={
             "required": "Select an English translation",
@@ -363,17 +364,18 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
+        self.helper.attrs = {"enctype": "multipart/form-data"}
         self.helper.layout = Layout(
             HTML.h1(self.title),
             HTML.p("Exporters are responsible for verifying that translations are accurate."),
-            "file",
+            "party_eng_translation_document",
             Submit("submit", "Continue"),
         )
 
 
 class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
     title = "Upload a document on company letterhead"
-    file = forms.FileField(
+    party_letterhead_document = forms.FileField(
         label="",
         error_messages={
             "required": "Select a document on company letterhead",
@@ -384,9 +386,10 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
+        self.helper.attrs = {"enctype": "multipart/form-data"}
         self.helper.layout = Layout(
             HTML.h1(self.title),
             HTML.p("The document only needs to include the end-user's name and signature."),
-            "file",
+            "party_letterhead_document",
             Submit("submit", "Continue"),
         )

@@ -1,12 +1,16 @@
+import logging
+
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
 from formtools.wizard.views import SessionWizardView
+from http import HTTPStatus
 
 from exporter.applications.forms.parties import new_party_form_group
 from exporter.applications.forms.parties import (
     PartyReuseForm,
-    PartyTypeSelectForm,
+    PartySubTypeSelectForm,
     PartyNameForm,
     PartyWebsiteForm,
     PartyAddressForm,
@@ -17,13 +21,23 @@ from exporter.applications.forms.parties import (
     PartyCompanyLetterheadDocumentUploadForm,
 )
 from exporter.applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
-from exporter.applications.services import get_application, post_party, validate_party, delete_party
+from exporter.applications.helpers.date_fields import format_date
+from exporter.applications.services import (
+    get_application,
+    post_party,
+    post_party_document,
+    validate_party,
+    delete_party,
+)
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
-from exporter.core.constants import OPEN, EndUserFormSteps
-from exporter.core.helpers import NoSaveStorage, str_to_bool, compose_with_and, compose_with_or
+from exporter.core.constants import OPEN, AddPartyFormSteps
+from exporter.core.helpers import NoSaveStorage, is_document_in_english, is_document_on_letterhead
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
+from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
+
+log = logging.getLogger(__name__)
 
 
 class EndUser(LoginRequiredMixin, TemplateView):
@@ -133,7 +147,6 @@ class EditEndUser(LoginRequiredMixin, CopyAndSetParty):
 
 
 class PartyReuseView(LoginRequiredMixin, FormView):
-    # template_name = "advice/select_advice.html"
     form_class = PartyReuseForm
 
     def get_success_url(self):
@@ -144,23 +157,88 @@ class PartyReuseView(LoginRequiredMixin, FormView):
             return reverse("applications:add_end_user2", kwargs=self.kwargs)
 
 
-class AddEndUserForm(LoginRequiredMixin, SessionWizardView):
+class AddPartyForm(LoginRequiredMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
 
     file_storage = NoSaveStorage()
 
-    storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
-
     form_list = [
-        (EndUserFormSteps.PARTY_TYPE, PartyTypeSelectForm),
-        (EndUserFormSteps.PARTY_NAME, PartyNameForm),
-        (EndUserFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
-        (EndUserFormSteps.PARTY_ADDRESS, PartyAddressForm),
-        (EndUserFormSteps.PARTY_SIGNATORY_NAME, PartySignatoryNameForm),
-        (EndUserFormSteps.PARTY_DOCUMENTS, PartyDocuments),
-        (EndUserFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
-        (EndUserFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
-        (EndUserFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, PartyCompanyLetterheadDocumentUploadForm)
+        (AddPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
+        (AddPartyFormSteps.PARTY_NAME, PartyNameForm),
+        (AddPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
+        (AddPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
+        (AddPartyFormSteps.PARTY_SIGNATORY_NAME, PartySignatoryNameForm),
+        (AddPartyFormSteps.PARTY_DOCUMENTS, PartyDocuments),
+        (AddPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
+        (AddPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
+        (AddPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, PartyCompanyLetterheadDocumentUploadForm),
     ]
 
-    condition_dict = {}
+    condition_dict = {
+        AddPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD: lambda wizard: not is_document_in_english(wizard),
+        AddPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_document_on_letterhead(wizard),
+    }
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        if cleaned_data is None:
+            return {}
+        return cleaned_data
+
+    def done(self, form_list, **kwargs):
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        party_document = all_data.pop("party_document", None)
+        party_eng_translation_document = all_data.pop("party_eng_translation_document", None)
+        party_letterhead_document = all_data.pop("party_letterhead_document", None)
+        breakpoint()
+
+        response, status_code = post_party(self.request, self.kwargs["pk"], dict(all_data))
+
+        if status_code != HTTPStatus.CREATED:
+            log.error(
+                "Error creating party - response was: %s - %s",
+                status_code,
+                response,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error creating party")
+
+        party_id = response[self.party_type]["id"]
+
+        if party_document:
+            data = {
+                "name": getattr(party_document, "original_name", party_document.name),
+                "s3_key": party_document.name,
+                "size": int(party_document.size // 1024) if party_document.size else 0,  # in kilobytes
+            }
+
+            response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
+            assert status_code == HTTPStatus.CREATED
+
+        if party_eng_translation_document:
+            data = {
+                "name": getattr(party_eng_translation_document, "original_name", party_eng_translation_document.name),
+                "s3_key": party_eng_translation_document.name,
+                "size": int(party_eng_translation_document.size // 1024) if party_eng_translation_document.size else 0,  # in kilobytes
+            }
+
+            response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
+            assert status_code == HTTPStatus.CREATED
+
+        if party_letterhead_document:
+            data = {
+                "name": getattr(party_letterhead_document, "original_name", party_letterhead_document.name),
+                "s3_key": party_letterhead_document.name,
+                "size": int(party_letterhead_document.size // 1024) if party_letterhead_document.size else 0,  # in kilobytes
+            }
+
+            response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
+            assert status_code == HTTPStatus.CREATED
+
+
+class AddEndUserForm(AddPartyForm):
+    party_type = "end_user"
