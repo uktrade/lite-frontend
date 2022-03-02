@@ -275,11 +275,19 @@ class PartyDocuments(forms.Form):
         "Products listed in the document should match as closely as possible to the products listed in the application."
     )
     text_p4 = "All products on the application must appear in the document."
-    undertaking_not_available = forms.BooleanField(
-        label="I do not have an end-user undertaking or stockist undertaking",
-        required=False,
+    end_user_document_available = forms.ChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if you have an end-user document",
+        },
     )
-    undertaking_not_available_reason = forms.CharField(
+    end_user_document_missing_reason = forms.CharField(
+        label="",
         widget=forms.Textarea(attrs={"rows": "5"}),
         help_text="Explain why you do not have an end-user undertaking or stockist undertaking.",
         required=False,
@@ -295,7 +303,11 @@ class PartyDocuments(forms.Form):
             HTML.p(self.text_p2),
             HTML.p(self.text_p3),
             HTML.p(self.text_p4),
-            "undertaking_not_available",
+            ConditionalRadios(
+                "end_user_document_available",
+                "Yes",
+                ConditionalQuestion("No", "end_user_document_missing_reason"),
+            ),
             Submit("submit", "Continue"),
         )
 

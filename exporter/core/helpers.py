@@ -270,6 +270,10 @@ def get_rfd_certificate(application):
     return documents.get("rfd-certificate")
 
 
+def is_end_user_document_available(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddPartyFormSteps.PARTY_DOCUMENTS)
+    return str_to_bool(cleaned_data.get("end_user_document_available"))
+
 def is_document_in_english(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(AddPartyFormSteps.PARTY_DOCUMENT_UPLOAD)
     return str_to_bool(cleaned_data.get("document_in_english"))

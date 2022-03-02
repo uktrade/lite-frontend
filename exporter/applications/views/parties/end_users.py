@@ -32,7 +32,12 @@ from exporter.applications.services import (
 )
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
 from exporter.core.constants import OPEN, AddPartyFormSteps
-from exporter.core.helpers import NoSaveStorage, is_document_in_english, is_document_on_letterhead
+from exporter.core.helpers import (
+    NoSaveStorage,
+    is_end_user_document_available,
+    is_document_in_english,
+    is_document_on_letterhead,
+)
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 from lite_forms.generators import error_page
 
@@ -176,8 +181,13 @@ class AddPartyForm(LoginRequiredMixin, SessionWizardView):
     ]
 
     condition_dict = {
-        AddPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD: lambda wizard: not is_document_in_english(wizard),
-        AddPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_document_on_letterhead(wizard),
+        AddPartyFormSteps.PARTY_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(wizard),
+        AddPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD: lambda wizard: is_end_user_document_available(wizard)
+        and not is_document_in_english(wizard),
+        AddPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(
+            wizard
+        )
+        and is_document_on_letterhead(wizard),
     }
 
     @cached_property
