@@ -1,62 +1,94 @@
+import logging
 from datetime import datetime
 from http import HTTPStatus
 
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
-
-from exporter.applications.forms.goods import good_on_application_form_group
-from exporter.applications.helpers.check_your_answers import get_total_goods_value
-from exporter.applications.services import (
-    get_application,
-    get_application_goods,
-    post_good_on_application,
-    delete_application_preexisting_good,
-    add_document_data,
-    validate_good_on_application,
-    post_application_document,
-    post_additional_document,
-    delete_application_document_data,
-    get_application_documents,
-    get_application_document,
-    download_document_from_s3,
-)
-from exporter.core import constants
-from exporter.core.helpers import get_firearms_subcategory
-from core.helpers import convert_dict_to_query_params
-from exporter.core.helpers import str_to_bool
-from exporter.goods.forms import (
-    check_document_available_form,
-    document_grading_form,
-    attach_documents_form,
-    add_good_form_group,
-    upload_firearms_act_certificate_form,
-    build_firearm_back_link_create,
-    has_valid_rfd_certificate,
-    has_valid_section_five_certificate,
-)
-from exporter.goods.services import (
-    get_goods,
-    get_good,
-    post_goods,
-    post_good_documents,
-    get_good_document_availability,
-    post_good_document_availability,
-    get_good_document_sensitivity,
-    post_good_document_sensitivity,
-    validate_good,
-)
-
-from exporter.applications.helpers.date_fields import format_date
-from exporter.core.validators import validate_expiry_date
-from lite_forms.components import FiltersBar, TextInput, BackLink
-from lite_forms.generators import error_page, form_page
-from lite_forms.helpers import get_form_by_pk
-from lite_forms.views import SingleFormView, MultiFormView
+from formtools.wizard.storage.session import SessionStorage
+from formtools.wizard.views import SessionWizardView
 
 from core.auth.views import LoginRequiredMixin
+from core.helpers import convert_dict_to_query_params
+from exporter.applications.helpers.check_your_answers import get_total_goods_value
+from exporter.applications.helpers.date_fields import format_date
+from exporter.applications.services import (
+    add_document_data,
+    delete_application_document_data,
+    delete_application_preexisting_good,
+    download_document_from_s3,
+    get_application,
+    get_application_document,
+    get_application_documents,
+    get_application_goods,
+    post_additional_document,
+    post_application_document,
+    post_good_on_application,
+)
+from exporter.core import constants
+from exporter.core.constants import AddGoodFormSteps
+from exporter.core.helpers import (
+    NoSaveStorage,
+    compose_with_and,
+    compose_with_or,
+    has_valid_rfd_certificate,
+    is_category_firearms,
+    is_draft,
+    is_preexisting,
+    is_product_type,
+    is_pv_graded,
+    show_attach_rfd_form,
+    show_rfd_form,
+    show_serial_numbers_form,
+    str_to_bool,
+)
+from exporter.core.validators import validate_expiry_date
+from exporter.goods.forms import (
+    AddGoodsQuestionsForm,
+    AttachFirearmsDealerCertificateForm,
+    ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
+    ComponentOfAFirearmUnitQuantityValueForm,
+    FirearmsActConfirmationForm,
+    FirearmsCalibreDetailsForm,
+    FirearmsCaptureSerialNumbersForm,
+    FirearmsNumberOfItemsForm,
+    FirearmsReplicaForm,
+    FirearmsUnitQuantityValueForm,
+    FirearmsYearOfManufactureDetailsForm,
+    GroupTwoProductTypeForm,
+    IdentificationMarkingsForm,
+    ProductCategoryForm,
+    ProductComponentForm,
+    ProductMilitaryUseForm,
+    ProductUsesInformationSecurityForm,
+    PvDetailsForm,
+    RegisteredFirearmsDealerForm,
+    SoftwareTechnologyDetailsForm,
+    UnitQuantityValueForm,
+    attach_documents_form,
+    build_firearm_back_link_create,
+    check_document_available_form,
+    document_grading_form,
+    has_valid_section_five_certificate,
+    upload_firearms_act_certificate_form,
+)
+from exporter.goods.services import (
+    get_good,
+    get_good_document_availability,
+    get_good_document_sensitivity,
+    get_goods,
+    post_good_document_availability,
+    post_good_document_sensitivity,
+    post_good_documents,
+    post_goods,
+)
+from lite_forms.components import BackLink, FiltersBar, TextInput
+from lite_forms.generators import error_page, form_page
+from lite_forms.views import SingleFormView
+
+log = logging.getLogger(__name__)
 
 
 class SectionDocumentMixin:
@@ -178,130 +210,213 @@ class RegisteredFirearmDealersMixin:
             assert status_code == HTTPStatus.CREATED
 
 
-class AddGood(LoginRequiredMixin, RegisteredFirearmDealersMixin, MultiFormView):
-    STEP_ARE_YOU_RFD = 8
-    STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
+class SkipResetSessionStorage(SessionStorage):
+    """This gives clients the ability to skip the reset (deletion) of
+    data that has been collected by the wizard.
+    """
+
+    def skip_reset(self):
+        """Tell the storage to skip the next reset() operation."""
+        self.request.session["skip_reset"] = True
+
+    def reset(self):
+        """Resets the storage and deletes any data unless unless
+        skip_reset() has been called beforehand.
+        """
+        if not self.request.session.pop("skip_reset", None):
+            super().reset()
+
+
+class AddGood(LoginRequiredMixin, SessionWizardView):
+    """This view manages the sequence of forms that are used add a new product
+    to an existing application.
+    """
+
+    template_name = "core/form-wizard.html"
+
+    file_storage = NoSaveStorage()
+
+    storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
+
+    form_list = [
+        (AddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
+        (AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
+        (AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
+        (AddGoodFormSteps.IDENTIFICATION_MARKINGS, IdentificationMarkingsForm),
+        (AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS, FirearmsCaptureSerialNumbersForm),
+        (AddGoodFormSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
+        (AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
+        (AddGoodFormSteps.ADD_GOODS_QUESTIONS, AddGoodsQuestionsForm),
+        (AddGoodFormSteps.PV_DETAILS, PvDetailsForm),
+        (AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmsYearOfManufactureDetailsForm),
+        (AddGoodFormSteps.FIREARMS_REPLICA, FirearmsReplicaForm),
+        (AddGoodFormSteps.FIREARMS_CALIBRE_DETAILS, FirearmsCalibreDetailsForm),
+        (AddGoodFormSteps.REGISTERED_FIREARMS_DEALER, RegisteredFirearmsDealerForm),
+        (AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmsDealerCertificateForm),
+        (AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION, FirearmsActConfirmationForm),
+        (AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS, SoftwareTechnologyDetailsForm),
+        (AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH, ProductMilitaryUseForm),
+        (AddGoodFormSteps.PRODUCT_COMPONENT, ProductComponentForm),
+        (AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH, ProductUsesInformationSecurityForm),
+    ]
+
+    condition_dict = {
+        AddGoodFormSteps.PRODUCT_CATEGORY: lambda w: not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
+        AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
+        AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: compose_with_and(
+            is_draft, is_product_type("ammunition_or_component")
+        ),
+        AddGoodFormSteps.IDENTIFICATION_MARKINGS: compose_with_and(
+            is_draft, is_product_type("ammunition_or_component")
+        ),
+        AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: compose_with_and(
+            is_draft,
+            is_product_type("ammunition_or_component"),
+            show_serial_numbers_form(AddGoodFormSteps.IDENTIFICATION_MARKINGS),
+        ),
+        AddGoodFormSteps.PRODUCT_MILITARY_USE: lambda w: not is_category_firearms(w),
+        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: lambda w: not is_category_firearms(w),
+        AddGoodFormSteps.PV_DETAILS: is_pv_graded,
+        AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: compose_with_and(is_draft, is_product_type("firearm")),
+        AddGoodFormSteps.FIREARMS_REPLICA: is_product_type("firearm"),
+        AddGoodFormSteps.FIREARMS_CALIBRE_DETAILS: is_product_type("ammunition_or_component"),
+        AddGoodFormSteps.REGISTERED_FIREARMS_DEALER: show_rfd_form,
+        AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE: show_attach_rfd_form,
+        AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION: compose_with_and(
+            is_draft, is_product_type("ammunition_or_component")
+        ),
+        AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS: is_product_type("firearms_software_or_tech"),
+        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: compose_with_or(
+            is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
+        ),
+        AddGoodFormSteps.PRODUCT_COMPONENT: is_product_type("firearms_accessory"),
+        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: compose_with_or(
+            is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
+        ),
+    }
 
     @cached_property
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
 
-    @property
-    def form_pk(self):
-        return int(self.request.POST["form_pk"])
+    def get_product_type(self):
+        group_two_product_type_cleaned_data = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
 
-    @property
-    def number_of_forms(self):
-        # we require the form index of the last form in the group, not the total number
-        return len(self.forms.get_forms()) - 1
+        if group_two_product_type_cleaned_data:
+            return group_two_product_type_cleaned_data["type"]
 
-    def validate_step(self, request, nested_data):
-        errors = {}
-        current = get_form_by_pk(self.form_pk, self.forms)
-        if self.form_pk == self.STEP_ARE_YOU_RFD:
-            if "is_registered_firearm_dealer" not in request.POST:
-                errors["is_registered_firearm_dealer"] = ["Select yes if you are a registered firearms dealer"]
+        return None
 
-        elif current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
-            if not self.request.FILES.get("file"):
-                errors["file"] = ["Select certificate file to upload"]
-            if not self.request.POST.get("reference_code"):
-                errors["reference_code"] = ["Enter the certificate number"]
-            errors["expiry_date"] = validate_expiry_date(request, "expiry_date_")
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        context["title"] = form.title
+        context["hide_step_count"] = True
+        # The back_link_url is used for the first form in the sequence. For subsequent forms,
+        # the wizard automatically generates the back link to the previous form.
+        context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        context["back_link_text"] = "Back"
+        return context
 
-        if errors:
-            return {"errors": errors}, None
-        return validate_good(request, nested_data)
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
 
-    def init(self, request, **kwargs):
-        self.draft_pk = str(kwargs["pk"])
-        self.forms = add_good_form_group(
-            request=request,
-            draft_pk=self.draft_pk,
-            application=self.application,
-        )
-        self.show_section_upload_form = False
-
-    def on_submission(self, request, **kwargs):
-        copied_request = request.POST.copy()
-        is_pv_graded = copied_request.get("is_pv_graded", "") == "yes"
-        is_software_technology = copied_request.get("item_category") in ["group3_software", "group3_technology"]
-
-        (
-            is_firearm,
-            is_firearm_ammunition_or_component,
-            is_firearms_accessory,
-            is_firearms_software_or_tech,
-        ) = get_firearms_subcategory(copied_request.get("type"))
-
-        is_rfd = copied_request.get("is_registered_firearm_dealer") == "True" or has_valid_rfd_certificate(
-            self.application
-        )
-
-        firearm_act_status = copied_request.get("is_covered_by_firearm_act_section_one_two_or_five", "")
-        selected_section = copied_request.get("firearms_act_section", "")
-
-        self.covered_by_firearms_act = firearm_act_status == "Yes"
-        self.certificate_not_required = firearm_act_status == "No" or firearm_act_status == "Unsure"
-        if is_rfd and self.covered_by_firearms_act:
-            selected_section = "firearms_act_section5"
-
-        show_serial_numbers_form = True
-        if copied_request.get("has_identification_markings") == "False":
-            show_serial_numbers_form = False
-
-        if firearm_act_status == "Yes":
-            self.show_section_upload_form = is_firearm_certificate_needed(
-                application=self.application, selected_section=selected_section
+        if step == AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS:
+            kwargs["number_of_items"] = self.get_cleaned_data_for_step(AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS).get(
+                "number_of_items", 0
             )
 
-        self.forms = add_good_form_group(
-            request=request,
-            is_pv_graded=is_pv_graded,
-            is_software_technology=is_software_technology,
-            is_firearm=is_firearm,
-            is_firearm_ammunition_or_component=is_firearm_ammunition_or_component,
-            is_firearms_accessory=is_firearms_accessory,
-            is_firearms_software_or_tech=is_firearms_software_or_tech,
-            draft_pk=self.draft_pk,
-            base_form_back_link=reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]}),
-            application=self.application,
-            show_serial_numbers_form=show_serial_numbers_form,
-            is_rfd=is_rfd,
-        )
+        if step == AddGoodFormSteps.ADD_GOODS_QUESTIONS:
+            kwargs["request"] = self.request
+            kwargs["application_pk"] = str(self.kwargs["pk"])
 
-        if self.form_pk == self.number_of_forms:
-            if self.show_section_upload_form:
-                firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.draft_pk}"
-                session_data = copied_request.dict()
-                if "control_list_entries[]" in copied_request:
-                    session_data["control_list_entries"] = copied_request.getlist("control_list_entries[]")
-                    del session_data["control_list_entries[]"]
+        if step == AddGoodFormSteps.PV_DETAILS:
+            kwargs["request"] = self.request
 
-                if "firearms_act_section" not in session_data:
-                    session_data["firearms_act_section"] = selected_section
-
-                request.session[firearms_data_id] = session_data
-
-    @property
-    def action(self):
-        current = get_form_by_pk(self.form_pk, self.forms)
-        if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
-            self.cache_rfd_certificate_details()
-        if self.form_pk == self.number_of_forms:
-            if not self.show_section_upload_form:
-                self.hide_unused_errors = False
-                return post_goods
-        return self.validate_step
-
-    def get_success_url(self):
-        if self.show_section_upload_form:
-            return reverse_lazy("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]})
-        else:
-            good = self.get_validated_data()["good"]
-            return reverse_lazy(
-                "applications:add_good_summary", kwargs={"pk": self.kwargs["pk"], "good_pk": good["id"]}
+        if step == AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION:
+            kwargs["is_rfd"] = str_to_bool(
+                self.get_cleaned_data_for_step(AddGoodFormSteps.REGISTERED_FIREARMS_DEALER).get(
+                    "is_registered_firearm_dealer"
+                )
+                or has_valid_rfd_certificate(self.application)
             )
+
+        if step == AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS:
+            kwargs["product_type"] = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE).get("type")
+
+        return kwargs
+
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        if cleaned_data is None:
+            return {}
+        return cleaned_data
+
+    def done(self, form_list, **kwargs):
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        cert_file = all_data.pop("file", None)
+
+        if not all_data.get("firearms_act_section"):
+            is_rfd = str_to_bool(all_data.get("is_registered_firearm_dealer")) or has_valid_rfd_certificate(
+                self.application
+            )
+
+            if is_rfd and str_to_bool(all_data.get("is_covered_by_firearm_act_section_one_two_or_five")):
+                all_data["firearms_act_section"] = "firearms_act_section5"
+
+        # post_goods() modifies the data dict, so pass a copy as we need it unaltered later on
+        api_resp_data, status_code = post_goods(self.request, dict(all_data))
+
+        if status_code != HTTPStatus.CREATED:
+            log.error(
+                "Error creating good - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error adding good")
+
+        if cert_file:
+            rfd_cert = {
+                "name": getattr(cert_file, "original_name", cert_file.name),
+                "s3_key": cert_file.name,
+                "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
+                "document_on_organisation": {
+                    "expiry_date": format_date(all_data, "expiry_date_"),
+                    "reference_code": all_data["reference_code"],
+                    "document_type": "rfd-certificate",
+                },
+            }
+
+            _, status_code = post_additional_document(
+                request=self.request,
+                pk=str(self.kwargs["pk"]),
+                json=rfd_cert,
+            )
+            assert status_code == HTTPStatus.CREATED
+
+        if str_to_bool(all_data.get("is_covered_by_firearm_act_section_one_two_or_five")):
+            if is_firearm_certificate_needed(
+                application=self.application, selected_section=all_data["firearms_act_section"]
+            ):
+                pk = str(self.kwargs["pk"])
+                firearms_data_id = f"post_{self.request.session['lite_api_user_id']}_{pk}"
+
+                all_data["form_pk"] = 0  # Temporary until attach-firearms-certificate is converted to Django form
+                all_data["wizard_goto_step"] = AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION
+                self.request.session[firearms_data_id] = all_data
+
+                # Don't reset the data in case a user re-enters this wizard from the 'Back' link.
+                # Note that data does get reset when a user re-enters the wizard from fresh.
+                self.storage.skip_reset()
+
+                return redirect(reverse("applications:attach-firearms-certificate", kwargs={"pk": self.kwargs["pk"]}))
+
+        return redirect(
+            reverse(
+                "applications:add_good_summary",
+                kwargs={"pk": self.kwargs["pk"], "good_pk": api_resp_data["good"]["id"]},
+            )
+        )
 
 
 class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
@@ -519,157 +634,319 @@ class AttachDocument(LoginRequiredMixin, TemplateView):
         )
 
 
-class AddGoodToApplication(LoginRequiredMixin, RegisteredFirearmDealersMixin, SectionDocumentMixin, MultiFormView):
-    STEP_RFD_UPLOAD_FORM_TITLE = "Attach your registered firearms dealer certificate"
+class AddGoodToApplicationFormSteps:
+    FIREARMS_NUMBER_OF_ITEMS = "FIREARMS_NUMBER_OF_ITEMS"
+    IDENTIFICATION_MARKINGS = "IDENTIFICATION_MARKINGS"
+    FIREARMS_CAPTURE_SERIAL_NUMBERS = "FIREARMS_CAPTURE_SERIAL_NUMBERS"
+    FIREARMS_YEAR_OF_MANUFACTURE_DETAILS = "FIREARMS_YEAR_OF_MANUFACTURE_DETAILS"
+    FIREARM_UNIT_QUANTITY_VALUE = "FIREARM_UNIT_QUANTITY_VALUE"
+    COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE = "COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE"
+    COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE = "COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE"
+    UNIT_QUANTITY_VALUE = "UNIT_QUANTITY_VALUE"
+    REGISTERED_FIREARMS_DEALER = "REGISTERED_FIREARMS_DEALER"
+    ATTACH_FIREARM_DEALER_CERTIFICATE = "ATTACH_FIREARM_DEALER_CERTIFICATE"
+    FIREARMS_ACT_CONFIRMATION = "FIREARMS_ACT_CONFIRMATION"
+
+
+def show_rfd_question(wizard):
+    is_firearm_ammunition_or_component = is_product_type("ammunition_or_component")(wizard)
+
+    return is_firearm_ammunition_or_component and not has_valid_rfd_certificate(wizard.application)
+
+
+def show_attach_rfd_question(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER)
+
+    if not cleaned_data:
+        return False
+
+    return str_to_bool(cleaned_data.get("is_registered_firearm_dealer"))
+
+
+def is_product_category(category):
+    def _is_product_category(wizard):
+        good = wizard.good
+        return good["item_category"]["key"] == category
+
+    return _is_product_category
+
+
+def is_firearm_type_in(firearm_types):
+    def _is_firearm_type_in(wizard):
+        good = wizard.good
+        firearm_type = good["firearm_details"]["type"]["key"]
+        return firearm_type in firearm_types
+
+    return _is_firearm_type_in
+
+
+def is_firearm_type_not_in(firearm_types):
+    def _is_firearm_type_not_in(wizard):
+        return not is_firearm_type_in(firearm_types)(wizard)
+
+    return _is_firearm_type_not_in
+
+
+class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, SessionWizardView):
+    template_name = "core/form-wizard.html"
+
+    file_storage = NoSaveStorage()
+
+    storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
+
+    form_list = [
+        (AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
+        (AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS, IdentificationMarkingsForm),
+        (AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS, FirearmsCaptureSerialNumbersForm),
+        (AddGoodToApplicationFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmsYearOfManufactureDetailsForm),
+        (AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE, FirearmsUnitQuantityValueForm),
+        (
+            AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE,
+            ComponentOfAFirearmUnitQuantityValueForm,
+        ),
+        (
+            AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE,
+            ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
+        ),
+        (AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE, UnitQuantityValueForm),
+        (AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER, RegisteredFirearmsDealerForm),
+        (AddGoodToApplicationFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmsDealerCertificateForm),
+        (AddGoodToApplicationFormSteps.FIREARMS_ACT_CONFIRMATION, FirearmsActConfirmationForm),
+    ]
+
+    condition_dict = {
+        AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS: compose_with_and(
+            is_preexisting(True), is_product_type("ammunition_or_component")
+        ),
+        AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS: compose_with_and(
+            is_preexisting(True), is_product_type("ammunition_or_component")
+        ),
+        AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: compose_with_and(
+            is_preexisting(True),
+            is_product_type("ammunition_or_component"),
+            show_serial_numbers_form(AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS),
+        ),
+        AddGoodToApplicationFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: compose_with_and(
+            is_preexisting(True), is_product_type("firearm")
+        ),
+        AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE: compose_with_and(
+            is_product_category(constants.PRODUCT_CATEGORY_FIREARM),
+            is_firearm_type_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES),
+            is_firearm_type_not_in([constants.FIREARM_COMPONENT, "components_for_ammunition"]),
+        ),
+        AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE: compose_with_and(
+            is_product_category(constants.PRODUCT_CATEGORY_FIREARM), is_firearm_type_in([constants.FIREARM_COMPONENT])
+        ),
+        AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE: compose_with_and(
+            is_product_category(constants.PRODUCT_CATEGORY_FIREARM), is_firearm_type_in(["components_for_ammunition"])
+        ),
+        AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE: compose_with_and(
+            is_product_category(constants.PRODUCT_CATEGORY_FIREARM),
+            is_firearm_type_not_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES),
+        ),
+        AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER: compose_with_and(
+            is_preexisting(True), show_rfd_question
+        ),
+        AddGoodToApplicationFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE: compose_with_and(
+            is_preexisting(True), show_attach_rfd_question
+        ),
+        AddGoodToApplicationFormSteps.FIREARMS_ACT_CONFIRMATION: compose_with_and(
+            is_preexisting(True), is_product_type("ammunition_or_component")
+        ),
+    }
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
 
     @cached_property
     def good(self):
-        good, _ = get_good(self.request, self.good_pk)
+        good, _ = get_good(self.request, self.kwargs["good_pk"])
         return good
 
-    @property
-    def form_pk(self):
-        return int(self.request.POST["form_pk"])
+    def get_product_type(self):
+        return self.good["firearm_details"]["type"]["key"]
 
-    @property
-    def number_of_forms(self):
-        # we require the form index of the last form in the group, not the total number
-        return len(self.forms.get_forms()) - 1
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        context["title"] = form.title
+        context["hide_step_count"] = True
+        # The back_link_url is used for the first form in the sequence. For subsequent forms,
+        # the wizard automatically generates the back link to the previous form.
+        context["back_link_url"] = reverse_lazy("applications:preexisting_good", kwargs={"pk": self.kwargs["pk"]})
+        return context
 
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.good_pk = kwargs["good_pk"]
-        self.application = get_application(self.request, self.object_pk)
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        if cleaned_data is None:
+            return {}
+        return cleaned_data
 
-        self.sub_case_type = self.application["case_type"]["sub_type"]
-        is_preexisting = str_to_bool(request.GET.get("preexisting", True))
-        show_attach_rfd = str_to_bool(request.POST.get("is_registered_firearm_dealer"))
-        is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
-        firearm_product_type = self.good["firearm_details"]["type"]["key"]
-        (
-            is_firearm,
-            is_firearm_ammunition_or_component,
-            is_firearms_accessory,
-            is_firearms_software_or_tech,
-        ) = get_firearms_subcategory(firearm_product_type)
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
 
-        self.forms = good_on_application_form_group(
-            request=request,
-            is_preexisting=is_preexisting,
-            good=self.good,
-            sub_case_type=self.sub_case_type,
-            draft_pk=self.object_pk,
-            application=self.application,
-            show_attach_rfd=show_attach_rfd,
-            relevant_firearm_act_section=request.POST.get("firearm_act_product_is_coverd_by"),
-            is_firearm=is_firearm,
-            is_firearm_ammunition_or_component=is_firearm_ammunition_or_component,
-            is_firearms_accessory=is_firearms_accessory,
-            is_firearms_software_or_tech=is_firearms_software_or_tech,
-            back_url=reverse("applications:preexisting_good", kwargs={"pk": self.object_pk}),
-            show_serial_numbers_form=True,
-            is_rfd=is_rfd,
-        )
-        self._action = validate_good_on_application
-        self.success_url = reverse_lazy(
-            "applications:attach-firearms-certificate-existing-good",
-            kwargs={"pk": self.object_pk, "good_pk": self.good_pk},
-        )
+        if step == AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS:
+            kwargs["number_of_items"] = self.get_cleaned_data_for_step(
+                AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS
+            ).get("number_of_items", 0)
 
-    @property
-    def action(self):
-        current = get_form_by_pk(self.form_pk, self.forms)
-        if current and current.title == self.STEP_RFD_UPLOAD_FORM_TITLE:
-            self.cache_rfd_certificate_details()
-        return self._action
+        if step in (
+            AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE,
+            AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE,
+            AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE,
+            AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE,
+        ):
+            kwargs["good"] = self.good
 
-    def on_submission(self, request, **kwargs):
-        is_preexisting = str_to_bool(request.GET.get("preexisting", True))
-        copied_request = request.POST.copy()
-        show_attach_rfd = str_to_bool(copied_request.get("is_registered_firearm_dealer"))
-        relevant_firearm_act_section = copied_request.get("firearm_act_product_is_coverd_by")
-        back_url = reverse("applications:preexisting_good", kwargs={"pk": self.good_pk})
+        if step == AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE:
+            kwargs["request"] = self.request
 
-        number_of_items = copied_request.get("number_of_items")
-        if self.good.get("firearm_details"):
-            self.good["firearm_details"]["number_of_items"] = number_of_items
+        if step == AddGoodToApplicationFormSteps.FIREARMS_ACT_CONFIRMATION:
+            try:
+                is_registered_firearm_dealer = self.get_cleaned_data_for_step(
+                    AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER
+                ).get("is_registered_firearm_dealer")
+            except AttributeError:
+                is_registered_firearm_dealer = False
+            kwargs["is_rfd"] = str_to_bool(is_registered_firearm_dealer or has_valid_rfd_certificate(self.application))
 
-        is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
-        selected_section = copied_request.get("firearms_act_section")
-        if is_rfd and copied_request.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
-            selected_section = "firearms_act_section5"
+        return kwargs
 
+    def get_good_on_application_data(self, form_list):
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+
+        all_data["pk"] = str(self.kwargs["pk"])
+
+        good = self.good
+        all_data["good_id"] = str(good["id"])
+
+        firearm_type = None
+        if good.get("firearm_details"):
+            if not all_data.get("number_of_items"):
+                all_data["number_of_items"] = good["firearm_details"]["number_of_items"]
+            firearm_type = good["firearm_details"]["type"]["key"]
+        all_data["type"] = firearm_type
+
+        return all_data
+
+    def should_show_section_upload_form(self, all_data, selected_section):
         show_section_upload_form = False
-        if copied_request.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+        if all_data.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
             show_section_upload_form = is_firearm_certificate_needed(
                 application=self.application, selected_section=selected_section
             )
+        return show_section_upload_form
 
-        show_serial_numbers_form = True
-        if copied_request.get("has_identification_markings") == "False":
-            show_serial_numbers_form = False
+    def get_selected_section(self, all_data):
+        show_attach_rfd = str_to_bool(all_data.get("is_registered_firearm_dealer"))
+        is_rfd = show_attach_rfd or has_valid_rfd_certificate(self.application)
+        selected_section = all_data.get("firearms_act_section")
+        if is_rfd and all_data.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+            selected_section = "firearms_act_section5"
 
-        (
-            is_firearm,
-            is_firearm_ammunition_or_component,
-            is_firearms_accessory,
-            is_firearms_software_or_tech,
-        ) = get_firearms_subcategory(copied_request.get("type"))
+        return selected_section
 
-        self.forms = good_on_application_form_group(
-            request,
-            is_preexisting,
-            self.good,
-            self.sub_case_type,
-            self.object_pk,
-            self.application,
-            show_attach_rfd,
-            relevant_firearm_act_section,
-            is_firearm=is_firearm,
-            is_firearm_ammunition_or_component=is_firearm_ammunition_or_component,
-            is_firearms_accessory=is_firearms_accessory,
-            is_firearms_software_or_tech=is_firearms_software_or_tech,
-            back_url=back_url,
-            show_serial_numbers_form=show_serial_numbers_form,
-            is_rfd=is_rfd,
+    def get_section_document(self, all_data):
+        documents = {item["document_type"]: item for item in self.application["organisation"]["documents"]}
+        good_firearms_details = self.good.get("firearm_details")
+
+        good_firearms_details_act_section = None
+        if good_firearms_details:
+            good_firearms_details_act_section = good_firearms_details.get("firearms_act_section")
+
+        firearm_section = all_data.get("firearms_act_section") or good_firearms_details_act_section
+        if firearm_section == "firearms_act_section1":
+            return documents["section-one-certificate"]
+        elif firearm_section == "firearms_act_section2":
+            return documents["section-two-certificate"]
+        elif firearm_section == "firearms_act_section5":
+            return documents["section-five-certificate"]
+
+    def done(self, form_list, **kwargs):
+        all_data = self.get_good_on_application_data(form_list)
+        cert_file = all_data.pop("file", None)
+
+        if cert_file:
+            rfd_cert = {
+                "name": getattr(cert_file, "original_name", cert_file.name),
+                "s3_key": cert_file.name,
+                "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
+                "document_on_organisation": {
+                    "expiry_date": format_date(all_data, "expiry_date_"),
+                    "reference_code": all_data["reference_code"],
+                    "document_type": "rfd-certificate",
+                },
+            }
+
+            _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert)
+            assert status_code == HTTPStatus.CREATED
+
+        selected_section = self.get_selected_section(all_data)
+        if self.should_show_section_upload_form(all_data, selected_section):
+            firearms_data_id = f"post_{self.request.session['lite_api_user_id']}_{self.kwargs['pk']}_{self.good['id']}"
+
+            if "firearms_act_section" not in all_data or not all_data.get("firearms_act_section"):
+                all_data["firearms_act_section"] = selected_section
+
+            all_data["form_pk"] = 1
+            all_data["wizard_goto_step"] = AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION
+            self.request.session[firearms_data_id] = all_data
+
+            # Don't reset the data in case a user re-enters this wizard from the 'Back' link.
+            # Note that data does get reset when a user re-enters the wizard from fresh.
+            self.storage.skip_reset()
+
+            return redirect(
+                reverse(
+                    "applications:attach-firearms-certificate-existing-good",
+                    kwargs={
+                        "pk": self.kwargs["pk"],
+                        "good_pk": self.good["id"],
+                    },
+                ),
+            )
+
+        # if firearm section 5 is selected and the organization already has a valid section 5 then use saved details
+        details = self.good["firearm_details"]
+        section = None
+        if details:
+            section = all_data.get("firearms_act_section") or details["firearms_act_section"]
+
+        if not is_firearm_certificate_needed(application=self.application, selected_section=section):
+            if section == "firearms_act_section5":
+                document = self.get_section_document(all_data)
+                expiry_date = datetime.strptime(document["expiry_date"], "%d %B %Y")
+                all_data.update(
+                    {
+                        "section_certificate_missing": details["section_certificate_missing"],
+                        "section_certificate_missing_reason": details["section_certificate_missing_reason"],
+                        "section_certificate_number": document["reference_code"],
+                        "section_certificate_date_of_expiryday": expiry_date.strftime("%d"),
+                        "section_certificate_date_of_expirymonth": expiry_date.strftime("%m"),
+                        "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y"),
+                        "firearms_certificate_uploaded": bool(details.get("section_certificate_missing_reason")),
+                    }
+                )
+
+        api_resp_data, status_code = post_good_on_application(self.request, self.application["id"], all_data)
+
+        if status_code != HTTPStatus.CREATED:
+            log.error(
+                "Error adding good to application - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error adding good")
+
+        return redirect(
+            reverse(
+                "applications:goods",
+                kwargs={
+                    "pk": self.kwargs["pk"],
+                },
+            ),
         )
-
-        # we require the form index of the last form in the group, not the total number
-        if self.form_pk == self.number_of_forms:
-            if show_section_upload_form:
-                firearms_data_id = f"post_{request.session['lite_api_user_id']}_{self.object_pk}_{self.good_pk}"
-
-                session_data = self.request.POST.copy().dict()
-                if "firearms_act_section" not in session_data:
-                    session_data["firearms_act_section"] = selected_section
-
-                request.session[firearms_data_id] = session_data
-            else:
-                self._action = post_good_on_application
-                self.success_url = reverse("applications:goods", kwargs={"pk": self.object_pk})
-
-            # if firearm section 5 is selected and the organization already has a valid section 5 then use saved details
-            details = self.good["firearm_details"]
-            section = None
-            if details:
-                section = self.request.POST.get("firearms_act_section") or details["firearms_act_section"]
-
-            if not is_firearm_certificate_needed(application=self.application, selected_section=section):
-                if section == "firearms_act_section5":
-                    document = self.get_section_document()
-                    expiry_date = datetime.strptime(document["expiry_date"], "%d %B %Y")
-                    self.request.POST = self.request.POST.copy()
-                    self.request.POST.update(
-                        {
-                            "section_certificate_missing": details["section_certificate_missing"],
-                            "section_certificate_missing_reason": details["section_certificate_missing_reason"],
-                            "section_certificate_number": document["reference_code"],
-                            "section_certificate_date_of_expiryday": expiry_date.strftime("%d"),
-                            "section_certificate_date_of_expirymonth": expiry_date.strftime("%m"),
-                            "section_certificate_date_of_expiryyear": expiry_date.strftime("%Y"),
-                            "firearms_certificate_uploaded": bool(details.get("section_certificate_missing_reason")),
-                        }
-                    )
 
 
 class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):

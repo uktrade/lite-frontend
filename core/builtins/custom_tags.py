@@ -798,6 +798,11 @@ def get(value, arg):
 
 
 @register.filter()
+def getitem(obj, name):
+    return obj[name]
+
+
+@register.filter()
 def application_type_in_list(application_type, application_types):
     types = CASE_SECTIONS[application_types]
     if isinstance(types, list):

@@ -20,7 +20,12 @@ def pytest_configure(config):
 
 
 @pytest.fixture
-def mock_exporter_user(requests_mock):
+def lite_api_user_id():
+    return "d355428a-64cb-4347-853b-afcacee15d93"
+
+
+@pytest.fixture
+def mock_exporter_user(requests_mock, lite_api_user_id):
     url = client._build_absolute_uri("/users/authenticate/")
     data = {
         "user": {
@@ -30,7 +35,7 @@ def mock_exporter_user(requests_mock):
             "last_name": "Bar",
             "status": "Active",
             "token": "foo",
-            "lite_api_user_id": "d355428a-64cb-4347-853b-afcacee15d93",
+            "lite_api_user_id": lite_api_user_id,
         }
     }
 
@@ -39,7 +44,7 @@ def mock_exporter_user(requests_mock):
 
 
 @pytest.fixture
-def mock_exporter_user_me(requests_mock):
+def mock_exporter_user_me(requests_mock, lite_api_user_id):
     url = client._build_absolute_uri("/users/me/")
     data = {
         "user": {
@@ -49,7 +54,7 @@ def mock_exporter_user_me(requests_mock):
             "last_name": "Bar",
             "status": "Active",
             "token": "foo",
-            "lite_api_user_id": "d355428a-64cb-4347-853b-afcacee15d93",
+            "lite_api_user_id": lite_api_user_id,
             "organisations": [
                 {
                     "id": "9bc26604-35ee-4383-9f58-74f8cab67443",

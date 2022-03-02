@@ -81,7 +81,10 @@ def add_identification_marking_details(firearm_details, json):
         # parent component doesnt get sent when empty unlike the remaining form fields
         firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
         firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
-        del json["no_identification_markings_details"]
+        try:
+            del json["no_identification_markings_details"]
+        except KeyError:
+            pass
 
     if "capture_serial_numbers_step" in json:
         try:
@@ -110,7 +113,7 @@ def add_firearm_details_to_data(json):
     firearm_details = add_identification_marking_details(firearm_details, json)
 
     if "firearm_year_of_manufacture_step" in json:
-        firearms_year_of_manufacture = json.pop("year_of_manufacture")
+        firearms_year_of_manufacture = json.pop("year_of_manufacture", "")
         if firearms_year_of_manufacture == "":
             firearms_year_of_manufacture = None
         firearm_details["year_of_manufacture"] = firearms_year_of_manufacture
@@ -121,10 +124,13 @@ def add_firearm_details_to_data(json):
         firearm_details["type"] = json.get("type")
         firearm_details["is_replica"] = json.get("is_replica")
         firearm_details["replica_description"] = json.get("replica_description", "")
-        del json["replica_description"]
+        try:
+            del json["replica_description"]
+        except KeyError:
+            pass
 
     if "firearm_calibre_step" in json:
-        firearm_calibre = json.pop("calibre")
+        firearm_calibre = json.pop("calibre", "")
         if firearm_calibre == "":
             firearm_calibre = None
         firearm_details["calibre"] = firearm_calibre

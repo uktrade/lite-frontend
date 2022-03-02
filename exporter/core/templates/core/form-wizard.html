@@ -3,50 +3,55 @@
 {% load crispy_forms_tags crispy_forms_gds %}
 
 {% block head %}
-	{{ wizard.form.media }}
+    {{ wizard.form.media }}
 {% endblock %}
 
 {% block content %}
-<main class="govuk-width-container">
-	<!-- Beta Banner -->
-	<div class="govuk-phase-banner">
-		<p class="govuk-phase-banner__content">
-			<strong class="govuk-tag govuk-phase-banner__content__tag">
-			beta
-			</strong>
-			<span class="govuk-phase-banner__text">
-			This is a new service – your <a class="govuk-link" href="{% url 'feedback' %}" target="_blank">feedback</a> will help us to improve it.
-			</span>
-		</p>
-	</div>
+    <main class="govuk-width-container">
+        <!-- Beta Banner -->
+        <div class="govuk-phase-banner">
+            <p class="govuk-phase-banner__content">
+                <strong class="govuk-tag govuk-phase-banner__content__tag">
+                    beta
+                </strong>
+                <span class="govuk-phase-banner__text">
+                    This is a new service - your <a class="govuk-link" href="{% url 'feedback' %}" target="_blank">feedback</a> will help us to improve it.
+                </span>
+            </p>
+        </div>
 
-	<form action="" method="post">
-		{% csrf_token %}
+        <form action="" method="post"{% if form.helper.attrs.enctype %} enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
+            {% csrf_token %}
 
-		<section aria-label="banner">
-			{% if wizard.steps.prev %}
-				<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="govuk-back-link">Previous step</button>
-			{% elif back_link_url %}
-				<a href="{{ back_link_url }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
-			{% endif %}
-		</section>
+            <section aria-label="banner">
+                {% if wizard.steps.prev %}
+                    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="govuk-back-link">{{ back_link_text|default:"Previous step" }}</button>
+                {% elif back_link_url %}
+                    <a href="{{ back_link_url }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
+                {% endif %}
+            </section>
 
-		<div class="govuk-main-wrapper " id="main-content" role="main">
-			<div class="govuk-grid-row">
-				<div class="govuk-grid-column-two-thirds">
-						<span class="govuk-caption-xl">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
-						{{ wizard.management_form }}
-						{% if wizard.form.forms %}
-								{{ wizard.form.management_form }}
-								{% for form in wizard.form.forms %}
-										{% crispy form %}
-								{% endfor %}
-						{% else %}
-								{% crispy wizard.form %}
-						{% endif %}
-				</div>
-			</div>
-		</div>
-	</form>
-</main>
+            <div class="govuk-main-wrapper " id="main-content" role="main">
+                {% include "gds/layout/error_summary.html" %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        {% if not hide_step_count %}
+                            <span class="govuk-caption-xl">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
+                        {% endif %}
+
+                        {{ wizard.management_form }}
+
+                        {% if wizard.form.forms %}
+                            {{ wizard.form.management_form }}
+                            {% for form in wizard.form.forms %}
+                                {% crispy form %}
+                            {% endfor %}
+                        {% else %}
+                            {% crispy wizard.form %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
 {% endblock %}
