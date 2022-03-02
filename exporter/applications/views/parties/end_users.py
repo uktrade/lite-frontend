@@ -28,6 +28,7 @@ from exporter.applications.services import (
     post_party_document,
     validate_party,
     delete_party,
+    get_party,
 )
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
 from exporter.core.constants import OPEN, AddPartyFormSteps
@@ -191,10 +192,10 @@ class AddPartyForm(LoginRequiredMixin, SessionWizardView):
 
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        all_data["type"] = self.party_type
         party_document = all_data.pop("party_document", None)
         party_eng_translation_document = all_data.pop("party_eng_translation_document", None)
         party_letterhead_document = all_data.pop("party_letterhead_document", None)
-        breakpoint()
 
         response, status_code = post_party(self.request, self.kwargs["pk"], dict(all_data))
 
@@ -223,7 +224,9 @@ class AddPartyForm(LoginRequiredMixin, SessionWizardView):
             data = {
                 "name": getattr(party_eng_translation_document, "original_name", party_eng_translation_document.name),
                 "s3_key": party_eng_translation_document.name,
-                "size": int(party_eng_translation_document.size // 1024) if party_eng_translation_document.size else 0,  # in kilobytes
+                "size": int(party_eng_translation_document.size // 1024)
+                if party_eng_translation_document.size
+                else 0,  # in kilobytes
             }
 
             response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
@@ -233,12 +236,32 @@ class AddPartyForm(LoginRequiredMixin, SessionWizardView):
             data = {
                 "name": getattr(party_letterhead_document, "original_name", party_letterhead_document.name),
                 "s3_key": party_letterhead_document.name,
-                "size": int(party_letterhead_document.size // 1024) if party_letterhead_document.size else 0,  # in kilobytes
+                "size": int(party_letterhead_document.size // 1024)
+                if party_letterhead_document.size
+                else 0,  # in kilobytes
             }
 
             response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
             assert status_code == HTTPStatus.CREATED
 
+        return redirect(reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id}))
+
 
 class AddEndUserForm(AddPartyForm):
+    party_type = "end_user"
+
+
+class PartySummaryForm(LoginRequiredMixin, TemplateView):
+    template_name = "applications/party-summary.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        party = get_party(self.request, kwargs["pk"], kwargs["obj_pk"])
+        return {**context, "party": party[self.party_type]}
+
+    def get_success_url(self):
+        return "#"
+
+
+class EndUserSummaryForm(PartySummaryForm):
     party_type = "end_user"

@@ -250,6 +250,7 @@ urlpatterns = [
     ),
     # End user with django forms
     path("<uuid:pk>/end-user/add2/", end_users.AddEndUserForm.as_view(), name="add_end_user2"),
+    path("<uuid:pk>/end-user/<uuid:obj_pk>/summary/", end_users.EndUserSummaryForm.as_view(), name="end_user_summary"),
 
     # Consignee
     path("<uuid:pk>/consignee/", consignees.Consignee.as_view(), name="consignee"),
