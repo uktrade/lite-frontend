@@ -83,3 +83,17 @@ class FinalAdvicePage(BaseAdvicePage):
 
     def click_clear_advice(self):
         self.driver.find_element_by_id(self.BUTTON_CLEAR_ADVICE_ID).click()
+
+
+class RecommendationsPage(BasePage):
+    def click_make_recommendation(self):
+        self.driver.find_element_by_xpath("//a[contains(text(), 'Make recommendation')]").click()
+
+    def click_approve_all(self):
+        self.driver.find_element_by_xpath("//input[@type='radio' and @value='approve_all']").click()
+
+    def select_country(self, country):
+        self.driver.find_element_by_xpath(f"//input[@type='checkbox' and @value='{country}']").click()
+
+    def enter_reasons_for_approving(self, reasons):
+        self.driver.find_element_by_xpath("//textarea[@name='approval_reasons']").send_keys(reasons)
