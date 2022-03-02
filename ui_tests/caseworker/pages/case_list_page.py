@@ -98,6 +98,9 @@ class CaseListPage(BasePage):
                 page_number -= 1
                 is_present = len(self.driver.find_elements_by_link_text(id))
 
+    def click_on_case(self, case_id):
+        self.driver.find_element_by_id(f"case-{case_id}").click()
+
     def click_on_case_checkbox(self, case_id):
         self.driver.find_element_by_css_selector(self.CHECKBOX_CASE + case_id + "']").click()
 
