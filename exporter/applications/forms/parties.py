@@ -4,6 +4,7 @@ from django import forms
 from django.urls import reverse_lazy
 
 from core.forms.layouts import ConditionalRadios, ConditionalQuestion
+from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
@@ -231,10 +232,19 @@ class PartyAddressForm(forms.Form):
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}), error_messages={"required": "Enter an address"}
     )
-    country = forms.CharField(error_messages={"required": "Select the country"})
+    country = forms.ChoiceField(
+        choices=[("", "Select a country")], error_messages={"required": "Select the country"}
+    )  # populated in __init__
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
+
+        self.fields["country"].widget = Autocomplete(attrs={"id": "country-autocomplete", "nonce": request.csp_nonce})
+
+        countries = get_countries(request, False, ["GB"])
+        country_choices = [(country["id"], country["name"]) for country in countries]
+        self.fields["country"].choices += country_choices
 
         self.helper = FormHelper()
         self.helper.layout = Layout(

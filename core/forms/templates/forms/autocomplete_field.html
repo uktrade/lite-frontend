@@ -6,8 +6,8 @@
   </optgroup>{% endif %}{% endfor %}
 </select>
 
-<script type="text/javascript" src="{% static '/javascripts/accessible-autocomplete.min.js' %}" nonce="{{ request.csp_nonce }}"></script>
-<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+<script type="text/javascript" src="{% static '/javascripts/accessible-autocomplete.min.js' %}" nonce="{{ widget.attrs.nonce }}"></script>
+<script type="text/javascript" nonce="{{ widget.attrs.nonce }}">
 	$(document).ready(function() {
 		var selectElement = document.getElementById('{{ widget.attrs.id }}');
 

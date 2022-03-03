@@ -202,8 +202,18 @@ class AddPartyView(LoginRequiredMixin, SessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
+        context["title"] = form.title
         context["hide_step_count"] = True
+        context["back_link_text"] = "Back"
         return context
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == AddPartyFormSteps.PARTY_ADDRESS:
+            kwargs["request"] = self.request
+
+        return kwargs
 
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
