@@ -281,3 +281,14 @@ class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
 
 class EndUserSummaryView(PartySummaryView):
     party_type = "end_user"
+
+
+class RemoveEndUserView(LoginRequiredMixin, PartyContextMixin, TemplateView):
+    party_type = "end_user"
+
+    def get(self, request, *args, **kwargs):
+        status_code = delete_party(self.request, kwargs["pk"], kwargs["obj_pk"])
+        if status_code != HTTPStatus.OK:
+            return error_page(request, "Error deleting party")
+
+        return redirect(reverse("applications:task_list", kwargs={"pk": kwargs["pk"]}))
