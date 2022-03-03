@@ -237,6 +237,7 @@ class AddPartyView(LoginRequiredMixin, SessionWizardView):
 
         if party_document:
             data = {
+                "type": "end_user_undertaking_document",
                 "name": getattr(party_document, "original_name", party_document.name),
                 "s3_key": party_document.name,
                 "size": int(party_document.size // 1024) if party_document.size else 0,  # in kilobytes
@@ -247,6 +248,7 @@ class AddPartyView(LoginRequiredMixin, SessionWizardView):
 
         if party_eng_translation_document:
             data = {
+                "type": "end_user_english_translation_document",
                 "name": getattr(party_eng_translation_document, "original_name", party_eng_translation_document.name),
                 "s3_key": party_eng_translation_document.name,
                 "size": int(party_eng_translation_document.size // 1024)
@@ -259,6 +261,7 @@ class AddPartyView(LoginRequiredMixin, SessionWizardView):
 
         if party_letterhead_document:
             data = {
+                "type": "end_user_company_letterhead_document",
                 "name": getattr(party_letterhead_document, "original_name", party_letterhead_document.name),
                 "s3_key": party_letterhead_document.name,
                 "size": int(party_letterhead_document.size // 1024)
