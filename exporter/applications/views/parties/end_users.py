@@ -200,6 +200,11 @@ class AddPartyForm(LoginRequiredMixin, SessionWizardView):
             return {}
         return cleaned_data
 
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        context["hide_step_count"] = True
+        return context
+
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
         all_data["type"] = self.party_type
