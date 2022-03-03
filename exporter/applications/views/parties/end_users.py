@@ -163,7 +163,7 @@ class PartyReuseView(LoginRequiredMixin, FormView):
             return reverse("applications:add_end_user2", kwargs=self.kwargs)
 
 
-class AddPartyForm(LoginRequiredMixin, SessionWizardView):
+class AddPartyView(LoginRequiredMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
 
     file_storage = NoSaveStorage()
@@ -262,21 +262,22 @@ class AddPartyForm(LoginRequiredMixin, SessionWizardView):
         return redirect(reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id}))
 
 
-class AddEndUserForm(AddPartyForm):
+class AddEndUserView(AddPartyView):
     party_type = "end_user"
 
 
-class PartySummaryForm(LoginRequiredMixin, TemplateView):
-    template_name = "applications/party-summary.html"
-
+class PartyContextMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         party = get_party(self.request, kwargs["pk"], kwargs["obj_pk"])
         return {**context, "party": party[self.party_type]}
 
+class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
+    template_name = "applications/party-summary.html"
+
     def get_success_url(self):
         return "#"
 
 
-class EndUserSummaryForm(PartySummaryForm):
+class EndUserSummaryView(PartySummaryView):
     party_type = "end_user"

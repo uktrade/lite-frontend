@@ -265,7 +265,7 @@ class PartySignatoryNameForm(forms.Form):
 
 
 class PartyDocuments(forms.Form):
-    title = "End-user documents"
+    title = "Do you have an end-user document?"
     text_p1 = """
         You will be asked to upload either an <a class="govuk-link" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form"> end-user undertaking (EUU)</a> or
          <a class="govuk-link" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">stockist undertaking (SU)</a> completed by the end-user or stockist.

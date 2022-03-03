@@ -9,12 +9,155 @@
     
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-xl">Party summary</h1>
+                <h1 class="govuk-heading-xl">End-user summary</h1>
 
-                    {{ party }}
-                </div>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Select the type of end-user
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ party.sub_type.value }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="#">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                        </dd>
+                    </div>
+                </dl>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            End-user name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ party.name }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="#">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                        </dd>
+                    </div>
+                </dl>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            End-user website (optional)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ party.website }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="#">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                        </dd>
+                    </div>
+                </dl>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            End-user address
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ party.address }} {{ party.country.name }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="#">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                        </dd>
+                    </div>
+                </dl>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Signatory name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ party.signatory_name_euu }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="#">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                        </dd>
+                    </div>
+                </dl>
+
+                {% for document in party.documents %}
+                    {% if document.type == "end_user_undertaking_document" %}
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Upload an end-user document
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ document.name }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="#">
+                                    Change<span class="govuk-visually-hidden"> name</span>
+                                </a>
+                                </dd>
+                            </div>
+                        </dl>
+                    {% endif %}
+
+                    {% if document.type == "end_user_english_translation_document" %}
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Upload an English translation of the end-user document
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ document.name }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="#">
+                                    Change<span class="govuk-visually-hidden"> name</span>
+                                </a>
+                                </dd>
+                            </div>
+                        </dl>
+                    {% endif %}
+
+                    {% if document.type == "end_user_company_letterhead_document" %}
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Upload a document on company letterhead
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ document.name }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="#">
+                                    Change<span class="govuk-visually-hidden"> name</span>
+                                </a>
+                                </dd>
+                            </div>
+                        </dl>
+                    {% endif %}
+
+                {% endfor %}
             </div>
+
+            <div class="govuk-grid-row">
+                <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' pk %}">
+                    Submit
+                </a>
+                <a draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'applications:remove_end_user2' pk obj_pk %}">
+                    Remove end-user
+                </a>
+            </div>
+
         </main>
   </div>
 {% endblock %}

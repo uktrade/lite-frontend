@@ -838,7 +838,7 @@ def get_parties_status_optional_documents(parties):
             if not party:
                 return NOT_STARTED
     else:
-        if not parties["document"]:
+        if not parties["documents"]:
             return IN_PROGRESS
 
     return DONE
