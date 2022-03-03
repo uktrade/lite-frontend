@@ -2,6 +2,7 @@ import logging
 from http import HTTPStatus
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -10,6 +11,7 @@ from django.views.generic import FormView, TemplateView
 from formtools.wizard.views import SessionWizardView
 
 from core.auth.views import LoginRequiredMixin
+from core.constants import CaseStatusEnum
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
@@ -1181,12 +1183,28 @@ class UpdateSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
     form_class = UpdateSerialNumbersForm
 
     @cached_property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    @cached_property
     def firearm_details(self):
         return self.good["firearm_details"]
 
     @cached_property
     def good(self):
         return get_good(self.request, self.object_id, full_detail=True)[0]
+
+    def dispatch(self, *args, **kwargs):
+        if self.application["status"]["key"] not in [
+            CaseStatusEnum.SUBMITTED,
+            CaseStatusEnum.FINALISED,
+        ]:
+            raise PermissionDenied()
+
+        if self.good["status"]["key"] not in ["submitted"]:
+            raise PermissionDenied()
+
+        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

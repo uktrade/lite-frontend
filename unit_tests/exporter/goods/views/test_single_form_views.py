@@ -3,6 +3,8 @@ from django.urls import reverse
 
 import pytest
 
+from core.constants import CaseStatusEnum
+
 
 @pytest.fixture
 def good_pk():
@@ -100,10 +102,22 @@ def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
     application_url = reverse("applications:application", kwargs={"pk": pk})
 
     requests_mock.get(
+        f"/applications/{pk}/",
+        json={
+            "status": {
+                "key": CaseStatusEnum.SUBMITTED,
+            },
+        },
+    )
+
+    requests_mock.get(
         f"/goods/{good_pk}/?pk={good_pk}&full_detail=True",
         json={
             "good": {
                 "name": good_name,
+                "status": {
+                    "key": "submitted",
+                },
                 "firearm_details": {
                     "serial_numbers": serial_numbers,
                     "number_of_items": 2,
@@ -128,6 +142,72 @@ def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
     )
     assert response.status_code == 302
     assert response.url == application_url
+
+
+def get_update_serial_number_permissions_parameters():
+    allowed_application_permissions = [
+        CaseStatusEnum.SUBMITTED,
+        CaseStatusEnum.FINALISED,
+    ]
+    all_permissions = CaseStatusEnum.all()
+    denied_application_permissions = list(set(all_permissions) - set(allowed_application_permissions))
+
+    parameters = []
+
+    for perm in allowed_application_permissions:
+        parameters += [
+            (perm, "draft", 400),
+            (perm, "submitted", 200),
+        ]
+
+    for perm in denied_application_permissions:
+        parameters += [
+            (perm, "draft", 400),
+            (perm, "submitted", 400),
+        ]
+
+    return parameters
+
+
+@pytest.mark.parametrize(
+    "application_status, good_status, expected_status_code",
+    get_update_serial_number_permissions_parameters(),
+)
+def test_update_serial_numbers_view_permissions(
+    authorized_client, requests_mock, good_pk, application_status, good_status, expected_status_code
+):
+    pk = str(uuid.uuid4())
+    url = reverse("applications:update_serial_numbers", kwargs={"pk": pk, "good_pk": good_pk})
+    good_name = "Test good"
+    serial_numbers = ["11111", "22222"]
+
+    requests_mock.get(
+        f"/applications/{pk}/",
+        json={
+            "status": {
+                "key": application_status,
+            },
+        },
+    )
+
+    requests_mock.get(
+        f"/goods/{good_pk}/?pk={good_pk}&full_detail=True",
+        json={
+            "good": {
+                "name": good_name,
+                "status": {
+                    "key": good_status,
+                },
+                "firearm_details": {
+                    "serial_numbers": serial_numbers,
+                    "number_of_items": 2,
+                },
+            },
+        },
+    )
+
+    response = authorized_client.get(url)
+    response.status_code == expected_status_code
 
 
 def test_good_military_use_view(authorized_client, requests_mock, good_pk):
