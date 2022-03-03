@@ -55,6 +55,7 @@ from exporter.goods.forms import (
     PvDetailsForm,
     RegisteredFirearmsDealerForm,
     SoftwareTechnologyDetailsForm,
+    UpdateSerialNumbersForm,
     attach_documents_form,
     build_firearm_create_back,
     check_document_available_form,
@@ -1174,3 +1175,40 @@ class DeleteDocument(LoginRequiredMixin, TemplateView):
             )
         else:
             return redirect(reverse("goods:good", kwargs={"pk": good_id}))
+
+
+class UpdateSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
+    form_class = UpdateSerialNumbersForm
+
+    @cached_property
+    def firearm_details(self):
+        return self.good["firearm_details"]
+
+    @cached_property
+    def good(self):
+        return get_good(self.request, self.object_id, full_detail=True)[0]
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        kwargs["number_of_items"] = self.firearm_details["number_of_items"]
+        kwargs["product_name"] = self.good["name"]
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        initial["serial_numbers"] = self.firearm_details["serial_numbers"]
+
+        return initial
+
+    def get_success_url(self):
+        return reverse("applications:application", kwargs={"pk": self.application_id})
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["back_link_url"] = self.get_success_url()
+
+        return ctx

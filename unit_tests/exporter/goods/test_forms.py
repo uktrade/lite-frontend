@@ -216,22 +216,59 @@ def test_identification_markings_form(data, valid, errors):
 
 
 @pytest.mark.parametrize(
-    "data, valid, errors",
+    "data, valid, cleaned_data, errors",
     (
-        ({"serial_numbers_0": "abc", "serial_numbers_1": "def", "serial_numbers_2": "ghi"}, True, {}),
+        (
+            {"serial_numbers_0": "abc", "serial_numbers_1": "def", "serial_numbers_2": "ghi"},
+            True,
+            {
+                "serial_number_input_0": "abc",
+                "serial_number_input_1": "def",
+                "serial_number_input_2": "ghi",
+                "capture_serial_numbers_step": True,
+            },
+            {},
+        ),
         (
             {"serial_numbers_0": "", "serial_numbers_1": "", "serial_numbers_2": ""},
             False,
+            {"capture_serial_numbers_step": True},
             {"serial_numbers": ["Enter at least one serial number"]},
         ),
     ),
 )
-def test_firearms_capture_serial_numbers_form(data, valid, errors):
+def test_firearms_capture_serial_numbers_form(data, valid, cleaned_data, errors):
     form = forms.FirearmsCaptureSerialNumbersForm(data=data, number_of_items=3)
 
     assert form.is_valid() == valid
-    assert form.cleaned_data["capture_serial_numbers_step"]
+    assert form.cleaned_data == cleaned_data
     assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, cleaned_data, errors",
+    (
+        (
+            {"serial_numbers_0": "abc", "serial_numbers_1": "def", "serial_numbers_2": "ghi"},
+            True,
+            {"serial_number_input_0": "abc", "serial_number_input_1": "def", "serial_number_input_2": "ghi"},
+            {},
+        ),
+        (
+            {"serial_numbers_0": "", "serial_numbers_1": "", "serial_numbers_2": ""},
+            False,
+            {},
+            {"serial_numbers": ["Enter at least one serial number"]},
+        ),
+    ),
+)
+def test_update_serial_numbers_form(data, valid, cleaned_data, errors):
+    form = forms.UpdateSerialNumbersForm(data=data, number_of_items=3, product_name="test product name")
+
+    assert form.is_valid() == valid
+    assert form.cleaned_data == cleaned_data
+    assert form.errors == errors
+    assert form.title == "Enter the serial numbers for 'test product name'"
 
 
 @pytest.mark.parametrize(

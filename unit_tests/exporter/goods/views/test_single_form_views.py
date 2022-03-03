@@ -92,6 +92,44 @@ def test_edit_serial_numbers_view(authorized_client, requests_mock, good_pk):
     assert data["serial_number_input_1"] == "ghijkl"
 
 
+def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
+    pk = str(uuid.uuid4())
+    url = reverse("applications:update_serial_numbers", kwargs={"pk": pk, "good_pk": good_pk})
+    good_name = "Test good"
+    serial_numbers = ["11111", "22222"]
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+
+    requests_mock.get(
+        f"/goods/{good_pk}/?pk={good_pk}&full_detail=True",
+        json={
+            "good": {
+                "name": good_name,
+                "firearm_details": {
+                    "serial_numbers": serial_numbers,
+                    "number_of_items": 2,
+                },
+            },
+        },
+    )
+
+    response = authorized_client.get(url)
+    ctx = response.context
+    form = ctx["form"]
+    assert form.initial == {"serial_numbers": serial_numbers}
+    assert form.title == f"Enter the serial numbers for '{good_name}'"
+    assert ctx["back_link_url"] == application_url
+
+    response = authorized_client.post(
+        url,
+        data={
+            "serial_numbers_0": "abcdef",
+            "serial_numbers_1": "ghijkl",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == application_url
+
+
 def test_good_military_use_view(authorized_client, requests_mock, good_pk):
     url = reverse("goods:good_military_use", kwargs={"pk": good_pk})
     requests_mock.get(
