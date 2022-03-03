@@ -1113,17 +1113,14 @@ class SoftwareTechnologyDetailsForm(forms.Form):
     software_or_technology_details = forms.CharField(
         label="",
         widget=forms.Textarea,
-        error_messages={
-            "required": "Enter the purpose of the technology",
-        },
     )
 
     def __init__(self, *args, **kwargs):
         product_type = kwargs.pop("product_type")
         super().__init__(*args, **kwargs)
 
-        category_text = get_category_display_string(product_type)
-        self.title = CreateGoodForm.TechnologySoftware.TITLE + category_text
+        self.category_text = get_category_display_string(product_type)
+        self.title = CreateGoodForm.TechnologySoftware.TITLE + self.category_text
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -1131,6 +1128,15 @@ class SoftwareTechnologyDetailsForm(forms.Form):
             "software_or_technology_details",
             Submit("submit", "Save"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if not cleaned_data.get("software_or_technology_details"):
+            self.errors.clear()
+            self.add_error("software_or_technology_details", f"Enter the purpose of the {self.category_text}")
+
+        return cleaned_data
 
 
 class ProductComponentForm(forms.Form):
@@ -1196,15 +1202,26 @@ class ProductComponentForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        if cleaned_data.get("is_component") == "yes_designed" and not cleaned_data.get("designed_details"):
-            self.add_error("designed_details", "Enter the details of the hardware")
-        elif cleaned_data.get("is_component") == "yes_modified" and not cleaned_data.get("modified_details"):
-            self.add_error("modified_details", "Enter the details of the modifications and the hardware")
-        elif cleaned_data.get("is_component") == "yes_general" and not cleaned_data.get("general_details"):
-            self.add_error(
+        component_details = (
+            ("yes_designed", "designed_details", "Enter the details of the hardware"),
+            ("yes_modified", "modified_details", "Enter the details of the modifications and the hardware"),
+            (
+                "yes_general",
                 "general_details",
                 "Enter the details of the types of applications the component is intended to be used in",
-            )
+            ),
+        )
+
+        max_chars = 2000
+
+        for is_component, details_field, empty_field_msg in component_details:
+            details = cleaned_data.get(details_field, "")
+
+            if cleaned_data.get("is_component") == is_component and not details:
+                self.add_error(details_field, empty_field_msg)
+
+            if len(details) > max_chars:
+                self.add_error(details_field, f"Ensure this field has no more than {max_chars} characters")
 
         return cleaned_data
 
