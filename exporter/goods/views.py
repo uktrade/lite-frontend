@@ -79,6 +79,7 @@ from exporter.goods.services import (
     edit_good,
     edit_good_details,
     edit_good_firearm_details,
+    edit_good_firearm_details_serial_numbers,
     edit_good_pv_grading,
     get_good,
     get_good_details,
@@ -1230,3 +1231,33 @@ class UpdateSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
         ctx["back_link_url"] = self.get_success_url()
 
         return ctx
+
+    def generate_serial_numbers_data(self, cleaned_data):
+        def sort_key(key):
+            return int(key.replace("serial_number_input_", ""))
+
+        keys = [key for key in cleaned_data.keys() if key.startswith("serial_number_input_")]
+        sorted_keys = sorted(keys, key=sort_key)
+        data = [cleaned_data[k] for k in sorted_keys]
+
+        return data
+
+    def form_valid(self, form):
+        serial_numbers = self.generate_serial_numbers_data(form.cleaned_data)
+
+        api_resp_data, status_code = edit_good_firearm_details_serial_numbers(
+            self.request,
+            self.object_id,
+            {"serial_numbers": serial_numbers},
+        )
+
+        if status_code != HTTPStatus.OK:
+            log.error(
+                "Error updating serial numbers - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error updating serial numbers")
+
+        return super().form_valid(form)

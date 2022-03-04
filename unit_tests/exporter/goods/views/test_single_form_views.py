@@ -3,6 +3,8 @@ from django.urls import reverse
 
 import pytest
 
+from pytest_django.asserts import assertContains
+
 from core.constants import CaseStatusEnum
 
 
@@ -133,15 +135,26 @@ def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
     assert form.title == f"Enter the serial numbers for '{good_name}'"
     assert ctx["back_link_url"] == application_url
 
+    update_serial_numbers = ["abcdef", "ghijkl"]
+
+    mock_put = requests_mock.put(
+        f"/goods/{good_pk}/update-serial-numbers/",
+        json={
+            "serial_numbers": update_serial_numbers,
+        },
+    )
+
     response = authorized_client.post(
         url,
         data={
-            "serial_numbers_0": "abcdef",
-            "serial_numbers_1": "ghijkl",
+            "serial_numbers_0": update_serial_numbers[0],
+            "serial_numbers_1": update_serial_numbers[1],
         },
     )
     assert response.status_code == 302
     assert response.url == application_url
+    assert mock_put.called_once
+    assert mock_put.last_request.json() == {"serial_numbers": ["abcdef", "ghijkl"]}
 
 
 def get_update_serial_number_permissions_parameters():
@@ -167,6 +180,59 @@ def get_update_serial_number_permissions_parameters():
         ]
 
     return parameters
+
+
+def test_update_serial_numbers_view_error_response(authorized_client, requests_mock, good_pk):
+    pk = str(uuid.uuid4())
+    url = reverse("applications:update_serial_numbers", kwargs={"pk": pk, "good_pk": good_pk})
+    good_name = "Test good"
+    serial_numbers = ["11111", "22222"]
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+
+    requests_mock.get(
+        f"/applications/{pk}/",
+        json={
+            "status": {
+                "key": CaseStatusEnum.SUBMITTED,
+            },
+        },
+    )
+
+    requests_mock.get(
+        f"/goods/{good_pk}/?pk={good_pk}&full_detail=True",
+        json={
+            "good": {
+                "name": good_name,
+                "status": {
+                    "key": "submitted",
+                },
+                "firearm_details": {
+                    "serial_numbers": serial_numbers,
+                    "number_of_items": 2,
+                },
+            },
+        },
+    )
+
+    update_serial_numbers = ["abcdef", "ghijkl"]
+
+    requests_mock.put(
+        f"/goods/{good_pk}/update-serial-numbers/",
+        json={
+            "errors": {"serial_numbers": "Invalid serial numbers"},
+        },
+        status_code=400,
+    )
+
+    response = authorized_client.post(
+        url,
+        data={
+            "serial_numbers_0": update_serial_numbers[0],
+            "serial_numbers_1": update_serial_numbers[1],
+        },
+    )
+    assert response.status_code == 200
+    assertContains(response, "Unexpected error updating serial numbers")
 
 
 @pytest.mark.parametrize(
