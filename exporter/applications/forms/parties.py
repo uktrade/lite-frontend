@@ -1,3 +1,4 @@
+from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
@@ -165,13 +166,15 @@ class PartyReuseForm(forms.Form):
 class PartySubTypeSelectForm(forms.Form):
     title = "Select the type of end user"
 
+    CHOICES = (
+        Choice("government", PartyForm.Options.GOVERNMENT),
+        Choice("commercial", PartyForm.Options.COMMERCIAL),
+        Choice("individual", PartyForm.Options.INDIVIDUAL, divider="or"),
+        Choice("other", PartyForm.Options.OTHER),
+    )
+
     sub_type = forms.ChoiceField(
-        choices=(
-            ("government", PartyForm.Options.GOVERNMENT),
-            ("commercial", PartyForm.Options.COMMERCIAL),
-            ("individual", PartyForm.Options.INDIVIDUAL),
-            ("other", PartyForm.Options.OTHER),
-        ),
+        choices=CHOICES,
         label="",
         widget=forms.RadioSelect,
         error_messages={
