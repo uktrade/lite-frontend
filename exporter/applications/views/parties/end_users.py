@@ -21,8 +21,8 @@ from exporter.applications.forms.parties import (
     PartyCompanyLetterheadDocumentUploadForm,
 )
 from exporter.applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
-from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
+    copy_party,
     get_application,
     post_party,
     post_party_document,
@@ -216,6 +216,9 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
 
         return kwargs
 
+    def get_success_url(self, party_id):
+        raise NotImplementedError("Subclasses must implement get_success_url()")
+
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
         all_data["type"] = self.party_type
@@ -273,11 +276,26 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
             response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
             assert status_code == HTTPStatus.CREATED
 
-        return redirect(reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id}))
+        return redirect(self.get_success_url(party_id))
 
 
 class SetEndUserView(SetPartyView):
     party_type = "end_user"
+
+    def get_success_url(self, party_id):
+        reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
+
+
+class CopyEndUserView(SetEndUserView):
+    def get_form_initial(self, step):
+        initial = copy_party(request=self.request, pk=str(self.kwargs["pk"]), party_pk=str(self.kwargs["obj_pk"]))
+        return initial
+
+    def get_success_url(self, party_id):
+        if self.application.sub_type == OPEN:
+            return reverse("applications:end_user", kwargs={"pk": self.application_id})
+
+        return reverse("applications:end_user_attach_document", kwargs={"pk": self.application_id, "obj_pk": party_id})
 
 
 class PartyContextMixin:
@@ -302,7 +320,6 @@ class PartyContextMixin:
         return {**context, "party": self.party}
 
 
-
 class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
     template_name = "applications/party-summary.html"
 
@@ -322,7 +339,6 @@ class RemoveEndUserView(LoginRequiredMixin, PartyContextMixin, TemplateView):
 
 
 class PartyEditMixin(LoginRequiredMixin, PartyContextMixin, FormView):
-
     def form_valid(self, form):
         update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
         return super().form_valid(form)
@@ -354,7 +370,6 @@ class PartyWebsiteEditView(PartyEditMixin):
 
 class PartyAddressEditView(PartyEditMixin):
     form_class = PartyAddressForm
-
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
