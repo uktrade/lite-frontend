@@ -29,6 +29,7 @@ from exporter.applications.services import (
     validate_party,
     delete_party,
     get_party,
+    update_party,
 )
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
 from exporter.core.constants import OPEN, AddPartyFormSteps
@@ -280,20 +281,32 @@ class AddEndUserView(AddPartyView):
 
 
 class PartyContextMixin:
+    template_name = "core/form.html"
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def party_id(self):
+        return str(self.kwargs["obj_pk"])
+
+    @property
+    def party(self):
+        party = get_party(self.request, self.kwargs["pk"], self.kwargs["obj_pk"])
+        party_type = list(party.keys())[0]
+        return party[party_type]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        party = get_party(self.request, kwargs["pk"], kwargs["obj_pk"])
-        return {**context, "party": party[self.party_type]}
+        return {**context, "party": self.party}
+
 
 class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
     template_name = "applications/party-summary.html"
 
     def get_success_url(self):
         return "#"
-
-
-class EndUserSummaryView(PartySummaryView):
-    party_type = "end_user"
 
 
 class RemoveEndUserView(LoginRequiredMixin, PartyContextMixin, TemplateView):
@@ -305,3 +318,54 @@ class RemoveEndUserView(LoginRequiredMixin, PartyContextMixin, TemplateView):
             return error_page(request, "Error deleting party")
 
         return redirect(reverse("applications:task_list", kwargs={"pk": kwargs["pk"]}))
+
+
+class PartyEditMixin(LoginRequiredMixin, PartyContextMixin, FormView):
+
+    def form_valid(self, form):
+        update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:end_user_summary", kwargs=self.kwargs)
+
+
+class PartySubTypeEditView(PartyEditMixin):
+    form_class = PartySubTypeSelectForm
+
+    def get_initial(self):
+        return {"sub_type": self.party["sub_type"]["key"], "sub_type_other": self.party["sub_type_other"]}
+
+
+class PartyNameEditView(PartyEditMixin):
+    form_class = PartyNameForm
+
+    def get_initial(self):
+        return {"name": self.party["name"]}
+
+
+class PartyWebsiteEditView(PartyEditMixin):
+    form_class = PartyWebsiteForm
+
+    def get_initial(self):
+        return {"website": self.party["website"]}
+
+
+class PartyAddressEditView(PartyEditMixin):
+    form_class = PartyAddressForm
+
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+    def get_initial(self):
+        return {"address": self.party["address"], "country": self.party["country"]["id"]}
+
+
+class PartySignatoryEditView(PartyEditMixin):
+    form_class = PartySignatoryNameForm
+
+    def get_initial(self):
+        return {"signatory_name_euu": self.party["signatory_name_euu"]}

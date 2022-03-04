@@ -198,7 +198,6 @@ def post_party(request, pk, json):
     data = client.post(request, f"/applications/{pk}/parties/", json)
     return data.json(), data.status_code
 
-
 def copy_party(request, pk, party_pk):
     return client.get(request, f"/applications/{pk}/parties/{party_pk}/copy/").json()["party"]
 
@@ -209,6 +208,11 @@ def delete_party(request, application_pk, obj_pk=None):
 
 def get_party(request, application_pk, pk):
     return client.get(request, f"/applications/{application_pk}/parties/{pk}/").json()
+
+
+def update_party(request, application_pk, pk, json):
+    data = client.put(request, f"/applications/{application_pk}/parties/{pk}/", json)
+    return data.json(), data.status_code
 
 
 def delete_party_document(request, application_pk, obj_pk):

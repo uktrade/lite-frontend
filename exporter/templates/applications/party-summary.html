@@ -20,7 +20,7 @@
                             {{ party.sub_type.value }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="#">
+                        <a class="govuk-link" href="{% url 'applications:end_user_edit_sub_type' pk obj_pk %}">
                             Change<span class="govuk-visually-hidden"> name</span>
                         </a>
                         </dd>
@@ -36,8 +36,8 @@
                             {{ party.name }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="#">
-                            Change<span class="govuk-visually-hidden"> name</span>
+                            <a class="govuk-link" href="{% url 'applications:end_user_edit_name' pk obj_pk %}">
+                                Change<span class="govuk-visually-hidden"> name</span>
                         </a>
                         </dd>
                     </div>
@@ -52,8 +52,8 @@
                             {{ party.website }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="#">
-                            Change<span class="govuk-visually-hidden"> name</span>
+                            <a class="govuk-link" href="{% url 'applications:end_user_edit_website' pk obj_pk %}">
+                                Change<span class="govuk-visually-hidden"> name</span>
                         </a>
                         </dd>
                     </div>
@@ -68,8 +68,8 @@
                             {{ party.address }} {{ party.country.name }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="#">
-                            Change<span class="govuk-visually-hidden"> name</span>
+                            <a class="govuk-link" href="{% url 'applications:end_user_edit_address' pk obj_pk %}">
+                                Change<span class="govuk-visually-hidden"> name</span>
                         </a>
                         </dd>
                     </div>
@@ -84,8 +84,8 @@
                             {{ party.signatory_name_euu }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="#">
-                            Change<span class="govuk-visually-hidden"> name</span>
+                            <a class="govuk-link" href="{% url 'applications:end_user_edit_signatory' pk obj_pk %}">
+                                Change<span class="govuk-visually-hidden"> name</span>
                         </a>
                         </dd>
                     </div>
