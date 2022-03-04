@@ -32,7 +32,7 @@ from exporter.applications.services import (
     update_party,
 )
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
-from exporter.core.constants import OPEN, AddPartyFormSteps
+from exporter.core.constants import OPEN, SetPartyFormSteps
 from exporter.core.helpers import (
     NoSaveStorage,
     is_end_user_document_available,
@@ -164,28 +164,28 @@ class PartyReuseView(LoginRequiredMixin, FormView):
             return reverse("applications:add_end_user2", kwargs=self.kwargs)
 
 
-class AddPartyView(LoginRequiredMixin, SessionWizardView):
+class SetPartyView(LoginRequiredMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
 
     file_storage = NoSaveStorage()
 
     form_list = [
-        (AddPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
-        (AddPartyFormSteps.PARTY_NAME, PartyNameForm),
-        (AddPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
-        (AddPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
-        (AddPartyFormSteps.PARTY_SIGNATORY_NAME, PartySignatoryNameForm),
-        (AddPartyFormSteps.PARTY_DOCUMENTS, PartyDocuments),
-        (AddPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
-        (AddPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
-        (AddPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, PartyCompanyLetterheadDocumentUploadForm),
+        (SetPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
+        (SetPartyFormSteps.PARTY_NAME, PartyNameForm),
+        (SetPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
+        (SetPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
+        (SetPartyFormSteps.PARTY_SIGNATORY_NAME, PartySignatoryNameForm),
+        (SetPartyFormSteps.PARTY_DOCUMENTS, PartyDocuments),
+        (SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
+        (SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
+        (SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, PartyCompanyLetterheadDocumentUploadForm),
     ]
 
     condition_dict = {
-        AddPartyFormSteps.PARTY_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(wizard),
-        AddPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD: lambda wizard: is_end_user_document_available(wizard)
+        SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(wizard),
+        SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD: lambda wizard: is_end_user_document_available(wizard)
         and not is_document_in_english(wizard),
-        AddPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(
+        SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(
             wizard
         )
         and is_document_on_letterhead(wizard),
@@ -211,7 +211,7 @@ class AddPartyView(LoginRequiredMixin, SessionWizardView):
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == AddPartyFormSteps.PARTY_ADDRESS:
+        if step == SetPartyFormSteps.PARTY_ADDRESS:
             kwargs["request"] = self.request
 
         return kwargs
@@ -276,7 +276,7 @@ class AddPartyView(LoginRequiredMixin, SessionWizardView):
         return redirect(reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id}))
 
 
-class AddEndUserView(AddPartyView):
+class SetEndUserView(SetPartyView):
     party_type = "end_user"
 
 
@@ -300,6 +300,7 @@ class PartyContextMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return {**context, "party": self.party}
+
 
 
 class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):

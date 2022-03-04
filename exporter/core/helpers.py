@@ -10,7 +10,7 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 from exporter.core import decorators
 from exporter.core import constants
-from exporter.core.constants import AddGoodFormSteps, AddPartyFormSteps
+from exporter.core.constants import AddGoodFormSteps, SetPartyFormSteps
 from core.builtins.custom_tags import default_na
 from exporter.organisation.roles.services import get_user_permissions
 
@@ -271,14 +271,15 @@ def get_rfd_certificate(application):
 
 
 def is_end_user_document_available(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step(AddPartyFormSteps.PARTY_DOCUMENTS)
+    cleaned_data = wizard.get_cleaned_data_for_step(SetPartyFormSteps.PARTY_DOCUMENTS)
     return str_to_bool(cleaned_data.get("end_user_document_available"))
 
+
 def is_document_in_english(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step(AddPartyFormSteps.PARTY_DOCUMENT_UPLOAD)
+    cleaned_data = wizard.get_cleaned_data_for_step(SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD)
     return str_to_bool(cleaned_data.get("document_in_english"))
 
 
 def is_document_on_letterhead(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step(AddPartyFormSteps.PARTY_DOCUMENT_UPLOAD)
+    cleaned_data = wizard.get_cleaned_data_for_step(SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD)
     return str_to_bool(cleaned_data.get("document_on_letterhead"))
