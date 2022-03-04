@@ -120,7 +120,7 @@
 					{% if locations %}
 						{% url 'applications:locations_summary' application.id as product_journey_url %}
 					{% else %}
-						{% url 'applications:location' application.id as product_journey_url %}
+						{% url 'applications:export_details' application.id as product_journey_url %}
 					{% endif %}
 					{% include "includes/task-list-item.html" with id='product-journey' title="Provide product location and journey" url=product_journey_url status=locations|task_list_item_status description=location_description %}
 				{% endif %}
