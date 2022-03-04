@@ -24,6 +24,9 @@
         </span>
     {% endif %}
 </div>
+{% if choice.divider %}
+    <div class="govuk-radios__divider">{{ choice.divider }}</div>
+{% endif %}
 {% if conditional_content %}
     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional_{{ field.html_name }}_{{ position }}">
         {{ conditional_content|safe }}
