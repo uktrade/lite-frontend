@@ -16,6 +16,7 @@ from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
     download_document_from_s3,
+    edit_good_on_application_firearm_details_serial_numbers,
     fetch_and_delete_previous_application_documents,
     get_application,
     get_application_documents,
@@ -79,12 +80,12 @@ from exporter.goods.services import (
     edit_good,
     edit_good_details,
     edit_good_firearm_details,
-    edit_good_firearm_details_serial_numbers,
     edit_good_pv_grading,
     get_good,
     get_good_details,
     get_good_document,
     get_good_documents,
+    get_good_on_application,
     get_goods,
     post_good_document_availability,
     post_good_document_sensitivity,
@@ -1180,29 +1181,31 @@ class DeleteDocument(LoginRequiredMixin, TemplateView):
             return redirect(reverse("goods:good", kwargs={"pk": good_id}))
 
 
-class UpdateSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
+class UpdateSerialNumbersView(LoginRequiredMixin, FormView):
     form_class = UpdateSerialNumbersForm
+    template_name = "core/form.html"
 
     @cached_property
     def application(self):
-        return get_application(self.request, self.application_id)
+        return get_application(self.request, self.kwargs["pk"])
 
     @cached_property
     def firearm_details(self):
-        return self.good["firearm_details"]
+        return self.good_on_application["firearm_details"]
+
+    @cached_property
+    def good_on_application(self):
+        return get_good_on_application(self.request, self.kwargs["good_on_application_pk"])
 
     @cached_property
     def good(self):
-        return get_good(self.request, self.object_id, full_detail=True)[0]
+        return self.good_on_application["good"]
 
     def dispatch(self, *args, **kwargs):
         if self.application["status"]["key"] not in [
             CaseStatusEnum.SUBMITTED,
             CaseStatusEnum.FINALISED,
         ]:
-            raise PermissionDenied()
-
-        if self.good["status"]["key"] not in ["submitted"]:
             raise PermissionDenied()
 
         return super().dispatch(*args, **kwargs)
@@ -1223,12 +1226,13 @@ class UpdateSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
         return initial
 
     def get_success_url(self):
-        return reverse("applications:application", kwargs={"pk": self.application_id})
+        return reverse("applications:application", kwargs={"pk": self.application["id"]})
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
         ctx["back_link_url"] = self.get_success_url()
+        ctx["title"] = self.get_form().title
 
         return ctx
 
@@ -1245,9 +1249,10 @@ class UpdateSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
     def form_valid(self, form):
         serial_numbers = self.generate_serial_numbers_data(form.cleaned_data)
 
-        api_resp_data, status_code = edit_good_firearm_details_serial_numbers(
+        api_resp_data, status_code = edit_good_on_application_firearm_details_serial_numbers(
             self.request,
-            self.object_id,
+            self.application["id"],
+            self.good_on_application["id"],
             {"serial_numbers": serial_numbers},
         )
 

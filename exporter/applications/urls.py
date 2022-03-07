@@ -116,11 +116,6 @@ urlpatterns = [
         name="identification_markings",
     ),
     path(
-        "<uuid:pk>/goods/<uuid:good_pk>/update-serial-numbers/",
-        UpdateSerialNumbersView.as_view(),
-        name="update_serial_numbers",
-    ),
-    path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/number-of-items/",
         EditNumberOfItemsView.as_view(),
         name="number_of_items",
@@ -154,6 +149,11 @@ urlpatterns = [
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),
         name="remove_preexisting_good",
+    ),
+    path(
+        "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/update-serial-numbers/",
+        UpdateSerialNumbersView.as_view(),
+        name="update_serial_numbers",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/documents/<uuid:doc_pk>/",

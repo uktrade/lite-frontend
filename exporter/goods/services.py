@@ -17,6 +17,12 @@ def get_good(request, pk, full_detail=False):
     return data.json().get("good"), data.status_code
 
 
+def get_good_on_application(request, pk):
+    response = client.get(request, f"/applications/good-on-application/{pk}")
+    response.raise_for_status()
+    return response.json()
+
+
 def get_good_details(request, pk):
     data = client.get(request, f"/goods/{pk}/details/" + convert_parameters_to_query_params(locals()))
     return data.json().get("good"), data.status_code
@@ -253,9 +259,4 @@ def get_good_document_sensitivity(request, pk):
 
 def post_good_document_sensitivity(request, pk, json):
     data = client.post(request, f"/goods/{pk}/document-sensitivity/", json)
-    return data.json(), data.status_code
-
-
-def edit_good_firearm_details_serial_numbers(request, pk, json):
-    data = client.put(request, f"/goods/{pk}/update-serial-numbers/", json)
     return data.json(), data.status_code

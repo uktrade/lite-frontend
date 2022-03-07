@@ -96,9 +96,12 @@ def test_edit_serial_numbers_view(authorized_client, requests_mock, good_pk):
     assert data["serial_number_input_1"] == "ghijkl"
 
 
-def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
+def test_update_serial_numbers_view(authorized_client, requests_mock):
     pk = str(uuid.uuid4())
-    url = reverse("applications:update_serial_numbers", kwargs={"pk": pk, "good_pk": good_pk})
+    good_on_application_pk = str(uuid.uuid4())
+    url = reverse(
+        "applications:update_serial_numbers", kwargs={"pk": pk, "good_on_application_pk": good_on_application_pk}
+    )
     good_name = "Test good"
     serial_numbers = ["11111", "22222"]
     application_url = reverse("applications:application", kwargs={"pk": pk})
@@ -106,6 +109,7 @@ def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
     requests_mock.get(
         f"/applications/{pk}/",
         json={
+            "id": pk,
             "status": {
                 "key": CaseStatusEnum.SUBMITTED,
             },
@@ -113,18 +117,16 @@ def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
     )
 
     requests_mock.get(
-        f"/goods/{good_pk}/?pk={good_pk}&full_detail=True",
+        f"/applications/good-on-application/{good_on_application_pk}/",
         json={
+            "firearm_details": {
+                "number_of_items": len(serial_numbers),
+                "serial_numbers": serial_numbers,
+            },
             "good": {
                 "name": good_name,
-                "status": {
-                    "key": "submitted",
-                },
-                "firearm_details": {
-                    "serial_numbers": serial_numbers,
-                    "number_of_items": 2,
-                },
             },
+            "id": good_on_application_pk,
         },
     )
 
@@ -138,7 +140,7 @@ def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
     update_serial_numbers = ["abcdef", "ghijkl"]
 
     mock_put = requests_mock.put(
-        f"/goods/{good_pk}/update-serial-numbers/",
+        f"/applications/{pk}/good-on-application/{good_on_application_pk}/update-serial-numbers/",
         json={
             "serial_numbers": update_serial_numbers,
         },
@@ -157,41 +159,19 @@ def test_update_serial_numbers_view(authorized_client, requests_mock, good_pk):
     assert mock_put.last_request.json() == {"serial_numbers": ["abcdef", "ghijkl"]}
 
 
-def get_update_serial_number_permissions_parameters():
-    allowed_application_permissions = [
-        CaseStatusEnum.SUBMITTED,
-        CaseStatusEnum.FINALISED,
-    ]
-    all_permissions = CaseStatusEnum.all()
-    denied_application_permissions = list(set(all_permissions) - set(allowed_application_permissions))
-
-    parameters = []
-
-    for perm in allowed_application_permissions:
-        parameters += [
-            (perm, "draft", 400),
-            (perm, "submitted", 200),
-        ]
-
-    for perm in denied_application_permissions:
-        parameters += [
-            (perm, "draft", 400),
-            (perm, "submitted", 400),
-        ]
-
-    return parameters
-
-
 def test_update_serial_numbers_view_error_response(authorized_client, requests_mock, good_pk):
     pk = str(uuid.uuid4())
-    url = reverse("applications:update_serial_numbers", kwargs={"pk": pk, "good_pk": good_pk})
+    good_on_application_pk = str(uuid.uuid4())
+    url = reverse(
+        "applications:update_serial_numbers", kwargs={"pk": pk, "good_on_application_pk": good_on_application_pk}
+    )
     good_name = "Test good"
     serial_numbers = ["11111", "22222"]
-    application_url = reverse("applications:application", kwargs={"pk": pk})
 
     requests_mock.get(
         f"/applications/{pk}/",
         json={
+            "id": pk,
             "status": {
                 "key": CaseStatusEnum.SUBMITTED,
             },
@@ -199,25 +179,23 @@ def test_update_serial_numbers_view_error_response(authorized_client, requests_m
     )
 
     requests_mock.get(
-        f"/goods/{good_pk}/?pk={good_pk}&full_detail=True",
+        f"/applications/good-on-application/{good_on_application_pk}/",
         json={
+            "firearm_details": {
+                "number_of_items": len(serial_numbers),
+                "serial_numbers": serial_numbers,
+            },
             "good": {
                 "name": good_name,
-                "status": {
-                    "key": "submitted",
-                },
-                "firearm_details": {
-                    "serial_numbers": serial_numbers,
-                    "number_of_items": 2,
-                },
             },
+            "id": good_on_application_pk,
         },
     )
 
     update_serial_numbers = ["abcdef", "ghijkl"]
 
     requests_mock.put(
-        f"/goods/{good_pk}/update-serial-numbers/",
+        f"/applications/{pk}/good-on-application/{good_on_application_pk}/update-serial-numbers/",
         json={
             "errors": {"serial_numbers": "Invalid serial numbers"},
         },
@@ -235,21 +213,48 @@ def test_update_serial_numbers_view_error_response(authorized_client, requests_m
     assertContains(response, "Unexpected error updating serial numbers")
 
 
+def get_update_serial_number_permissions_parameters():
+    allowed_application_permissions = [
+        CaseStatusEnum.SUBMITTED,
+        CaseStatusEnum.FINALISED,
+    ]
+    all_permissions = CaseStatusEnum.all()
+    denied_application_permissions = list(set(all_permissions) - set(allowed_application_permissions))
+
+    parameters = []
+
+    for perm in allowed_application_permissions:
+        parameters += [
+            (perm, 200),
+        ]
+
+    for perm in denied_application_permissions:
+        parameters += [
+            (perm, 400),
+        ]
+
+    return parameters
+
+
 @pytest.mark.parametrize(
-    "application_status, good_status, expected_status_code",
+    "application_status, expected_status_code",
     get_update_serial_number_permissions_parameters(),
 )
 def test_update_serial_numbers_view_permissions(
-    authorized_client, requests_mock, good_pk, application_status, good_status, expected_status_code
+    authorized_client, requests_mock, good_pk, application_status, expected_status_code
 ):
     pk = str(uuid.uuid4())
-    url = reverse("applications:update_serial_numbers", kwargs={"pk": pk, "good_pk": good_pk})
+    good_on_application_pk = str(uuid.uuid4())
+    url = reverse(
+        "applications:update_serial_numbers", kwargs={"pk": pk, "good_on_application_pk": good_on_application_pk}
+    )
     good_name = "Test good"
     serial_numbers = ["11111", "22222"]
 
     requests_mock.get(
         f"/applications/{pk}/",
         json={
+            "id": pk,
             "status": {
                 "key": application_status,
             },
@@ -257,18 +262,16 @@ def test_update_serial_numbers_view_permissions(
     )
 
     requests_mock.get(
-        f"/goods/{good_pk}/?pk={good_pk}&full_detail=True",
+        f"/applications/good-on-application/{good_on_application_pk}/",
         json={
+            "firearm_details": {
+                "number_of_items": len(serial_numbers),
+                "serial_numbers": serial_numbers,
+            },
             "good": {
                 "name": good_name,
-                "status": {
-                    "key": good_status,
-                },
-                "firearm_details": {
-                    "serial_numbers": serial_numbers,
-                    "number_of_items": 2,
-                },
             },
+            "id": good_on_application_pk,
         },
     )
 
