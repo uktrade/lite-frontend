@@ -293,9 +293,9 @@ class CopyEndUserView(SetEndUserView):
 
     def get_success_url(self, party_id):
         if self.application.sub_type == OPEN:
-            return reverse("applications:end_user", kwargs={"pk": self.application_id})
+            return reverse("applications:end_user", kwargs={"pk": self.kwargs["pk"]})
 
-        return reverse("applications:end_user_summary", kwargs={"pk": self.application_id, "obj_pk": party_id})
+        return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
 
 
 class PartyContextMixin:
