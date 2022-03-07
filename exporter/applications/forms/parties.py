@@ -361,8 +361,13 @@ class PartyDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # when edit user may choose not to replace the existing document
+        # so make this field optional
+        if edit:
+            self.fields["party_document"].required = False
 
         self.helper = FormHelper()
         self.helper.attrs = {"enctype": "multipart/form-data"}
@@ -385,8 +390,11 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if edit:
+            self.fields["party_eng_translation_document"].required = False
 
         self.helper = FormHelper()
         self.helper.attrs = {"enctype": "multipart/form-data"}
@@ -407,8 +415,11 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if edit:
+            self.fields["party_letterhead_document"].required = False
 
         self.helper = FormHelper()
         self.helper.attrs = {"enctype": "multipart/form-data"}
