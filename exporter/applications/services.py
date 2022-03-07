@@ -220,6 +220,11 @@ def delete_party_document(request, application_pk, obj_pk):
     return data.status_code
 
 
+def delete_party_document_by_id(request, application_pk, party_pk, document_pk):
+    data = client.delete(request, f"/applications/{application_pk}/parties/{party_pk}/document/{document_pk}")
+    return data.status_code
+
+
 def post_party_document(request, application_pk, obj_pk, json):
     data = client.post(request, f"/applications/{application_pk}/parties/{obj_pk}/document/", data=json)
     return data.json(), data.status_code

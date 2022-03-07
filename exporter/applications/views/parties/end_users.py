@@ -23,6 +23,7 @@ from exporter.applications.forms.parties import (
 from exporter.applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
 from exporter.applications.services import (
     copy_party,
+    delete_party_document_by_id,
     get_application,
     post_party,
     post_party_document,
@@ -30,14 +31,16 @@ from exporter.applications.services import (
     delete_party,
     get_party,
     update_party,
+    delete_party_document_by_id,
 )
 from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
-from exporter.core.constants import OPEN, SetPartyFormSteps
+from exporter.core.constants import OPEN, SetPartyFormSteps, PartyDocumentType
 from exporter.core.helpers import (
     NoSaveStorage,
     is_end_user_document_available,
     is_document_in_english,
     is_document_on_letterhead,
+    str_to_bool,
 )
 from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 from lite_forms.generators import error_page
@@ -148,6 +151,18 @@ class PartyReuseView(LoginRequiredMixin, FormView):
             return reverse("applications:set_end_user2", kwargs=self.kwargs)
 
 
+def _post_party_document(request, application_id, party_id, document_type, document):
+    data = {
+        "type": document_type,
+        "name": getattr(document, "original_name", document.name),
+        "s3_key": document.name,
+        "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
+    }
+
+    response, status_code = post_party_document(request, application_id, party_id, data)
+    assert status_code == HTTPStatus.CREATED
+
+
 class SetPartyView(LoginRequiredMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
 
@@ -225,7 +240,7 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
 
         if party_document:
             data = {
-                "type": "end_user_undertaking_document",
+                "type": PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT,
                 "name": getattr(party_document, "original_name", party_document.name),
                 "s3_key": party_document.name,
                 "size": int(party_document.size // 1024) if party_document.size else 0,  # in kilobytes
@@ -236,7 +251,7 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
 
         if party_eng_translation_document:
             data = {
-                "type": "end_user_english_translation_document",
+                "type": PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT,
                 "name": getattr(party_eng_translation_document, "original_name", party_eng_translation_document.name),
                 "s3_key": party_eng_translation_document.name,
                 "size": int(party_eng_translation_document.size // 1024)
@@ -249,7 +264,7 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
 
         if party_letterhead_document:
             data = {
-                "type": "end_user_company_letterhead_document",
+                "type": PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
                 "name": getattr(party_letterhead_document, "original_name", party_letterhead_document.name),
                 "s3_key": party_letterhead_document.name,
                 "size": int(party_letterhead_document.size // 1024)
@@ -371,26 +386,173 @@ class PartySignatoryEditView(PartyEditMixin):
         return {"signatory_name_euu": self.party["signatory_name_euu"]}
 
 
-class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
-    def get_initial(self):
-        return {}
+class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, SessionWizardView):
+    template_name = "core/form-wizard.html"
+    file_storage = NoSaveStorage()
 
+    form_list = [
+        (SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
+        (SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
+        (SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, PartyCompanyLetterheadDocumentUploadForm),
+    ]
+
+    condition_dict = {
+        SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD: lambda wizard: is_end_user_document_available(wizard)
+        and not is_document_in_english(wizard),
+        SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(
+            wizard
+        )
+        and is_document_on_letterhead(wizard),
+    }
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        # get existing document status for the end-user
+        self.existing_documents = {document["type"]: document["id"] for document in self.party["documents"]}
+        self.english_translation_exists = bool(
+            {PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT}.intersection(self.existing_documents.keys())
+        )
+        self.company_letterhead_document_exists = bool(
+            {PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT}.intersection(self.existing_documents.keys())
+        )
+        if step == SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD:
+            kwargs["edit"] = True
+
+        if step == SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD:
+            kwargs["edit"] = self.english_translation_exists
+
+        if step == SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD:
+            kwargs["edit"] = self.company_letterhead_document_exists
+
+        return kwargs
+
+    def get_form_initial(self, step):
+        if step != SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD:
+            return {"end_user_document_available": True}
+
+        document = [
+            doc for doc in self.party["documents"] if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT
+        ]
+        if not document:
+            raise ValueError("End-user undertaking document not yet uploaded, editing not allowed")
+
+        document = document[0]
+        return {
+            "end_user_document_available": True,
+            "description": document["description"],
+            "document_in_english": self.party["document_in_english"],
+            "document_on_letterhead": self.party["document_on_letterhead"],
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["hide_step_count"] = True
+        # The back_link_url is used for the first form in the sequence. For subsequent forms,
+        # the wizard automatically generates the back link to the previous form.
+        context["back_link_url"] = reverse("applications:end_user_summary", kwargs=self.kwargs)
+        context["back_link_text"] = "Back"
+        return context
+
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        if step == SetPartyFormSteps.PARTY_DOCUMENTS:
+            cleaned_data = {"end_user_document_available": True}
+
+        if cleaned_data is None:
+            return {}
+        return cleaned_data
+
+    def done(self, form_list, **kwargs):
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        print(all_data)
+
+        # get updated user choices
+        party_document = all_data.pop("party_document", None)
+        document_in_english = str_to_bool(all_data.pop("document_in_english", None))
+        document_on_letterhead = str_to_bool(all_data.pop("document_on_letterhead", None))
+        party_eng_translation_document = all_data.pop("party_eng_translation_document", None)
+        party_letterhead_document = all_data.pop("party_letterhead_document", None)
+
+        data = {
+            "document_in_english": document_in_english,
+            "document_on_letterhead": document_on_letterhead,
+        }
+
+        response, status_code = update_party(self.request, self.application_id, self.party_id, data)
+        if status_code != HTTPStatus.OK:
+            log.error(
+                "Error updating party - response was: %s - %s",
+                status_code,
+                response,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error updating party")
+
+        # if True then user is uploading new undertaking document
+        if party_document:
+            _post_party_document(
+                self.request,
+                self.application_id,
+                self.party_id,
+                PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT,
+                party_document,
+            )
+
+        # if True then user choice hasn't changed and uploaded a new translation document
+        if party_eng_translation_document:
+            _post_party_document(
+                self.request,
+                self.application_id,
+                self.party_id,
+                PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT,
+                party_eng_translation_document,
+            )
+        elif document_in_english and self.english_translation_exists:
+            # delete existing document
+            delete_party_document_by_id(
+                self.request,
+                self.application_id,
+                self.party_id,
+                self.existing_documents[PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT],
+            )
+
+        if party_letterhead_document:
+            _post_party_document(
+                self.request,
+                self.application_id,
+                self.party_id,
+                PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
+                party_letterhead_document,
+            )
+        elif document_on_letterhead is False and self.company_letterhead_document_exists:
+            delete_party_document_by_id(
+                self.request,
+                self.application_id,
+                self.party_id,
+                self.existing_documents[PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT],
+            )
+
+        return redirect(reverse("applications:end_user_summary", kwargs=self.kwargs))
+
+
+class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
         if self.kwargs.get("document_type") == "english_translation":
-            return PartyEnglishTranslationDocumentUploadForm(**form_kwargs)
+            return PartyEnglishTranslationDocumentUploadForm(edit=True, **form_kwargs)
         elif self.kwargs.get("document_type") == "company_letterhead":
-            return PartyCompanyLetterheadDocumentUploadForm(**form_kwargs)
+            return PartyCompanyLetterheadDocumentUploadForm(edit=True, **form_kwargs)
         else:
             raise ValueError("Invalid document type encountered")
 
     def form_valid(self, form):
         if self.kwargs.get("document_type") == "english_translation":
             document = form.cleaned_data["party_eng_translation_document"]
-            party_document_type = "end_user_english_translation_document"
+            party_document_type = PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT
         elif self.kwargs.get("document_type") == "company_letterhead":
             document = form.cleaned_data["party_letterhead_document"]
-            party_document_type = "end_user_company_letterhead_document"
+            party_document_type = PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT
         else:
             raise ValueError("Invalid document type encountered")
 
