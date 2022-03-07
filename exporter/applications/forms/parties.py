@@ -199,6 +199,14 @@ class PartySubTypeSelectForm(forms.Form):
             Submit("submit", "Continue"),
         )
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("sub_type") == "other" and not cleaned_data.get("sub_type_other"):
+            self.add_error("sub_type_other", "Enter the type of the party you're adding")
+
+        return cleaned_data
+
 
 class PartyNameForm(forms.Form):
     title = "End user name"
