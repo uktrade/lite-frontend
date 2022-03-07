@@ -295,7 +295,7 @@ class CopyEndUserView(SetEndUserView):
         if self.application.sub_type == OPEN:
             return reverse("applications:end_user", kwargs={"pk": self.application_id})
 
-        return reverse("applications:end_user_attach_document", kwargs={"pk": self.application_id, "obj_pk": party_id})
+        return reverse("applications:end_user_summary", kwargs={"pk": self.application_id, "obj_pk": party_id})
 
 
 class PartyContextMixin:
