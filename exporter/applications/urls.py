@@ -249,7 +249,7 @@ urlpatterns = [
         name="end_user_delete_document",
     ),
     # End user with django forms
-    path("<uuid:pk>/end-user/set2/", end_users.SetEndUserView.as_view(), name="add_end_user2"),
+    path("<uuid:pk>/end-user/set2/", end_users.SetEndUserView.as_view(), name="set_end_user2"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/remove2/", end_users.RemoveEndUserView.as_view(), name="remove_end_user2"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/summary/", end_users.PartySummaryView.as_view(), name="end_user_summary"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/sub-type/", end_users.PartySubTypeEditView.as_view(), name="end_user_edit_sub_type"),

@@ -60,7 +60,7 @@ class EndUser(LoginRequiredMixin, TemplateView):
 
 class AddEndUser(LoginRequiredMixin, AddParty):
     def __init__(self):
-        super().__init__(new_url="applications:set_end_user", copy_url="applications:end_users_copy")
+        super().__init__(new_url="applications:set_end_user2", copy_url="applications:end_users_copy")
 
     @property
     def back_url(self):
@@ -145,7 +145,7 @@ class PartyReuseView(LoginRequiredMixin, FormView):
         if reuse_party == "yes":
             return reverse("applications:end_users_copy", kwargs=self.kwargs)
         else:
-            return reverse("applications:add_end_user2", kwargs=self.kwargs)
+            return reverse("applications:set_end_user2", kwargs=self.kwargs)
 
 
 class SetPartyView(LoginRequiredMixin, SessionWizardView):
