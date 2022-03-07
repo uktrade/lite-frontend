@@ -51,25 +51,9 @@ class EndUser(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
-        is_permanent_app = is_application_export_type_permanent(application)
         if application["end_user"]:
             kwargs = {"pk": application_id, "obj_pk": application["end_user"]["id"]}
-            context = {
-                "application": application,
-                "title": EndUserPage.TITLE,
-                "edit_url": reverse("applications:edit_end_user", kwargs=kwargs),
-                "remove_url": reverse("applications:remove_end_user", kwargs=kwargs),
-                "answers": convert_party(
-                    party=application["end_user"],
-                    application=application,
-                    editable=application["status"]["value"] == "draft",
-                ),
-                "highlight": ["Document"]
-                if (is_permanent_app and application.sub_type != OPEN and not application["end_user"]["document"])
-                else {},
-            }
-
-            return render(request, "applications/end-user.html", context)
+            return redirect(reverse("applications:end_user_summary", kwargs=kwargs))
         else:
             return redirect(reverse("applications:add_end_user", kwargs={"pk": application_id}))
 
