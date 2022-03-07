@@ -283,7 +283,7 @@ class SetEndUserView(SetPartyView):
     party_type = "end_user"
 
     def get_success_url(self, party_id):
-        reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
+        return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
 
 
 class CopyEndUserView(SetEndUserView):
