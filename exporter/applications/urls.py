@@ -257,6 +257,7 @@ urlpatterns = [
     path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/website/", end_users.PartyWebsiteEditView.as_view(), name="end_user_edit_website"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/address/", end_users.PartyAddressEditView.as_view(), name="end_user_edit_address"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/signatory/", end_users.PartySignatoryEditView.as_view(), name="end_user_edit_signatory"),
+    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/<document_type>/", end_users.PartyDocumentEditView.as_view(), name="end_user_edit_document"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/copy2/", end_users.CopyEndUserView.as_view(), name="copy_end_user2"),
     # Consignee
     path("<uuid:pk>/consignee/", consignees.Consignee.as_view(), name="consignee"),
