@@ -38,7 +38,7 @@
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" href="{% url 'applications:end_user_edit_name' pk obj_pk %}">
                                 Change<span class="govuk-visually-hidden"> name</span>
-                        </a>
+                            </a>
                         </dd>
                     </div>
                 </dl>
@@ -54,7 +54,7 @@
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" href="{% url 'applications:end_user_edit_website' pk obj_pk %}">
                                 Change<span class="govuk-visually-hidden"> name</span>
-                        </a>
+                            </a>
                         </dd>
                     </div>
                 </dl>
@@ -70,7 +70,7 @@
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" href="{% url 'applications:end_user_edit_address' pk obj_pk %}">
                                 Change<span class="govuk-visually-hidden"> name</span>
-                        </a>
+                            </a>
                         </dd>
                     </div>
                 </dl>
@@ -86,7 +86,7 @@
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" href="{% url 'applications:end_user_edit_signatory' pk obj_pk %}">
                                 Change<span class="govuk-visually-hidden"> name</span>
-                        </a>
+                            </a>
                         </dd>
                     </div>
                 </dl>
@@ -102,9 +102,9 @@
                                     {{ document.name }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href="#">
-                                    Change<span class="govuk-visually-hidden"> name</span>
-                                </a>
+                                    <a class="govuk-link" href="#">
+                                        Change<span class="govuk-visually-hidden"> name</span>
+                                    </a>
                                 </dd>
                             </div>
                         </dl>
@@ -120,9 +120,9 @@
                                     {{ document.name }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href="#">
-                                    Change<span class="govuk-visually-hidden"> name</span>
-                                </a>
+                                    <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'english_translation' %}">
+                                        Change<span class="govuk-visually-hidden"> name</span>
+                                    </a>
                                 </dd>
                             </div>
                         </dl>
@@ -138,9 +138,9 @@
                                     {{ document.name }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href="#">
-                                    Change<span class="govuk-visually-hidden"> name</span>
-                                </a>
+                                    <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'company_letterhead' %}">
+                                        Change<span class="govuk-visually-hidden"> name</span>
+                                    </a>
                                 </dd>
                             </div>
                         </dl>

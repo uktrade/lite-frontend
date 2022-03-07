@@ -369,3 +369,44 @@ class PartySignatoryEditView(PartyEditMixin):
 
     def get_initial(self):
         return {"signatory_name_euu": self.party["signatory_name_euu"]}
+
+
+class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
+    def get_initial(self):
+        return {}
+
+    def get_form(self):
+        form_kwargs = self.get_form_kwargs()
+        if self.kwargs.get("document_type") == "english_translation":
+            return PartyEnglishTranslationDocumentUploadForm(**form_kwargs)
+        elif self.kwargs.get("document_type") == "company_letterhead":
+            return PartyCompanyLetterheadDocumentUploadForm(**form_kwargs)
+        else:
+            raise ValueError("Invalid document type encountered")
+
+    def form_valid(self, form):
+        if self.kwargs.get("document_type") == "english_translation":
+            document = form.cleaned_data["party_eng_translation_document"]
+            party_document_type = "end_user_english_translation_document"
+        elif self.kwargs.get("document_type") == "company_letterhead":
+            document = form.cleaned_data["party_letterhead_document"]
+            party_document_type = "end_user_company_letterhead_document"
+        else:
+            raise ValueError("Invalid document type encountered")
+
+        data = {
+            "type": party_document_type,
+            "name": getattr(document, "original_name", document.name),
+            "s3_key": document.name,
+            "size": int(document.size // 1024)
+            if document.size
+            else 0,  # in kilobytes
+        }
+
+        response, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
+        assert status_code == HTTPStatus.CREATED
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        document_type = self.kwargs.pop("document_type")
+        return reverse("applications:end_user_summary", kwargs=self.kwargs)
