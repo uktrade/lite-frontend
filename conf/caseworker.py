@@ -14,6 +14,7 @@ INSTALLED_APPS += [
     "caseworker.external_data",
     "caseworker.advice",
     "caseworker.teams",
+    "caseworker.cases",
 ]
 
 MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")
