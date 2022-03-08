@@ -209,7 +209,7 @@ def is_pv_graded(wizard):
 def show_serial_numbers_form(indentification_markings_step_name):
     def _show_serial_numbers_form(wizard):
         cleaned_data = wizard.get_cleaned_data_for_step(indentification_markings_step_name)
-        return str_to_bool(cleaned_data.get("has_identification_markings"))
+        return cleaned_data.get("serial_numbers_available") == "AVAILABLE"
 
     return _show_serial_numbers_form
 

@@ -234,18 +234,46 @@ def test_add_number_of_items_preexisting(
     assert isinstance(response.context["form"], IdentificationMarkingsForm)
 
 
+@pytest.mark.parametrize(
+    "data, expected_next_form",
+    [
+        (
+            {
+                "serial_numbers_available": "AVAILABLE",
+            },
+            FirearmsCaptureSerialNumbersForm,
+        ),
+        (
+            {
+                "serial_numbers_available": "LATER",
+            },
+            FirearmsYearOfManufactureDetailsForm,
+        ),
+        (
+            {
+                "serial_numbers_available": "NOT_AVAILABLE",
+                "no_identification_markings_details": "reasons",
+            },
+            FirearmsYearOfManufactureDetailsForm,
+        ),
+    ],
+)
 def test_identification_markings_preexisting(
-    mock_application_with_documents_request, goto_step_preexisting, post_to_step_preexisting
+    mock_application_with_documents_request,
+    goto_step_preexisting,
+    post_to_step_preexisting,
+    data,
+    expected_next_form,
 ):
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS)
     assert isinstance(response.context["form"], IdentificationMarkingsForm)
 
     response = post_to_step_preexisting(
         AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS,
-        {"has_identification_markings": True},
+        data,
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmsCaptureSerialNumbersForm)
+    assert isinstance(response.context["form"], expected_next_form)
 
 
 def test_firearms_capture_serial_numbers_preexisting(
@@ -260,7 +288,7 @@ def test_firearms_capture_serial_numbers_preexisting(
     goto_step_preexisting(AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS)
     post_to_step_preexisting(
         AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS,
-        {"has_identification_markings": True},
+        {"serial_numbers_available": "AVAILABLE"},
     )
 
     response = goto_step_preexisting(AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS)
@@ -384,7 +412,7 @@ def _submit_good_to_application(prexisting_url, authorized_client, post_to_step_
 
     response = post_to_step_preexisting(
         AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS,
-        {"has_identification_markings": True},
+        {"serial_numbers_available": "AVAILABLE"},
     )
     assert not response.context["form"].errors
 
@@ -471,11 +499,11 @@ def test_add_good_to_application_api_submission_with_documents_preexisting(
     assert good_to_application_data == {
         "number_of_items": 3,
         "number_of_items_step": True,
-        "has_identification_markings": "True",
         "identification_markings_step": True,
         "serial_number_input_0": "abcdef",
         "serial_number_input_1": "abcdef",
         "serial_number_input_2": "abcdef",
+        "serial_numbers_available": "AVAILABLE",
         "capture_serial_numbers_step": True,
         "firearm_year_of_manufacture_step": True,
         "value": "120",
@@ -501,7 +529,7 @@ def test_add_good_to_application_api_submission_with_documents_preexisting(
         "firearms_certificate_uploaded": True,
         "firearm_details": {
             "number_of_items": 3,
-            "has_identification_markings": "True",
+            "serial_numbers_available": "AVAILABLE",
             "no_identification_markings_details": "",
             "serial_numbers": ["abcdef", "abcdef", "abcdef"],
             "year_of_manufacture": "2020",
@@ -580,7 +608,6 @@ def test_add_good_to_application_api_submission_without_documents_preexisting(
         "firearms_act_section": "firearms_act_section5",
         "form_pk": 1,
         "good_id": good["good"]["id"],
-        "has_identification_markings": "True",
         "has_proof_mark": True,
         "identification_markings_step": True,
         "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
@@ -598,6 +625,7 @@ def test_add_good_to_application_api_submission_without_documents_preexisting(
         "serial_number_input_0": "abcdef",
         "serial_number_input_1": "abcdef",
         "serial_number_input_2": "abcdef",
+        "serial_numbers_available": "AVAILABLE",
         "type": "firearms",
         "value": "120",
         "year_of_manufacture": "2020",
