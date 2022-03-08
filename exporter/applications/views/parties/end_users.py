@@ -62,83 +62,9 @@ class EndUser(LoginRequiredMixin, TemplateView):
             return redirect(reverse("applications:add_end_user", kwargs={"pk": application_id}))
 
 
-class AddEndUser(LoginRequiredMixin, AddParty):
-    def __init__(self):
-        super().__init__(new_url="applications:set_end_user", copy_url="applications:end_users_copy")
-
-    @property
-    def back_url(self):
-        return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]}) + "#end_user"
-
-
-class SetEndUser(LoginRequiredMixin, SetParty):
-    def __init__(self, copy_existing=False):
-        super().__init__(
-            url="applications:end_user_attach_document",
-            party_type="end_user",
-            form=new_party_form_group,
-            back_url="applications:end_user",
-            strings=EndUserForm,
-            copy_existing=copy_existing,
-            post_action=post_party,
-            validate_action=validate_party,
-        )
-
-    def get_success_url(self):
-        if self.application.sub_type == OPEN:
-            return reverse("applications:end_user", kwargs={"pk": self.object_pk})
-        else:
-            return reverse(
-                self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
-            )
-
-
-class RemoveEndUser(LoginRequiredMixin, DeleteParty):
-    def __init__(self):
-        super().__init__(
-            url="applications:add_end_user",
-            action=delete_party,
-            error=EndUserPage.DELETE_ERROR,
-        )
-
-
 class CopyEndUsers(LoginRequiredMixin, CopyParties):
     def __init__(self):
         super().__init__(new_party_type="end_user")
-
-
-class CopyEndUser(LoginRequiredMixin, CopyAndSetParty):
-    def __init__(self):
-        super().__init__(
-            url="applications:end_user_attach_document",
-            party_type="end_user",
-            form=new_party_form_group,
-            back_url="applications:end_users_copy",
-            strings=EndUserForm,
-            validate_action=validate_party,
-            post_action=post_party,
-        )
-
-    def get_success_url(self):
-        if self.application.sub_type == OPEN:
-            return reverse("applications:end_user", kwargs={"pk": self.object_pk})
-        else:
-            return reverse(
-                self.url, kwargs={"pk": self.object_pk, "obj_pk": self.get_validated_data()[self.party_type]["id"]}
-            )
-
-
-class EditEndUser(LoginRequiredMixin, CopyAndSetParty):
-    def __init__(self):
-        super().__init__(
-            url="applications:end_user_attach_document",
-            party_type="end_user",
-            form=new_party_form_group,
-            back_url="applications:end_user",
-            strings=EndUserForm,
-            validate_action=validate_party,
-            post_action=post_party,
-        )
 
 
 class AddEndUserView(LoginRequiredMixin, FormView):
