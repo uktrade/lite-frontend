@@ -1,0 +1,73 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+    {% include 'includes/breadcrumbs.html' with title="applications.AddSerialNumbersList.TITLE" %}
+{% endblock %}
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-l">{% block title %}{% lcs "applications.AddSerialNumbersList.TITLE" %}{% endblock %}</h1>
+        </div>
+    </div>
+
+    {% if applications %}
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">
+                        {% lcs "applications.AddSerialNumbersList.Table.REFERENCE" %}
+                    </th>
+                    <th class="govuk-table__header" scope="col">
+                        {% lcs "applications.AddSerialNumbersList.Table.PRODUCTS" %}
+                    </th>
+                    <th class="govuk-table__header" scope="col">
+                        {% lcs "applications.AddSerialNumbersList.Table.DESTINATION" %}
+                    </th>
+                    <th class="govuk-table__header" scope="col">
+                        {% lcs "applications.AddSerialNumbersList.Table.STATUS" %}
+                    </th>
+                    <th class="govuk-table__header" scope="col">
+                        {% lcs "applications.AddSerialNumbersList.Table.ACTION_REQUIRED" %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                {% for application in applications %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            <div class="govuk-!-margin-bottom-1">
+                                <a class="govuk-link" href="{% url 'applications:application' application.id %}">{{ application.reference_code }}</a>
+                            </div>
+                            <div class="govuk-body-s govuk-!-margin-0">
+                                {{ application.name }}
+                            </div>
+                        </td>
+                        <td class="govuk-table__cell">
+                            <ol class="govuk-list govuk-list--number">
+                                {% for good in application.goods %}
+                                    <li>
+                                        {{ good.good.name }}
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </td>
+                        <td class="govuk-table__cell">
+                            {{ application.end_user.name }} - {{ application.end_user.country.name }}
+                        </td>
+                        <td class="govuk-table__cell">
+                            {{ application.status.value }}
+                        </td>
+                        <td class="govuk-table__cell">
+                            <a class="govuk-link" href="{% url 'applications:application' application.id %}">Add serial numbers</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% pagination with data=applications %}
+    {% else %}
+        {% include "includes/notice.html" with text="applications.AddSerialNumbersList.NO_CONTENT_NOTICE" %}
+    {% endif %}
+{% endblock %}

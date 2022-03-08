@@ -907,3 +907,15 @@ class RouteOfGoods:
     TITLE = "Are the products being shipped on an air waybill or bill of lading?"
     NO_ANSWER_DESCRIPTION = "Provide details of the route of the products"
     SAVE_BUTTON = "Save"
+
+
+class AddSerialNumbersList:
+    TITLE = "Add serial numbers"
+    NO_CONTENT_NOTICE = "There are no applications that require serial numbers"
+
+    class Table:
+        REFERENCE = "Reference"
+        PRODUCTS = "Products"
+        DESTINATION = "Destination"
+        STATUS = "Status"
+        ACTION_REQUIRED = "Action required"

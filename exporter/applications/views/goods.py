@@ -23,6 +23,7 @@ from exporter.applications.services import (
     get_application_document,
     get_application_documents,
     get_application_goods,
+    get_applications_require_serial_numbers,
     post_additional_document,
     post_application_document,
     post_good_on_application,
@@ -1021,3 +1022,20 @@ def is_firearm_certificate_needed(application, selected_section):
     if not has_valid_section_five_certificate(application):
         firearm_sections.append("firearms_act_section5")
     return selected_section in firearm_sections
+
+
+class AddSerialNumbersList(LoginRequiredMixin, TemplateView):
+    template_name = "applications/goods/add-serial-numbers-list.html"
+
+    @cached_property
+    def applications(self):
+        params = {"page": int(self.request.GET.get("page", 1))}
+        response = get_applications_require_serial_numbers(self.request, **params)
+        return response["results"]
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx["applications"] = self.applications
+
+        return ctx

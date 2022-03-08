@@ -41,6 +41,7 @@ app_name = "applications"
 urlpatterns = [
     # Common
     path("", common.ApplicationsList.as_view(), name="applications"),
+    path("add-serial-numbers/", goods.AddSerialNumbersList.as_view(), name="add_serial_numbers"),
     path("<uuid:pk>/delete/", common.DeleteApplication.as_view(), name="delete"),
     path("<uuid:pk>/task-list/", common.ApplicationTaskList.as_view(), name="task_list"),
     path("<uuid:pk>/summary/", common.ApplicationSummary.as_view(), name="summary"),
