@@ -28,7 +28,6 @@ from exporter.applications.views.goods import is_firearm_certificate_needed
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     NoSaveStorage,
-    compose_with_or,
     has_valid_rfd_certificate,
     is_category_firearms,
     is_product_type,
@@ -37,6 +36,7 @@ from exporter.core.helpers import (
     show_rfd_form,
     str_to_bool,
 )
+from exporter.core.wizard.conditionals import C
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
@@ -265,20 +265,20 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
     condition_dict = {
         AddGoodFormSteps.PRODUCT_CATEGORY: lambda w: not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
         AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
-        AddGoodFormSteps.PRODUCT_MILITARY_USE: lambda w: not is_category_firearms(w),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: lambda w: not is_category_firearms(w),
+        AddGoodFormSteps.PRODUCT_MILITARY_USE: ~C(is_category_firearms),
+        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: ~C(is_category_firearms),
         AddGoodFormSteps.PV_DETAILS: is_pv_graded,
         AddGoodFormSteps.FIREARMS_REPLICA: is_product_type("firearm"),
         AddGoodFormSteps.FIREARMS_CALIBRE_DETAILS: is_product_type("ammunition_or_component"),
         AddGoodFormSteps.REGISTERED_FIREARMS_DEALER: show_rfd_form,
         AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE: show_attach_rfd_form,
         AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS: is_product_type("firearms_software_or_tech"),
-        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: compose_with_or(
-            is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
+        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: (
+            C(is_product_type("firearms_accessory")) | C(is_product_type("firearms_software_or_tech"))
         ),
         AddGoodFormSteps.PRODUCT_COMPONENT: is_product_type("firearms_accessory"),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: compose_with_or(
-            is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
+        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: (
+            C(is_product_type("firearms_accessory")) | C(is_product_type("firearms_software_or_tech"))
         ),
     }
 
