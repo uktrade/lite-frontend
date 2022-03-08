@@ -22,7 +22,6 @@ from exporter.applications.forms.parties import (
 )
 from exporter.applications.services import (
     copy_party,
-    delete_party_document_by_id,
     get_application,
     post_party,
     post_party_document,
@@ -107,7 +106,7 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
     ]
 
     condition_dict = {
-        SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(wizard),
+        SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD: is_end_user_document_available,
         SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD: lambda wizard: is_end_user_document_available(wizard)
         and not is_document_in_english(wizard),
         SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(
