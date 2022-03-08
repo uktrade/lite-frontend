@@ -189,7 +189,7 @@ def route_of_goods_form():
                 + "A bill of lading is a contract between the owner of the goods and the carrier. It is a receipt, "
                 + "contains the terms of the carriage contract, and importantly, is a document of title, which proves ownership of the goods."
                 + "</p>"
-                + "<a class='govuk-link' "
+                + "<a class='govuk-link' target='_blank' "
                 + "href='https://www.great.gov.uk/advice/prepare-for-export-procedures-and-logistics/understand-international-trade-terms/'>"
                 + "Understand international trade terms</a>"
                 + "</div>"

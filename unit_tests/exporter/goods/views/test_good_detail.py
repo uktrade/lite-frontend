@@ -36,7 +36,7 @@ def good():
             "section_certificate_missing_reason": "",
             "section_certificate_number": None,
             "section_certificate_date_of_expiry": None,
-            "has_identification_markings": None,
+            "serial_numbers_available": None,
             "no_identification_markings_details": None,
             "has_proof_mark": None,
             "no_proof_mark_details": "",

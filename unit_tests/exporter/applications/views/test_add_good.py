@@ -135,7 +135,31 @@ def test_add_good_number_of_items(url, authorized_client):
     assert title not in response.content
 
 
-def test_add_good_identification_markings(url, authorized_client):
+@pytest.mark.parametrize(
+    "data, expected_next_form",
+    [
+        (
+            {
+                "serial_numbers_available": "AVAILABLE",
+            },
+            FirearmsCaptureSerialNumbersForm,
+        ),
+        (
+            {
+                "serial_numbers_available": "LATER",
+            },
+            AddGoodsQuestionsForm,
+        ),
+        (
+            {
+                "serial_numbers_available": "NOT_AVAILABLE",
+                "no_identification_markings_details": "reasons",
+            },
+            AddGoodsQuestionsForm,
+        ),
+    ],
+)
+def test_add_good_identification_markings(url, authorized_client, data, expected_next_form):
     title = CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE.encode("utf-8")
     response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.IDENTIFICATION_MARKINGS})
     assert isinstance(response.context["form"], IdentificationMarkingsForm)
@@ -144,11 +168,11 @@ def test_add_good_identification_markings(url, authorized_client):
         url,
         data={
             f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.IDENTIFICATION_MARKINGS,
-            f"{AddGoodFormSteps.IDENTIFICATION_MARKINGS}-has_identification_markings": "True",
+            **{f"{AddGoodFormSteps.IDENTIFICATION_MARKINGS}-{key}": value for key, value in data.items()},
         },
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmsCaptureSerialNumbersForm)
+    assert isinstance(response.context["form"], expected_next_form)
     assert title not in response.content
 
 
@@ -174,7 +198,7 @@ def test_add_good_capture_serial_numbers(url, authorized_client):
         url,
         data={
             f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.IDENTIFICATION_MARKINGS,
-            f"{AddGoodFormSteps.IDENTIFICATION_MARKINGS}-has_identification_markings": "True",
+            f"{AddGoodFormSteps.IDENTIFICATION_MARKINGS}-serial_numbers_available": "AVAILABLE",
         },
     )
 
@@ -513,11 +537,11 @@ def test_add_good_api_submission(url, authorized_client, requests_mock, data_sta
         "product_type_step": True,
         "number_of_items": 3,
         "number_of_items_step": True,
-        "has_identification_markings": "True",
         "identification_markings_step": True,
         "serial_number_input_0": "abcdef",
         "serial_number_input_1": "ghijkl",
         "serial_number_input_2": "mnopqr",
+        "serial_numbers_available": "AVAILABLE",
         "capture_serial_numbers_step": True,
         "name": "test",
         "description": "",
@@ -560,7 +584,7 @@ def test_add_good_api_submission(url, authorized_client, requests_mock, data_sta
         "firearm_details": {
             "type": "firearms",
             "number_of_items": 3,
-            "has_identification_markings": "True",
+            "serial_numbers_available": "AVAILABLE",
             "no_identification_markings_details": "",
             "serial_numbers": ["abcdef", "ghijkl", "mnopqr"],
             "year_of_manufacture": "2000",
@@ -636,7 +660,7 @@ def _submit_good(url, authorized_client, is_rfd=True, firearms_act="Yes"):
         url,
         data={
             f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.IDENTIFICATION_MARKINGS,
-            f"{AddGoodFormSteps.IDENTIFICATION_MARKINGS}-has_identification_markings": "True",
+            f"{AddGoodFormSteps.IDENTIFICATION_MARKINGS}-serial_numbers_available": "AVAILABLE",
         },
     )
     assert not response.context["form"].errors

@@ -936,7 +936,7 @@ class EditIdentificationMarkingsView(LoginRequiredMixin, GoodCommonMixin, FormVi
         data = get_good_details(self.request, self.object_id)[0]["firearm_details"]
 
         return {
-            "has_identification_markings": data["has_identification_markings"],
+            "serial_numbers_available": data["serial_numbers_available"],
             "no_identification_markings_details": data["no_identification_markings_details"],
         }
 
@@ -949,8 +949,8 @@ class EditIdentificationMarkingsView(LoginRequiredMixin, GoodCommonMixin, FormVi
                 kwargs={"pk": self.object_id, "type": "application", "draft_pk": self.draft_id},
             )
         elif self.application_id and self.object_id:
-            has_identification_markings = form.cleaned_data["has_identification_markings"]
-            if str_to_bool(has_identification_markings) is True:
+            serial_numbers_available = form.cleaned_data["serial_numbers_available"]
+            if serial_numbers_available == "AVAILABLE":
                 success_url = reverse(
                     "applications:serial_numbers", kwargs={"pk": self.application_id, "good_pk": self.object_id}
                 )
