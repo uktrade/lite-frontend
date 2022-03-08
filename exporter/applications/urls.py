@@ -226,13 +226,46 @@ urlpatterns = [
     ),
     # End User
     path("<uuid:pk>/end-user/", end_users.EndUser.as_view(), name="end_user"),
-    path("<uuid:pk>/end-user/add/", end_users.AddEndUser.as_view(), name="add_end_user"),
-    path("<uuid:pk>/end-user/set/", end_users.SetEndUser.as_view(), name="set_end_user"),
+    path("<uuid:pk>/end-user/add/", end_users.AddEndUserView.as_view(), name="add_end_user"),
+    path("<uuid:pk>/end-user/set/", end_users.SetEndUserView.as_view(), name="set_end_user"),
     path("<uuid:pk>/end-user/copy/", end_users.CopyEndUsers.as_view(), name="end_users_copy"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/", end_users.EndUser.as_view(), name="end_user"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/", end_users.EditEndUser.as_view(), name="edit_end_user"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/copy/", end_users.CopyEndUser.as_view(), name="copy_end_user"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/remove/", end_users.RemoveEndUser.as_view(), name="remove_end_user"),
+    path("<uuid:pk>/end-user/<uuid:obj_pk>/summary/", end_users.PartySummaryView.as_view(), name="end_user_summary"),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/sub-type/",
+        end_users.PartySubTypeEditView.as_view(),
+        name="end_user_edit_sub_type",
+    ),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/name/", end_users.PartyNameEditView.as_view(), name="end_user_edit_name"
+    ),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/website/",
+        end_users.PartyWebsiteEditView.as_view(),
+        name="end_user_edit_website",
+    ),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/address/",
+        end_users.PartyAddressEditView.as_view(),
+        name="end_user_edit_address",
+    ),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/signatory/",
+        end_users.PartySignatoryEditView.as_view(),
+        name="end_user_edit_signatory",
+    ),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/undertaking_document/",
+        end_users.PartyUndertakingDocumentEditView.as_view(),
+        name="end_user_edit_undertaking_document",
+    ),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/<document_type>/",
+        end_users.PartyDocumentEditView.as_view(),
+        name="end_user_edit_document",
+    ),
+    path("<uuid:pk>/end-user/<uuid:obj_pk>/copy/", end_users.CopyEndUserView.as_view(), name="copy_end_user"),
+    path("<uuid:pk>/end-user/<uuid:obj_pk>/remove/", end_users.RemoveEndUserView.as_view(), name="remove_end_user"),
     path(
         "<uuid:pk>/end-user/<uuid:obj_pk>/document/attach/",
         documents.AttachDocuments.as_view(),
@@ -248,18 +281,6 @@ urlpatterns = [
         documents.DeleteDocument.as_view(),
         name="end_user_delete_document",
     ),
-    # End user with django forms
-    path("<uuid:pk>/end-user/set2/", end_users.SetEndUserView.as_view(), name="set_end_user2"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/remove2/", end_users.RemoveEndUserView.as_view(), name="remove_end_user2"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/summary/", end_users.PartySummaryView.as_view(), name="end_user_summary"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/sub-type/", end_users.PartySubTypeEditView.as_view(), name="end_user_edit_sub_type"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/name/", end_users.PartyNameEditView.as_view(), name="end_user_edit_name"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/website/", end_users.PartyWebsiteEditView.as_view(), name="end_user_edit_website"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/address/", end_users.PartyAddressEditView.as_view(), name="end_user_edit_address"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/signatory/", end_users.PartySignatoryEditView.as_view(), name="end_user_edit_signatory"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/undertaking_document/", end_users.PartyUndertakingDocumentEditView.as_view(), name="end_user_edit_undertaking_document"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/edit/<document_type>/", end_users.PartyDocumentEditView.as_view(), name="end_user_edit_document"),
-    path("<uuid:pk>/end-user/<uuid:obj_pk>/copy2/", end_users.CopyEndUserView.as_view(), name="copy_end_user2"),
     # Consignee
     path("<uuid:pk>/consignee/", consignees.Consignee.as_view(), name="consignee"),
     path("<uuid:pk>/consignee/add/", consignees.AddConsignee.as_view(), name="add_consignee"),

@@ -1,5 +1,6 @@
 import logging
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -63,7 +64,7 @@ class EndUser(LoginRequiredMixin, TemplateView):
 
 class AddEndUser(LoginRequiredMixin, AddParty):
     def __init__(self):
-        super().__init__(new_url="applications:set_end_user2", copy_url="applications:end_users_copy")
+        super().__init__(new_url="applications:set_end_user", copy_url="applications:end_users_copy")
 
     @property
     def back_url(self):
@@ -140,15 +141,18 @@ class EditEndUser(LoginRequiredMixin, CopyAndSetParty):
         )
 
 
-class PartyReuseView(LoginRequiredMixin, FormView):
+class AddEndUserView(LoginRequiredMixin, FormView):
     form_class = PartyReuseForm
+    template_name = "core/form.html"
 
-    def get_success_url(self):
-        reuse_party = self.request.POST.get("reuse_party")
-        if reuse_party == "yes":
-            return reverse("applications:end_users_copy", kwargs=self.kwargs)
+    def form_valid(self, form):
+        reuse_party = str_to_bool(form.cleaned_data.get("reuse_party"))
+        if reuse_party:
+            success_url = reverse("applications:end_users_copy", kwargs=self.kwargs)
         else:
-            return reverse("applications:set_end_user2", kwargs=self.kwargs)
+            success_url = reverse("applications:set_end_user", kwargs=self.kwargs)
+
+        return HttpResponseRedirect(success_url)
 
 
 def _post_party_document(request, application_id, party_id, document_type, document):
@@ -212,6 +216,12 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
 
         if step == SetPartyFormSteps.PARTY_ADDRESS:
             kwargs["request"] = self.request
+        if step in (
+            SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD,
+            SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD,
+            SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD,
+        ):
+            kwargs["edit"] = False
 
         return kwargs
 
