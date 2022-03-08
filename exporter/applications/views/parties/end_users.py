@@ -1,14 +1,13 @@
 import logging
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
 from formtools.wizard.views import SessionWizardView
 from http import HTTPStatus
 
-from exporter.applications.forms.parties import new_party_form_group
 from exporter.applications.forms.parties import (
     PartyReuseForm,
     PartySubTypeSelectForm,
@@ -21,20 +20,18 @@ from exporter.applications.forms.parties import (
     PartyEnglishTranslationDocumentUploadForm,
     PartyCompanyLetterheadDocumentUploadForm,
 )
-from exporter.applications.helpers.check_your_answers import convert_party, is_application_export_type_permanent
 from exporter.applications.services import (
     copy_party,
     delete_party_document_by_id,
     get_application,
     post_party,
     post_party_document,
-    validate_party,
     delete_party,
     get_party,
     update_party,
     delete_party_document_by_id,
 )
-from exporter.applications.views.parties.base import AddParty, SetParty, DeleteParty, CopyParties, CopyAndSetParty
+from exporter.applications.views.parties.base import CopyParties
 from exporter.core.constants import OPEN, SetPartyFormSteps, PartyDocumentType
 from exporter.core.helpers import (
     NoSaveStorage,
@@ -43,7 +40,6 @@ from exporter.core.helpers import (
     is_document_on_letterhead,
     str_to_bool,
 )
-from lite_content.lite_exporter_frontend.applications import EndUserForm, EndUserPage
 from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
@@ -89,7 +85,7 @@ def _post_party_document(request, application_id, party_id, document_type, docum
         "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
     }
 
-    response, status_code = post_party_document(request, application_id, party_id, data)
+    _, status_code = post_party_document(request, application_id, party_id, data)
     assert status_code == HTTPStatus.CREATED
 
 
@@ -499,10 +495,10 @@ class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
             "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
         }
 
-        response, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
+        _, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
         assert status_code == HTTPStatus.CREATED
         return super().form_valid(form)
 
     def get_success_url(self):
-        document_type = self.kwargs.pop("document_type")
+        self.kwargs.pop("document_type")
         return reverse("applications:end_user_summary", kwargs=self.kwargs)

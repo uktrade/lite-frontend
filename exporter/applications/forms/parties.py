@@ -288,8 +288,10 @@ class PartySignatoryNameForm(forms.Form):
 class PartyDocuments(forms.Form):
     title = "Do you have an end-user document?"
     text_p1 = """
-        You will be asked to upload either an <a class="govuk-link" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form"> end-user undertaking (EUU)</a> or
-         <a class="govuk-link" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">stockist undertaking (SU)</a> completed by the end-user or stockist.
+        You will be asked to upload either an <a class="govuk-link" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form">
+         end-user undertaking (EUU)</a> or
+         <a class="govuk-link" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">stockist undertaking (SU)</a>
+          completed by the end-user or stockist.
     """
     text_p2 = "You must include at least one page on company letterhead. This can either be within the end-user document or on a separate document."
     text_p3 = (
