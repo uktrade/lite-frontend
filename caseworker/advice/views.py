@@ -370,7 +370,8 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
 
         if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
-            return forms.ConsolidateApprovalForm(**form_kwargs)
+            team_alias = self.caseworker["team"].get("alias", None)
+            return forms.ConsolidateApprovalForm(team_alias=team_alias, **form_kwargs)
 
         team_name = self.caseworker["team"]["name"]
         return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)

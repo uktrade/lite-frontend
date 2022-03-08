@@ -6,6 +6,7 @@ from django.utils.html import format_html
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
+from caseworker.advice import services
 
 from core.forms.widgets import GridmultipleSelect
 
@@ -123,8 +124,16 @@ class GiveApprovalAdviceForm(forms.Form):
 class ConsolidateApprovalForm(GiveApprovalAdviceForm):
     """Approval form minus some fields."""
 
-    def __init__(self, *args, **kwargs):
+    ALIAS_LABELS = {
+        services.MOD_ECJU_TEAM: "Enter MOD’s overall reason for approval",
+        services.LICENSING_UNIT_TEAM: "Enter Licensing Unit’s reason for approval",
+    }
+
+    def __init__(self, team_alias, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if team_alias in self.ALIAS_LABELS:
+            self.fields["approval_reasons"].label = self.ALIAS_LABELS[team_alias]
+
         self.helper = FormHelper()
         self.helper.layout = Layout("approval_reasons", "proviso", Submit("submit", "Submit recommendation"))
 

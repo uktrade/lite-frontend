@@ -608,6 +608,35 @@ def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_
 
 
 @pytest.mark.parametrize(
+    "data, product_type, valid, error_field, error_message",
+    (
+        ({"software_or_technology_details": "Some details"}, "group3_software", True, None, None),
+        (
+            {"software_or_technology_details": ""},
+            "group3_software",
+            False,
+            "software_or_technology_details",
+            "Enter the purpose of the software",
+        ),
+        (
+            {"software_or_technology_details": ""},
+            "group3_technology",
+            False,
+            "software_or_technology_details",
+            "Enter the purpose of the technology",
+        ),
+    ),
+)
+def test_software_technology_details_form(data, product_type, valid, error_field, error_message):
+    form = forms.SoftwareTechnologyDetailsForm(product_type=product_type, data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors[error_field][0] == error_message
+
+
+@pytest.mark.parametrize(
     "data, valid, error_field, error_message",
     (
         ({"is_component": "yes_designed", "designed_details": "Test details"}, True, None, None),
@@ -629,6 +658,24 @@ def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_
             False,
             "general_details",
             "Enter the details of the types of applications the component is intended to be used in",
+        ),
+        (
+            {"is_component": "yes_designed", "designed_details": "x" * 2001},
+            False,
+            "designed_details",
+            "Ensure this field has no more than 2000 characters",
+        ),
+        (
+            {"is_component": "yes_modified", "modified_details": "x" * 2001},
+            False,
+            "modified_details",
+            "Ensure this field has no more than 2000 characters",
+        ),
+        (
+            {"is_component": "yes_general", "general_details": "x" * 2001},
+            False,
+            "general_details",
+            "Ensure this field has no more than 2000 characters",
         ),
     ),
 )

@@ -22,6 +22,7 @@ from exporter.applications.forms.locations import (
 from exporter.applications.forms import locations as location_forms
 from exporter.applications.helpers.check_your_answers import is_application_oiel_of_type
 from exporter.applications.helpers.countries import prettify_country_data
+from exporter.applications.helpers.task_list_sections import get_product_location_and_journey_details
 from exporter.applications.helpers.validators import (
     validate_external_location_choice,
     validate_and_update_goods_location_choice,
@@ -149,7 +150,7 @@ class TemporaryOrPermanentFormView(LoginRequiredMixin, ApplicationMixin, FormVie
     def form_valid(self, form):
         put_application_simple(self.request, self.kwargs["pk"], form.cleaned_data)
         if form.cleaned_data["export_type"] == "temporary":
-            return redirect(reverse("applications:temporary_export_details", kwargs={"pk": self.kwargs["pk"]}))
+            return redirect(reverse("applications:export_details", kwargs={"pk": self.kwargs["pk"]}))
         else:
             return redirect(reverse("applications:route_of_goods", kwargs={"pk": self.kwargs["pk"]}))
 
@@ -179,7 +180,14 @@ class LocationsSummaryView(LoginRequiredMixin, ApplicationMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["application"] = self.application
-        context["back_link_url"] = reverse("applications:goods_recipients", kwargs={"pk": self.kwargs["pk"]})
+
+        has_product_journey = get_product_location_and_journey_details(self.application)
+        if has_product_journey:
+            back_link_url = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
+        else:
+            back_link_url = reverse("applications:export_details", kwargs={"pk": self.kwargs["pk"]})
+
+        context["back_link_url"] = back_link_url
         return context
 
 

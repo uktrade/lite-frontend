@@ -140,6 +140,12 @@ FIREARMS_ALL_TYPES = [
 
 
 class GoodsStartingPoint:
+    TITLE = "Where will the products begin their export journey?"
+    GB = "Great Britain"
+    NI = "Northern Ireland"
+
+
+class TemporaryOrPermanent:
     TITLE = "Are the products being permanently exported?"
     YES = "Yes"
     NO = "No, this is a temporary export"
@@ -171,6 +177,10 @@ class TemporaryExportDetails:
 class RouteOfGoods:
     TITLE = "Are the products being shipped from the UK on an air waybill or bill of lading?"
     NO_ANSWER_DESCRIPTION = "Provide details of the route of the products"
+
+
+class GoodsRecipients:
+    TITLE = "Who are the products going to?"
 
 
 class AddGoodFormSteps:

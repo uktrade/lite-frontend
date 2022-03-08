@@ -15,7 +15,7 @@ class RouteOfGoods(LoginRequiredMixin, SingleFormView):
         if is_permanent:
             back_url = reverse("applications:temporary_or_permanent", kwargs={"pk": self.kwargs["pk"]})
         else:
-            back_url = reverse("applications:temporary_export_details", kwargs={"pk": self.kwargs["pk"]})
+            back_url = reverse("applications:export_details", kwargs={"pk": self.kwargs["pk"]})
         self.object_pk = kwargs["pk"]
         self.data = self.get_form_data(request)
         self.form = route_of_goods_form(back_link=back_url)

@@ -2,11 +2,13 @@ import datetime
 
 from exporter.core.constants import (
     CONTINUE,
+    GoodsRecipients,
     GoodsStartingPoint,
     PERMANENT,
     RouteOfGoods,
     TEMPORARY,
     TemporaryExportDetails,
+    TemporaryOrPermanent,
 )
 from lite_forms.components import (
     FormGroup,
@@ -25,31 +27,56 @@ from lite_forms.helpers import conditional
 def export_details_form(back_link_url, is_temporary):
     return FormGroup(
         [
-            permanent_temporary_export_form(back_link_url=back_link_url),
+            goods_starting_point_form(back_link_url=back_link_url),
+            permanent_temporary_export_form(),
             conditional(is_temporary, provide_export_details_form()),
             conditional(is_temporary, is_temp_direct_control_form()),
             conditional(is_temporary, proposed_product_return_date_form()),
             route_of_goods_form(),
+            goods_recipients_form(),
         ]
     )
 
 
-def permanent_temporary_export_form(back_link_url):
+def goods_starting_point_form(back_link_url):
     return Form(
         back_link=BackLink("Back", back_link_url),
         title=GoodsStartingPoint.TITLE,
         questions=[
             RadioButtons(
-                name="export_type",
+                name="goods_starting_point",
                 short_title=GoodsStartingPoint.TITLE,
                 options=[
                     Option(
+                        key="GB",
+                        value="Great Britain",
+                    ),
+                    Option(
+                        key="NI",
+                        value="Northern Ireland",
+                    ),
+                ],
+            )
+        ],
+        default_button_name=CONTINUE,
+    )
+
+
+def permanent_temporary_export_form():
+    return Form(
+        title=TemporaryOrPermanent.TITLE,
+        questions=[
+            RadioButtons(
+                name="export_type",
+                short_title=TemporaryOrPermanent.TITLE,
+                options=[
+                    Option(
                         key=PERMANENT,
-                        value=GoodsStartingPoint.YES,
+                        value=TemporaryOrPermanent.YES,
                     ),
                     Option(
                         key=TEMPORARY,
-                        value=GoodsStartingPoint.NO,
+                        value=TemporaryOrPermanent.NO,
                     ),
                 ],
             )
@@ -162,9 +189,49 @@ def route_of_goods_form():
                 + "A bill of lading is a contract between the owner of the goods and the carrier. It is a receipt, "
                 + "contains the terms of the carriage contract, and importantly, is a document of title, which proves ownership of the goods."
                 + "</p>"
-                + "<a class='govuk-link' "
+                + "<a class='govuk-link' target='_blank' "
                 + "href='https://www.great.gov.uk/advice/prepare-for-export-procedures-and-logistics/understand-international-trade-terms/'>"
                 + "Understand international trade terms</a>"
+                + "</div>"
+                + "</details>"
+                "<br>"
+            ),
+        ],
+        default_button_name=CONTINUE,
+    )
+
+
+def goods_recipients_form():
+    return Form(
+        title=GoodsRecipients.TITLE,
+        questions=[
+            RadioButtons(
+                name="goods_recipients",
+                short_title="",
+                options=[
+                    Option(key="direct_to_end_user", value="Directly to the end-user"),
+                    Option(key="via_consignee", value="To an end-user via a consignee"),
+                    Option(
+                        key="via_consignee_and_third_parties",
+                        value="To an end-user via a consignee, with additional third parties",
+                    ),
+                ],
+            ),
+            HiddenField("section_certificate_step", True),
+            HTMLBlock(
+                "<br>"
+                + "<details class='govuk-details' data-module='govuk-details'>"
+                + "<summary class='govuk-details__summary'>"
+                + "<span class='govuk-details__summary-text'>Help with end user, consignee and third party</span>"
+                + "</summary>"
+                + "<div class='govuk-details__text govuk'>"
+                + "<p>An end-user receives the products in the destination country. They either use the products "
+                + "themselves, resell from stock, or export them again to another country.</p>"
+                + "<p>A consignee receives the products and then delivers or sells them to the end-user.</p>"
+                + "<p>A third party is involved in the export but not regarded as a consignee, end-user or ultimate "
+                + "end-user, for example they might be an agent, broker, consultant or distributor.</p>"
+                + "<p>For products being exported again passed their first destination, there may also be an ultimate "
+                + "end-user. An ultimate end-user in a third country receives goods via an onward export from the end user.</p>"
                 + "</div>"
                 + "</details>"
                 "<br>"
