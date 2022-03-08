@@ -45,3 +45,14 @@ class C(BaseConditional):
 
     def __call__(self, wizard):
         return self.conditional_func(wizard)
+
+
+class Flag(BaseConditional):
+    def __init__(self, flag, key=None):
+        self.flag = flag
+        self.key = key
+
+    def __call__(self, wizard):
+        if self.key:
+            return getattr(self.flag, self.key)
+        return self.flag

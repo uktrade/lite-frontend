@@ -1,6 +1,6 @@
 import pytest
 
-from exporter.core.wizard.conditionals import C
+from exporter.core.wizard.conditionals import C, Flag
 
 
 class FakeWizard:
@@ -56,3 +56,20 @@ def test_only_compose_with_composables():
 
     with pytest.raises(TypeError):
         C(is_true) | is_false
+
+
+def test_flag(wizard):
+    assert Flag(True)(wizard)
+    assert not (~Flag(True))(wizard)
+    assert (Flag(True) & Flag(True))(wizard)
+    assert (Flag(True) | Flag(True))(wizard)
+
+
+def test_flag_with_key(wizard):
+    class Holder:
+        true = True
+
+    assert Flag(Holder, "true")(wizard)
+    assert not (~Flag(Holder, "true"))(wizard)
+    assert (Flag(Holder, "true") & Flag(Holder, "true"))(wizard)
+    assert (Flag(Holder, "true") | Flag(Holder, "true"))(wizard)

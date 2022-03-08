@@ -43,7 +43,7 @@ from exporter.core.helpers import (
     str_to_bool,
 )
 from exporter.core.validators import validate_expiry_date
-from exporter.core.wizard.conditionals import C
+from exporter.core.wizard.conditionals import C, Flag
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
@@ -260,7 +260,7 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
     ]
 
     condition_dict = {
-        AddGoodFormSteps.PRODUCT_CATEGORY: lambda w: not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
+        AddGoodFormSteps.PRODUCT_CATEGORY: ~Flag(settings, "FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS"),
         AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
         AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: C(is_draft) & C(is_product_type("ammunition_or_component")),
         AddGoodFormSteps.IDENTIFICATION_MARKINGS: C(is_draft) & C(is_product_type("ammunition_or_component")),
