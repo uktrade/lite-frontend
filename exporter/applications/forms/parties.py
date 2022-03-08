@@ -285,7 +285,7 @@ class PartySignatoryNameForm(forms.Form):
         )
 
 
-class PartyDocuments(forms.Form):
+class PartyDocumentsForm(forms.Form):
     title = "Do you have an end-user document?"
     text_p1 = """
         You will be asked to upload either an <a class="govuk-link" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form">
@@ -333,6 +333,19 @@ class PartyDocuments(forms.Form):
             ),
             Submit("submit", "Continue"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get("end_user_document_available") == "False" and not cleaned_data.get(
+            "end_user_document_missing_reason"
+        ):
+            self.add_error(
+                "end_user_document_missing_reason",
+                "Enter why you do not have an end-user undertaking or stockist undertaking",
+            )
+
+        return cleaned_data
 
 
 class PartyDocumentUploadForm(forms.Form):

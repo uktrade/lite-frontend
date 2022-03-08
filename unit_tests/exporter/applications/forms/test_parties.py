@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.applications.forms import parties
 
@@ -104,6 +105,164 @@ def test_party_address_form(mock_get_countries, data, valid, errors):
 )
 def test_party_signatory_name_form(data, valid, errors):
     form = parties.PartySignatoryNameForm(data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        ({"end_user_document_available": "True"}, True, None),
+        (
+            {"end_user_document_available": ""},
+            False,
+            {"end_user_document_available": ["Select yes if you have an end-user document"]},
+        ),
+        ({"end_user_document_available": "False", "end_user_document_missing_reason": "test reason"}, True, None),
+        (
+            {"end_user_document_available": "False", "end_user_document_missing_reason": ""},
+            False,
+            {
+                "end_user_document_missing_reason": [
+                    "Enter why you do not have an end-user undertaking or stockist undertaking"
+                ]
+            },
+        ),
+    ),
+)
+def test_party_documents_form(data, valid, errors):
+    form = parties.PartyDocumentsForm(data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, files, edit, valid, errors",
+    (
+        (
+            {"description": "test", "document_in_english": "True", "document_on_letterhead": "True"},
+            {"party_document": SimpleUploadedFile("test", b"test_content")},
+            False,
+            True,
+            None,
+        ),
+        (
+            {"description": "test", "document_in_english": "True", "document_on_letterhead": "True"},
+            {},
+            True,
+            True,
+            None,
+        ),
+        (
+            {"description": "", "document_in_english": "", "document_on_letterhead": ""},
+            {},
+            False,
+            False,
+            {
+                "party_document": ["Select an end-user document"],
+                "document_in_english": ["Select yes if the end-user document is in English"],
+                "document_on_letterhead": [
+                    "Select yes if the document includes at least one page on company letterhead"
+                ],
+            },
+        ),
+        (
+            {"description": "", "document_in_english": "", "document_on_letterhead": ""},
+            {},
+            False,
+            False,
+            {
+                "party_document": ["Select an end-user document"],
+                "document_in_english": ["Select yes if the end-user document is in English"],
+                "document_on_letterhead": [
+                    "Select yes if the document includes at least one page on company letterhead"
+                ],
+            },
+        ),
+    ),
+)
+def test_party_document_upload_form(data, files, edit, valid, errors):
+    form = parties.PartyDocumentUploadForm(edit=edit, data=data, files=files)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, files, edit, valid, errors",
+    (
+        (
+            {},
+            {"party_eng_translation_document": SimpleUploadedFile("test", b"test_content")},
+            False,
+            True,
+            None,
+        ),
+        (
+            {},
+            {},
+            True,
+            True,
+            None,
+        ),
+        (
+            {},
+            {},
+            False,
+            False,
+            {
+                "party_eng_translation_document": ["Select an English translation"],
+            },
+        ),
+    ),
+)
+def test_party_english_translation_document_upload_form(data, files, edit, valid, errors):
+    form = parties.PartyEnglishTranslationDocumentUploadForm(edit=edit, data=data, files=files)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, files, edit, valid, errors",
+    (
+        (
+            {},
+            {"party_letterhead_document": SimpleUploadedFile("test", b"test_content")},
+            False,
+            True,
+            None,
+        ),
+        (
+            {},
+            {},
+            True,
+            True,
+            None,
+        ),
+        (
+            {},
+            {},
+            False,
+            False,
+            {
+                "party_letterhead_document": ["Select a document on company letterhead"],
+            },
+        ),
+    ),
+)
+def test_party_company_letterhead_document_upload_form(data, files, edit, valid, errors):
+    form = parties.PartyCompanyLetterheadDocumentUploadForm(edit=edit, data=data, files=files)
 
     assert form.is_valid() == valid
 

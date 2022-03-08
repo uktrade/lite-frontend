@@ -15,7 +15,7 @@ from exporter.applications.forms.parties import (
     PartyWebsiteForm,
     PartyAddressForm,
     PartySignatoryNameForm,
-    PartyDocuments,
+    PartyDocumentsForm,
     PartyDocumentUploadForm,
     PartyEnglishTranslationDocumentUploadForm,
     PartyCompanyLetterheadDocumentUploadForm,
@@ -100,7 +100,7 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
         (SetPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
         (SetPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
         (SetPartyFormSteps.PARTY_SIGNATORY_NAME, PartySignatoryNameForm),
-        (SetPartyFormSteps.PARTY_DOCUMENTS, PartyDocuments),
+        (SetPartyFormSteps.PARTY_DOCUMENTS, PartyDocumentsForm),
         (SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
         (SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
         (SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, PartyCompanyLetterheadDocumentUploadForm),
@@ -226,7 +226,7 @@ class CopyEndUserView(SetEndUserView):
         if self.application.sub_type == OPEN:
             return reverse("applications:end_user", kwargs={"pk": self.kwargs["pk"]})
 
-        return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
+        return super().get_success_url(party_id)
 
 
 class PartyContextMixin:
