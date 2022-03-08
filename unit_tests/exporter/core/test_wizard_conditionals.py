@@ -48,3 +48,11 @@ def test_or_conditionals(wizard):
 def test_complex_conditionals(wizard):
     assert (C(is_true) & C(is_false) | C(is_true))(wizard)
     assert not ((~C(is_true)) & (C(is_false) | C(is_true)))(wizard)
+
+
+def test_only_compose_with_composables():
+    with pytest.raises(TypeError):
+        C(is_true) & is_true
+
+    with pytest.raises(TypeError):
+        C(is_true) | is_false

@@ -263,7 +263,7 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
         AddGoodFormSteps.PRODUCT_CATEGORY: lambda w: not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
         AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
         AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: C(is_draft) & C(is_product_type("ammunition_or_component")),
-        AddGoodFormSteps.IDENTIFICATION_MARKINGS: C(is_draft) & is_product_type("ammunition_or_component"),
+        AddGoodFormSteps.IDENTIFICATION_MARKINGS: C(is_draft) & C(is_product_type("ammunition_or_component")),
         AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: (
             C(is_draft)
             & C(is_product_type("ammunition_or_component"))

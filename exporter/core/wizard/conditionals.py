@@ -3,9 +3,13 @@ class BaseConditional:
         return Not(self)
 
     def __and__(self, other):
+        if not isinstance(other, BaseConditional):
+            raise TypeError(f"{type(other)} is not a Conditional")
         return And(self, other)
 
     def __or__(self, other):
+        if not isinstance(other, BaseConditional):
+            raise TypeError(f"{type(other)} is not a Conditional")
         return Or(self, other)
 
 
