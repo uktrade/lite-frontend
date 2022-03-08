@@ -167,22 +167,11 @@
                                                     {% endif %}
                                                 </td>
                                             </tr>
-                                            {% if firearm_details.serial_numbers_available == "AVAILABLE" %}
+                                            {% if firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
                                                 <tr class="govuk-table__row app-table__row">
                                                     <th scope="row" class="govuk-table__header">Serial numbers</th>
                                                     <td class="govuk-table__cell">
-                                                        <details class="govuk-details" data-module="govuk-details">
-                                                            <summary class="govuk-details__summary">
-                                                                <span class="govuk-details__summary-text">
-                                                                    View serial numbers
-                                                                </span>
-                                                            </summary>
-                                                            <div class="govuk-details__text">
-                                                                {% for item in firearm_details.serial_numbers %}
-                                                                    {{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
-                                                                {% endfor %}
-                                                            </div>
-                                                        </details>
+                                                        {% include "case/includes/serial_numbers.html" %}
                                                     </td>
                                                 </tr>
                                             {% endif %}
