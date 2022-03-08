@@ -29,3 +29,8 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             description=strings.Authentication.UserDoesNotExist.DESCRIPTION,
             show_back_link=False,
         )
+
+    def fetch_token(self, request, auth_code):
+        return request.authbroker_client.fetch_token(
+            settings.AUTHBROKER_TOKEN_URL, client_secret=settings.AUTHBROKER_CLIENT_SECRET, code=auth_code
+        )

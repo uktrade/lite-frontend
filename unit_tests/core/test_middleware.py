@@ -2,7 +2,8 @@ from unittest import mock
 
 import pytest
 from django.conf import settings
-from oauthlib.oauth2 import OAuth2Error, TokenExpiredError
+from authlib.oauth2 import OAuth2Error
+
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
 from rest_framework.response import Response
@@ -104,12 +105,8 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
     assert response.status_code == status.HTTP_302_FOUND
 
 
-@pytest.mark.parametrize(
-    "error",
-    (OAuth2Error, TokenExpiredError),
-)
 @mock.patch("core.middleware.cache")
-def test_sso_introspection_middleware_oauth_error(mock_cache, error, rf):
+def test_sso_introspection_middleware_oauth_error(mock_cache, rf):
     # Set up mock request and response
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
@@ -117,7 +114,7 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, error, rf):
     request.session = mock.Mock()
     get_response = mock.Mock(return_value=Response())
     # Set up mock SSO response
-    request.authbroker_client.get = mock.Mock(side_effect=error())
+    request.authbroker_client.get = mock.Mock(side_effect=OAuth2Error())
     # Mock cache
     mock_cache.get = mock.Mock(return_value=None)
     # Call the middleware
