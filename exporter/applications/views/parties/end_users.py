@@ -29,6 +29,7 @@ from exporter.applications.services import (
     get_party,
     update_party,
     delete_party_document_by_id,
+    download_document_from_s3,
 )
 from exporter.applications.views.parties.base import CopyParties
 from exporter.core.constants import OPEN, SetPartyFormSteps, PartyDocumentType
@@ -112,7 +113,7 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
         SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(
             wizard
         )
-        and is_document_on_letterhead(wizard),
+        and not is_document_on_letterhead(wizard),
     }
 
     @cached_property
@@ -333,7 +334,7 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
         SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD: lambda wizard: is_end_user_document_available(
             wizard
         )
-        and is_document_on_letterhead(wizard),
+        and not is_document_on_letterhead(wizard),
     }
 
     def get_form_kwargs(self, step=None):
@@ -456,7 +457,7 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
                 PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
                 party_letterhead_document,
             )
-        elif document_on_letterhead is False and self.company_letterhead_document_exists:
+        elif document_on_letterhead and self.company_letterhead_document_exists:
             delete_party_document_by_id(
                 self.request,
                 self.application_id,
@@ -501,3 +502,13 @@ class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
     def get_success_url(self):
         self.kwargs.pop("document_type")
         return reverse("applications:end_user_summary", kwargs=self.kwargs)
+
+
+class PartyDocumentDownloadView(LoginRequiredMixin, PartyContextMixin, TemplateView):
+    def get(self, request, **kwargs):
+        document = [doc for doc in self.party["documents"] if doc["id"] == kwargs["document_pk"]]
+        if not document:
+            return error_page(request, "Requested document not associated with this party")
+
+        document = document[0]
+        return download_document_from_s3(document["s3_key"], document["name"])

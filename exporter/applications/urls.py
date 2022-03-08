@@ -267,6 +267,10 @@ urlpatterns = [
     path("<uuid:pk>/end-user/<uuid:obj_pk>/copy/", end_users.CopyEndUserView.as_view(), name="copy_end_user"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/remove/", end_users.RemoveEndUserView.as_view(), name="remove_end_user"),
     path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/document/<document_pk>/",
+        end_users.PartyDocumentDownloadView.as_view(),
+        name="party_document_download",
+    ),    path(
         "<uuid:pk>/end-user/<uuid:obj_pk>/document/attach/",
         documents.AttachDocuments.as_view(),
         name="end_user_attach_document",
