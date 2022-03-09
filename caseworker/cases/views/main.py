@@ -167,7 +167,6 @@ class CaseDetail(CaseView):
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
             Slices.END_USE_DETAILS,
-            Slices.ROUTE_OF_GOODS,
             Slices.SUPPORTING_DOCUMENTS,
             Slices.FREEDOM_OF_INFORMATION,
         ]
