@@ -23,6 +23,26 @@ class AuthView(RedirectView):
         return url
 
 
+class AuthLogoutView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        redirect_url = settings.LOGOUT_URL + self.request.build_absolute_uri("/")
+        if self.request.authbroker_client.token:
+            if self.request.authbroker_client.token.get("id_token"):
+                # if we have an ID token then the logout call to SSO service will require this.
+                logout_query = urlencode(
+                    {
+                        "id_token_hint": self.request.authbroker_client.token["id_token"],
+                        "post_logout_redirect_uri": self.request.build_absolute_uri("/"),
+                    }
+                )
+                redirect_url = settings.LOGOUT_URL + f"?{logout_query}"
+        else:
+            # We not even logged redirect to home page
+            redirect_url = self.request.build_absolute_uri("/")
+        self.request.session.flush()
+        return redirect_url
+
+
 class AbstractAuthCallbackView(abc.ABC, View):
     @abc.abstractmethod
     def handle_failure(self, data, status_code):
@@ -76,23 +96,3 @@ class LoginRequiredMixin:
         if not self.request.authbroker_client.token:
             return self.redirect_to_login()
         return super().dispatch(request, *args, **kwargs)
-
-
-class AuthLogoutView(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        redirect_url = settings.LOGOUT_URL + self.request.build_absolute_uri("/")
-        if self.request.authbroker_client.token:
-            if self.request.authbroker_client.token.get("id_token"):
-                # if we have an ID token then the logout call to SSO service will require this.
-                logout_query = urlencode(
-                    {
-                        "id_token_hint": self.request.authbroker_client.token["id_token"],
-                        "post_logout_redirect_uri": self.request.build_absolute_uri("/"),
-                    }
-                )
-                redirect_url = settings.LOGOUT_URL + f"?{logout_query}"
-        else:
-            # We not even logged redirect to home page
-            redirect_url = self.request.build_absolute_uri("/")
-        self.request.session.flush()
-        return redirect_url
