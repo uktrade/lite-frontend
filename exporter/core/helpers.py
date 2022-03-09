@@ -241,20 +241,6 @@ def show_attach_rfd_form(wizard):
     return str_to_bool(cleaned_data.get("is_registered_firearm_dealer"))
 
 
-def compose_with_and(*predicates):
-    def _and(wizard):
-        return all(func(wizard) for func in predicates)
-
-    return _and
-
-
-def compose_with_or(*predicates):
-    def _or(wizard):
-        return any(func(wizard) for func in predicates)
-
-    return _or
-
-
 def has_expired_rfd_certificate(application):
     document = get_rfd_certificate(application)
     return bool(document) and document["is_expired"]

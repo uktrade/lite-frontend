@@ -31,8 +31,6 @@ from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     NoSaveStorage,
-    compose_with_and,
-    compose_with_or,
     has_valid_rfd_certificate,
     is_category_firearms,
     is_draft,
@@ -45,6 +43,7 @@ from exporter.core.helpers import (
     str_to_bool,
 )
 from exporter.core.validators import validate_expiry_date
+from exporter.core.wizard.conditionals import C, Flag
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
@@ -261,37 +260,31 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
     ]
 
     condition_dict = {
-        AddGoodFormSteps.PRODUCT_CATEGORY: lambda w: not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
+        AddGoodFormSteps.PRODUCT_CATEGORY: ~Flag(settings, "FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS"),
         AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
-        AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: compose_with_and(
-            is_draft, is_product_type("ammunition_or_component")
+        AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: C(is_draft) & C(is_product_type("ammunition_or_component")),
+        AddGoodFormSteps.IDENTIFICATION_MARKINGS: C(is_draft) & C(is_product_type("ammunition_or_component")),
+        AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: (
+            C(is_draft)
+            & C(is_product_type("ammunition_or_component"))
+            & C(show_serial_numbers_form(AddGoodFormSteps.IDENTIFICATION_MARKINGS))
         ),
-        AddGoodFormSteps.IDENTIFICATION_MARKINGS: compose_with_and(
-            is_draft, is_product_type("ammunition_or_component")
-        ),
-        AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: compose_with_and(
-            is_draft,
-            is_product_type("ammunition_or_component"),
-            show_serial_numbers_form(AddGoodFormSteps.IDENTIFICATION_MARKINGS),
-        ),
-        AddGoodFormSteps.PRODUCT_MILITARY_USE: lambda w: not is_category_firearms(w),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: lambda w: not is_category_firearms(w),
+        AddGoodFormSteps.PRODUCT_MILITARY_USE: ~C(is_category_firearms),
+        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: ~C(is_category_firearms),
         AddGoodFormSteps.PV_DETAILS: is_pv_graded,
-        AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: compose_with_and(is_draft, is_product_type("firearm")),
+        AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: C(is_draft) & C(is_product_type("firearm")),
         AddGoodFormSteps.FIREARMS_REPLICA: is_product_type("firearm"),
         AddGoodFormSteps.FIREARMS_CALIBRE_DETAILS: is_product_type("ammunition_or_component"),
         AddGoodFormSteps.REGISTERED_FIREARMS_DEALER: show_rfd_form,
         AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE: show_attach_rfd_form,
-        AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION: compose_with_and(
-            is_draft, is_product_type("ammunition_or_component")
-        ),
+        AddGoodFormSteps.FIREARMS_ACT_CONFIRMATION: C(is_draft) & C(is_product_type("ammunition_or_component")),
         AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS: is_product_type("firearms_software_or_tech"),
-        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: compose_with_or(
-            is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
+        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: (
+            C(is_product_type("firearms_accessory")) | C(is_product_type("firearms_software_or_tech"))
         ),
         AddGoodFormSteps.PRODUCT_COMPONENT: is_product_type("firearms_accessory"),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: compose_with_or(
-            is_product_type("firearms_accessory"), is_product_type("firearms_software_or_tech")
+        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: (
+            C(is_product_type("firearms_accessory")) | C(is_product_type("firearms_software_or_tech"))
         ),
     }
 
@@ -715,43 +708,43 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, SessionWiza
     ]
 
     condition_dict = {
-        AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS: compose_with_and(
-            is_preexisting(True), is_product_type("ammunition_or_component")
+        AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS: (
+            C(is_preexisting(True)) & C(is_product_type("ammunition_or_component"))
         ),
-        AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS: compose_with_and(
-            is_preexisting(True), is_product_type("ammunition_or_component")
+        AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS: (
+            C(is_preexisting(True)) & C(is_product_type("ammunition_or_component"))
         ),
-        AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: compose_with_and(
-            is_preexisting(True),
-            is_product_type("ammunition_or_component"),
-            show_serial_numbers_form(AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS),
+        AddGoodToApplicationFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: (
+            C(is_preexisting(True))
+            & C(is_product_type("ammunition_or_component"))
+            & C(show_serial_numbers_form(AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS))
         ),
-        AddGoodToApplicationFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: compose_with_and(
-            is_preexisting(True), is_product_type("firearm")
+        AddGoodToApplicationFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: (
+            C(is_preexisting(True)) & C(is_product_type("firearm"))
         ),
-        AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE: compose_with_and(
-            is_product_category(constants.PRODUCT_CATEGORY_FIREARM),
-            is_firearm_type_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES),
-            is_firearm_type_not_in([constants.FIREARM_COMPONENT, "components_for_ammunition"]),
+        AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE: (
+            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            & C(is_firearm_type_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES))
+            & C(is_firearm_type_not_in([constants.FIREARM_COMPONENT, "components_for_ammunition"]))
         ),
-        AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE: compose_with_and(
-            is_product_category(constants.PRODUCT_CATEGORY_FIREARM), is_firearm_type_in([constants.FIREARM_COMPONENT])
+        AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE: (
+            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            & C(is_firearm_type_in([constants.FIREARM_COMPONENT]))
         ),
-        AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE: compose_with_and(
-            is_product_category(constants.PRODUCT_CATEGORY_FIREARM), is_firearm_type_in(["components_for_ammunition"])
+        AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE: (
+            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            & C(is_firearm_type_in(["components_for_ammunition"]))
         ),
-        AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE: compose_with_and(
-            is_product_category(constants.PRODUCT_CATEGORY_FIREARM),
-            is_firearm_type_not_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES),
+        AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE: (
+            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            & C(is_firearm_type_not_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES))
         ),
-        AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER: compose_with_and(
-            is_preexisting(True), show_rfd_question
+        AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER: C(is_preexisting(True)) & C(show_rfd_question),
+        AddGoodToApplicationFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE: (
+            C(is_preexisting(True)) & C(show_attach_rfd_question)
         ),
-        AddGoodToApplicationFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE: compose_with_and(
-            is_preexisting(True), show_attach_rfd_question
-        ),
-        AddGoodToApplicationFormSteps.FIREARMS_ACT_CONFIRMATION: compose_with_and(
-            is_preexisting(True), is_product_type("ammunition_or_component")
+        AddGoodToApplicationFormSteps.FIREARMS_ACT_CONFIRMATION: (
+            C(is_preexisting(True)) & C(is_product_type("ammunition_or_component"))
         ),
     }
 
