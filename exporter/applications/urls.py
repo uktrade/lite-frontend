@@ -35,12 +35,14 @@ from exporter.goods.views import (
     EditFirearmReplicaView,
     EditFirearmActCertificateDetails,
     EditYearOfManufactureView,
+    UpdateSerialNumbersView,
 )
 
 app_name = "applications"
 urlpatterns = [
     # Common
     path("", common.ApplicationsList.as_view(), name="applications"),
+    path("add-serial-numbers/", goods.AddSerialNumbersList.as_view(), name="add_serial_numbers"),
     path("<uuid:pk>/delete/", common.DeleteApplication.as_view(), name="delete"),
     path("<uuid:pk>/task-list/", common.ApplicationTaskList.as_view(), name="task_list"),
     path("<uuid:pk>/summary/", common.ApplicationSummary.as_view(), name="summary"),
@@ -110,17 +112,17 @@ urlpatterns = [
         name="firearms_act_certificate",
     ),
     path(
-        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/identification_markings/",
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/identification-markings/",
         EditIdentificationMarkingsView.as_view(),
         name="identification_markings",
     ),
     path(
-        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/number_of_items/",
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/number-of-items/",
         EditNumberOfItemsView.as_view(),
         name="number_of_items",
     ),
     path(
-        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/serial_numbers/",
+        "<uuid:pk>/goods/<uuid:good_pk>/edit-firearm-details/serial-numbers/",
         EditSerialNumbersView.as_view(),
         name="serial_numbers",
     ),
@@ -148,6 +150,11 @@ urlpatterns = [
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),
         name="remove_preexisting_good",
+    ),
+    path(
+        "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/update-serial-numbers/",
+        UpdateSerialNumbersView.as_view(),
+        name="update_serial_numbers",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/documents/<uuid:doc_pk>/",

@@ -11,7 +11,6 @@ def get_user(request, pk=None, params=None):
         url = "/users/me/"
     if params:
         url = url + "?" + convert_dict_to_query_params(params)
-
     return client.get(request, url).json()
 
 

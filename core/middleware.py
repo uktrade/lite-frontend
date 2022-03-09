@@ -10,7 +10,7 @@ from django.contrib.auth import logout
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.utils.cache import add_never_cache_headers
-from oauthlib.oauth2 import OAuth2Error
+from authlib.oauth2 import OAuth2Error
 from django.http import HttpResponseForbidden
 from requests.exceptions import RequestException
 
@@ -131,7 +131,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
     def __call__(self, request):
         # It is important to NOT run this middleware
         # when a user has not been authenticated.
-        if not request.authbroker_client.authorized:
+        if not request.authbroker_client.token:
             return self.get_response(request)
         try:
             self.introspect(request)

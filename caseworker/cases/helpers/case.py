@@ -4,8 +4,9 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import TemplateView
 
+from core.constants import CaseStatusEnum
+
 from caseworker.advice.services import get_advice_tab_context
-from caseworker.cases.constants import CaseStatusEnum
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.objects import Slice, Case
 from caseworker.cases.services import (

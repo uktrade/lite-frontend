@@ -18,8 +18,8 @@ class StartPage:
         "raise an end user advisory query",
         "add products to your database",
     ]
-    SIGN_IN_BUTTON = "Sign in with"
-    SIGN_IN_BUTTON_SUFFIX = "GREAT"
+    SIGN_IN_BUTTON = "Sign in with GOV.UK"
+    SIGN_IN_BUTTON_SUFFIX = "GOV.UK"
     OR = "or"
     REGISTER_ACCOUNT_LINK = "set up an account"
     NOTICE = (

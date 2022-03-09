@@ -10,11 +10,14 @@ from django.views.generic import RedirectView
 from django.views.generic.base import View
 
 from core.auth.utils import get_profile
+import uuid
 
 
 class AuthView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        url, state = self.request.authbroker_client.authorization_url(settings.AUTHBROKER_AUTHORIZATION_URL)
+        url, state = self.request.authbroker_client.create_authorization_url(
+            settings.AUTHBROKER_AUTHORIZATION_URL, nonce=uuid.uuid4().hex
+        )
         self.request.session[f"{settings.TOKEN_SESSION_KEY}_oauth_state"] = state
         return url
 
@@ -38,20 +41,24 @@ class AbstractAuthCallbackView(abc.ABC, View):
     def authenticate_user(self):
         pass
 
+    @abc.abstractmethod
+    def fetch_token(self, request, auth_code):
+        pass
+
     @cached_property
     def user_profile(self):
         return get_profile(self.request.authbroker_client)
 
     def get(self, request, *args, **kwargs):
         auth_code = request.GET.get("code", None)
+
         if not auth_code:
             return redirect(reverse("auth:login"))
         state = self.request.session.get(f"{settings.TOKEN_SESSION_KEY}_oauth_state", None)
         if not state:
             return HttpResponseServerError()
-        token = request.authbroker_client.fetch_token(
-            settings.AUTHBROKER_TOKEN_URL, client_secret=settings.AUTHBROKER_CLIENT_SECRET, code=auth_code
-        )
+
+        token = self.fetch_token(request, auth_code)
         self.request.session[settings.TOKEN_SESSION_KEY] = dict(token)
         del self.request.session[f"{settings.TOKEN_SESSION_KEY}_oauth_state"]
         data, status_code = self.authenticate_user()
@@ -71,6 +78,6 @@ class LoginRequiredMixin:
         return HttpResponseRedirect(urlunparse(login_url_parts))
 
     def dispatch(self, request, *args, **kwargs):
-        if not self.request.authbroker_client.authorized:
+        if not self.request.authbroker_client.token:
             return self.redirect_to_login()
         return super().dispatch(request, *args, **kwargs)

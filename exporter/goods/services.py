@@ -17,6 +17,12 @@ def get_good(request, pk, full_detail=False):
     return data.json().get("good"), data.status_code
 
 
+def get_good_on_application(request, pk):
+    response = client.get(request, f"/applications/good-on-application/{pk}")
+    response.raise_for_status()
+    return response.json()
+
+
 def get_good_details(request, pk):
     data = client.get(request, f"/goods/{pk}/details/" + convert_parameters_to_query_params(locals()))
     return data.json().get("good"), data.status_code
@@ -79,7 +85,7 @@ def add_identification_marking_details(firearm_details, json):
 
     if "identification_markings_step" in json:
         # parent component doesnt get sent when empty unlike the remaining form fields
-        firearm_details["has_identification_markings"] = json.get("has_identification_markings", "")
+        firearm_details["serial_numbers_available"] = json.get("serial_numbers_available", "")
         firearm_details["no_identification_markings_details"] = json.get("no_identification_markings_details")
         try:
             del json["no_identification_markings_details"]

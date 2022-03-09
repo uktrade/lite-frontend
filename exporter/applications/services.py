@@ -31,6 +31,17 @@ def get_applications(request, page: int = 1, submitted: bool = True):
     return data.json()
 
 
+def get_applications_require_serial_numbers(request, page: int = 1):
+    """
+    Returns a list of applications requiring serial numbers
+    :param request: Standard HttpRequest object
+    :param page: Returns n page of page results
+    """
+    querystring = convert_parameters_to_query_params({"page": page})
+    data = client.get(request, f"/applications/require-serial-numbers/{querystring}")
+    return data.json()
+
+
 def has_existing_applications_and_licences_and_nlrs(request):
     """
     Returns if an hmrc org has any submitted queries
@@ -149,7 +160,7 @@ def serialize_good_on_app_data(json, good=None, preexisting=False):
     if firearm_details:
         if not preexisting and good:
             firearm_details["number_of_items"] = good["firearm_details"]["number_of_items"]
-            if good["firearm_details"]["has_identification_markings"] is True:
+            if good["firearm_details"]["serial_numbers_available"] == "AVAILABLE":
                 firearm_details["serial_numbers"] = good["firearm_details"]["serial_numbers"]
             else:
                 firearm_details["serial_numbers"] = list()
@@ -437,4 +448,11 @@ def copy_application(request, pk, data):
 def post_exhibition(request, pk, data):
     post_data = format_date_fields(data)
     data = client.post(request, f"/applications/{pk}/exhibition-details/", data=post_data)
+    return data.json(), data.status_code
+
+
+def edit_good_on_application_firearm_details_serial_numbers(request, pk, good_on_application_pk, json):
+    data = client.put(
+        request, f"/applications/{pk}/good-on-application/{good_on_application_pk}/update-serial-numbers/", json
+    )
     return data.json(), data.status_code

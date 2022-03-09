@@ -443,13 +443,14 @@ class FirearmsNumberOfItemsForm(forms.Form):
 class IdentificationMarkingsForm(forms.Form):
     title = CreateGoodForm.FirearmGood.IdentificationMarkings.TITLE
 
-    has_identification_markings = forms.ChoiceField(
+    serial_numbers_available = forms.ChoiceField(
         choices=(
-            (True, CreateGoodForm.FirearmGood.IdentificationMarkings.YES),
-            (False, CreateGoodForm.FirearmGood.IdentificationMarkings.NO),
+            ("AVAILABLE", CreateGoodForm.FirearmGood.IdentificationMarkings.YES_NOW),
+            ("LATER", CreateGoodForm.FirearmGood.IdentificationMarkings.YES_LATER),
+            ("NOT_AVAILABLE", CreateGoodForm.FirearmGood.IdentificationMarkings.NO),
         ),
         error_messages={
-            "required": "Select yes if the product has identification markings",
+            "required": "Select whether you can enter serial numbers now, later or the product does not have them.",
         },
         label="",
     )
@@ -466,8 +467,9 @@ class IdentificationMarkingsForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             ConditionalRadios(
-                "has_identification_markings",
-                CreateGoodForm.FirearmGood.IdentificationMarkings.YES,
+                "serial_numbers_available",
+                CreateGoodForm.FirearmGood.IdentificationMarkings.YES_NOW,
+                CreateGoodForm.FirearmGood.IdentificationMarkings.YES_LATER,
                 ConditionalQuestion(
                     CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
                     "no_identification_markings_details",
@@ -480,7 +482,7 @@ class IdentificationMarkingsForm(forms.Form):
         cleaned_data = super().clean()
         cleaned_data["identification_markings_step"] = True
 
-        if cleaned_data.get("has_identification_markings") == "False":
+        if cleaned_data.get("serial_numbers_available") == "NOT_AVAILABLE":
             if not cleaned_data.get("no_identification_markings_details"):
                 self.add_error(
                     "no_identification_markings_details",
@@ -523,14 +525,17 @@ class SerialNumbersField(forms.MultiValueField):
         return data_list
 
 
-class FirearmsCaptureSerialNumbersForm(forms.Form):
-    title = "Enter the serial numbers for this product"
-
+class BaseSerialNumbersForm(forms.Form):
     def __init__(self, *args, **kwargs):
         number_of_items = kwargs.pop("number_of_items")
+
         super().__init__(*args, **kwargs)
 
-        self.fields["serial_numbers"] = SerialNumbersField(number_of_items, label="", required=False)
+        self.fields["serial_numbers"] = SerialNumbersField(
+            number_of_items,
+            label="",
+            required=False,
+        )
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -538,13 +543,11 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
             HTML.p("Enter at least one serial number."),
             HTML.p(f"{number_of_items} items"),
             "serial_numbers",
-            Submit("submit", "Save and continue"),
+            Submit("submit", self.save_button_text),
         )
 
     def clean(self):
         cleaned_data = super().clean()
-
-        cleaned_data["capture_serial_numbers_step"] = True
 
         try:
             serial_numbers = cleaned_data.pop("serial_numbers")
@@ -555,6 +558,31 @@ class FirearmsCaptureSerialNumbersForm(forms.Form):
             cleaned_data[f"serial_number_input_{i}"] = serial_number
 
         return cleaned_data
+
+
+class FirearmsCaptureSerialNumbersForm(BaseSerialNumbersForm):
+    title = "Enter the serial numbers for this product"
+    save_button_text = "Save and continue"
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        cleaned_data["capture_serial_numbers_step"] = True
+
+        return cleaned_data
+
+
+class UpdateSerialNumbersForm(BaseSerialNumbersForm):
+    save_button_text = "Submit"
+
+    def __init__(self, *args, **kwargs):
+        self.product_name = kwargs.pop("product_name")
+
+        super().__init__(*args, **kwargs)
+
+    @property
+    def title(self):
+        return f"Enter the serial numbers for '{self.product_name}'"
 
 
 class ProductMilitaryUseForm(forms.Form):

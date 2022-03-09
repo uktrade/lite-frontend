@@ -209,7 +209,7 @@ def is_pv_graded(wizard):
 def show_serial_numbers_form(indentification_markings_step_name):
     def _show_serial_numbers_form(wizard):
         cleaned_data = wizard.get_cleaned_data_for_step(indentification_markings_step_name)
-        return str_to_bool(cleaned_data.get("has_identification_markings"))
+        return cleaned_data.get("serial_numbers_available") == "AVAILABLE"
 
     return _show_serial_numbers_form
 
@@ -239,20 +239,6 @@ def show_attach_rfd_form(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.REGISTERED_FIREARMS_DEALER)
 
     return str_to_bool(cleaned_data.get("is_registered_firearm_dealer"))
-
-
-def compose_with_and(*predicates):
-    def _and(wizard):
-        return all(func(wizard) for func in predicates)
-
-    return _and
-
-
-def compose_with_or(*predicates):
-    def _or(wizard):
-        return any(func(wizard) for func in predicates)
-
-    return _or
 
 
 def has_expired_rfd_certificate(application):

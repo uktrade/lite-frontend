@@ -18,6 +18,10 @@ from lite_forms.components import (
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 
+from django import forms
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Submit, Layout, HTML
+
 
 def select_your_organisation_form(organisations):
     return Form(
@@ -233,3 +237,22 @@ def register_an_individual_group(request, location):
             site_form(request, True, location),
         ]
     )
+
+
+class RegisterNameForm(forms.Form):
+    first_name = forms.CharField(
+        label="First name",
+        required=True,
+        error_messages={"required": "Enter your first name"},
+    )
+    last_name = forms.CharField(label="Last name", required=True, error_messages={"required": "Enter your last name"})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1("What is your name?"),
+            "first_name",
+            "last_name",
+            Submit("submit", "Continue"),
+        )

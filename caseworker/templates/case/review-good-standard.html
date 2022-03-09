@@ -15,7 +15,13 @@
             {% endif %}
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Name</th>
-                <td class="govuk-table__cell">{% if object.good.name %} {{ object.good.name }} {% else %} {{ object.good.description }} {% endif %}</td>
+                <td class="govuk-table__cell">
+                    {% if object.good.name %}
+                        {{ object.good.name }}
+                    {% else %}
+                        {{ object.good.description }}
+                    {% endif %}
+                </td>
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Description</th>
@@ -61,7 +67,6 @@
                     <!-- core firearms types -->
                     {% with firearms_core_types="firearms ammunition components_for_firearms components_for_ammunition" %}
                         {% if firearm_details.type.key in firearms_core_types.split %}
-
                             {% if firearm_details.type.key == "firearms" %}
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Year of manufacture</th>
@@ -81,6 +86,7 @@
                                     </td>
                                 </tr>
                             {% endif %}
+
                             <tr class="govuk-table__row app-table__row">
                                 <th scope="row" class="govuk-table__header">Calibre</th>
                                 <td class="govuk-table__cell">{{ firearm_details.calibre|default_na }}</td>
@@ -155,38 +161,26 @@
                             <tr class="govuk-table__row app-table__row">
                                 <th scope="row" class="govuk-table__header">Identification markings</th>
                                 <td class="govuk-table__cell">
-                                    {% if firearm_details.has_identification_markings is not None %}
-                                        {% if firearm_details.has_identification_markings %}
-                                            Yes
-                                        {% else %}
-                                            No <br>
-                                            <span class="govuk-hint">
-                                                {{ firearm_details.no_identification_markings_details }}
-                                            </span>
-                                        {% endif %}
+                                    {% if firearm_details.serial_numbers_available == "AVAILABLE" %}
+                                        Yes, I can add serial numbers now
+                                    {% elif firearm_details.serial_numbers_available == "LATER" %}
+                                        Yes, I can add serial numbers later
+                                    {% else %}
+                                        No
+                                        <span class="govuk-hint">
+                                            {{ firearm_details.no_identification_markings_details|default_na }}
+                                        </span>
                                     {% endif %}
                                 </td>
                             </tr>
-                            {% if firearm_details.has_identification_markings is True %}
+                            {% if firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Serial numbers</th>
                                     <td class="govuk-table__cell">
-                                        <details class="govuk-details" data-module="govuk-details">
-                                            <summary class="govuk-details__summary">
-                                            <span class="govuk-details__summary-text">
-                                                View serial numbers
-                                            </span>
-                                            </summary>
-                                            <div class="govuk-details__text">
-                                                {% for item in firearm_details.serial_numbers %}
-                                                {{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </details>
+                                        {% include "case/includes/serial_numbers.html" %}
                                     </td>
                                 </tr>
                             {% endif %}
-
                         {% endif %}
                     {% endwith %}
 
@@ -222,7 +216,7 @@
                                 {% if object.good.uses_information_security %}
                                     {{ object.good.uses_information_security|yesno|title }}
                                     {% if object.good.information_security_details %}
-                                    , {{ object.good.information_security_details }}
+                                        , {{ object.good.information_security_details }}
                                     {% endif %}
                                 {% else %}
                                     Not added
@@ -242,7 +236,7 @@
                                 {% if object.good.is_military_use %}
                                     {{ object.good.is_military_use.value }}
                                     {% if object.good.modified_military_use_details %}
-                                    , {{ object.good.modified_military_use_details }}
+                                        , {{ object.good.modified_military_use_details }}
                                     {% endif %}
                                 {% else %}
                                     Not added
@@ -255,7 +249,7 @@
                                 {% if object.good.uses_information_security %}
                                     {{ object.good.uses_information_security|yesno|title }}
                                     {% if object.good.information_security_details %}
-                                    , {{ object.good.information_security_details }}
+                                        , {{ object.good.information_security_details }}
                                     {% endif %}
                                 {% else %}
                                     Not added
@@ -276,7 +270,7 @@
                         {% if object.good.is_military_use %}
                             {{ object.good.is_military_use.value }}
                             {% if object.good.modified_military_use_details %}
-                            , {{ object.good.modified_military_use_details }}
+                                , {{ object.good.modified_military_use_details }}
                             {% endif %}
                         {% else %}
                             Not added
@@ -301,7 +295,7 @@
                         {% if object.good.uses_information_security %}
                             {{ object.good.uses_information_security|yesno|title }}
                             {% if object.good.information_security_details %}
-                            , {{ object.good.information_security_details }}
+                                , {{ object.good.information_security_details }}
                             {% endif %}
                         {% else %}
                             Not added
@@ -321,16 +315,16 @@
                         {% if object.good.documents|length > 1 %}
                             <ol class="govuk-list govuk-list--number">
                                 {% for document in object.good.documents %}
-                                <li>
-                                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
-                                    <span class="govuk-hint"> {{ document.description }} </span>
-                                </li>
+                                    <li>
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+                                        <span class="govuk-hint">{{ document.description }}</span>
+                                    </li>
                                 {% endfor %}
                             </ol>
                         {% else %}
                             {% with document=object.good.documents.0 %}
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
-                                <span class="govuk-hint"> {{ document.description }} </span>
+                                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}">{{ document.name }}</a>
+                                <span class="govuk-hint">{{ document.description }}</span>
                             {% endwith %}
                         {% endif %}
                     {% else %}
