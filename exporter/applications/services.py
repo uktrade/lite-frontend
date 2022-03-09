@@ -198,6 +198,7 @@ def post_party(request, pk, json):
     data = client.post(request, f"/applications/{pk}/parties/", json)
     return data.json(), data.status_code
 
+
 def copy_party(request, pk, party_pk):
     return client.get(request, f"/applications/{pk}/parties/{party_pk}/copy/").json()["party"]
 
