@@ -32,7 +32,13 @@ from exporter.applications.services import (
     download_document_from_s3,
 )
 from exporter.applications.views.parties.base import CopyParties
-from exporter.core.constants import OPEN, SetPartyFormSteps, PartyDocumentType
+from exporter.core.constants import (
+    OPEN,
+    SetPartyFormSteps,
+    PartyDocumentType,
+    DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION,
+    DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD,
+)
 from exporter.core.helpers import (
     NoSaveStorage,
     is_end_user_document_available,
@@ -243,8 +249,7 @@ class PartyContextMixin:
     @property
     def party(self):
         party = get_party(self.request, self.kwargs["pk"], self.kwargs["obj_pk"])
-        party_type = list(party.keys())[0]
-        return party[party_type]
+        return party["data"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -255,7 +260,7 @@ class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
     template_name = "applications/party-summary.html"
 
     def get_success_url(self):
-        return "#"
+        return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
 
 
 class RemoveEndUserView(LoginRequiredMixin, PartyContextMixin, TemplateView):
@@ -269,7 +274,7 @@ class RemoveEndUserView(LoginRequiredMixin, PartyContextMixin, TemplateView):
         return redirect(reverse("applications:task_list", kwargs={"pk": kwargs["pk"]}))
 
 
-class PartyEditMixin(LoginRequiredMixin, PartyContextMixin, FormView):
+class PartyEditView(LoginRequiredMixin, PartyContextMixin, FormView):
     def form_valid(self, form):
         update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
         return super().form_valid(form)
@@ -278,28 +283,28 @@ class PartyEditMixin(LoginRequiredMixin, PartyContextMixin, FormView):
         return reverse("applications:end_user_summary", kwargs=self.kwargs)
 
 
-class PartySubTypeEditView(PartyEditMixin):
+class PartySubTypeEditView(PartyEditView):
     form_class = PartySubTypeSelectForm
 
     def get_initial(self):
         return {"sub_type": self.party["sub_type"]["key"], "sub_type_other": self.party["sub_type_other"]}
 
 
-class PartyNameEditView(PartyEditMixin):
+class PartyNameEditView(PartyEditView):
     form_class = PartyNameForm
 
     def get_initial(self):
         return {"name": self.party["name"]}
 
 
-class PartyWebsiteEditView(PartyEditMixin):
+class PartyWebsiteEditView(PartyEditView):
     form_class = PartyWebsiteForm
 
     def get_initial(self):
         return {"website": self.party["website"]}
 
 
-class PartyAddressEditView(PartyEditMixin):
+class PartyAddressEditView(PartyEditView):
     form_class = PartyAddressForm
 
     def get_form_kwargs(self):
@@ -311,7 +316,7 @@ class PartyAddressEditView(PartyEditMixin):
         return {"address": self.party["address"], "country": self.party["country"]["id"]}
 
 
-class PartySignatoryEditView(PartyEditMixin):
+class PartySignatoryEditView(PartyEditView):
     form_class = PartySignatoryNameForm
 
     def get_initial(self):
@@ -342,11 +347,11 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
 
         # get existing document status for the end-user
         self.existing_documents = {document["type"]: document["id"] for document in self.party["documents"]}
-        self.english_translation_exists = bool(
-            {PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT}.intersection(self.existing_documents.keys())
+        self.english_translation_exists = (
+            PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT in self.existing_documents
         )
-        self.company_letterhead_document_exists = bool(
-            {PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT}.intersection(self.existing_documents.keys())
+        self.company_letterhead_document_exists = (
+            PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT in self.existing_documents
         )
         if step == SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD:
             kwargs["edit"] = True
@@ -397,7 +402,6 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
 
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
-        print(all_data)
 
         # get updated user choices
         party_document = all_data.pop("party_document", None)
@@ -471,18 +475,18 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
 class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
-        if self.kwargs.get("document_type") == "english_translation":
+        if self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION:
             return PartyEnglishTranslationDocumentUploadForm(edit=True, **form_kwargs)
-        elif self.kwargs.get("document_type") == "company_letterhead":
+        elif self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD:
             return PartyCompanyLetterheadDocumentUploadForm(edit=True, **form_kwargs)
         else:
             raise ValueError("Invalid document type encountered")
 
     def form_valid(self, form):
-        if self.kwargs.get("document_type") == "english_translation":
+        if self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION:
             document = form.cleaned_data["party_eng_translation_document"]
             party_document_type = PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT
-        elif self.kwargs.get("document_type") == "company_letterhead":
+        elif self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD:
             document = form.cleaned_data["party_letterhead_document"]
             party_document_type = PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT
         else:
@@ -495,8 +499,17 @@ class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
             "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
         }
 
-        _, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
+        response, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
         assert status_code == HTTPStatus.CREATED
+        if status_code != HTTPStatus.OK:
+            log.error(
+                "Error uploading party document - response was: %s - %s",
+                status_code,
+                response,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error uploading party document")
+
         return super().form_valid(form)
 
     def get_success_url(self):

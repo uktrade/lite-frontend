@@ -5,7 +5,7 @@
 
 {% block body %}
     <div class="govuk-width-container">
-        <a href="#" class="govuk-back-link">Back</a>
+        <a href="{% url 'applications:task_list' pk %}" class="govuk-back-link">Back</a>
     
         <div class="lite-app-bar">
             <div class="lite-app-bar__content">
@@ -103,7 +103,11 @@
                             Upload an end-user document
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <a {% if document.safe %} href="{% url 'applications:party_document_download' pk obj_pk document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+                            {% if document.safe %}
+                                <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+                            {% else %}
+                                {{ document.name }}
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" href="{% url 'applications:end_user_edit_undertaking_document' pk obj_pk %}">
@@ -121,7 +125,11 @@
                             Upload an English translation of the end-user document
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <a {% if document.safe %} href="{% url 'applications:party_document_download' pk obj_pk document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+                            {% if document.safe %}
+                                <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+                            {% else %}
+                                {{ document.name }}
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'english_translation' %}">
@@ -139,7 +147,11 @@
                             Upload a document on company letterhead
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <a {% if document.safe %} href="{% url 'applications:party_document_download' pk obj_pk document.id %}"{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+                            {% if document.safe %}
+                                <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+                            {% else %}
+                                {{ document.name }}
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'company_letterhead' %}">
@@ -153,7 +165,7 @@
         {% endfor %}
     </div>
 
-    <div class="govuk-summary-list">
+    <div>
         <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' pk %}">
             Submit
         </a>

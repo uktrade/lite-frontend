@@ -138,6 +138,9 @@ FIREARMS_ALL_TYPES = [
     "technology_related_to_firearms",
 ]
 
+DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION = "english_translation"
+DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD = "company_letterhead"
+
 
 class GoodsStartingPoint:
     TITLE = "Where will the products begin their export journey?"
