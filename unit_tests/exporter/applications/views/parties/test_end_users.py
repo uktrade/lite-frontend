@@ -93,7 +93,7 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
         "end_user_document_missing_reason": "",
         "description": "",
         "document_in_english": "False",
-        "document_on_letterhead": "True",
+        "document_on_letterhead": "False",
         "type": "end_user",
     }
 
@@ -165,7 +165,7 @@ def set_end_user(url, authorized_client):
             f"{current_step_key}": SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD,
             f"{SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD}-party_document": party_doc,
             f"{SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD}-document_in_english": "False",
-            f"{SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD}-document_on_letterhead": "True",
+            f"{SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD}-document_on_letterhead": "False",
         },
     )
     assert not response.context["form"].errors
