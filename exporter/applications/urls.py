@@ -270,7 +270,8 @@ urlpatterns = [
         "<uuid:pk>/end-user/<uuid:obj_pk>/document/<document_pk>/",
         end_users.PartyDocumentDownloadView.as_view(),
         name="party_document_download",
-    ),    path(
+    ),
+    path(
         "<uuid:pk>/end-user/<uuid:obj_pk>/document/attach/",
         documents.AttachDocuments.as_view(),
         name="end_user_attach_document",
