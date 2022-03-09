@@ -63,5 +63,7 @@ $('[data-definition-title]').click(function() {
     return false;
 })
 
-var cookiePolicy = new CookiePolicy();
-cookiePolicy.initBanner(".app-cookie-banner", ".js-accept-cookie", "cookies");
+$(document).ready(function() {
+    var cookiePolicy = new CookiePolicy();
+    cookiePolicy.initBanner(".app-cookie-banner", ".js-accept-cookie", "cookies");
+});
