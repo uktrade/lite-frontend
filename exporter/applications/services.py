@@ -31,6 +31,17 @@ def get_applications(request, page: int = 1, submitted: bool = True):
     return data.json()
 
 
+def get_applications_require_serial_numbers(request, page: int = 1):
+    """
+    Returns a list of applications requiring serial numbers
+    :param request: Standard HttpRequest object
+    :param page: Returns n page of page results
+    """
+    querystring = convert_parameters_to_query_params({"page": page})
+    data = client.get(request, f"/applications/require-serial-numbers/{querystring}")
+    return data.json()
+
+
 def has_existing_applications_and_licences_and_nlrs(request):
     """
     Returns if an hmrc org has any submitted queries
