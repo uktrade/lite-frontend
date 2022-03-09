@@ -17,6 +17,12 @@ def get_good(request, pk, full_detail=False):
     return data.json().get("good"), data.status_code
 
 
+def get_good_on_application(request, pk):
+    response = client.get(request, f"/applications/good-on-application/{pk}")
+    response.raise_for_status()
+    return response.json()
+
+
 def get_good_details(request, pk):
     data = client.get(request, f"/goods/{pk}/details/" + convert_parameters_to_query_params(locals()))
     return data.json().get("good"), data.status_code

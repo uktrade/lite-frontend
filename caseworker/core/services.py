@@ -2,8 +2,9 @@ from collections import defaultdict
 
 from caseworker.users.services import get_gov_user
 from core import client
+from core.constants import CaseStatusEnum
 from core.helpers import convert_value_to_query_param
-from caseworker.cases.constants import CaseType, CaseStatusEnum
+from caseworker.cases.constants import CaseType
 from lite_forms.components import Option
 
 

@@ -2,6 +2,7 @@ import logging
 from http import HTTPStatus
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -10,10 +11,12 @@ from django.views.generic import FormView, TemplateView
 from formtools.wizard.views import SessionWizardView
 
 from core.auth.views import LoginRequiredMixin
+from core.constants import CaseStatusEnum
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
     download_document_from_s3,
+    edit_good_on_application_firearm_details_serial_numbers,
     fetch_and_delete_previous_application_documents,
     get_application,
     get_application_documents,
@@ -55,6 +58,7 @@ from exporter.goods.forms import (
     PvDetailsForm,
     RegisteredFirearmsDealerForm,
     SoftwareTechnologyDetailsForm,
+    UpdateSerialNumbersForm,
     attach_documents_form,
     build_firearm_create_back,
     check_document_available_form,
@@ -81,6 +85,7 @@ from exporter.goods.services import (
     get_good_details,
     get_good_document,
     get_good_documents,
+    get_good_on_application,
     get_goods,
     post_good_document_availability,
     post_good_document_sensitivity,
@@ -1174,3 +1179,90 @@ class DeleteDocument(LoginRequiredMixin, TemplateView):
             )
         else:
             return redirect(reverse("goods:good", kwargs={"pk": good_id}))
+
+
+class UpdateSerialNumbersView(LoginRequiredMixin, FormView):
+    form_class = UpdateSerialNumbersForm
+    template_name = "core/form.html"
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    @cached_property
+    def firearm_details(self):
+        return self.good_on_application["firearm_details"]
+
+    @cached_property
+    def good_on_application(self):
+        return get_good_on_application(self.request, self.kwargs["good_on_application_pk"])
+
+    @cached_property
+    def good(self):
+        return self.good_on_application["good"]
+
+    def dispatch(self, *args, **kwargs):
+        if self.application["status"]["key"] not in [
+            CaseStatusEnum.SUBMITTED,
+            CaseStatusEnum.FINALISED,
+        ]:
+            raise PermissionDenied()
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        kwargs["number_of_items"] = self.firearm_details["number_of_items"]
+        kwargs["product_name"] = self.good["name"]
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        initial["serial_numbers"] = self.firearm_details["serial_numbers"]
+
+        return initial
+
+    def get_success_url(self):
+        return reverse("applications:application", kwargs={"pk": self.application["id"]})
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["back_link_url"] = self.get_success_url()
+        ctx["title"] = self.get_form().title
+
+        return ctx
+
+    def generate_serial_numbers_data(self, cleaned_data):
+        def sort_key(key):
+            return int(key.replace("serial_number_input_", ""))
+
+        keys = [key for key in cleaned_data.keys() if key.startswith("serial_number_input_")]
+        sorted_keys = sorted(keys, key=sort_key)
+        data = [cleaned_data[k] for k in sorted_keys]
+
+        return data
+
+    def form_valid(self, form):
+        serial_numbers = self.generate_serial_numbers_data(form.cleaned_data)
+
+        api_resp_data, status_code = edit_good_on_application_firearm_details_serial_numbers(
+            self.request,
+            self.application["id"],
+            self.good_on_application["id"],
+            {"serial_numbers": serial_numbers},
+        )
+
+        if status_code != HTTPStatus.OK:
+            log.error(
+                "Error updating serial numbers - response was: %s - %s",
+                status_code,
+                api_resp_data,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error updating serial numbers")
+
+        return super().form_valid(form)

@@ -99,7 +99,7 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     url = reverse(f"applications:good_detail_summary", kwargs={"pk": pk})
     old_locations = bool(application["goods_locations"])
     converted = {
-        convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"]),
+        convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"], is_summary),
         strings.END_USE_DETAILS: _get_end_use_details(application),
         strings.END_USER: convert_party(application["end_user"], application, editable),
         strings.CONSIGNEE: convert_party(application["consignee"], application, editable),
@@ -223,7 +223,7 @@ def _convert_hmrc_query(application, editable=False):
     }
 
 
-def convert_goods_on_application(goods_on_application, is_exhibition=False):
+def convert_goods_on_application(goods_on_application, is_exhibition=False, is_summary=False):
     converted = []
     for good_on_application in goods_on_application:
         # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
@@ -258,6 +258,17 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False):
             item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
             item["Quantity"] = pluralise_quantity(good_on_application)
             item["Value"] = f"£{good_on_application['value']}"
+        if not is_summary and requires_serial_numbers(good_on_application):
+            update_serial_numbers_url = reverse(
+                "applications:update_serial_numbers",
+                kwargs={
+                    "pk": good_on_application["application"],
+                    "good_on_application_pk": good_on_application["id"],
+                },
+            )
+            item[mark_safe('<span class="govuk-visually-hidden">Actions</a>')] = mark_safe(  # nosec
+                f'<a class="govuk-link" href="{update_serial_numbers_url}">Add serial numbers</a>'
+            )
         converted.append(item)
     return converted
 
@@ -632,3 +643,19 @@ def get_application_type_string(application):
         return applications.ApplicationPage.Summary.Licence.TRADE_CONTROL
     else:
         return APPLICATION_TYPE_STRINGS[application_type]
+
+
+def requires_serial_numbers(good_on_application):
+    if "firearm_details" not in good_on_application:
+        return False
+
+    firearm_details = good_on_application["firearm_details"]
+
+    if firearm_details["serial_numbers_available"] == "NOT_AVAILABLE":
+        return False
+
+    serial_numbers = firearm_details["serial_numbers"]
+    added_serial_numbers = [sn for sn in serial_numbers if sn]
+    number_of_items = firearm_details["number_of_items"]
+
+    return number_of_items != len(added_serial_numbers)

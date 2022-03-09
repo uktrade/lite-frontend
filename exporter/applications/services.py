@@ -439,3 +439,10 @@ def post_exhibition(request, pk, data):
     post_data = format_date_fields(data)
     data = client.post(request, f"/applications/{pk}/exhibition-details/", data=post_data)
     return data.json(), data.status_code
+
+
+def edit_good_on_application_firearm_details_serial_numbers(request, pk, good_on_application_pk, json):
+    data = client.put(
+        request, f"/applications/{pk}/good-on-application/{good_on_application_pk}/update-serial-numbers/", json
+    )
+    return data.json(), data.status_code
