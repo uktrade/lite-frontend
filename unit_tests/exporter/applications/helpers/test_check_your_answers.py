@@ -96,3 +96,38 @@ def test_add_serial_numbers_link(data_good_on_application):
     }
     actual = check_your_answers.convert_goods_on_application([data_good_on_application])
     assert '<span class="govuk-visually-hidden">Actions</a>' not in actual[0]
+
+
+def test_actions_column_is_balanced_across_rows(data_good_on_application):
+    with_serial_numbers = {
+        **data_good_on_application,
+        **{
+            "firearm_details": {
+                "number_of_items": 3,
+                "serial_numbers_available": "AVAILABLE",
+                "serial_numbers": ["111", "222", "333"],
+            }
+        },
+    }
+    later_serial_numbers = {
+        **data_good_on_application,
+        **{
+            "firearm_details": {
+                "number_of_items": 3,
+                "serial_numbers_available": "LATER",
+                "serial_numbers": [],
+            }
+        },
+    }
+
+    actual = check_your_answers.convert_goods_on_application([with_serial_numbers, with_serial_numbers])
+    assert '<span class="govuk-visually-hidden">Actions</a>' not in actual[0]
+    assert '<span class="govuk-visually-hidden">Actions</a>' not in actual[1]
+
+    actual = check_your_answers.convert_goods_on_application([later_serial_numbers, later_serial_numbers])
+    assert '<span class="govuk-visually-hidden">Actions</a>' in actual[0]
+    assert '<span class="govuk-visually-hidden">Actions</a>' in actual[1]
+
+    actual = check_your_answers.convert_goods_on_application([with_serial_numbers, later_serial_numbers])
+    assert '<span class="govuk-visually-hidden">Actions</a>' in actual[0]
+    assert '<span class="govuk-visually-hidden">Actions</a>' in actual[1]
