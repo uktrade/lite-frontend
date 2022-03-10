@@ -67,6 +67,14 @@ def test_add_serial_numbers_link(data_good_on_application):
     actual = check_your_answers.convert_goods_on_application([data_good_on_application])
     assert '<span class="govuk-visually-hidden">Actions</a>' not in actual[0]
 
+    assert "firearm_details" not in data_good_on_application
+    actual = check_your_answers.convert_goods_on_application([data_good_on_application])
+    assert '<span class="govuk-visually-hidden">Actions</a>' not in actual[0]
+
+    data_good_on_application["firearm_details"] = None
+    actual = check_your_answers.convert_goods_on_application([data_good_on_application])
+    assert '<span class="govuk-visually-hidden">Actions</a>' not in actual[0]
+
     data_good_on_application["firearm_details"] = {
         "serial_numbers_available": "NOT_AVAILABLE",
     }
