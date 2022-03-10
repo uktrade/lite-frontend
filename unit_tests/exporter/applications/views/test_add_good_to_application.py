@@ -401,8 +401,8 @@ def test_firearms_act_confirmation_preexisting(
     assert not isinstance(response.context["form"], FirearmsActConfirmationForm)
 
 
-def _submit_good_to_application(prexisting_url, authorized_client, post_to_step_preexisting, case):
-    authorized_client.get(prexisting_url)
+def _submit_good_to_application(preexisting_url, authorized_client, post_to_step_preexisting, case):
+    authorized_client.get(preexisting_url)
 
     response = post_to_step_preexisting(
         AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS,
@@ -532,6 +532,149 @@ def test_add_good_to_application_api_submission_with_documents_preexisting(
             "serial_numbers_available": "AVAILABLE",
             "no_identification_markings_details": "",
             "serial_numbers": ["abcdef", "abcdef", "abcdef"],
+            "year_of_manufacture": "2020",
+            "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            "firearms_act_section": "firearms_act_section5",
+            "section_certificate_missing": True,
+            "section_certificate_missing_reason": "missing reason",
+            "section_certificate_number": "",
+            "date_of_deactivation": None,
+            "has_proof_mark": True,
+            "no_proof_mark_details": "",
+            "is_deactivated": False,
+            "deactivation_standard": "",
+            "deactivation_standard_other": "",
+            "is_deactivated_to_standard": "",
+        },
+        "quantity": 3,
+        "unit": "NAR",
+    }
+
+    rfd_cert_data = documents_matcher.last_request.json()
+    assert rfd_cert_data == {
+        "name": f'{rfd_cert_data["name"]}',
+        "s3_key": f'{rfd_cert_data["s3_key"]}',
+        "size": 0,
+        "document_on_organisation": {
+            "expiry_date": "2030-01-01",
+            "reference_code": "12345",
+            "document_type": "rfd-certificate",
+        },
+    }
+
+
+def test_add_good_to_application_api_submission_with_deferred_serial_numbers_with_documents_preexisting(
+    mock_application_with_documents_request,
+    preexisting_url,
+    authorized_client,
+    post_to_step_preexisting,
+    requests_mock,
+    case,
+    good,
+):
+    goods_matcher = requests_mock.post(f"/applications/{case['id']}/goods/", status_code=201, json={})
+    documents_matcher = requests_mock.post(f"/applications/{case['case']['id']}/documents/", status_code=201, json={})
+
+    authorized_client.get(preexisting_url)
+
+    response = post_to_step_preexisting(
+        AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS,
+        {"number_of_items": "3"},
+    )
+    assert not response.context["form"].errors
+
+    response = post_to_step_preexisting(
+        AddGoodToApplicationFormSteps.IDENTIFICATION_MARKINGS,
+        {"serial_numbers_available": "LATER"},
+    )
+    assert not response.context["form"].errors
+
+    response = post_to_step_preexisting(
+        AddGoodToApplicationFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS,
+        {
+            "year_of_manufacture": 2020,
+        },
+    )
+    assert not response.context["form"].errors
+
+    response = post_to_step_preexisting(
+        AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE,
+        {
+            "value": "120",
+            "is_good_incorporated": True,
+            "is_deactivated": False,
+            "has_proof_mark": True,
+        },
+    )
+    assert not response.context["form"].errors
+
+    response = post_to_step_preexisting(
+        AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER,
+        {
+            "is_registered_firearm_dealer": True,
+        },
+    )
+    assert not response.context["form"].errors
+
+    response = post_to_step_preexisting(
+        AddGoodToApplicationFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE,
+        {
+            "expiry_date_0": 1,
+            "expiry_date_1": 1,
+            "expiry_date_2": 2030,
+            "reference_code": "12345",
+            "file": SimpleUploadedFile("file.txt", b"abc", content_type="text/plain"),
+        },
+    )
+    assert not response.context["form"].errors
+
+    response = post_to_step_preexisting(
+        AddGoodToApplicationFormSteps.FIREARMS_ACT_CONFIRMATION,
+        {
+            "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            "firearms_act_section": "firearms_act_section5",
+        },
+    )
+    assert response.status_code == 302
+
+    assert response.url == f"/applications/{case['case']['id']}/goods/"
+
+    assert goods_matcher.called_once
+    assert documents_matcher.called_once
+
+    good_to_application_data = goods_matcher.last_request.json()
+    assert good_to_application_data == {
+        "number_of_items": 3,
+        "number_of_items_step": True,
+        "identification_markings_step": True,
+        "serial_numbers_available": "LATER",
+        "firearm_year_of_manufacture_step": True,
+        "value": "120",
+        "is_good_incorporated": True,
+        "is_registered_firearm_dealer": "True",
+        "reference_code": "12345",
+        "expiry_date": "2030-01-01",
+        "expiry_date_day": "1",
+        "expiry_date_month": "1",
+        "expiry_date_year": "2030",
+        "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+        "firearms_act_section": "firearms_act_section5",
+        "section_certificate_step": True,
+        "pk": case["case"]["id"],
+        "good_id": good["good"]["id"],
+        "type": "firearms",
+        "section_certificate_missing": "certification missing",
+        "section_certificate_missing_reason": "missing reason",
+        "section_certificate_number": "12345",
+        "section_certificate_date_of_expiryday": "01",
+        "section_certificate_date_of_expirymonth": "01",
+        "section_certificate_date_of_expiryyear": "2030",
+        "firearms_certificate_uploaded": True,
+        "firearm_details": {
+            "number_of_items": 3,
+            "serial_numbers_available": "LATER",
+            "no_identification_markings_details": "",
+            "serial_numbers": [],
             "year_of_manufacture": "2020",
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
             "firearms_act_section": "firearms_act_section5",
