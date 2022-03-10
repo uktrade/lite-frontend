@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "core.feedback",
     "formtools",
     "core.cookies",
+    "core.goods",
 ]
 
 MIDDLEWARE = [

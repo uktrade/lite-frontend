@@ -177,7 +177,7 @@
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Serial numbers</th>
                                     <td class="govuk-table__cell">
-                                        {% include "case/includes/serial_numbers.html" %}
+                                        {% include "goods/includes/serial_numbers.html" with firearm_details=firearm_details %}
                                     </td>
                                 </tr>
                             {% endif %}
