@@ -15,6 +15,7 @@ urlpatterns = [
     path("attach/", main.AttachDocuments.as_view(), name="attach_documents"),
     # This needs to be before "case" path b/c the regex in that sinks everything
     path("advice/", include("caseworker.advice.urls")),
+    path("tau/", include("caseworker.tau.urls")),
     path("documents/<str:file_pk>/", main.Document.as_view(), name="document"),
     path("assign-flags/", AssignFlags.as_view(), name="assign_flags"),
     path(
