@@ -450,7 +450,7 @@ class IdentificationMarkingsForm(forms.Form):
             ("NOT_AVAILABLE", CreateGoodForm.FirearmGood.IdentificationMarkings.NO),
         ),
         error_messages={
-            "required": "Select whether you can enter serial numbers now, later or the product does not have them.",
+            "required": "Select whether you can enter serial numbers now, later or if the product does not have them",
         },
         label="",
     )

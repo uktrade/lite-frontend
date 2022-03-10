@@ -181,7 +181,7 @@ def test_firearms_number_of_items_form(data, valid, error_field, error_message):
             False,
             {
                 "serial_numbers_available": [
-                    "Select whether you can enter serial numbers now, later or the product does not have them."
+                    "Select whether you can enter serial numbers now, later or if the product does not have them"
                 ]
             },
         ),
