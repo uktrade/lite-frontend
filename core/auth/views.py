@@ -1,4 +1,5 @@
 import abc
+import uuid
 from urllib.parse import urlparse, urlunparse
 
 from django.conf import settings
@@ -8,9 +9,9 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 from django.views.generic import RedirectView
 from django.views.generic.base import View
+from django.utils.http import urlencode
 
 from core.auth.utils import get_profile
-import uuid
 
 
 class AuthView(RedirectView):
@@ -24,8 +25,22 @@ class AuthView(RedirectView):
 
 class AuthLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
+        redirect_url = settings.LOGOUT_URL + self.request.build_absolute_uri("/")
+        if self.request.authbroker_client.token:
+            if self.request.authbroker_client.token.get("id_token"):
+                # if we have an ID token then the logout call to SSO service will require this.
+                logout_query = urlencode(
+                    {
+                        "id_token_hint": self.request.authbroker_client.token["id_token"],
+                        "post_logout_redirect_uri": self.request.build_absolute_uri("/"),
+                    }
+                )
+                redirect_url = settings.LOGOUT_URL + f"?{logout_query}"
+        else:
+            # We not even logged redirect to home page
+            redirect_url = self.request.build_absolute_uri("/")
         self.request.session.flush()
-        return settings.LOGOUT_URL + self.request.build_absolute_uri("/")
+        return redirect_url
 
 
 class AbstractAuthCallbackView(abc.ABC, View):
