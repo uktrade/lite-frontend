@@ -646,10 +646,9 @@ def get_application_type_string(application):
 
 
 def requires_serial_numbers(good_on_application):
-    if "firearm_details" not in good_on_application:
+    firearm_details = good_on_application.get("firearm_details")
+    if not firearm_details:
         return False
-
-    firearm_details = good_on_application["firearm_details"]
 
     if firearm_details["serial_numbers_available"] == "NOT_AVAILABLE":
         return False
