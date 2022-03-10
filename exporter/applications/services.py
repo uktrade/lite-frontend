@@ -222,8 +222,18 @@ def get_party(request, application_pk, pk):
     return client.get(request, f"/applications/{application_pk}/parties/{pk}/").json()
 
 
+def update_party(request, application_pk, pk, json):
+    data = client.put(request, f"/applications/{application_pk}/parties/{pk}/", json)
+    return data.json(), data.status_code
+
+
 def delete_party_document(request, application_pk, obj_pk):
     data = client.delete(request, f"/applications/{application_pk}/parties/{obj_pk}/document/")
+    return data.status_code
+
+
+def delete_party_document_by_id(request, application_pk, party_pk, document_pk):
+    data = client.delete(request, f"/applications/{application_pk}/parties/{party_pk}/document/{document_pk}")
     return data.status_code
 
 
