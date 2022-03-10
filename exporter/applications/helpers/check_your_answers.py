@@ -15,6 +15,7 @@ from exporter.core.constants import (
     PERMANENT,
     CaseTypes,
     APPLICATION_TYPE_STRINGS,
+    PartyDocumentType,
 )
 from core.constants import GoodsTypeCategory
 from core.builtins.custom_tags import (
@@ -489,19 +490,34 @@ def convert_party(party, application, editable):
         data["Role"] = party.get("role_other") if party.get("role_other") else party.get("role").get("value")
 
     if application["case_type"]["sub_type"]["key"] != OPEN:
-        if party.get("document"):
-            document_type = party["type"] if party["type"] != "end_user" else "end-user"
-            document = _convert_document(party, document_type, application["id"], editable)
-        else:
-            document = convert_to_link(
-                reverse(
-                    f"applications:{party['type']}_attach_document",
-                    kwargs={"pk": application["id"], "obj_pk": party["id"]},
-                ),
-                "Attach document",
-            )
+        if party["type"] == "end_user":
+            party_type = "end-user"
+            for doc in party.get("documents", []):
+                document_type = PartyDocumentType.SUPPORTING_DOCUMENT
+                if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT:
+                    document_type = "End user document"
+                if doc["type"] == PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT:
+                    document_type = "English translation of the end user document"
+                if doc["type"] == PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT:
+                    document_type = "Document on company letterhead"
 
-        data["Document"] = document
+                data[document_type] = _convert_end_user_document(application["id"], party["id"], doc, editable)
+        else:
+            if party.get("document"):
+                party_type = party["type"]
+                if party["type"] == "third_party":
+                    party_type = "third-parties"
+                document = _convert_document(party, party_type, application["id"], editable)
+            else:
+                document = convert_to_link(
+                    reverse(
+                        f"applications:{party['type']}_attach_document",
+                        kwargs={"pk": application["id"], "obj_pk": party["id"]},
+                    ),
+                    "Attach document",
+                )
+
+            data["Document"] = document
 
     if has_clearance:
         data["Clearance level"] = party["clearance_level"].get("value") if party["clearance_level"] else None
@@ -543,6 +559,31 @@ def _get_supporting_documentation(supporting_documentation, application_id):
         }
         for document in supporting_documentation
     ]
+
+
+def _convert_end_user_document(application_id, party_id, document, editable):
+    if document["safe"] is None:
+        return "Processing"
+
+    if not document["safe"]:
+        return convert_to_link(
+            f"/applications/{application_id}/end-user/{party_id}/document/attach/", Parties.Documents.VIRUS
+        )
+
+    if editable:
+        return convert_to_link(
+            f"/applications/{application_id}/end-user/{party_id}/document/{document['id']}",
+            document["name"],
+            include_br=True,
+        ) + convert_to_link(
+            f"/applications/{application_id}/end-user/{party_id}/document/{document['id']}", Parties.Documents.DELETE
+        )
+    else:
+        return convert_to_link(
+            f"/applications/{application_id}/end-user/{party_id}/document/{document['id']}",
+            document["name"],
+            include_br=True,
+        )
 
 
 def _convert_document(party, document_type, application_id, editable):

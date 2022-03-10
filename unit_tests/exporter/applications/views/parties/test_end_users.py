@@ -32,6 +32,9 @@ def url(data_standard_case):
 
 def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_case):
     party_id = str(uuid.uuid4())
+    requests_mock.get(
+        f'/applications/{data_standard_case["case"]["id"]}/', json={"id": data_standard_case["case"]["id"]}
+    )
     requests_mock.post(
         f'/applications/{data_standard_case["case"]["id"]}/parties/',
         status_code=201,
@@ -57,6 +60,7 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
     )
 
     letterhead_data = requests_mock.request_history.pop().json()
+    letterhead_data.pop("description")
     assert letterhead_data == {
         "type": PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
         "name": f'{letterhead_data["name"]}',
@@ -65,6 +69,7 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
     }
 
     translation_data = requests_mock.request_history.pop().json()
+    translation_data.pop("description")
     assert translation_data == {
         "type": PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT,
         "name": f'{translation_data["name"]}',
@@ -78,8 +83,10 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
         "name": f'{undertaking_data["name"]}',
         "s3_key": f'{undertaking_data["s3_key"]}',
         "size": 0,
+        "description": "",
     }
 
+    _ = requests_mock.request_history.pop().json()
     end_user_data = requests_mock.request_history.pop().json()
     assert end_user_data == {
         "sub_type": "government",
