@@ -11,7 +11,7 @@ def test_log_out_logged_in(authorized_client):
     response = authorized_client.get(url)
     assert response.status_code == 302
     assert settings.TOKEN_SESSION_KEY not in authorized_client.session
-    assert response.url == f"{settings.LOGOUT_URL}http://testserver/"
+    assert response.url == settings.LOGOUT_URL + "http://testserver/"
 
 
 def test_log_out_gov_signout_with_token(authorized_client):
