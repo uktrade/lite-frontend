@@ -102,6 +102,8 @@ def add_identification_marking_details(firearm_details, json):
         for i in range(number_of_items):
             serial_numbers.append(json.get(f"serial_number_input_{i}", ""))
         firearm_details["serial_numbers"] = serial_numbers
+    elif firearm_details.get("serial_numbers_available") == "LATER":
+        firearm_details["serial_numbers"] = []
 
     return firearm_details
 

@@ -99,7 +99,7 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     url = reverse(f"applications:good_detail_summary", kwargs={"pk": pk})
     old_locations = bool(application["goods_locations"])
     converted = {
-        convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"], is_summary),
+        convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"], is_summary=is_summary),
         strings.END_USE_DETAILS: _get_end_use_details(application),
         strings.END_USER: convert_party(application["end_user"], application, editable),
         strings.CONSIGNEE: convert_party(application["consignee"], application, editable),
