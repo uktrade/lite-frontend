@@ -50,7 +50,7 @@ Feature: I want to define new work queues and the teams they belong to
     And I select status "Withdrawn" and save
     And I go to the internal homepage
     And I click on the "Open cases" queue in dropdown
-    Then I dont see previously created application
+    Then I don't see previously created application
 
   @skip @LT_1299_countersigning_queues_working @regression
   Scenario: Finish with a team queue and have countersigning queue automatically apply

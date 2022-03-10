@@ -4,91 +4,93 @@ Feature: I want to record my user advice and any comments and conditions relatin
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
-  @skip @LT_1376 @regression @skip @LT_1760
-  Scenario: Give proviso advice
-    Given I sign in to SSO or am signed into SSO
-    And an Exhibition Clearance is created
-    And I create a proviso picklist
-    And I create a standard advice picklist
-    And the status is set to "submitted"
-    When I go to application previously created
-    And I click on the user advice tab
-    And I select all items in the user advice view
-    And I choose to 'proviso' the licence
-    And I select "UK SECRET" clearance level
-    And I import text from the 'proviso' picklist
-    And I import text from the 'text' picklist
-    And I write 'We will get back to you in three weeks' in the note text field
-    And I select that a footnote is required with the note 'I believe the items are good, but have concerns about the country'
-    And I click continue
-    Then I see my advice has been posted successfully
-    And I see added advice in the same amount of places
-    When I go to grouped view
-    And I select all items in the "proviso" grouped view
-    And I click give advice
-    And I choose to 'proviso' the licence
-    Then I see the fields pre-populated with the proviso and advice picklist items
-
-  @skip @LT_1115_grant @regression
-  Scenario: Give approval advice
+  @fcdo_approve_case
+  Scenario: FCDO to approve a case
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
-    And all flags are removed
-    And I create a proviso picklist
-    And I create a standard advice picklist
-    And the status is set to "submitted"
     When I go to application previously created
-    And I click on the user advice tab
-    Then I see total goods value
-    When I select all items in the user advice view
-    And I choose to 'approve' the licence
-    Then I dont see clearance level
-    When I import text from the 'text' picklist
-    And I write 'We will get back to you in three weeks' in the note text field
-    And I select that a footnote is not required
+    And I assign the case to "FCO Cases to Review" queue
+    And I go to my profile page
+    And I change my team to "FCO" and default queue to "FCO Cases to Review"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click make recommendation
+    And I click approve all
     And I click continue
-    Then I see my advice has been posted successfully
-    When I combine all user advice
-    And I combine all team advice
-    And I finalise the advice
-    Then today's date and duration is filled in
+    And I select countries "GB, UA"
+    And I enter "Hello World" as the reasons for approving
+    And I click submit recommendation
+    Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
+    When I click move case forward
+    Then I don't see previously created application
+    # Check the case has moved to the correct queue
+    When I go to my profile page
+    And I change my team to "FCO" and default queue to "FCO Counter-signing"
+    And I go to my case list
+    Then I should see my case in the cases list
+    # Check the recommendation is listed
+    When I click the application previously created
+    And I click the recommendations and decision tab
+    And I expand the details for "FCO has approved"
+    Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
 
-  @skip @LT_966_refusal_flags @regression
-  Scenario: Give refusal advice
+
+  @mod_advice
+  Scenario: MOD advice journey
+    ##### MOD to circulate a case #####
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
-    And the status is set to "submitted"
     When I go to application previously created
-    And I click on the user advice tab
-    And I select all items in the user advice view
-    And I choose to 'refuse' the licence
-    And I select decision "2b"
-    And I import text from the 'text' picklist
-    And I write 'We will get back to you in three weeks' in the note text field
-    And I select that a footnote is required with the note 'These classification of items can not go to the countries selected'
-    And I click continue
-    Then I see my advice has been posted successfully
-    And I see added advice in the same amount of places
-    When I combine all user advice
-    And I go to application previously created
-    Then I see refusal flag is attached
+    And I assign the case to "Circulate to sub-advisers" queue
+    And I go to my profile page
+    And I change my team to "MOD-ECJU" and default queue to "Circulate to sub-advisers"
+    And I go to my case list
+    And I click the application previously created
+    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I click I'm done
+    And I click submit
+    Then I don't see previously created application
 
-  @skip @LT_920_cannot_give_advice_terminal_case @regression
-  Scenario: Cannot give advice on a case in terminal state
-    Given I sign in to SSO or am signed into SSO
-    And I create standard application or standard application has been previously created
-    And I create a proviso picklist
-    And I create a standard advice picklist
-    And the status is set to "submitted"
-    When I go to application previously created
-    And I click change status
-    And I select status "Withdrawn" and save
-    And I click on the user advice tab
-    Then the give advice checkboxes are not present
-    And the give or change advice button is not present
-    When I go to the team advice
-    Then the give advice checkboxes are not present
-    And the give or change advice button is not present
-    When I go to the final advice
-    Then the give advice checkboxes are not present
-    And the give or change advice button is not present
+    ##### Sub-advisor to give advice #####
+    When I go to my profile page
+    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I go to my case list
+    Then I should see my case in the cases list
+    When I click the application previously created
+    And I click the recommendations and decision tab
+    And I click make recommendation
+    And I click approve all
+    And I click continue
+    And I enter "reason for approving" as the reasons for approving
+    And I enter "licence condition" as the licence condition
+    And I enter "instruction for exporter" as the instructions for the exporter
+    And I enter "reporting footnote" as the reporting footnote
+    And I click submit recommendation
+    Then I see "reason for approving" as the reasons for approving
+    Then I see "licence condition" as the licence condition
+    Then I see "instruction for exporter" as the instructions for the exporter
+    Then I see "reporting footnote" as the reporting footnote
+    When I click move case forward
+    Then I don't see previously created application
+
+    ##### MOD-ECJU to consolidate #####
+    When I go to my profile page
+    And I change my team to "MOD-ECJU" and default queue to "Review and combine"
+    And I go to my case list
+    Then I should see my case in the cases list
+    When I click the application previously created
+    And I click the recommendations and decision tab
+    And I expand the details for "MOD-ECJU has approved with licence conditions"
+    Then I see "reason for approving" as the reasons for approving
+    Then I see "licence condition" as the licence condition
+    Then I see "instruction for exporter" as the instructions for the exporter
+    Then I see "reporting footnote" as the reporting footnote
+    When I click "Review and combine"
+    And I enter "overall reason" as the overall reason
+    And I enter "licence condition1" as the licence condition
+    And I click submit recommendation
+    Then I see "overall reason" as the overall reason
+    Then I see "licence condition1" as the licence condition
+    When I click move case forward
+    Then I don't see previously created application
