@@ -1,11 +1,11 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
+    <a href="{% url 'applications:task_list' pk %}" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block body %}
     <div class="govuk-width-container">
-        <a href="{% url 'applications:task_list' pk %}" class="govuk-back-link">Back</a>
     
         <div class="lite-app-bar">
             <div class="lite-app-bar__content">
@@ -29,9 +29,6 @@
                 </a>
                 </dd>
             </div>
-        </dl>
-
-        <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     End-user name
@@ -45,9 +42,6 @@
                     </a>
                 </dd>
             </div>
-        </dl>
-
-        <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     End-user website (optional)
@@ -61,9 +55,6 @@
                     </a>
                 </dd>
             </div>
-        </dl>
-
-        <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     End-user address
@@ -77,9 +68,6 @@
                     </a>
                 </dd>
             </div>
-        </dl>
-
-        <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Signatory name
@@ -93,73 +81,66 @@
                     </a>
                 </dd>
             </div>
-        </dl>
 
         {% for document in party.documents %}
             {% if document.type == "end_user_undertaking_document" %}
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Upload an end-user document
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if document.safe %}
-                                <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
-                            {% else %}
-                                {{ document.name }}
-                            {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="{% url 'applications:end_user_edit_undertaking_document' pk obj_pk %}">
-                                Change<span class="govuk-visually-hidden"> name</span>
-                            </a>
-                        </dd>
-                    </div>
-                </dl>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Upload an end-user document
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if document.safe %}
+                            <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+                        {% else %}
+                            {{ document.name }}
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="{% url 'applications:end_user_edit_undertaking_document' pk obj_pk %}">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                    </dd>
+                </div>
             {% endif %}
 
             {% if document.type == "end_user_english_translation_document" %}
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Upload an English translation of the end-user document
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if document.safe %}
-                                <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
-                            {% else %}
-                                {{ document.name }}
-                            {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'english_translation' %}">
-                                Change<span class="govuk-visually-hidden"> name</span>
-                            </a>
-                        </dd>
-                    </div>
-                </dl>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Upload an English translation of the end-user document
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if document.safe %}
+                            <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+                        {% else %}
+                            {{ document.name }}
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'english_translation' %}">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                    </dd>
+                </div>
             {% endif %}
 
             {% if document.type == "end_user_company_letterhead_document" %}
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Upload a document on company letterhead
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if document.safe %}
-                                <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
-                            {% else %}
-                                {{ document.name }}
-                            {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'company_letterhead' %}">
-                                Change<span class="govuk-visually-hidden"> name</span>
-                            </a>
-                        </dd>
-                    </div>
-                </dl>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Upload a document on company letterhead
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if document.safe %}
+                            <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+                        {% else %}
+                            {{ document.name }}
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="{% url 'applications:end_user_edit_document' pk obj_pk 'company_letterhead' %}">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                    </dd>
+                </div>
             {% endif %}
 
         {% endfor %}
