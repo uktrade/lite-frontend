@@ -183,10 +183,20 @@ ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
 # AWS
 VCAP_SERVICES = env.json("VCAP_SERVICES", {})
 
-AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = env.str("AWS_REGION")
-AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
+if VCAP_SERVICES:
+    if "aws-s3-bucket" not in VCAP_SERVICES:
+        raise Exception("S3 Bucket not bound to environment")
+
+    aws_credentials = VCAP_SERVICES["aws-s3-bucket"][0]["credentials"]
+    AWS_ACCESS_KEY_ID = aws_credentials["aws_access_key_id"]
+    AWS_SECRET_ACCESS_KEY = aws_credentials["aws_secret_access_key"]
+    AWS_REGION = aws_credentials["aws_region"]
+    AWS_STORAGE_BUCKET_NAME = aws_credentials["bucket_name"]
+else:
+    AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+    AWS_REGION = env("AWS_REGION")
+    AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
 LOGGING = {
     "version": 1,
