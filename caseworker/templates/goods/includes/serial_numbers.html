@@ -1,0 +1,18 @@
+{% load firearm_details %}
+
+{% if firearm_details|has_added_serial_numbers %}
+    <details class="govuk-details govuk-!-margin-bottom-0" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                View serial numbers
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            {% for item in firearm_details.serial_numbers %}
+                {{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
+            {% endfor %}
+        </div>
+    </details>
+{% else %}
+    Not added yet
+{% endif %}
