@@ -11,7 +11,7 @@ describe('Application', () => {
     response = await createApplication()
   })
 
-  it.only('should approve a case in FCDO queue with the correct information', () => {
+  it('should approve a case in FCDO queue with the correct information', () => {
     cy.visit(`/queues/${response.defaultQueue}/cases/${response.applicationId}/`)
     cy.get('#heading-reference-code')
       .should('contain', response.submittedApplication.reference_code)
@@ -34,7 +34,7 @@ describe('Application', () => {
     cy.get('#form-cases').should('contain', 'There are no new cases')
   })
 
-  it('should approve a case in Counter-Sign queue with the correct information', () => {
+  it('should approve a case in FCO Counter-signing queue with the correct information', () => {
     cy.visit('/').then(() => {
       cy.visit(`/queues/${counterSignQueue}/cases/${response.applicationId}/details/`)
     })
