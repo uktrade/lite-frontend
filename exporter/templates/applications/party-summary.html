@@ -119,6 +119,21 @@
                             </a>
                         </dd>
                     </div>
+                    {% if party.product_differences_note %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Describe any differences between products listed in the document and products on the application (optional)
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ party.product_differences_note }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="{% url 'applications:end_user_edit_undertaking_document' pk obj_pk %}">
+                                    Change<span class="govuk-visually-hidden"> name</span>
+                                </a>
+                            </dd>
+                        </div>
+                    {% endif %}
                 {% endif %}
 
                 {% if document.type == "end_user_english_translation_document" %}

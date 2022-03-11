@@ -890,6 +890,9 @@ def party_status(party):
 
         return IN_PROGRESS
 
+    return DONE
+
+
 @register.filter()
 def get_parties_status(parties):
     if not parties:

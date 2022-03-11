@@ -60,7 +60,6 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
     )
 
     letterhead_data = requests_mock.request_history.pop().json()
-    letterhead_data.pop("description")
     assert letterhead_data == {
         "type": PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
         "name": f'{letterhead_data["name"]}',
@@ -69,7 +68,6 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
     }
 
     translation_data = requests_mock.request_history.pop().json()
-    translation_data.pop("description")
     assert translation_data == {
         "type": PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT,
         "name": f'{translation_data["name"]}',
@@ -83,7 +81,6 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
         "name": f'{undertaking_data["name"]}',
         "s3_key": f'{undertaking_data["s3_key"]}',
         "size": 0,
-        "description": "",
     }
 
     _ = requests_mock.request_history.pop().json()
@@ -98,7 +95,7 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
         "signatory_name_euu": "test signatory",
         "end_user_document_available": "True",
         "end_user_document_missing_reason": "",
-        "description": "",
+        "product_differences_note": "",
         "document_in_english": "False",
         "document_on_letterhead": "False",
         "type": "end_user",
