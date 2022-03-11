@@ -280,24 +280,13 @@
                                 </dd>
                             </div>
 
-                            {% if good.firearm_details.serial_numbers_available == "AVAILABLE" %}
+                            {% if good.firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">
                                         Serial numbers
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        <details class="govuk-details" data-module="govuk-details">
-                                            <summary class="govuk-details__summary">
-                                                <span class="govuk-details__summary-text">
-                                                    View serial numbers
-                                                </span>
-                                            </summary>
-                                            <div class="govuk-details__text">
-                                                {% for item in good.firearm_details.serial_numbers %}
-                                                    {{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </details>
+                                        {% include "goods/includes/serial_numbers.html" with firearm_details=good.firearm_details %}
                                     </dd>
                                 </div>
                             {% endif %}
