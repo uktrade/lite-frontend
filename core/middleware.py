@@ -117,7 +117,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
         self.get_response = get_response
 
     def get_token(self, request):
-        new_token = False
+        is_new_token = False
         token = request.authbroker_client.token.get("access_token")
         try:
             jwt.decode(token, options={"verify_signature": False, "verify_exp": True})
@@ -134,11 +134,11 @@ class AuthBrokerTokenIntrospectionMiddleware:
             )
             token = new_jwt_token.get("access_token")
             request.session[settings.TOKEN_SESSION_KEY] = dict(new_jwt_token)
-            new_token = True
+            is_new_token = True
         except jwt.DecodeError:
             # The client doesn't have the correct support for full JWT we will return the original token
             pass
-        return token, new_token
+        return token, is_new_token
 
     def client_introspect_call(self, request):
         logger.info("Introspecting with SSO: %s", request.session.get("lite_api_user_id"))
@@ -148,12 +148,12 @@ class AuthBrokerTokenIntrospectionMiddleware:
     def introspect(self, request):
         # If refresh tokens are supported we will only return valid tokens here this to stop the call to the client
         # from failing because of short lived tokens
-        token, new_token = self.get_token(request)
+        token, is_new_token = self.get_token(request)
         cache_key = f"sso_introspection:{token}"
         cache_value = cache.get(cache_key)
         if cache_value is not None:
             return
-        if not new_token:
+        if not is_new_token:
             # This is to prevent another client call if only just received a new token
             self.client_introspect_call(request)
 
