@@ -279,7 +279,7 @@ def get_my_case_list(driver):  # noqa
 
 
 @when("I click the application previously created")
-def i_click_application_previously_created(driver, context):
+def i_click_application_previously_created(driver, context):  # noqa
     case_list_page = CaseListPage(driver)
     case_list_page.click_on_case(context.case_id)
 
