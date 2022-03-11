@@ -29,6 +29,7 @@ class Shared(BasePage):
     INPUT_NAME_FILTER_ID = "name"
     CASES_FORM_ID = "form-cases"
     FIRST_LINK_IN_ROW = ".govuk-table__row .govuk-link"
+    GOVUK_HEADING = ".govuk-heading-xl"
 
     def click_submit(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
@@ -53,6 +54,9 @@ class Shared(BasePage):
 
     def get_text_of_cases_form(self):
         return self.driver.find_element_by_id(self.CASES_FORM_ID).text
+
+    def get_text_of_heading(self):
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.GOVUK_HEADING)
 
     def get_links_in_cells_in_table(self):
         return self.driver.find_elements_by_css_selector(self.LINKS_IN_TABLE)
