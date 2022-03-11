@@ -36,7 +36,7 @@ Feature: View an Open Applications
     Then review date is at the first audit in the trail
     # The case should be hidden as the next review date is in the future
     When I go to my work queue
-    Then I dont see previously created application
+    Then I don't see previously created application
     # After applying hidden cases filter then the case should no longer be hidden
     Then I see previously hidden created application
     # The case should not be hidden in all cases queue

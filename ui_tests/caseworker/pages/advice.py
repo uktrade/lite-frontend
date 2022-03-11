@@ -1,4 +1,5 @@
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.by import By
 
 from tests_common import selectors
 from ui_tests.caseworker.pages.BasePage import BasePage
@@ -83,3 +84,56 @@ class FinalAdvicePage(BaseAdvicePage):
 
     def click_clear_advice(self):
         self.driver.find_element_by_id(self.BUTTON_CLEAR_ADVICE_ID).click()
+
+
+class RecommendationsAndDecisionPage(BasePage):
+    def click_make_recommendation(self):
+        self.driver.find_element(by=By.XPATH, value="//a[contains(text(), 'Make recommendation')]").click()
+
+    def click_approve_all(self):
+        self.driver.find_element(by=By.XPATH, value="//input[@type='radio' and @value='approve_all']").click()
+
+    def select_country(self, country):
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='checkbox' and @value='{country}']").click()
+
+    def enter_reasons_for_approving(self, reasons):
+        self.driver.find_element(by=By.XPATH, value="//textarea[@name='approval_reasons']").send_keys(reasons)
+
+    def enter_licence_condition(self, licence_condition):
+        self.driver.find_element(by=By.XPATH, value="//textarea[@name='proviso']").send_keys(licence_condition)
+
+    def enter_instructions_for_exporter(self, instructions):
+        self.driver.find_element(by=By.XPATH, value="//textarea[@name='instructions_to_exporter']").send_keys(
+            instructions
+        )
+
+    def enter_reporting_footnote(self, footnote):
+        self.driver.find_element(by=By.XPATH, value="//textarea[@name='footnote_details']").send_keys(footnote)
+
+    def get_reasons_for_approving(self):
+        return self.driver.find_element(
+            by=By.XPATH,
+            value="//p[ancestor::div[preceding-sibling::*[self::h2 or self::h3]"
+            "[contains(text(), 'Reason for approving') or contains(text(), 'Reasons for approving')]]][2]",
+        ).text
+
+    def get_licence_condition(self):
+        return self.driver.find_element(
+            by=By.XPATH,
+            value="//p[ancestor::div[preceding-sibling::*[self::h2 or self::h3]"
+            "[contains(text(), 'Licence condition')]]][2]",
+        ).text
+
+    def get_instructions_for_exporter(self):
+        return self.driver.find_element(
+            by=By.XPATH,
+            value="//p[ancestor::div[preceding-sibling::*[self::h2 or self::h3]"
+            "[contains(text(), 'Additional instructions')]]][2]",
+        ).text
+
+    def get_reporting_footnote(self):
+        return self.driver.find_element(
+            by=By.XPATH,
+            value="//p[ancestor::div[preceding-sibling::*[self::h2 or self::h3]"
+            "[contains(text(), 'Reporting footnote')]]][2]",
+        ).text
