@@ -146,7 +146,6 @@ class AuthBrokerTokenIntrospectionMiddleware:
         response.raise_for_status()
 
     def introspect(self, request):
-        client = request.authbroker_client
         # If refresh tokens are supported we will only return valid tokens here this to stop the call to the client
         # from failing because of short lived tokens
         token, new_token = self.get_token(request)
