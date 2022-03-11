@@ -512,6 +512,9 @@ def convert_party(party, application, editable):
                     document_type = "Document on company letterhead"
 
                 data[document_type] = _convert_end_user_document(application["id"], party["id"], doc, editable)
+            else:
+                document_key_heading = "Explain why you do not have an end-user undertaking or stockist undertaking"
+                data[document_key_heading] = party["end_user_document_missing_reason"]
         else:
             if party.get("document"):
                 party_type = party["type"]
