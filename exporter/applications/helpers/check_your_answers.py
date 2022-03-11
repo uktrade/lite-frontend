@@ -225,6 +225,11 @@ def _convert_hmrc_query(application, editable=False):
 
 def convert_goods_on_application(goods_on_application, is_exhibition=False, is_summary=False):
     converted = []
+
+    def requires_actions(good_on_application):
+        return not is_summary and requires_serial_numbers(good_on_application)
+
+    requires_actions_column = any(requires_actions(g) for g in goods_on_application)
     for good_on_application in goods_on_application:
         # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
         if good_on_application["good"]["is_good_controlled"] is None:
@@ -258,7 +263,7 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False, is_s
             item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
             item["Quantity"] = pluralise_quantity(good_on_application)
             item["Value"] = f"£{good_on_application['value']}"
-        if not is_summary and requires_serial_numbers(good_on_application):
+        if requires_actions(good_on_application):
             update_serial_numbers_url = reverse(
                 "applications:update_serial_numbers",
                 kwargs={
@@ -269,7 +274,12 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False, is_s
             item[mark_safe('<span class="govuk-visually-hidden">Actions</a>')] = mark_safe(  # nosec
                 f'<a class="govuk-link" href="{update_serial_numbers_url}">Add serial numbers</a>'
             )
+        elif requires_actions_column:
+            item[
+                mark_safe('<span class="govuk-visually-hidden">Actions</a>')  # nosec
+            ] = " "  # Not just an empty string or it will get converted into N/A
         converted.append(item)
+
     return converted
 
 
