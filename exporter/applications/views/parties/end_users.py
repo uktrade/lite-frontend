@@ -83,16 +83,25 @@ class AddEndUserView(LoginRequiredMixin, FormView):
         return HttpResponseRedirect(success_url)
 
 
-def _post_party_document(request, application_id, party_id, document_type, document):
+def _post_party_document(request, application_id, party_id, document_type, document, description=""):
     data = {
         "type": document_type,
         "name": getattr(document, "original_name", document.name),
         "s3_key": document.name,
         "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
+        "description": description,
     }
 
-    _, status_code = post_party_document(request, application_id, party_id, data)
-    assert status_code == HTTPStatus.CREATED
+    response, status_code = post_party_document(request, application_id, party_id, data)
+    if status_code != HTTPStatus.CREATED:
+        log.error(
+            "Error uploading party document of type %s - response was: %s - %s",
+            data["type"],
+            status_code,
+            response,
+            exc_info=True,
+        )
+    return response, status_code
 
 
 class SetPartyView(LoginRequiredMixin, SessionWizardView):
@@ -154,7 +163,7 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
         return kwargs
 
     def get_success_url(self, party_id):
-        raise NotImplementedError("Subclasses must implement get_success_url()")
+        return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
 
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
@@ -164,7 +173,6 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
         party_letterhead_document = all_data.pop("party_letterhead_document", None)
 
         response, status_code = post_party(self.request, self.kwargs["pk"], dict(all_data))
-
         if status_code != HTTPStatus.CREATED:
             log.error(
                 "Error creating party - response was: %s - %s",
@@ -177,41 +185,38 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
         party_id = response[self.party_type]["id"]
 
         if party_document:
-            data = {
-                "type": PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT,
-                "name": getattr(party_document, "original_name", party_document.name),
-                "s3_key": party_document.name,
-                "size": int(party_document.size // 1024) if party_document.size else 0,  # in kilobytes
-            }
-
-            response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
-            assert status_code == HTTPStatus.CREATED
+            _, status_code = _post_party_document(
+                self.request,
+                self.application.id,
+                party_id,
+                PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT,
+                party_document,
+                all_data["description"],
+            )
+            if status_code != HTTPStatus.CREATED:
+                return error_page(self.request, "Unexpected error uploading party document")
 
         if party_eng_translation_document:
-            data = {
-                "type": PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT,
-                "name": getattr(party_eng_translation_document, "original_name", party_eng_translation_document.name),
-                "s3_key": party_eng_translation_document.name,
-                "size": int(party_eng_translation_document.size // 1024)
-                if party_eng_translation_document.size
-                else 0,  # in kilobytes
-            }
-
-            response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
-            assert status_code == HTTPStatus.CREATED
+            _, status_code = _post_party_document(
+                self.request,
+                self.application.id,
+                party_id,
+                PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT,
+                party_eng_translation_document,
+            )
+            if status_code != HTTPStatus.CREATED:
+                return error_page(self.request, "Unexpected error uploading party document")
 
         if party_letterhead_document:
-            data = {
-                "type": PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
-                "name": getattr(party_letterhead_document, "original_name", party_letterhead_document.name),
-                "s3_key": party_letterhead_document.name,
-                "size": int(party_letterhead_document.size // 1024)
-                if party_letterhead_document.size
-                else 0,  # in kilobytes
-            }
-
-            response, status_code = post_party_document(self.request, str(self.kwargs["pk"]), party_id, data)
-            assert status_code == HTTPStatus.CREATED
+            _, status_code = _post_party_document(
+                self.request,
+                self.application.id,
+                party_id,
+                PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
+                party_letterhead_document,
+            )
+            if status_code != HTTPStatus.CREATED:
+                return error_page(self.request, "Unexpected error uploading party document")
 
         return redirect(self.get_success_url(party_id))
 
@@ -238,11 +243,11 @@ class CopyEndUserView(SetEndUserView):
 class PartyContextMixin:
     template_name = "core/form.html"
 
-    @property
+    @cached_property
     def application_id(self):
         return str(self.kwargs["pk"])
 
-    @property
+    @cached_property
     def party_id(self):
         return str(self.kwargs["obj_pk"])
 
@@ -427,23 +432,28 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
 
         # if True then user is uploading new undertaking document
         if party_document:
-            _post_party_document(
+            _, status_code = _post_party_document(
                 self.request,
                 self.application_id,
                 self.party_id,
                 PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT,
                 party_document,
+                all_data["description"],
             )
+            if status_code != HTTPStatus.CREATED:
+                return error_page(self.request, "Unexpected error uploading party document")
 
         # if True then user choice hasn't changed and uploaded a new translation document
         if party_eng_translation_document:
-            _post_party_document(
+            _, status_code = _post_party_document(
                 self.request,
                 self.application_id,
                 self.party_id,
                 PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT,
                 party_eng_translation_document,
             )
+            if status_code != HTTPStatus.CREATED:
+                return error_page(self.request, "Unexpected error uploading party document")
         elif document_in_english and self.english_translation_exists:
             # delete existing document
             delete_party_document_by_id(
@@ -454,13 +464,15 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
             )
 
         if party_letterhead_document:
-            _post_party_document(
+            _, status_code = _post_party_document(
                 self.request,
                 self.application_id,
                 self.party_id,
                 PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT,
                 party_letterhead_document,
             )
+            if status_code != HTTPStatus.CREATED:
+                return error_page(self.request, "Unexpected error uploading party document")
         elif document_on_letterhead and self.company_letterhead_document_exists:
             delete_party_document_by_id(
                 self.request,
@@ -483,6 +495,7 @@ class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
             raise ValueError("Invalid document type encountered")
 
     def form_valid(self, form):
+        document = None
         if self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION:
             document = form.cleaned_data["party_eng_translation_document"]
             party_document_type = PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT
@@ -492,16 +505,18 @@ class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
         else:
             raise ValueError("Invalid document type encountered")
 
+        if document is None:
+            return super().form_valid(form)
+
         data = {
             "type": party_document_type,
-            "name": getattr(document, "original_name", document.name),
+            "name": getattr(document, "name"),
             "s3_key": document.name,
             "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
         }
 
         response, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
-        assert status_code == HTTPStatus.CREATED
-        if status_code != HTTPStatus.OK:
+        if status_code != HTTPStatus.CREATED:
             log.error(
                 "Error uploading party document - response was: %s - %s",
                 status_code,
