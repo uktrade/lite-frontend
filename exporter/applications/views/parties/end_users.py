@@ -328,6 +328,36 @@ class PartySignatoryEditView(PartyEditView):
         return {"signatory_name_euu": self.party["signatory_name_euu"]}
 
 
+class PartyDocumentOptionEditView(PartyEditView):
+    form_class = PartyDocumentsForm
+
+    def get_initial(self):
+        return {
+            "end_user_document_available": self.party["end_user_document_available"],
+            "end_user_document_missing_reason": self.party["end_user_document_missing_reason"],
+        }
+
+    def form_valid(self, form):
+        end_user_document_available = str_to_bool(form.cleaned_data.get("end_user_document_available"))
+        # delete any existing documents
+        if not end_user_document_available:
+            for document in self.party["documents"]:
+                delete_party_document_by_id(
+                    self.request,
+                    self.application_id,
+                    self.party_id,
+                    document["id"],
+                )
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if self.party["end_user_document_available"]:
+            return reverse("applications:end_user_edit_undertaking_document", kwargs=self.kwargs)
+        else:
+            return reverse("applications:end_user_summary", kwargs=self.kwargs)
+
+
 class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
     file_storage = NoSaveStorage()
@@ -352,6 +382,7 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
 
         # get existing document status for the end-user
         self.existing_documents = {document["type"]: document["id"] for document in self.party["documents"]}
+        self.undertaking_document_exists = PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT in self.existing_documents
         self.english_translation_exists = (
             PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT in self.existing_documents
         )
@@ -359,7 +390,7 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
             PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT in self.existing_documents
         )
         if step == SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD:
-            kwargs["edit"] = True
+            kwargs["edit"] = self.undertaking_document_exists
 
         if step == SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD:
             kwargs["edit"] = self.english_translation_exists
@@ -376,13 +407,13 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
         document = [
             doc for doc in self.party["documents"] if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT
         ]
-        if not document:
-            raise ValueError("End-user undertaking document not yet uploaded, editing not allowed")
+        description = ""
+        if document:
+            description = document[0]["description"]
 
-        document = document[0]
         return {
             "end_user_document_available": True,
-            "description": document["description"],
+            "description": description,
             "document_in_english": self.party["document_in_english"],
             "document_on_letterhead": self.party["document_on_letterhead"],
         }

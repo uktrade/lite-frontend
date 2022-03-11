@@ -262,6 +262,11 @@ urlpatterns = [
         name="end_user_edit_signatory",
     ),
     path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/edit/document_option/",
+        end_users.PartyDocumentOptionEditView.as_view(),
+        name="end_user_document_option",
+    ),
+    path(
         "<uuid:pk>/end-user/<uuid:obj_pk>/edit/undertaking_document/",
         end_users.PartyUndertakingDocumentEditView.as_view(),
         name="end_user_edit_undertaking_document",
