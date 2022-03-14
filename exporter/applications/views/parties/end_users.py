@@ -83,13 +83,12 @@ class AddEndUserView(LoginRequiredMixin, FormView):
         return HttpResponseRedirect(success_url)
 
 
-def _post_party_document(request, application_id, party_id, document_type, document, description=""):
+def _post_party_document(request, application_id, party_id, document_type, document):
     data = {
         "type": document_type,
         "name": getattr(document, "original_name", document.name),
         "s3_key": document.name,
         "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
-        "description": description,
     }
 
     response, status_code = post_party_document(request, application_id, party_id, data)
@@ -191,7 +190,6 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
                 party_id,
                 PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT,
                 party_document,
-                all_data["description"],
             )
             if status_code != HTTPStatus.CREATED:
                 return error_page(self.request, "Unexpected error uploading party document")
@@ -328,6 +326,36 @@ class PartySignatoryEditView(PartyEditView):
         return {"signatory_name_euu": self.party["signatory_name_euu"]}
 
 
+class PartyDocumentOptionEditView(PartyEditView):
+    form_class = PartyDocumentsForm
+
+    def get_initial(self):
+        return {
+            "end_user_document_available": self.party["end_user_document_available"],
+            "end_user_document_missing_reason": self.party["end_user_document_missing_reason"],
+        }
+
+    def form_valid(self, form):
+        end_user_document_available = str_to_bool(form.cleaned_data.get("end_user_document_available"))
+        # delete any existing documents
+        if not end_user_document_available:
+            for document in self.party["documents"]:
+                delete_party_document_by_id(
+                    self.request,
+                    self.application_id,
+                    self.party_id,
+                    document["id"],
+                )
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if self.party["end_user_document_available"]:
+            return reverse("applications:end_user_edit_undertaking_document", kwargs=self.kwargs)
+        else:
+            return reverse("applications:end_user_summary", kwargs=self.kwargs)
+
+
 class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, SessionWizardView):
     template_name = "core/form-wizard.html"
     file_storage = NoSaveStorage()
@@ -352,6 +380,7 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
 
         # get existing document status for the end-user
         self.existing_documents = {document["type"]: document["id"] for document in self.party["documents"]}
+        self.undertaking_document_exists = PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT in self.existing_documents
         self.english_translation_exists = (
             PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT in self.existing_documents
         )
@@ -359,7 +388,7 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
             PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT in self.existing_documents
         )
         if step == SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD:
-            kwargs["edit"] = True
+            kwargs["edit"] = self.undertaking_document_exists
 
         if step == SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD:
             kwargs["edit"] = self.english_translation_exists
@@ -373,16 +402,9 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
         if step != SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD:
             return {"end_user_document_available": True}
 
-        document = [
-            doc for doc in self.party["documents"] if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT
-        ]
-        if not document:
-            raise ValueError("End-user undertaking document not yet uploaded, editing not allowed")
-
-        document = document[0]
         return {
             "end_user_document_available": True,
-            "description": document["description"],
+            "product_differences_note": self.party["product_differences_note"],
             "document_in_english": self.party["document_in_english"],
             "document_on_letterhead": self.party["document_on_letterhead"],
         }
@@ -416,8 +438,10 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
         party_letterhead_document = all_data.pop("party_letterhead_document", None)
 
         data = {
+            "product_differences_note": all_data["product_differences_note"],
             "document_in_english": document_in_english,
             "document_on_letterhead": document_on_letterhead,
+            "end_user_document_missing_reason": "",
         }
 
         response, status_code = update_party(self.request, self.application_id, self.party_id, data)
@@ -438,7 +462,6 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Se
                 self.party_id,
                 PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT,
                 party_document,
-                all_data["description"],
             )
             if status_code != HTTPStatus.CREATED:
                 return error_page(self.request, "Unexpected error uploading party document")

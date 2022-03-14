@@ -478,6 +478,33 @@ def _get_temporary_export_details(application):
         return values_to_print
 
 
+def get_end_user_data(application, party, editable):
+    data = {}
+    document_availability_key = "Do you have an end-user document?"
+    if party["end_user_document_available"]:
+        data[document_availability_key] = "Yes"
+        for doc in party["documents"]:
+            document_type = PartyDocumentType.SUPPORTING_DOCUMENT
+            if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT:
+                document_type = "End user document"
+            if doc["type"] == PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT:
+                document_type = "English translation of the end user document"
+            if doc["type"] == PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT:
+                document_type = "Document on company letterhead"
+
+            data[document_type] = _convert_end_user_document(application["id"], party["id"], doc, editable)
+
+            if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT and party["product_differences_note"]:
+                key = "Describe any differences between products listed in the document and products on the application (optional)"
+                data[key] = party["product_differences_note"]
+    else:
+        data[document_availability_key] = "No, I do not have an end-user undertaking or stockist undertaking"
+        document_key_heading = "Explain why you do not have an end-user undertaking or stockist undertaking"
+        data[document_key_heading] = party["end_user_document_missing_reason"]
+
+    return data
+
+
 def convert_party(party, application, editable):
     if not party:
         return {}
@@ -501,17 +528,8 @@ def convert_party(party, application, editable):
 
     if application["case_type"]["sub_type"]["key"] != OPEN:
         if party["type"] == "end_user":
-            party_type = "end-user"
-            for doc in party.get("documents", []):
-                document_type = PartyDocumentType.SUPPORTING_DOCUMENT
-                if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT:
-                    document_type = "End user document"
-                if doc["type"] == PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT:
-                    document_type = "English translation of the end user document"
-                if doc["type"] == PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT:
-                    document_type = "Document on company letterhead"
-
-                data[document_type] = _convert_end_user_document(application["id"], party["id"], doc, editable)
+            party_data = get_end_user_data(application, party, editable)
+            data = dict(data, **party_data)
         else:
             if party.get("document"):
                 party_type = party["type"]

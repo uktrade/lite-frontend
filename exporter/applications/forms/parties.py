@@ -357,7 +357,7 @@ class PartyDocumentUploadForm(forms.Form):
             "required": "Select an end-user document",
         },
     )
-    description = forms.CharField(
+    product_differences_note = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),
         label="Describe any differences between products listed in the document and products on the application (optional)",
         required=False,
@@ -398,7 +398,7 @@ class PartyDocumentUploadForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             "party_document",
-            "description",
+            "product_differences_note",
             "document_in_english",
             "document_on_letterhead",
             Submit("submit", "Continue"),

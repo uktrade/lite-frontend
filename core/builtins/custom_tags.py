@@ -839,6 +839,8 @@ def get_parties_status_optional_documents(parties):
                 return NOT_STARTED
     else:
         if not parties["documents"]:
+            if parties["type"] == "end_user" and parties["end_user_document_available"] is False:
+                return DONE
             return IN_PROGRESS
 
     return DONE
@@ -878,6 +880,19 @@ def display_clc_ratings(control_list_entries):
     return ", ".join(ratings)
 
 
+def party_status(party):
+    if not party:
+        return NOT_STARTED
+
+    if not party["documents"]:
+        if party["type"] == "end_user" and party["end_user_document_available"] is False:
+            return DONE
+
+        return IN_PROGRESS
+
+    return DONE
+
+
 @register.filter()
 def get_parties_status(parties):
     if not parties:
@@ -885,14 +900,9 @@ def get_parties_status(parties):
 
     if isinstance(parties, list):
         for party in parties:
-            if not party:
-                return NOT_STARTED
-
-            if not party["documents"]:
-                return IN_PROGRESS
+            return party_status(party)
     else:
-        if not parties["documents"]:
-            return IN_PROGRESS
+        return party_status(parties)
 
     return DONE
 
