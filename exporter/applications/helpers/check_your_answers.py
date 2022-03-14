@@ -494,10 +494,7 @@ def get_end_user_data(application, party, editable):
 
             data[document_type] = _convert_end_user_document(application["id"], party["id"], doc, editable)
 
-            if (
-                doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT
-                and party["product_differences_note"]
-            ):
+            if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT and party["product_differences_note"]:
                 key = "Describe any differences between products listed in the document and products on the application (optional)"
                 data[key] = party["product_differences_note"]
     else:

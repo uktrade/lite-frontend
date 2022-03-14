@@ -138,6 +138,8 @@ def mock_countries(requests_mock):
             {"id": "AE-AZ", "name": "Abu Dhabi", "type": "gov.uk Territory", "is_eu": False},
             {"id": "AF", "name": "Afghanistan", "type": "gov.uk Country", "is_eu": False},
             {"id": "AE-AJ", "name": "Ajman", "type": "gov.uk Territory", "is_eu": False},
+            {"id": "IN", "name": "India", "type": "gov.uk Territory", "is_eu": False},
+            {"id": "US", "name": "United States", "type": "gov.uk Territory", "is_eu": False},
         ]
     }
 
