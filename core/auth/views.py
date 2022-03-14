@@ -75,6 +75,7 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
         token = self.fetch_token(request, auth_code)
         self.request.session[settings.TOKEN_SESSION_KEY] = dict(token)
+        self.request.session[f"{settings.TOKEN_SESSION_KEY}_auth_code"] = auth_code
         del self.request.session[f"{settings.TOKEN_SESSION_KEY}_oauth_state"]
         data, status_code = self.authenticate_user()
 
