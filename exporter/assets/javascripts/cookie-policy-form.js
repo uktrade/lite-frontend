@@ -1,12 +1,9 @@
-import CookieBanner from "../../../core/assets/javascripts/cookie-banner";
+import initCookiePreferences from "../../../core/assets/javascripts/cookies/preferences.js";
 
-var cookiePolicy = new CookieBanner();
-cookiePolicy.bindForm(
-  "#cookie-preferences-form",
-  ".cookie-settings__confirmation",
-  {
-    usage: "cookies-usage",
-    campaigns: "cookies-campaigns",
-    settings: "cookies-settings",
-  }
+initCookiePreferences(
+    "#cookie-preferences-form",
+    ".cookie-settings__confirmation",
+    {
+        usage: "cookies-usage",
+    }
 );

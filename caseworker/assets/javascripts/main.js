@@ -4,6 +4,7 @@ import { initAll } from 'govuk-frontend';
 // our JS
 import '../../../core/assets/javascripts/definitions.js';
 import '../../../core/assets/javascripts/back-link.js';
+import initCookierBanner from '../../../core/assets/javascripts/cookies/banner.js';
 
 // core
 // TODO: can't rewrite these as ES6 imports yet as they are used by other templates
@@ -33,4 +34,5 @@ $(document).ready(function() {
 	initQueuesMenu();
 	initFlagListExpanders();
 	initReviewGood();
+	initCookierBanner("app-cookie-banner", "js-accept-cookie");
 });
