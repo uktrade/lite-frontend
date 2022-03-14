@@ -45,7 +45,6 @@ django-inline-svg = "~=0.1"
 django-markdownx = "<3.1"
 django-storages = "==1.8"     # Need to fix this version because 1.9 removes support for boto
 elastic-apm = "~=6.7.2"
-gunicorn = "~=20.0"
 markdown = "~=3.1"
 mohawk = ">=1.1"
 munch = "~=2.5.0"
@@ -64,6 +63,7 @@ python-magic = "~=0.4"
 django-log-formatter-ecs = "==0.0.5"
 importlib-metadata = "==4.6.3"  # Dependency for some packages. Might not be needed for Python3.8+
 Authlib = "==0.15.5"
+gevent = "*"
 
 [requires]
 python_version = "3.7"
