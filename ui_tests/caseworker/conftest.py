@@ -153,6 +153,7 @@ def create_open_app(driver, apply_for_open_application):  # noqa
 
 @when("I click move case forward")
 @when("I click submit recommendation")
+@when("I click confirm")
 @when("I click continue")
 @when("I click submit")
 def submit_form(driver):  # noqa
@@ -162,12 +163,9 @@ def submit_form(driver):  # noqa
     time.sleep(5)
 
 
-@when(parsers.parse('I click "{button_text}"'))
-def click_button(driver, button_text):  # noqa
-    button = driver.find_element(
-        by=By.XPATH, value=f"//a[contains(@class, 'govuk-button') and contains(text(), '{button_text}')]"
-    )
-    button.click()
+@when(parsers.parse('I click "{link_text}"'))
+def click_link_with_text(driver, link_text):  # noqa
+    driver.find_element_by_link_text(link_text).click()
 
 
 @when("I click change status")  # noqa
@@ -573,6 +571,16 @@ def should_see_recommendation(driver, countries, reasons):  # noqa
     for country in countries.split(","):
         assert country.strip() in text
     assert reasons.strip() in text
+
+
+@then(parsers.parse('I see there are no recommendations from "{team}"'))
+def should_not_see_recommendation(driver, team, context):  # noqa
+    assert f"{team} has approved" not in Shared(driver).get_text_of_body()
+
+
+@then("I am asked what my recommendation is")
+def should_ask_for_recommendation(driver):  # noqa
+    assert Shared(driver).get_text_of_heading().text == "What is your recommendation?"
 
 
 @when("I click on the user advice tab")  # noqa
