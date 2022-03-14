@@ -1,0 +1,73 @@
+{% with end_user=case.data.end_user %}
+    <h2 class="govuk-heading-m">End-user documents</h2>
+    <table class="govuk-table">
+        <tbody class="govuk-table__body">
+            {% if end_user.documents|length %}
+                {% for document in end_user.documents %}
+                    {% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Upload an end-user document</th>
+                            <td class="govuk-table__cell">
+                                {% if document.safe %}
+                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                        End-user document ({{ document.name|document_extension|upper}} opens in new tab)
+                                    </a>
+                                {% else %}
+                                    {{ document.name }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if end_user.product_differences_note %}
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">
+                                    Describe any differences between products listed in the document and products on the application (optional)
+                                </th>
+                                <td class="govuk-table__cell">{{ end_user.product_differences_note }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if document.type == "end_user_english_translation_document" %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Upload an English translation of the end-user document</th>
+                            <td class="govuk-table__cell">
+                                {% if document.safe %}
+                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                        English translation ({{ document.name|document_extension|upper}} opens in new tab)
+                                    </a>
+                                {% else %}
+                                    {{ document.name }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    {% if document.type == "end_user_company_letterhead_document" %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Upload a document on company letterhead</th>
+                            <td class="govuk-table__cell">
+                                {% if document.safe %}
+                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                        Company letterhead ({{ document.name|document_extension|upper}} opens in new tab)
+                                    </a>
+                                {% else %}
+                                    {{ document.name }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                {% endfor %}
+            {% else %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Do you have an end-user document?</th>
+                    <td class="govuk-table__cell">No, I do not have an end-user undertaking or stockist undertaking</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Explain why you do not have an end-user undertaking or stockist undertaking</th>
+                    <td class="govuk-table__cell">{{ end_user.end_user_document_missing_reason }}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endwith %}
