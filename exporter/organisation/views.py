@@ -1,8 +1,9 @@
-from django.conf import settings
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, TemplateView, RedirectView
+from django.views.generic import FormView, RedirectView, TemplateView, View
 
+from core.auth.views import LoginRequiredMixin
+from core.services import download_document_from_s3
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
@@ -11,8 +12,6 @@ from lite_forms.helpers import conditional
 from exporter.organisation.roles.services import get_user_permissions
 from exporter.organisation import forms
 from exporter.organisation.services import post_document_on_organisation, get_document_on_organisation
-from core.auth.views import LoginRequiredMixin
-from s3chunkuploader.file_handler import s3_client
 
 
 class OrganisationView(TemplateView):
@@ -57,17 +56,12 @@ class Details(LoginRequiredMixin, OrganisationView):
     template_name = "details/index"
 
 
-class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
-    def get_redirect_url(self, pk):
+class DocumentOnOrganisation(LoginRequiredMixin, View):
+    def get(self, request, pk):
         organisation_id = str(self.request.session["organisation"])
         response = get_document_on_organisation(request=self.request, organisation_id=organisation_id, document_id=pk)
-        document_on_organisation = response.json()
-        signed_url = s3_client().generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": document_on_organisation["document"]["s3_key"]},
-            ExpiresIn=15,
-        )
-        return signed_url
+        document = response.json()["document"]
+        return download_document_from_s3(document["s3_key"], document["name"])
 
 
 class AbstractOrganisationUpload(LoginRequiredMixin, FormView):

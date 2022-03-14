@@ -11,11 +11,11 @@ from django.views.generic import FormView, TemplateView
 from formtools.wizard.views import SessionWizardView
 
 from core.auth.views import LoginRequiredMixin
+from core.services import download_document_from_s3
 from core.constants import CaseStatusEnum
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
-    download_document_from_s3,
     edit_good_on_application_firearm_details_serial_numbers,
     fetch_and_delete_previous_application_documents,
     get_application,

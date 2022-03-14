@@ -29,7 +29,6 @@ from exporter.applications.services import (
     get_party,
     update_party,
     delete_party_document_by_id,
-    download_document_from_s3,
 )
 from exporter.applications.views.parties.base import CopyParties
 from exporter.core.constants import (
@@ -49,6 +48,7 @@ from exporter.core.helpers import (
 from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
+from core.services import download_document_from_s3
 
 log = logging.getLogger(__name__)
 

@@ -1,14 +1,11 @@
 import datetime
 from logging import getLogger
 
-from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import TemplateView
-
-from s3chunkuploader.file_handler import s3_client
 
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
@@ -20,6 +17,8 @@ from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
+
+from core.services import download_document_from_s3
 
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.additional_contacts import add_additional_contact_form
@@ -390,16 +389,8 @@ class AttachDocuments(TemplateView):
 class Document(TemplateView):
     def get(self, request, **kwargs):
         document, _ = get_document(request, pk=kwargs["file_pk"])
-        client = s3_client()
-        signed_url = client.generate_presigned_url(
-            "get_object",
-            Params={
-                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-                "Key": document["document"]["s3_key"],
-            },
-            ExpiresIn=15,
-        )
-        return redirect(signed_url)
+        document = document["document"]
+        return download_document_from_s3(document["s3_key"], document["name"])
 
 
 class CaseOfficer(SingleFormView):
