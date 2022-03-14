@@ -97,18 +97,24 @@ class RecommendationsAndDecisionPage(BasePage):
         self.driver.find_element(by=By.XPATH, value=f"//input[@type='checkbox' and @value='{country}']").click()
 
     def enter_reasons_for_approving(self, reasons):
-        self.driver.find_element(by=By.XPATH, value="//textarea[@name='approval_reasons']").send_keys(reasons)
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='approval_reasons']")
+        el.clear()
+        el.send_keys(reasons)
 
     def enter_licence_condition(self, licence_condition):
-        self.driver.find_element(by=By.XPATH, value="//textarea[@name='proviso']").send_keys(licence_condition)
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='proviso']")
+        el.clear()
+        el.send_keys(licence_condition)
 
     def enter_instructions_for_exporter(self, instructions):
-        self.driver.find_element(by=By.XPATH, value="//textarea[@name='instructions_to_exporter']").send_keys(
-            instructions
-        )
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='instructions_to_exporter']")
+        el.clear()
+        el.send_keys(instructions)
 
     def enter_reporting_footnote(self, footnote):
-        self.driver.find_element(by=By.XPATH, value="//textarea[@name='footnote_details']").send_keys(footnote)
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='footnote_details']")
+        el.clear()
+        el.send_keys(footnote)
 
     def get_reasons_for_approving(self):
         return self.driver.find_element(

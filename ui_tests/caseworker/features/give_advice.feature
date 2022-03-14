@@ -96,6 +96,41 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I don't see previously created application
 
 
+  @mod_edit_advice
+  Scenario: MOD edit advice journey
+    Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
+    When I go to application previously created
+    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I go to my profile page
+    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click make recommendation
+    And I click approve all
+    And I click continue
+    And I enter "reason for approving" as the reasons for approving
+    And I enter "licence condition" as the licence condition
+    And I enter "instruction for exporter" as the instructions for the exporter
+    And I enter "reporting footnote" as the reporting footnote
+    And I click submit recommendation
+    Then I see "reason for approving" as the reasons for approving
+    Then I see "licence condition" as the licence condition
+    Then I see "instruction for exporter" as the instructions for the exporter
+    Then I see "reporting footnote" as the reporting footnote
+    When I click "Edit recommendation"
+    And I enter "reason for approving1" as the reasons for approving
+    And I enter "licence condition1" as the licence condition
+    And I enter "instruction for exporter1" as the instructions for the exporter
+    And I enter "reporting footnote1" as the reporting footnote
+    And I click submit recommendation
+    Then I see "reason for approving1" as the reasons for approving
+    Then I see "licence condition1" as the licence condition
+    Then I see "instruction for exporter1" as the instructions for the exporter
+    Then I see "reporting footnote1" as the reporting footnote
+
+
   @mod_clear_advice
   Scenario: MOD clear advice journey
     Given I sign in to SSO or am signed into SSO
