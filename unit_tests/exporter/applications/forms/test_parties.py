@@ -90,7 +90,7 @@ def test_party_address_form(mock_get_countries, data, valid, errors):
     form = parties.PartyAddressForm(request=request, data=data)
 
     assert form.is_valid() == valid
-    mock_get_countries.assert_called_once_with(request, False, ["GB"])
+    mock_get_countries.assert_called_once_with(request)
 
     if not valid:
         assert form.errors == errors
