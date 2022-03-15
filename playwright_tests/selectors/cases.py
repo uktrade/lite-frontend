@@ -8,4 +8,9 @@ case_selectors = {
     "fcdo_approval_reason": "#id_approval_reasons",
     "recommendation_review": "#main-content",
     "cases_form": "#form-cases",
+    "assigned_queues": "#assigned-queues",
+    "counter_sign_details": ".govuk-details__text",
+    "counter_sign_approval_reason": "#id_form-0-approval_reasons",
+    "counter_sign_reason": "div.govuk-grid-column-three-quarters > p.govuk-body",
+    "fcdo_reason": "div.govuk-grid-row > div.govuk-cookie-banner__content",
 }
