@@ -1,4 +1,4 @@
-from actions.requests_helper import post
+from .requests_helper import post
 
 
 def create_goods(fixture, headers):

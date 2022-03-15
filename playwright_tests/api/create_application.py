@@ -1,27 +1,27 @@
 import os
 import time
 
-from fixtures.application import create, submit, status
-from fixtures.auth_user import auth_user
-from fixtures.document import document
-from fixtures.end_use_details import end_use_details
-from fixtures.export_auth_user import export_auth_user
-from fixtures.goods import goods
-from fixtures.headers import exporter, caseworker
-from fixtures.organisation import organisation
-from fixtures.parties import end_user, ultimate_end_user, consignee, third_party
-from fixtures.route_of_goods import route_of_goods
-from fixtures.site import site
-from fixtures.user_to_org import user_to_org
+from playwright_tests.api.fixtures.application import create, submit, status
+from playwright_tests.api.fixtures.auth_user import auth_user
+from playwright_tests.api.fixtures.document import document
+from playwright_tests.api.fixtures.end_use_details import end_use_details
+from playwright_tests.api.fixtures.export_auth_user import export_auth_user
+from playwright_tests.api.fixtures.goods import goods
+from playwright_tests.api.fixtures.headers import exporter, caseworker
+from playwright_tests.api.fixtures.organisation import organisation
+from playwright_tests.api.fixtures.parties import end_user, ultimate_end_user, consignee, third_party
+from playwright_tests.api.fixtures.route_of_goods import route_of_goods
+from playwright_tests.api.fixtures.site import site
+from playwright_tests.api.fixtures.user_to_org import user_to_org
 
-from actions.authenticate import gov_auth, export_auth
-from actions.organisation import (
+from playwright_tests.api.actions.authenticate import gov_auth, export_auth
+from playwright_tests.api.actions.organisation import (
   create_organisation,
   update_organisation_status,
   add_user_to_organisation,
   add_site_to_organisation,
 )
-from actions.application import (
+from playwright_tests.api.actions.application import (
   create_draft_application,
   add_good_to_application,
   add_location_to_application,
@@ -35,7 +35,7 @@ from actions.application import (
   submit_application,
   change_application_status,
 )
-from actions.goods import create_goods, create_goods_document
+from playwright_tests.api.actions.goods import create_goods, create_goods_document
 from dotenv import load_dotenv
 
 load_dotenv('caseworker.env')

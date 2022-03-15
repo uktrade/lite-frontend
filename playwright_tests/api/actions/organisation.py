@@ -1,4 +1,4 @@
-from actions.requests_helper import post, put
+from .requests_helper import post, put
 
 
 def create_organisation(fixture, headers):
