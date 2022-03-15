@@ -1,15 +1,11 @@
+# flake8: noqa
 from playwright_tests.api.login import set_sso_cookie
 import os
-from typing import Any, Dict, Generator, List, Callable, Optional
 
 import pytest
 from playwright.sync_api import (
-    Browser,
-    BrowserContext,
     Error,
     Page,
-    Playwright,
-    BrowserType,
     sync_playwright,
 )
 from slugify import slugify
@@ -20,19 +16,19 @@ import tempfile
 artifacts_folder = tempfile.TemporaryDirectory(prefix="playwright-pytest-")
 
 
-def _build_artifact_test_folder(pytestconfig: Any, request: Any, folder_or_file_name: str) -> str:
+def _build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
     output_dir = pytestconfig.getoption("--output")
     return os.path.join(output_dir, slugify(request.node.nodeid), folder_or_file_name)
 
 
 @pytest.fixture(scope="session")
-def browser_type_launch_args() -> Dict:
+def browser_type_launch_args():
     launch_options = {"headless": False}
     return launch_options
 
 
 @pytest.fixture(scope="session")
-def browser_context_args() -> Dict:
+def browser_context_args():
     context_args = {
         "base_url": "https://internal.lite.service.devdata.uktrade.digital/",
     }
@@ -40,20 +36,20 @@ def browser_context_args() -> Dict:
 
 
 @pytest.fixture(scope="session")
-def playwright() -> Generator[Playwright, None, None]:
+def playwright():
     pw = sync_playwright().start()
     yield pw
     pw.stop()
 
 
 @pytest.fixture(scope="session")
-def browser_type(playwright: Playwright, browser_name: str) -> BrowserType:
+def browser_type(playwright, browser_name):
     return getattr(playwright, browser_name)
 
 
 @pytest.fixture(scope="session")
-def launch_browser(browser_type_launch_args: Dict, browser_type: BrowserType,) -> Callable[..., Browser]:
-    def launch(**kwargs: Dict) -> Browser:
+def launch_browser(browser_type_launch_args, browser_type):
+    def launch(**kwargs):
         launch_options = {**browser_type_launch_args, **kwargs}
         browser = browser_type.launch(**launch_options)
         return browser
@@ -62,7 +58,7 @@ def launch_browser(browser_type_launch_args: Dict, browser_type: BrowserType,) -
 
 
 @pytest.fixture(scope="session")
-def browser(launch_browser: Callable[[], Browser]) -> Generator[Browser, None, None]:
+def browser(launch_browser):
     browser = launch_browser()
     yield browser
     browser.close()
@@ -70,10 +66,8 @@ def browser(launch_browser: Callable[[], Browser]) -> Generator[Browser, None, N
 
 
 @pytest.fixture
-def context(
-    browser: Browser, browser_context_args: Dict, pytestconfig: Any, request: Any,
-) -> Generator[BrowserContext, None, None]:
-    pages: List[Page] = []
+def context(browser, browser_context_args, pytestconfig, request):
+    pages = []
     context = browser.new_context(**browser_context_args)
     context.on("page", lambda page: pages.append(page))
 
@@ -81,7 +75,10 @@ def context(
     capture_trace = tracing_option in ["on", "retain-on-failure"]
     if capture_trace:
         context.tracing.start(
-            name=slugify(request.node.nodeid), screenshots=True, snapshots=True, sources=True,
+            name=slugify(request.node.nodeid),
+            screenshots=True,
+            snapshots=True,
+            sources=True,
         )
 
     yield context
@@ -130,18 +127,18 @@ def context(
 
 
 @pytest.fixture
-def page(context: BrowserContext) -> Generator[Page, None, None]:
+def page(context):
     page = context.new_page()
     set_sso_cookie(page)
     yield page
 
 
 @pytest.fixture(scope="session")
-def browser_name() -> Optional[str]:
+def browser_name():
     return "chromium"
 
 
-def pytest_addoption(parser: Any) -> None:
+def pytest_addoption(parser):
     group = parser.getgroup("playwright", "Playwright")
     group.addoption(
         "--browser",
@@ -151,17 +148,28 @@ def pytest_addoption(parser: Any) -> None:
         choices=["chromium", "firefox", "webkit"],
     )
     group.addoption(
-        "--headed", action="store_true", default=False, help="Run tests in headed mode.",
+        "--headed",
+        action="store_true",
+        default=False,
+        help="Run tests in headed mode.",
     )
     group.addoption(
-        "--browser-channel", action="store", default=None, help="Browser channel to be used.",
+        "--browser-channel",
+        action="store",
+        default=None,
+        help="Browser channel to be used.",
     )
     group.addoption(
-        "--slowmo", default=0, type=int, help="Run tests with slow mo",
+        "--slowmo",
+        default=0,
+        type=int,
+        help="Run tests with slow mo",
     )
     group.addoption("--device", default=None, action="store", help="Device to be emulated.")
     group.addoption(
-        "--output", default="test-results", help="Directory for artifacts produced by tests, defaults to test-results.",
+        "--output",
+        default="test-results",
+        help="Directory for artifacts produced by tests, defaults to test-results.",
     )
     group.addoption(
         "--tracing",
