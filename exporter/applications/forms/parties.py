@@ -253,7 +253,7 @@ class PartyAddressForm(forms.Form):
 
         self.fields["country"].widget = Autocomplete(attrs={"id": "country-autocomplete", "nonce": request.csp_nonce})
 
-        countries = get_countries(request, False, ["GB"])
+        countries = get_countries(request)
         country_choices = [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices += country_choices
 
