@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common.tools.helpers import find_paginated_item_by_id
@@ -59,3 +61,18 @@ class GeneratedDocument(BasePage):
 
     def select_document_template(self):
         self.driver.find_element_by_css_selector(self.DOCUMENT_TEMPLATE_CSS).click()
+
+    def select_document_template_by_name(self, template_name):
+        self.driver.find_element(by=By.XPATH, value=f"//img[@alt='{template_name}']").click()
+
+    def get_item_from_siel_document_preview(self, item_name):
+        headers = (
+            td.text
+            for td in self.driver.find_elements(by=By.XPATH, value="//div[@class = 'document']/table[2]/tbody/tr[4]/td")
+        )
+        values = (
+            td.text
+            for td in self.driver.find_elements(by=By.XPATH, value="//div[@class = 'document']/table[2]/tbody/tr[5]/td")
+        )
+
+        return dict(zip(headers, values))[item_name]
