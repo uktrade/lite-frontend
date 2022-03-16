@@ -200,7 +200,7 @@ jobs:
   caseworker_ui_test:
     # has to be machine executor as the VPN does not work in docker executor
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202201-02
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -210,6 +210,7 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
@@ -220,7 +221,7 @@ jobs:
 
   exporter_ui_test:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202201-02
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -230,6 +231,7 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
