@@ -1,3 +1,4 @@
+from email.mime import application
 from json import JSONDecodeError
 
 from django.conf import settings
@@ -7,7 +8,10 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, FormView
 from django.http import HttpResponseRedirect
 
-from exporter.applications.services import has_existing_applications_and_licences_and_nlrs
+from exporter.applications.services import (
+    get_applications_require_serial_numbers,
+    has_existing_applications_and_licences_and_nlrs,
+)
 from exporter.auth.services import authenticate_exporter_user
 
 from exporter.core.forms import (
@@ -39,6 +43,14 @@ from core.auth.views import LoginRequiredMixin
 
 
 class Home(TemplateView):
+    def _notifications_with_missing_serial_numbers(self, request):
+        notifications, _ = get_notifications(request)
+        require_serial_numbers_response = get_applications_require_serial_numbers(request)
+        require_serial_numbers = len(require_serial_numbers_response["results"])
+        app_notifications = notifications["notifications"]["application"]
+        notifications["notifications"]["application"] = app_notifications + require_serial_numbers
+        return notifications
+
     def get(self, request, **kwargs):
         if not request.authbroker_client.token:
             context = {
@@ -50,8 +62,8 @@ class Home(TemplateView):
             user_permissions = user["role"]["permissions"]
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
+        notifications = self._notifications_with_missing_serial_numbers(request)
         organisation = get_organisation(request, str(request.session["organisation"]))
-        notifications, _ = get_notifications(request)
         existing = has_existing_applications_and_licences_and_nlrs(request)
 
         context = {
