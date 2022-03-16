@@ -19,5 +19,6 @@ class TAUHome(LoginRequiredMixin, TemplateView):
         return get_case(self.request, self.case_id)
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         case = self.case
-        return {"case": case, "greetings": f"Welcome to TAU 2.0! Case: {case.id}"}
+        return {**context, "case": case, "greetings": f"Welcome to TAU 2.0! Case: {case.id}"}
