@@ -209,7 +209,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I select the template "SIEL template"
     And I click continue
     And I click preview
-    Then I see that "16. Control list no" is "ML1a" on the SIEL licence preview
+    Then I see the licence number on the SIEL licence preview
+    And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
     Then I see the case status is now "Finalised"

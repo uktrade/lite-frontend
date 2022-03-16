@@ -406,6 +406,12 @@ def select_template_by_name(driver, template_name):  # noqa
     GeneratedDocument(driver).select_document_template_by_name(template_name)
 
 
+@then("I see the licence number on the SIEL licence preview")
+def should_see_licence_number_on_siel_licence_preview(driver, context):  # noqa
+    text = GeneratedDocument(driver).get_document_preview_text()
+    assert f"{context.reference_code}-01" in text
+
+
 @then(parsers.parse('I see that "{item_name}" is "{value}" on the SIEL licence preview'))  # noqa
 def should_see_item_on_siel_licence_preview(driver, item_name, value):  # noqa
     val = GeneratedDocument(driver).get_item_from_siel_document_preview(item_name)
