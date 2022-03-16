@@ -4,8 +4,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
-  @fcdo_approve_case
-  Scenario: FCDO to approve a case
+  @fcdo_approve_advice
+  Scenario: FCDO to approve advice journey
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
@@ -36,8 +36,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
 
 
-  @mod_advice
-  Scenario: MOD advice journey
+  @mod_approve_advice
+  Scenario: MOD approve advice journey
     ##### MOD to circulate a case #####
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -68,9 +68,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I enter "reporting footnote" as the reporting footnote
     And I click submit recommendation
     Then I see "reason for approving" as the reasons for approving
-    Then I see "licence condition" as the licence condition
-    Then I see "instruction for exporter" as the instructions for the exporter
-    Then I see "reporting footnote" as the reporting footnote
+    And I see "licence condition" as the licence condition
+    And I see "instruction for exporter" as the instructions for the exporter
+    And I see "reporting footnote" as the reporting footnote
     When I click move case forward
     Then I don't see previously created application
 
@@ -83,15 +83,15 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click the recommendations and decision tab
     And I expand the details for "MOD-ECJU has approved with licence conditions"
     Then I see "reason for approving" as the reasons for approving
-    Then I see "licence condition" as the licence condition
-    Then I see "instruction for exporter" as the instructions for the exporter
-    Then I see "reporting footnote" as the reporting footnote
+    And I see "licence condition" as the licence condition
+    And I see "instruction for exporter" as the instructions for the exporter
+    And I see "reporting footnote" as the reporting footnote
     When I click "Review and combine"
     And I enter "overall reason" as the overall reason
     And I enter "licence condition1" as the licence condition
     And I click submit recommendation
     Then I see "overall reason" as the overall reason
-    Then I see "licence condition1" as the licence condition
+    And I see "licence condition1" as the licence condition
     When I click move case forward
     Then I don't see previously created application
 
@@ -116,9 +116,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I enter "reporting footnote" as the reporting footnote
     And I click submit recommendation
     Then I see "reason for approving" as the reasons for approving
-    Then I see "licence condition" as the licence condition
-    Then I see "instruction for exporter" as the instructions for the exporter
-    Then I see "reporting footnote" as the reporting footnote
+    And I see "licence condition" as the licence condition
+    And I see "instruction for exporter" as the instructions for the exporter
+    And I see "reporting footnote" as the reporting footnote
     When I click "Edit recommendation"
     And I enter "reason for approving1" as the reasons for approving
     And I enter "licence condition1" as the licence condition
@@ -126,9 +126,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I enter "reporting footnote1" as the reporting footnote
     And I click submit recommendation
     Then I see "reason for approving1" as the reasons for approving
-    Then I see "licence condition1" as the licence condition
-    Then I see "instruction for exporter1" as the instructions for the exporter
-    Then I see "reporting footnote1" as the reporting footnote
+    And I see "licence condition1" as the licence condition
+    And I see "instruction for exporter1" as the instructions for the exporter
+    And I see "reporting footnote1" as the reporting footnote
 
 
   @mod_clear_advice
@@ -151,11 +151,36 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I enter "reporting footnote" as the reporting footnote
     And I click submit recommendation
     Then I see "reason for approving" as the reasons for approving
-    Then I see "licence condition" as the licence condition
-    Then I see "instruction for exporter" as the instructions for the exporter
-    Then I see "reporting footnote" as the reporting footnote
+    And I see "licence condition" as the licence condition
+    And I see "instruction for exporter" as the instructions for the exporter
+    And I see "reporting footnote" as the reporting footnote
     When I click "Clear recommendation"
     And I click confirm
     Then I am asked what my recommendation is
-    When I click "Back"
+    When I click back
     Then I see there are no recommendations from "MOD-WECA"
+
+  @mod_refuse_advice
+  Scenario: MOD refuse advice journey
+    Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
+    When I go to application previously created
+    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I go to my profile page
+    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click make recommendation
+    And I click refuse all
+    And I click continue
+    And I select refusal criteria "1a, 1b, 1c, 1d, 1e, 1f"
+    And I enter "reason for this refusal" as the reasons for refusal
+    And I click submit recommendation
+    Then I see "reason for this refusal" as the reasons for refusal
+    # The following step will implicitly navigate through the "All cases" queue
+    When I go to application previously created
+    And I click the recommendations and decision tab
+    And I expand the details for "MOD-WECA has refused"
+    Then I see "reason for this refusal" as the reasons for refusal
+    And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria

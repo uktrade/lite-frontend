@@ -163,9 +163,16 @@ def submit_form(driver):  # noqa
     time.sleep(5)
 
 
-@when(parsers.parse('I click "{link_text}"'))
-def click_link_with_text(driver, link_text):  # noqa
-    driver.find_element_by_link_text(link_text).click()
+@when(parsers.parse('I click "{button_text}"'))
+def click_button_with_text(driver, button_text):  # noqa
+    driver.find_element(
+        by=By.XPATH, value=f"//a[contains(@class, 'govuk-button') and contains(text(), '{button_text}')]"
+    ).click()
+
+
+@when("I click back")
+def click_back_link(driver):  # noqa
+    driver.find_element_by_link_text("Back").click()
 
 
 @when("I click change status")  # noqa
@@ -511,16 +518,36 @@ def click_approve_all(driver):  # noqa
     RecommendationsAndDecisionPage(driver).click_approve_all()
 
 
+@when("I click refuse all")
+def click_refuse_all(driver):  # noqa
+    RecommendationsAndDecisionPage(driver).click_refuse_all()
+
+
+@when(parsers.parse('I select refusal criteria "{criteria}"'))
+def select_refusal_criteria(driver, criteria):  # noqa
+    page = RecommendationsAndDecisionPage(driver)
+
+    for crit in criteria.split(","):
+        page.select_refusal_criteria(crit.strip())
+
+
 @when(parsers.parse('I select countries "{countries}"'))
 def select_countries(driver, countries):  # noqa
+    page = RecommendationsAndDecisionPage(driver)
+
     for country in countries.split(","):
-        RecommendationsAndDecisionPage(driver).select_country(country.strip())
+        page.select_country(country.strip())
 
 
 @when(parsers.parse('I enter "{reasons}" as the overall reason'))
 @when(parsers.parse('I enter "{reasons}" as the reasons for approving'))
 def enter_reasons_for_approving(driver, reasons, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_reasons_for_approving(reasons)
+
+
+@when(parsers.parse('I enter "{reasons}" as the reasons for refusal'))
+def enter_reasons_for_refusal(driver, reasons, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_reasons_for_refusal(reasons)
 
 
 @when(parsers.parse('I enter "{licence_condition}" as the licence condition'))
@@ -542,6 +569,18 @@ def enter_reporting_footnote(driver, footnote, context):  # noqa
 @then(parsers.parse('I see "{reasons}" as the reasons for approving'))
 def should_see_reasons_for_approving(driver, reasons, context):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_reasons_for_approving() == reasons
+
+
+@then(parsers.parse('I see "{reasons}" as the reasons for refusal'))
+def should_see_reasons_for_refusal(driver, reasons, context):  # noqa
+    assert RecommendationsAndDecisionPage(driver).get_reasons_for_refusal() == reasons
+
+
+@then(parsers.parse('I see "{criteria}" as the refusal criteria'))
+def should_see_refusal_criteria(driver, criteria):  # noqa
+    page = RecommendationsAndDecisionPage(driver)
+
+    assert all(crit == criteria for crit in page.get_refusal_criteria())
 
 
 @then(parsers.parse('I see "{licence_condition}" as the licence condition'))
