@@ -160,6 +160,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I click back
     Then I see there are no recommendations from "MOD-WECA"
 
+
   @mod_refuse_advice
   Scenario: MOD refuse advice journey
     Given I sign in to SSO or am signed into SSO
@@ -184,3 +185,33 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I expand the details for "MOD-WECA has refused"
     Then I see "reason for this refusal" as the reasons for refusal
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
+
+
+  @lu_consolidate_advice
+  Scenario: LU consolidate advice journey
+    Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
+    And I prepare the application for final review
+    When I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Review and combine"
+    And I enter "reason for approving" as the reasons for approving
+    And I enter "licence condition" as the licence condition
+    And I click submit recommendation
+    Then I see "reason for approving" as the reasons for approving
+    And I see "licence condition" as the licence condition
+    When I click "Finalise case"
+    And I click save
+    And I click "Generate"
+    And I select the template "SIEL template"
+    And I click continue
+    And I click preview
+    Then I see the licence number on the SIEL licence preview
+    And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
+    When I click continue
+    And I click save and publish to exporter
+    Then I see the case status is now "Finalised"
+    And I see the case is not assigned to any queues

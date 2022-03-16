@@ -1,4 +1,3 @@
-from tests_common.fixtures.core import api_client
 from faker import Faker
 
 fake = Faker()

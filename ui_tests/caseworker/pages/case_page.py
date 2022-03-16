@@ -60,6 +60,16 @@ class CasePage(BasePage):
         scroll_to_element_by_id(self.driver, self.LINK_ASSIGN_USERS_ID)
         self.driver.find_element_by_id(self.LINK_ASSIGN_USERS_ID).click()
 
+    def get_status(self):
+        return self.driver.find_element(
+            by=By.XPATH, value="//dd[preceding-sibling::dt[contains(text(), 'Status')]]"
+        ).text
+
+    def get_assigned_queues(self):
+        return self.driver.find_element(
+            by=By.XPATH, value="//dd[preceding-sibling::dt[contains(text(), 'Assigned queues')]]"
+        ).text
+
     def click_change_status(self):
         self.driver.find_element_by_id(self.LINK_CHANGE_STATUS_ID).click()
 

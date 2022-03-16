@@ -86,13 +86,13 @@ class Cases:
         if save_licence:
             self.api_client.add_to_context("licence", response["licence"])
 
-    def manage_case_status(self, draft_id):
+    def manage_case_status(self, draft_id, status="withdrawn"):
         draft_id_to_change = draft_id or self.api_client.context["draft_id"]
         response = self.api_client.make_request(
             method="PUT",
             url="/applications/" + draft_id_to_change + "/status/",
             headers=self.api_client.gov_headers,
-            body={"status": "withdrawn"},
+            body={"status": status},
         )
 
         return response.status_code
