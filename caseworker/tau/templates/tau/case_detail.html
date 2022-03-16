@@ -1,0 +1,106 @@
+{% load advice_tags tau_tags %}
+<h2 id="products-title" class="govuk-heading-m">Assessing {{case.goods|length}} products</h2>
+{% for good in case.goods %}
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary">
+      <span class="govuk-details__summary-text">{{ good.good.name }}</span>
+  </summary>
+  <div class="govuk-details__text">
+    <table id="table-products-{{ forloop.counter }}" class="govuk-table">
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Select the type of firearm product</td>
+          <td class="govuk-table__cell">{{good.good.firearm_details.type.value}}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Part number (optional)</td>
+          <td class="govuk-table__cell">{{ good.good.part_number }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Does the product have a government security grading or classification?</td>
+          <td class="govuk-table__cell">{{ good.good.is_pv_graded|title }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Is the product for military use?</td>
+          <td class="govuk-table__cell">{{ good.good.is_military_use.value }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Will the product be onward exported to any additional countries?</td>
+          <td class="govuk-table__cell">{{ case.destinations|is_ultimate_end_user|yesno|capfirst }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Quantity</td>
+          <td class="govuk-table__cell">{{ good.quantity|floatformat:"0" }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Total value</td>
+          <td class="govuk-table__cell">£{{ case.goods | get_case_value }}</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</details>
+{% endfor %}
+<h2 id="case-details-title" class="govuk-heading-m">Case details</h2>
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary">
+      <span id="products-section-title" class="govuk-details__summary-text">{{case.goods|length}} products</span>
+  </summary>
+  <div class="govuk-details__text">
+    <table id="table-products-summary" class="govuk-table">
+      <tbody class="govuk-table__body">
+      {% for good in case.goods %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ good.good.name }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary">
+    <span id="destinations-section-title" class="govuk-details__summary-text">{{case.destinations|length}} destinations</span>
+  </summary>
+  <div class="govuk-details__text">
+    <table id="table-destinations" class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Country</th>
+          <th scope="col" class="govuk-table__header">Type</th>
+          <th scope="col" class="govuk-table__header">Name</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for destination in case.destinations %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ destination.country.name }}</td>
+          {% if 'type_display_value' in destination %}
+            <td class="govuk-table__cell">{{ destination.type_display_value }}</td>
+          {% else %}
+            <td class="govuk-table__cell">{{ destination.type }}</td>
+          {% endif %}
+          <td class="govuk-table__cell">{{ destination.name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">End-use</span>
+  </summary>
+  <div class="govuk-details__text">
+    <table id="table-end-use" class="govuk-table">
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ case.data.intended_end_use }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</details>

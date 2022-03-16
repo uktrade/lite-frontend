@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView
+from django.utils.functional import cached_property
 
 from caseworker.cases.services import get_case
 from core.auth.views import LoginRequiredMixin
@@ -9,7 +10,15 @@ class TAUHome(LoginRequiredMixin, TemplateView):
 
     template_name = "tau/home.html"
 
+    @cached_property
+    def case_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def case(self):
+        return get_case(self.request, self.case_id)
+
     def get_context_data(self, **kwargs):
-        case_id = str(kwargs["pk"])
-        case = get_case(self.request, case_id)
-        return {"case": case, "greetings": f"Welcome to TAU 2.0! Case: {case.id}"}
+        context = super().get_context_data(**kwargs)
+        case = self.case
+        return {**context, "case": case, "greetings": f"Welcome to TAU 2.0! Case: {case.id}"}
