@@ -276,6 +276,11 @@ urlpatterns = [
         end_users.PartyDocumentEditView.as_view(),
         name="end_user_edit_document",
     ),
+    path(
+        "<uuid:pk>/end-user/<uuid:obj_pk>/ec3_document/",
+        end_users.PartyEC3DocumentView.as_view(),
+        name="end_user_ec3_document",
+    ),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/copy/", end_users.CopyEndUserView.as_view(), name="copy_end_user"),
     path("<uuid:pk>/end-user/<uuid:obj_pk>/remove/", end_users.RemoveEndUserView.as_view(), name="remove_end_user"),
     path(

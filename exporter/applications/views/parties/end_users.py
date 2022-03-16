@@ -19,6 +19,7 @@ from exporter.applications.forms.parties import (
     PartyDocumentUploadForm,
     PartyEnglishTranslationDocumentUploadForm,
     PartyCompanyLetterheadDocumentUploadForm,
+    PartyEC3DocumentUploadForm,
 )
 from exporter.applications.services import (
     copy_party,
@@ -563,3 +564,14 @@ class PartyDocumentDownloadView(LoginRequiredMixin, PartyContextMixin, TemplateV
 
         document = document[0]
         return download_document_from_s3(document["s3_key"], document["name"])
+
+
+class PartyEC3DocumentView(LoginRequiredMixin, PartyContextMixin, FormView):
+    form_class = PartyEC3DocumentUploadForm
+
+    def form_valid(self, form):
+        update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:end_user_summary", kwargs=self.kwargs)

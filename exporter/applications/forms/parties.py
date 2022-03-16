@@ -453,3 +453,38 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
             "party_letterhead_document",
             Submit("submit", "Continue"),
         )
+
+
+class PartyEC3DocumentUploadForm(forms.Form):
+    title = "Upload an EC3 form (optional)"
+    party_ec3_document = forms.FileField(label="", required=False)
+    ec3_missing_reason = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="",
+        help_text="If you do not have an EC3 form, explain why (optional)",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.attrs = {"enctype": "multipart/form-data"}
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            HTML.p(
+                "An EC3 form is required if you are exporting firearm products from Northern Ireland to a country within the European Union."
+            ),
+            "party_ec3_document",
+            "ec3_missing_reason",
+            HTML.details(
+                "Help with the EC3 form and exemptions",
+                """You do not require an EC3 form to export weapons sights, sound suppressors or silencers, magazines, antique firearms
+                 manufactured before 1890 (including parts and components for those firearms) and items which will be used by
+                 police, armed forces or public authorities.<br><br>
+                <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form">
+                Guidance on the EC3 form (opens in new tab)</a>
+            """,
+            ),
+            Submit("submit", "Continue"),
+        )
