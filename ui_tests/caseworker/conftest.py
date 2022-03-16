@@ -414,8 +414,7 @@ def should_see_licence_number_on_siel_licence_preview(driver, context):  # noqa
 
 @then(parsers.parse('I see that "{item_name}" is "{value}" on the SIEL licence preview'))  # noqa
 def should_see_item_on_siel_licence_preview(driver, item_name, value):  # noqa
-    val = GeneratedDocument(driver).get_item_from_siel_document_preview(item_name)
-    assert val == value
+    assert value == GeneratedDocument(driver).get_item_from_siel_document_preview(item_name)
 
 
 @when("I go to the documents tab")  # noqa
