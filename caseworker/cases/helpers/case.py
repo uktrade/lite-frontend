@@ -53,6 +53,7 @@ class Slices:
     SANCTION_MATCHES = Slice("case/slices/sanctions.html")
     DENIAL_MATCHES = Slice("case/slices/denial-matches.html")
     DELETED_ENTITIES = Slice("case/slices/deleted-entities.html")
+    END_USER_DOCUMENTS = Slice("case/slices/end-user-documents.html")
     LOCATIONS = Slice("components/locations.html")
     F680_DETAILS = Slice("case/slices/f680-details.html", "F680 details")
     EXHIBITION_DETAILS = Slice("case/slices/exhibition-details.html", "Exhibition details")

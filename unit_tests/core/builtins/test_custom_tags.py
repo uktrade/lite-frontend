@@ -172,3 +172,22 @@ def test_pluralise_quantity(good_on_app, quantity_display):
 )
 def test_highlight_text_sanitization(input, term, expected):
     assert expected == highlight_text(input, term)
+
+
+@pytest.mark.parametrize(
+    "filename,expected",
+    [
+        ("testfile.pdf", "pdf"),
+        ("test file.pdf", "pdf"),
+        ("this is test file.pdf", "pdf"),
+        ("this-is-a-test-file.docx", "docx"),
+        ("test-123_file.doc", "doc"),
+        ("testfile.ppt", "ppt"),
+        ("testfile", ""),
+        ("test_archive.zip", "zip"),
+        ("test_archive.tar", "tar"),
+        ("test_archive.tar.gz", "gz"),
+    ],
+)
+def test_document_extension(filename, expected):
+    assert expected == custom_tags.document_extension(filename)

@@ -2,9 +2,10 @@ from __future__ import division
 
 import datetime
 import json
-from importlib import import_module
+import os
 import re
 from collections import Counter, OrderedDict
+from importlib import import_module
 
 import bleach
 from dateutil.parser import parse
@@ -925,3 +926,9 @@ def full_name(user):
 def verbose_goods_starting_point(value):
     goods_starting_points = {"GB": "Great Britain", "NI": "Northern Ireland"}
     return goods_starting_points.get(value, "")
+
+
+@register.filter
+def document_extension(filename):
+    _, ext = os.path.splitext(filename)
+    return ext[1:]
