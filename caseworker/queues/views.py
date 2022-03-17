@@ -87,6 +87,17 @@ class Cases(LoginRequiredMixin, TemplateView):
 
         is_system_queue = self.queue.get("is_system_queue", False)
 
+        for case in self.data["results"]["cases"]:
+            try:
+                destinations = case["destinations"]
+            except KeyError:
+                destinations = []
+
+            unique_destinations = [
+                dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}
+            ]
+            case["unique_destinations"] = unique_destinations
+
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,

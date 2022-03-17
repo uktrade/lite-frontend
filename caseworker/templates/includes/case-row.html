@@ -95,9 +95,9 @@
 	{# destinations #}
 	<td class="govuk-table__cell lite-mobile-hide">
 		<ol class="govuk-list destinations__list">
-			{% for destination in case.destinations %}
+			{% for country in case.unique_destinations %}
 				<li>
-					{{destination.country.name}}
+					{{country.name}}
 				</li>
 			{% endfor %}
 		</ol>
