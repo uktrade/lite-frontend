@@ -4,7 +4,7 @@ Feature: I want to create and deactivate flags
   I want to create and deactivate flags
   So that I can make new flags where required and prevent flags which are no longer relevant from being assigned
 
-  @skip @LT_950_add_edit @regression
+  @skip @legacy
   Scenario: Add, edit and deactivate a flag
     Given I sign in to SSO or am signed into SSO
     When I go to flags
@@ -19,7 +19,7 @@ Feature: I want to create and deactivate flags
     Then I see the flag in the flag list
 
 
-  @skip @LT_1277_approval_blocking_flag @regression
+  @skip @legacy
   Scenario: Create an approval blocking flag
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created

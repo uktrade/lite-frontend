@@ -4,14 +4,14 @@ Feature: I want to indicate the standard licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
-  @skip @LT_1091_draft @regression
+  @skip @legacy
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
     Then I see the application overview
     When I delete the application
 
-  @skip @LT_1091_standard @setup @regression
+  @skip @legacy
   Scenario: Submit standard application permanent
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -54,7 +54,7 @@ Feature: I want to indicate the standard licence I want
     And I click on applications
     Then I see submitted application
 
-  @skip @LT_1091_external @regression
+  @skip @legacy
   Scenario: Submit standard application with external locations and ultimate end users
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -110,7 +110,7 @@ Feature: I want to indicate the standard licence I want
     And I click on applications
     Then I see submitted application
 
-  @skip @LT_1074_copy_existing_party @regression
+  @skip @legacy
   Scenario: Submit standard application with external locations and ultimate end users and copy party
     Given I go to exporter homepage and choose Test Org
     And I create a draft
@@ -130,7 +130,7 @@ Feature: I want to indicate the standard licence I want
     When I click continue
     And I skip uploading a document
 
-  @skip @LT_1208_standard_individual_transhipment_application @regression
+  @skip @legacy
   Scenario: Submit a standard individual transhipment application
     Given I go to exporter homepage and choose Test Org
     When I create a standard individual transhipment application
@@ -172,7 +172,7 @@ Feature: I want to indicate the standard licence I want
     And I click on applications
     Then I see submitted application
 
-  @skip @LT_1758_standard_temporary_application_with_temporary_export_details @regression
+  @skip @legacy
   Scenario: Submit standard application temporary
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "temporary" export type
@@ -221,7 +221,7 @@ Feature: I want to indicate the standard licence I want
     Then I see submitted application
 
 
-  @skip @LT_1331_standard_individual_trade_control_application @regression
+  @skip @legacy
   Scenario: Apply for a standard individual trade control licence draft
     Given I go to exporter homepage and choose Test Org
     When I create a standard individual trade control draft application
@@ -237,7 +237,7 @@ Feature: I want to indicate the standard licence I want
     Then I see "2" locations
 
 
-  @skip @LTD_361_Review_when_importing_existing_product @regression
+  @skip @legacy
   Scenario: Review product details when importing existing product, update description and add it to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -251,7 +251,7 @@ Feature: I want to indicate the standard licence I want
     And I add product to application
 
 
-  @firearms @skip @LTD_398_Add_a_new_firearm_product @regression
+  @skip @legacy @recent
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -278,7 +278,7 @@ Feature: I want to indicate the standard licence I want
     Then the product with name "Rifle" is added to the application
 
 
-  @firearms @skip @LTD_375_Add_a_new_firearm_product_ammunition_component @regression
+  @skip @legacy @recent
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application that is not covered by Firearms Act
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -303,7 +303,7 @@ Feature: I want to indicate the standard licence I want
     Then the product with name "Rifle" is added to the application
 
 
-  @firearms @skip @LTD_398_Add_a_new_firearm_accessory @regression
+  @skip @legacy @recent
   Scenario: Add a new Firearm product of type firearms accesory to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -322,7 +322,7 @@ Feature: I want to indicate the standard licence I want
     Then the product with name "firearm accessory" is added to the application
 
 
-  @firearms @skip @LTD_398_Add_a_new_software_related_to_firearm_product @regression
+  @skip @legacy @recent
   Scenario: Add a new Software relating to a Firearm product to the application
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -339,7 +339,7 @@ Feature: I want to indicate the standard licence I want
     Then the product with name "Firearms software" is added to the application
 
 
-  @firearms @skip @LTD_398_Add_a_new_firearm_product_and_check_edit @regression
+  @skip @legacy @recent
   Scenario: Add a new Firearm product and check if we can edit fields from summary screen
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -366,7 +366,7 @@ Feature: I want to indicate the standard licence I want
     And I can edit good "Calibre" as "0.45"
 
 
-  @skip @LTD_398_Add_a_new_firearm_accessory_and_check_edit @regression
+  @skip @legacy @recent
   Scenario: Add a new Firearm accessory and check if we can edit fields from summary screen
     Given I go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type

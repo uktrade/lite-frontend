@@ -1,7 +1,7 @@
 @all @internal @copied_applications
 Feature: I want to see that a copied application references the previous application
 
-  @skip @LT_972_copy_application @regression
+  @skip @legacy
   Scenario: View original application link in new application
     Given I sign in to SSO or am signed into SSO
     And I have an open application from copying

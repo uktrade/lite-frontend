@@ -14,7 +14,7 @@ Feature: I want to add an internal note to a case and view notes
     And I click post note
     Then I see "case note" as a case note
 
-  @skip @LT_911_too_many @regression
+  @skip @legacy
   Scenario: Add a case note with too many characters
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
@@ -23,7 +23,7 @@ Feature: I want to add an internal note to a case and view notes
     And I enter "too many characters" for case note
     Then the case note is disabled
 
-  @skip @LT_911_cancel @regression
+  @skip @legacy
   Scenario: Case note cancel button
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
@@ -33,7 +33,7 @@ Feature: I want to add an internal note to a case and view notes
     And I click cancel button
     Then entered text is no longer in case note field
 
-  @skip @LT_912_add_external @regression
+  @skip @legacy
   Scenario: Add a new exporter visible case note
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

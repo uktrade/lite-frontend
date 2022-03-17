@@ -4,7 +4,7 @@ As a logged in government user
 I want to configure standard templates for letter generation
 So that I can create standard letters used by case workers and they can be updated when required
 
-  @skip @LT_1029_add_template @regression
+  @skip @legacy
   Scenario: Create a Template
     Given I sign in to SSO or am signed into SSO
     And I create a letter paragraph picklist
@@ -17,7 +17,7 @@ So that I can create standard letters used by case workers and they can be updat
     When I click continue
     Then I see my template in the table
 
-  @skip @LT_1029_view_and_edit_template @regression
+  @skip @legacy
   Scenario: View and edit a created template
     Given I sign in to SSO or am signed into SSO
     And I create a document template

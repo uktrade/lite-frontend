@@ -4,7 +4,7 @@ Feature: I want to add case-level flags to a case and view them
   I want to toggle one or more flags on and off a case to highlight key features
   So that all users viewing the case can quickly and easily see the aspects which might require more attention
 
-  @skip @LT_951 @regression
+  @skip @legacy
   Scenario: Add all flags to case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

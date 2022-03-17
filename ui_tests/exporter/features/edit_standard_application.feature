@@ -4,7 +4,7 @@ Feature: I want to be able to edit and update an active application
   I want to be able to edit and update an active application
   So that any additional information and/or corrected details can be updated on my application
 
-  @skip @LT_998_edit_standard_application_slow @regression
+  @skip @legacy
   Scenario: Edit a standard application
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api
@@ -38,7 +38,7 @@ Feature: I want to be able to edit and update an active application
     And I click the back link
     Then the document has been removed from the application
 
-  @skip @LT_998_edit_standard_application_fast @regression
+  @skip @legacy
   Scenario: Edit a standard application with audit
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api

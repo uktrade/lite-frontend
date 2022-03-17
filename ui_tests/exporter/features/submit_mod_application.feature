@@ -4,7 +4,7 @@ Feature: I want to create MOD Licence Applications
   I want to apply for an MOD clearance for equipment or information if I need one
   So that I can get approval to provide the relevant equipment or information to a third party outside the UK
 
-  @skip @LT_1169_exhibition_clearance @setup @regression
+  @skip @legacy
   Scenario: Submit Exhibition Clearance Application
     Given I go to exporter homepage and choose Test Org
     When I select a licence of type "mod"
@@ -30,7 +30,7 @@ Feature: I want to create MOD Licence Applications
     And I click on applications
     Then I see submitted application
 
-  @skip @LT_1980_MOD_clearance @setup @regression
+  @skip @legacy
   Scenario: Submit F680 Application
     Given I go to exporter homepage and choose Test Org
     When I select a licence of type "mod"
@@ -62,7 +62,7 @@ Feature: I want to create MOD Licence Applications
     And I click on applications
     Then I see submitted application
 
-  @skip @LT_1980_gifting_clearance @setup @regression
+  @skip @legacy
   Scenario: Submit Gifting Application
     Given I go to exporter homepage and choose Test Org
     When I select a licence of type "mod"

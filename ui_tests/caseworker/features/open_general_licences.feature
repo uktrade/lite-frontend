@@ -2,7 +2,7 @@
 Feature: I want to add open general licences
     So that exporters can use them
 
-  @skip @lt_1268_open_general_licences @regression
+  @skip @legacy
   Scenario: Add an open general licence, edit it and deactivate it
     Given I sign in to SSO or am signed into SSO
     When I go to open general licences
@@ -21,7 +21,7 @@ Feature: I want to add open general licences
     When I deactivate the open general licence
     Then I see the updated open general export licence
 
-  @skip @lt_1470_open_general_licences @regression
+  @skip @legacy
   Scenario: Add an open general licence application and view it
     Given I sign in to SSO or am signed into SSO
     And an ogel licence has been added

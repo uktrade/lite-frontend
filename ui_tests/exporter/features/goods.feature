@@ -4,7 +4,7 @@ Feature: I want to edit and remove goods on the goods list
   I want to add edit and remove goods on my goods list
   So that I can ensure the correct goods are listed on my goods list
 
-  @skip @LT_928_edit @regression @broken
+  @skip @legacy
   Scenario: Add, edit and delete good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
@@ -24,7 +24,7 @@ Feature: I want to edit and remove goods on the goods list
     When I delete my good
     Then my good is no longer in the goods list
 
-  @skip @LT_1006_add_clc_query_good @regression @broken
+  @skip @legacy
   Scenario: Add queried good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
@@ -38,7 +38,7 @@ Feature: I want to edit and remove goods on the goods list
     Then I see good information
     And I see the good is in a query
 
-  @skip @LT_1262_add_good_without_document @regression @broken
+  @skip @legacy
   Scenario: Add a new good without a document for a valid reason
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
@@ -52,7 +52,7 @@ Feature: I want to edit and remove goods on the goods list
     When I click the back link
     Then My good is created
 
-  @skip @LT_2704_add_software_good_and_edit @regression @broken
+  @skip @legacy
   Scenario: Add, edit and delete software good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
@@ -73,7 +73,7 @@ Feature: I want to edit and remove goods on the goods list
     When I delete my good
     Then my good is no longer in the goods list
 
-  @skip @LT_2351_add_firearm_category_two_good_and_delete @regression
+  @skip @legacy
   Scenario: Add and delete firearm good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link
@@ -92,7 +92,7 @@ Feature: I want to edit and remove goods on the goods list
     When I delete my good
     Then my good is no longer in the goods list
 
-  @skip @LT_2351_add_firearm_category_two_good_and_edit @regression @broken
+  @skip @legacy
   Scenario: Add, edit and delete firearm good
     Given I go to exporter homepage and choose Test Org
     When I click on goods link

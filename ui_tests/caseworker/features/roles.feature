@@ -4,7 +4,7 @@ Feature: I want to create roles
   I want to create roles with permissions
   So that I can restrict access to functionality
 
-  @skip @LT_1127_edit @regression
+  @skip @legacy
   Scenario: Edit a role
     Given I sign in to SSO or am signed into SSO
     When I go to users
