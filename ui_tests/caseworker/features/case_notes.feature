@@ -4,15 +4,15 @@ Feature: I want to add an internal note to a case and view notes
   I want to add an internal note to a case and view existing notes
   So that I can record my findings and comments and others users can see these
 
-  @skip @LT_911_add @regression
+  @add_case_note
   Scenario: Add a new valid case note
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
     When I go to application previously created
     And I click on the case notes tab
-    And I enter "This application is potentially risky." for case note
+    And I enter "case note" for case note
     And I click post note
-    Then note is displayed
+    Then I see "case note" as a case note
 
   @skip @LT_911_too_many @regression
   Scenario: Add a case note with too many characters
