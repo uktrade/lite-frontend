@@ -208,3 +208,11 @@
 		}
 	}
 }
+
+.app-advice-recommendation-heading {
+	display: flex;
+
+	&__additional_details {
+		margin-left: auto;
+	}
+}

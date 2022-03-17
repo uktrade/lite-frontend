@@ -10,9 +10,9 @@
 		</summary>
         {% for decision_advice in user_advice.advice %}
             <div class="govuk-details__text">
-                <h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}app-bg-colour--green{% elif decision_advice.decision == "Refuse" %}app-bg-colour--red{% endif %}">
+                <h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 app-advice-recommendation-heading {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}app-bg-colour--green{% elif decision_advice.decision == "Refuse" %}app-bg-colour--red{% endif %}">
                     {{ decision_advice.decision_verb|capfirst }} by {% if user_advice.user.first_name %}{{ user_advice.user.first_name|add:' '|add:user_advice.user.last_name }}{% else %}{{ user_advice.user.email }}{% endif %}
-                    <!--<span class="govuk-!-font-weight-regular" style="float:right">{{ decision_advice.advice.0.advice.created_at|parse_date|date:"d F Y" }}</span>-->
+                    <span class="govuk-!-font-weight-regular app-advice-recommendation-heading__additional_details">{{ decision_advice.advice.0.advice.created_at|parse_date|date:"d F Y" }}</span>
                 </h2>
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
