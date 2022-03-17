@@ -201,7 +201,6 @@ jobs:
     # has to be machine executor as the VPN does not work in docker executor
     machine:
       image: ubuntu-2004:202201-02
-      docker_layer_caching: true
     environment:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
@@ -222,7 +221,6 @@ jobs:
   exporter_ui_test:
     machine:
       image: ubuntu-2004:202201-02
-      docker_layer_caching: true
     environment:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
