@@ -11,7 +11,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I go to application previously created
     And I assign the case to "FCO Cases to Review" queue
     And I go to my profile page
-    And I change my team to "FCO" and default queue to "FCO Cases to Review"
+    And I change my team to "FCDO" and default queue to "FCO Cases to Review"
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -26,13 +26,13 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I don't see previously created application
     # Check the case has moved to the correct queue
     When I go to my profile page
-    And I change my team to "FCO" and default queue to "FCO Counter-signing"
+    And I change my team to "FCDO" and default queue to "FCO Counter-signing"
     And I go to my case list
     Then I should see my case in the cases list
     # Check the recommendation is listed
     When I click the application previously created
     And I click the recommendations and decision tab
-    And I expand the details for "FCO has approved"
+    And I expand the details for "FCDO has approved"
     Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
 
 
