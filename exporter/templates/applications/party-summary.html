@@ -192,6 +192,46 @@
                 </dd>
             </div>
         {% endif %}
+
+        {% for document in party.documents %}
+            {% if document.type == "end_user_ec3_document" %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Upload an EC3 form (optional)
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if document.safe %}
+                            <a href="{% url 'applications:party_document_download' pk obj_pk document.id %}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+                        {% else %}
+                            {{ document.name }}
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
+                            Change<span class="govuk-visually-hidden"> name</span>
+                        </a>
+                    </dd>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if party.ec3_missing_reason %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    If you do not have an EC3 form, explain why (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ party.ec3_missing_reason }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
+                        Change<span class="govuk-visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+        {% endif %}
+
+
     </div>
 
     <div>

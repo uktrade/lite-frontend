@@ -10,6 +10,7 @@ from exporter.core.constants import (
     PartyDocumentType,
     DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION,
     DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD,
+    DOCUMENT_TYPE_PARAM_EC3_DOCUMENT,
 )
 from exporter.applications.views.parties.end_users import party_requires_ec3_document
 
@@ -80,6 +81,8 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
     assert resp.url == reverse(
         "applications:end_user_summary", kwargs={"pk": data_standard_case["case"]["id"], "obj_pk": party_id}
     )
+
+    _ = requests_mock.request_history.pop()
 
     letterhead_data = requests_mock.request_history.pop().json()
     assert letterhead_data == {
@@ -252,6 +255,24 @@ def set_end_user(url, authorized_client):
                 "end_user_document_missing_reason": "",
             },
         ),
+        (
+            "end_user_ec3_document",
+            {
+                "ec3_missing_reason": "",
+            },
+            {
+                "ec3_missing_reason": "",
+            },
+        ),
+        (
+            "end_user_ec3_document",
+            {
+                "ec3_missing_reason": "Document not available",
+            },
+            {
+                "ec3_missing_reason": "Document not available",
+            },
+        ),
     ),
 )
 def test_edit_end_user(requests_mock, authorized_client, data_standard_case, url_name, data, expected):
@@ -284,6 +305,11 @@ def end_user_documents():
             "party_letterhead_document": SimpleUploadedFile(
                 "company_letterhead.pdf", b"file_content", content_type="application/pdf"
             )
+        },
+        DOCUMENT_TYPE_PARAM_EC3_DOCUMENT: {
+            "party_ec3_document": SimpleUploadedFile(
+                "ec3_document.pdf", b"file_content", content_type="application/pdf"
+            ),
         },
     }
 
@@ -349,8 +375,8 @@ def test_edit_end_user_document(
                 "goods_starting_point": "NI",
                 "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
                 "goods": [
-                    {"firearm_details": {"type": "software_related_to_firearms"}},
-                    {"firearm_details": {"type": "technology_related_to_firearms"}},
+                    {"firearm_details": {"type": {"key": "software_related_to_firearms"}}},
+                    {"firearm_details": {"type": {"key": "technology_related_to_firearms"}}},
                 ],
             },
             False,
@@ -360,7 +386,7 @@ def test_edit_end_user_document(
                 "goods_starting_point": "NI",
                 "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
                 "goods": [
-                    {"firearm_details": {"type": "software_related_to_firearms"}},
+                    {"firearm_details": {"type": {"key": "software_related_to_firearms"}}},
                 ],
             },
             False,
@@ -370,9 +396,9 @@ def test_edit_end_user_document(
                 "goods_starting_point": "NI",
                 "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
                 "goods": [
-                    {"firearm_details": {"type": "firearms"}},
-                    {"firearm_details": {"type": "software_related_to_firearms"}},
-                    {"firearm_details": {"type": "technology_related_to_firearms"}},
+                    {"firearm_details": {"type": {"key": "firearms"}}},
+                    {"firearm_details": {"type": {"key": "software_related_to_firearms"}}},
+                    {"firearm_details": {"type": {"key": "technology_related_to_firearms"}}},
                 ],
             },
             True,
@@ -381,3 +407,25 @@ def test_edit_end_user_document(
 )
 def test_party_requires_ec3_document(application_data, ec3_expected_status):
     assert ec3_expected_status == party_requires_ec3_document(application_data)
+
+
+def test_edit_end_user_ec3_document(requests_mock, authorized_client, data_standard_case, end_user_documents):
+    application_id = data_standard_case["case"]["id"]
+    end_user = data_standard_case["case"]["data"]["end_user"]
+
+    data = end_user_documents[DOCUMENT_TYPE_PARAM_EC3_DOCUMENT]
+    ec3_edit_url = reverse(
+        f"applications:end_user_ec3_document",
+        kwargs={"pk": application_id, "obj_pk": end_user["id"]},
+    )
+    response = authorized_client.post(ec3_edit_url, data=data)
+    assert response.status_code == 302
+
+    _ = requests_mock.request_history.pop()
+    actual = requests_mock.request_history.pop().json()
+    assert actual == {
+        "type": PartyDocumentType.END_USER_EC3_DOCUMENT,
+        "name": actual["name"],
+        "s3_key": actual["s3_key"],
+        "size": 0,
+    }

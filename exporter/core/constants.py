@@ -140,6 +140,7 @@ FIREARMS_ALL_TYPES = [
 
 DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION = "english_translation"
 DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD = "company_letterhead"
+DOCUMENT_TYPE_PARAM_EC3_DOCUMENT = "ec3_document"
 
 
 class GoodsStartingPoint:
@@ -226,3 +227,4 @@ class PartyDocumentType:
     END_USER_UNDERTAKING_DOCUMENT = "end_user_undertaking_document"
     END_USER_ENGLISH_TRANSLATION_DOCUMENT = "end_user_english_translation_document"
     END_USER_COMPANY_LETTERHEAD_DOCUMENT = "end_user_company_letterhead_document"
+    END_USER_EC3_DOCUMENT = "end_user_ec3_document"

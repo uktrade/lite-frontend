@@ -33,6 +33,7 @@ from exporter.applications.services import (
     download_document_from_s3,
 )
 from exporter.applications.views.parties.base import CopyParties
+from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.core.constants import (
     OPEN,
     SetPartyFormSteps,
@@ -102,40 +103,6 @@ def _post_party_document(request, application_id, party_id, document_type, docum
             exc_info=True,
         )
     return response, status_code
-
-
-def party_requires_ec3_document(application):
-    """
-    Helper function to determine EC3 document requirement status for End-user
-
-    We only need to ask if the goods originate from NI, going to EU and the
-    product type is not software or technology related to firearms. If we have
-    atleast one other type included then we need to ask for this form provided
-    the other conditions satisfy.
-    Since the user may not have added the products before entering End-user details
-    and vice versa this needs checking in multiple places and accodingly notify user.
-    """
-
-    # user may not have completed the goods location section
-    goods_from_NI = application.get("goods_starting_point", "") == "NI"
-
-    # user may not have entered end-user details yet
-    eu_destination = False
-    destination = application.get("destinations", {})
-    if destination and destination["type"] == "end_user" and destination["data"]["country"]["is_eu"]:
-        eu_destination = True
-
-    ec3_product_types = {
-        "firearms",
-        "components_for_firearms",
-        "ammunition",
-        "components_for_ammunition",
-        "firearms_accessory",
-    }
-    product_types = {product["firearm_details"]["type"] for product in application.get("goods", [])}
-    firearms_products = bool(ec3_product_types.intersection(product_types))
-
-    return goods_from_NI and eu_destination and firearms_products
 
 
 class SetPartyView(LoginRequiredMixin, SessionWizardView):
@@ -262,7 +229,7 @@ class SetEndUserView(SetPartyView):
     party_type = "end_user"
 
     def get_success_url(self, party_id):
-        return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
+        return super().get_success_url(party_id)
 
 
 class CopyEndUserView(SetEndUserView):
@@ -607,8 +574,52 @@ class PartyDocumentDownloadView(LoginRequiredMixin, PartyContextMixin, TemplateV
 class PartyEC3DocumentView(LoginRequiredMixin, PartyContextMixin, FormView):
     form_class = PartyEC3DocumentUploadForm
 
+    def get_initial(self):
+        return {"ec3_missing_reason": self.party["ec3_missing_reason"]}
+
     def form_valid(self, form):
-        update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
+        party_ec3_document = form.cleaned_data.pop("party_ec3_document", None)
+        ec3_missing_reason = form.cleaned_data.pop("ec3_missing_reason", None)
+        if party_ec3_document and ec3_missing_reason:
+            form.add_error(None, "Select an EC3 form, or enter a reason why you do not have one (optional)")
+            return super().form_valid(form)
+
+        existing_documents = {document["type"]: document["id"] for document in self.party["documents"]}
+        ec3_document_exists = PartyDocumentType.END_USER_EC3_DOCUMENT in existing_documents
+
+        # We only want an EC3 form or missing reason, providing both is an error so
+        # one of the following is true but user can edit these values from summary page.
+        # If the user provides a reason then we have to delete previously uploaded document
+        # if it exists and similarly if new document is uploaded then we reset the reason.
+        if ec3_missing_reason and ec3_document_exists:
+            delete_party_document_by_id(
+                self.request,
+                self.application_id,
+                self.party_id,
+                existing_documents[PartyDocumentType.END_USER_EC3_DOCUMENT],
+            )
+
+        if party_ec3_document:
+            ec3_missing_reason = ""
+            data = {
+                "type": PartyDocumentType.END_USER_EC3_DOCUMENT,
+                "name": getattr(party_ec3_document, "name"),
+                "s3_key": party_ec3_document.name,
+                "size": int(party_ec3_document.size // 1024) if party_ec3_document.size else 0,  # in kilobytes
+            }
+            response, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
+            if status_code != HTTPStatus.CREATED:
+                log.error(
+                    "Error uploading EC3 document - response was: %s - %s",
+                    status_code,
+                    response,
+                    exc_info=True,
+                )
+                return error_page(self.request, "Unexpected error uploading EC3 document")
+
+        data = {"ec3_missing_reason": ec3_missing_reason}
+        update_party(self.request, self.application_id, self.party_id, data)
+
         return super().form_valid(form)
 
     def get_success_url(self):

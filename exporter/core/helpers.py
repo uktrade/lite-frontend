@@ -269,3 +269,4 @@ def is_document_in_english(wizard):
 def is_document_on_letterhead(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD)
     return str_to_bool(cleaned_data.get("document_on_letterhead"))
+
