@@ -23,10 +23,10 @@ def click_post_note(driver, context):
     context.date_time_of_post = utils.get_formatted_date_time_h_m_pm_d_m_y()
 
 
-@then("note is displayed")
-def note_is_displayed(driver, context):
+@then(parsers.parse('I see "{case_note}" as a case note'))
+def note_is_displayed(driver, case_note):
     application_page = ApplicationPage(driver)
-    assert context.text in application_page.get_text_of_case_note(0)
+    assert case_note in application_page.get_text_of_case_note(0)
     assert utils.search_for_correct_date_regex_in_element(
         application_page.get_text_of_case_note_date_time(0)
     ), "incorrect time format of post on case note"
