@@ -1,55 +1,143 @@
-from datetime import date
-
 from pytest_bdd import when, then, parsers, scenarios
 
 from ui_tests.caseworker.pages.shared import Shared
-from ui_tests.caseworker.pages.advice import UserAdvicePage, FinalAdvicePage, TeamAdvicePage, BaseAdvicePage
+from ui_tests.caseworker.pages.advice import RecommendationsAndDecisionPage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
+from ui_tests.caseworker.pages.generate_document_page import GeneratedDocument
 from ui_tests.caseworker.pages.give_advice_pages import GiveAdvicePages
-from ui_tests.caseworker.pages.record_decision_page import RecordDecision
-from ui_tests.caseworker.pages.grant_licence_page import GrantLicencePage
 
 scenarios("../features/give_advice.feature", strict_gherkin=False)
 
 
-@when(parsers.parse('I select decision "{number}"'))
-def select_decision(driver, number, context):
-    record = RecordDecision(driver)
-    record.click_on_decision_number(number)
-    context.advice_data.append(number)
+@when("I click move case forward")
+@when("I click submit recommendation")
+@when("I click save and publish to exporter")
+def submit_form(driver):  # noqa
+    Shared(driver).click_submit()
 
 
-@when("I select all items in the team advice view")
-def click_items_in_advice_view(driver, context):
-    context.number_of_advice_items_clicked = TeamAdvicePage(driver).click_on_all_checkboxes()
+@when("I click the recommendations and decision tab")
+def click_on_recommendations_and_decision_tab(driver, context):  # noqa
+    CasePage(driver).change_tab("advice")
 
 
-@when(parsers.parse("I select that a footnote is required with the note '{text}'"))
-def write_note_text_field(driver, text, context):
-    give_advice_page = GiveAdvicePages(driver)
-    give_advice_page.select_footnote_required()
-    give_advice_page.enter_footnote(text)
-    context.advice_data.append(text)
+@when("I click make recommendation")
+def click_make_recommendation_button(driver):  # noqa
+    RecommendationsAndDecisionPage(driver).click_make_recommendation()
 
 
-@then("I see the fields pre-populated with the proviso and advice picklist items")
-def i_see_fields_prepopulated(driver, context):
-    text = driver.find_element_by_id("text").text
-    proviso = driver.find_element_by_id("proviso").text
-    assert text == context.standard_advice_query_picklist_question_text
-    assert proviso == context.proviso_picklist_question_text
+@when("I click approve all")
+def click_approve_all(driver):  # noqa
+    RecommendationsAndDecisionPage(driver).click_approve_all()
 
 
-@then("I see my advice has been posted successfully")
-def posted_successfully_advice(driver):
-    assert "Advice posted successfully" in Shared(driver).get_text_of_info_bar()
+@when("I click refuse all")
+def click_refuse_all(driver):  # noqa
+    RecommendationsAndDecisionPage(driver).click_refuse_all()
 
 
-@then("I see added advice in the same amount of places")
-def added_advice_on_application_page(driver, context):
-    assert len(driver.find_elements_by_css_selector(".app-advice__item")) == context.number_of_advice_items_clicked
-    for advice in context.advice_data:
-        assert advice in driver.find_element_by_css_selector(".app-advice__item").text
+@when(parsers.parse('I select refusal criteria "{criteria}"'))
+def select_refusal_criteria(driver, criteria):  # noqa
+    page = RecommendationsAndDecisionPage(driver)
+
+    for crit in criteria.split(","):
+        page.select_refusal_criteria(crit.strip())
+
+
+@when(parsers.parse('I select countries "{countries}"'))
+def select_countries(driver, countries):  # noqa
+    page = RecommendationsAndDecisionPage(driver)
+
+    for country in countries.split(","):
+        page.select_country(country.strip())
+
+
+@when(parsers.parse('I enter "{reasons}" as the overall reason'))
+@when(parsers.parse('I enter "{reasons}" as the reasons for approving'))
+def enter_reasons_for_approving(driver, reasons, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_reasons_for_approving(reasons)
+
+
+@when(parsers.parse('I enter "{reasons}" as the reasons for refusal'))
+def enter_reasons_for_refusal(driver, reasons, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_reasons_for_refusal(reasons)
+
+
+@when(parsers.parse('I enter "{licence_condition}" as the licence condition'))
+def enter_licence_condition(driver, licence_condition, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_licence_condition(licence_condition)
+
+
+@when(parsers.parse('I enter "{instructions}" as the instructions for the exporter'))
+def enter_instructions_for_exporter(driver, instructions, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_instructions_for_exporter(instructions)
+
+
+@when(parsers.parse('I enter "{footnote}" as the reporting footnote'))
+def enter_reporting_footnote(driver, footnote, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_reporting_footnote(footnote)
+
+
+@then(parsers.parse('I should see my recommendation for "{countries}" with "{reasons}"'))
+def should_see_recommendation(driver, countries, reasons):  # noqa
+    text = driver.find_element_by_xpath("//main[@class='govuk-main-wrapper']//*").text
+    for country in countries.split(","):
+        assert country.strip() in text
+    assert reasons.strip() in text
+
+
+@then(parsers.parse('I see there are no recommendations from "{team}"'))
+def should_not_see_recommendation(driver, team, context):  # noqa
+    assert f"{team} has approved" not in Shared(driver).get_text_of_body()
+
+
+@then("I am asked what my recommendation is")
+def should_ask_for_recommendation(driver):  # noqa
+    assert Shared(driver).get_text_of_heading().text == "What is your recommendation?"
+
+
+@then(parsers.parse('I see "{reasons}" as the overall reason'))
+@then(parsers.parse('I see "{reasons}" as the reasons for approving'))
+def should_see_reasons_for_approving(driver, reasons, context):  # noqa
+    assert RecommendationsAndDecisionPage(driver).get_reasons_for_approving() == reasons
+
+
+@then(parsers.parse('I see "{reasons}" as the reasons for refusal'))
+def should_see_reasons_for_refusal(driver, reasons, context):  # noqa
+    assert RecommendationsAndDecisionPage(driver).get_reasons_for_refusal() == reasons
+
+
+@then(parsers.parse('I see "{criteria}" as the refusal criteria'))
+def should_see_refusal_criteria(driver, criteria):  # noqa
+    page = RecommendationsAndDecisionPage(driver)
+
+    assert all(crit == criteria for crit in page.get_refusal_criteria())
+
+
+@then(parsers.parse('I see "{licence_condition}" as the licence condition'))
+def should_see_licence_condition(driver, licence_condition, context):  # noqa
+    assert RecommendationsAndDecisionPage(driver).get_licence_condition() == licence_condition
+
+
+@then(parsers.parse('I see "{instructions}" as the instructions for the exporter'))
+def should_see_instructions_for_exporter(driver, instructions, context):  # noqa
+    assert RecommendationsAndDecisionPage(driver).get_instructions_for_exporter() == instructions
+
+
+@then(parsers.parse('I see "{footnote}" as the reporting footnote'))
+def should_see_reporting_footnote(driver, footnote, context):  # noqa
+    assert RecommendationsAndDecisionPage(driver).get_reporting_footnote() == footnote
+
+
+@then("I see the licence number on the SIEL licence preview")
+def should_see_licence_number_on_siel_licence_preview(driver, context):  # noqa
+    text = GeneratedDocument(driver).get_document_preview_text()
+    assert f"{context.reference_code}-01" in text
+
+
+@then(parsers.parse('I see that "{item_name}" is "{value}" on the SIEL licence preview'))  # noqa
+def should_see_item_on_siel_licence_preview(driver, item_name, value):  # noqa
+    assert value == GeneratedDocument(driver).get_item_from_siel_document_preview(item_name)
 
 
 @when("I go to the team advice")
@@ -62,78 +150,6 @@ def go_to_final_advice(driver):
     CasePage(driver).change_tab(CaseTabs.FINAL_ADVICE)
 
 
-@then("today's date and duration is filled in")
-def todays_date_is_filled_in(driver):
-    date_in_form = GrantLicencePage(driver).get_date_in_date_entry()
-    today = date.today()
-    assert today.day == int(date_in_form["day"])
-    assert today.month == int(date_in_form["month"])
-    assert today.year == int(date_in_form["year"])
-
-    duration_in_form = GrantLicencePage(driver).get_duration_in_finalise_view()
-
-    assert int(duration_in_form) > 0
-
-
-@then("I see refusal flag is attached")
-def refusal_flag_displayed(driver):
-    assert Shared(driver).is_flag_applied("Refusal Advice")
-
-
-@when("I clear team advice")
-def clear_advice(driver):
-    TeamAdvicePage(driver).click_clear_advice()
-
-
-@then("the give advice checkboxes are not present")
-def check_advice_checkboxes_are_not_present(driver):
-    driver.implicitly_wait(0)
-    assert GiveAdvicePages(driver).checkbox_present() == 0
-    driver.implicitly_wait(60)
-
-
-@then("the give or change advice button is not present")
-def check_give_advice_button_is_not_present(driver):
-
-    user_advice_page = UserAdvicePage(driver)
-    team_advice_page = TeamAdvicePage(driver)
-    final_advice_page = FinalAdvicePage(driver)
-    driver.implicitly_wait(0)
-    assert not user_advice_page.is_advice_button_enabled()
-    assert not team_advice_page.is_advice_button_enabled()
-    assert not final_advice_page.is_advice_button_enabled()
-    driver.implicitly_wait(60)
-
-
-@then("I see total goods value")
-def total_goods_value(driver, context):
-    assert "Total value: £" + str(context.good_value) in Shared(driver).get_text_of_body()
-
-
-@then("I dont see clearance level")
-def dont_see_clearance_level(driver):
-    driver.implicitly_wait(0)
-    assert (
-        len(GiveAdvicePages(driver).clearance_grading_present()) == 0
-    ), "clearance level is displayed when it shouldn't be"
-    driver.implicitly_wait(60)
-
-
 @when(parsers.parse('I select "{clearance_level}" clearance level'))
 def select_clearance_level(driver, clearance_level):
     GiveAdvicePages(driver).select_clearance_grading(clearance_level)
-
-
-@when("I go to grouped view")
-def go_to_grouped_view(driver):
-    BaseAdvicePage(driver).click_grouped_view_button()
-
-
-@when(parsers.parse('I select all items in the "{group}" grouped view'))
-def select_all_items_in_group(driver, group):
-    UserAdvicePage(driver).click_grouped_view_checkboxes(group)
-
-
-@when("I click give advice")
-def click_give_advice(driver):
-    UserAdvicePage(driver).click_give_advice()
