@@ -2,6 +2,7 @@ Feature: I want to be able to submit SIEL firearm applications
   As a logged in exporter
   I want to be able to submit SIEL firearm applications
 
+  @skip @current
   Scenario: Initiate an application for a SIEL firearm
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "temporary" export type
@@ -9,6 +10,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the application overview
     And I logout
 
+  @skip @current
   Scenario: Open a SIEL application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "temporary" export type
@@ -16,6 +18,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the application overview
     And I logout
 
+  @skip @current
   Scenario: Temporary export details
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "temporary" export type
@@ -27,6 +30,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the temporary export detail summary
     And I logout
 
+  @skip @current
   Scenario: Enter consignee details in the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -41,6 +45,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the consignee summary
     And I logout
 
+  @skip @current
   Scenario: Associate application with existing consignee party
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -56,6 +61,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see Government in the consignee summary
     And I logout
 
+  @skip @current
   Scenario: Enter details for the end user section in the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -71,6 +77,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the end user summary
     And I logout
 
+  @skip @current
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -97,7 +104,7 @@ Feature: I want to be able to submit SIEL firearm applications
     Then the product with name "Rifle" is added to the application
     And I logout
 
-
+  @skip @current
   Scenario: Enter details for the End use details section in the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -113,7 +120,7 @@ Feature: I want to be able to submit SIEL firearm applications
     And the section "End use details" is now saved
     And I logout
 
-
+    @skip @current
   Scenario: Enter details for the Route of goods section in the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -124,7 +131,7 @@ Feature: I want to be able to submit SIEL firearm applications
     And the section "Route of goods" is now saved
     And I logout
 
-
+  @skip @current
   Scenario: Enter details for the Location section in the application
     Given I signin and go to exporter homepage and choose Test Org
     When I create a standard application of a "permanent" export type
@@ -138,7 +145,7 @@ Feature: I want to be able to submit SIEL firearm applications
     And the section "Locations" is now saved
     And I logout
 
-
+  @skip @current
   Scenario: Submit Application
     Given I signin and go to exporter homepage and choose Test Org
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>

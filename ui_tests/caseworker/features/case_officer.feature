@@ -3,7 +3,7 @@ Feature: I want to assign a dedicated case officer / single point of contact to 
     So that all internal users and the exporter can see a single named point of contact for the case,
     and know who to contact for questions or escalation
 
-  @skip @LT_1232_Assign_and_remove_case_officer @regression
+  @skip @legacy
   Scenario: Assign and remove case officer
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

@@ -4,7 +4,7 @@ Feature: I want to create ECJU queries
   I want to raise a query to an exporter about their case
   So that I can ask them for additional information or to correct an issue with the case they have submitted
 
-  @skip @LT_1192_add @regression @skip @LT_1493_query
+  @skip @legacy
   Scenario: Add an ECJU Query to a case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

@@ -4,7 +4,7 @@ Feature: I want to register an organisation
   I want to register an organisation
   So that I can export my products in the future
 
-
+  @skip @current
   Scenario: Register a commercial organisation that is based in UK
     Given I am not signed into LITE but signed into GREAT SSO
     When I sign in as user without an organisation registered

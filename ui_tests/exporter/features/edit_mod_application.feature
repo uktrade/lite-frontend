@@ -4,7 +4,7 @@ Feature: I want to be able to edit MOD Licence Applications
   I want to apply for an MOD clearance for equipment or information if I need one
   So that I can get approval to provide the relevant equipment or information to a third party outside the UK
 
-  @skip @LT_1169_edit_exhibition_clearance @regression
+  @skip @legacy
   Scenario: Edit a Exhibition Clearance Application
     Given I go to exporter homepage and choose Test Org
     And I create a exhibition clearance application via api
@@ -29,7 +29,7 @@ Feature: I want to be able to edit MOD Licence Applications
     And I click the back link
     Then the document has been removed from the application
 
-  @skip @LT_1598 @skip @LT_1980_edit_f680_clearance @regression
+  @skip @legacy
   Scenario: Edit an F680 Clearance Application
     Given I go to exporter homepage and choose Test Org
     And I create a F680 clearance application via api

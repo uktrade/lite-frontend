@@ -50,7 +50,7 @@ gunicorn = "~=20.0"
 markdown = "~=3.1"
 mohawk = ">=1.1"
 munch = "~=2.5.0"
-requests = "~=2.21"
+requests = {extras = ["security"], version = "~=2.21"}
 s3chunkuploader = "~=0.8"
 sentry-sdk = "~=0.16"
 sigauth = "~=4.2"
@@ -65,6 +65,7 @@ python-magic = "~=0.4"
 django-log-formatter-ecs = "==0.0.5"
 importlib-metadata = "==4.6.3"  # Dependency for some packages. Might not be needed for Python3.8+
 Authlib = "==0.15.5"
+regex = "==2022.3.2"
 
 [requires]
 python_version = "3.7"

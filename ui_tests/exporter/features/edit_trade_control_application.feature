@@ -4,7 +4,7 @@ Feature: I want to be able to edit and update an active application
   I want to be able to edit and update an active application
   So that any additional information and/or corrected details can be updated on my application
 
-  @skip @LT_998_edit_standard_application_slow @regression
+  @skip @legacy
   Scenario: Edit a trade control application
     Given I go to exporter homepage and choose Test Org
     And I create a trade control application via api

@@ -1,7 +1,7 @@
 @all @users
 Feature: I want to test users
 
-  @skip @deactivate_user @regression
+  @skip @legacy
   Scenario: Add user, deactivate then reactivate
     Given I sign in to SSO or am signed into SSO
     # Adds a new user and making sure it shows as active

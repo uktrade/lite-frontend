@@ -4,7 +4,7 @@ Feature: I want to be able to administer applications for multiple companies
   I want to be able to administer applications for multiple companies
   So that I can manage applications for all my customers
 
-  @skip @LT_1175 @regression
+  @skip @legacy
   Scenario: Switch between two organisations
     Given I have a second set up organisation
     And I go to exporter homepage and choose Test Org

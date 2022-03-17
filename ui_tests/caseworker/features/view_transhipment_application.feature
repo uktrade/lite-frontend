@@ -4,7 +4,7 @@ Feature: I want to view the case details of a case
   I want to view the details on a case
   So that I can make review the case before making any decisions
 
-  @skip @regression
+  @skip @legacy
   Scenario: View a standard transhipment application
     Given I sign in to SSO or am signed into SSO
     And a standard transhipment application is created

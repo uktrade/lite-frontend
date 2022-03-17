@@ -4,7 +4,7 @@ Feature: Compliance
   I want to be able to log actions required for compliance purposes
   So that I can document whether entities are complying with the law
 
-  @skip @LT_866_submit_open_licence_returns @regression
+  @skip @legacy
   Scenario: Submit and view open licence returns
     Given I go to exporter homepage and choose Test Org
     And I create an open application via api

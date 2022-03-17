@@ -5,7 +5,7 @@ Feature: I want standard picklists
   And activate/deactivate items on these picklists
   So that I can make it easier for other government users to quickly apply any relevant conditions to their approval recommendations
 
-  @skip @LT_1077_add_edit @regression
+  @skip @legacy
   Scenario: Add and edit a letter paragraph
     Given I sign in to SSO or am signed into SSO
     When I go to My Team
@@ -20,7 +20,7 @@ Feature: I want standard picklists
     When I edit my picklist to "edit" and "edit"
     Then I see my picklist page with status as "Active"
 
-  @skip @LT_1077_deactivate @regression
+  @skip @legacy
   Scenario: Deactivate and reactivate a picklist item
     Given I sign in to SSO or am signed into SSO
     When I go to My Team

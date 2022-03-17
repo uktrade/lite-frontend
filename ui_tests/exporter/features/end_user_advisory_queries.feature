@@ -4,7 +4,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
   I want to raise an End User advisory enquiry for a particular end user/ultimate end user
   So that I can be advised whether or not the person I am seeking to export my goods is a suitable end user for export
 
-  @skip @LT_1007 @skip @LT_1483 @regression
+  @skip @legacy
   Scenario: create an end user advisory and copy an existing end user advisory
     Given I go to exporter homepage and choose Test Org
     When I click on end user advisories
@@ -21,7 +21,7 @@ Feature: I want to raise an End User advisory enquiry to check if a particular e
     And I enter "reasoning" for my reason, and "these are notes" for notes and click submit
     Then I see the success page
 
-  @skip @LT_1474 @regression
+  @skip @legacy
   Scenario: can view/create case notes, and view/respond to ecju queries
     Given I go to exporter homepage and choose Test Org
     And An end user advisory with a case note and ecju query has been added via gov user
