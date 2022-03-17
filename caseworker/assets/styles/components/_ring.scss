@@ -1,4 +1,6 @@
 // -- vars
+@use "sass:math";
+
 $bg-color: govuk-colour("white");
 $default-size: 0.3em;
 $label-font-size: $default-size * 0.4;
@@ -71,16 +73,16 @@ $top: $label-font-size-redo * 0.65;
 
 	.pie {
 		@include size(100%, 100%);
-		clip: rect(0, $default-size, $default-size, $default-size / 2);
+		clip: rect(0, $default-size, $default-size, $default-size * 0.5);
 		left: 0;
 		position: absolute;
 		top: 0;
 
 		.half-circle {
 			@include size(100%, 100%);
-			border: ($default-size / 7.5) solid #3498db;
+			border: math.div($default-size, 7.5) solid #3498db;
 			border-radius: 50%;
-			clip: rect(0, $default-size / 2, $default-size, 0);
+			clip: rect(0, $default-size * 0.5, $default-size, 0);
 			left: 0;
 			position: absolute;
 			top: 0;

@@ -1,13 +1,12 @@
 
 export default function initFlagListExpanders() {
-
 	const $flagsLists = $('.app-flags--list');
 	const chevronSVG = $('#js-chevron-svg').html();
 
 	$flagsLists.each(function() {
 		const $flags = $(this).find('.app-flag');
 
-		$flags.each(function(i) {
+		$flags.each(function (i) {
 			if (i > 2) {
 				$(this)
 					.addClass('app-hidden--force')
@@ -36,7 +35,7 @@ export default function initFlagListExpanders() {
 
 	const $flagExpanders = $('.app-flags__expander');
 
-	$flagExpanders.on('click keypress', function(e) {
+	$flagExpanders.on('click keypress', function (e) {
 		$(this)
 			.prev() // in the flags list preceding the button
 			.find('.app-hidden--force')

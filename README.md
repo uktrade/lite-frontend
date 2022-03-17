@@ -3,7 +3,6 @@
 [![circle-ci-image]][circle-ci]
 [![coverage-image]][coverage]
 
-
 **Frontend for LITE - the Department for International Trade (DIT)**
 
 ---
@@ -24,8 +23,10 @@
     $ pipenv install --dev
 
 #### Git Hub pre-commit setup
+
 - Install pre-commit (e.g MAC pip install pre-commit)
 - pre-commit install
+
 * run following to scan all files for issues
   - pre-commit run --all-files
 
@@ -55,28 +56,29 @@ make run_exporter
 
 #### First time setup
 
-  - Set up your local config file:
-    - `make secrets`
-    - populate the newly created `caseworker.env` and `exporter.env` with values from Vault.
+- Set up your local config file:
+  - `make secrets`
+  - populate the newly created `caseworker.env` and `exporter.env` with values from Vault.
 
-  * Ensure docker is running
+* Ensure docker is running
 
-  * Build and start docker images:
-    - If you haven't already done this for lite-api, set up a shared docker network:
-      - `docker network create lite` - shared network to allow API and frontend to communicate
-    - `docker-compose build` - build the container image
-  * Installation requirements
-    - install libmagic
+* Build and start docker images:
+  - If you haven't already done this for lite-api, set up a shared docker network:
+    - `docker network create lite` - shared network to allow API and frontend to communicate
+  - `docker-compose build` - build the container image
+* Installation requirements
+  - install libmagic
 
 #### Starting the service
+
 - `docker-compose up -d` - to start the two frontend Django servers
 
 - Ensure you have a working version of `lite-api` running, see [the instructions for running it
   in docker](https://github.com/uktrade/lite-api/blob/master/README.md#running-the-service-with-docker)
 
 - Visit:
-    - [http://localhost:8200](http://localhost:8200) for the caseworker frontend
-    - [http://localhost:8300](http://localhost:8300) for the exporter frontend
+  - [http://localhost:8200](http://localhost:8200) for the caseworker frontend
+  - [http://localhost:8300](http://localhost:8300) for the exporter frontend
 
 #### Running unit tests
 
@@ -114,46 +116,47 @@ Run all tests
 PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest ui_tests/
 make run_ui_tests
 ```
+
 Run all Unit and UI tests
+
 ```
 make run_all_tests
 ```
 
-
 > You can use the flags `--step-through` (in conjunction with `-s`) and `--step-verbose` to stop on each step. Helpful for exploration and debugging.
 
 > The UI tests (a.k.a. end-to-end tests, e2e tests, browser tests or functional tests) require some local configuration
-changes before they can run. As mentioned above, you need to run `make run_caseworker` and `make run_exporter`.
-These copy the `example.caseworker.env` and `example.exporter.env` files to `caseworker.env` and `exporter.env`
-respectively. In each file, the following variables need to have different values (see development team members for
-what those values should be or just try looking in Vault):
+> changes before they can run. As mentioned above, you need to run `make run_caseworker` and `make run_exporter`.
+> These copy the `example.caseworker.env` and `example.exporter.env` files to `caseworker.env` and `exporter.env`
+> respectively. In each file, the following variables need to have different values (see development team members for
+> what those values should be or just try looking in Vault):
 
-* AUTHBROKER_CLIENT_ID
-* AUTHBROKER_CLIENT_SECRET
-* AUTHBROKER_URL - should be https://sso.trade.uat.uktrade.io for caseworker but https://great.uat.uktrade.digital
+- AUTHBROKER_CLIENT_ID
+- AUTHBROKER_CLIENT_SECRET
+- AUTHBROKER_URL - should be https://sso.trade.uat.uktrade.io for caseworker but https://great.uat.uktrade.digital
   for the exporter
-* AWS_ACCESS_KEY_ID
-* AWS_SECRET_ACCESS_KEY
-* AWS_STORAGE_BUCKET_NAME
-* AWS_REGION
-* TEST_SSO_EMAIL
-* TEST_SSO_PASSWORD
-* TEST_SSO_NAME (for the caseworker)
-* NOTIFY_KEY
-* NOTIFY_FEEDBACK_TEMPLATE_ID
-* NOTIFY_FEEDBACK_EMAIL
-* ENVIRONMENT - set to "local" if the tests are targeting the local caseworker
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+- AWS_STORAGE_BUCKET_NAME
+- AWS_REGION
+- TEST_SSO_EMAIL
+- TEST_SSO_PASSWORD
+- TEST_SSO_NAME (for the caseworker)
+- NOTIFY_KEY
+- NOTIFY_FEEDBACK_TEMPLATE_ID
+- NOTIFY_FEEDBACK_EMAIL
+- ENVIRONMENT - set to "local" if the tests are targeting the local caseworker
   and exporter. If not set the UI tests will try talking to devdata
-* DIRECTORY_SSO_API_CLIENT_BASE_URL - Needed by the UI tests but not the caseworker or exporter, available
+- DIRECTORY_SSO_API_CLIENT_BASE_URL - Needed by the UI tests but not the caseworker or exporter, available
   in Vault
-* DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
+- DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
   in Vault
 
 Before running the UI tests, make sure you have the following services running with corresponding ports:
 
-* lite-api (port=**8100**)
-* casework (port=**8200**)
-* exporter (port=**8300**)
+- lite-api (port=**8100**)
+- casework (port=**8200**)
+- exporter (port=**8300**)
 
 An example for how to run the above service:
 
@@ -178,4 +181,19 @@ Finally, to run a UI test on the command line (will run an exporter and casework
 ```bash
 PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/exporter
 PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/caseworker/
+```
+
+## Javascript/SCSS
+
+Node version required is 16.5.0
+All javascripts and scss files are stored under caseworker/assets and exporter/assets
+
+```
+  npm i
+
+  // Building and live building for local development.
+  npm run watch
+
+  // Building before PR.
+  npm run build
 ```

@@ -5,4 +5,11 @@
 			class="app-flag app-flag--{{ flag.colour }}"
 			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
 	{% endfor %}
+	{%if destinations_flags %}
+		{% for flag in destinations_flags %}
+			<li
+				class="app-flag app-flag--{{ flag.colour }}"
+				{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
+		{% endfor %}
+	{%endif%}
 </ol>

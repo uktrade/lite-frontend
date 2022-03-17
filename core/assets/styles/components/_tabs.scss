@@ -83,7 +83,7 @@
 
 	.lite-notification-bubble {
 		@include govuk-font($size: 14, $weight: bold);
-		margin-left: govuk-spacing(1) / 2;
+		margin-left: govuk-spacing(1) * 0.5;
 		width: 18px!important;
 		line-height: 18px!important;
 		border-bottom-width: 0;

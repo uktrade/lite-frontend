@@ -158,7 +158,6 @@
 	{# TODO: eventually this should all be migrated into main.js file #}
 	{% block body_common_javascript %}
 		<script nonce="{{ request.csp_nonce }}" src="{% static 'main.js' %}"></script>
-
 	{% endblock %}
 
 	{% block javascript %}{% endblock %}

@@ -25,7 +25,7 @@ $popup-font-size: 15px;
 		font-size: 16px;
 		font-weight: bold;
 		padding: 0;
-		margin-bottom: $popup-padding / 2;
+		margin-bottom: $popup-padding * 0.5;
 		color: govuk-colour("black");
 	}
 }
