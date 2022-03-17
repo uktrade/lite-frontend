@@ -11,6 +11,7 @@ from exporter.core.constants import (
     DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION,
     DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD,
 )
+from exporter.applications.views.parties.end_users import party_requires_ec3_document
 
 
 @pytest.fixture
@@ -321,3 +322,62 @@ def test_edit_end_user_document(
         "s3_key": actual["s3_key"],
         "size": expected["size"],
     }
+
+
+@pytest.mark.parametrize(
+    "application_data, ec3_expected_status",
+    (
+        ({}, False),
+        ({"goods_starting_point": ""}, False),
+        ({"goods_starting_point": "GB"}, False),
+        ({"goods_starting_point": "NI"}, False),
+        ({"goods_starting_point": "GB", "destinations": {"type": "consignee"}}, False),
+        (
+            {"goods_starting_point": "GB", "destinations": {"type": "end_user", "data": {"country": {"is_eu": False}}}},
+            False,
+        ),
+        (
+            {"goods_starting_point": "GB", "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}}},
+            False,
+        ),
+        (
+            {"goods_starting_point": "NI", "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}}},
+            False,
+        ),
+        (
+            {
+                "goods_starting_point": "NI",
+                "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
+                "goods": [
+                    {"firearm_details": {"type": "software_related_to_firearms"}},
+                    {"firearm_details": {"type": "technology_related_to_firearms"}},
+                ],
+            },
+            False,
+        ),
+        (
+            {
+                "goods_starting_point": "NI",
+                "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
+                "goods": [
+                    {"firearm_details": {"type": "software_related_to_firearms"}},
+                ],
+            },
+            False,
+        ),
+        (
+            {
+                "goods_starting_point": "NI",
+                "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
+                "goods": [
+                    {"firearm_details": {"type": "firearms"}},
+                    {"firearm_details": {"type": "software_related_to_firearms"}},
+                    {"firearm_details": {"type": "technology_related_to_firearms"}},
+                ],
+            },
+            True,
+        ),
+    ),
+)
+def test_party_requires_ec3_document(application_data, ec3_expected_status):
+    assert ec3_expected_status == party_requires_ec3_document(application_data)
