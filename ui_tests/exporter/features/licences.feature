@@ -14,7 +14,7 @@ Feature: I want to be able to view licences as an exporter user
     Then I see all the typical licence details
     And I see my standard application licence details
 
-  @skip
+  @skip @current
   Scenario: When a new licence is issued, an email is sent to notify LITE-HMRC
     Given I signin and go to exporter homepage and choose Test Org
     And Only my email is to be processed by LITE-HMRC
@@ -30,7 +30,7 @@ Feature: I want to be able to view licences as an exporter user
     And I see my standard application licence details
     And an email is sent to HMRC
 
-  @skip @LT_1254_view_licences_open @regression
+  @skip @legacy
   Scenario: View my open application licences
     Given I go to exporter homepage and choose Test Org
     And I create an open application via api
@@ -43,7 +43,7 @@ Feature: I want to be able to view licences as an exporter user
     Then I see all the typical licence details
     And I see my open application licence details
 
-  @skip @LT_1254_view_licences_mod @regression
+  @skip @legacy
   Scenario: View my mod application licences
     Given I go to exporter homepage and choose Test Org
     And an Exhibition Clearance is created
@@ -56,7 +56,7 @@ Feature: I want to be able to view licences as an exporter user
     Then I see all the typical licence details
     And I see my exhibition application licence details
 
-  @skip @LT_2692_view_nlrs @regression
+  @skip @legacy
   Scenario: View my nlr documents
     Given I go to exporter homepage and choose Test Org
     And I create a standard application via api

@@ -3,7 +3,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
   case sub-type, country and combinations of flags on the case
   So that I can focus on working the case and not on routing cases to the correct departments
 
-  @skip @LT_1063_create @regression
+  @skip @legacy
   Scenario: Create routing rule
     Given I sign in to SSO or am signed into SSO
     And a queue has been created
@@ -19,7 +19,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I filter by my routing rule queue
     Then I see the routing rule in the list as "Deactivated" and tier "10"
 
-  @skip @LT_2109_routing_rules_automation @regression
+  @skip @legacy
    Scenario: Routing rule automation
     Given I sign in to SSO or am signed into SSO
     And an Exhibition Clearance is created

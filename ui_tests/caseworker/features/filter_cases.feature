@@ -4,7 +4,7 @@ Feature: I want to filter cases on a queue
   I want to filter the cases in the work queue I am viewing
   So that I can easily find the cases I am most interested in
 
-  @skip @LT_914_filter @regression
+  @skip @legacy
   Scenario: Filter cases
     Given I sign in to SSO or am signed into SSO
     And a queue has been created

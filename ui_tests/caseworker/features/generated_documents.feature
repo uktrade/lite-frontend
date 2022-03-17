@@ -4,7 +4,7 @@ As a logged in government user
 I want to select a template to generate a document to the applicant on a case
 So that I can easily and quickly generate different types of standard document to send to the applicant
 
-  @skip @LT_1028_generate_document @regression
+  @skip @legacy
   Scenario: Generate a document for a case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
@@ -28,7 +28,7 @@ So that I can easily and quickly generate different types of standard document t
     When I click continue
     Then I see both my generated documents
 
-  @skip @LT_1252_generate_document_with_addressee @regression
+  @skip @legacy
   Scenario: Generate a document with an addressee for a case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

@@ -5,7 +5,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
   So that: everyone is aware which specific users are working on this case in any given work queue / department
 
 
-  @skip @LT_947_select_all @regression
+  @skip @legacy
   Scenario: Select all cases and deselect, Add user to case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
@@ -31,7 +31,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
     Then user is not assignee on case list
 
 
-  @skip @LT_947_search_filter @regression
+  @skip @legacy
   Scenario: Filter by user
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
@@ -46,7 +46,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
     Then only SSO users name is displayed in user list for assign cases
 
 
-  @skip @LT_1295_assign_user_to_case_and_queue @regression
+  @skip @legacy
   Scenario: Assign a user via a case
     Given I sign in to SSO or am signed into SSO
     And a queue has been created
@@ -60,7 +60,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
     And I click the queue and click continue
     Then I see a user is assigned
 
-  @skip @LT_1264_unassign_user_from_case_on_system_queue @regression
+  @skip @legacy
    Scenario: Unassign user from a case when visiting from a system queue
     Given I sign in to SSO or am signed into SSO
     And a queue has been created
@@ -73,7 +73,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
     And I go to my work queue
     Then my case is not in the queue
 
-  @skip @LT_1264_unassign_user_from_case_on_work_queue @regression
+  @skip @legacy
    Scenario: Unassign user from a case when visiting from a work queue
     Given I sign in to SSO or am signed into SSO
     And a queue has been created
@@ -87,7 +87,7 @@ Feature: I want to assign one or more specific users to a case in a work queue
     And I go to my work queue
     Then my case is not in the queue
 
-  @skip @LT_1264_mark_done_when_not_assigned_from_work_queue @regression
+  @skip @legacy
    Scenario: Done on case without being assigned when accessing from a work queue
     Given I sign in to SSO or am signed into SSO
     And a queue has been created

@@ -4,7 +4,7 @@ Feature: I want to respond to clc queries
   I want to respond to a CLC query with the correct control list classification code to use for a good  or an NLR as applicable
   So that an exporter can apply for a licence with that code and without me needing to assess the goods again
 
-  @skip @LT_1138_respond @clc @regression
+  @skip @legacy
   Scenario: respond to a clc type of query
     Given I sign in to SSO or am signed into SSO
     And I create report summary picklist
@@ -22,7 +22,7 @@ Feature: I want to respond to clc queries
     And I select status "CLC review" and save
     Then the status has been changed in the clc query
 
-  @skip @LT_1528_respond @pv_grading @regression
+  @skip @legacy
   Scenario: respond to a grading type of query
     Given I sign in to SSO or am signed into SSO
     And I create report summary picklist

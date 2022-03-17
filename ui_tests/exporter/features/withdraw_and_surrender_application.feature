@@ -1,7 +1,7 @@
 @all @status
 Feature: I want to be able to withdraw an active application
 
-  @skip @LT_995_Withdraw_active_application @regression
+  @skip @legacy
     Scenario: Withdraw an active application
       Given I go to exporter homepage and choose Test Org
       And I create a standard application via api
@@ -16,7 +16,7 @@ Feature: I want to be able to withdraw an active application
       When I click the notes tab
       Then the case note text area is not present
 
-  @skip @LT_979_surrender_application @regression
+  @skip @legacy
     Scenario: Surrender an application
       Given I go to exporter homepage and choose Test Org
       And I create a standard application via api

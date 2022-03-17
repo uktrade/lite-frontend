@@ -2,7 +2,7 @@
 Feature: I want to add additional contacts to a case
     So that all information is available about a case
 
-  @skip @LT_1253_Additional_contacts @regression
+  @skip @legacy
   Scenario: Add an additional contact to a case
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created

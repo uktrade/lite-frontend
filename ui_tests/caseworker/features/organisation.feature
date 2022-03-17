@@ -4,7 +4,7 @@ Feature: I want to add a company to LITE
   I want to add a new company to LITE
   So that the new company can make applications
 
-  @skip @LT_934_register_commercial_organisation @regression
+  @skip @legacy
   Scenario: Registering a commercial organisation
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
@@ -15,7 +15,7 @@ Feature: I want to add a company to LITE
     Then organisation is edited
     And the "updated" organisation appears in the audit trail
 
-  @skip @LT_1417_register_individual_organisation @regression
+  @skip @legacy
   Scenario: Registering an individual
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
@@ -24,7 +24,7 @@ Feature: I want to add a company to LITE
     When I click the organisation
     Then the "created" organisation appears in the audit trail
 
-  @skip @LT_1008_register_hmrc_organisation @regression
+  @skip @legacy
   Scenario: Registering an HMRC organisation
     Given I sign in to SSO or am signed into SSO
     When I go to organisations
@@ -49,7 +49,7 @@ Feature: I want to add a company to LITE
     And I click on Active tab
     Then I should see details of organisation previously created
 
-  @skip @LT_1105_review_and_reject_an_organisation @regression
+  @skip @legacy
   Scenario: Review and reject an organisation
     Given I sign in to SSO or am signed into SSO
     And an anonymous user applies for an organisation

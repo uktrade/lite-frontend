@@ -49,7 +49,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
     | Test    | Rifle   | SN-XYZ-456  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
-  @skip @LT_1300 @regression
+  @skip @legacy
   Scenario: Review goods On Standard Application
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -59,7 +59,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I respond "yes", "ML4b1", "1", "Because the good is controlled" and click submit
     Then the control list is present on the case page
 
-  @skip @LT_1629 @regression
+  @skip @legacy
   Scenario: Review goods On Open Application
     Given I sign in to SSO or am signed into SSO
     And I create open application or open application has been previously created
