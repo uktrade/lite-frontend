@@ -132,7 +132,11 @@ class Applications:
             self.add_external_site(site_id=site["id"], draft_id=draft_id)
 
         if draft["application_type"] != "exhc":
-            self.goods.add_good_to_draft(draft_id=draft_id, good=good)
+            if not isinstance(good, list):
+                good = [good]
+
+            for i, g in enumerate(good):
+                self.goods.add_good_to_draft(draft_id=draft_id, good=g, count=i)
         else:
             self.goods.add_good_to_draft(draft_id=draft_id, good=self.request_data["add_exhibition_good"])
             self.add_site(draft_id=draft_id)
