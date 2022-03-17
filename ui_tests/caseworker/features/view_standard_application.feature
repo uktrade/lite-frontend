@@ -4,6 +4,7 @@ Feature: I want to view the case details of a case
   I want to view the details on a case
   So that I can make review the case before making any decisions
 
+  @skip @current
   Scenario: Gov user can see case details
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
