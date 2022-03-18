@@ -18,60 +18,13 @@ import initMenuTooltips from './menu-tooltips.js'
 import initQueuesMenu from './queues-menu.js';
 import initFlagListExpanders from './flag-expanders.js';
 import initReviewGood from './review-good.js';
+import destinationsList from './show-hide-destinations.js';
 
 // vendor styles
 import 'tippy.js/dist/tippy.css';
 
 // our styles
 import '../styles/styles.scss';
-
-// Hide show destinatios list.
-const hideItems = (array) => {
-		for (const [index, country] of array.entries()) {
-			if (index > 2) {
-				country.classList.add('app-hidden--force')
-		}
-	}
-}
-
-(destinationsList = () => {
-	const destinationsList = document.getElementsByClassName('destinations__list')
-
-	for (const destinations of destinationsList) {
-		const destinationsHtmlCollection = destinations.getElementsByTagName("li")
-
-		if (destinationsHtmlCollection.length > 3) {
-			array = [...destinationsHtmlCollection]
-
-			hideItems(array)
-			const td = destinations.parentElement
-			const link = td.appendChild(document.createElement('a'))
-			link.setAttribute("data-hide", true)
-			link.innerText = `View all(${destinationsHtmlCollection.length})`
-			link.href = ""
-			link.className = "destinations__show-all"
-			link.addEventListener("click", (e) => {
-				e.preventDefault()
-				
-				const showHideButton = e.currentTarget
-				const countryList = [...showHideButton.parentElement.getElementsByTagName("li")]
-
-				if (showHideButton.dataset.hide === "true") {
-					for (country of countryList) {
-						country.classList.remove('app-hidden--force')
-						showHideButton.dataset.hide = false
-						showHideButton.innerText = "View less"
-					}
-				} else {
-					hideItems(countryList)
-					showHideButton.dataset.hide = true
-					showHideButton.innerText = `View all(${countryList.length})`
-				}
-			})
-		}
-	}
-})()
-
 
 $(document).ready(function() {
 	// init govuk
@@ -82,5 +35,6 @@ $(document).ready(function() {
 	initFlagListExpanders();
 	initReviewGood();
 	initCookierBanner("app-cookie-banner", "js-accept-cookie");
+	destinationsList();
 });
 
