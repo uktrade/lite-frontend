@@ -10,7 +10,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to my profile page
-    And I change my team to "TAU" and default queue to "Open cases"
+    And I change my team to "Technical Assessment Unit" and default queue to "Open cases"
     And I go to my case list
     And I click on show filters
     And I filter by application type "Standard Individual Export Licence"
@@ -34,7 +34,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to my profile page
-    And I change my team to "TAU" and default queue to "Open cases"
+    And I change my team to "Technical Assessment Unit" and default queue to "Open cases"
     And I go to my case list
     And I click on show filters
     And I filter by application type "Standard Individual Export Licence"

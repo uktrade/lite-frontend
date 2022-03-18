@@ -55,6 +55,6 @@ Feature: I want to have cases be automatically routed to relevant work queues an
       And I go to my case list
       Then I should see my case in the cases list
       When I go to my profile page
-      And I change my team to "TAU" and default queue to "Technical Assessment Unit SIELs to Review"
+      And I change my team to "Technical Assessment Unit" and default queue to "Technical Assessment Unit SIELs to Review"
       And I go to my case list
       Then I should see my case in the cases list

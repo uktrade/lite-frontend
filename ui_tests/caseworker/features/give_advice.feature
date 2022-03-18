@@ -4,14 +4,14 @@ Feature: I want to record my user advice and any comments and conditions relatin
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
-  @skip @current @fcdo_approve_advice
+  @fcdo_approve_advice
   Scenario: FCDO to approve advice journey
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
-    And I assign the case to "FCO Cases to Review" queue
+    And I assign the case to "FCDO Cases to Review" queue
     And I go to my profile page
-    And I change my team to "FCDO" and default queue to "FCO Cases to Review"
+    And I change my team to "FCDO" and default queue to "FCDO Cases to Review"
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -26,7 +26,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I don't see previously created application
     # Check the case has moved to the correct queue
     When I go to my profile page
-    And I change my team to "FCDO" and default queue to "FCO Counter-signing"
+    And I change my team to "FCDO" and default queue to "FCDO Counter-signing"
     And I go to my case list
     Then I should see my case in the cases list
     # Check the recommendation is listed
@@ -35,8 +35,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I expand the details for "FCDO has approved"
     Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
 
-
-  @skip @current @mod_approve_advice
+  @mod_approve_advice
   Scenario: MOD approve advice journey
     ##### MOD to circulate a case #####
     Given I sign in to SSO or am signed into SSO
