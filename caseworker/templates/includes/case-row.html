@@ -92,11 +92,20 @@
 			<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_GOODS_FLAGS' %}</p>
 		{% endif %}
 	</td>
-
+	{# destinations #}
+	<td class="govuk-table__cell lite-mobile-hide">
+		<ol class="govuk-list destinations__list">
+			{% for country in case.unique_destinations %}
+				<li>
+					{{country.name}}
+				</li>
+			{% endfor %}
+		</ol>
+	</td>
 	{# application flags #}
 	<td class="govuk-table__cell lite-tablet-hide">
-		{% if case.flags %}
-			{% include 'includes/case-row-flags.html' with flags=case.flags %}
+		{% if case.flags or case.destinations_flags %}
+			{% include 'includes/case-row-flags.html' with flags=case.flags destinations_flags=case.destinations_flags%}
 		{% else %}
 			<p class="app-information-bar">No flags set</p>
 		{% endif %}
@@ -106,15 +115,6 @@
 	<td class="govuk-table__cell lite-tablet-hide">
 		{% if case.goods_flags %}
 			{% include 'includes/case-row-flags.html' with flags=case.goods_flags %}
-		{% else %}
-			<p class="app-information-bar">No flags set</p>
-		{% endif %}
-	</td>
-
-	{# destination flags #}
-	<td class="govuk-table__cell lite-tablet-hide">
-		{% if case.destinations_flags %}
-			{% include 'includes/case-row-flags.html' with flags=case.destinations_flags %}
 		{% else %}
 			<p class="app-information-bar">No flags set</p>
 		{% endif %}

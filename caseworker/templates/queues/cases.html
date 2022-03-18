@@ -76,9 +76,9 @@
 					<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
 					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
 					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
 					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Flags</th>
 					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.GOODS' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
 				</tr>
 			</thead>
 
@@ -99,8 +99,6 @@
 	<div class="app-hidden--force" id="js-chevron-svg">
 		{% svg 'chevron' %}
 	</div>
-
-	<script nonce="{{ request.csp_nonce }}" src="{% static 'main.js' %}"></script>
 
 	{# this is tied to inline javascript in lite_forms/templates/components/autocomplete.html and cannot be removed yet #}
 	<script nonce="{{ request.csp_nonce }}">
