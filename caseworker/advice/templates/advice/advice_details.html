@@ -1,10 +1,11 @@
 {% load advice_tags %}
-
+{% load parse_date from spire_tags %}
 {% with user=advice.0.user decision=advice.0.type.key %}
 <table id="table-licenceable-products" class="govuk-table">
     {% if decision == 'approve' or decision == 'proviso' %}
-    <h2 class="app-bg-colour--green govuk-heading-m govuk-!-padding-2">
+    <h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 app-advice-recommendation-heading app-bg-colour--green">
         {% if team %} Approved by {{ user.team.name }} {% else %} Approved by {{ user|full_name }} {% endif %}
+		<span class="govuk-!-font-weight-regular app-advice-recommendation-heading__additional_details">{{ advice.0.created_at|parse_date|date:"d F Y" }}</span>
     </h2>
     {% elif decision == 'refuse' %}
     <h2 class="govuk-heading-m app-bg-colour--red govuk-!-padding-2">
