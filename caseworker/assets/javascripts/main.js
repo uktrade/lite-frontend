@@ -18,7 +18,7 @@ import initMenuTooltips from './menu-tooltips.js'
 import initQueuesMenu from './queues-menu.js';
 import initFlagListExpanders from './flag-expanders.js';
 import initReviewGood from './review-good.js';
-import destinationsList from './show-hide-destinations.js';
+import initDestinationsList from './show-hide-destinations.js';
 
 // vendor styles
 import 'tippy.js/dist/tippy.css';
@@ -35,6 +35,5 @@ $(document).ready(function() {
 	initFlagListExpanders();
 	initReviewGood();
 	initCookierBanner("app-cookie-banner", "js-accept-cookie");
-	destinationsList();
+	initDestinationsList();
 });
-

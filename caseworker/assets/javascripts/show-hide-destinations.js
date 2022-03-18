@@ -1,52 +1,47 @@
-// Hide show destinatios list.
-const hideItems = (array) => {
-		for (const [index, country] of array.entries()) {
-			if (index > 2) {
-				country.classList.add("app-hidden--force")
-		}
+// Hide show destinations list.
+
+const MAX_COUNTRIES_TO_DISPLAY = 3
+
+const hideItems = (countries) => countries.forEach((country, index) => {
+	if (index > MAX_COUNTRIES_TO_DISPLAY - 1) {
+		country.classList.add("app-hidden--force")
 	}
+})
+
+
+const initDestinationsList = () => {
+	const destinationsList = document.querySelectorAll(".destinations__list")
+
+	destinationsList.forEach((destinations) => {
+		const items = destinations.querySelectorAll("li")
+
+		if (items.length <= MAX_COUNTRIES_TO_DISPLAY) {
+			return
+		}
+
+		hideItems(items)
+		let hidden = true
+
+		const td = destinations.parentElement
+		const button = document.createElement("button")
+		button.className = "lite-button--link"
+		button.innerText = `View all (${items.length})`
+		td.appendChild(button)
+
+		button.addEventListener("click", (e) => {
+			e.preventDefault()
+
+			if (hidden) {
+				items.forEach((item) => item.classList.remove("app-hidden--force"))
+				hidden = false
+				button.innerText = "View less"
+			} else {
+				hideItems(items)
+				hidden = true
+				button.innerText = `View all (${items.length})`
+			}
+		})
+	})
 }
 
-destinationsList = () => {
-	const destinationsList = document.getElementsByClassName("destinations__list")
-	let showHideState = {}
-
-	for (const [i, value] of [...destinationsList].entries()) {
-		showHideState[i] = true
-	}
-
-	for (const [index, destinations] of [...destinationsList].entries()) {
-		const destinationsHtmlCollection = destinations.getElementsByTagName("li")
-
-		if (destinationsHtmlCollection.length > 3) {
-			array = [...destinationsHtmlCollection]
-
-			hideItems(array)
-			const td = destinations.parentElement
-			const button = td.appendChild(document.createElement("a"))
-			button.innerText = `View all(${destinationsHtmlCollection.length})`
-			button.href = ""
-			button.className = "destinations__show-all"
-			button.addEventListener("click", (e) => {
-				e.preventDefault()
-				
-				const specificShowHideButton = e.currentTarget
-				const countryList = [...specificShowHideButton.parentElement.getElementsByTagName("li")]
-
-				if (showHideState[index] === true) {
-					for (country of countryList) {
-						country.classList.remove("app-hidden--force")
-						specificShowHideButton.innerText = "View less"
-						showHideState[index] = false
-					}
-				} else {
-					hideItems(countryList)
-					specificShowHideButton.innerText = `View all(${countryList.length})`
-					showHideState[index] = true
-				}
-			})
-		}
-	}
-}
-
-export default destinationsList
+export default initDestinationsList
