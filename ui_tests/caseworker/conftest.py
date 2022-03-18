@@ -187,7 +187,7 @@ def submit_form(driver):  # noqa
     Shared(driver).click_submit()
     # handle case when scenario clicks submit in consecutive steps: there is a race condition resulting in the same
     # submit button being clicked for each step
-    time.sleep(5)
+    time.sleep(2)
 
 
 @when(parsers.parse('I click "{button_text}"'))
