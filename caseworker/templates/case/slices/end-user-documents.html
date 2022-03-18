@@ -1,4 +1,4 @@
-{% with end_user=case.data.end_user %}
+{% with end_user=case.data.end_user consignee=case.data.consignee third_parties=case.data.third_parties ultimate_end_users=case.data.ultimate_end_users %}
     <h2 class="govuk-heading-m">End-user documents</h2>
     <table class="govuk-table">
         <tbody class="govuk-table__body">
@@ -68,6 +68,58 @@
                     <td class="govuk-table__cell">{{ end_user.end_user_document_missing_reason }}</td>
                 </tr>
             {% endif %}
+
+            {% if consignee and consignee.documents|length %}
+                {% with document=consignee.documents.0 %}
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Upload a consignee document</th>
+                        <td class="govuk-table__cell">
+                            {% if document.safe %}
+                                <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    Consignee document ({{ document.name|document_extension|upper}} opens in new tab)
+                                </a>
+                            {% else %}
+                                {{ document.name }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endif %}
+
+            {% for party in ultimate_end_users %}
+                {% with document=party.documents.0 %}
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Upload an ultimate end-user document</th>
+                        <td class="govuk-table__cell">
+                            {% if document.safe %}
+                                <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    Ultimate end-user document ({{ document.name|document_extension|upper}} opens in new tab)
+                                </a>
+                            {% else %}
+                                {{ document.name }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+
+            {% for party in third_parties %}
+                {% with document=party.documents.0 %}
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">Upload a third party ({{ party.role.key }}) document</th>
+                        <td class="govuk-table__cell">
+                            {% if document.safe %}
+                                <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    Third party document ({{ document.name|document_extension|upper}} opens in new tab)
+                                </a>
+                            {% else %}
+                                {{ document.name }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+
         </tbody>
     </table>
 {% endwith %}

@@ -33,7 +33,6 @@
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.ADDRESS' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.BUSINESS' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.WEBSITE' %}</th>
-						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DOCUMENTS' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.SIGNATORY_NAME' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</th>
 					</tr>
@@ -92,14 +91,6 @@
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.WEBSITE' %}</span>
 								{{ destination.website|linkify }}
-							</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.DOCUMENTS' %}</span>
-								{% if destination.document %}
-									<a id="link-{{ destination.type}}-download" class="govuk-link" href="{% url 'cases:document' queue.id case.id destination.document.id %}">
-										{{ destination.document.name }}
-									</a>
-								{% endif %}
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
 								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.SIGNATORY_NAME' %}</span>

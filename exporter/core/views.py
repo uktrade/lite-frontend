@@ -1,4 +1,3 @@
-from email.mime import application
 from json import JSONDecodeError
 
 from django.conf import settings
