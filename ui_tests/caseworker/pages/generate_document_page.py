@@ -34,7 +34,7 @@ class GeneratedDocument(BasePage):
         return self.driver.find_element_by_id(self.PREVIEW).is_displayed()
 
     def get_document_preview_text(self):
-        return self.driver.find_element_by_id(self.PREVIEW).text
+        return self.driver.find_element(by=By.ID, value=self.PREVIEW).text
 
     def get_document_paragraph_text_in_preview(self):
         return self.driver.find_element_by_id(self.PARAGRAPHS).text
