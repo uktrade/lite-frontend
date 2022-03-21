@@ -90,6 +90,9 @@ class RecommendationsAndDecisionPage(BasePage):
     def click_make_recommendation(self):
         self.driver.find_element(by=By.XPATH, value="//a[contains(text(), 'Make recommendation')]").click()
 
+    def click_refuse(self):
+        self.driver.find_element(by=By.XPATH, value="//input[@type='radio' and @value='refuse']").click()
+
     def click_approve_all(self):
         self.driver.find_element(by=By.XPATH, value="//input[@type='radio' and @value='approve_all']").click()
 

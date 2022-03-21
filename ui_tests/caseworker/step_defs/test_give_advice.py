@@ -26,6 +26,11 @@ def click_make_recommendation_button(driver):  # noqa
     RecommendationsAndDecisionPage(driver).click_make_recommendation()
 
 
+@when("I click refuse")
+def click_refuse(driver):  # noqa
+    RecommendationsAndDecisionPage(driver).click_refuse()
+
+
 @when("I click approve all")
 def click_approve_all(driver):  # noqa
     RecommendationsAndDecisionPage(driver).click_approve_all()
@@ -129,6 +134,13 @@ def should_see_reporting_footnote(driver, footnote, context):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_reporting_footnote() == footnote
 
 
+@then("I see the application reference on the document preview")
+def should_see_application_ref_on_refusal_letter(driver, context):  # noqa
+    text = GeneratedDocument(driver).get_document_preview_text()
+    assert f"{context.reference_code}" in text
+
+
+@then("I see the licence number on the document preview")
 @then("I see the licence number on the SIEL licence preview")
 def should_see_licence_number_on_siel_licence_preview(driver, context):  # noqa
     text = GeneratedDocument(driver).get_document_preview_text()
