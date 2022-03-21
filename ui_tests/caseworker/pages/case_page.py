@@ -40,8 +40,8 @@ class CasePage(BasePage):
 
     def change_tab(self, tab: str):
         if tab == CaseTabs.USER_ADVICE or tab == CaseTabs.TEAM_ADVICE or tab == CaseTabs.FINAL_ADVICE:
-            self.driver.find_element_by_id("tab-collection-advice").click()
-        self.driver.find_element_by_id("tab-" + tab).click()
+            self.driver.find_element(by=By.ID, value="tab-collection-advice").click()
+        self.driver.find_element(by=By.ID, value="tab-" + tab).click()
 
     def click_change_case_flags(self):
         self.driver.find_element_by_id(self.LINK_CHANGE_CASE_FLAGS_ID).click()
