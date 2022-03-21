@@ -178,6 +178,7 @@ def prepare_for_final_review(driver, api_test_client):  # noqa
     )
 
 
+@when("I click save and continue")
 @when("I click save")
 @when("I click preview")
 @when("I click confirm")
@@ -193,7 +194,11 @@ def submit_form(driver):  # noqa
 @when(parsers.parse('I click "{button_text}"'))
 def click_button_with_text(driver, button_text):  # noqa
     driver.find_element(
-        by=By.XPATH, value=f"//a[contains(@class, 'govuk-button') and contains(text(), '{button_text}')]"
+        by=By.XPATH,
+        value=(
+            f"//button[contains(@class, 'govuk-button') and contains(text(), '{button_text}')] "
+            f"| //a[contains(@class, 'govuk-button') and contains(text(), '{button_text}')]"
+        ),
     ).click()
 
 

@@ -5,29 +5,32 @@ Feature: I want to review, amend where required and confirm the goods ratings an
   So that I can confirm the goods are correctly described
 
 
+  @review_good
   Scenario: Gov user can review product in an application
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
-    And the status is set to "submitted"
-    When I go to my profile page
-    And I change my team to "Technical Assessment Unit" and default queue to "Open cases"
-    And I go to my case list
-    And I click on show filters
-    And I filter by application type "Standard Individual Export Licence"
-    Then I should see my case in the cases list
     When I go to application previously created
-    Then I should see the product name as "Rifle" with product rating as "PL9002"
-    And I select the product and click on Review goods
-    And I update the control list entry to "ML4b"
-    And I check the product part number is "PN-ABC-123"
-    And I input "Rifles" for annual report summary and submit
-    Then I should see the product name as "Rifle" with product rating as "ML4b"
-    And I check the product annual report summary is "Rifles"
-    And the product status is "Verified"
+    And I select all goods
+    And I click review goods
+    And I input "ML1a" as the control list entry
+    And I select "Yes" for is a licence required
+    And I input "ARS" as annual report summary
+    And I click save and continue
+    And I leave control list entry field blank
+    And I select this product does not have a control list entry
+    And I select "No" for is a licence required
+    And I input "ARS" as annual report summary
+    And I click "Save and return to case details"
+    Then for the first good I see "ML1a" for "Rating"
+    And for the first good I see "Yes" for "Licence required"
+    And for the first good I see "ARS" for "ARS"
+    And for the second good I see "N/A" for "Rating"
+    And for the second good I see "No" for "Licence required"
+    And for the second good I see "ARS" for "ARS"
 
     Examples:
-    | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | Rifle   | PN-ABC-123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+    | name    | product        | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test    | Rifle1, Rifle2 | PN-ABC-123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
   Scenario: Gov user can add case note
     Given I sign in to SSO or am signed into SSO

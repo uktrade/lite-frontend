@@ -25,11 +25,12 @@ class Goods:
             method="GET", url="/goods/?" + extra_params, headers=self.api_client.exporter_headers
         ).json()["results"]
 
-    def add_good_to_draft(self, draft_id, good):
+    def add_good_to_draft(self, draft_id, good, count=0):
         if not good.get("good_id"):
             data = self.request_data["good"]
             item = self.post_good(data)
             self.api_client.add_to_context("good_id", item["id"])
+            self.api_client.add_to_context(f"good_id{count}", item["id"])
             good["good_id"] = item["id"]
 
         good_on_app = good or self.request_data["add_good"]
@@ -40,6 +41,7 @@ class Goods:
             body=good_on_app,
         ).json()["good"]
         self.api_client.add_to_context("good_on_application_id", item["id"])
+        self.api_client.add_to_context(f"good_on_application_id{count}", item["id"])
 
     def add_good(self, good=None):
         data = good or self.request_data["good"]
