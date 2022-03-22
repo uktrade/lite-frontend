@@ -66,7 +66,7 @@ secrets:
 .PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
 
 start-caseworker:
-	$(docker-e2e) up --build
+	$(docker-e2e) up --build -d
 
 stop-caseworker:
 	$(docker-e2e) down --remove-orphans

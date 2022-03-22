@@ -42,6 +42,7 @@ def test_approve_a_case_in_FCDO_queue(page, application_data):
     assert "There are no new cases" in case_form
 
 
+@pytest.mark.skip(reason="need to change queues via API")
 def test_approve_a_case_in_FCO_countersign_queue(page, application_data):
     COUNTER_SIGN_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
 
@@ -49,8 +50,9 @@ def test_approve_a_case_in_FCO_countersign_queue(page, application_data):
     page.goto(f"/queues/{COUNTER_SIGN_QUEUE}/cases/{application_data['application_id']}/details/")
 
     assigned_queues = page.locator(case_selectors["assigned_queues"]).inner_text()
+
     assert "FCO Cases to Review" not in assigned_queues
-    assert "FCO Counter-signing" in assigned_queues
+    assert "FCDO Counter-signing" in assigned_queues
 
     page.goto(f"/queues/{COUNTER_SIGN_QUEUE}/cases/{application_data['application_id']}/advice/countersign/")
     counter_sign_details = page.locator(case_selectors["counter_sign_details"]).inner_text()
@@ -73,5 +75,5 @@ def test_approve_a_case_in_FCO_countersign_queue(page, application_data):
 
     assigned_queues = page.locator(case_selectors["assigned_queues"]).inner_text()
     assert "FCO Cases to Review" not in assigned_queues
-    assert "FCO Counter-signing" not in assigned_queues
+    assert "FCDO Counter-signing" not in assigned_queues
     assert "MOD Cases to Review" in assigned_queues

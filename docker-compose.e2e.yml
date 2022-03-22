@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.2'
 
 services:
   caseworker:
@@ -30,7 +30,5 @@ services:
   redis:
     image: "redis:5-alpine"
     container_name: redis
-    expose:
-      - 6379
     ports:
       - 6379:6379
