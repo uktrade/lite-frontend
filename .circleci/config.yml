@@ -238,14 +238,50 @@ jobs:
       - ui_tests
       - vpn_disconnect
 
+  caseworker_e2e_test:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - setup_code
+      - vpn_install
+      - vpn_connect
+      - run_make:
+          label: Run caseworker e2e tests
+          target: start-caseworker caseworker-e2e-tests
+      - store_playwright_artifacts
+      - vpn_disconnect
+
+commands:
+  run_make:
+    description: Run makefile target with some setup
+    parameters:
+      label:
+        type: string
+        default: Execute make << parameters.target >>
+      target:
+        type: string
+    steps:
+      - run:
+          name: Copy config
+          command: cp ci.caseworker.env caseworker.env
+      - run:
+          name: << parameters.label >>
+          command: make << parameters.target >>
+  store_playwright_artifacts:
+    description: Store Playwright artifacts
+    steps:
+      - store_artifacts:
+          path: playwright_videos/
+
 workflows:
   version: 2
-  unit_test:
+  tests:
     when: << pipeline.parameters.run_unit_tests >>
     jobs:
       - lint
       - caseworker_unit_test
       - exporter_unit_test
+      - caseworker_e2e_test
       - upload_coverage:
           requires:
            - caseworker_unit_test
