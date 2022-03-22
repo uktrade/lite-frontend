@@ -7,7 +7,7 @@ from tests_common import functions
 scenarios("../features/case_notes.feature", strict_gherkin=False)
 
 
-@when(parsers.parse('I enter "{text}" for case note'))
+@when(parsers.parse('I enter "{text}" as the case note'))
 def enter_case_note_text(driver, text, context):
     application_page = ApplicationPage(driver)
     if text == "too many characters":
@@ -49,7 +49,7 @@ def entered_text_no_longer_in_case_field(driver, context):
     assert context.text not in application_page.get_text_of_case_note_field(), "cancel button hasn't cleared text"
 
 
-@when("I click visible to exporters checkbox")
+@when("I click make visible to exporter")
 def click_visible_to_exporters_checkbox(driver):
     application_page = ApplicationPage(driver)
     application_page.click_visible_to_exporter_checkbox()
@@ -61,6 +61,6 @@ def click_confirm_on_confirmation_box(driver):
     alert.accept()
 
 
-@when("I click on the case notes tab")
+@when("I click on the notes and timeline tab")
 def case_notes_tab(driver, internal_url, context):
     ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
