@@ -58,7 +58,7 @@ def waitForBuildStatusToChange(number, status, wait_states, msg){
 pipeline {
 
     parameters {
-        choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\ndevpopcorn\ndevkoala\nstaging\nuat\ndevdata')
+        choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nuat\ndevdata\ndemo')
         string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
     }
 
