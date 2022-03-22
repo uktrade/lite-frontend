@@ -180,6 +180,7 @@ def prepare_for_final_review(driver, api_test_client):  # noqa
 
 @when("I click save and continue")
 @when("I click save")
+@when("I click send")
 @when("I click preview")
 @when("I click confirm")
 @when("I click continue")

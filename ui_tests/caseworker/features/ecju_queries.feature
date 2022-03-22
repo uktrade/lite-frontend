@@ -4,16 +4,20 @@ Feature: I want to create ECJU queries
   I want to raise a query to an exporter about their case
   So that I can ask them for additional information or to correct an issue with the case they have submitted
 
-  @skip @legacy
+  @ecju_query
   Scenario: Add an ECJU Query to a case
+    # Caseworker creates query
     Given I sign in to SSO or am signed into SSO
-    And I create open application or open application has been previously created
-    And I create an ecju query picklist
+    And I create standard application or standard application has been previously created
     When I go to application previously created
-    And I go to the ECJU queries tab
-    And I click new query
-    And I enter in my query text
-    Then the new ECJU Query is visible in the list
-    And the ECJU Query creation is visible in the case timeline
-    When I create a response to the ECJU query
-    Then the ECJU Query is in the closed list
+    And I click the queries tab
+    And I click "Add an ECJU query"
+    And I enter "Some unique query" as the query
+    And I click send
+    Then I see "Some unique query" as the query under open queries
+    # Exporter responds to query
+    When Exporter responds with "Some unique response" to the ECJU query
+    # Caseworker views response
+    When I go to application previously created
+    And I click the queries tab
+    Then I see "Some unique response" as the response under closed queries
