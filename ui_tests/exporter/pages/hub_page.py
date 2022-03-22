@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -9,7 +11,7 @@ class Hub(BasePage):
     TILE_APPLICATIONS_ID = "applications-notifications"  # ID
 
     def click_applications(self):
-        self.driver.find_element_by_css_selector(self.APPLICATION_BTN).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.APPLICATION_BTN).click()
 
     def click_sites_link(self):
         self.driver.find_element_by_css_selector(self.SITES_BTN).click()
@@ -26,5 +28,5 @@ class Hub(BasePage):
         return int("".join(filter(str.isdigit, text_of_new_notifications)))
 
     def notification_bubble_exists(self):
-        notification_exists = self.driver.find_element_by_id(self.TILE_APPLICATIONS_ID).is_displayed()
+        notification_exists = self.driver.find_element(by=By.ID, value=self.TILE_APPLICATIONS_ID).is_displayed()
         return notification_exists

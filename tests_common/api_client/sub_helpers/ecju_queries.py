@@ -25,10 +25,15 @@ class EcjuQueries:
             body={"response": response},
         )
 
-    def add_ecju_query(self, case_id):
+    def add_ecju_query(self, case_id, query=None):
+        query_data = self.request_data["ecju_query"]
+
+        if query is not None:
+            query_data["question"] = query
+
         self.api_client.make_request(
             method="POST",
             url="/cases/" + case_id + "/ecju-queries/",
             headers=self.api_client.gov_headers,
-            body=self.request_data["ecju_query"],
+            body=query_data,
         )

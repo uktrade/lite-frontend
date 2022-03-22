@@ -1,8 +1,11 @@
-from exporter.ecju_queries.services import get_ecju_query_documents
-from pytest_bdd import when, scenarios, then, parsers
+from pytest_bdd import given, then, when, scenarios, parsers
 from tests_common import functions
+from tests_common.tools import helpers
 
+from ui_tests.exporter.pages.application_page import ApplicationPage
+from ui_tests.exporter.pages.hub_page import Hub
 from ui_tests.exporter.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage, DocumentGradingPage
+from ui_tests.exporter.pages.shared import Shared
 
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
@@ -53,3 +56,40 @@ def delete_uploaded_document_and_submit(driver, item_index):
     driver.execute_script("arguments[0].scrollIntoView();", document)
     driver.execute_script("arguments[0].click();", document)
     functions.click_submit(driver)
+
+
+@when("I click check progress")
+def click_check_progress(driver):
+    Hub(driver).click_applications()
+
+
+@given(parsers.parse('Caseworker creates an ECJU query with "{query}"'))
+def caseworker_create_query(driver, query, api_test_client, context):
+    api_test_client.ecju_queries.add_ecju_query(context.case_id, query=query)
+
+
+@then("I see a notification next to check progress")
+def should_see_notification_check_progress(driver):
+    return Hub(driver).notification_bubble_exists()
+
+
+@then("I see a notification next to the application")
+def should_see_notification_application(driver, context):
+    elements = driver.find_elements_by_css_selector(".govuk-table__row")
+    no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
+    assert "1" in elements[no].find_element_by_css_selector(Shared(driver).NOTIFICATION).text
+
+
+@then("I see a notification next to ECJU queries")
+def should_see_notification_ecju_queries(driver):
+    assert ApplicationPage(driver).ecju_query_notification_count() == "1"
+
+
+@then(parsers.parse('I see "{query}" as the query under open queries'))
+def should_see_query_in_open_queries(driver, query):
+    assert query in ApplicationPage(driver).get_open_queries_text()
+
+
+@then(parsers.parse('I see "{response}" as the response under closed queries'))
+def should_see_response_in_closed_queries(driver, response):
+    assert response in ApplicationPage(driver).get_closed_queries_text()

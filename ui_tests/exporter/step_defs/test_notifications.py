@@ -1,4 +1,4 @@
-from pytest_bdd import scenarios, given, when, then, parsers
+from pytest_bdd import scenarios, given, then, parsers
 
 from ui_tests.exporter.pages.hub_page import Hub
 from ui_tests.exporter.pages.shared import Shared
@@ -11,13 +11,6 @@ scenarios("../features/notifications.feature", strict_gherkin=False)
 def application_exists_case_note_added(apply_for_open_application, api_test_client, context, driver):
     api_test_client.ecju_queries.add_ecju_query(context.case_id)
     api_test_client.cases.add_case_note(context, context.case_id)
-
-
-@when("I click on my application")
-def click_on_application(driver, context):
-    elements = Shared(driver).get_gov_table_cell_links()
-    no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    elements[no].click()
 
 
 @then(parsers.parse('I see "{num}" notifications on application list'))
