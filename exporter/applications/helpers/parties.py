@@ -1,3 +1,6 @@
+from exporter.core.constants import FirearmsProductType
+
+
 def party_requires_ec3_document(application):
     """
     Helper function to determine EC3 document requirement status for End-user
@@ -25,13 +28,17 @@ def party_requires_ec3_document(application):
         eu_destination = True
 
     ec3_product_types = {
-        "firearms",
-        "components_for_firearms",
-        "ammunition",
-        "components_for_ammunition",
-        "firearms_accessory",
+        FirearmsProductType.FIREARMS,
+        FirearmsProductType.AMMUNITION,
+        FirearmsProductType.COMPONENTS_FOR_FIREARMS,
+        FirearmsProductType.COMPONENTS_FOR_AMMUNITION,
+        FirearmsProductType.FIREARMS_ACCESSORY,
     }
-    product_types = {product["firearm_details"]["type"]["key"] for product in application.get("goods", [])}
-    firearms_products = bool(ec3_product_types.intersection(product_types))
+    product_types = {
+        product["firearm_details"]["type"]["key"]
+        for product in application.get("goods", [])
+        if product.get("firearm_details")
+    }
+    firearms_products = ec3_product_types.intersection(product_types)
 
     return goods_from_NI and eu_destination and firearms_products

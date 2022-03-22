@@ -74,12 +74,8 @@ def get_application_task_list(request, application, errors=None):
     end_user = application.get("end_user", {})
     ec3_details_available = False
     if end_user:
-        ec3_document_available = bool(
-            [
-                document
-                for document in end_user["documents"]
-                if document["type"] == PartyDocumentType.END_USER_EC3_DOCUMENT
-            ]
+        ec3_document_available = any(
+            document["type"] == PartyDocumentType.END_USER_EC3_DOCUMENT for document in end_user["documents"]
         )
         ec3_details_available = ec3_document_available or end_user["ec3_missing_reason"]
 

@@ -228,9 +228,6 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
 class SetEndUserView(SetPartyView):
     party_type = "end_user"
 
-    def get_success_url(self, party_id):
-        return super().get_success_url(party_id)
-
 
 class CopyEndUserView(SetEndUserView):
     def get_form_initial(self, step):
@@ -267,6 +264,11 @@ class PartyContextMixin:
 
 class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
     template_name = "applications/party-summary.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        available_documents = {document["type"]: document for document in self.party["documents"]}
+        return {**context, **available_documents}
 
     def get_success_url(self):
         return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
@@ -343,9 +345,15 @@ class PartyDocumentOptionEditView(PartyEditView):
 
     def form_valid(self, form):
         end_user_document_available = str_to_bool(form.cleaned_data.get("end_user_document_available"))
-        # delete any existing documents
+
+        # delete any existing documents except EC3 which is different from undertaking documents
+        existing_documents = [
+            document
+            for document in self.party["documents"]
+            if document["type"] != PartyDocumentType.END_USER_EC3_DOCUMENT
+        ]
         if not end_user_document_available:
-            for document in self.party["documents"]:
+            for document in existing_documents:
                 delete_party_document_by_id(
                     self.request,
                     self.application_id,
@@ -582,7 +590,7 @@ class PartyEC3DocumentView(LoginRequiredMixin, PartyContextMixin, FormView):
         ec3_missing_reason = form.cleaned_data.pop("ec3_missing_reason", None)
         if party_ec3_document and ec3_missing_reason:
             form.add_error(None, "Select an EC3 form, or enter a reason why you do not have one (optional)")
-            return super().form_valid(form)
+            return super().form_invalid(form)
 
         existing_documents = {document["type"]: document["id"] for document in self.party["documents"]}
         ec3_document_exists = PartyDocumentType.END_USER_EC3_DOCUMENT in existing_documents

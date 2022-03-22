@@ -374,6 +374,14 @@ def test_edit_end_user_document(
             {
                 "goods_starting_point": "NI",
                 "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
+                "goods": [],
+            },
+            False,
+        ),
+        (
+            {
+                "goods_starting_point": "NI",
+                "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
                 "goods": [
                     {"firearm_details": {"type": {"key": "software_related_to_firearms"}}},
                     {"firearm_details": {"type": {"key": "technology_related_to_firearms"}}},
@@ -406,7 +414,7 @@ def test_edit_end_user_document(
     ),
 )
 def test_party_requires_ec3_document(application_data, ec3_expected_status):
-    assert ec3_expected_status == party_requires_ec3_document(application_data)
+    assert ec3_expected_status == bool(party_requires_ec3_document(application_data))
 
 
 def test_edit_end_user_ec3_document(requests_mock, authorized_client, data_standard_case, end_user_documents):
@@ -421,8 +429,7 @@ def test_edit_end_user_ec3_document(requests_mock, authorized_client, data_stand
     response = authorized_client.post(ec3_edit_url, data=data)
     assert response.status_code == 302
 
-    _ = requests_mock.request_history.pop()
-    actual = requests_mock.request_history.pop().json()
+    actual = requests_mock.request_history.pop(-2).json()
     assert actual == {
         "type": PartyDocumentType.END_USER_EC3_DOCUMENT,
         "name": actual["name"],
