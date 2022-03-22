@@ -23,7 +23,11 @@ services:
       - 8200:8200
     volumes:
       - ./playwright_videos:/app/playwright_videos
-    command: ./manage.py runserver 0.0.0.0:${PORT:-8200}
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+       npm run build_caseworker
+       ./manage.py runserver 0.0.0.0:${PORT:-8200}
     stdin_open: true
     tty: true
 

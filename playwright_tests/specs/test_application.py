@@ -42,7 +42,6 @@ def test_approve_a_case_in_FCDO_queue(page, application_data):
     assert "There are no new cases" in case_form
 
 
-@pytest.mark.skip(reason="need to change queues via API")
 def test_approve_a_case_in_FCO_countersign_queue(page, application_data):
     COUNTER_SIGN_QUEUE = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
 
