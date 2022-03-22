@@ -1,6 +1,5 @@
 from pytest_bdd import given, then, when, scenarios, parsers
 from tests_common import functions
-from tests_common.tools import helpers
 
 from ui_tests.exporter.pages.application_page import ApplicationPage
 from ui_tests.exporter.pages.hub_page import Hub
@@ -58,26 +57,9 @@ def delete_uploaded_document_and_submit(driver, item_index):
     functions.click_submit(driver)
 
 
-@when("I click check progress")
-def click_check_progress(driver):
-    Hub(driver).click_applications()
-
-
 @given(parsers.parse('Caseworker creates an ECJU query with "{query}"'))
 def caseworker_create_query(driver, query, api_test_client, context):
     api_test_client.ecju_queries.add_ecju_query(context.case_id, query=query)
-
-
-@then("I see a notification next to check progress")
-def should_see_notification_check_progress(driver):
-    return Hub(driver).notification_bubble_exists()
-
-
-@then("I see a notification next to the application")
-def should_see_notification_application(driver, context):
-    elements = driver.find_elements_by_css_selector(".govuk-table__row")
-    no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    assert "1" in elements[no].find_element_by_css_selector(Shared(driver).NOTIFICATION).text
 
 
 @then("I see a notification next to ECJU queries")
