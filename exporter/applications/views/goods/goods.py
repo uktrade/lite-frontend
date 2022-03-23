@@ -8,7 +8,6 @@ from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 from formtools.wizard.storage.session import SessionStorage
-from formtools.wizard.views import SessionWizardView
 
 from core.auth.views import LoginRequiredMixin
 from core.helpers import convert_dict_to_query_params
@@ -31,7 +30,6 @@ from exporter.applications.services import (
 from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
-    NoSaveStorage,
     has_valid_rfd_certificate,
     is_category_firearms,
     is_draft,
@@ -45,6 +43,7 @@ from exporter.core.helpers import (
 )
 from exporter.core.validators import validate_expiry_date
 from exporter.core.wizard.conditionals import C, Flag
+from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
@@ -227,14 +226,10 @@ class SkipResetSessionStorage(SessionStorage):
             super().reset()
 
 
-class AddGood(LoginRequiredMixin, SessionWizardView):
+class AddGood(LoginRequiredMixin, BaseSessionWizardView):
     """This view manages the sequence of forms that are used add a new product
     to an existing application.
     """
-
-    template_name = "core/form-wizard.html"
-
-    file_storage = NoSaveStorage()
 
     storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
 
@@ -687,11 +682,7 @@ def is_firearm_type_not_in(firearm_types):
     return _is_firearm_type_not_in
 
 
-class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, SessionWizardView):
-    template_name = "core/form-wizard.html"
-
-    file_storage = NoSaveStorage()
-
+class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSessionWizardView):
     storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
 
     form_list = [

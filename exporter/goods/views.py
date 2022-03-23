@@ -8,7 +8,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import FormView, TemplateView
-from formtools.wizard.views import SessionWizardView
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import CaseStatusEnum
@@ -30,7 +29,6 @@ from exporter.applications.services import (
 from exporter.applications.views.goods import is_firearm_certificate_needed
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
-    NoSaveStorage,
     has_valid_rfd_certificate,
     is_category_firearms,
     is_product_type,
@@ -40,6 +38,7 @@ from exporter.core.helpers import (
     str_to_bool,
 )
 from exporter.core.wizard.conditionals import C
+from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
@@ -241,14 +240,10 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
         return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": good_id, "type": "case-notes"}))
 
 
-class AddGood(LoginRequiredMixin, SessionWizardView):
+class AddGood(LoginRequiredMixin, BaseSessionWizardView):
     """This view manages the sequence of forms that are used add a new product
     to a user's product list.
     """
-
-    template_name = "core/form-wizard.html"
-
-    file_storage = NoSaveStorage()
 
     form_list = [
         (AddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
