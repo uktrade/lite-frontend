@@ -345,6 +345,12 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
             return {}
         return cleaned_data
 
+    def render_next_step(self, form, **kwargs):
+        if settings.FEATURE_FLAG_PRODUCT_2_0 and self.steps.current == AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE:
+            if form.cleaned_data["type"] == "firearms":
+                return redirect("applications:new_good_firearm", pk=self.kwargs["pk"])
+        return super().render_next_step(form, **kwargs)
+
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
         cert_file = all_data.pop("file", None)
