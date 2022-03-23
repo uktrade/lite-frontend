@@ -1,5 +1,6 @@
-from ui_tests.exporter.pages.BasePage import BasePage
+from selenium.webdriver.common.by import By
 
+from ui_tests.exporter.pages.BasePage import BasePage
 from ui_tests.exporter.pages.shared import Shared
 
 
@@ -16,6 +17,7 @@ class ApplicationPage(BasePage):
     LINK_GENERATED_DOCUMENTS_TAB_ID = "link-generated-documents"  # ID
     LINK_GENERATED_DOCUMENT_DOWNLOAD_LINK = "generated-document-download"  # ID
     ECJU_QUERY_RESPONSE_TEXT = "Respond to query"  # text
+    ECJU_QUERIES_OPEN = "open-ecju-query"  # ID
     ECJU_QUERIES_CLOSED = "closed-ecju-query"  # ID
     LINK_EDIT_APPLICATION = "a[href*='/edit-type/']"
     AUDIT_TRAIL_ITEM = ".app-activity__item"  # CSS
@@ -35,7 +37,14 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_id(self.BUTTON_COPY_APPLICATION_ID).click()
 
     def click_ecju_query_tab(self):
-        self.driver.find_element_by_id(self.LINK_ECJU_QUERY_TAB_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_ECJU_QUERY_TAB_ID).click()
+
+    def ecju_query_notification_count(self):
+        return (
+            self.driver.find_element(by=By.ID, value=self.LINK_ECJU_QUERY_TAB_ID)
+            .find_element_by_css_selector(Shared.NOTIFICATION)
+            .text.strip()
+        )
 
     def click_generated_documents_tab(self):
         self.driver.find_element_by_id(self.LINK_GENERATED_DOCUMENTS_TAB_ID).click()
@@ -77,3 +86,9 @@ class ApplicationPage(BasePage):
 
     def click_draft_applications_tab(self):
         self.driver.find_element_by_id(self.DRAFT_TAB).click()
+
+    def get_open_queries_text(self):
+        return self.driver.find_element(by=By.ID, value=self.ECJU_QUERIES_OPEN).text
+
+    def get_closed_queries_text(self):
+        return self.driver.find_element(by=By.ID, value=self.ECJU_QUERIES_CLOSED).text

@@ -433,7 +433,7 @@ def click_the_ecju_query_tab(driver):  # noqa
     application_page.click_ecju_query_tab()
 
 
-@when("I click to respond to the ecju query")  # noqa
+@when("I click to respond to the ECJU query")  # noqa
 def respond_to_ecju_click(driver):  # noqa
     application_page = ApplicationPage(driver)
     application_page.respond_to_ecju_query(0)
@@ -450,6 +450,7 @@ def click_button(driver, button_value):  # noqa
     functions.click_submit(driver, button_value=button_value)
 
 
+@when(parsers.parse('I enter "{response}" for the response and click submit'))  # noqa
 @when(parsers.parse('I enter "{response}" for ecju query and click submit'))  # noqa
 def respond_to_query(driver, response):  # noqa
     response_page = RespondToEcjuQueryPage(driver)
@@ -1276,3 +1277,10 @@ def i_agree(driver):  # noqa
 @then("the application is submitted")
 def application_submitted(driver, context):  # noqa
     assert driver.find_element_by_tag_name("h1").text == "Application submitted"
+
+
+@when("I click on my application")
+def click_on_application(driver, context):  # noqa
+    elements = Shared(driver).get_gov_table_cell_links()
+    no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
+    elements[no].click()
