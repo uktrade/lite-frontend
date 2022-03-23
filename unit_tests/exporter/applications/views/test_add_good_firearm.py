@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from core import client
 from exporter.core.constants import AddGoodFormSteps
+from exporter.goods.forms.firearms import FirearmCategoryForm
 
 
 @pytest.fixture
@@ -43,6 +44,7 @@ def test_firearm_category_redirects_to_new_wizard(
     assert response.url == new_good_firearm_url
 
 
-def test_new_good_firearm_view(authorized_client, new_good_firearm_url):
+def test_add_good_firearm_start(authorized_client, new_good_firearm_url):
     response = authorized_client.get(new_good_firearm_url)
     assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmCategoryForm)

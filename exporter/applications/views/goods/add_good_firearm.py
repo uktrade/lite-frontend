@@ -1,7 +1,14 @@
-from django.http import HttpResponse
-from django.views.generic import View
+from core.auth.views import LoginRequiredMixin
+
+from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.goods.forms.firearms import FirearmCategoryForm
 
 
-class AddGoodFirearm(View):
-    def get(self, request, **kwargs):
-        return HttpResponse("OK")
+class AddGoodFirearmSteps:
+    FIREARM_CATEGORY = "FIREARM_CATEGORY"
+
+
+class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
+    form_list = [
+        (AddGoodFirearmSteps.FIREARM_CATEGORY, FirearmCategoryForm),
+    ]
