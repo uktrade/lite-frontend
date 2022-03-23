@@ -1,0 +1,38 @@
+version: '3.2'
+
+services:
+  caseworker:
+    depends_on:
+      - redis
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    environment:
+      # Below values can be found in vault
+      DIRECTORY_SSO_API_CLIENT_BASE_URL: ${PW_DIRECTORY_SSO_API_CLIENT_BASE_URL}
+      DIRECTORY_SSO_API_CLIENT_API_KEY: ${PW_DIRECTORY_SSO_API_CLIENT_API_KEY}
+      AUTHBROKER_CLIENT_ID: ${PW_AUTHBROKER_CLIENT_ID}
+      AUTHBROKER_CLIENT_SECRET: ${PW_AUTHBROKER_CLIENT_SECRET}
+      PW_SSO_USER: ${PW_SSO_USER}
+      PW_EXPORT_SSO_USER: ${PW_EXPORT_SSO_USER}
+      PW_SSO_PASSWORD: ${PW_SSO_PASSWORD}
+      PW_SSO_URL: ${PW_SSO_URL}
+    env_file:
+      - ./caseworker.env
+    ports:
+      - 8200:8200
+    volumes:
+      - ./playwright_videos:/app/playwright_videos
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+       npm run build_caseworker
+       ./manage.py runserver 0.0.0.0:${PORT:-8200}
+    stdin_open: true
+    tty: true
+
+  redis:
+    image: "redis:5-alpine"
+    container_name: redis
+    ports:
+      - 6379:6379

@@ -1,5 +1,8 @@
 ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 
+docker-e2e = docker-compose -p lite -f docker-compose.e2e.yml
+wait-for-caseworker = dockerize -wait http://localhost:8200/healthcheck -timeout 5m -wait-retry-interval 5s
+
 manage_caseworker:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py $(ARGUMENTS)
 
@@ -61,3 +64,13 @@ secrets:
 	cp example.exporter.env exporter.env
 
 .PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
+
+start-caseworker:
+	$(docker-e2e) up --build -d
+
+stop-caseworker:
+	$(docker-e2e) down --remove-orphans
+
+caseworker-e2e-test:
+	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
+	$(docker-e2e) exec caseworker bash -c '$(wait-for-caseworker) && pytest playwright_tests/specs/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos'

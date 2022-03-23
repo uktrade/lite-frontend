@@ -36,6 +36,27 @@ image_redis: &image_redis
 ###############################################################################
 
 commands:
+  run_make:
+    description: Run makefile target with some setup
+    parameters:
+      label:
+        type: string
+        default: Execute make << parameters.target >>
+      target:
+        type: string
+    steps:
+      - run:
+          name: Copy config
+          command: cp ci.caseworker.env caseworker.env
+      - run:
+          name: << parameters.label >>
+          command: make << parameters.target >>
+
+  store_playwright_artifacts:
+    description: Store Playwright artifacts
+    steps:
+      - store_artifacts:
+          path: playwright_videos/
 
   vpn_install:
     description: "Install OpenVPN client"
@@ -48,6 +69,7 @@ commands:
             sudo apt-get remove openvpn # remove ubuntu aptrepo source
             sudo apt-get update
             sudo apt-get install openvpn -y
+
   vpn_connect:
     parameters:
       config:
@@ -238,14 +260,30 @@ jobs:
       - ui_tests
       - vpn_disconnect
 
+  caseworker_e2e_test:
+    machine:
+      image: ubuntu-1604:201903-01
+    resource_class: large
+    steps:
+      - checkout
+      - run: git submodule update --init
+      - vpn_install
+      - vpn_connect
+      - run_make:
+          label: Run caseworker e2e tests
+          target: start-caseworker caseworker-e2e-test
+      - store_playwright_artifacts
+      - vpn_disconnect
+
 workflows:
   version: 2
-  unit_test:
+  tests:
     when: << pipeline.parameters.run_unit_tests >>
     jobs:
       - lint
       - caseworker_unit_test
       - exporter_unit_test
+      - caseworker_e2e_test
       - upload_coverage:
           requires:
            - caseworker_unit_test

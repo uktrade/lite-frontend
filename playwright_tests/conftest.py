@@ -5,7 +5,6 @@ import os
 import pytest
 from playwright.sync_api import (
     Error,
-    Page,
     sync_playwright,
 )
 from slugify import slugify
@@ -23,7 +22,7 @@ def _build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args():
-    launch_options = {"headless": False}
+    launch_options = {}
     return launch_options
 
 
@@ -31,6 +30,7 @@ def browser_type_launch_args():
 def browser_context_args():
     context_args = {
         "base_url": "https://internal.lite.service.devdata.uktrade.digital/",
+        "record_video_dir": "./",
     }
     return context_args
 

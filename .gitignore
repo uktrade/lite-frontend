@@ -178,3 +178,6 @@ ui_tests/screenshots
 
 # pii file
 .pii-secret-hook
+
+# Playwright
+playwright_videos/
