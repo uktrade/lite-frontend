@@ -43,7 +43,6 @@ from core.auth.views import LoginRequiredMixin
 
 class Home(TemplateView):
     def _applications_with_missing_serial_numbers(self, request):
-        notifications, _ = get_notifications(request)
         response = get_applications_require_serial_numbers(request)
         application_ids = [application["id"] for application in response["results"]]
         return len(response["results"]), application_ids
