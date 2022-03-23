@@ -90,3 +90,29 @@ def test_tau_home_noauth(client, url):
     """GET /tau should return 302 with an unauthorised client"""
     response = client.get(url)
     assert response.status_code == 302
+
+
+def test_form(authorized_client, url, data_standard_case, requests_mock, mock_get_control_list_entries):
+    """
+    Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
+    """
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=data_standard_case)
+    requests_mock.post(client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={})
+    # unassessed products should have 1 entry
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert good["id"] in soup.find(id="unassessed-products").text
+    response = authorized_client.post(url, data={"report_summary": "test", 'goods': [good["id"]], 'does_not_have_control_list_entries': True})
+    assert response.status_code == 302
+    assert requests_mock.last_request.json() == {
+        "control_list_entries": [],
+        "report_summary": "test",
+        "comment": "",
+        "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
+        "is_good_controlled": False,
+    }
