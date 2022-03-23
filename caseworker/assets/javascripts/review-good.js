@@ -72,9 +72,11 @@ export default function initReviewGood() {
 
   if (!(controlListEntriesField || controlRationgField)) return;
 
-  controlRationgField.style.display = 'none';
+  if (controlRationgField) {
+    controlRationgField.style.display = 'none';
 
-  progressivelyEnhanceMultipleSelectField(controlRationgField)
+    progressivelyEnhanceMultipleSelectField(controlRationgField)
+  }
 
   // adding place for "rating may need alternative CLC"
   var controlListEntriesTokenFieldInfo = document.createElement('div')
