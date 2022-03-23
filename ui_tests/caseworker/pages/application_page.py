@@ -242,7 +242,7 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_id(self.ASSIGN_USER_ID).click()
 
     def click_im_done_button(self):
-        self.driver.find_element_by_id(self.BUTTON_IM_DONE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_IM_DONE_ID).click()
 
     def click_on_case_link(self, case_id):
         self.driver.find_element_by_id(self.CASE_LINK_PARTIAL_ID + case_id).click()

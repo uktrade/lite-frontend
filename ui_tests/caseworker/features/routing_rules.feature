@@ -3,9 +3,88 @@ Feature: I want to have cases be automatically routed to relevant work queues an
   case sub-type, country and combinations of flags on the case
   So that I can focus on working the case and not on routing cases to the correct departments
 
+
+  @e2e_routing
+  Scenario: End to end routing rules
+    Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
+    And I set the case status to "Submitted"
+    # LR
+    When I go to my profile page
+    And I change my team to "Licensing Reception" and default queue to "Licensing Reception SIEL applications"
+    And I go to my case list
+    And I click the application previously created
+    And I click I'm done
+    And I click submit
+    And I go to application previously created
+    Then I see the case status is now "Initial checks"
+    And I see the case is assigned to queues "Enforcement Unit Cases to Review, Technical Assessment Unit SIELs to Review"
+    # EU
+    When I go to my profile page
+    And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"
+    And I go to my case list
+    And I click the application previously created
+    And I click I'm done
+    And I click submit
+    And I go to application previously created
+    Then I see the case status is now "Initial checks"
+    And I see the case is assigned to queues "Technical Assessment Unit SIELs to Review"
+    And I see the case is not assigned to queues "Enforcement Unit Cases to Review"
+    # TAU
+    When I go to my profile page
+    And I change my team to "Technical Assessment Unit" and default queue to "Technical Assessment Unit SIELs to Review"
+    And I go to my case list
+    And I click the application previously created
+    And I click I'm done
+    And I click submit
+    And I go to application previously created
+    Then I see the case status is now "Under review"
+    And I see the case is assigned to queues "Licensing Unit Pre-circulation Cases to Review"
+    # LU
+    When I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Pre-circulation Cases to Review"
+    And I go to my case list
+    And I click the application previously created
+    And I click I'm done
+    And I click submit
+    And I go to application previously created
+    Then I see the case status is now "OGD Advice"
+    And I see the case is assigned to queues "Circulate to sub-advisers, FCDO Cases to Review"
+    # MOD
+    When I go to my profile page
+    And I change my team to "MOD-ECJU" and default queue to "Circulate to sub-advisers"
+    And I go to my case list
+    And I click the application previously created
+    And I click I'm done
+    And I click submit
+    And I go to application previously created
+    Then I see the case status is now "OGD Advice"
+    And I see the case is assigned to queues "FCDO Cases to Review"
+    # FCDO
+    When I go to my profile page
+    And I change my team to "FCDO" and default queue to "FCDO Cases to Review"
+    And I go to my case list
+    And I click the application previously created
+    And I click I'm done
+    And I click submit
+    And I go to my profile page
+    And I change my team to "FCDO" and default queue to "FCDO Counter-signing"
+    And I go to my case list
+    And I click the application previously created
+    And I click I'm done
+    And I input "decision" in the text box
+    And I click submit
+    And I go to application previously created
+    Then I see the case status is now "Under final review"
+    And I see the case is assigned to queues "Licensing Unit Post-circulation Cases to Finalise"
+    When I click on the case notes tab
+    Then I see "decision" as a case note
+
+
   @skip @legacy
   Scenario: Create routing rule
     Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
     And a queue has been created
     When I add a flag at level Case
     And I go to routing rules list

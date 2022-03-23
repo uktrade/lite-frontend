@@ -32,7 +32,7 @@ class Shared(BasePage):
     GOVUK_HEADING = ".govuk-heading-xl"
 
     def click_submit(self):
-        self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.SUBMIT_BUTTON).click()
 
     def get_text_of_error_message(self, no):
         return self.driver.find_elements_by_css_selector(self.ERROR_MESSAGE)[no].text
