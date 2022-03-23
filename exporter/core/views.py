@@ -42,13 +42,10 @@ from core.auth.views import LoginRequiredMixin
 
 
 class Home(TemplateView):
-    def _notifications_with_missing_serial_numbers(self, request):
-        notifications, _ = get_notifications(request)
-        require_serial_numbers_response = get_applications_require_serial_numbers(request)
-        require_serial_numbers = len(require_serial_numbers_response["results"])
-        app_notifications = notifications["notifications"]["application"]
-        notifications["notifications"]["application"] = app_notifications + require_serial_numbers
-        return notifications
+    def _applications_with_missing_serial_numbers(self, request):
+        response = get_applications_require_serial_numbers(request)
+        application_ids = [application["id"] for application in response["results"]]
+        return len(response["results"]), application_ids
 
     def get(self, request, **kwargs):
         if not request.authbroker_client.token:
@@ -61,7 +58,8 @@ class Home(TemplateView):
             user_permissions = user["role"]["permissions"]
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
-        notifications = self._notifications_with_missing_serial_numbers(request)
+        notifications, _ = get_notifications(request)
+        require_serials_count, require_serials_ids = self._applications_with_missing_serial_numbers(request)
         organisation = get_organisation(request, str(request.session["organisation"]))
         existing = has_existing_applications_and_licences_and_nlrs(request)
 
@@ -69,6 +67,8 @@ class Home(TemplateView):
             "organisation": organisation,
             "user_data": user,
             "notifications": notifications,
+            "missing_serials_count": require_serials_count,
+            "missing_serials_id": require_serials_ids[0] if require_serials_ids else None,
             "existing": existing,
             "user_permissions": user_permissions,
             "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
