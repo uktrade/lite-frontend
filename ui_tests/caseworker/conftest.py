@@ -780,12 +780,12 @@ def note_is_displayed(driver, case_note):  # noqa
 
 
 @when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case'))
-def submit_case_as_team(driver, team, queue, context, internal_url):
+def submit_case_as_team(driver, team, queue, context, internal_url):  # noqa
     submit_case_as_team_with_decision(driver, team, queue, None, context, internal_url)
 
 
 @when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case with decision "{decision}"'))
-def submit_case_as_team_with_decision(driver, team, queue, decision, context, internal_url):
+def submit_case_as_team_with_decision(driver, team, queue, decision, context, internal_url):  # noqa
     get_profile_page(driver)
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
