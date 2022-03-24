@@ -47,6 +47,7 @@ from exporter.core.validators import validate_expiry_date
 from exporter.core.wizard.conditionals import C, Flag
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
+    PvGradingForm,
     AttachFirearmsDealerCertificateForm,
     ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
     ComponentOfAFirearmUnitQuantityValueForm,
@@ -247,6 +248,7 @@ class AddGood(LoginRequiredMixin, SessionWizardView):
         (AddGoodFormSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
         (AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
         (AddGoodFormSteps.ADD_GOODS_QUESTIONS, AddGoodsQuestionsForm),
+        (AddGoodFormSteps.PV_GRADING, PvGradingForm),
         (AddGoodFormSteps.PV_DETAILS, PvDetailsForm),
         (AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmsYearOfManufactureDetailsForm),
         (AddGoodFormSteps.FIREARMS_REPLICA, FirearmsReplicaForm),

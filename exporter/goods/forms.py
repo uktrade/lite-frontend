@@ -703,19 +703,6 @@ class AddGoodsQuestionsForm(forms.Form):
         widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
     )
 
-    is_pv_graded = forms.ChoiceField(
-        choices=(
-            ("yes", CreateGoodForm.IsGraded.YES),
-            ("no", CreateGoodForm.IsGraded.NO),
-        ),
-        label=CreateGoodForm.IsGraded.TITLE,
-        help_text=CreateGoodForm.IsGraded.DESCRIPTION,
-        widget=forms.RadioSelect,
-        error_messages={
-            "required": "Select an option",
-        },
-    )
-
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
         application_pk = kwargs.pop("application_pk")
@@ -753,7 +740,6 @@ class AddGoodsQuestionsForm(forms.Form):
                 ),
                 CreateGoodForm.IsControlled.NO,
             ),
-            "is_pv_graded",
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
         )
 
@@ -773,6 +759,47 @@ def decompose_date(field_name, field_data, joiner=""):
     decomposed_data[f"{field_name}{joiner}year"] = str(field_data.year)
 
     return decomposed_data
+
+
+class PvGradingForm(forms.Form):
+    title = CreateGoodForm.IsGraded.TITLE
+
+    is_pv_graded = forms.ChoiceField(
+        choices=(
+            ("yes", CreateGoodForm.IsGraded.YES),
+            ("no", CreateGoodForm.IsGraded.NO),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product has a security grading or classification",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            HTML.p("For example, UK Official or NATO Restricted."),
+            "is_pv_graded",
+            HTML.details(
+                "Help with security gradings",
+                """<p>The government classifies information assets to ensure they are appropriately protected.</p>
+                <p><a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/government-security-classifications">
+                Guidance on government security gradings (opens in new tab)</a></p>
+                <p>The grading can sometimes include a prefix and suffix. There are many in use and so it is important that you know the full
+                 classification of the product.</p>
+                <p>If the product was developed with Ministry of Defense (MOD) funding you will find the grading in the Security Aspects Letter
+                 provided by the MOD project team.</p>
+                <p>If the product was developed with overseas government support, that government is responsible for providing the grading.</p>
+                <p>If the product was developed without UK or overseas government support, you should apply for a private venture grading
+                 using <a class="govuk-link" target="_blank" href="https://www.spire.trade.gov.uk/">SPIRE</a>. The grading will be provided by MOD.</p>
+                """,
+            ),
+            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
+        )
 
 
 class PvDetailsForm(forms.Form):

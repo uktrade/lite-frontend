@@ -19,6 +19,7 @@ from exporter.goods.forms import (
     ProductComponentForm,
     ProductMilitaryUseForm,
     ProductUsesInformationSecurityForm,
+    PvGradingForm,
     PvDetailsForm,
     RegisteredFirearmsDealerForm,
     SoftwareTechnologyDetailsForm,
@@ -171,24 +172,20 @@ def test_add_good_goods_questions(url, authorized_client):
             f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-name": "test",
             f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-is_good_controlled": "True",
             f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-control_list_entries": "ML1a",
-            f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-is_pv_graded": "yes",
         },
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], PvDetailsForm)
+    assert isinstance(response.context["form"], PvGradingForm)
     assert title not in response.content
 
 
 def test_add_good_pv_details(url, authorized_client):
-    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.ADD_GOODS_QUESTIONS})
+    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PV_GRADING})
     authorized_client.post(
         url,
         data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.ADD_GOODS_QUESTIONS,
-            f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-name": "test",
-            f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-is_good_controlled": "True",
-            f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-control_list_entries": "ML1a",
-            f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-is_pv_graded": "yes",
+            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PV_GRADING,
+            f"{AddGoodFormSteps.PV_GRADING}-is_pv_graded": "yes",
         },
     )
 
@@ -424,7 +421,7 @@ def _submit_good(url, authorized_client, is_rfd=True, firearms_act="Yes"):
     )
     assert not response.context["form"].errors
 
-    # Post goods questions, return pv details
+    # Post goods questions, return pv grading
     response = authorized_client.post(
         url,
         data={
@@ -432,7 +429,16 @@ def _submit_good(url, authorized_client, is_rfd=True, firearms_act="Yes"):
             f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-name": "test",
             f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-is_good_controlled": "True",
             f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-control_list_entries": "ML1a",
-            f"{AddGoodFormSteps.ADD_GOODS_QUESTIONS}-is_pv_graded": "yes",
+        },
+    )
+    assert not response.context["form"].errors
+
+    # Post pv grading questions, return pv details
+    response = authorized_client.post(
+        url,
+        data={
+            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PV_GRADING,
+            f"{AddGoodFormSteps.PV_GRADING}-is_pv_graded": "yes",
         },
     )
     assert not response.context["form"].errors

@@ -168,13 +168,13 @@ class CreateGoodForm:
         DESCRIPTION = "Type to get suggestions. For example, ML1a."
 
     class IsGraded:
-        TITLE = "Does the product have a security grading?"
+        TITLE = "Does the product have a government security grading or classification?"
         DESCRIPTION = (
             "For example, UK OFFICIAL or NATO UNCLASSIFIED. The security grading of the product doesn't affect if an "
             "export licence is needed."
         )
-        YES = "Yes"
-        NO = "No, it doesn't need one"
+        YES = "Yes (includes Unclassified)"
+        NO = "No"
         RAISE_QUERY = "No, it needs one, apply for a private venture (PV) grading"
 
     class PartNumber:

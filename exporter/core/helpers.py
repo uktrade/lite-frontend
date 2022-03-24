@@ -201,9 +201,9 @@ def is_draft(wizard):
 
 
 def is_pv_graded(wizard):
-    add_goods_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.ADD_GOODS_QUESTIONS)
+    pv_grading_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.PV_GRADING)
 
-    return str_to_bool(add_goods_cleaned_data.get("is_pv_graded"))
+    return str_to_bool(pv_grading_cleaned_data.get("is_pv_graded"))
 
 
 def show_serial_numbers_form(indentification_markings_step_name):
