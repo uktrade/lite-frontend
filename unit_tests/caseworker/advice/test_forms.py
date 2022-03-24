@@ -13,8 +13,8 @@ from caseworker.advice import forms
 def test_give_approval_advice_form_valid(data, valid_status):
     form = forms.GiveApprovalAdviceForm(data=data)
     assert form.is_valid() == valid_status
-    if valid_status == False:
-        assert form.errors["approval_reasons"][0] == "Enter a reason for approving"
+    if not valid_status:
+        assert form.errors["approval_reasons"] == ["Enter a reason for approving"]
 
 
 @pytest.mark.parametrize(
@@ -30,8 +30,7 @@ def test_select_advice_form_valid(data, valid_status):
     form = forms.SelectAdviceForm(data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
-        assert "recommendation" in form.errors.keys()
-        assert "Select if you approve all or refuse all" in form.errors["recommendation"]
+        assert form.errors["recommendation"] == ["Select if you approve all or refuse all"]
 
 
 @pytest.mark.parametrize(
@@ -47,8 +46,7 @@ def test_consolidate_select_advice_form_valid(data, valid_status):
     form = forms.ConsolidateSelectAdviceForm(team_name=None, data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
-        assert "recommendation" in form.errors.keys()
-        assert "Select if you approve or refuse" in form.errors["recommendation"]
+        assert form.errors["recommendation"] == ["Select if you approve or refuse"]
 
 
 @pytest.mark.parametrize(
@@ -75,8 +73,7 @@ def test_countersign_advice_form_valid(data, valid_status):
     form = forms.CountersignAdviceForm(data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
-        assert "approval_reasons" in form.errors.keys()
-        assert "Enter why you agree with the recommendation" in form.errors["approval_reasons"]
+        assert form.errors["approval_reasons"] == ["Enter why you agree with the recommendation"]
 
 
 @pytest.mark.parametrize(
@@ -94,9 +91,8 @@ def test_countersign_advice_form_valid(data, valid_status):
         ({"approval_reasons": "meets the requirements"}, False),
     ),
 )
-def test_give_approval_advice_form_valid(data, valid_status):
+def test_give_fcdo_approval_advice_form_valid(data, valid_status):
     form = forms.FCDOApprovalAdviceForm(data=data, countries={"GB": "United Kingdom"})
-    form.is_valid()
     assert form.is_valid() == valid_status
-    if valid_status == False:
-        assert "Select the destinations you want to make recommendations for" in form.errors["countries"][0]
+    if not valid_status:
+        assert form.errors["countries"] == ["Select the destinations you want to make recommendations for"]
