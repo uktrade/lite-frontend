@@ -496,6 +496,7 @@ def data_standard_case():
                     "product_differences_note": "",
                     "document_in_english": True,
                     "document_on_letterhead": True,
+                    "ec3_missing_reason": "",
                     "role": {"key": "other", "value": "Other"},
                     "role_other": None,
                     "flags": [],

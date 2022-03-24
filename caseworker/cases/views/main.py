@@ -162,8 +162,8 @@ class CaseDetail(CaseView):
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
-            Slices.DENIAL_MATCHES,
-            Slices.SANCTION_MATCHES,
+            conditional(self.case.data["denial_matches"], Slices.DENIAL_MATCHES),
+            conditional(self.case.data["sanction_matches"], Slices.SANCTION_MATCHES),
             conditional(self.case.data["end_user"], Slices.END_USER_DOCUMENTS),
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,

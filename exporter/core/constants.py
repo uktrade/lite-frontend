@@ -110,6 +110,16 @@ class LocationType:
     LAND_BASED = "land_based"
 
 
+class FirearmsProductType:
+    FIREARMS = "firearms"
+    COMPONENTS_FOR_FIREARMS = "components_for_firearms"
+    AMMUNITION = "ammunition"
+    COMPONENTS_FOR_AMMUNITION = "components_for_ammunition"
+    FIREARMS_ACCESSORY = "firearms_accessory"
+    SOFTWARE_RELATED_TO_FIREARM = "software_related_to_firearms"
+    TECHNOLOGY_RELATED_TO_FIREARM = "technology_related_to_firearms"
+
+
 PRODUCT_CATEGORY_FIREARM = "group2_firearms"
 FIREARMS = "firearms"
 FIREARMS_ACCESSORY = "firearms_accessory"
@@ -140,6 +150,7 @@ FIREARMS_ALL_TYPES = [
 
 DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION = "english_translation"
 DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD = "company_letterhead"
+DOCUMENT_TYPE_PARAM_EC3_DOCUMENT = "ec3_document"
 
 
 class GoodsStartingPoint:
@@ -226,3 +237,4 @@ class PartyDocumentType:
     END_USER_UNDERTAKING_DOCUMENT = "end_user_undertaking_document"
     END_USER_ENGLISH_TRANSLATION_DOCUMENT = "end_user_english_translation_document"
     END_USER_COMPANY_LETTERHEAD_DOCUMENT = "end_user_company_letterhead_document"
+    END_USER_EC3_DOCUMENT = "end_user_ec3_document"

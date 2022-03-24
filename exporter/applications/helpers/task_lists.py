@@ -5,6 +5,7 @@ from exporter.applications.helpers.check_your_answers import (
     _is_application_export_type_temporary,
     get_application_type_string,
 )
+from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.applications.helpers.task_list_sections import (
     get_reference_number_description,
     get_edit_type,
@@ -25,6 +26,7 @@ from exporter.core.constants import (
     EXHIBITION,
     F680,
     GIFTING,
+    PartyDocumentType,
     Permissions,
     CaseTypes,
 )
@@ -67,6 +69,17 @@ def get_application_task_list(request, application, errors=None):
         "licence_type": get_application_type_string(application),
         "errors": errors,
     }
+
+    require_ec3 = party_requires_ec3_document(application)
+    end_user = application.get("end_user", {})
+    ec3_details_available = False
+    if end_user:
+        ec3_document_available = any(
+            document["type"] == PartyDocumentType.END_USER_EC3_DOCUMENT for document in end_user["documents"]
+        )
+        ec3_details_available = ec3_document_available or end_user["ec3_missing_reason"]
+
+    context["show_ec3_banner"] = require_ec3 and not ec3_details_available
 
     if application_type == HMRC:
         context["locations"] = application["goods_locations"] or application["have_goods_departed"]

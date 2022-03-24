@@ -41,6 +41,24 @@
 		</div>
 	{% endif %}
 
+	{% if show_ec3_banner %}
+		<div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+			<div class="govuk-notification-banner__header">
+			<h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+				Important
+			</h2>
+			</div>
+			<div class="govuk-notification-banner__content">
+			<p class="govuk-notification-banner__heading">
+				An EC3 form may be needed to export your products from Northern Ireland to the European Union.
+				<a class="govuk-notification-banner__link" href="{% url 'applications:end_user_ec3_document' application.id application.end_user.id %}">
+					Upload an EC3 form (optional)
+				</a>.
+			</p>
+			</div>
+		</div>
+	{% endif %}
+
 	<h1 class="govuk-heading-l govuk-!-margin-bottom-2">
 		{% block title %}{% endblock %}
 	</h1>

@@ -69,6 +69,32 @@
                 </tr>
             {% endif %}
 
+            {% if end_user.documents|length %}
+                {% for document in end_user.documents %}
+                    {% if document.type == "end_user_ec3_document" %}
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Upload an EC3 form</th>
+                            <td class="govuk-table__cell">
+                                {% if document.safe %}
+                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                        EC3 form ({{ document.name|document_extension|upper}} opens in new tab)
+                                    </a>
+                                {% else %}
+                                    {{ document.name }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if end_user.ec3_missing_reason %}
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">If you do not have an EC3 form, explain why (optional)</th>
+                    <td class="govuk-table__cell">{{ end_user.ec3_missing_reason }}</td>
+                </tr>
+            {% endif %}
+
             {% if consignee and consignee.documents|length %}
                 {% with document=consignee.documents.0 %}
                     <tr class="govuk-table__row">

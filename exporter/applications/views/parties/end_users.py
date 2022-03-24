@@ -19,6 +19,7 @@ from exporter.applications.forms.parties import (
     PartyDocumentUploadForm,
     PartyEnglishTranslationDocumentUploadForm,
     PartyCompanyLetterheadDocumentUploadForm,
+    PartyEC3DocumentUploadForm,
 )
 from exporter.applications.services import (
     copy_party,
@@ -32,6 +33,7 @@ from exporter.applications.services import (
     download_document_from_s3,
 )
 from exporter.applications.views.parties.base import CopyParties
+from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.core.constants import (
     OPEN,
     SetPartyFormSteps,
@@ -162,7 +164,11 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
         return kwargs
 
     def get_success_url(self, party_id):
-        return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
+        application = get_application(self.request, self.kwargs["pk"])
+        if party_requires_ec3_document(application):
+            return reverse("applications:end_user_ec3_document", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
+        else:
+            return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
 
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
@@ -222,9 +228,6 @@ class SetPartyView(LoginRequiredMixin, SessionWizardView):
 class SetEndUserView(SetPartyView):
     party_type = "end_user"
 
-    def get_success_url(self, party_id):
-        return reverse("applications:end_user_summary", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
-
 
 class CopyEndUserView(SetEndUserView):
     def get_form_initial(self, step):
@@ -261,6 +264,11 @@ class PartyContextMixin:
 
 class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
     template_name = "applications/party-summary.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        available_documents = {document["type"]: document for document in self.party["documents"]}
+        return {**context, **available_documents}
 
     def get_success_url(self):
         return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
@@ -337,9 +345,15 @@ class PartyDocumentOptionEditView(PartyEditView):
 
     def form_valid(self, form):
         end_user_document_available = str_to_bool(form.cleaned_data.get("end_user_document_available"))
-        # delete any existing documents
+
+        # delete any existing documents except EC3 which is different from undertaking documents
+        existing_documents = [
+            document
+            for document in self.party["documents"]
+            if document["type"] != PartyDocumentType.END_USER_EC3_DOCUMENT
+        ]
         if not end_user_document_available:
-            for document in self.party["documents"]:
+            for document in existing_documents:
                 delete_party_document_by_id(
                     self.request,
                     self.application_id,
@@ -563,3 +577,58 @@ class PartyDocumentDownloadView(LoginRequiredMixin, PartyContextMixin, TemplateV
 
         document = document[0]
         return download_document_from_s3(document["s3_key"], document["name"])
+
+
+class PartyEC3DocumentView(LoginRequiredMixin, PartyContextMixin, FormView):
+    form_class = PartyEC3DocumentUploadForm
+
+    def get_initial(self):
+        return {"ec3_missing_reason": self.party["ec3_missing_reason"]}
+
+    def form_valid(self, form):
+        party_ec3_document = form.cleaned_data.pop("party_ec3_document", None)
+        ec3_missing_reason = form.cleaned_data.pop("ec3_missing_reason", None)
+        if party_ec3_document and ec3_missing_reason:
+            form.add_error(None, "Select an EC3 form, or enter a reason why you do not have one (optional)")
+            return super().form_invalid(form)
+
+        existing_documents = {document["type"]: document["id"] for document in self.party["documents"]}
+        ec3_document_exists = PartyDocumentType.END_USER_EC3_DOCUMENT in existing_documents
+
+        # We only want an EC3 form or missing reason, providing both is an error so
+        # one of the following is true but user can edit these values from summary page.
+        # If the user provides a reason then we have to delete previously uploaded document
+        # if it exists and similarly if new document is uploaded then we reset the reason.
+        if ec3_missing_reason and ec3_document_exists:
+            delete_party_document_by_id(
+                self.request,
+                self.application_id,
+                self.party_id,
+                existing_documents[PartyDocumentType.END_USER_EC3_DOCUMENT],
+            )
+
+        if party_ec3_document:
+            ec3_missing_reason = ""
+            data = {
+                "type": PartyDocumentType.END_USER_EC3_DOCUMENT,
+                "name": getattr(party_ec3_document, "name"),
+                "s3_key": party_ec3_document.name,
+                "size": int(party_ec3_document.size // 1024) if party_ec3_document.size else 0,  # in kilobytes
+            }
+            response, status_code = post_party_document(self.request, self.application_id, self.party_id, data)
+            if status_code != HTTPStatus.CREATED:
+                log.error(
+                    "Error uploading EC3 document - response was: %s - %s",
+                    status_code,
+                    response,
+                    exc_info=True,
+                )
+                return error_page(self.request, "Unexpected error uploading EC3 document")
+
+        data = {"ec3_missing_reason": ec3_missing_reason}
+        update_party(self.request, self.application_id, self.party_id, data)
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:end_user_summary", kwargs=self.kwargs)
