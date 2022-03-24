@@ -192,43 +192,13 @@
             </div>
         {% endif %}
 
-        {% if not end_user_ec3_document and not party.ec3_missing_reason %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Upload an EC3 form (optional)
-                </dt>
-                <dd class="govuk-summary-list__value">
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
-                        Change<span class="govuk-visually-hidden"> name</span>
-                    </a>
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    If you do not have an EC3 form, explain why (optional)
-                </dt>
-                <dd class="govuk-summary-list__value">
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
-                        Change<span class="govuk-visually-hidden"> name</span>
-                    </a>
-                </dd>
-            </div>
-        {% else %}
-            {% if end_user_ec3_document %}
+        {% if ec3_required %}
+            {% if not end_user_ec3_document and not party.ec3_missing_reason %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Upload an EC3 form (optional)
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        {% if end_user_ec3_document.safe %}
-                            <a href="{% url 'applications:party_document_download' pk obj_pk end_user_ec3_document.id %}" class="govuk-link--no-visited-state">{{ end_user_ec3_document.name }}</a>
-                        {% else %}
-                            {{ end_user_ec3_document.name }}
-                        {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
@@ -236,15 +206,11 @@
                         </a>
                     </dd>
                 </div>
-            {% endif %}
-
-            {% if party.ec3_missing_reason %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         If you do not have an EC3 form, explain why (optional)
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        {{ party.ec3_missing_reason }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
@@ -252,6 +218,42 @@
                         </a>
                     </dd>
                 </div>
+            {% else %}
+                {% if end_user_ec3_document %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Upload an EC3 form (optional)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if end_user_ec3_document.safe %}
+                                <a href="{% url 'applications:party_document_download' pk obj_pk end_user_ec3_document.id %}" class="govuk-link--no-visited-state">{{ end_user_ec3_document.name }}</a>
+                            {% else %}
+                                {{ end_user_ec3_document.name }}
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
+                                Change<span class="govuk-visually-hidden"> name</span>
+                            </a>
+                        </dd>
+                    </div>
+                {% endif %}
+
+                {% if party.ec3_missing_reason %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            If you do not have an EC3 form, explain why (optional)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ party.ec3_missing_reason }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="{% url 'applications:end_user_ec3_document' pk obj_pk %}">
+                                Change<span class="govuk-visually-hidden"> name</span>
+                            </a>
+                        </dd>
+                    </div>
+                {% endif %}
             {% endif %}
         {% endif %}
     </div>

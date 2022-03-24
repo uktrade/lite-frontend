@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from exporter.applications.helpers.countries import ContractTypes
+from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.core.constants import (
     STANDARD,
     OPEN,
@@ -484,13 +485,14 @@ def get_end_user_data(application, party, editable):
     if party["end_user_document_available"]:
         data[document_availability_key] = "Yes"
         for doc in party["documents"]:
-            document_type = PartyDocumentType.SUPPORTING_DOCUMENT
             if doc["type"] == PartyDocumentType.END_USER_UNDERTAKING_DOCUMENT:
                 document_type = "End user document"
-            if doc["type"] == PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT:
+            elif doc["type"] == PartyDocumentType.END_USER_ENGLISH_TRANSLATION_DOCUMENT:
                 document_type = "English translation of the end user document"
-            if doc["type"] == PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT:
+            elif doc["type"] == PartyDocumentType.END_USER_COMPANY_LETTERHEAD_DOCUMENT:
                 document_type = "Document on company letterhead"
+            else:
+                continue
 
             data[document_type] = _convert_end_user_document(application["id"], party["id"], doc, editable)
 
@@ -501,6 +503,22 @@ def get_end_user_data(application, party, editable):
         data[document_availability_key] = "No, I do not have an end-user undertaking or stockist undertaking"
         document_key_heading = "Explain why you do not have an end-user undertaking or stockist undertaking"
         data[document_key_heading] = party["end_user_document_missing_reason"]
+
+    ec3_required = party_requires_ec3_document(application)
+    if ec3_required:
+        ec3_document = [
+            document for document in party["documents"] if document["type"] == PartyDocumentType.END_USER_EC3_DOCUMENT
+        ]
+        if not ec3_document and not party["ec3_missing_reason"]:
+            data["Upload an EC3 form (optional)"] = " "
+            data["If you do not have an EC3 form, explain why (optional)"] = " "
+        else:
+            if ec3_document:
+                data["Upload an EC3 form (optional)"] = _convert_end_user_document(
+                    application["id"], party["id"], ec3_document[0], editable
+                )
+            elif party["ec3_missing_reason"]:
+                data["If you do not have an EC3 form, explain why (optional)"] = party["ec3_missing_reason"]
 
     return data
 
