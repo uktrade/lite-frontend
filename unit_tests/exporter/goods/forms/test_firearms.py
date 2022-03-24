@@ -1,6 +1,9 @@
 import pytest
 
-from exporter.goods.forms.firearms import FirearmCategoryForm
+from exporter.goods.forms.firearms import (
+    FirearmCategoryForm,
+    FirearmNameForm,
+)
 
 
 @pytest.mark.parametrize(
@@ -18,5 +21,18 @@ from exporter.goods.forms.firearms import FirearmCategoryForm
 )
 def test_firearm_category_form(data, is_valid, errors):
     form = FirearmCategoryForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"name": ["Enter a descriptive name"]}),
+        ({"name": ["TEST NAME"]}, True, {}),
+    ),
+)
+def test_firearm_category_form(data, is_valid, errors):
+    form = FirearmNameForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

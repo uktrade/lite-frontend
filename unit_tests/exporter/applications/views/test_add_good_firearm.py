@@ -109,9 +109,13 @@ def test_add_good_firearm_submission(
         },
     )
 
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.CATEGORY,
         {"category": ["NON_AUTOMATIC_SHOTGUN"]},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.NAME,
+        {"name": "TEST NAME"},
     )
 
     assert response.status_code == 302
@@ -131,7 +135,7 @@ def test_add_good_firearm_submission(
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "type": "firearms",
         },
-        "name": "FAKE NAME",
+        "name": "TEST NAME",
         "is_good_controlled": False,
         "is_pv_graded": "no",
         "item_category": "group2_firearms",
@@ -149,9 +153,13 @@ def test_add_good_firearm_submission_error(
         json={},
     )
 
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.CATEGORY,
         {"category": ["NON_AUTOMATIC_SHOTGUN"]},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.NAME,
+        {"name": "TEST NAME"},
     )
 
     assert response.status_code == 200

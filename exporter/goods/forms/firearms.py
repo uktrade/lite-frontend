@@ -4,6 +4,7 @@ from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
 from django import forms
 from django.db import models
+from django.template.loader import render_to_string
 
 
 class TextChoice(Choice):
@@ -70,3 +71,35 @@ class FirearmCategoryForm(forms.Form):
             return data
 
         raise forms.ValidationError('Select a firearm category, or select "None of the above"')
+
+
+class FirearmNameForm(forms.Form):
+    class Layout:
+        TITLE = "Give the product a descriptive name"
+        SUBTITLE = (
+            "Try to match the name as closely as possible to any documentation such as the technical "
+            "specification, end user certificate or firearm certificate."
+        )
+        SUBMIT_BUTTON = "Continue"
+
+    name = forms.CharField(
+        label="",
+        error_messages={
+            "required": "Enter a descriptive name",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            HTML.p(self.Layout.SUBTITLE),
+            "name",
+            HTML.details(
+                "Help with naming your product",
+                render_to_string("goods/forms/firearms/help_with_naming_your_product.html"),
+            ),
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )

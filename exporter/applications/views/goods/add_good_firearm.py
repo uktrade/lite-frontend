@@ -10,7 +10,10 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.goods.forms.firearms import FirearmCategoryForm
+from exporter.goods.forms.firearms import (
+    FirearmCategoryForm,
+    FirearmNameForm,
+)
 from exporter.goods.services import post_firearm
 from lite_forms.generators import error_page
 
@@ -20,11 +23,13 @@ logger = logging.getLogger(__name__)
 
 class AddGoodFirearmSteps:
     CATEGORY = "CATEGORY"
+    NAME = "NAME"
 
 
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
+        (AddGoodFirearmSteps.NAME, FirearmNameForm),
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -50,7 +55,6 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
 
-        all_data["name"] = "FAKE NAME"
         all_data["is_good_controlled"] = False
         all_data["is_pv_graded"] = "no"
 
