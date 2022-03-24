@@ -7,11 +7,13 @@ Feature: I want to add an internal note to a case and view notes
   @add_case_note
   Scenario: Add a new valid case note
     Given I sign in to SSO or am signed into SSO
-    And I create open application or open application has been previously created
+    And I create standard application or standard application has been previously created
     When I go to application previously created
-    And I click on the case notes tab
-    And I enter "case note" for case note
+    And I click on the notes and timeline tab
+    And I enter "case note" as the case note
+    And I click make visible to exporter
     And I click post note
+    And I click confirm on confirmation box
     Then I see "case note" as a case note
 
   @skip @legacy

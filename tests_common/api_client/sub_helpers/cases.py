@@ -43,8 +43,10 @@ class Cases:
                 body={"queues": [bin_queue_id]},
             )
 
-    def add_case_note(self, context, case_id):
+    def add_case_note(self, context, case_id, note=None):
         data = self.request_data["case_note"]
+        if note is not None:
+            data["text"] = note
         context.case_note_text = self.request_data["case_note"]["text"]
         self.api_client.make_request(
             method="POST",
