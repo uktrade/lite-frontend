@@ -17,7 +17,7 @@ class FirearmCategoryForm(forms.Form):
         SUBTITLE = "Some firearm categories require a criminal conviction check and additonal documentation."
         SUBMIT_BUTTON = "Continue"
 
-    class FirearmCategoryChoices(models.TextChoices):
+    class CategoryChoices(models.TextChoices):
         NON_AUTOMATIC_SHOTGUN = "NON_AUTOMATIC_SHOTGUN", "Non automatic shotgun"
         NON_AUTOMATIC_RIM_FIRED_RIFLE = "NON_AUTOMATIC_RIM_FIRED_RIFLE", "Non automatic rim-fired rifle"
         NON_AUTOMATIC_RIM_FIRED_HANDGUN = "NON_AUTOMATIC_RIM_FIRED_HANDGUN", "Non automatic rim-fired handgun"
@@ -25,20 +25,20 @@ class FirearmCategoryForm(forms.Form):
         COMBINATION_GUN_MADE_BEFORE_1938 = "COMBINATION_GUN_MADE_BEFORE_1938", "Combination gun made before 1938"
         NONE = "NONE", "None of the above"
 
-    FIREARM_CATEGORY_CHOICES = (
-        TextChoice(FirearmCategoryChoices.NON_AUTOMATIC_SHOTGUN),
-        TextChoice(FirearmCategoryChoices.NON_AUTOMATIC_RIM_FIRED_RIFLE),
-        TextChoice(FirearmCategoryChoices.NON_AUTOMATIC_RIM_FIRED_HANDGUN),
-        TextChoice(FirearmCategoryChoices.RIFLE_MADE_BEFORE_1938),
+    CATEGORY_CHOICES = (
+        TextChoice(CategoryChoices.NON_AUTOMATIC_SHOTGUN),
+        TextChoice(CategoryChoices.NON_AUTOMATIC_RIM_FIRED_RIFLE),
+        TextChoice(CategoryChoices.NON_AUTOMATIC_RIM_FIRED_HANDGUN),
+        TextChoice(CategoryChoices.RIFLE_MADE_BEFORE_1938),
         TextChoice(
-            FirearmCategoryChoices.COMBINATION_GUN_MADE_BEFORE_1938,
+            CategoryChoices.COMBINATION_GUN_MADE_BEFORE_1938,
             divider="or",
         ),
-        TextChoice(FirearmCategoryChoices.NONE),
+        TextChoice(CategoryChoices.NONE),
     )
 
-    firearm_category = forms.MultipleChoiceField(
-        choices=FIREARM_CATEGORY_CHOICES,
+    category = forms.MultipleChoiceField(
+        choices=CATEGORY_CHOICES,
         error_messages={
             "required": 'Select a firearm category, or select "None of the above"',
         },
@@ -54,19 +54,19 @@ class FirearmCategoryForm(forms.Form):
             HTML.h1(self.Layout.TITLE),
             HTML.p(self.Layout.SUBTITLE),
             Field(
-                "firearm_category",
+                "category",
                 template="gds/layout/checkboxes_with_divider.html",
             ),
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
-    def clean_firearm_category(self):
-        data = self.cleaned_data["firearm_category"]
+    def clean_category(self):
+        data = self.cleaned_data["category"]
 
-        if self.FirearmCategoryChoices.NONE not in data:
+        if self.CategoryChoices.NONE not in data:
             return data
 
-        if data == [self.FirearmCategoryChoices.NONE]:
+        if data == [self.CategoryChoices.NONE]:
             return data
 
         raise forms.ValidationError('Select a firearm category, or select "None of the above"')
