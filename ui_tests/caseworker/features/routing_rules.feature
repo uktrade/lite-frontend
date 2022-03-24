@@ -35,7 +35,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I switch to "FCDO" with queue "FCDO Counter-signing" and I submit the case with decision "decision"
     Then I see the case status is now "Under final review"
     And I see the case is assigned to queues "Licensing Unit Post-circulation Cases to Finalise"
-    When I click on the case notes tab
+    When I click on the notes and timeline tab
     Then I see "decision" as a case note
 
 

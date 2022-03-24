@@ -50,8 +50,3 @@ def click_visible_to_exporters_checkbox(driver):
 def click_confirm_on_confirmation_box(driver):
     alert = driver.switch_to.alert
     alert.accept()
-
-
-@when("I click on the notes and timeline tab")
-def case_notes_tab(driver, internal_url, context):
-    ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)

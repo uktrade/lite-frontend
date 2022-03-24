@@ -765,7 +765,7 @@ def flag_not_present(driver, flag):  # noqa
     assert len(el) == 0
 
 
-@when("I click on the case notes tab")  # noqa
+@when("I click on the notes and timeline tab")  # noqa
 def case_notes_tab(driver, internal_url, context):  # noqa
     ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
 
