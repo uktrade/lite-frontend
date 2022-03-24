@@ -94,9 +94,9 @@ def test_countersign_advice_form_valid(data, valid_status):
         ({"approval_reasons": "meets the requirements"}, False),
     ),
 )
-def test_give_approval_advice_form_valid(data, valid_status):
+def test_give_fcdo_approval_advice_form_valid(data, valid_status):
     form = forms.FCDOApprovalAdviceForm(data=data, countries={"GB": "United Kingdom"})
     form.is_valid()
     assert form.is_valid() == valid_status
-    if valid_status == False:
+    if not valid_status:
         assert "Select the destinations you want to make recommendations for" in form.errors["countries"][0]
