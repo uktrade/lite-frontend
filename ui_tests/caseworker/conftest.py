@@ -151,8 +151,17 @@ def create_open_app(driver, apply_for_open_application):  # noqa
     pass
 
 
+@given("I prepare the application for final review NLR")
+def prepare_for_final_review_nlr(api_test_client):  # noqa
+    prepare_case(api_test_client, nlr=True)
+
+
 @given("I prepare the application for final review")
-def prepare_for_final_review(driver, api_test_client):  # noqa
+def prepare_for_final_review(api_test_client):  # noqa
+    prepare_case(api_test_client, nlr=False)
+
+
+def prepare_case(api_test_client, nlr):  # noqa
     api_test_client.gov_users.put_test_user_in_team("Admin")
     api_test_client.flags.assign_case_flags(api_test_client.context["case_id"], [])
     api_test_client.gov_users.put_test_user_in_team("Licensing Unit")
@@ -169,8 +178,8 @@ def prepare_for_final_review(driver, api_test_client):  # noqa
         good_id=api_test_client.context["good_id"],
         good_on_application_id=api_test_client.context["good_on_application_id"],
         case_id=api_test_client.context["case_id"],
-        control_list_entries=["ML1a"],
-        is_good_controlled=True,
+        control_list_entries=["ML1a"] if not nlr else [],
+        is_good_controlled=not nlr,
         report_summary="ARS",
     )
     api_test_client.cases.manage_case_status(
@@ -798,3 +807,13 @@ def submit_case_as_team_with_decision(driver, team, queue, decision, context, in
 
     submit_form(driver)
     click_on_created_application(driver, context, internal_url)
+
+
+@then(parsers.parse('for the first good I see "{value}" for "{name}"'))
+def check_first_goods_row(driver, value, name):  # noqa
+    assert value == CasePage(driver).get_goods_row_with_headers(row_num=1)[name]
+
+
+@then(parsers.parse('for the second good I see "{value}" for "{name}"'))
+def check_second_goods_row(driver, value, name):  # noqa
+    assert value == CasePage(driver).get_goods_row_with_headers(row_num=2)[name]

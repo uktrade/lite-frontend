@@ -3,6 +3,7 @@ from pytest_bdd import when, then, parsers, scenarios
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.advice import RecommendationsAndDecisionPage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
+from ui_tests.caseworker.pages.generate_decision_documents_page import GeneratedDecisionDocuments
 from ui_tests.caseworker.pages.generate_document_page import GeneratedDocument
 from ui_tests.caseworker.pages.give_advice_pages import GiveAdvicePages
 
@@ -150,6 +151,18 @@ def should_see_licence_number_on_siel_licence_preview(driver, context):  # noqa
 @then(parsers.parse('I see that "{item_name}" is "{value}" on the SIEL licence preview'))  # noqa
 def should_see_item_on_siel_licence_preview(driver, item_name, value):  # noqa
     assert value == GeneratedDocument(driver).get_item_from_siel_document_preview(item_name)
+
+
+@then(parsers.parse('the document name should be "{name}"'))
+def should_see_document_name_in_document_list(driver, name, context):  # noqa
+    doc_name = GeneratedDecisionDocuments(driver).get_decision_document_name()
+    assert name == doc_name
+
+
+@then("I see the product name under name on the document preview")
+def should_see_product_name_on_nlr_preview(driver, context):  # noqa
+    prod_name = GeneratedDocument(driver).get_product_name_from_nlr_document_preview()
+    assert context.goods[0]["good"]["name"] == prod_name
 
 
 @when("I go to the team advice")

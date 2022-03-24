@@ -80,16 +80,6 @@ def input_annual_report_summary(driver, summary):
     summary_element.send_keys(summary)
 
 
-@then(parsers.parse('for the first good I see "{value}" for "{name}"'))
-def check_first_goods_row(driver, value, name):
-    assert value == CasePage(driver).get_goods_row_with_headers(row_num=1)[name]
-
-
-@then(parsers.parse('for the second good I see "{value}" for "{name}"'))
-def check_second_goods_row(driver, value, name):
-    assert value == CasePage(driver).get_goods_row_with_headers(row_num=2)[name]
-
-
 @then(parsers.parse('the product status is "{status}"'))
 def check_product_rating_and_status(driver, status):
     product_table = driver.find_element_by_id("table-goods")
