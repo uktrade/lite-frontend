@@ -143,9 +143,3 @@ def case_removed_from_queue(driver, context):
 @given(parsers.parse('I set the case status to "{status}"'))
 def set_case_status(driver, status, api_test_client, context):
     api_test_client.cases.manage_case_status(api_test_client.context["case_id"], status=status.lower())
-
-
-@when(parsers.parse('I input "{decision}" in the text box'))
-def enter_decision_note(driver, decision):
-    driver.find_element(by=By.XPATH, value="//span[contains(text(), 'Explain why')]").click()
-    driver.find_element(by=By.XPATH, value="//textarea[@id='note']").send_keys(decision)

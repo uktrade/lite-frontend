@@ -1,7 +1,7 @@
-from django.utils import timezone
-from pytest_bdd import given, when, then, parsers
 import time
 
+from django.utils import timezone
+from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -777,3 +777,24 @@ def note_is_displayed(driver, case_note):  # noqa
     assert utils.search_for_correct_date_regex_in_element(
         application_page.get_text_of_case_note_date_time(0)
     ), "incorrect time format of post on case note"
+
+
+@when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case'))
+def submit_case_as_team(driver, team, queue, context, internal_url):
+    submit_case_as_team_with_decision(driver, team, queue, None, context, internal_url)
+
+
+@when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case with decision "{decision}"'))
+def submit_case_as_team_with_decision(driver, team, queue, decision, context, internal_url):
+    get_profile_page(driver)
+    go_to_team_edit_page(driver, team, queue)
+    get_my_case_list(driver)
+    i_click_application_previously_created(driver, context)
+    im_done_button(driver)
+
+    if decision:
+        driver.find_element(by=By.XPATH, value="//span[contains(text(), 'Explain why')]").click()
+        driver.find_element(by=By.XPATH, value="//textarea[@id='note']").send_keys(decision)
+
+    submit_form(driver)
+    click_on_created_application(driver, context, internal_url)
