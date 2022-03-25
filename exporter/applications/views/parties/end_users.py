@@ -252,6 +252,10 @@ class PartyContextMixin:
     def party_id(self):
         return str(self.kwargs["obj_pk"])
 
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
     @property
     def party(self):
         party = get_party(self.request, self.kwargs["pk"], self.kwargs["obj_pk"])
@@ -267,6 +271,7 @@ class PartySummaryView(LoginRequiredMixin, PartyContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["ec3_required"] = party_requires_ec3_document(self.application)
         available_documents = {document["type"]: document for document in self.party["documents"]}
         return {**context, **available_documents}
 
