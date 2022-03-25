@@ -27,9 +27,12 @@ def google_tag_manager(context):
     GTM_AUTH = getattr(settings, "GTM_AUTH", None)
     GTM_PREVIEW = getattr(settings, "GTM_PREVIEW", None)
     GTM_COOKIES_WIN = getattr(settings, "GTM_COOKIES_WIN", None)
+    request = context.get("request")
+    if not request:
+        return ""
     return render_gtm_template(
         "cookies/gtm.html",
-        context["request"],
+        request,
         GTM_ID,
         GTM_AUTH,
         GTM_PREVIEW,
@@ -45,9 +48,12 @@ def google_tag_manager_noscript(context):
     GTM_AUTH = getattr(settings, "GTM_AUTH", None)
     GTM_PREVIEW = getattr(settings, "GTM_PREVIEW", None)
     GTM_COOKIES_WIN = getattr(settings, "GTM_COOKIES_WIN", None)
+    request = context.get("request")
+    if not request:
+        return ""
     return render_gtm_template(
         "cookies/gtm_noscript.html",
-        context["request"],
+        request,
         GTM_ID,
         GTM_AUTH,
         GTM_PREVIEW,

@@ -20,6 +20,11 @@ def pytest_configure(config):
         load_dotenv(dotenv_path=DEFAULT_ENVFILE, override=True)
 
 
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_FLAG_PRODUCT_2_0 = False
+
+
 @pytest.fixture
 def lite_api_user_id():
     return "d355428a-64cb-4347-853b-afcacee15d93"

@@ -5,7 +5,6 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
-from formtools.wizard.views import SessionWizardView
 from http import HTTPStatus
 
 from exporter.applications.forms.parties import (
@@ -42,12 +41,12 @@ from exporter.core.constants import (
     DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD,
 )
 from exporter.core.helpers import (
-    NoSaveStorage,
     is_end_user_document_available,
     is_document_in_english,
     is_document_on_letterhead,
     str_to_bool,
 )
+from exporter.core.wizard.views import BaseSessionWizardView
 from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
@@ -105,11 +104,7 @@ def _post_party_document(request, application_id, party_id, document_type, docum
     return response, status_code
 
 
-class SetPartyView(LoginRequiredMixin, SessionWizardView):
-    template_name = "core/form-wizard.html"
-
-    file_storage = NoSaveStorage()
-
+class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (SetPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
         (SetPartyFormSteps.PARTY_NAME, PartyNameForm),
@@ -375,10 +370,7 @@ class PartyDocumentOptionEditView(PartyEditView):
             return reverse("applications:end_user_summary", kwargs=self.kwargs)
 
 
-class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, SessionWizardView):
-    template_name = "core/form-wizard.html"
-    file_storage = NoSaveStorage()
-
+class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, BaseSessionWizardView):
     form_list = [
         (SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
         (SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
