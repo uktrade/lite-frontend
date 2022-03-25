@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 
 from tests_common import functions
@@ -27,7 +28,7 @@ class UsersPage(BasePage):
         self.driver.find_element_by_id(self.EMAIL).send_keys(email)
 
     def select_option_from_team_drop_down_by_visible_text(self, value):
-        select = Select(self.driver.find_element_by_id(self.TEAM))
+        select = Select(self.driver.find_element(by=By.ID, value=self.TEAM))
         select.select_by_visible_text(value)
 
     def select_option_from_role_drop_down_by_visible_text(self, value):
@@ -35,7 +36,7 @@ class UsersPage(BasePage):
         select.select_by_visible_text(value)
 
     def select_option_from_default_queue_drop_down_by_visible_text(self, value):
-        select = Select(self.driver.find_element_by_id(self.QUEUE))
+        select = Select(self.driver.find_element(by=By.ID, value=self.QUEUE))
         select.select_by_visible_text(value)
 
     def select_option_from_team_drop_down_by_value(self):

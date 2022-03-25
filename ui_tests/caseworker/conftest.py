@@ -1,7 +1,7 @@
-from django.utils import timezone
-from pytest_bdd import given, when, then, parsers
 import time
 
+from django.utils import timezone
+from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -301,7 +301,7 @@ def get_profile_page(driver):  # noqa
 @when(parsers.parse('I change my team to "{team}" and default queue to "{queue}"'))  # noqa
 def go_to_team_edit_page(driver, team, queue):  # noqa
     # we should already be on the profile page
-    driver.find_element_by_id("link-edit-team").click()
+    driver.find_element(by=By.ID, value="link-edit-team").click()
     teams_page = TeamsPages(driver)
     teams_page.select_team_from_dropdown(team)
     teams_page.select_default_queue_from_dropdown(queue)
@@ -314,8 +314,8 @@ def get_my_case_list(driver):  # noqa
     Clicks on the menu and selects Cases
     Depending on team, default queue the list of cases will be different
     """
-    driver.find_element_by_id("link-menu").click()
-    driver.find_element_by_link_text("Cases").click()
+    driver.find_element(by=By.ID, value="link-menu").click()
+    driver.find_element(by=By.LINK_TEXT, value="Cases").click()
 
 
 @when("I click the application previously created")
@@ -724,21 +724,37 @@ def select_queue(driver, queue_name, check):  # noqa
 
 
 @when(parsers.parse('I assign the case to "{queue}" queue'))  # noqa
-def case_assigned_to_queue(driver, queue):  # noqa
+def assign_case_to_queue(driver, queue):  # noqa
     driver.find_element_by_id("link-change-queues").click()
     select_queue(driver, queue, True)
     functions.click_submit(driver)
 
 
 @then(parsers.parse('I remove the case from "{queue}" queue'))  # noqa
-def case_removed_from_queue(driver, queue):  # noqa
+def remove_case_from_queue(driver, queue):  # noqa
     driver.find_element_by_id("link-change-queues").click()
     select_queue(driver, queue, False)
     functions.click_submit(driver)
 
 
-@then(parsers.parse("I see the case is not assigned to any queues"))  # noqa
-def case_not_assigned_to_any_queue(driver, queue):  # noqa
+@then(parsers.parse('I see the case is assigned to queues "{queues}"'))  # noqa
+def case_assigned_to_queues(driver, queues):  # noqa
+    assigned = CasePage(driver).get_assigned_queues()
+
+    for queue in queues.split(","):
+        assert queue.strip() in assigned
+
+
+@then(parsers.parse('I see the case is not assigned to queues "{queues}"'))  # noqa
+def case_not_assigned_to_queues(driver, queues):  # noqa
+    assigned = CasePage(driver).get_assigned_queues()
+
+    for queue in queues.split(","):
+        assert queue.strip() not in assigned
+
+
+@then("I see the case is not assigned to any queues")  # noqa
+def case_not_assigned_to_any_queue(driver):  # noqa
     assert CasePage(driver).get_assigned_queues() == "Not assigned to any queues"
 
 
@@ -747,3 +763,38 @@ def flag_not_present(driver, flag):  # noqa
     flags_container = driver.find_element_by_id("case-flags")
     el = flags_container.find_elements_by_xpath(f"//li[contains(text(), '{flag}')]")
     assert len(el) == 0
+
+
+@when("I click on the notes and timeline tab")  # noqa
+def case_notes_tab(driver, internal_url, context):  # noqa
+    ApplicationPage(driver).go_to_cases_activity_tab(internal_url, context)
+
+
+@then(parsers.parse('I see "{case_note}" as a case note'))  # noqa
+def note_is_displayed(driver, case_note):  # noqa
+    application_page = ApplicationPage(driver)
+    assert case_note in application_page.get_text_of_case_note(0)
+    assert utils.search_for_correct_date_regex_in_element(
+        application_page.get_text_of_case_note_date_time(0)
+    ), "incorrect time format of post on case note"
+
+
+@when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case'))
+def submit_case_as_team(driver, team, queue, context, internal_url):  # noqa
+    submit_case_as_team_with_decision(driver, team, queue, None, context, internal_url)
+
+
+@when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case with decision "{decision}"'))
+def submit_case_as_team_with_decision(driver, team, queue, decision, context, internal_url):  # noqa
+    get_profile_page(driver)
+    go_to_team_edit_page(driver, team, queue)
+    get_my_case_list(driver)
+    i_click_application_previously_created(driver, context)
+    im_done_button(driver)
+
+    if decision:
+        driver.find_element(by=By.XPATH, value="//span[contains(text(), 'Explain why')]").click()
+        driver.find_element(by=By.XPATH, value="//textarea[@id='note']").send_keys(decision)
+
+    submit_form(driver)
+    click_on_created_application(driver, context, internal_url)
