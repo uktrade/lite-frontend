@@ -99,7 +99,7 @@ class CaseListPage(BasePage):
                 is_present = len(self.driver.find_elements_by_link_text(id))
 
     def click_on_case(self, case_id):
-        self.driver.find_element_by_id(f"case-{case_id}").click()
+        self.driver.find_element(by=By.ID, value=f"case-{case_id}").click()
 
     def click_on_case_checkbox(self, case_id):
         self.driver.find_element_by_css_selector(self.CHECKBOX_CASE + case_id + "']").click()
@@ -132,7 +132,7 @@ class CaseListPage(BasePage):
         return elements[no].is_displayed()
 
     def click_clear_filters_button(self):
-        self.driver.find_element_by_id(self.BUTTON_CLEAR_FILTERS).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_CLEAR_FILTERS).click()
 
     def click_advanced_filters_button(self):
         self.driver.find_element_by_id(self.LINK_ADVANCED_FILTERS).click()
@@ -188,7 +188,7 @@ class CaseListPage(BasePage):
         self.driver.find_element_by_id(self.EXPORTER_APPLICATION_REFERENCE_ID).send_keys(exporter_application_reference)
 
     def filter_by_case_reference(self, case_reference):
-        self.driver.find_element_by_id(self.CASE_REFERENCE_ID).send_keys(case_reference)
+        self.driver.find_element(by=By.ID, value=self.CASE_REFERENCE_ID).send_keys(case_reference)
 
     def filter_by_goods_related_description(self, goods_related_description):
         self.driver.find_element_by_id(self.GOODS_RELATED_DESCRIPTION_ID)

@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
-from pytest_bdd import when, then, scenarios, parsers
-from caseworker.core.constants import SystemTeamsID
-from ui_tests.caseworker.pages.case_page import CasePage
-from ui_tests.caseworker.pages.teams_pages import TeamsPages
+from pytest_bdd import given, when, then, scenarios, parsers
+from selenium.webdriver.common.by import By
 
+from caseworker.core.constants import SystemTeamsID
 from ui_tests.caseworker.pages.application_page import ApplicationPage
+from ui_tests.caseworker.pages.case_page import CasePage
 from ui_tests.caseworker.pages.routing_rules_pages import RoutingRulesPage
+from ui_tests.caseworker.pages.teams_pages import TeamsPages
 from tests_common import functions
 
 scenarios("../features/routing_rules.feature", strict_gherkin=False)
@@ -137,3 +138,8 @@ def done_button_on_page(driver):
 def case_removed_from_queue(driver, context):
     soup = BeautifulSoup(driver.page_source, "html.parser")
     assert not soup.find(id=f"case-{context.case_id}")
+
+
+@given(parsers.parse('I set the case status to "{status}"'))
+def set_case_status(driver, status, api_test_client, context):
+    api_test_client.cases.manage_case_status(api_test_client.context["case_id"], status=status.lower())

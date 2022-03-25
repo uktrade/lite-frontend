@@ -449,7 +449,7 @@ def test_add_goods_questions_form(rf, client, data, application_pk, valid, error
         ),
     ),
 )
-@patch("exporter.goods.forms.get_pv_gradings")
+@patch("exporter.goods.forms.goods.get_pv_gradings")
 def test_pv_details_form(mock_get_pv_gradings, data, valid, error_field, error_message):
     mock_get_pv_gradings.return_value = [{"key1": "display1"}, {"key2": "display2"}]
 

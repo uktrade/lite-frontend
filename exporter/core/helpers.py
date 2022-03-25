@@ -6,7 +6,6 @@ from django.conf import settings
 from django.template.defaultfilters import safe
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
-from storages.backends.s3boto3 import S3Boto3Storage
 
 from exporter.core import decorators
 from exporter.core import constants
@@ -145,19 +144,6 @@ def get_firearms_subcategory(type):
     is_firearms_accessory = type == constants.FIREARMS_ACCESSORY
     is_firearms_software_or_tech = type in constants.FIREARMS_SOFTWARE_TECH
     return is_firearm, is_firearm_ammunition_or_component, is_firearms_accessory, is_firearms_software_or_tech
-
-
-class NoSaveStorage(S3Boto3Storage):
-    def save(self, name, content, max_length=None):
-        # We don't actually need to save anything here as our file is already
-        # on S3.
-        return content.obj.key
-
-    def delete(self, name):
-        # We don't actually want to delete anything here as we'll be sending
-        # the key to the API that will pick this up so we want it to persist
-        # in the S3 bucket.
-        pass
 
 
 def is_category_firearms(wizard):

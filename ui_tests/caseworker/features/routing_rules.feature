@@ -3,9 +3,46 @@ Feature: I want to have cases be automatically routed to relevant work queues an
   case sub-type, country and combinations of flags on the case
   So that I can focus on working the case and not on routing cases to the correct departments
 
+
+  @e2e_routing
+  Scenario: End to end routing rules
+    Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
+    And I set the case status to "Submitted"
+    # LR
+    When I switch to "Licensing Reception" with queue "Licensing Reception SIEL applications" and I submit the case
+    Then I see the case status is now "Initial checks"
+    And I see the case is assigned to queues "Enforcement Unit Cases to Review, Technical Assessment Unit SIELs to Review"
+    # EU
+    When I switch to "Enforcement Unit" with queue "Enforcement Unit Cases to Review" and I submit the case
+    Then I see the case status is now "Initial checks"
+    And I see the case is assigned to queues "Technical Assessment Unit SIELs to Review"
+    And I see the case is not assigned to queues "Enforcement Unit Cases to Review"
+    # TAU
+    When I switch to "Technical Assessment Unit" with queue "Technical Assessment Unit SIELs to Review" and I submit the case
+    Then I see the case status is now "Under review"
+    And I see the case is assigned to queues "Licensing Unit Pre-circulation Cases to Review"
+    # LU
+    When I switch to "Licensing Unit" with queue "Licensing Unit Pre-circulation Cases to Review" and I submit the case
+    Then I see the case status is now "OGD Advice"
+    And I see the case is assigned to queues "Circulate to sub-advisers, FCDO Cases to Review"
+    # MOD
+    When I switch to "MOD-ECJU" with queue "Circulate to sub-advisers" and I submit the case
+    Then I see the case status is now "OGD Advice"
+    And I see the case is assigned to queues "FCDO Cases to Review"
+    # FCDO
+    When I switch to "FCDO" with queue "FCDO Cases to Review" and I submit the case
+    And I switch to "FCDO" with queue "FCDO Counter-signing" and I submit the case with decision "decision"
+    Then I see the case status is now "Under final review"
+    And I see the case is assigned to queues "Licensing Unit Post-circulation Cases to Finalise"
+    When I click on the notes and timeline tab
+    Then I see "decision" as a case note
+
+
   @skip @legacy
   Scenario: Create routing rule
     Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
     And a queue has been created
     When I add a flag at level Case
     And I go to routing rules list

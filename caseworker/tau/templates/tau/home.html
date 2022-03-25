@@ -1,6 +1,6 @@
 {% extends 'layouts/case.html' %}
 
-{% load static custom_tags %}
+{% load static custom_tags crispy_forms_tags %}
 
 {% block body %}
 
@@ -9,11 +9,27 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl">TAU 2.0 Home</h1>
-                <span class="govuk-caption-xl">This will eventually hold the list view and possibly the form as well.</span>
+                <h2>Unassessed Products: (This is a placeholder atm, to be replaced by a pretty table with checkboxes and info)</h2>
+                <ul id="unassessed-products">
+                    {% for id, name in unassessed_goods.items %}
+                    <li>ID: {{ id }}   Name: {{ name }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <h2>Assessed Products: (This is a placeholder atm, to check if the form works)</h2>
+                <ul id="assessed-products">
+                    {% for id, name in assessed_goods.items %}
+                    <li>ID: {{ id }}   Name: {{ name }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <h2>The OG case details - would probably be merged into the table</h2>
+                {% include "tau/case_detail.html" %}
             </div>
             <div class="govuk-grid-column-one-third">
-                {% include "tau/case_detail.html" %}
+                {% if unassessed_goods %}
+                {% crispy form %}
+                {% endif %}
             </div>
         </div>
     </main>
