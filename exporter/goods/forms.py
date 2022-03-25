@@ -2,7 +2,8 @@ import json
 
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
+from crispy_forms_gds.layout import HTML, Field, Layout, Submit
+from datetime import datetime, date
 from django import forms
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -761,6 +762,23 @@ def decompose_date(field_name, field_data, joiner=""):
     return decomposed_data
 
 
+def pv_gradings_help_text():
+    return HTML.details(
+        "Help with security gradings",
+        """<p>The government classifies information assets to ensure they are appropriately protected.</p>
+            <p><a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/government-security-classifications">
+            Guidance on government security gradings (opens in new tab)</a></p>
+            <p>The grading can sometimes include a prefix and suffix. There are many in use and so it is important that you know the full
+                classification of the product.</p>
+            <p>If the product was developed with Ministry of Defense (MOD) funding you will find the grading in the Security Aspects Letter
+                provided by the MOD project team.</p>
+            <p>If the product was developed with overseas government support, that government is responsible for providing the grading.</p>
+            <p>If the product was developed without UK or overseas government support, you should apply for a private venture grading
+                using <a class="govuk-link" target="_blank" href="https://www.spire.trade.gov.uk/">SPIRE</a>. The grading will be provided by MOD.</p>
+            """,
+    )
+
+
 class PvGradingForm(forms.Form):
     title = CreateGoodForm.IsGraded.TITLE
 
@@ -784,20 +802,7 @@ class PvGradingForm(forms.Form):
             HTML.h1(self.title),
             HTML.p("For example, UK Official or NATO Restricted."),
             "is_pv_graded",
-            HTML.details(
-                "Help with security gradings",
-                """<p>The government classifies information assets to ensure they are appropriately protected.</p>
-                <p><a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/government-security-classifications">
-                Guidance on government security gradings (opens in new tab)</a></p>
-                <p>The grading can sometimes include a prefix and suffix. There are many in use and so it is important that you know the full
-                 classification of the product.</p>
-                <p>If the product was developed with Ministry of Defense (MOD) funding you will find the grading in the Security Aspects Letter
-                 provided by the MOD project team.</p>
-                <p>If the product was developed with overseas government support, that government is responsible for providing the grading.</p>
-                <p>If the product was developed without UK or overseas government support, you should apply for a private venture grading
-                 using <a class="govuk-link" target="_blank" href="https://www.spire.trade.gov.uk/">SPIRE</a>. The grading will be provided by MOD.</p>
-                """,
-            ),
+            pv_gradings_help_text(),
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
         )
 
@@ -805,29 +810,43 @@ class PvGradingForm(forms.Form):
 class PvDetailsForm(forms.Form):
     title = GoodGradingForm.TITLE
 
-    prefix = forms.CharField(required=False, label=f"{GoodGradingForm.PREFIX} (optional)")
+    prefix = forms.CharField(
+        required=False, label=f"{GoodGradingForm.PREFIX} (optional)", help_text="For example, UK, NATO or OCCAR"
+    )
 
-    grading = forms.ChoiceField(required=False, label=GoodGradingForm.GRADING, choices=[("", "Select")])
+    grading = forms.ChoiceField(
+        choices=(),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select the security grading",
+        },
+    )
 
-    suffix = forms.CharField(required=False, label=f"{GoodGradingForm.SUFFIX} (optional)")
-
-    custom_grading = forms.CharField(required=False, label=f"{GoodGradingForm.OTHER_GRADING} (optional)")
+    suffix = forms.CharField(
+        required=False, label=f"{GoodGradingForm.SUFFIX} (optional)", help_text="For example, UK eyes only"
+    )
 
     issuing_authority = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
         label=GoodGradingForm.ISSUING_AUTHORITY,
         error_messages={
-            "required": "This field may not be blank",
+            "required": "Enter the name and address of the issuing authority",
         },
     )
 
     reference = forms.CharField(
         label=GoodGradingForm.REFERENCE,
         error_messages={
-            "required": "This field may not be blank",
+            "required": "Enter the reference",
         },
     )
 
-    date_of_issue = DateInputField(label=GoodGradingForm.DATE_OF_ISSUE)
+    date_of_issue = DateInputField(
+        label=GoodGradingForm.DATE_OF_ISSUE,
+        require_all_fields=False,
+        help_text="For example, 29 09 2021",
+    )
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
@@ -836,34 +855,35 @@ class PvDetailsForm(forms.Form):
         gradings = [(key, display) for grading in get_pv_gradings(request) for key, display in grading.items()]
         self.fields["grading"].choices += gradings
 
+        date_of_issue = self.fields["date_of_issue"]
+        date_of_issue.error_messages = {"required": "Enter the date of issue"}
+        date_of_issue.fields[0].error_messages = {"incomplete": "Date of issue must include a day"}
+        date_of_issue.fields[1].error_messages = {"incomplete": "Date of issue must include a month"}
+        date_of_issue.fields[2].error_messages = {"incomplete": "Date of issue must include a year"}
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            HTML.h3("PV grading"),
-            Fieldset(
-                Field.text("prefix"), Field.text("grading"), Field.text("suffix"), css_class="app-pv-grading-inputs"
-            ),
-            "custom_grading",
+            "prefix",
+            "grading",
+            "suffix",
             "issuing_authority",
             "reference",
             "date_of_issue",
+            pv_gradings_help_text(),
             Submit("submit", "Save and continue"),
         )
 
     def clean(self):
         cleaned_data = super().clean()
 
-        if not cleaned_data.get("grading") and not cleaned_data.get("custom_grading"):
-            self.add_error("custom_grading", "Enter the grading if it's not listed in the dropdown list")
-        elif cleaned_data.get("grading") and cleaned_data.get("custom_grading"):
-            self.add_error(
-                "custom_grading",
-                "Check if this grading or the grading selected on the dropdown list is the correct one for the product",
-            )
-
         date_of_issue = cleaned_data.get("date_of_issue")
         if date_of_issue:
             cleaned_data.update(decompose_date("date_of_issue", date_of_issue))
+
+            date_of_issue = cleaned_data.get("date_of_issue")
+            if datetime.strptime(date_of_issue, "%Y-%m-%d").date() > date.today():
+                self.add_error("date_of_issue", "Date of issue must be in the past")
 
         return cleaned_data
 

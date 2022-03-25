@@ -231,7 +231,7 @@ def get_trade_control_product_categories(request):
 # PV gradings
 def get_pv_gradings(request, convert_to_options=False):
     if convert_to_options:
-        data = client.get(request, "/static/private-venture-gradings/")
+        data = client.get(request, "/static/private-venture-gradings/v2/")
 
         converted_units = []
         for pvg in data.json().get("pv_gradings"):
@@ -244,7 +244,7 @@ def get_pv_gradings(request, convert_to_options=False):
                 )
         return converted_units
 
-    data = client.get(request, "/static/private-venture-gradings/")
+    data = client.get(request, "/static/private-venture-gradings/v2/")
     return data.json().get("pv_gradings")
 
 

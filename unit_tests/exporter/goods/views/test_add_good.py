@@ -55,7 +55,7 @@ def clc_url(requests_mock):
 
 @pytest.fixture(autouse=True)
 def pv_gradings_url(requests_mock):
-    clc_url = client._build_absolute_uri("/static/private-venture-gradings/")
+    clc_url = client._build_absolute_uri("/static/private-venture-gradings/v2/")
     requests_mock.get(url=clc_url, json={"pv_gradings": [{"test": "test"}, {"test1": "test1"}]})
 
 
@@ -361,7 +361,6 @@ def test_add_good_api_submission(url, authorized_client, requests_mock, data_sta
         "prefix": "",
         "grading": "test",
         "suffix": "",
-        "custom_grading": "",
         "issuing_authority": "test_authority",
         "reference": "test_ref",
         "date_of_issue": "2020-01-01",
@@ -379,7 +378,6 @@ def test_add_good_api_submission(url, authorized_client, requests_mock, data_sta
         "expiry_date_year": "2030",
         "pv_grading_details": {
             "grading": "test",
-            "custom_grading": "",
             "prefix": "",
             "suffix": "",
             "issuing_authority": "test_authority",

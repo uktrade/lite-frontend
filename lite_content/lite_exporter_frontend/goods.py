@@ -266,14 +266,14 @@ class CreateGoodForm:
 
 
 class GoodGradingForm:
-    TITLE = "Security grading"
+    TITLE = "What is the security grading or classification?"
     DESCRIPTION = ""
 
-    PREFIX = "Prefix"
-    GRADING = "Grading"
-    SUFFIX = "Suffix"
+    PREFIX = "Enter a prefix"
+    GRADING = "Choose the security grading"
+    SUFFIX = "Enter a suffix"
     OTHER_GRADING = "Other type of security grading"
-    ISSUING_AUTHORITY = "Issuing authority"
+    ISSUING_AUTHORITY = "Name and address of the issuing authority"
     REFERENCE = "Reference"
     DATE_OF_ISSUE = "Date of issue"
 

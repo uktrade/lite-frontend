@@ -407,7 +407,6 @@ def test_add_goods_questions_form(rf, client, data, application_pk, valid, error
                 "prefix": "test prefix",
                 "grading": "key1",
                 "suffix": "test suffix",
-                "custom_grading": "",
                 "issuing_authority": "test authority",
                 "reference": "test ref",
                 "date_of_issue_0": 1,
@@ -421,9 +420,23 @@ def test_add_goods_questions_form(rf, client, data, application_pk, valid, error
         (
             {
                 "prefix": "test prefix",
+                "grading": "",
+                "suffix": "test suffix",
+                "issuing_authority": "",
+                "reference": "test ref",
+                "date_of_issue_0": 1,
+                "date_of_issue_1": 1,
+                "date_of_issue_2": 2021,
+            },
+            False,
+            "grading",
+            "Select the security grading",
+        ),
+        (
+            {
+                "prefix": "test prefix",
                 "grading": "key1",
                 "suffix": "test suffix",
-                "custom_grading": "",
                 "issuing_authority": "",
                 "reference": "test ref",
                 "date_of_issue_0": 1,
@@ -432,23 +445,7 @@ def test_add_goods_questions_form(rf, client, data, application_pk, valid, error
             },
             False,
             "issuing_authority",
-            "This field may not be blank",
-        ),
-        (
-            {
-                "prefix": "test prefix",
-                "grading": "key1",
-                "suffix": "test suffix",
-                "custom_grading": "custom_grading",
-                "issuing_authority": "test authority",
-                "reference": "test ref",
-                "date_of_issue_0": 1,
-                "date_of_issue_1": 1,
-                "date_of_issue_2": 2021,
-            },
-            False,
-            "custom_grading",
-            "Check if this grading or the grading selected on the dropdown list is the correct one for the product",
+            "Enter the name and address of the issuing authority",
         ),
     ),
 )
@@ -459,7 +456,7 @@ def test_pv_details_form(mock_get_pv_gradings, data, valid, error_field, error_m
     form = forms.PvDetailsForm(data=data, request="test request")
 
     assert form.is_valid() == valid
-    assert form.fields["grading"].choices == [("", "Select"), ("key1", "display1"), ("key2", "display2")]
+    assert form.fields["grading"].choices == [("key1", "display1"), ("key2", "display2")]
     mock_get_pv_gradings.assert_called_once_with("test request")
 
     if valid:

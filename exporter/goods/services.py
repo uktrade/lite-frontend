@@ -35,7 +35,6 @@ def post_goods(request, json):
         if "reference" in json:
             json["pv_grading_details"] = {
                 "grading": json["grading"],
-                "custom_grading": json["custom_grading"],
                 "prefix": json["prefix"],
                 "suffix": json["suffix"],
                 "issuing_authority": json["issuing_authority"],
