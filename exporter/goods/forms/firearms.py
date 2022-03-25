@@ -6,6 +6,9 @@ from django import forms
 from django.db import models
 from django.template.loader import render_to_string
 
+from core.forms.layouts import ConditionalQuestion, ConditionalRadios
+from exporter.core.services import get_control_list_entries
+
 
 class TextChoice(Choice):
     def __init__(self, choice, **kwargs):
@@ -103,3 +106,71 @@ class FirearmNameForm(forms.Form):
             ),
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
+
+
+class FirearmProductControlListEntryForm(forms.Form):
+    class Layout:
+        TITLE = "Do you know the product's control list entry?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_good_controlled = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=lambda val: val == "True",
+        label="",
+        error_messages={
+            "required": "Select yes if you know the products control list entry",
+        },
+    )
+
+    control_list_entries = forms.MultipleChoiceField(
+        choices=[],  # set in __init__
+        label="Enter the control list entry (type to get suggestions)",
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
+    )
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        clc_list = get_control_list_entries(request)
+        self.fields["control_list_entries"].choices = [(entry["rating"], entry["rating"]) for entry in clc_list]
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            ConditionalRadios(
+                "is_good_controlled",
+                ConditionalQuestion(
+                    "Yes",
+                    "control_list_entries",
+                ),
+                ConditionalQuestion(
+                    "No",
+                    HTML.p(
+                        "The product will be assessed and given a control list entry. "
+                        "If the product isn't subject to any controls, you'll be issued "
+                        "with a 'no licence required' document."
+                    ),
+                ),
+            ),
+            HTML.details(
+                "Help with control list entries",
+                render_to_string("goods/forms/firearms/help_with_control_list_entries.html"),
+            ),
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_good_controlled = cleaned_data.get("is_good_controlled")
+        control_list_entries = cleaned_data.get("control_list_entries")
+
+        if is_good_controlled and not control_list_entries:
+            self.add_error("control_list_entries", "Enter the control list entry")
+
+        return cleaned_data

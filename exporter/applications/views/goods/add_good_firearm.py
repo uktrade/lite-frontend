@@ -13,6 +13,7 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
     FirearmCategoryForm,
     FirearmNameForm,
+    FirearmProductControlListEntryForm,
 )
 from exporter.goods.services import post_firearm
 from lite_forms.generators import error_page
@@ -24,12 +25,14 @@ logger = logging.getLogger(__name__)
 class AddGoodFirearmSteps:
     CATEGORY = "CATEGORY"
     NAME = "NAME"
+    PRODUCT_CONTROL_LIST_ENTRY = "PRODUCT_CONTROL_LIST_ENTRY"
 
 
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
         (AddGoodFirearmSteps.NAME, FirearmNameForm),
+        (AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -52,6 +55,14 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return ctx
 
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY:
+            kwargs["request"] = self.request
+
+        return kwargs
+
     def done(self, form_list, **kwargs):
         firearm_data_keys = ["category"]
         all_data = {}
@@ -63,7 +74,6 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 else:
                     all_data[k] = v
 
-        all_data["is_good_controlled"] = False
         all_data["is_pv_graded"] = "no"
         all_data["firearm_details"] = firearm_data
 
