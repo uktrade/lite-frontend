@@ -15,6 +15,7 @@ from exporter.goods.forms.firearms import (
     FirearmCategoryForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
+    FirearmReplicaForm,
 )
 from exporter.goods.services import post_firearm
 from lite_forms.generators import error_page
@@ -28,6 +29,7 @@ class AddGoodFirearmSteps:
     NAME = "NAME"
     PRODUCT_CONTROL_LIST_ENTRY = "PRODUCT_CONTROL_LIST_ENTRY"
     CALIBRE = "CALIBRE"
+    IS_REPLICA = "IS_REPLICA"
 
 
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
@@ -36,6 +38,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.NAME, FirearmNameForm),
         (AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
         (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
+        (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -67,7 +70,13 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         return kwargs
 
     def get_payload(self, form_list):
-        firearm_data_keys = ["calibre", "category"]
+        firearm_data_keys = [
+            "calibre",
+            "category",
+            "is_replica",
+            "replica_description",
+        ]
+
         payload = {}
         firearm_data = {}
         for form in form_list:
