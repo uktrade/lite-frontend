@@ -26,6 +26,12 @@ def new_good_firearm_url(data_standard_case):
     )
 
 
+@pytest.fixture(autouse=True)
+def set_feature_flags(settings):
+    settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = True
+    settings.FEATURE_FLAG_PRODUCT_2_0 = True
+
+
 def test_firearm_category_redirects_to_new_wizard(
     settings,
     authorized_client,
@@ -34,9 +40,6 @@ def test_firearm_category_redirects_to_new_wizard(
     new_good_firearm_url,
     new_good_url,
 ):
-    settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = True
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
-
     app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     requests_mock.get(url=app_url, json=data_standard_case["case"])
 
@@ -54,6 +57,14 @@ def test_firearm_category_redirects_to_new_wizard(
 
     assert response.status_code == 302
     assert response.url == new_good_firearm_url
+
+
+def test_add_good_firearm_access_denied_without_feature_flag(
+    settings, authorized_client, new_good_firearm_url, new_good_url
+):
+    settings.FEATURE_FLAG_PRODUCT_2_0 = False
+    response = authorized_client.get(new_good_firearm_url)
+    assert response.status_code == 404
 
 
 def test_add_good_firearm_start(authorized_client, new_good_firearm_url, new_good_url):

@@ -2,6 +2,8 @@ import logging
 
 from http import HTTPStatus
 
+from django.conf import settings
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 
@@ -24,6 +26,12 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
     ]
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
