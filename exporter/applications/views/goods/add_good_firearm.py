@@ -11,6 +11,7 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
+    FirearmCalibreForm,
     FirearmCategoryForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
@@ -26,6 +27,7 @@ class AddGoodFirearmSteps:
     CATEGORY = "CATEGORY"
     NAME = "NAME"
     PRODUCT_CONTROL_LIST_ENTRY = "PRODUCT_CONTROL_LIST_ENTRY"
+    CALIBRE = "CALIBRE"
 
 
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
@@ -33,6 +35,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
         (AddGoodFirearmSteps.NAME, FirearmNameForm),
         (AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
+        (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -63,25 +66,34 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return kwargs
 
-    def done(self, form_list, **kwargs):
-        firearm_data_keys = ["category"]
-        all_data = {}
+    def get_payload(self, form_list):
+        firearm_data_keys = ["calibre", "category"]
+        payload = {}
         firearm_data = {}
         for form in form_list:
             for k, v in form.cleaned_data.items():
                 if k in firearm_data_keys:
                     firearm_data[k] = v
                 else:
-                    all_data[k] = v
+                    payload[k] = v
 
-        all_data["is_pv_graded"] = "no"
-        all_data["firearm_details"] = firearm_data
+        payload["is_pv_graded"] = "no"
+        payload["firearm_details"] = firearm_data
 
-        api_resp_data, status_code = post_firearm(
-            self.request,
-            all_data,
+        return payload
+
+    def get_success_url(self, api_resp_data):
+        return reverse(
+            "applications:add_good_summary",
+            kwargs={"pk": self.kwargs["pk"], "good_pk": api_resp_data["good"]["id"]},
         )
 
+    def done(self, form_list, **kwargs):
+        payload = self.get_payload(form_list)
+        api_resp_data, status_code = post_firearm(
+            self.request,
+            payload,
+        )
         if status_code != HTTPStatus.CREATED:
             logger.error(
                 "Error creating firearm - response was: %s - %s",
@@ -91,9 +103,4 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             )
             return error_page(self.request, "Unexpected error adding firearm")
 
-        return redirect(
-            reverse(
-                "applications:add_good_summary",
-                kwargs={"pk": self.kwargs["pk"], "good_pk": api_resp_data["good"]["id"]},
-            )
-        )
+        return redirect(self.get_success_url(api_resp_data))

@@ -129,7 +129,7 @@ def test_add_good_firearm_submission(
         AddGoodFirearmSteps.NAME,
         {"name": "TEST NAME"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": True,
@@ -138,6 +138,10 @@ def test_add_good_firearm_submission(
                 "ML1a",
             ],
         },
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
     )
 
     assert response.status_code == 302
@@ -153,6 +157,7 @@ def test_add_good_firearm_submission(
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
         "firearm_details": {
+            "calibre": "calibre 123",
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "type": "firearms",
         },
@@ -188,7 +193,7 @@ def test_add_good_firearm_submission_error(
         AddGoodFirearmSteps.NAME,
         {"name": "TEST NAME"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": True,
@@ -197,6 +202,10 @@ def test_add_good_firearm_submission_error(
                 "ML1a",
             ],
         },
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
     )
 
     assert response.status_code == 200

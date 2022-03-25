@@ -174,3 +174,26 @@ class FirearmProductControlListEntryForm(forms.Form):
             self.add_error("control_list_entries", "Enter the control list entry")
 
         return cleaned_data
+
+
+class FirearmCalibreForm(forms.Form):
+    class Layout:
+        TITLE = "What is the calibre of the product?"
+        SUBMIT_BUTTON = "Continue"
+
+    calibre = forms.CharField(
+        label="",
+        error_messages={
+            "required": "Enter the calibre",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            "calibre",
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
