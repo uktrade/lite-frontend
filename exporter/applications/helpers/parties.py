@@ -35,9 +35,9 @@ def party_requires_ec3_document(application):
         FirearmsProductType.FIREARMS_ACCESSORY,
     }
     product_types = {
-        product["firearm_details"]["type"]["key"]
+        product["good"]["firearm_details"]["type"]["key"]
         for product in application.get("goods", [])
-        if product.get("firearm_details")
+        if product["good"].get("firearm_details")
     }
     firearms_products = ec3_product_types.intersection(product_types)
 
