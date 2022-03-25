@@ -53,14 +53,23 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         return ctx
 
     def done(self, form_list, **kwargs):
-        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        firearm_data_keys = ["category"]
+        all_data = {}
+        firearm_data = {}
+        for form in form_list:
+            for k, v in form.cleaned_data.items():
+                if k in firearm_data_keys:
+                    firearm_data[k] = v
+                else:
+                    all_data[k] = v
 
         all_data["is_good_controlled"] = False
         all_data["is_pv_graded"] = "no"
+        all_data["firearm_details"] = firearm_data
 
         api_resp_data, status_code = post_firearm(
             self.request,
-            dict(all_data),
+            all_data,
         )
 
         if status_code != HTTPStatus.CREATED:

@@ -57,10 +57,7 @@ def post_goods(request, json):
 def post_firearm(request, json):
     json["item_category"] = PRODUCT_CATEGORY_FIREARM
 
-    json["firearm_details"] = {
-        "category": json["category"],
-        "type": FIREARMS,
-    }
+    json["firearm_details"]["type"] = FIREARMS
 
     data = client.post(request, "/goods/", json)
 

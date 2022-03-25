@@ -130,7 +130,6 @@ def test_add_good_firearm_submission(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
-        "category": ["NON_AUTOMATIC_SHOTGUN"],
         "firearm_details": {
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "type": "firearms",
