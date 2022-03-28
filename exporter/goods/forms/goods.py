@@ -5,6 +5,7 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Field, Layout, Submit
 from datetime import datetime, date
 from django import forms
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -762,23 +763,6 @@ def decompose_date(field_name, field_data, joiner=""):
     return decomposed_data
 
 
-def pv_gradings_help_text():
-    return HTML.details(
-        "Help with security gradings",
-        """<p>The government classifies information assets to ensure they are appropriately protected.</p>
-            <p><a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/government-security-classifications">
-            Guidance on government security gradings (opens in new tab)</a></p>
-            <p>The grading can sometimes include a prefix and suffix. There are many in use and so it is important that you know the full
-                classification of the product.</p>
-            <p>If the product was developed with Ministry of Defense (MOD) funding you will find the grading in the Security Aspects Letter
-                provided by the MOD project team.</p>
-            <p>If the product was developed with overseas government support, that government is responsible for providing the grading.</p>
-            <p>If the product was developed without UK or overseas government support, you should apply for a private venture grading
-                using <a class="govuk-link" target="_blank" href="https://www.spire.trade.gov.uk/">SPIRE</a>. The grading will be provided by MOD.</p>
-            """,
-    )
-
-
 class PvGradingForm(forms.Form):
     title = CreateGoodForm.IsGraded.TITLE
 
@@ -802,7 +786,10 @@ class PvGradingForm(forms.Form):
             HTML.h1(self.title),
             HTML.p("For example, UK Official or NATO Restricted."),
             "is_pv_graded",
-            pv_gradings_help_text(),
+            HTML.details(
+                "Help with security gradings",
+                render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
+            ),
             Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
         )
 
@@ -870,7 +857,10 @@ class PvDetailsForm(forms.Form):
             "issuing_authority",
             "reference",
             "date_of_issue",
-            pv_gradings_help_text(),
+            HTML.details(
+                "Help with security gradings",
+                render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
+            ),
             Submit("submit", "Save and continue"),
         )
 
