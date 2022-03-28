@@ -203,12 +203,16 @@ def submit_form(driver):  # noqa
 
 @when(parsers.parse('I click "{button_text}"'))
 def click_button_with_text(driver, button_text):  # noqa
-    driver.find_element(
-        by=By.XPATH,
-        value=(
-            f"//button[contains(@class, 'govuk-button') and contains(text(), '{button_text}')] "
-            f"| //a[contains(@class, 'govuk-button') and contains(text(), '{button_text}')]"
-        ),
+    WebDriverWait(driver, 30).until(
+        expected_conditions.presence_of_element_located(
+            (
+                By.XPATH,
+                (
+                    f"//button[contains(@class, 'govuk-button') and contains(text(), '{button_text}')] "
+                    f"| //a[contains(@class, 'govuk-button') and contains(text(), '{button_text}')]"
+                ),
+            )
+        )
     ).click()
 
 
