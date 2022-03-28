@@ -383,8 +383,8 @@ def test_edit_end_user_document(
                 "goods_starting_point": "NI",
                 "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
                 "goods": [
-                    {"firearm_details": {"type": {"key": "software_related_to_firearms"}}},
-                    {"firearm_details": {"type": {"key": "technology_related_to_firearms"}}},
+                    {"good": {"firearm_details": {"type": {"key": "software_related_to_firearms"}}}},
+                    {"good": {"firearm_details": {"type": {"key": "technology_related_to_firearms"}}}},
                 ],
             },
             False,
@@ -394,7 +394,7 @@ def test_edit_end_user_document(
                 "goods_starting_point": "NI",
                 "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
                 "goods": [
-                    {"firearm_details": {"type": {"key": "software_related_to_firearms"}}},
+                    {"good": {"firearm_details": {"type": {"key": "software_related_to_firearms"}}}},
                 ],
             },
             False,
@@ -404,9 +404,9 @@ def test_edit_end_user_document(
                 "goods_starting_point": "NI",
                 "destinations": {"type": "end_user", "data": {"country": {"is_eu": True}}},
                 "goods": [
-                    {"firearm_details": {"type": {"key": "firearms"}}},
-                    {"firearm_details": {"type": {"key": "software_related_to_firearms"}}},
-                    {"firearm_details": {"type": {"key": "technology_related_to_firearms"}}},
+                    {"good": {"firearm_details": {"type": {"key": "firearms"}}}},
+                    {"good": {"firearm_details": {"type": {"key": "software_related_to_firearms"}}}},
+                    {"good": {"firearm_details": {"type": {"key": "technology_related_to_firearms"}}}},
                 ],
             },
             True,
