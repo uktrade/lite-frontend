@@ -64,11 +64,8 @@ commands:
       - run:
           name: Install OpenVPN
           command: |
-            # There seems to be a bug with the openvpn aptrepo sources
-            sudo apt-get update # for apt-get to recognise openvpn
-            sudo apt-get remove openvpn # remove ubuntu aptrepo source
             sudo apt-get update
-            sudo apt-get install openvpn -y
+            sudo apt-get install openvpn openvpn-systemd-resolved
 
   vpn_connect:
     parameters:
@@ -77,30 +74,60 @@ commands:
         type: env_var_name
         default: VPN_CONFIG
     steps:
-      - run: echo ${<<parameters.config>>:?} | base64 --decode >> config.ovpn
       - run:
-          name: Connect to VPN
+          name: Check IP before VPN connection
           command: |
-            sudo openvpn \
-              --config config.ovpn \
-              --script-security 2 \
-              --up /etc/openvpn/update-resolv-conf \
-              --down /etc/openvpn/update-resolv-conf \
-              > openvpn.log 2>&1 &
-            cat openvpn.log
-            while [ -n "$(ip addr show tun0 2>&1 > /dev/null)" ]; do
-              sleep 0.1;
+            ip a
+            echo "Public IP before VPN connection is $(curl checkip.amazonaws.com)"
+
+      - run:
+          name: VPN Setup
+          background: true
+          command: |
+            echo ${<<parameters.config>>:?} | base64 --decode > /tmp/config.ovpn
+
+            SYS_RES_DNS=$(systemd-resolve --status | grep 'DNS Servers'|awk '{print $3}')
+            echo $SYS_RES_DNS
+
+            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
+            echo $phone_home
+
+            vpn_command=(sudo openvpn
+              --config /tmp/config.ovpn
+              --route $SYS_RES_DNS 255.255.255.255 net_gateway
+              --route 169.254.0.0 255.255.0.0 net_gateway
+              --script-security 2
+              --up /etc/openvpn/update-systemd-resolved --up-restart
+              --down /etc/openvpn/update-systemd-resolved --down-pre
+              --dhcp-option DOMAIN-ROUTE .)
+
+            for IP in $(host runner.circleci.com | awk '{ print $4; }')
+              do
+                vpn_command+=(--route $IP 255.255.255.255 net_gateway)
+                echo $IP
             done
-            ls /etc/openvpn/
-            ls /usr/share/openvpn/
-            cat openvpn.log
-            dig great.dev.uktrade.digital +short
-            cat /etc/resolv.conf
-            curl -I https://great.dev.uktrade.digital/
+
+            "${vpn_command[@]}" > /tmp/openvpn.log
+
+      - run:
+          name: Wait for the connection to be established and check IP
+          command: |
+            until [ -f /tmp/openvpn.log ] && [ "$(grep -c "Initialization Sequence Completed" /tmp/openvpn.log)" != 0 ]; do
+              echo "Attempting to connect to VPN server..."
+              sleep 1;
+            done
+
+            printf "\nVPN connected\n"
+            printf "\nPublic IP is now $(curl checkip.amazonaws.com)\n"
+
+
   vpn_disconnect:
     steps:
-      - run: sudo killall openvpn || true
-      - run: sudo rm config.ovpn
+      - run:
+          name: Disconnect from OpenVPN
+          command: |
+            sudo killall openvpn || true
+          when: always
 
   setup_code:
     steps:
@@ -261,7 +288,7 @@ jobs:
 
   caseworker_e2e_test:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202008-01
     resource_class: large
     steps:
       - checkout
