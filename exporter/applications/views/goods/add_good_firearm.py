@@ -12,6 +12,7 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application
 from exporter.core.helpers import get_rfd_certificate, has_valid_rfd_certificate
+from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
     FirearmCalibreForm,
@@ -20,6 +21,7 @@ from exporter.goods.forms.firearms import (
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
+    FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
 )
@@ -51,6 +53,17 @@ def is_pv_graded(wizard):
     return add_goods_cleaned_data.get("is_pv_graded")
 
 
+def has_user_marked_rfd_certificate_invalid(wizard):
+    is_rfd_certificate_valid_cleaned_data = wizard.get_cleaned_data_for_step(
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
+    )
+    if not is_rfd_certificate_valid_cleaned_data:
+        return True
+
+    is_rfd_valid = is_rfd_certificate_valid_cleaned_data["is_rfd_valid"]
+    return not is_rfd_valid
+
+
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
@@ -61,12 +74,14 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
         (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
+        (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
     ]
     condition_dict = {
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
-    }
-
-    condition_dict = {
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: (
+            C(has_rfd_certificate) & C(has_user_marked_rfd_certificate_invalid)
+        )
+        | ~C(has_rfd_certificate),
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
     }
 
@@ -121,6 +136,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             "category",
             "is_replica",
             "replica_description",
+            "is_registered_firearm_dealer",
         ]
 
         keys_to_remove = [

@@ -9,6 +9,7 @@ from exporter.goods.forms.firearms import (
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
+    FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
 )
@@ -256,5 +257,18 @@ def test_firearm_validity_form(data, is_valid, errors):
     }
 
     form = FirearmRFDValidityForm(data=data, rfd_certificate=rfd_certificate)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_registered_firearm_dealer": ["Select yes if you are a registered firearms dealer"]}),
+        ({"is_registered_firearm_dealer": True}, True, {}),
+    ),
+)
+def test_firearm_registered_firearms_dealer_form(data, is_valid, errors):
+    form = FirearmRegisteredFirearmsDealerForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

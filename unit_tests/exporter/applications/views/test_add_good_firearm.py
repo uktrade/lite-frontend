@@ -10,6 +10,7 @@ from exporter.core.constants import AddGoodFormSteps
 from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
 from exporter.goods.forms.firearms import (
     FirearmCategoryForm,
+    FirearmRegisteredFirearmsDealerForm,
     FirearmRFDValidityForm,
 )
 
@@ -179,7 +180,28 @@ def test_add_good_firearm_displays_rfd_validity_step(
     assertContains(response, rfd_certificate_name)
 
 
-def test_add_good_firearm_submission(
+def test_add_good_firearm_skips_rfd_validity_step(application_without_rfd_document, goto_step, post_to_step):
+    goto_step(AddGoodFirearmSteps.IS_REPLICA)
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmRegisteredFirearmsDealerForm)
+
+
+def test_add_good_firearm_shows_registered_firearms_step_after_confirming_certificate_invalid(
+    application_with_rfd_document, rfd_certificate, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID)
+    response = post_to_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, {"is_rfd_valid": False})
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmRegisteredFirearmsDealerForm)
+
+
+def test_add_good_firearm_with_rfd_document_submission(
     authorized_client,
     new_good_firearm_url,
     post_to_step,
@@ -279,6 +301,92 @@ def test_add_good_firearm_submission(
         "issuing_authority": "Government entity",
         "reference": "GR123",
         "date_of_issue": "2020-02-20",
+        "item_category": "group2_firearms",
+    }
+
+
+def test_add_good_firearm_without_rfd_document_submission(
+    authorized_client,
+    new_good_firearm_url,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    control_list_entries,
+    application_without_rfd_document,
+):
+    authorized_client.get(new_good_firearm_url)
+
+    good_id = str(uuid.uuid4())
+
+    post_goods_matcher = requests_mock.post(
+        f"/goods/",
+        status_code=201,
+        json={
+            "good": {
+                "id": good_id,
+            },
+        },
+    )
+
+    post_to_step(
+        AddGoodFirearmSteps.CATEGORY,
+        {"category": ["NON_AUTOMATIC_SHOTGUN"]},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.NAME,
+        {"name": "TEST NAME"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": True},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:add_good_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+    assert post_goods_matcher.called_once
+    last_request = post_goods_matcher.last_request
+    assert last_request.json() == {
+        "firearm_details": {
+            "calibre": "calibre 123",
+            "category": ["NON_AUTOMATIC_SHOTGUN"],
+            "is_registered_firearm_dealer": True,
+            "is_replica": True,
+            "replica_description": "This is a replica",
+            "type": "firearms",
+        },
+        "control_list_entries": ["ML1", "ML1a"],
+        "name": "TEST NAME",
+        "is_good_controlled": True,
+        "is_pv_graded": False,
         "item_category": "group2_firearms",
     }
 

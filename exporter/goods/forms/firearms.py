@@ -424,3 +424,32 @@ class FirearmRFDValidityForm(forms.Form):
             "is_rfd_valid",
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
+
+
+class FirearmRegisteredFirearmsDealerForm(forms.Form):
+    class Layout:
+        TITLE = "Are you a registered firearms dealer?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_registered_firearm_dealer = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if you are a registered firearms dealer",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            "is_registered_firearm_dealer",
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
