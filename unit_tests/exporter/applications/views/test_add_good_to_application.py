@@ -674,7 +674,7 @@ def test_add_good_to_application_api_submission_with_deferred_serial_numbers_wit
             "number_of_items": 3,
             "serial_numbers_available": "LATER",
             "no_identification_markings_details": "",
-            "serial_numbers": [],
+            "serial_numbers": ["", "", ""],
             "year_of_manufacture": "2020",
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
             "firearms_act_section": "firearms_act_section5",
