@@ -76,3 +76,8 @@ class GeneratedDocument(BasePage):
         )
 
         return dict(zip(headers, values))[item_name]
+
+    def get_product_name_from_nlr_document_preview(self):
+        return self.driver.find_element(
+            by=By.XPATH, value="//div[@id='paragraph_content']/table/tbody/tr[1]/td[2]"
+        ).text
