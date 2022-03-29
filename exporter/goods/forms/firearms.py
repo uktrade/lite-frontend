@@ -10,6 +10,10 @@ from core.forms.layouts import ConditionalQuestion, ConditionalRadios
 from exporter.core.services import get_control_list_entries
 
 
+def coerce_str_to_bool(val):
+    return val == "True"
+
+
 class TextChoice(Choice):
     def __init__(self, choice, **kwargs):
         super().__init__(choice.value, choice.label, **kwargs)
@@ -118,7 +122,7 @@ class FirearmProductControlListEntryForm(forms.Form):
             (True, "Yes"),
             (False, "No"),
         ),
-        coerce=lambda val: val == "True",
+        coerce=coerce_str_to_bool,
         label="",
         error_messages={
             "required": "Select yes if you know the products control list entry",
@@ -172,5 +176,81 @@ class FirearmProductControlListEntryForm(forms.Form):
 
         if is_good_controlled and not control_list_entries:
             self.add_error("control_list_entries", "Enter the control list entry")
+
+        return cleaned_data
+
+
+class FirearmCalibreForm(forms.Form):
+    class Layout:
+        TITLE = "What is the calibre of the product?"
+        SUBMIT_BUTTON = "Continue"
+
+    calibre = forms.CharField(
+        label="",
+        error_messages={
+            "required": "Enter the calibre",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            "calibre",
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+
+class FirearmReplicaForm(forms.Form):
+    class Layout:
+        TITLE = "Is the product a replica firearm?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_replica = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product is a replica firearm",
+        },
+    )
+
+    replica_description = forms.CharField(
+        widget=forms.Textarea,
+        label="Describe the firearm the product is a replica of",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            ConditionalRadios(
+                "is_replica",
+                ConditionalQuestion(
+                    "Yes",
+                    "replica_description",
+                ),
+                "No",
+            ),
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_replica = cleaned_data.get("is_replica")
+        replica_description = cleaned_data.get("replica_description")
+
+        if is_replica and not replica_description:
+            self.add_error("replica_description", "Enter a description")
 
         return cleaned_data
