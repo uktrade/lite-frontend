@@ -1,4 +1,5 @@
 import logging
+import requests
 
 from http import HTTPStatus
 
@@ -9,6 +10,8 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 
+from exporter.applications.services import get_application
+from exporter.core.helpers import get_rfd_certificate, has_valid_rfd_certificate
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
     FirearmCalibreForm,
@@ -18,6 +21,7 @@ from exporter.goods.forms.firearms import (
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
     FirearmReplicaForm,
+    FirearmRFDValidityForm,
 )
 from exporter.goods.services import post_firearm
 from lite_forms.generators import error_page
@@ -34,6 +38,12 @@ class AddGoodFirearmSteps:
     PV_GRADING_DETAILS = "PV_GRADING_DETAILS"
     CALIBRE = "CALIBRE"
     IS_REPLICA = "IS_REPLICA"
+    IS_RFD_CERTIFICATE_VALID = "IS_RFD_CERTIFICATE_VALID"
+    IS_REGISTERED_FIREARMS_DEALER = "IS_REGISTERED_FIREARMS_DEALER"
+
+
+def has_rfd_certificate(wizard):
+    return has_valid_rfd_certificate(wizard.application)
 
 
 def is_pv_graded(wizard):
@@ -50,7 +60,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
         (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
         (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
+        (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
     ]
+    condition_dict = {
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
+    }
 
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
@@ -58,6 +72,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        try:
+            self.application = get_application(self.request, self.kwargs["pk"])
+        except requests.exceptions.HTTPError:
             raise Http404
 
         return super().dispatch(request, *args, **kwargs)
@@ -91,6 +110,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         if step == AddGoodFirearmSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
 
+        if step == AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID:
+            kwargs["rfd_certificate"] = get_rfd_certificate(self.application)
+
         return kwargs
 
     def get_payload(self, form_list):
@@ -101,10 +123,17 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             "replica_description",
         ]
 
+        keys_to_remove = [
+            "is_rfd_valid",
+        ]
+
         payload = {}
         firearm_data = {}
         for form in form_list:
             for k, v in form.cleaned_data.items():
+                if k in keys_to_remove:
+                    continue
+
                 if k in firearm_data_keys:
                     firearm_data[k] = v
                 else:

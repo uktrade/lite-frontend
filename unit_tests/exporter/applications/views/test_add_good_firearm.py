@@ -8,7 +8,10 @@ from django.urls import reverse
 from core import client
 from exporter.core.constants import AddGoodFormSteps
 from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
-from exporter.goods.forms.firearms import FirearmCategoryForm
+from exporter.goods.forms.firearms import (
+    FirearmCategoryForm,
+    FirearmRFDValidityForm,
+)
 
 
 @pytest.fixture
@@ -33,10 +36,45 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
+def application(data_standard_case, requests_mock):
+    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    matcher = requests_mock.get(url=app_url, json=data_standard_case["case"])
+    return matcher
+
+
+@pytest.fixture
+def rfd_certificate():
+    return {
+        "id": str(uuid.uuid4()),
+        "document": {
+            "name": "testdocument.txt",
+        },
+        "document_type": "rfd-certificate",
+        "is_expired": False,
+    }
+
+
+@pytest.fixture
+def application_with_rfd_document(data_standard_case, requests_mock, rfd_certificate):
+    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    case = data_standard_case["case"]
+    case["organisation"] = {
+        "documents": [rfd_certificate],
+    }
+    matcher = requests_mock.get(url=app_url, json=case)
+    return matcher
+
+
+@pytest.fixture
+def application_without_rfd_document(application):
+    return application
+
+
+@pytest.fixture
 def control_list_entries(requests_mock):
-    requests_mock.get(
-        "/static/control-list-entries/", json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]}
-    )
+    clc_url = client._build_absolute_uri("/static/control-list-entries/")
+    matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
+    return matcher
 
 
 @pytest.fixture
@@ -48,19 +86,12 @@ def pv_gradings(requests_mock):
 
 
 def test_firearm_category_redirects_to_new_wizard(
-    settings,
     authorized_client,
-    requests_mock,
-    data_standard_case,
     new_good_firearm_url,
     new_good_url,
+    application,
+    control_list_entries,
 ):
-    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
-    requests_mock.get(url=app_url, json=data_standard_case["case"])
-
-    clc_url = client._build_absolute_uri("/static/control-list-entries/")
-    requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
-
     response = authorized_client.post(new_good_url, data={"wizard_goto_step": AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE})
     response = authorized_client.post(
         new_good_url,
@@ -75,20 +106,44 @@ def test_firearm_category_redirects_to_new_wizard(
 
 
 def test_add_good_firearm_access_denied_without_feature_flag(
-    settings, authorized_client, new_good_firearm_url, new_good_url
+    settings,
+    authorized_client,
+    new_good_firearm_url,
 ):
     settings.FEATURE_FLAG_PRODUCT_2_0 = False
     response = authorized_client.get(new_good_firearm_url)
     assert response.status_code == 404
 
 
-def test_add_good_firearm_start(authorized_client, new_good_firearm_url, new_good_url):
+def test_add_good_firearm_invalid_application(
+    data_standard_case, requests_mock, authorized_client, new_good_firearm_url
+):
+    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    requests_mock.get(url=app_url, status_code=404)
+    response = authorized_client.get(new_good_firearm_url)
+    assert response.status_code == 404
+
+
+def test_add_good_firearm_start(authorized_client, new_good_firearm_url, new_good_url, application):
     response = authorized_client.get(new_good_firearm_url)
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmCategoryForm)
     assert response.context["hide_step_count"]
     assert response.context["back_link_url"] == new_good_url
     assert response.context["title"] == "Firearm category"
+
+
+@pytest.fixture
+def goto_step(authorized_client, new_good_firearm_url):
+    def _goto_step(step_name):
+        return authorized_client.post(
+            new_good_firearm_url,
+            data={
+                "wizard_goto_step": step_name,
+            },
+        )
+
+    return _goto_step
 
 
 @pytest.fixture
@@ -107,6 +162,23 @@ def post_to_step(authorized_client, new_good_firearm_url):
     return _post_to_step
 
 
+def test_add_good_firearm_displays_rfd_validity_step(
+    application_with_rfd_document, rfd_certificate, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmSteps.IS_REPLICA)
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmRFDValidityForm)
+    rfd_certificate_url = reverse("organisation:document", kwargs={"pk": rfd_certificate["id"]})
+    assertContains(response, rfd_certificate_url)
+    rfd_certificate_name = rfd_certificate["document"]["name"]
+    assertContains(response, rfd_certificate_name)
+
+
 def test_add_good_firearm_submission(
     authorized_client,
     new_good_firearm_url,
@@ -115,6 +187,7 @@ def test_add_good_firearm_submission(
     data_standard_case,
     control_list_entries,
     pv_gradings,
+    application_with_rfd_document,
 ):
     authorized_client.get(new_good_firearm_url)
 
@@ -168,9 +241,13 @@ def test_add_good_firearm_submission(
         AddGoodFirearmSteps.CALIBRE,
         {"calibre": "calibre 123"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.IS_REPLICA,
         {"is_replica": True, "replica_description": "This is a replica"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
+        {"is_rfd_valid": True},
     )
 
     assert response.status_code == 302
@@ -213,6 +290,7 @@ def test_add_good_firearm_submission_error(
     requests_mock,
     data_standard_case,
     control_list_entries,
+    application_with_rfd_document,
 ):
     authorized_client.get(new_good_firearm_url)
 
@@ -248,9 +326,13 @@ def test_add_good_firearm_submission_error(
         AddGoodFirearmSteps.CALIBRE,
         {"calibre": "calibre 123"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.IS_REPLICA,
         {"is_replica": True, "replica_description": "This is a replica"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
+        {"is_rfd_valid": True},
     )
 
     assert response.status_code == 200

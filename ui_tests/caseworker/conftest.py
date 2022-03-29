@@ -314,7 +314,7 @@ def get_profile_page(driver):  # noqa
 @when(parsers.parse('I change my team to "{team}" and default queue to "{queue}"'))  # noqa
 def go_to_team_edit_page(driver, team, queue):  # noqa
     # we should already be on the profile page
-    driver.find_element(by=By.ID, value="link-edit-team").click()
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "link-edit-team"))).click()
     teams_page = TeamsPages(driver)
     teams_page.select_team_from_dropdown(team)
     teams_page.select_default_queue_from_dropdown(queue)

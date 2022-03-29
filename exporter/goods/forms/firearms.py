@@ -7,6 +7,7 @@ from datetime import date
 from django import forms
 from django.db import models
 from django.template.loader import render_to_string
+from django.urls import reverse
 
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
@@ -377,3 +378,49 @@ class FirearmReplicaForm(forms.Form):
             self.add_error("replica_description", "Enter a description")
 
         return cleaned_data
+
+
+class FirearmRFDValidityForm(forms.Form):
+    class Layout:
+        TITLE = "Is your registered firearms dealer certificate still valid?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_rfd_valid = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if your registered firearms dealer certificate is still valid",
+        },
+    )
+
+    def __init__(self, rfd_certificate, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        rfd_certificate_download_url = reverse(
+            "organisation:document",
+            kwargs={
+                "pk": rfd_certificate["id"],
+            },
+        )
+        rfd_certificate_name = rfd_certificate["document"]["name"]
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            HTML.p(
+                render_to_string(
+                    "goods/forms/firearms/rfd_certificate_download_link.html",
+                    {
+                        "url": rfd_certificate_download_url,
+                        "name": rfd_certificate_name,
+                    },
+                ),
+            ),
+            "is_rfd_valid",
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
