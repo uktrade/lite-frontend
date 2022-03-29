@@ -128,6 +128,13 @@ commands:
           command: |
             sudo killall openvpn || true
           when: always
+  
+  vpn_handshake:
+    steps:
+      - run:
+          name: VPN handshake
+          command: curl -I https://great.dev.uktrade.digital/
+          when: always
 
   setup_code:
     steps:
@@ -248,7 +255,7 @@ jobs:
   caseworker_ui_test:
     # has to be machine executor as the VPN does not work in docker executor
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202008-01
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -263,12 +270,13 @@ jobs:
       - setup_code
       - vpn_install
       - vpn_connect
+      - vpn_handshake
       - ui_tests
       - vpn_disconnect
 
   exporter_ui_test:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202008-01
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -283,6 +291,7 @@ jobs:
       - setup_code
       - vpn_install
       - vpn_connect
+      - vpn_handshake
       - ui_tests
       - vpn_disconnect
 
