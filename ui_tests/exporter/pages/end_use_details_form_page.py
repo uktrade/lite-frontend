@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -9,13 +11,13 @@ class EndUseDetailsFormPage(BasePage):
     SUSPECTED_WMD_REF_ID = "suspected_wmd_ref"
 
     def click_on_yes_radiobutton(self):
-        self.driver.find_element_by_css_selector("[id$=-True]").click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value="[id$=-True]").click()
 
     def click_on_no_radiobutton(self):
-        self.driver.find_element_by_css_selector("[id$=-False]").click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value="[id$=-False]").click()
 
     def enter_reference_number(self, ref_number):
-        ref_field = self.driver.find_element_by_class_name(self.INPUT_FIELD_CLASS)
+        ref_field = self.driver.find_element(by=By.CLASS_NAME, value=self.INPUT_FIELD_CLASS)
         ref_field.clear()
         ref_field.send_keys(ref_number)
 
@@ -24,7 +26,7 @@ class EndUseDetailsFormPage(BasePage):
 
     def enter_additional_details(self, field_id, details):
         self.driver.execute_script(f'document.getElementById("{field_id}").value = "{details[:-1]}"')
-        self.driver.find_element_by_id(field_id).send_keys(details[-1:])
+        self.driver.find_element(by=By.ID, value=field_id).send_keys(details[-1:])
 
     def answer_military_end_use_controls(self, flag: bool, ref_number=None):
         if flag:

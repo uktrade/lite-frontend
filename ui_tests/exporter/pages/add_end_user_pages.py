@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from ui_tests.exporter.pages.BasePage import BasePage
 from tests_common import functions
 
@@ -5,7 +6,7 @@ from tests_common import functions
 class AddEndUserPages(BasePage):
     INPUT_NAME_ID = "name"
     INPUT_ADDRESS_ID = "address"
-    INPUT_COUNTRY_ID = "country"
+    INPUT_COUNTRY_ID = "country-autocomplete"
     INPUT_WEBSITE_ID = "website"
     INPUT_SIGNATORY_NAME_ID = "signatory_name_euu"
 
@@ -26,7 +27,7 @@ class AddEndUserPages(BasePage):
         functions.click_submit(self.driver)
 
     def enter_name(self, name):
-        name_tb = self.driver.find_element_by_id(self.INPUT_NAME_ID)
+        name_tb = self.driver.find_element(by=By.XPATH, value=f"//input[contains(@id, '{self.INPUT_NAME_ID}')]")
         name_tb.clear()
         name_tb.send_keys(name)
 
@@ -34,7 +35,9 @@ class AddEndUserPages(BasePage):
         return self.driver.find_element_by_id(self.INPUT_NAME_ID).get_attribute("value")
 
     def enter_address(self, address):
-        address_tb = self.driver.find_element_by_id(self.INPUT_ADDRESS_ID)
+        address_tb = self.driver.find_element(
+            by=By.XPATH, value=f"//textarea[contains(@id, '{self.INPUT_ADDRESS_ID}')]"
+        )
         address_tb.clear()
         address_tb.send_keys(address)
 
@@ -56,7 +59,7 @@ class AddEndUserPages(BasePage):
         return self.driver.find_element_by_id(self.INPUT_COUNTRY_ID).get_attribute("value")
 
     def select_type(self, option):
-        self.driver.find_element_by_css_selector(f"*[value='{option.lower()}']").click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=f"*[value='{option.lower()}']").click()
 
     def click_copy_existing_button(self):
         self.driver.find_element_by_id(self.LINK_COPY_EXISTING_ID).click()
@@ -80,4 +83,9 @@ class AddEndUserPages(BasePage):
         self.driver.find_element_by_css_selector(f"*[value='{option.lower()}']").click()
 
     def enter_signatory_name(self, name):
-        self.driver.find_element_by_id(self.INPUT_SIGNATORY_NAME_ID).send_keys(name)
+        self.driver.find_element(
+            by=By.XPATH, value=f"//input[contains(@id, '{self.INPUT_SIGNATORY_NAME_ID}')]"
+        ).send_keys(name)
+
+    def enter_no_end_user_document_reason(self, reason):
+        self.driver.find_element(by=By.TAG_NAME, value="textarea").send_keys(reason)

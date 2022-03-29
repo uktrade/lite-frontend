@@ -1,4 +1,5 @@
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 
 from ui_tests.exporter.pages.BasePage import BasePage
 from tests_common.tools.helpers import scroll_to_element_by_id
@@ -11,7 +12,7 @@ class TaskListPage(BasePage):
 
     def click_on_task_list_section(self, section):
         scroll_to_element_by_id(self.driver, section)
-        self.driver.find_element_by_id(section).click()
+        self.driver.find_element(by=By.ID, value=section).click()
 
     def get_section_status(self, section):
         return self.driver.find_element_by_id(section + self.STATUS_PARTIAL_ID).get_attribute("data-status")

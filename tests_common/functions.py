@@ -7,8 +7,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
 
-def click_submit(driver: WebDriver, button_value="submit"):
-    element = driver.find_element(by=By.CSS_SELECTOR, value=f"button[value='{button_value}']")
+def click_submit(driver: WebDriver):
+    element = driver.find_element(by=By.CSS_SELECTOR, value='.govuk-button[type*="submit"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.execute_script("arguments[0].click();", element)
 
@@ -35,7 +35,7 @@ def element_with_id_exists(driver: WebDriver, element_id: str) -> bool:
 
 
 def send_keys_to_autocomplete(driver: WebDriver, element_id: str, keys: str):
-    element = driver.find_element_by_id(element_id)
+    element = driver.find_element(by=By.ID, value=element_id)
     element.send_keys(keys)
 
     # Tab away from element and wait
@@ -44,7 +44,7 @@ def send_keys_to_autocomplete(driver: WebDriver, element_id: str, keys: str):
 
 
 def send_tokens_to_token_bar(driver: WebDriver, element_selector: str, tokens: List[str]):
-    element = driver.find_element_by_css_selector(element_selector)
+    element = driver.find_element(by=By.CSS_SELECTOR, value=element_selector)
 
     for token in tokens:
         element.send_keys(token)

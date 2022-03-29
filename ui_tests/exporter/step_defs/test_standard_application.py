@@ -8,10 +8,10 @@ from ui_tests.exporter.conftest import (
     enter_export_licence,
     enter_case_note_text,
     click_post_note,
-    answer_firearms_question,
 )
 from ui_tests.exporter.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from ui_tests.exporter.pages.add_goods_details import AddGoodDetails
+from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
 from ui_tests.exporter.pages.check_your_answers_page import CheckYourAnswers
 from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
@@ -240,6 +240,105 @@ def create_standard_application(driver, export_type, context):  # noqa
     enter_export_licence(driver, "yes", "123456", context)
 
 
+@when("I click apply")
+def click_apply(driver):
+    ExporterHubPage(driver).click_apply_for_a_licence()
+
+
+@when("I select export licence")
+def select_export_licence(driver):
+    ApplyForALicencePage(driver).select_licence_type("export_licence")
+    functions.click_submit(driver)
+
+
+@when("I select SIEL")
+def select_siel(driver):
+    apply_page = ApplyForALicencePage(driver)
+    apply_page.click_export_licence("siel")
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{app_name}" as name'))
+def enter_application_name(driver, app_name):
+    apply_page = ApplyForALicencePage(driver)
+    apply_page.enter_name_or_reference_for_application(app_name)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{option}" to reusing an existing party'))
+@when(parsers.parse('I select "{option}" to permanently exported'))
+@when(parsers.parse('I select "{option}" to section 1 of the firearms act'))
+@when(parsers.parse('I select "{option}" to registered firearms dealer'))
+@when(parsers.parse('I select "{option}" to a replica firearm'))
+@when(parsers.parse('I select "{option}" to receiving a letter'))
+def select_yes_no_radio(driver, option):
+    Shared(driver).click_on_radio_buttons({"yes": 0, "no": 1, "I don't know": 5}[option])
+    functions.click_submit(driver)
+
+
+@when(
+    parsers.parse(
+        'I enter "{product_name}" as name, "{clc_entry}" for control list, and "{grading}" for security grading'
+    )
+)
+def enter_add_product_details(driver, product_name, clc_entry, grading):
+    add_good_page = AddGoodPage(driver)
+    add_good_page.enter_good_name(product_name)
+    add_good_page.select_is_your_good_controlled(True)
+    add_good_page.enter_control_list_entries(clc_entry)
+    if grading != "yes":
+        grading = "no"
+    add_good_page.select_is_your_good_graded(grading)
+    functions.click_submit(driver)
+
+
+@when(
+    parsers.parse(
+        'I enter "{value}" as value, "{incorporated}" for incorporation, "{deactivated}" for deactivation, and "{proof_marks}" for proof marks'
+    )
+)
+def enter_quantity_and_value(driver, value, incorporated, deactivated, proof_marks):
+    good_details_page = StandardApplicationGoodDetails(driver)
+    good_details_page.enter_value(value)
+    bool_lookup = {"yes": True, "no": False}
+    good_details_page.set_good_incorporated(bool_lookup[incorporated])
+    good_details_page.set_deactivated_status(bool_lookup[deactivated])
+    good_details_page.set_proof_marks(bool_lookup[proof_marks])
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{details}" for the intended end use'))
+def enter_end_use_details(driver, details):
+    end_use_page = EndUseDetailsFormPage(driver)
+    end_use_page.answer_intended_end_use_details(details)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{option}" to where products begin export journey'))
+def set_begin_export_journey(driver, option):
+    Shared(driver).click_on_radio_buttons({"Great Britain": 0, "Northern Ireland": 1}[option])
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{option}" to who products are going'))
+def set_who_products_are_going(driver, option):
+    Shared(driver).click_on_radio_buttons(
+        {
+            "directly to the end-user": 0,
+            "to an end-user via a consignee": 1,
+            "to an end-user via a consignee, with additional third parties": 2,
+        }[option]
+    )
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select no and enter "{reason}" for end user document'))
+def skip_end_user_document(driver, reason):
+    select_yes_no_radio(driver, "no")
+    AddEndUserPages(driver).enter_no_end_user_document_reason(reason)
+    functions.click_submit(driver)
+
+
 @then("I see the application overview")  # noqa
 def i_see_the_application_overview(driver, context):  # noqa
     element = TaskListPage(driver).get_text_of_lite_task_list_items()
@@ -358,13 +457,21 @@ def eu_compliant_limitations_end_use_details(driver, choice):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for products received under transfer licence from the EU'))  # noqa
+@when(parsers.parse('I select "{choice}" to products received under transfer licence from the EU'))  # noqa
 def eu_military_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
     if choice == "Yes":
         end_use_details.answer_is_eu_military(True)
     else:
         end_use_details.answer_is_eu_military(False)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select no to product document and enter "{reason}"'))
+def select_product_document_available(driver, reason):
+    Shared(driver).click_on_radio_buttons(1)
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_related_field_details("no_document_comments", text=reason)
     functions.click_submit(driver)
 
 

@@ -3,6 +3,9 @@ import os
 from django.utils import timezone
 from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 import tests_common.tools.helpers as utils
 from ui_tests.exporter.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
@@ -242,40 +245,40 @@ def intended_end_use_details(driver):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for informed by ECJU to apply'))  # noqa
+@when(parsers.parse('I select "{choice}" to informed by ECJU to apply'))  # noqa
 def military_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
-    if choice == "Yes":
+    if choice.lower() == "yes":
         end_use_details.answer_military_end_use_controls(True, fake.ean(length=13))
     else:
         end_use_details.answer_military_end_use_controls(False)
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for informed by ECJU about WMD use'))  # noqa
+@when(parsers.parse('I select "{choice}" to informed by ECJU about WMD use'))  # noqa
 def informed_wmd_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
-    if choice == "Yes":
+    if choice.lower() == "yes":
         end_use_details.answer_is_informed_wmd(True, fake.ean(length=13))
     else:
         end_use_details.answer_is_informed_wmd(False)
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for suspected WMD use'))  # noqa
+@when(parsers.parse('I select "{choice}" to suspected WMD use'))  # noqa
 def suspected_wmd_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
-    if choice == "Yes":
+    if choice.lower() == "yes":
         end_use_details.answer_is_suspected_wmd(True, fake.sentence(nb_words=30))
     else:
         end_use_details.answer_is_suspected_wmd(False)
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I answer "{choice}" for shipping air waybill or lading and Save'))  # noqa
+@when(parsers.parse('I select "{choice}" to shipping air waybill or lading'))  # noqa
 def route_of_goods(driver, choice):  # noqa
     route_of_goods = RouteOfGoodsFormPage(driver)
-    if choice == "No":
+    if choice.lower() == "no":
         route_of_goods.answer_route_of_goods_question(True, "Not shipped air waybill.")
     else:
         route_of_goods.answer_route_of_goods_question(False)
@@ -416,6 +419,7 @@ def i_choose_to_make_minor_edits(driver):  # noqa
     application_edit_type_page.click_change_application_button()
 
 
+@when("I click save and continue")  # noqa
 @when("I click continue")  # noqa
 @when("I click submit")  # noqa
 def i_click_submit_button(driver):  # noqa
@@ -841,17 +845,22 @@ def specify_serial_number_of_other_identification_details(driver, has_markings, 
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I specify number of items as "{number_of_items}"'))
+@when("I choose to enter serial numbers now")
+def specify_serial_numbers_available(driver):  # noqa
+    specify_serial_number_of_other_identification_details(driver, has_markings="AVAILABLE", details=None)
+
+
+@when(parsers.parse('I enter "{number_of_items}" for number of items'))
 def specify_number_of_items(driver, number_of_items):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_number_of_items(number_of_items)
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter "{number_of_items}" serial numbers as "{serial_numbers}"'))
-def enter_serial_numbers(driver, number_of_items, serial_numbers):  # noqa
+@when(parsers.parse('I enter "{serial_numbers}" for the serial numbers'))
+def enter_serial_numbers(driver, serial_numbers):  # noqa
     good_details_page = AddGoodDetails(driver)
-    good_details_page.enter_serial_numbers(int(number_of_items), serial_numbers.split(","))
+    good_details_page.enter_serial_numbers(serial_numbers.split(","))
     functions.click_submit(driver)
 
 
@@ -872,7 +881,7 @@ def create_a_new_good_in_application(driver, name, description, part_number, con
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter firearm year of manufacture as "{year}"'))
+@when(parsers.parse('I enter "{year}" as the year of manufacture'))
 def enter_firearm_year_of_manufacture(driver, year):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_year_of_manufacture(year)
@@ -886,7 +895,7 @@ def enter_firearm_replica_status_with_description(driver, status, description): 
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter calibre as "{calibre}"'))
+@when(parsers.parse('I enter "{calibre}" as the calibre'))
 def enter_firearm_calibre(driver, calibre):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_calibre(calibre)
@@ -1074,7 +1083,14 @@ def edit_good_details_in_application(driver, field_name, updated_value):  # noqa
 
 @when(parsers.parse('I click on "{link_text}"'))  # noqa
 def click_link_with_text(driver, link_text):  # noqa
-    driver.find_element_by_link_text(link_text).click()
+    WebDriverWait(driver, 30).until(
+        expected_conditions.presence_of_element_located(
+            (
+                By.LINK_TEXT,
+                link_text,
+            )
+        )
+    ).click()
 
 
 @then("I see the temporary export detail summary")  # noqa
@@ -1113,6 +1129,11 @@ def select_party(driver, consignee_type):  # noqa
 
 @when(parsers.parse('I select "{end_user_type}" as the type of end user'))  # noqa
 def select_end_user_type(driver, end_user_type):  # noqa
+    end_user_type = {
+        "government organisation": "government",
+        "commercial organisation": "commercial",
+        "an individual": "individual",
+    }.get(end_user_type.lower(), end_user_type)
     add_end_user_page = AddEndUserPages(driver)
     add_end_user_page.select_type(end_user_type)
     functions.click_submit(driver)

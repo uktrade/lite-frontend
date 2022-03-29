@@ -4,6 +4,54 @@ Feature: I want to indicate the standard licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
+  Scenario: Submit standard application
+    Given I signin and go to exporter homepage and choose Test Org
+    When I click apply
+    And I select export licence
+    And I select SIEL
+    And I enter "application1" as name
+    And I select "no" to receiving a letter
+    And I click on "Products"
+    And I click on "Add a new product"
+    And I select product type "Firearm"
+    And I enter "1" for number of items
+    And I choose to enter serial numbers now
+    And I enter "12345" for the serial numbers
+    And I enter "name" as name, "ML1a" for control list, and "no it doesn’t need one" for security grading
+    And I enter "2015" as the year of manufacture
+    And I select "no" to a replica firearm
+    And I enter ".22" as the calibre
+    And I select "no" to registered firearms dealer
+    And I select "I don't know" to section 1 of the firearms act
+    And I click on "Continue"
+    And I select no to product document and enter "reason"
+    And I enter "20" as value, "no" for incorporation, "no" for deactivation, and "yes" for proof marks
+    And I click on "Back to application overview"
+    And I click on "End use details"
+    And I enter "end use details" for the intended end use
+    And I select "no" to informed by ECJU to apply
+    And I select "no" to informed by ECJU about WMD use
+    And I select "no" to suspected WMD use
+    And I select "no" to products received under transfer licence from the EU
+    And I click save and continue
+    And I click on "Provide product location and journey"
+    And I select "Great Britain" to where products begin export journey
+    And I select "yes" to permanently exported
+    And I select "yes" to shipping air waybill or lading
+    And I select "directly to the end-user" to who products are going
+    And I click on "Submit"
+    And I click on "End user"
+    And I select "no" to reusing an existing party
+    And I select "commercial organisation" as the type of end user
+    And I enter the "Joe Bloggs" as end user name
+    And I click continue
+    And I enter "123 Main Street" and "France" for end user address
+    And I enter "Joe Bloggs" for signatory name
+    And I select no and enter "reason" for end user document
+    And I click on "Submit"
+    And I submit the application
+
+
   @skip @legacy
   Scenario: Apply for a licence to draft and delete
     Given I go to exporter homepage and choose Test Org
