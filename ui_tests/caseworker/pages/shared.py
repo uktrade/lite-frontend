@@ -38,7 +38,7 @@ class Shared(BasePage):
         return self.driver.find_elements_by_css_selector(self.ERROR_MESSAGE)[no].text
 
     def get_text_of_body(self):
-        return self.driver.find_element_by_css_selector(self.BODY).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.BODY).text
 
     def get_text_of_caption(self):
         return self.driver.find_element_by_css_selector(self.GOVUK_CAPTION).text

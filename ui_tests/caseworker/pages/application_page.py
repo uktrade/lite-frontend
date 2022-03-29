@@ -295,3 +295,27 @@ class ApplicationPage(BasePage):
             + context.eua_id
             + "/activity/"
         )
+
+    def select_end_user(self, end_user_name):
+        self.driver.find_element(
+            by=By.XPATH,
+            value=f"//input[@type='checkbox' and @name='end_user' and ancestor::tr/td/text()[contains(., '{end_user_name}')]]",
+        ).click()
+
+    def get_matches(self, match_type):
+        """Return a list of names that have denial matches based on
+        the supplied match_type - one of "PARTIAL MATCH" or "EXACT MATCH".
+        """
+        return [
+            td.text
+            for td in self.driver.find_elements(
+                by=By.XPATH,
+                value=f"//table[@id='table-denial-matches']/tbody/tr/td[3][contains(preceding-sibling::td/strong/text(), '{match_type}')]",
+            )
+        ]
+
+    def select_denial_match(self, name):
+        return self.driver.find_element(
+            by=By.XPATH,
+            value=f"//input[@type='checkbox' and ancestor::table[@id='table-denial-matches']/tbody/tr/td[3][contains(text(), '{name}')]]",
+        ).click()
