@@ -30,7 +30,6 @@ Feature: I want to export and import XML for enforcement checking
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
     | Test    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
-
   Scenario: Import xml file after enforcement checks
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
@@ -40,19 +39,19 @@ Feature: I want to export and import XML for enforcement checking
     When I go to my profile page
     And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"
     And I go to my case list
-    When I click export enforcement xml
-    And I go to application previously created
-    Then the file "enforcement_check.xml" is downloaded
-    And the downloaded file should include "CONSIGNEE" "COUNTRY" as "Belgium"
-    And the downloaded file should include "END_USER" "COUNTRY" as "Belgium"
-    When I include "CONSIGNEE" details to generate import file
-    And I go to my case list
-    And I import the generated enforcement check xml file
+    And I cleanup the temporary files created
+    And I click "Export EU XML"
+    Then an XML file is downloaded onto my device
+    When I include "END_USER" details and generate import file
+    Then for FLAG the file has "N"
+    And for "CODE1" the file has the "END_USER" data "ELA_ID" number from export file
+    And for "CODE2" the file has the "END_USER" data "SH_ID" number from export file
+    When I go to my case list
+    And I click "Import EU XML"
+    And I attach the file above
     And I go to application previously created
     Then the application is removed from "Enforcement Unit Cases to Review" queue
-    And the flag "Enforcement Check Req" is not present
-    And I cleanup the temporary files created
 
     Examples:
-    | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | Rifle   | ABC-123-45  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+    | name    | product    | part_number | clc_rating  | end_user_name | end_user_address| country | consignee_name    | consignee_address | end_use                  |
+    | Test    | Rifle      | PN-ABC-123  | PL9002      | Joe bloggs    | 123 Main street | BL      | Josephine Bloggs  | 123 Main Street   | Research and development |
