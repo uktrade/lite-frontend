@@ -300,23 +300,15 @@ class ApplicationPage(BasePage):
             value=f"//input[@type='checkbox' and @name='end_user' and ancestor::tr/td/text()[contains(., '{end_user_name}')]]",
         ).click()
 
-    def get_partial_matches(self):
-        """Return a list of names that have partial denial matches."""
+    def get_matches(self, match_type):
+        """Return a list of names that have denial matches based on
+        the supplied match_type - one of "PARTIAL MATCH" or "EXACT MATCH".
+        """
         return [
             td.text
             for td in self.driver.find_elements(
                 by=By.XPATH,
-                value="//table[@id='table-denial-matches']/tbody/tr/td[3][contains(preceding-sibling::td/strong/text(), 'PARTIAL MATCH')]",
-            )
-        ]
-
-    def get_exact_matches(self):
-        """Return a list of names that have exact denial matches."""
-        return [
-            td.text
-            for td in self.driver.find_elements(
-                by=By.XPATH,
-                value="//table[@id='table-denial-matches']/tbody/tr/td[3][contains(preceding-sibling::td/strong/text(), 'EXACT MATCH')]",
+                value=f"//table[@id='table-denial-matches']/tbody/tr/td[3][contains(preceding-sibling::td/strong/text(), '{match_type}')]",
             )
         ]
 

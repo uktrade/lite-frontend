@@ -1,6 +1,6 @@
 import uuid
 
-from pytest_bdd import then, scenarios, parsers, when
+from pytest_bdd import given, then, scenarios, parsers, when
 
 from ui_tests.caseworker.pages.add_denial_records_page import AddDenialRecordsPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
@@ -68,7 +68,7 @@ def select_name(driver, name):
 
 @then(parsers.parse('I should see "{name}" as a partial match'))
 def should_see_partial_match(driver, name):
-    assert name in ApplicationPage(driver).get_partial_matches()
+    assert name in ApplicationPage(driver).get_matches("PARTIAL MATCH")
 
 
 @then(parsers.parse('I should not see "{name}" as a partial match'))
@@ -78,7 +78,7 @@ def should_not_see_partial_match(driver, name):
 
 @then(parsers.parse('I should see "{name}" as an exact match'))
 def should_see_exact_match(driver, name):
-    assert name in ApplicationPage(driver).get_exact_matches()
+    assert name in ApplicationPage(driver).get_matches("EXACT MATCH")
 
 
 @then(parsers.parse('I should not see "{name}" as an exact match'))
@@ -91,6 +91,6 @@ def select_denial_match(driver, name):
     ApplicationPage(driver).select_denial_match(name)
 
 
-@then("I cleanup the temporary files created")
+@given("I cleanup any temporary files created")
 def cleanup_temporary_files(driver):
     AddDenialRecordsPage(driver).cleanup_temporary_files()
