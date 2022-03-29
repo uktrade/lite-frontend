@@ -113,9 +113,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         payload["firearm_details"] = firearm_data
 
         if payload.get("is_pv_graded"):
-            payload.pop("date_of_issueday", None)
-            payload.pop("date_of_issuemonth", None)
-            payload.pop("date_of_issueyear", None)
+            payload["date_of_issue"] = payload["date_of_issue"].isoformat()
 
         return payload
 

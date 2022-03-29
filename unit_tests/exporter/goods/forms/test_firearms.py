@@ -6,6 +6,8 @@ from exporter.goods.forms.firearms import (
     FirearmCategoryForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
+    FirearmPvGradingForm,
+    FirearmPvGradingDetailsForm,
     FirearmReplicaForm,
 )
 
@@ -58,6 +60,14 @@ def control_list_entries(requests_mock):
     )
 
 
+@pytest.fixture
+def pv_gradings(requests_mock):
+    requests_mock.get(
+        "/static/private-venture-gradings/v2/",
+        json={"pv_gradings": [{"official": "Official"}, {"restricted": "Restricted"}]},
+    )
+
+
 def test_firearm_product_control_list_entry_form_init_control_list_entries(request_with_session, control_list_entries):
     form = FirearmProductControlListEntryForm(request=request_with_session)
     assert form.fields["control_list_entries"].choices == [("ML1", "ML1"), ("ML1a", "ML1a")]
@@ -74,6 +84,128 @@ def test_firearm_product_control_list_entry_form_init_control_list_entries(reque
 )
 def test_firearm_product_control_list_entry_form(data, is_valid, errors, request_with_session, control_list_entries):
     form = FirearmProductControlListEntryForm(data=data, request=request_with_session)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_pv_graded": ["Select yes if the product has a security grading or classification"]}),
+        ({"is_pv_graded": True}, True, {}),
+        ({"is_pv_graded": False}, True, {}),
+    ),
+)
+def test_firearm_pv_security_gradings_form(data, is_valid, errors):
+    form = FirearmPvGradingForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "grading": ["Select the security grading"],
+                "issuing_authority": ["Enter the name and address of the issuing authority"],
+                "reference": ["Enter the reference"],
+                "date_of_issue": ["Enter the date of issue"],
+            },
+        ),
+        (
+            {"grading": "official", "reference": "ABC123"},
+            False,
+            {
+                "issuing_authority": ["Enter the name and address of the issuing authority"],
+                "date_of_issue": ["Enter the date of issue"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "20",
+            },
+            False,
+            {
+                "date_of_issue": ["Date of issue must include a month", "Date of issue must include a year"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "20",
+                "date_of_issue_2": "2020",
+            },
+            False,
+            {
+                "date_of_issue": ["Date of issue must include a month"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "20",
+                "date_of_issue_1": "2",
+                "date_of_issue_2": "2040",
+            },
+            False,
+            {
+                "date_of_issue": ["Date of issue must be in the past"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "50",
+                "date_of_issue_1": "2",
+                "date_of_issue_2": "2020",
+            },
+            False,
+            {
+                "date_of_issue": ["day is out of range for month"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "20",
+                "date_of_issue_1": "20",
+                "date_of_issue_2": "2020",
+            },
+            False,
+            {
+                "date_of_issue": ["month must be in 1..12"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "20",
+                "date_of_issue_1": "2",
+                "date_of_issue_2": "2020",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_pv_security_grading_details_form(data, is_valid, errors, request_with_session, pv_gradings):
+    form = FirearmPvGradingDetailsForm(data=data, request=request_with_session)
     assert form.is_valid() == is_valid
     assert form.errors == errors
 

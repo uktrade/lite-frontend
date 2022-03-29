@@ -3,7 +3,7 @@ from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
-from datetime import datetime, date
+from datetime import date
 from django import forms
 from django.db import models
 from django.template.loader import render_to_string
@@ -276,9 +276,8 @@ class FirearmPvGradingDetailsForm(forms.Form):
 
         date_of_issue = self.fields["date_of_issue"]
         date_of_issue.error_messages = {"required": "Enter the date of issue"}
-        date_of_issue.fields[0].error_messages = {"incomplete": "Date of issue must include a day"}
-        date_of_issue.fields[1].error_messages = {"incomplete": "Date of issue must include a month"}
-        date_of_issue.fields[2].error_messages = {"incomplete": "Date of issue must include a year"}
+        for field in date_of_issue.fields:
+            field.error_messages = {"incomplete": f"Date of issue must include a {field.label.lower()}"}
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -296,18 +295,12 @@ class FirearmPvGradingDetailsForm(forms.Form):
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
-    def clean(self):
-        cleaned_data = super().clean()
+    def clean_date_of_issue(self):
+        date_of_issue = self.cleaned_data["date_of_issue"]
+        if date_of_issue > date.today():
+            raise forms.ValidationError("Date of issue must be in the past")
 
-        date_of_issue = cleaned_data.get("date_of_issue")
-        if date_of_issue:
-            cleaned_data.update(decompose_date("date_of_issue", date_of_issue))
-
-            date_of_issue = cleaned_data.get("date_of_issue")
-            if datetime.strptime(date_of_issue, "%Y-%m-%d").date() > date.today():
-                self.add_error("date_of_issue", "Date of issue must be in the past")
-
-        return cleaned_data
+        return date_of_issue
 
 
 class FirearmCalibreForm(forms.Form):
