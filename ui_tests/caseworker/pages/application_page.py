@@ -242,7 +242,7 @@ class ApplicationPage(BasePage):
         self.driver.find_element_by_id(self.ASSIGN_USER_ID).click()
 
     def click_im_done_button(self):
-        WebDriverWait(self.driver, 20).until(
+        WebDriverWait(self.driver, 30).until(
             expected_conditions.presence_of_element_located((By.ID, self.BUTTON_IM_DONE_ID))
         ).click()
 

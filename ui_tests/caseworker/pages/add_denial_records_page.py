@@ -4,6 +4,8 @@ import os
 import time
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from ui_tests.caseworker.pages.BasePage import BasePage
 
@@ -12,7 +14,9 @@ class AddDenialRecordsPage(BasePage):
     CSV_FILE_LOCATION = "/tmp/example-denials.csv"
 
     def download_example_csv_file(self):
-        self.driver.find_element(by=By.LINK_TEXT, value="Download an example .csv file").click()
+        WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.LINK_TEXT, "Download an example .csv file"))
+        ).click()
 
         for _ in range(20):
             if os.path.exists(self.CSV_FILE_LOCATION):
