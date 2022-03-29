@@ -15,6 +15,7 @@ from exporter.goods.forms.firearms import (
     FirearmCategoryForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
+    FirearmPvGradingForm,
     FirearmReplicaForm,
 )
 from exporter.goods.services import post_firearm
@@ -28,6 +29,7 @@ class AddGoodFirearmSteps:
     CATEGORY = "CATEGORY"
     NAME = "NAME"
     PRODUCT_CONTROL_LIST_ENTRY = "PRODUCT_CONTROL_LIST_ENTRY"
+    PV_GRADING = "PV_GRADING"
     CALIBRE = "CALIBRE"
     IS_REPLICA = "IS_REPLICA"
 
@@ -37,6 +39,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
         (AddGoodFirearmSteps.NAME, FirearmNameForm),
         (AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
+        (AddGoodFirearmSteps.PV_GRADING, FirearmPvGradingForm),
         (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
         (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
     ]
@@ -71,6 +74,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_payload(self, form_list):
         firearm_data_keys = [
+            "is_pv_graded",
             "calibre",
             "category",
             "is_replica",
@@ -86,7 +90,6 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 else:
                     payload[k] = v
 
-        payload["is_pv_graded"] = "no"
         payload["firearm_details"] = firearm_data
 
         return payload

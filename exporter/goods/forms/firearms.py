@@ -180,6 +180,39 @@ class FirearmProductControlListEntryForm(forms.Form):
         return cleaned_data
 
 
+class FirearmPvGradingForm(forms.Form):
+    class Layout:
+        TITLE = "Does the product have a government security grading or classification?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_pv_graded = forms.ChoiceField(
+        choices=(
+            ("yes", "Yes (includes Unclassified)"),
+            ("no", "No"),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product has a security grading or classification",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            HTML.p("For example, UK Official or NATO Restricted."),
+            "is_pv_graded",
+            HTML.details(
+                "Help with security gradings",
+                render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
+            ),
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+
 class FirearmCalibreForm(forms.Form):
     class Layout:
         TITLE = "What is the calibre of the product?"
