@@ -49,8 +49,5 @@ ADD package-lock.json .
 # Build application
 RUN npm install
 
-# VPN Handshake, essential step for tunnel to be established in circleci
-RUN curl -I https://great.dev.uktrade.digital/
-
 # Add application directory to image
 ADD . /app
