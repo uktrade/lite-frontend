@@ -1,5 +1,6 @@
 import pytest
 import requests
+import uuid
 
 from exporter.goods.forms.firearms import (
     FirearmCalibreForm,
@@ -7,6 +8,7 @@ from exporter.goods.forms.firearms import (
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmReplicaForm,
+    FirearmRFDValidityForm,
 )
 
 
@@ -102,5 +104,25 @@ def test_firearm_calibre_form(data, is_valid, errors):
 )
 def test_firearm_replica_form(data, is_valid, errors):
     form = FirearmReplicaForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_rfd_valid": ["Select yes if your registered firearms dealer certificate is still valid"]}),
+        ({"is_rfd_valid": True}, True, {}),
+    ),
+)
+def test_firearm_validity_form(data, is_valid, errors):
+    rfd_certificate = {
+        "id": uuid.uuid4(),
+        "document": {
+            "name": "TEST DOCUMENT",
+        },
+    }
+
+    form = FirearmRFDValidityForm(data=data, rfd_certificate=rfd_certificate)
     assert form.is_valid() == is_valid
     assert form.errors == errors
