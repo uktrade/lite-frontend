@@ -14,6 +14,7 @@ Feature: I want to export and import XML for enforcement checking
     When I go to my profile page
     And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"
     And I go to my case list
+    And I cleanup the temporary files created
     When I click export enforcement xml
     And I go to application previously created
     Then the file "enforcement_check.xml" is downloaded
@@ -24,7 +25,6 @@ Feature: I want to export and import XML for enforcement checking
     And the downloaded file should include "END_USER" "PD_SURNAME" as "Automated End user"
     And the downloaded file should include "END_USER" "ADDRESS1" as "1234, High street"
     And I remove the case from "Enforcement Unit Cases to Review" queue
-    And I cleanup the temporary files created
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
