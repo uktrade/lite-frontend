@@ -248,6 +248,12 @@ def get_pv_gradings(request, convert_to_options=False):
     return data.json().get("pv_gradings")
 
 
+def get_pv_gradings_v2(request):
+    response = client.get(request, "/static/private-venture-gradings/v2/")
+    response.raise_for_status()
+    return response.json().get("pv_gradings")
+
+
 def get_control_list_entry(request, rating):
     data = client.get(request, f"/static/control-list-entries/{rating}")
     return data.json().get("control_list_entry")

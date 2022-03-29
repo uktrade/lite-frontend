@@ -1,13 +1,15 @@
 from crispy_forms_gds.choices import Choice
+from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
+from datetime import datetime, date
 from django import forms
 from django.db import models
 from django.template.loader import render_to_string
 
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios
-from exporter.core.services import get_control_list_entries
+from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 
 
 def coerce_str_to_bool(val):
@@ -185,12 +187,13 @@ class FirearmPvGradingForm(forms.Form):
         TITLE = "Does the product have a government security grading or classification?"
         SUBMIT_BUTTON = "Continue"
 
-    is_pv_graded = forms.ChoiceField(
+    is_pv_graded = forms.TypedChoiceField(
         choices=(
-            ("yes", "Yes (includes Unclassified)"),
-            ("no", "No"),
+            (True, "Yes (includes Unclassified)"),
+            (False, "No"),
         ),
         label="",
+        coerce=coerce_str_to_bool,
         widget=forms.RadioSelect,
         error_messages={
             "required": "Select yes if the product has a security grading or classification",
@@ -211,6 +214,100 @@ class FirearmPvGradingForm(forms.Form):
             ),
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
+
+
+def decompose_date(field_name, field_data, joiner=""):
+    decomposed_data = {}
+
+    decomposed_data[field_name] = field_data.strftime("%Y-%m-%d")
+    decomposed_data[f"{field_name}{joiner}day"] = str(field_data.day)
+    decomposed_data[f"{field_name}{joiner}month"] = str(field_data.month)
+    decomposed_data[f"{field_name}{joiner}year"] = str(field_data.year)
+
+    return decomposed_data
+
+
+class FirearmPvGradingDetailsForm(forms.Form):
+    class Layout:
+        TITLE = "What is the security grading or classification?"
+        SUBMIT_BUTTON = "Continue"
+
+    prefix = forms.CharField(
+        required=False, label="Enter a prefix (optional)", help_text="For example, UK, NATO or OCCAR"
+    )
+
+    grading = forms.ChoiceField(
+        choices=(),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select the security grading",
+        },
+    )
+    suffix = forms.CharField(required=False, label="Enter a suffix (optional)", help_text="For example, UK eyes only")
+
+    issuing_authority = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Name and address of the issuing authority",
+        error_messages={
+            "required": "Enter the name and address of the issuing authority",
+        },
+    )
+
+    reference = forms.CharField(
+        label="Reference",
+        error_messages={
+            "required": "Enter the reference",
+        },
+    )
+
+    date_of_issue = DateInputField(
+        label="Date of issue",
+        require_all_fields=False,
+        help_text="For example, 20 02 2020",
+    )
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+
+        gradings = [(key, display) for grading in get_pv_gradings_v2(request) for key, display in grading.items()]
+        self.fields["grading"].choices += gradings
+
+        date_of_issue = self.fields["date_of_issue"]
+        date_of_issue.error_messages = {"required": "Enter the date of issue"}
+        date_of_issue.fields[0].error_messages = {"incomplete": "Date of issue must include a day"}
+        date_of_issue.fields[1].error_messages = {"incomplete": "Date of issue must include a month"}
+        date_of_issue.fields[2].error_messages = {"incomplete": "Date of issue must include a year"}
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            "prefix",
+            "grading",
+            "suffix",
+            "issuing_authority",
+            "reference",
+            "date_of_issue",
+            HTML.details(
+                "Help with security gradings",
+                render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
+            ),
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        date_of_issue = cleaned_data.get("date_of_issue")
+        if date_of_issue:
+            cleaned_data.update(decompose_date("date_of_issue", date_of_issue))
+
+            date_of_issue = cleaned_data.get("date_of_issue")
+            if datetime.strptime(date_of_issue, "%Y-%m-%d").date() > date.today():
+                self.add_error("date_of_issue", "Date of issue must be in the past")
+
+        return cleaned_data
 
 
 class FirearmCalibreForm(forms.Form):
