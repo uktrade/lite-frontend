@@ -10,11 +10,12 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 
-from exporter.applications.services import get_application
+from exporter.applications.services import get_application, post_additional_document
 from exporter.core.helpers import get_rfd_certificate, has_valid_rfd_certificate
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
+    FirearmAttachRFDCertificate,
     FirearmCalibreForm,
     FirearmCategoryForm,
     FirearmNameForm,
@@ -42,6 +43,7 @@ class AddGoodFirearmSteps:
     IS_REPLICA = "IS_REPLICA"
     IS_RFD_CERTIFICATE_VALID = "IS_RFD_CERTIFICATE_VALID"
     IS_REGISTERED_FIREARMS_DEALER = "IS_REGISTERED_FIREARMS_DEALER"
+    ATTACH_RFD_CERTIFICATE = "ATTACH_RFD_CERTIFICATE"
 
 
 def has_rfd_certificate(wizard):
@@ -64,6 +66,17 @@ def has_user_marked_rfd_certificate_invalid(wizard):
     return not is_rfd_valid
 
 
+def has_user_marked_as_registered_firearms_dealer(wizard):
+    is_registered_firearms_dealer_cleaned_data = wizard.get_cleaned_data_for_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER
+    )
+    if not is_registered_firearms_dealer_cleaned_data:
+        return False
+
+    is_registered_firearm_dealer = is_registered_firearms_dealer_cleaned_data["is_registered_firearm_dealer"]
+    return is_registered_firearm_dealer
+
+
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
@@ -75,6 +88,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
+        (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
     ]
     condition_dict = {
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
@@ -83,6 +97,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         )
         | ~C(has_rfd_certificate),
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: has_user_marked_as_registered_firearms_dealer,
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -141,6 +156,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         keys_to_remove = [
             "is_rfd_valid",
+            "expiry_date",
+            "reference_code",
+            "file",
         ]
 
         payload = {}
@@ -162,10 +180,30 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return payload
 
-    def get_success_url(self, api_resp_data):
+    def has_rfd_certificate_data(self):
+        return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
+
+    def get_rfd_certificate_payload(self):
+        rfd_certificate_cleaned_data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE)
+        cert_file = rfd_certificate_cleaned_data["file"]
+        expiry_date = rfd_certificate_cleaned_data["expiry_date"]
+        reference_code = rfd_certificate_cleaned_data["reference_code"]
+        rfd_certificate_payload = {
+            "name": getattr(cert_file, "original_name", cert_file.name),
+            "s3_key": cert_file.name,
+            "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
+            "document_on_organisation": {
+                "expiry_date": expiry_date.isoformat(),
+                "reference_code": reference_code,
+                "document_type": "rfd-certificate",
+            },
+        }
+        return rfd_certificate_payload
+
+    def get_success_url(self, pk, good_pk):
         return reverse(
             "applications:add_good_summary",
-            kwargs={"pk": self.kwargs["pk"], "good_pk": api_resp_data["good"]["id"]},
+            kwargs={"pk": pk, "good_pk": good_pk},
         )
 
     def done(self, form_list, **kwargs):
@@ -183,4 +221,23 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             )
             return error_page(self.request, "Unexpected error adding firearm")
 
-        return redirect(self.get_success_url(api_resp_data))
+        application_pk = str(self.kwargs["pk"])
+        good_pk = api_resp_data["good"]["id"]
+
+        if self.has_rfd_certificate_data():
+            rfd_certificate_payload = self.get_rfd_certificate_payload()
+            api_resp_data, status_code = post_additional_document(
+                request=self.request,
+                pk=application_pk,
+                json=rfd_certificate_payload,
+            )
+            if status_code != HTTPStatus.CREATED:
+                logger.error(
+                    "Error rfd certificate when creating firearm - response was: %s - %s",
+                    status_code,
+                    api_resp_data,
+                    exc_info=True,
+                )
+                return error_page(self.request, "Unexpected error adding firearm")
+
+        return redirect(self.get_success_url(application_pk, good_pk))

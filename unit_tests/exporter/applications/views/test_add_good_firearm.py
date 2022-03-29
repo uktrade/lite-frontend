@@ -1,14 +1,18 @@
+import datetime
 import pytest
 import uuid
 
 from pytest_django.asserts import assertContains
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
 from exporter.core.constants import AddGoodFormSteps
+from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
 from exporter.goods.forms.firearms import (
+    FirearmAttachRFDCertificate,
     FirearmCategoryForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmRFDValidityForm,
@@ -201,6 +205,16 @@ def test_add_good_firearm_shows_registered_firearms_step_after_confirming_certif
     assert isinstance(response.context["form"], FirearmRegisteredFirearmsDealerForm)
 
 
+def test_add_good_firearm_shows_upload_rfd_step_after_confirmed_as_registered_firearms_dealer(
+    application_without_rfd_document, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER)
+    response = post_to_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, {"is_registered_firearm_dealer": True})
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmAttachRFDCertificate)
+
+
 def test_add_good_firearm_with_rfd_document_submission(
     authorized_client,
     new_good_firearm_url,
@@ -313,19 +327,29 @@ def test_add_good_firearm_without_rfd_document_submission(
     data_standard_case,
     control_list_entries,
     application_without_rfd_document,
+    application,
+    mocker,
 ):
     authorized_client.get(new_good_firearm_url)
 
     good_id = str(uuid.uuid4())
 
     post_goods_matcher = requests_mock.post(
-        f"/goods/",
+        "/goods/",
         status_code=201,
         json={
             "good": {
                 "id": good_id,
             },
         },
+    )
+    post_additional_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
+        status_code=201,
+        json={},
+    )
+    mock_file_storage = mocker.patch(
+        "exporter.applications.views.goods.add_good_firearm.AddGoodFirearm.file_storage",
     )
 
     post_to_step(
@@ -358,9 +382,19 @@ def test_add_good_firearm_without_rfd_document_submission(
         AddGoodFirearmSteps.IS_REPLICA,
         {"is_replica": True, "replica_description": "This is a replica"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
         {"is_registered_firearm_dealer": True},
+    )
+    expiry_date = datetime.date.today() + datetime.timedelta(days=5)
+    file_name = "test"
+    response = post_to_step(
+        AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE,
+        {
+            "reference_code": "12345",
+            "file": SimpleUploadedFile(file_name, b"test content"),
+            **decompose_date("expiry_date", expiry_date),
+        },
     )
 
     assert response.status_code == 302
@@ -388,6 +422,19 @@ def test_add_good_firearm_without_rfd_document_submission(
         "is_good_controlled": True,
         "is_pv_graded": False,
         "item_category": "group2_firearms",
+    }
+
+    assert post_additional_document_matcher.called_once
+    last_request = post_additional_document_matcher.last_request
+    assert last_request.json() == {
+        "name": file_name,
+        "s3_key": file_name,
+        "size": 0,
+        "document_on_organisation": {
+            "expiry_date": expiry_date.isoformat(),
+            "reference_code": "12345",
+            "document_type": "rfd-certificate",
+        },
     }
 
 
