@@ -7,7 +7,7 @@ verify_ssl = true
 allure-pytest = "~=2.6"
 allure-python-commons = "~=2.6"
 bandit = "==1.6.2"
-black = "==22.1.0"
+black = "~=22.3.0"
 directory-sso-api-client = "~=6.3"
 envparse = "~=0.2"
 faker = "~=4.0"
