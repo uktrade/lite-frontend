@@ -32,6 +32,13 @@ def set_feature_flags(settings):
     settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
 
+@pytest.fixture
+def control_list_entries(requests_mock):
+    requests_mock.get(
+        "/static/control-list-entries/", json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]}
+    )
+
+
 def test_firearm_category_redirects_to_new_wizard(
     settings,
     authorized_client,
@@ -93,7 +100,12 @@ def post_to_step(authorized_client, new_good_firearm_url):
 
 
 def test_add_good_firearm_submission(
-    authorized_client, new_good_firearm_url, post_to_step, requests_mock, data_standard_case
+    authorized_client,
+    new_good_firearm_url,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    control_list_entries,
 ):
     authorized_client.get(new_good_firearm_url)
 
@@ -113,9 +125,27 @@ def test_add_good_firearm_submission(
         AddGoodFirearmSteps.CATEGORY,
         {"category": ["NON_AUTOMATIC_SHOTGUN"]},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.NAME,
         {"name": "TEST NAME"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
     )
 
     assert response.status_code == 302
@@ -131,18 +161,27 @@ def test_add_good_firearm_submission(
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
         "firearm_details": {
+            "calibre": "calibre 123",
             "category": ["NON_AUTOMATIC_SHOTGUN"],
+            "is_replica": True,
+            "replica_description": "This is a replica",
             "type": "firearms",
         },
+        "control_list_entries": ["ML1", "ML1a"],
         "name": "TEST NAME",
-        "is_good_controlled": False,
+        "is_good_controlled": True,
         "is_pv_graded": "no",
         "item_category": "group2_firearms",
     }
 
 
 def test_add_good_firearm_submission_error(
-    authorized_client, new_good_firearm_url, post_to_step, requests_mock, data_standard_case, caplog
+    authorized_client,
+    new_good_firearm_url,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    control_list_entries,
 ):
     authorized_client.get(new_good_firearm_url)
 
@@ -156,9 +195,27 @@ def test_add_good_firearm_submission_error(
         AddGoodFirearmSteps.CATEGORY,
         {"category": ["NON_AUTOMATIC_SHOTGUN"]},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.NAME,
         {"name": "TEST NAME"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
     )
 
     assert response.status_code == 200

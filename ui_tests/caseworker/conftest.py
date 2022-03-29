@@ -203,7 +203,7 @@ def submit_form(driver):  # noqa
 
 @when(parsers.parse('I click "{button_text}"'))
 def click_button_with_text(driver, button_text):  # noqa
-    WebDriverWait(driver, 30).until(
+    WebDriverWait(driver, 20).until(
         expected_conditions.presence_of_element_located(
             (
                 By.XPATH,
