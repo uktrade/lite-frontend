@@ -7,7 +7,6 @@ from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
-from datetime import date
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -292,7 +291,7 @@ class FirearmPvGradingDetailsForm(forms.Form):
 
     def clean_date_of_issue(self):
         date_of_issue = self.cleaned_data["date_of_issue"]
-        if date_of_issue > date.today():
+        if date_of_issue > datetime.date.today():
             raise forms.ValidationError("Date of issue must be in the past")
 
         return date_of_issue
