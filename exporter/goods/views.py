@@ -315,12 +315,6 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
 
         return kwargs
 
-    def get_cleaned_data_for_step(self, step):
-        cleaned_data = super().get_cleaned_data_for_step(step)
-        if cleaned_data is None:
-            return {}
-        return cleaned_data
-
     def done(self, form_list, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
         all_data.pop("file", None)
