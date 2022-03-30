@@ -77,6 +77,14 @@ def control_list_entries(requests_mock):
     return matcher
 
 
+@pytest.fixture
+def pv_gradings(requests_mock):
+    requests_mock.get(
+        "/static/private-venture-gradings/v2/",
+        json={"pv_gradings": [{"official": "Official"}, {"restricted": "Restricted"}]},
+    )
+
+
 def test_firearm_category_redirects_to_new_wizard(
     authorized_client,
     new_good_firearm_url,
@@ -178,6 +186,7 @@ def test_add_good_firearm_submission(
     requests_mock,
     data_standard_case,
     control_list_entries,
+    pv_gradings,
     application_with_rfd_document,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -210,6 +219,22 @@ def test_add_good_firearm_submission(
                 "ML1",
                 "ML1a",
             ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": True},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING_DETAILS,
+        {
+            "prefix": "NATO",
+            "grading": "official",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue_0": "20",
+            "date_of_issue_1": "02",
+            "date_of_issue_2": "2020",
         },
     )
     post_to_step(
@@ -247,7 +272,13 @@ def test_add_good_firearm_submission(
         "control_list_entries": ["ML1", "ML1a"],
         "name": "TEST NAME",
         "is_good_controlled": True,
-        "is_pv_graded": "no",
+        "is_pv_graded": True,
+        "prefix": "NATO",
+        "grading": "official",
+        "suffix": "",
+        "issuing_authority": "Government entity",
+        "reference": "GR123",
+        "date_of_issue": "2020-02-20",
         "item_category": "group2_firearms",
     }
 
@@ -286,6 +317,10 @@ def test_add_good_firearm_submission_error(
                 "ML1a",
             ],
         },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": False},
     )
     post_to_step(
         AddGoodFirearmSteps.CALIBRE,

@@ -18,6 +18,8 @@ from exporter.goods.forms.firearms import (
     FirearmCategoryForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
+    FirearmPvGradingForm,
+    FirearmPvGradingDetailsForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
 )
@@ -32,6 +34,8 @@ class AddGoodFirearmSteps:
     CATEGORY = "CATEGORY"
     NAME = "NAME"
     PRODUCT_CONTROL_LIST_ENTRY = "PRODUCT_CONTROL_LIST_ENTRY"
+    PV_GRADING = "PV_GRADING"
+    PV_GRADING_DETAILS = "PV_GRADING_DETAILS"
     CALIBRE = "CALIBRE"
     IS_REPLICA = "IS_REPLICA"
     IS_RFD_CERTIFICATE_VALID = "IS_RFD_CERTIFICATE_VALID"
@@ -42,17 +46,28 @@ def has_rfd_certificate(wizard):
     return has_valid_rfd_certificate(wizard.application)
 
 
+def is_pv_graded(wizard):
+    add_goods_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFirearmSteps.PV_GRADING)
+    return add_goods_cleaned_data.get("is_pv_graded")
+
+
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
         (AddGoodFirearmSteps.NAME, FirearmNameForm),
         (AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
+        (AddGoodFirearmSteps.PV_GRADING, FirearmPvGradingForm),
+        (AddGoodFirearmSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
         (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
         (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
     ]
     condition_dict = {
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
+    }
+
+    condition_dict = {
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -80,10 +95,19 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return ctx
 
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        if cleaned_data is None:
+            return {}
+        return cleaned_data
+
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
         if step == AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY:
+            kwargs["request"] = self.request
+
+        if step == AddGoodFirearmSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
 
         if step == AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID:
@@ -115,8 +139,10 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 else:
                     payload[k] = v
 
-        payload["is_pv_graded"] = "no"
         payload["firearm_details"] = firearm_data
+
+        if payload.get("is_pv_graded"):
+            payload["date_of_issue"] = payload["date_of_issue"].isoformat()
 
         return payload
 
