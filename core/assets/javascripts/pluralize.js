@@ -1,6 +1,6 @@
 function pluralize(length) {
-	if (length != "1") {
-		return "s";
-	}
-	return "";
+  if (length != "1") {
+    return "s";
+  }
+  return "";
 }
