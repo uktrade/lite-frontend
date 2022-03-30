@@ -3,9 +3,10 @@ import pytest
 import uuid
 
 from pytest_django.asserts import assertContains
-
+from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from unittest.mock import patch
 
 from core import client
 from exporter.core.constants import AddGoodFormSteps
@@ -16,7 +17,25 @@ from exporter.goods.forms.firearms import (
     FirearmCategoryForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmRFDValidityForm,
+    FirearmDocumentSensitivityForm,
+    FirearmDocumentUploadForm,
 )
+
+
+@pytest.fixture(autouse=True)
+def setup():
+    class NoOpStorage(Storage):
+        def save(self, name, content, max_length=None):
+            return name
+
+        def open(self, name, mode="rb"):
+            return None
+
+        def delete(self, name):
+            pass
+
+    with patch("exporter.applications.views.goods.add_good_firearm.AddGoodFirearm.file_storage", new=NoOpStorage()):
+        yield
 
 
 @pytest.fixture
@@ -215,6 +234,62 @@ def test_add_good_firearm_shows_upload_rfd_step_after_confirmed_as_registered_fi
     assert isinstance(response.context["form"], FirearmAttachRFDCertificate)
 
 
+def test_add_good_firearm_product_document_not_available(application_with_rfd_document, goto_step, post_to_step):
+    goto_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY)
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmCategoryForm)
+
+
+def test_add_good_firearm_product_document_available_but_sensitive(
+    application_with_rfd_document, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY)
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": True},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        {"is_document_sensitive": True},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmCategoryForm)
+
+
+def test_add_good_firearm_product_document_available_but_not_sensitive(
+    application_with_rfd_document, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY)
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": True},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        {"is_document_sensitive": False},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentUploadForm)
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
+        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmCategoryForm)
+
+
 def test_add_good_firearm_with_rfd_document_submission(
     authorized_client,
     new_good_firearm_url,
@@ -237,6 +312,12 @@ def test_add_good_firearm_with_rfd_document_submission(
                 "id": good_id,
             },
         },
+    )
+
+    post_good_document_matcher = requests_mock.post(
+        f"/goods/{good_id}/documents/",
+        status_code=201,
+        json={},
     )
 
     post_to_step(
@@ -286,6 +367,21 @@ def test_add_good_firearm_with_rfd_document_submission(
         {"is_rfd_valid": True},
     )
 
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": True},
+    )
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        {"is_document_sensitive": False},
+    )
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
+        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
+    )
+
     assert response.status_code == 302
     assert response.url == reverse(
         "applications:add_good_summary",
@@ -316,7 +412,15 @@ def test_add_good_firearm_with_rfd_document_submission(
         "reference": "GR123",
         "date_of_issue": "2020-02-20",
         "item_category": "group2_firearms",
+        "is_document_available": True,
+        "no_document_comments": "",
+        "is_document_sensitive": False,
+        "description": "",
     }
+
+    assert post_good_document_matcher.called_once
+    doc_request = post_good_document_matcher.last_request
+    assert doc_request.json()[0] == {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}
 
 
 def test_add_good_firearm_without_rfd_document_submission(
@@ -328,7 +432,6 @@ def test_add_good_firearm_without_rfd_document_submission(
     control_list_entries,
     application_without_rfd_document,
     application,
-    mocker,
 ):
     authorized_client.get(new_good_firearm_url)
 
@@ -347,9 +450,6 @@ def test_add_good_firearm_without_rfd_document_submission(
         f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
-    )
-    mock_file_storage = mocker.patch(
-        "exporter.applications.views.goods.add_good_firearm.AddGoodFirearm.file_storage",
     )
 
     post_to_step(
@@ -397,6 +497,11 @@ def test_add_good_firearm_without_rfd_document_submission(
         },
     )
 
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+
     assert response.status_code == 302
     assert response.url == reverse(
         "applications:add_good_summary",
@@ -422,6 +527,8 @@ def test_add_good_firearm_without_rfd_document_submission(
         "is_good_controlled": True,
         "is_pv_graded": False,
         "item_category": "group2_firearms",
+        "is_document_available": False,
+        "no_document_comments": "product not manufactured yet",
     }
 
     assert post_additional_document_matcher.called_once
@@ -488,6 +595,11 @@ def test_add_good_firearm_submission_error(
     response = post_to_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
         {"is_rfd_valid": True},
+    )
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
 
     assert response.status_code == 200

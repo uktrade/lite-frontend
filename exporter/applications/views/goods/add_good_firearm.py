@@ -25,8 +25,11 @@ from exporter.goods.forms.firearms import (
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
+    FirearmDocumentAvailability,
+    FirearmDocumentSensitivityForm,
+    FirearmDocumentUploadForm,
 )
-from exporter.goods.services import post_firearm
+from exporter.goods.services import post_firearm, post_good_documents
 from lite_forms.generators import error_page
 
 
@@ -44,6 +47,19 @@ class AddGoodFirearmSteps:
     IS_RFD_CERTIFICATE_VALID = "IS_RFD_CERTIFICATE_VALID"
     IS_REGISTERED_FIREARMS_DEALER = "IS_REGISTERED_FIREARMS_DEALER"
     ATTACH_RFD_CERTIFICATE = "ATTACH_RFD_CERTIFICATE"
+    PRODUCT_DOCUMENT_AVAILABILITY = "PRODUCT_DOCUMENT_AVAILABILITY"
+    PRODUCT_DOCUMENT_SENSITIVITY = "PRODUCT_DOCUMENT_SENSITIVITY"
+    PRODUCT_DOCUMENT_UPLOAD = "PRODUCT_DOCUMENT_UPLOAD"
+
+
+def is_product_document_available(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY)
+    return cleaned_data.get("is_document_available")
+
+
+def is_document_sensitive(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY)
+    return cleaned_data.get("is_document_sensitive")
 
 
 def has_rfd_certificate(wizard):
@@ -89,15 +105,21 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
     ]
+
     condition_dict = {
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: (
             C(has_rfd_certificate) & C(has_user_marked_rfd_certificate_invalid)
         )
         | ~C(has_rfd_certificate),
-        AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: has_user_marked_as_registered_firearms_dealer,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -159,6 +181,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             "expiry_date",
             "reference_code",
             "file",
+            "product_document",
         ]
 
         payload = {}
@@ -200,6 +223,20 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         }
         return rfd_certificate_payload
 
+    def has_product_documentation(self):
+        return self.condition_dict[AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD](self)
+
+    def get_product_document_payload(self):
+        data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
+        document = data["product_document"]
+        payload = {
+            "name": getattr(document, "original_name", document.name),
+            "s3_key": document.name,
+            "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
+            "description": data["description"],
+        }
+        return payload
+
     def get_success_url(self, pk, good_pk):
         return reverse(
             "applications:add_good_summary",
@@ -239,5 +276,21 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                     exc_info=True,
                 )
                 return error_page(self.request, "Unexpected error adding firearm")
+
+        if self.has_product_documentation():
+            document_payload = self.get_product_document_payload()
+            api_resp_data, status_code = post_good_documents(
+                request=self.request,
+                pk=good_pk,
+                json=document_payload,
+            )
+            if status_code != HTTPStatus.CREATED:
+                logger.error(
+                    "Error product document when creating firearm - response was: %s - %s",
+                    status_code,
+                    api_resp_data,
+                    exc_info=True,
+                )
+                return error_page(self.request, "Unexpected error adding document to firearm")
 
         return redirect(self.get_success_url(application_pk, good_pk))
