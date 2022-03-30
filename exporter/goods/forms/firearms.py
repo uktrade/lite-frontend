@@ -17,6 +17,19 @@ from core.forms.layouts import ConditionalQuestion, ConditionalRadios
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 
 
+class CustomErrorDateInputField(DateInputField):
+    def __init__(self, error_messages, **kwargs):
+        super().__init__(**kwargs)
+
+        for key, field in zip(["day", "month", "year"], self.fields):
+            field_error_messages = error_messages.pop(key)
+            field.error_messages["incomplete"] = field_error_messages["incomplete"]
+            regex_validator = field.validators[0]
+            regex_validator.message = field_error_messages["invalid"]
+
+        self.error_messages = error_messages
+
+
 def coerce_str_to_bool(val):
     return val == "True"
 
@@ -255,10 +268,26 @@ class FirearmPvGradingDetailsForm(forms.Form):
         },
     )
 
-    date_of_issue = DateInputField(
+    date_of_issue = CustomErrorDateInputField(
         label="Date of issue",
         require_all_fields=False,
         help_text="For example, 20 02 2020",
+        error_messages={
+            "required": "Enter the date of issue",
+            "incomplete": "Enter the date of issue",
+            "day": {
+                "incomplete": "Date of issue must include a day",
+                "invalid": "Date of issue must be a real date",
+            },
+            "month": {
+                "incomplete": "Date of issue must include a month",
+                "invalid": "Date of issue must be a real date",
+            },
+            "year": {
+                "incomplete": "Date of issue must include a year",
+                "invalid": "Date of issue must be a real date",
+            },
+        },
     )
 
     def __init__(self, *args, **kwargs):
@@ -267,11 +296,6 @@ class FirearmPvGradingDetailsForm(forms.Form):
 
         gradings = [(key, display) for grading in get_pv_gradings_v2(request) for key, display in grading.items()]
         self.fields["grading"].choices += gradings
-
-        date_of_issue = self.fields["date_of_issue"]
-        date_of_issue.error_messages = {"required": "Enter the date of issue"}
-        for field in date_of_issue.fields:
-            field.error_messages = {"incomplete": f"Date of issue must include a {field.label.lower()}"}
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -467,23 +491,30 @@ class FirearmAttachRFDCertificate(forms.Form):
         },
     )
 
-    expiry_date = DateInputField(
+    expiry_date = CustomErrorDateInputField(
         label="Expiry date",
         help_text="For example 27 3 2023",
         require_all_fields=False,
+        error_messages={
+            "required": "Enter the expiry date",
+            "incomplete": "Enter the expiry date",
+            "day": {
+                "incomplete": "Expiry date must include a day",
+                "invalid": "Expiry date must be a real date",
+            },
+            "month": {
+                "incomplete": "Expiry date must include a month",
+                "invalid": "Expiry date must be a real date",
+            },
+            "year": {
+                "incomplete": "Expiry date must include a year",
+                "invalid": "Expiry date must be a real date",
+            },
+        },
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        expiry_date = self.fields["expiry_date"]
-        expiry_date.error_messages["required"] = "Enter the expiry date"
-
-        for expiry_date_field in expiry_date.fields:
-            label = expiry_date_field.label
-            expiry_date_field.error_messages["incomplete"] = f"Expiry date must include a {label.lower()}"
-            regex_validator = expiry_date_field.validators[0]
-            regex_validator.message = "Expiry date must be a real date"
 
         self.helper = FormHelper()
         self.helper.attrs = {"enctype": "multipart/form-data"}
