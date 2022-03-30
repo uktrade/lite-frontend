@@ -1,7 +1,9 @@
 from http import HTTPStatus
 from datetime import date
-from django.utils import timezone
 from dateutil.relativedelta import relativedelta
+
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from exporter.applications.helpers.date_fields import format_date
 from lite_content.lite_exporter_frontend.core import RegisterAnOrganisation
@@ -39,3 +41,31 @@ def validate_expiry_date(request, field_name):
     else:
         if relativedelta(expiry_date, today).years >= 5:
             return ["Expiry date is too far in the future"]
+
+
+class FutureDateValidator:
+    def __init__(self, message):
+        self.message = message
+
+    def __call__(self, value):
+        if value <= date.today():
+            raise ValidationError(self.message)
+
+
+class PastDateValidator:
+    def __init__(self, message):
+        self.message = message
+
+    def __call__(self, value):
+        if value > date.today():
+            raise ValidationError(self.message)
+
+
+class RelativeDeltaDateValidator:
+    def __init__(self, message, **kwargs):
+        self.message = message
+        self.relativedelta = relativedelta(**kwargs)
+
+    def __call__(self, value):
+        if value > (date.today() + self.relativedelta):
+            raise ValidationError(self.message)

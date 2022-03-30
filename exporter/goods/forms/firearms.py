@@ -1,20 +1,16 @@
-import datetime
-
-from dateutil.relativedelta import relativedelta
-
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
 from django import forms
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
+from exporter.core.validators import FutureDateValidator, PastDateValidator, RelativeDeltaDateValidator
 
 
 class CustomErrorDateInputField(DateInputField):
@@ -288,6 +284,7 @@ class FirearmPvGradingDetailsForm(forms.Form):
                 "invalid": "Date of issue must be a real date",
             },
         },
+        validators=[PastDateValidator("Date of issue must be in the past")],
     )
 
     def __init__(self, *args, **kwargs):
@@ -312,13 +309,6 @@ class FirearmPvGradingDetailsForm(forms.Form):
             ),
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
-
-    def clean_date_of_issue(self):
-        date_of_issue = self.cleaned_data["date_of_issue"]
-        if date_of_issue > datetime.date.today():
-            raise forms.ValidationError("Date of issue must be in the past")
-
-        return date_of_issue
 
 
 class FirearmCalibreForm(forms.Form):
@@ -511,6 +501,10 @@ class FirearmAttachRFDCertificate(forms.Form):
                 "invalid": "Expiry date must be a real date",
             },
         },
+        validators=[
+            FutureDateValidator("Expiry date must be in the future"),
+            RelativeDeltaDateValidator("Expiry date must be within 5 years", years=5),
+        ],
     )
 
     def __init__(self, *args, **kwargs):
@@ -525,16 +519,3 @@ class FirearmAttachRFDCertificate(forms.Form):
             "expiry_date",
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
-
-    def clean_expiry_date(self):
-        expiry_date = self.cleaned_data["expiry_date"]
-
-        today = datetime.date.today()
-
-        if expiry_date <= today:
-            raise ValidationError("Expiry date must be in the future")
-
-        if expiry_date > (today + relativedelta(years=5)):
-            raise ValidationError("Expiry date must be within 5 years")
-
-        return expiry_date
