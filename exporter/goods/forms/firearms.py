@@ -1,3 +1,7 @@
+import datetime
+
+from dateutil.relativedelta import relativedelta
+
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
@@ -5,6 +9,7 @@ from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
 from datetime import date
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -424,3 +429,93 @@ class FirearmRFDValidityForm(forms.Form):
             "is_rfd_valid",
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
+
+
+class FirearmRegisteredFirearmsDealerForm(forms.Form):
+    class Layout:
+        TITLE = "Are you a registered firearms dealer?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_registered_firearm_dealer = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if you are a registered firearms dealer",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            "is_registered_firearm_dealer",
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+
+class FirearmAttachRFDCertificate(forms.Form):
+    class Layout:
+        TITLE = "Upload a registered firearms dealer certificate"
+        SUBMIT_BUTTON = "Continue"
+
+    file = forms.FileField(
+        label="",
+        error_messages={
+            "required": "Select a registered firearms dealer certificate",
+        },
+    )
+
+    reference_code = forms.CharField(
+        label="Certificate number",
+        error_messages={
+            "required": "Enter the certificate number",
+        },
+    )
+
+    expiry_date = DateInputField(
+        label="Expiry date",
+        help_text="For example 27 3 2023",
+        require_all_fields=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        expiry_date = self.fields["expiry_date"]
+        expiry_date.error_messages["required"] = "Enter the expiry date"
+
+        for expiry_date_field in expiry_date.fields:
+            label = expiry_date_field.label
+            expiry_date_field.error_messages["incomplete"] = f"Expiry date must include a {label.lower()}"
+            regex_validator = expiry_date_field.validators[0]
+            regex_validator.message = "Expiry date must be a real date"
+
+        self.helper = FormHelper()
+        self.helper.attrs = {"enctype": "multipart/form-data"}
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            "file",
+            "reference_code",
+            "expiry_date",
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+    def clean_expiry_date(self):
+        expiry_date = self.cleaned_data["expiry_date"]
+
+        today = datetime.date.today()
+
+        if expiry_date <= today:
+            raise ValidationError("Expiry date must be in the future")
+
+        if expiry_date > (today + relativedelta(years=5)):
+            raise ValidationError("Expiry date must be within 5 years")
+
+        return expiry_date

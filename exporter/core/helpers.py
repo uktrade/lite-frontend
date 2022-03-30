@@ -255,3 +255,11 @@ def is_document_in_english(wizard):
 def is_document_on_letterhead(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD)
     return str_to_bool(cleaned_data.get("document_on_letterhead"))
+
+
+def decompose_date(field_name, date):
+    return {
+        f"{field_name}_0": date.day,
+        f"{field_name}_1": date.month,
+        f"{field_name}_2": date.year,
+    }

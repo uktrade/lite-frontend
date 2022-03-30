@@ -1,10 +1,12 @@
 import os
-
 import pytest
+
 from dotenv import load_dotenv
+
 from django.conf import settings
-from conf import exporter
 from django.test import Client
+
+from conf import exporter
 
 from core import client
 
@@ -23,6 +25,11 @@ def pytest_configure(config):
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
     settings.FEATURE_FLAG_PRODUCT_2_0 = False
+
+
+@pytest.fixture(autouse=True)
+def upload_handler():
+    settings.FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.MemoryFileUploadHandler"]
 
 
 @pytest.fixture

@@ -1,14 +1,22 @@
+import datetime
 import pytest
 import requests
 import uuid
 
+from dateutil.relativedelta import relativedelta
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
+    FirearmAttachRFDCertificate,
     FirearmCalibreForm,
     FirearmCategoryForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
+    FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
 )
@@ -256,5 +264,121 @@ def test_firearm_validity_form(data, is_valid, errors):
     }
 
     form = FirearmRFDValidityForm(data=data, rfd_certificate=rfd_certificate)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_registered_firearm_dealer": ["Select yes if you are a registered firearms dealer"]}),
+        ({"is_registered_firearm_dealer": True}, True, {}),
+    ),
+)
+def test_firearm_registered_firearms_dealer_form(data, is_valid, errors):
+    form = FirearmRegisteredFirearmsDealerForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, files, is_valid, errors",
+    (
+        (
+            {},
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Enter the expiry date"],
+            },
+        ),
+        (
+            decompose_date("expiry_date", datetime.date.today() - datetime.timedelta(days=10)),
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Expiry date must be in the future"],
+            },
+        ),
+        (
+            decompose_date("expiry_date", datetime.date.today()),
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Expiry date must be in the future"],
+            },
+        ),
+        (
+            decompose_date("expiry_date", datetime.date.today() + relativedelta(years=5, days=1)),
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Expiry date must be within 5 years"],
+            },
+        ),
+        (
+            {"expiry_date_1": "12", "expiry_date_2": "2022"},
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Expiry date must include a day"],
+            },
+        ),
+        (
+            {"expiry_date_0": "1", "expiry_date_2": "2022"},
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Expiry date must include a month"],
+            },
+        ),
+        (
+            {"expiry_date_0": "1", "expiry_date_1": "12"},
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Expiry date must include a year"],
+            },
+        ),
+        (
+            {"expiry_date_0": "abc", "expiry_date_1": "abc", "expiry_date_2": "abc"},
+            {},
+            False,
+            {
+                "file": ["Select a registered firearms dealer certificate"],
+                "reference_code": ["Enter the certificate number"],
+                "expiry_date": ["Expiry date must be a real date"],
+            },
+        ),
+        (
+            {
+                "reference_code": "abcdef",
+                **decompose_date(
+                    "expiry_date",
+                    datetime.date.today() + datetime.timedelta(days=1),
+                ),
+            },
+            {"file": SimpleUploadedFile("test", b"test content")},
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_attach_rfd_certificate_form(data, files, is_valid, errors):
+    form = FirearmAttachRFDCertificate(data=data, files=files)
     assert form.is_valid() == is_valid
     assert form.errors == errors
