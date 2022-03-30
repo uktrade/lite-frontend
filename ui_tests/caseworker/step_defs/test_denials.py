@@ -13,7 +13,7 @@ scenarios("../features/denials.feature", strict_gherkin=False)
 
 @when("I go to the add denial records page")
 def go_to_add_denial_records_page(driver, internal_url):
-    driver.get(f"{internal_url}/denials/upload/")
+    driver.get(f'{internal_url.rstrip("/")}/denials/upload/')
 
 
 @when("I download an example .csv file")
