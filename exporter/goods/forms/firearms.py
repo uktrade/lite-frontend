@@ -222,17 +222,6 @@ class FirearmPvGradingForm(forms.Form):
         )
 
 
-def decompose_date(field_name, field_data, joiner=""):
-    decomposed_data = {}
-
-    decomposed_data[field_name] = field_data.strftime("%Y-%m-%d")
-    decomposed_data[f"{field_name}{joiner}day"] = str(field_data.day)
-    decomposed_data[f"{field_name}{joiner}month"] = str(field_data.month)
-    decomposed_data[f"{field_name}{joiner}year"] = str(field_data.year)
-
-    return decomposed_data
-
-
 class FirearmPvGradingDetailsForm(forms.Form):
     class Layout:
         TITLE = "What is the security grading or classification?"
