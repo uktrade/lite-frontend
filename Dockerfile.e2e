@@ -1,47 +1,10 @@
-FROM python:3.7-slim
-
-ENV DOCKERIZE_VERSION      v0.6.1
-ENV CHROME_VERSION         99.0.4844.82-1
+FROM gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
 
 WORKDIR /app
 
-# Install dependencies
-RUN apt-get update --fix-missing
-RUN apt-get install -y \
-  gcc \
-  build-essential \
-  python3-dev \
-  libmagic1 \
-  wget
-
-# Install dockerize
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-
-# Install pyenv
-RUN pip3 install pipenv
-ADD Pipfile* /app/
-
 # Use pyenv to install python packages
+ADD Pipfile* /app/
 RUN pipenv install --dev --system --deploy
-
-# Initialise playwright
-RUN playwright install
-
-# Install Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-RUN apt-get update --fix-missing
-RUN apt-get -y install google-chrome-stable
-
-# Install node dependencies
-RUN apt-get update -yq \
-    && apt-get -yq install curl gnupg ca-certificates \
-    && curl -L https://deb.nodesource.com/setup_14.x | bash \
-    && apt-get update -yq \
-    && apt-get install -yq \
-        nodejs
 
 ADD package.json .
 ADD package-lock.json .

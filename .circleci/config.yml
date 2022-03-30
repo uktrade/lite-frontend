@@ -96,8 +96,6 @@ commands:
   
             ### IMPORTANT: Include the following line to exclude the connection from CircleCI and the link-local range
             phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
-            echo phone_home is:
-            echo $phone_home
               
             if [ -n "$phone_home" ]; then
               echo -e "\nroute $phone_home 255.255.255.255 net_gateway" >> /tmp/config.ovpn
