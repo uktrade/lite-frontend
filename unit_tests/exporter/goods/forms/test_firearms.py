@@ -4,7 +4,6 @@ import requests
 import uuid
 
 from dateutil.relativedelta import relativedelta
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.core.helpers import decompose_date
@@ -19,6 +18,9 @@ from exporter.goods.forms.firearms import (
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
+    FirearmDocumentAvailability,
+    FirearmDocumentSensitivityForm,
+    FirearmDocumentUploadForm,
 )
 
 
@@ -380,5 +382,66 @@ def test_firearm_registered_firearms_dealer_form(data, is_valid, errors):
 )
 def test_firearm_attach_rfd_certificate_form(data, files, is_valid, errors):
     form = FirearmAttachRFDCertificate(data=data, files=files)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_document_available": ["Select yes or no"]}),
+        (
+            {"is_document_available": False},
+            False,
+            {"no_document_comments": ["Enter a reason why you cannot upload a product document"]},
+        ),
+        ({"is_document_available": False, "no_document_comments": "product not manufactured yet"}, True, {}),
+        (
+            {"is_document_available": True},
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_document_availability_form(data, is_valid, errors):
+    form = FirearmDocumentAvailability(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_document_sensitive": ["Select yes if the document is rated above Official-sensitive"]}),
+        ({"is_document_sensitive": True}, True, {}),
+        ({"is_document_sensitive": False}, True, {}),
+    ),
+)
+def test_firearm_document_sensitivity_form(data, is_valid, errors):
+    form = FirearmDocumentSensitivityForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, files, is_valid, errors",
+    (
+        ({}, {}, False, {"product_document": ["Select a document that shows what your product is designed to do"]}),
+        (
+            {"description": ""},
+            {},
+            False,
+            {"product_document": ["Select a document that shows what your product is designed to do"]},
+        ),
+        (
+            {"description": "product data sheet"},
+            {"product_document": SimpleUploadedFile("test", b"test content")},
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_product_document_upload_form(data, files, is_valid, errors):
+    form = FirearmDocumentUploadForm(data=data, files=files)
     assert form.is_valid() == is_valid
     assert form.errors == errors
