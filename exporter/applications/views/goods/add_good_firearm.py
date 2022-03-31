@@ -11,7 +11,7 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application, post_additional_document
-from exporter.core.helpers import get_rfd_certificate, has_valid_rfd_certificate
+from exporter.core.helpers import get_document_data, get_rfd_certificate, has_valid_rfd_certificate
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
@@ -197,10 +197,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         cert_file = rfd_certificate_cleaned_data["file"]
         expiry_date = rfd_certificate_cleaned_data["expiry_date"]
         reference_code = rfd_certificate_cleaned_data["reference_code"]
+
         rfd_certificate_payload = {
-            "name": getattr(cert_file, "original_name", cert_file.name),
-            "s3_key": cert_file.name,
-            "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
+            **get_document_data(cert_file),
             "document_on_organisation": {
                 "expiry_date": expiry_date.isoformat(),
                 "reference_code": reference_code,
@@ -216,9 +215,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
         document = data["product_document"]
         payload = {
-            "name": getattr(document, "original_name", document.name),
-            "s3_key": document.name,
-            "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
+            **get_document_data(document),
             "description": data["description"],
         }
         return payload

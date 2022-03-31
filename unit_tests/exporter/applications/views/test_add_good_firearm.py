@@ -420,7 +420,7 @@ def test_add_good_firearm_with_rfd_document_submission(
 
     assert post_good_document_matcher.called_once
     doc_request = post_good_document_matcher.last_request
-    assert doc_request.json()[0] == {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}
+    assert doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
 
 
 def test_add_good_firearm_without_rfd_document_submission(

@@ -263,3 +263,11 @@ def decompose_date(field_name, date):
         f"{field_name}_1": date.month,
         f"{field_name}_2": date.year,
     }
+
+
+def get_document_data(file):
+    return {
+        "name": getattr(file, "original_name", file.name),
+        "s3_key": file.name,
+        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
+    }
