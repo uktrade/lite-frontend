@@ -131,12 +131,6 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
 
-    def get_cleaned_data_for_step(self, step):
-        cleaned_data = super().get_cleaned_data_for_step(step)
-        if cleaned_data is None:
-            return {}
-        return cleaned_data
-
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
         context["title"] = form.title
