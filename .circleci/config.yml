@@ -105,7 +105,7 @@ commands:
       - run:
           name: VPN logs
           background: true
-          command: tail -f /tmp/openvpn.log
+          command: tail -f /var/log/syslog
 
       - run:
           name: Wait for the connection to be established and check
@@ -263,6 +263,7 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
@@ -284,6 +285,7 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
