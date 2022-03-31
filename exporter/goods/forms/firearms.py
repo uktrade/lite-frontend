@@ -519,3 +519,121 @@ class FirearmAttachRFDCertificate(forms.Form):
             "expiry_date",
             Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
+
+
+class FirearmDocumentAvailability(forms.Form):
+    class Layout:
+        TITLE = "Do you have a document that shows what your product is and what it's designed to do?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_document_available = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Select yes or no",
+        },
+    )
+
+    no_document_comments = forms.CharField(
+        widget=forms.Textarea,
+        label="Explain why you are not able to upload a product document. This may delay your application.",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            HTML.p(render_to_string("goods/forms/firearms/product_document_hint_text.html")),
+            ConditionalRadios(
+                "is_document_available",
+                "Yes",
+                ConditionalQuestion("No", "no_document_comments"),
+            ),
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        comments = cleaned_data.get("no_document_comments")
+        if cleaned_data.get("is_document_available") is False and comments == "":
+            self.add_error(
+                "no_document_comments",
+                "Enter a reason why you cannot upload a product document",
+            )
+
+        return cleaned_data
+
+
+class FirearmDocumentSensitivityForm(forms.Form):
+    class Layout:
+        TITLE = "Is the document rated above Official-sensitive?"
+        SUBMIT_BUTTON = "Continue"
+
+    is_document_sensitive = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the document is rated above Official-sensitive",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            ConditionalRadios(
+                "is_document_sensitive",
+                ConditionalQuestion(
+                    "Yes", HTML.p(render_to_string("goods/forms/firearms/product_document_contact_ecju.html"))
+                ),
+                "No",
+            ),
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
+
+
+class FirearmDocumentUploadForm(forms.Form):
+    class Layout:
+        TITLE = "Upload a document that shows what your product is designed to do"
+        SUBMIT_BUTTON = "Continue"
+
+    product_document = forms.FileField(
+        label="Upload a file",
+        error_messages={
+            "required": "Select a document that shows what your product is designed to do",
+        },
+    )
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="",
+        help_text="Description (optional)",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.attrs = {"enctype": "multipart/form-data"}
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            "product_document",
+            "description",
+            Submit("submit", self.Layout.SUBMIT_BUTTON),
+        )
