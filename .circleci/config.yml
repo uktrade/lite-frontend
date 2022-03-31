@@ -125,25 +125,6 @@ commands:
             echo $SESSION_PATH
             sudo openvpn3 session-manage --session-path $SESSION_PATH --disconnect
           when: always
-  
-  vpn_handshake:
-    steps:
-      - run:
-          name: VPN handshake
-          background: true
-          command: |
-            timeout 600 bash -c 'while true  # infinite loop
-                                  do
-                                      curl -I https://great.dev.uktrade.digital/
-                                      sleep 1  # short pause between requests
-                                  done'
-          when: always
-
-  bypass_vpn:
-    steps:
-      - run:
-          name: Basic auth for ip filter
-          command: curl --user $VPN_USER:$VPN_PASSWORD https://internal.lite.service.devdata.uktrade.digital/automated-test-auth
 
   setup_code:
     steps:
@@ -262,7 +243,6 @@ jobs:
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
   caseworker_ui_test:
-    # has to be machine executor as the VPN does not work in docker executor
     machine:
       image: ubuntu-2004:202008-01
       docker_layer_caching: true
@@ -274,12 +254,12 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: pyenv global 3.8.5
+      - run: pyenv install 3.7.0
+      - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
       - vpn_install
       - vpn_connect
-      - vpn_handshake
       - ui_tests
       - vpn_disconnect
 
@@ -295,12 +275,12 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: pyenv global 3.8.5
+      - run: pyenv install 3.7.0
+      - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
       - vpn_install
       - vpn_connect
-      - vpn_handshake
       - ui_tests
       - vpn_disconnect
 
@@ -311,15 +291,10 @@ jobs:
     steps:
       - checkout
       - run: git submodule update --init
-      # - vpn_install
-      # - vpn_connect
-      # - vpn_handshake
-      - bypass_vpn
       - run_make:
           label: Run caseworker e2e tests
           target: start-caseworker caseworker-e2e-test
       - store_playwright_artifacts
-      - vpn_disconnect
 
 workflows:
   version: 2

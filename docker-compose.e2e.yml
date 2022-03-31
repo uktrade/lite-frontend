@@ -17,6 +17,9 @@ services:
       PW_EXPORT_SSO_USER: ${PW_EXPORT_SSO_USER}
       PW_SSO_PASSWORD: ${PW_SSO_PASSWORD}
       PW_SSO_URL: ${PW_SSO_URL}
+      VPN_PASSWORD: ${VPN_PASSWORD}
+      VPN_USER: ${VPN_USER}
+      VPN_BASIC_AUTH_TOKEN: ${VPN_BASIC_AUTH_TOKEN}
     env_file:
       - ./caseworker.env
     ports:

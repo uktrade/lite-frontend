@@ -129,6 +129,7 @@ def context(browser, browser_context_args, pytestconfig, request):
 @pytest.fixture
 def page(context):
     page = context.new_page()
+    page.set_extra_http_headers({"Authorization": f"Basic {os.getenv('VPN_BASIC_AUTH_TOKEN')}"})
     set_sso_cookie(page)
     yield page
 
