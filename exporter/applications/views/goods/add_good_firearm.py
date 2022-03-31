@@ -85,6 +85,15 @@ def has_user_marked_as_registered_firearms_dealer(wizard):
     return is_registered_firearms_dealer_cleaned_data.get("is_registered_firearm_dealer", False)
 
 
+class ServiceError(Exception):
+    def __init__(self, status_code, response, log_message, user_message):
+        super().__init__()
+        self.status_code = status_code
+        self.response = response
+        self.log_message = log_message
+        self.user_message = user_message
+
+
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
@@ -226,54 +235,74 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             kwargs={"pk": pk, "good_pk": good_pk},
         )
 
-    def done(self, form_list, **kwargs):
+    def post_firearm(self, form_list):
         payload = self.get_payload(form_list)
         api_resp_data, status_code = post_firearm(
             self.request,
             payload,
         )
         if status_code != HTTPStatus.CREATED:
-            logger.error(
-                "Error creating firearm - response was: %s - %s",
+            raise ServiceError(
                 status_code,
                 api_resp_data,
-                exc_info=True,
+                "Error creating firearm - response was: %s - %s",
+                "Unexpected error adding firearm",
             )
-            return error_page(self.request, "Unexpected error adding firearm")
 
         application_pk = str(self.kwargs["pk"])
         good_pk = api_resp_data["good"]["id"]
 
-        if self.has_rfd_certificate_data():
-            rfd_certificate_payload = self.get_rfd_certificate_payload()
-            api_resp_data, status_code = post_additional_document(
-                request=self.request,
-                pk=application_pk,
-                json=rfd_certificate_payload,
-            )
-            if status_code != HTTPStatus.CREATED:
-                logger.error(
-                    "Error rfd certificate when creating firearm - response was: %s - %s",
-                    status_code,
-                    api_resp_data,
-                    exc_info=True,
-                )
-                return error_page(self.request, "Unexpected error adding firearm")
+        return application_pk, good_pk
 
-        if self.has_product_documentation():
-            document_payload = self.get_product_document_payload()
-            api_resp_data, status_code = post_good_documents(
-                request=self.request,
-                pk=good_pk,
-                json=document_payload,
+    def post_rfd_certificate(self, application_pk):
+        rfd_certificate_payload = self.get_rfd_certificate_payload()
+        api_resp_data, status_code = post_additional_document(
+            request=self.request,
+            pk=application_pk,
+            json=rfd_certificate_payload,
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error rfd certificate when creating firearm - response was: %s - %s",
+                "Unexpected error adding firearm",
             )
-            if status_code != HTTPStatus.CREATED:
-                logger.error(
-                    "Error product document when creating firearm - response was: %s - %s",
-                    status_code,
-                    api_resp_data,
-                    exc_info=True,
-                )
-                return error_page(self.request, "Unexpected error adding document to firearm")
+
+    def post_product_documentation(self, good_pk):
+        document_payload = self.get_product_document_payload()
+        api_resp_data, status_code = post_good_documents(
+            request=self.request,
+            pk=good_pk,
+            json=document_payload,
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error product document when creating firearm - response was: %s - %s",
+                "Unexpected error adding document to firearm",
+            )
+
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        return error_page(self.request, service_error.user_message)
+
+    def done(self, form_list, **kwargs):
+        try:
+            application_pk, good_pk = self.post_firearm(form_list)
+
+            if self.has_rfd_certificate_data():
+                self.post_rfd_certificate(application_pk)
+
+            if self.has_product_documentation():
+                self.post_product_documentation(good_pk)
+        except ServiceError as e:
+            return self.handle_service_error(e)
 
         return redirect(self.get_success_url(application_pk, good_pk))
