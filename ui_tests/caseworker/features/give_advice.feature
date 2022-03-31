@@ -261,7 +261,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
-
   @lu_nlr_advice
   Scenario: LU NLR advice journey
     # Setup
@@ -269,10 +268,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create standard application or standard application has been previously created
     And I prepare the application for final review NLR
     # Scenario starts
-    When I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
-    And I go to my case list
-    And I click the application previously created
     Then for the first good I see "N/A" for "Rating"
     And for the first good I see "No" for "Licence required"
     And for the first good I see "ARS" for "ARS"
@@ -296,3 +291,35 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click save and publish to exporter
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
+
+  @lu_countersign
+  Scenario: LU countersign
+    Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
+    And I prepare the application for final review
+    When I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Team Leader to Countersign"
+    And I go to my case list
+    And I click the application previously created
+    Then I see the application destinations
+    When I click edit flags on the last destination
+    And I select a "LU Countersign Required" flag
+    And I click I'm done
+    And Click on details
+    And I enter "Decision has been made with reasons" as the case note
+    And I click submit
+    When I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Head of Licensing Unit countersigning"
+    And I go to my case list
+    And I click the application previously created
+    Then I click on Notes and timeline
+    Then I should see "Decision has been made with reasons" appear in the timeline
+    When I click I'm done
+    And I click submit
+    Then I don't see previously created application
+    When I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    Then I see the case status is now "Under final review"
+    And I see the case is assigned to "Licensing Unit Post-circulation Cases to Finalise"
