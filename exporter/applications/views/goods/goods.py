@@ -334,12 +334,6 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
 
         return kwargs
 
-    def get_cleaned_data_for_step(self, step):
-        cleaned_data = super().get_cleaned_data_for_step(step)
-        if cleaned_data is None:
-            return {}
-        return cleaned_data
-
     def render_next_step(self, form, **kwargs):
         if settings.FEATURE_FLAG_PRODUCT_2_0 and self.steps.current == AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE:
             if form.cleaned_data["type"] == "firearms":
@@ -766,12 +760,6 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
         # the wizard automatically generates the back link to the previous form.
         context["back_link_url"] = reverse_lazy("applications:preexisting_good", kwargs={"pk": self.kwargs["pk"]})
         return context
-
-    def get_cleaned_data_for_step(self, step):
-        cleaned_data = super().get_cleaned_data_for_step(step)
-        if cleaned_data is None:
-            return {}
-        return cleaned_data
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)

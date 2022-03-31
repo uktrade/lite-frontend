@@ -73,4 +73,4 @@ stop-caseworker:
 
 caseworker-e2e-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
-	$(docker-e2e) exec caseworker bash -c '$(wait-for-caseworker) && pytest playwright_tests/specs/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos'
+	$(docker-e2e) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest playwright_tests/specs/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos'

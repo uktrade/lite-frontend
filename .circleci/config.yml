@@ -64,11 +64,13 @@ commands:
       - run:
           name: Install OpenVPN
           command: |
-            # There seems to be a bug with the openvpn aptrepo sources
-            sudo apt-get update # for apt-get to recognise openvpn
-            sudo apt-get remove openvpn # remove ubuntu aptrepo source
-            sudo apt-get update
-            sudo apt-get install openvpn -y
+            sudo apt update && sudo apt install apt-transport-https
+            sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
+            sudo apt-key add openvpn-repo-pkg-key.pub
+              
+            ### The repository URL will depend on your Ubuntu release name (here we chose "focal" since Ubuntu 20.04 is used
+            sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-focal.list
+            sudo apt update && sudo apt install openvpn3
 
   vpn_connect:
     parameters:
@@ -77,30 +79,60 @@ commands:
         type: env_var_name
         default: VPN_CONFIG
     steps:
-      - run: echo ${<<parameters.config>>:?} | base64 --decode >> config.ovpn
       - run:
-          name: Connect to VPN
+          name: VPN Setup
+          background: true
           command: |
-            sudo openvpn \
-              --config config.ovpn \
-              --script-security 2 \
-              --up /etc/openvpn/update-resolv-conf \
-              --down /etc/openvpn/update-resolv-conf \
-              > openvpn.log 2>&1 &
-            cat openvpn.log
-            while [ -n "$(ip addr show tun0 2>&1 > /dev/null)" ]; do
-              sleep 0.1;
-            done
-            ls /etc/openvpn/
-            ls /usr/share/openvpn/
-            cat openvpn.log
+            echo ${<<parameters.config>>:?} | base64 --decode > /tmp/config.ovpn
+  
+            ### IMPORTANT: Include the following line to exclude the connection from CircleCI and the link-local range
+            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
+              
+            if [ -n "$phone_home" ]; then
+              echo -e "\nroute $phone_home 255.255.255.255 net_gateway" >> /tmp/config.ovpn
+            fi
+              
+            echo "\nroute 169.254.0.0 255.255.0.0 net_gateway" >> /tmp/config.ovpn
+              
+            # This will start the connection
+            sudo openvpn3 session-start \
+              --config /tmp/config.ovpn \
+              > /tmp/openvpn.log
+
             dig great.dev.uktrade.digital +short
-            cat /etc/resolv.conf
             curl -I https://great.dev.uktrade.digital/
+      
+      - run:
+          name: VPN logs
+          background: true
+          command: tail -f /var/log/syslog
+
+      - run:
+          name: Wait for the connection to be established and check
+          command: |
+            until sudo openvpn3 sessions-list|grep "Client connected"; do
+              echo "Attempting to connect to VPN server..."
+              sleep 1;
+            done
+            printf "\nPublic IP is now $(curl checkip.amazonaws.com)\n"
+
   vpn_disconnect:
     steps:
-      - run: sudo killall openvpn || true
-      - run: sudo rm config.ovpn
+      - run:
+          name: Disconnect from OpenVPN
+          command: |
+            SESSION_PATH=$(sudo openvpn3 sessions-list | grep Path | awk -F': ' '{print $2}')
+            echo $SESSION_PATH
+            sudo openvpn3 session-manage --session-path $SESSION_PATH --disconnect
+          when: always
+  
+  vpn_handshake:
+    steps:
+      - run:
+          name: VPN handshake
+          command: |
+            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' https://great.dev.uktrade.digital/)" != "200" ]]; do sleep 5; done' || false
+          when: always
 
   setup_code:
     steps:
@@ -221,7 +253,7 @@ jobs:
   caseworker_ui_test:
     # has to be machine executor as the VPN does not work in docker executor
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202008-01
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -231,17 +263,19 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
       - vpn_install
       - vpn_connect
+      - vpn_handshake
       - ui_tests
       - vpn_disconnect
 
   exporter_ui_test:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202008-01
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -251,23 +285,26 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
       - vpn_install
       - vpn_connect
+      - vpn_handshake
       - ui_tests
       - vpn_disconnect
 
   caseworker_e2e_test:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202008-01
     resource_class: large
     steps:
       - checkout
       - run: git submodule update --init
       - vpn_install
       - vpn_connect
+      - vpn_handshake
       - run_make:
           label: Run caseworker e2e tests
           target: start-caseworker caseworker-e2e-test

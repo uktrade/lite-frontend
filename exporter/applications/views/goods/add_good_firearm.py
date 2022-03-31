@@ -75,22 +75,14 @@ def has_user_marked_rfd_certificate_invalid(wizard):
     is_rfd_certificate_valid_cleaned_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
     )
-    if not is_rfd_certificate_valid_cleaned_data:
-        return True
-
-    is_rfd_valid = is_rfd_certificate_valid_cleaned_data["is_rfd_valid"]
-    return not is_rfd_valid
+    return not is_rfd_certificate_valid_cleaned_data.get("is_rfd_valid", False)
 
 
 def has_user_marked_as_registered_firearms_dealer(wizard):
     is_registered_firearms_dealer_cleaned_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER
     )
-    if not is_registered_firearms_dealer_cleaned_data:
-        return False
-
-    is_registered_firearm_dealer = is_registered_firearms_dealer_cleaned_data["is_registered_firearm_dealer"]
-    return is_registered_firearm_dealer
+    return is_registered_firearms_dealer_cleaned_data.get("is_registered_firearm_dealer", False)
 
 
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
@@ -146,12 +138,6 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         ctx["title"] = form.Layout.TITLE
 
         return ctx
-
-    def get_cleaned_data_for_step(self, step):
-        cleaned_data = super().get_cleaned_data_for_step(step)
-        if cleaned_data is None:
-            return {}
-        return cleaned_data
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
