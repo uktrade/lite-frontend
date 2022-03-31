@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6abee324a5dc2e39eafa42de688f6ab6a022d5bd742f203d9811cbdba157a495"
+            "sha256": "60418a05f16ec1007c4a085295e730d050387b3a529e50aaa185b49ac7a6bee6"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -81,19 +81,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:895fb88c69be78f82cfee58a79c97a3ad8d4a2a1209041a411d7d6b9fc5393e4",
-                "sha256:bcb541175a7d190dd919a0af0e807ee6e9d26f135551e741b10d94343f2d7588"
+                "sha256:ef41b9c7b6311d5152bdc78f7de56912c1ed265debf7da14133e1ad00246ad50",
+                "sha256:f165790439117e3fd40f8c06826845068852a70ca5ac62adb192405c97f117e1"
             ],
             "index": "pypi",
-            "version": "==1.21.42"
+            "version": "==1.21.27"
         },
         "botocore": {
             "hashes": [
-                "sha256:14aee41c8bf59d2dd2d89e8751fa37d3c95dcb92707d1966aa02697e914c1417",
-                "sha256:a2baa9484bbaee96ef312c049b8e360badcab58329e487b57567644a571b5f4a"
+                "sha256:03c41d26d1e765380b8175d4b136d3144aa051f17a86eebfdf9a885a5a9a6a72",
+                "sha256:102eb24b44d473adea6bb8728b20fb9547fa5858c3293df7cad67ef17ea736a7"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.24.42"
+            "version": "==1.24.28"
         },
         "certifi": {
             "hashes": [
@@ -732,6 +732,10 @@
                 "sha256:ecd29f1b3e66a4c0753105baec262b331bcbceefc22fbe6f7e8bcd2067bcb4d7"
             ],
             "version": "==1.1.0"
+        },
+        "s3chunkuploader": {
+            "git": "https://github.com/uktrade/s3chunkuploader",
+            "ref": "abf0512c6df989ade077f7ae9944636efaa8a3c6"
         },
         "s3transfer": {
             "hashes": [
