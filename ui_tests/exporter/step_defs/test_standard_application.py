@@ -13,6 +13,7 @@ from ui_tests.exporter.conftest import (
 from ui_tests.exporter.pages.add_new_external_location_form_page import AddNewExternalLocationFormPage
 from ui_tests.exporter.pages.add_goods_details import AddGoodDetails
 from ui_tests.exporter.pages.apply_for_a_licence_page import ApplyForALicencePage
+from ui_tests.exporter.pages.check_your_answers_page import CheckYourAnswers
 from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
 from ui_tests.exporter.pages.location_type_page import LocationTypeFormPage
 from ui_tests.exporter.pages.submitted_applications_page import SubmittedApplicationsPages
@@ -386,3 +387,187 @@ def check_product_document_available(driver, choice):
     good_details_page = AddGoodDetails(driver)
     good_details_page.set_registered_firearms_dealer(choice)
     functions.click_submit(driver)
+
+
+@then("my answers are played back to me")
+def answers_played_back_to_me():
+    pass
+
+
+@then(parsers.parse('I see "{licence}" as the Licence'))
+def check_licence_type_full(driver, licence):
+    answers_page = CheckYourAnswers(driver)
+    assert licence == answers_page.get_summary_row_value("Licence")
+
+
+@then(parsers.parse('I see "{licence_type}" as the type'))
+def check_licence_type(driver, licence_type):
+    answers_page = CheckYourAnswers(driver)
+    assert licence_type == answers_page.get_summary_row_value("Type")
+
+
+@then(parsers.parse('I see "{name}" as reference name'))
+def check_application_name(driver, name):
+    answers_page = CheckYourAnswers(driver)
+    assert name == answers_page.get_summary_row_value("Reference name")
+
+
+@then(parsers.parse('I see "{informed_status}" as informed to apply'))
+def check_informed_status(driver, informed_status):
+    answers_page = CheckYourAnswers(driver)
+    assert informed_status == answers_page.get_summary_row_value("Informed to apply")
+
+
+@then(parsers.parse('I see "{origin}" as product journey origin'))
+def check_application_name(driver, origin):
+    label = "Where will the products begin their export journey?"
+    answers_page = CheckYourAnswers(driver)
+    assert origin == answers_page.get_row_value(label)
+
+
+@then(parsers.parse('I see "{value}" as product permanently exported'))
+def check_export_status(driver, value):
+    label = "Are the products being permanently exported?"
+    answers_page = CheckYourAnswers(driver)
+    assert value == answers_page.get_row_value(label)
+
+
+@then(parsers.parse('I see "{waybill_status}" as way bill'))
+def check_way_bill(driver, waybill_status):
+    label = "Are the products being shipped from the UK on an air waybill or bill of lading?"
+    answers_page = CheckYourAnswers(driver)
+    assert waybill_status == answers_page.get_row_value(label)
+
+
+@then(parsers.parse('I see "{transit_status}" as who are the products going to'))
+def check_party(driver, transit_status):
+    label = "Who are the products going to?"
+    answers_page = CheckYourAnswers(driver)
+    assert transit_status == answers_page.get_row_value(label)
+
+
+@then(parsers.parse('I see "{product_name}" as name'))
+def check_product_name(driver, product_name):
+    answers_page = CheckYourAnswers(driver)
+    assert product_name == answers_page.get_product_field_value("Name")
+
+
+@then(parsers.parse('I see "{part_number}" as part number'))
+def check_product_part_number(driver, part_number):
+    answers_page = CheckYourAnswers(driver)
+    assert part_number == answers_page.get_product_field_value("Part number")
+
+
+@then(parsers.parse('I see "{controlled}" as controlled'))
+def check_product_controlled_status(driver, controlled):
+    answers_page = CheckYourAnswers(driver)
+    assert controlled == answers_page.get_product_field_value("Controlled")
+
+
+@then(parsers.parse('I see "{clc_entry}" as control list entry'))
+def check_product_clc_entry(driver, clc_entry):
+    answers_page = CheckYourAnswers(driver)
+    assert clc_entry == answers_page.get_product_field_value("Control list entries")
+
+
+@then(parsers.parse('I see "{incorporated}" as incorporated'))
+def check_product_incorporation(driver, incorporated):
+    answers_page = CheckYourAnswers(driver)
+    assert incorporated == answers_page.get_product_field_value("Incorporated")
+
+
+@then(parsers.parse('I see "{quantity}" as quantity'))
+def check_product_quantity(driver, quantity):
+    answers_page = CheckYourAnswers(driver)
+    assert quantity == answers_page.get_product_field_value("Quantity")
+
+
+@then(parsers.parse('I see "{value}" as value'))
+def check_product_value(driver, value):
+    answers_page = CheckYourAnswers(driver)
+    assert value == answers_page.get_product_field_value("Value")
+
+
+@then(parsers.parse('I see "{end_use}" as intended end use'))
+def check_end_use(driver, end_use):
+    answers_page = CheckYourAnswers(driver)
+    assert end_use == answers_page.get_end_use_field_value("Intended end use")
+
+
+@then(parsers.parse('I see "{inform_status}" for informed to apply'))
+def check_informed_to_apply(driver, inform_status):
+    answers_page = CheckYourAnswers(driver)
+    assert inform_status == answers_page.get_end_use_field_value("Informed to apply")
+
+
+@then(parsers.parse('I see "{inform_wmd}" for informed WMD'))
+def check_informed_wmd(driver, inform_wmd):
+    answers_page = CheckYourAnswers(driver)
+    assert inform_wmd == answers_page.get_end_use_field_value("Informed WMD")
+
+
+@then(parsers.parse('I see "{suspect_wmd}" for suspect WMD'))
+def check_suspect_wmd(driver, suspect_wmd):
+    answers_page = CheckYourAnswers(driver)
+    assert suspect_wmd == answers_page.get_end_use_field_value("Suspect WMD")
+
+
+@then(parsers.parse('I see "{eu_transfer}" for EU transfer'))
+def check_eu_transfer(driver, eu_transfer):
+    answers_page = CheckYourAnswers(driver)
+    assert eu_transfer == answers_page.get_end_use_field_value("EU transfer licence")
+
+
+@then(parsers.parse('I see "{end_user_name}" for end user name'))
+def check_end_user_name(driver, end_user_name):
+    answers_page = CheckYourAnswers(driver)
+    assert end_user_name == answers_page.get_end_user_row_value("Name")
+
+
+@then(parsers.parse('I see "{end_user_type}" for type'))
+def check_end_user_type(driver, end_user_type):
+    answers_page = CheckYourAnswers(driver)
+    assert end_user_type == answers_page.get_end_user_row_value("Type")
+
+
+@then(parsers.parse('I see "{end_user_address}" as address'))
+def check_end_user_address(driver, end_user_address):
+    answers_page = CheckYourAnswers(driver)
+    assert end_user_address == answers_page.get_end_user_row_value("Address")
+
+
+@then(parsers.parse('I see "{end_user_website}" as website'))
+def check_end_user_website(driver, end_user_website):
+    answers_page = CheckYourAnswers(driver)
+    assert end_user_website == answers_page.get_end_user_row_value("Website")
+
+
+@then(parsers.parse('I see "{end_user_signatory}" as signatory'))
+def check_end_user_signatory(driver, end_user_signatory):
+    answers_page = CheckYourAnswers(driver)
+    assert end_user_signatory == answers_page.get_end_user_row_value("Signatory name")
+
+
+@then(parsers.parse('I see "{end_user_document_status}" for end user document'))
+def check_end_user_undertaking_document(driver, end_user_document_status):
+    label = "Do you have an end-user document?"
+    answers_page = CheckYourAnswers(driver)
+    assert end_user_document_status == answers_page.get_end_user_row_value(label)
+
+
+@then(parsers.parse('I see "{reason}" for the explanation'))
+def check_end_user_document_missing_reason(driver, reason):
+    label = "Explain why you do not have an end-user undertaking or stockist undertaking"
+    answers_page = CheckYourAnswers(driver)
+    assert reason == answers_page.get_end_user_row_value(label)
+
+
+@then(parsers.parse('I see "{no_info_text}" for "{party_type}"'))
+def check_party_section_text(driver, no_info_text, party_type):
+    answers_page = CheckYourAnswers(driver)
+    assert no_info_text == answers_page.get_party_section_text(party_type)
+
+
+@then(parsers.parse('I see "{no_info_text}" for Notes'))
+def check_notes(driver, no_info_text):
+    assert no_info_text == CheckYourAnswers(driver).get_notes_text()

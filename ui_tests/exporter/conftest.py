@@ -94,6 +94,12 @@ def click_on_an_application(driver, exporter_url, context):  # noqa
     driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id + "/task-list/")
 
 
+
+@when("I go to a prefilled application")  # noqa
+def goto_prefilled_application(driver, exporter_url, context):  # noqa
+    driver.get(exporter_url.rstrip("/") + "/applications/7b1cbc08-6c4f-4076-917c-b4b0c014f1df/summary/")
+
+
 @when("I click on the application just created")  # noqa
 def click_on_application_just_created(driver, context):  # noqa
     driver.find_element_by_link_text(context.app_name).click()
