@@ -404,7 +404,7 @@ def test_add_good_firearm_with_rfd_document_submission(
         "control_list_entries": ["ML1", "ML1a"],
         "name": "TEST NAME",
         "is_good_controlled": True,
-        "is_pv_graded": True,
+        "is_pv_graded": "yes",
         "prefix": "NATO",
         "grading": "official",
         "suffix": "",
@@ -415,12 +415,11 @@ def test_add_good_firearm_with_rfd_document_submission(
         "is_document_available": True,
         "no_document_comments": "",
         "is_document_sensitive": False,
-        "description": "",
     }
 
     assert post_good_document_matcher.called_once
     doc_request = post_good_document_matcher.last_request
-    assert doc_request.json()[0] == {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}
+    assert doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
 
 
 def test_add_good_firearm_without_rfd_document_submission(
@@ -525,7 +524,7 @@ def test_add_good_firearm_without_rfd_document_submission(
         "control_list_entries": ["ML1", "ML1a"],
         "name": "TEST NAME",
         "is_good_controlled": True,
-        "is_pv_graded": False,
+        "is_pv_graded": "no",
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",

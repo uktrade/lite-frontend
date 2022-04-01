@@ -11,7 +11,7 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application, post_additional_document
-from exporter.core.helpers import get_rfd_certificate, has_valid_rfd_certificate
+from exporter.core.helpers import get_document_data, get_rfd_certificate, has_valid_rfd_certificate
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
@@ -85,6 +85,31 @@ def has_user_marked_as_registered_firearms_dealer(wizard):
     return is_registered_firearms_dealer_cleaned_data.get("is_registered_firearm_dealer", False)
 
 
+def get_cleaned_data(form):
+    return form.cleaned_data
+
+
+def get_pv_grading_payload(form):
+    return {
+        "is_pv_graded": "yes" if form.cleaned_data["is_pv_graded"] else "no",
+    }
+
+
+def get_pv_grading_good_payload(form):
+    payload = form.cleaned_data.copy()
+    payload["date_of_issue"] = payload["date_of_issue"].isoformat()
+    return payload
+
+
+class ServiceError(Exception):
+    def __init__(self, status_code, response, log_message, user_message):
+        super().__init__()
+        self.status_code = status_code
+        self.response = response
+        self.log_message = log_message
+        self.user_message = user_message
+
+
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
@@ -112,6 +137,20 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: has_user_marked_as_registered_firearms_dealer,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+    }
+    good_payload_dict = {
+        AddGoodFirearmSteps.NAME: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
+        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+    firearm_payload_dict = {
+        AddGoodFirearmSteps.CATEGORY: get_cleaned_data,
+        AddGoodFirearmSteps.CALIBRE: get_cleaned_data,
+        AddGoodFirearmSteps.IS_REPLICA: get_cleaned_data,
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_cleaned_data,
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -153,41 +192,22 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return kwargs
 
-    def get_payload(self, form_list):
-        firearm_data_keys = [
-            "calibre",
-            "category",
-            "is_replica",
-            "replica_description",
-            "is_registered_firearm_dealer",
-        ]
+    def get_payload(self, form_dict):
+        good_payload = {}
+        for step_name, payload_func in self.good_payload_dict.items():
+            form = form_dict.get(step_name)
+            if form:
+                good_payload.update(payload_func(form))
 
-        keys_to_remove = [
-            "is_rfd_valid",
-            "expiry_date",
-            "reference_code",
-            "file",
-            "product_document",
-        ]
+        firearm_payload = {}
+        for step_name, payload_func in self.firearm_payload_dict.items():
+            form = form_dict.get(step_name)
+            if form:
+                firearm_payload.update(payload_func(form))
 
-        payload = {}
-        firearm_data = {}
-        for form in form_list:
-            for k, v in form.cleaned_data.items():
-                if k in keys_to_remove:
-                    continue
+        good_payload["firearm_details"] = firearm_payload
 
-                if k in firearm_data_keys:
-                    firearm_data[k] = v
-                else:
-                    payload[k] = v
-
-        payload["firearm_details"] = firearm_data
-
-        if payload.get("is_pv_graded"):
-            payload["date_of_issue"] = payload["date_of_issue"].isoformat()
-
-        return payload
+        return good_payload
 
     def has_rfd_certificate_data(self):
         return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
@@ -197,10 +217,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         cert_file = rfd_certificate_cleaned_data["file"]
         expiry_date = rfd_certificate_cleaned_data["expiry_date"]
         reference_code = rfd_certificate_cleaned_data["reference_code"]
+
         rfd_certificate_payload = {
-            "name": getattr(cert_file, "original_name", cert_file.name),
-            "s3_key": cert_file.name,
-            "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
+            **get_document_data(cert_file),
             "document_on_organisation": {
                 "expiry_date": expiry_date.isoformat(),
                 "reference_code": reference_code,
@@ -216,9 +235,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
         document = data["product_document"]
         payload = {
-            "name": getattr(document, "original_name", document.name),
-            "s3_key": document.name,
-            "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
+            **get_document_data(document),
             "description": data["description"],
         }
         return payload
@@ -229,54 +246,74 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             kwargs={"pk": pk, "good_pk": good_pk},
         )
 
-    def done(self, form_list, **kwargs):
-        payload = self.get_payload(form_list)
+    def post_firearm(self, form_dict):
+        payload = self.get_payload(form_dict)
         api_resp_data, status_code = post_firearm(
             self.request,
             payload,
         )
         if status_code != HTTPStatus.CREATED:
-            logger.error(
-                "Error creating firearm - response was: %s - %s",
+            raise ServiceError(
                 status_code,
                 api_resp_data,
-                exc_info=True,
+                "Error creating firearm - response was: %s - %s",
+                "Unexpected error adding firearm",
             )
-            return error_page(self.request, "Unexpected error adding firearm")
 
         application_pk = str(self.kwargs["pk"])
         good_pk = api_resp_data["good"]["id"]
 
-        if self.has_rfd_certificate_data():
-            rfd_certificate_payload = self.get_rfd_certificate_payload()
-            api_resp_data, status_code = post_additional_document(
-                request=self.request,
-                pk=application_pk,
-                json=rfd_certificate_payload,
-            )
-            if status_code != HTTPStatus.CREATED:
-                logger.error(
-                    "Error rfd certificate when creating firearm - response was: %s - %s",
-                    status_code,
-                    api_resp_data,
-                    exc_info=True,
-                )
-                return error_page(self.request, "Unexpected error adding firearm")
+        return application_pk, good_pk
 
-        if self.has_product_documentation():
-            document_payload = self.get_product_document_payload()
-            api_resp_data, status_code = post_good_documents(
-                request=self.request,
-                pk=good_pk,
-                json=document_payload,
+    def post_rfd_certificate(self, application_pk):
+        rfd_certificate_payload = self.get_rfd_certificate_payload()
+        api_resp_data, status_code = post_additional_document(
+            request=self.request,
+            pk=application_pk,
+            json=rfd_certificate_payload,
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error rfd certificate when creating firearm - response was: %s - %s",
+                "Unexpected error adding firearm",
             )
-            if status_code != HTTPStatus.CREATED:
-                logger.error(
-                    "Error product document when creating firearm - response was: %s - %s",
-                    status_code,
-                    api_resp_data,
-                    exc_info=True,
-                )
-                return error_page(self.request, "Unexpected error adding document to firearm")
+
+    def post_product_documentation(self, good_pk):
+        document_payload = self.get_product_document_payload()
+        api_resp_data, status_code = post_good_documents(
+            request=self.request,
+            pk=good_pk,
+            json=document_payload,
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error product document when creating firearm - response was: %s - %s",
+                "Unexpected error adding document to firearm",
+            )
+
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        return error_page(self.request, service_error.user_message)
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            application_pk, good_pk = self.post_firearm(form_dict)
+
+            if self.has_rfd_certificate_data():
+                self.post_rfd_certificate(application_pk)
+
+            if self.has_product_documentation():
+                self.post_product_documentation(good_pk)
+        except ServiceError as e:
+            return self.handle_service_error(e)
 
         return redirect(self.get_success_url(application_pk, good_pk))

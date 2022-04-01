@@ -35,11 +35,29 @@ class TextChoice(Choice):
         super().__init__(choice.value, choice.label, **kwargs)
 
 
-class FirearmCategoryForm(forms.Form):
+class BaseFirearmForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        for field in self.fields.values():
+            if isinstance(field, forms.FileField):
+                self.helper.attrs = {"enctype": "multipart/form-data"}
+                break
+
+        self.helper.layout = Layout(
+            HTML.h1(self.Layout.TITLE),
+            *self.get_layout_fields(),
+            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
+        )
+
+    def get_layout_fields(self):
+        raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
+
+
+class FirearmCategoryForm(BaseFirearmForm):
     class Layout:
         TITLE = "Firearm category"
-        SUBTITLE = "Some firearm categories require a criminal conviction check and additonal documentation."
-        SUBMIT_BUTTON = "Continue"
 
     class CategoryChoices(models.TextChoices):
         NON_AUTOMATIC_SHOTGUN = "NON_AUTOMATIC_SHOTGUN", "Non automatic shotgun"
@@ -70,18 +88,13 @@ class FirearmCategoryForm(forms.Form):
         widget=forms.CheckboxSelectMultiple(),
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
-            HTML.p(self.Layout.SUBTITLE),
+    def get_layout_fields(self):
+        return (
+            HTML.p("Some firearm categories require a criminal conviction check and additonal documentation."),
             Field(
                 "category",
                 template="gds/layout/checkboxes_with_divider.html",
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
     def clean_category(self):
@@ -96,14 +109,9 @@ class FirearmCategoryForm(forms.Form):
         raise forms.ValidationError('Select a firearm category, or select "None of the above"')
 
 
-class FirearmNameForm(forms.Form):
+class FirearmNameForm(BaseFirearmForm):
     class Layout:
         TITLE = "Give the product a descriptive name"
-        SUBTITLE = (
-            "Try to match the name as closely as possible to any documentation such as the technical "
-            "specification, end user certificate or firearm certificate."
-        )
-        SUBMIT_BUTTON = "Continue"
 
     name = forms.CharField(
         label="",
@@ -112,26 +120,23 @@ class FirearmNameForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
-            HTML.p(self.Layout.SUBTITLE),
+    def get_layout_fields(self):
+        return (
+            HTML.p(
+                "Try to match the name as closely as possible to any documentation such as the technical "
+                "specification, end user certificate or firearm certificate.",
+            ),
             "name",
             HTML.details(
                 "Help with naming your product",
                 render_to_string("goods/forms/firearms/help_with_naming_your_product.html"),
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
 
-class FirearmProductControlListEntryForm(forms.Form):
+class FirearmProductControlListEntryForm(BaseFirearmForm):
     class Layout:
         TITLE = "Do you know the product's control list entry?"
-        SUBMIT_BUTTON = "Continue"
 
     is_good_controlled = forms.TypedChoiceField(
         choices=(
@@ -159,9 +164,8 @@ class FirearmProductControlListEntryForm(forms.Form):
         clc_list = get_control_list_entries(request)
         self.fields["control_list_entries"].choices = [(entry["rating"], entry["rating"]) for entry in clc_list]
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             ConditionalRadios(
                 "is_good_controlled",
                 ConditionalQuestion(
@@ -181,7 +185,6 @@ class FirearmProductControlListEntryForm(forms.Form):
                 "Help with control list entries",
                 render_to_string("goods/forms/firearms/help_with_control_list_entries.html"),
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
     def clean(self):
@@ -196,10 +199,9 @@ class FirearmProductControlListEntryForm(forms.Form):
         return cleaned_data
 
 
-class FirearmPvGradingForm(forms.Form):
+class FirearmPvGradingForm(BaseFirearmForm):
     class Layout:
         TITLE = "Does the product have a government security grading or classification?"
-        SUBMIT_BUTTON = "Continue"
 
     is_pv_graded = forms.TypedChoiceField(
         choices=(
@@ -214,26 +216,20 @@ class FirearmPvGradingForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             HTML.p("For example, UK Official or NATO Restricted."),
             "is_pv_graded",
             HTML.details(
                 "Help with security gradings",
                 render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
 
-class FirearmPvGradingDetailsForm(forms.Form):
+class FirearmPvGradingDetailsForm(BaseFirearmForm):
     class Layout:
         TITLE = "What is the security grading or classification?"
-        SUBMIT_BUTTON = "Continue"
 
     prefix = forms.CharField(
         required=False, label="Enter a prefix (optional)", help_text="For example, UK, NATO or OCCAR"
@@ -294,9 +290,8 @@ class FirearmPvGradingDetailsForm(forms.Form):
         gradings = [(key, display) for grading in get_pv_gradings_v2(request) for key, display in grading.items()]
         self.fields["grading"].choices += gradings
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             "prefix",
             "grading",
             "suffix",
@@ -307,14 +302,12 @@ class FirearmPvGradingDetailsForm(forms.Form):
                 "Help with security gradings",
                 render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
 
-class FirearmCalibreForm(forms.Form):
+class FirearmCalibreForm(BaseFirearmForm):
     class Layout:
         TITLE = "What is the calibre of the product?"
-        SUBMIT_BUTTON = "Continue"
 
     calibre = forms.CharField(
         label="",
@@ -323,21 +316,13 @@ class FirearmCalibreForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
-            "calibre",
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
-        )
+    def get_layout_fields(self):
+        return ("calibre",)
 
 
-class FirearmReplicaForm(forms.Form):
+class FirearmReplicaForm(BaseFirearmForm):
     class Layout:
         TITLE = "Is the product a replica firearm?"
-        SUBMIT_BUTTON = "Continue"
 
     is_replica = forms.TypedChoiceField(
         choices=(
@@ -358,12 +343,8 @@ class FirearmReplicaForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             ConditionalRadios(
                 "is_replica",
                 ConditionalQuestion(
@@ -372,7 +353,6 @@ class FirearmReplicaForm(forms.Form):
                 ),
                 "No",
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
     def clean(self):
@@ -387,10 +367,9 @@ class FirearmReplicaForm(forms.Form):
         return cleaned_data
 
 
-class FirearmRFDValidityForm(forms.Form):
+class FirearmRFDValidityForm(BaseFirearmForm):
     class Layout:
         TITLE = "Is your registered firearms dealer certificate still valid?"
-        SUBMIT_BUTTON = "Continue"
 
     is_rfd_valid = forms.TypedChoiceField(
         choices=(
@@ -406,37 +385,34 @@ class FirearmRFDValidityForm(forms.Form):
     )
 
     def __init__(self, rfd_certificate, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        rfd_certificate_download_url = reverse(
+        self.rfd_certificate_download_url = reverse(
             "organisation:document",
             kwargs={
                 "pk": rfd_certificate["id"],
             },
         )
-        rfd_certificate_name = rfd_certificate["document"]["name"]
+        self.rfd_certificate_name = rfd_certificate["document"]["name"]
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return (
             HTML.p(
                 render_to_string(
                     "goods/forms/firearms/rfd_certificate_download_link.html",
                     {
-                        "url": rfd_certificate_download_url,
-                        "name": rfd_certificate_name,
+                        "url": self.rfd_certificate_download_url,
+                        "name": self.rfd_certificate_name,
                     },
                 ),
             ),
             "is_rfd_valid",
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
 
-class FirearmRegisteredFirearmsDealerForm(forms.Form):
+class FirearmRegisteredFirearmsDealerForm(BaseFirearmForm):
     class Layout:
         TITLE = "Are you a registered firearms dealer?"
-        SUBMIT_BUTTON = "Continue"
 
     is_registered_firearm_dealer = forms.TypedChoiceField(
         choices=(
@@ -451,21 +427,13 @@ class FirearmRegisteredFirearmsDealerForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
-            "is_registered_firearm_dealer",
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
-        )
+    def get_layout_fields(self):
+        return ("is_registered_firearm_dealer",)
 
 
-class FirearmAttachRFDCertificate(forms.Form):
+class FirearmAttachRFDCertificate(BaseFirearmForm):
     class Layout:
         TITLE = "Upload a registered firearms dealer certificate"
-        SUBMIT_BUTTON = "Continue"
 
     file = forms.FileField(
         label="",
@@ -507,24 +475,17 @@ class FirearmAttachRFDCertificate(forms.Form):
         ],
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.attrs = {"enctype": "multipart/form-data"}
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             "file",
             "reference_code",
             "expiry_date",
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
 
-class FirearmDocumentAvailability(forms.Form):
+class FirearmDocumentAvailability(BaseFirearmForm):
     class Layout:
         TITLE = "Do you have a document that shows what your product is and what it's designed to do?"
-        SUBMIT_BUTTON = "Continue"
 
     is_document_available = forms.TypedChoiceField(
         choices=(
@@ -545,19 +506,14 @@ class FirearmDocumentAvailability(forms.Form):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             HTML.p(render_to_string("goods/forms/firearms/product_document_hint_text.html")),
             ConditionalRadios(
                 "is_document_available",
                 "Yes",
                 ConditionalQuestion("No", "no_document_comments"),
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
     def clean(self):
@@ -573,10 +529,9 @@ class FirearmDocumentAvailability(forms.Form):
         return cleaned_data
 
 
-class FirearmDocumentSensitivityForm(forms.Form):
+class FirearmDocumentSensitivityForm(BaseFirearmForm):
     class Layout:
         TITLE = "Is the document rated above Official-sensitive?"
-        SUBMIT_BUTTON = "Continue"
 
     is_document_sensitive = forms.TypedChoiceField(
         choices=(
@@ -591,27 +546,22 @@ class FirearmDocumentSensitivityForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             ConditionalRadios(
                 "is_document_sensitive",
                 ConditionalQuestion(
-                    "Yes", HTML.p(render_to_string("goods/forms/firearms/product_document_contact_ecju.html"))
+                    "Yes",
+                    HTML.p(render_to_string("goods/forms/firearms/product_document_contact_ecju.html")),
                 ),
                 "No",
             ),
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
 
 
-class FirearmDocumentUploadForm(forms.Form):
+class FirearmDocumentUploadForm(BaseFirearmForm):
     class Layout:
         TITLE = "Upload a document that shows what your product is designed to do"
-        SUBMIT_BUTTON = "Continue"
 
     product_document = forms.FileField(
         label="Upload a file",
@@ -626,14 +576,8 @@ class FirearmDocumentUploadForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.attrs = {"enctype": "multipart/form-data"}
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             "product_document",
             "description",
-            Submit("submit", self.Layout.SUBMIT_BUTTON),
         )
