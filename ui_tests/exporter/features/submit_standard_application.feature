@@ -50,6 +50,38 @@ Feature: I want to indicate the standard licence I want
     And I select no and enter "reason" for end user document
     And I click on "Submit"
     And I submit the application
+    Then my answers are played back to me
+    And I see "Standard Individual Export Licence" as the Licence
+    And I see "Standard Licence" as the type
+    And I see "application1" as reference name
+    And I see "No" as informed to apply
+    And I see "Great Britain" as product journey origin
+    And I see "Yes" as product permanently exported
+    And I see "Yes" as way bill
+    And I see "Direct to end user" as who are the products going to
+    And I see "name" as name
+    And I see "N/A" as part number
+    And I see "Yes" as controlled
+    And I see "ML1a" as control list entry
+    And I see "No" as incorporated
+    And I see "1 item" as quantity
+    And I see "£20.00" as value
+    And I see "end use details" as intended end use
+    And I see "No" for informed to apply
+    And I see "No" for informed WMD
+    And I see "No" for suspect WMD
+    And I see "No" for EU transfer
+    And I see "Joe Bloggs" for end user name
+    And I see "Commercial Organisation" for type
+    And I see "123 Main street, France" as address
+    And I see "N/A" as website
+    And I see "Joe Bloggs" as signatory
+    And I see "No, I do not have an end-user undertaking or stockist undertaking" for end user document
+    And I see "reason" for the explanation
+    And I see "No information added to this section." for "Consignee"
+    And I see "No information added to this section." for "Third parties"
+    And I see "No information added to this section." for "Supporting documents"
+    And I see "No information added to this section." for Notes
 
 
   @skip @legacy
@@ -431,41 +463,3 @@ Feature: I want to indicate the standard licence I want
     And I can edit good "Part number" as "ACC-123/Y"
     And I can edit good "Military use" as "yes_modified"
     And I can edit good "Information security features" as "No"
-
-
-  @check_answers
-  Scenario: Check your answers before submitting page
-    Given I signin and go to exporter homepage and choose Test Org
-    When I go to a prefilled application
-    Then my answers are played back to me
-    And I see "Standard Individual Export Licence" as the Licence
-    And I see "Standard Licence" as the type
-    And I see "application1" as reference name
-    And I see "No" as informed to apply
-    And I see "Great Britain" as product journey origin
-    And I see "Yes" as product permanently exported
-    And I see "Yes" as way bill
-    And I see "Direct to end user" as who are the products going to
-    And I see "name" as name
-    And I see "N/A" as part number
-    And I see "Yes" as controlled
-    And I see "ML1a" as control list entry
-    And I see "No" as incorporated
-    And I see "1 item" as quantity
-    And I see "£20.00" as value
-    And I see "end use details" as intended end use
-    And I see "No" for informed to apply
-    And I see "No" for informed WMD
-    And I see "No" for suspect WMD
-    And I see "No" for EU transfer
-    And I see "Joe Bloggs" for end user name
-    And I see "Commercial Organisation" for type
-    And I see "123 Main street, France" as address
-    And I see "N/A" as website
-    And I see "Joe Bloggs" as signatory
-    And I see "No, I do not have an end-user undertaking or stockist undertaking" for end user document
-    And I see "reason" for the explanation
-    And I see "No information added to this section." for "Consignee"
-    And I see "No information added to this section." for "Third parties"
-    And I see "No information added to this section." for "Supporting documents"
-    And I see "No information added to this section." for Notes
