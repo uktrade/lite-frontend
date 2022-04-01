@@ -8,14 +8,16 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application, post_additional_document
+from exporter.core.constants import FirearmsProductType
 from exporter.core.helpers import get_document_data, get_rfd_certificate, has_valid_rfd_certificate
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.goods.forms import GroupTwoProductTypeForm
 from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmCalibreForm,
@@ -31,7 +33,7 @@ from exporter.goods.forms.firearms import (
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
 )
-from exporter.goods.services import post_firearm, post_good_documents, get_good, get_good_documents
+from exporter.goods.services import post_firearm, edit_firearm, post_good_documents, get_good, get_good_documents
 from lite_forms.generators import error_page
 
 
@@ -348,4 +350,40 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         application = get_application(self.request, self.application_id)
         is_user_rfd = has_valid_rfd_certificate(application)
 
-        return {**context, "is_user_rfd": is_user_rfd, "good": self.good, "documents": documents}
+        return {
+            **context,
+            "is_user_rfd": is_user_rfd,
+            "application_id": self.application_id,
+            "good": self.good,
+            "documents": documents,
+        }
+
+
+class FirearmEditView(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+
+    @cached_property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def good_id(self):
+        return str(self.kwargs["good_pk"])
+
+    @property
+    def good(self):
+        return get_good(self.request, self.good_id, full_detail=True)[0]
+
+    def form_valid(self, form):
+        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:product_summary", kwargs=self.kwargs)
+
+
+class FirearmEditProductType(FirearmEditView):
+    form_class = GroupTwoProductTypeForm
+
+    def get_initial(self):
+        return {"type": self.good["firearm_details"]["type"]["key"]}
