@@ -7,6 +7,8 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.functional import cached_property
+from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 
@@ -29,7 +31,7 @@ from exporter.goods.forms.firearms import (
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
 )
-from exporter.goods.services import post_firearm, post_good_documents
+from exporter.goods.services import post_firearm, post_good_documents, get_good, get_good_documents
 from lite_forms.generators import error_page
 
 
@@ -242,7 +244,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_success_url(self, pk, good_pk):
         return reverse(
-            "applications:add_good_summary",
+            "applications:product_summary",
             kwargs={"pk": pk, "good_pk": good_pk},
         )
 
@@ -317,3 +319,33 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             return self.handle_service_error(e)
 
         return redirect(self.get_success_url(application_pk, good_pk))
+
+
+class FirearmProductSummary(LoginRequiredMixin, TemplateView):
+    template_name = "applications/goods/firearms/product-summary.html"
+
+    @cached_property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def good_id(self):
+        return str(self.kwargs["good_pk"])
+
+    @cached_property
+    def good(self):
+        return get_good(self.request, self.good_id, full_detail=True)[0]
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        documents = get_good_documents(self.request, self.good_id)
+        application = get_application(self.request, self.application_id)
+        is_user_rfd = has_valid_rfd_certificate(application)
+
+        return {**context, "is_user_rfd": is_user_rfd, "good": self.good, "documents": documents}

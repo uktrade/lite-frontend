@@ -1,0 +1,161 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+{% endblock %}
+
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-xl">
+                {% block title %} '{{ good.name }}' has been saved {% endblock %}
+            </h1>
+            <p class="govuk-body">This item has been saved to your product list so that you can reuse it for future
+                applications.</p>
+        </div>
+    </div>
+
+    {% with firearm_details=good.firearm_details %}
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Select the type of firearm product
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ good.firearm_details.type.value|default_na }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Firearm category
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {% for category in firearm_details.category %}
+                        {{ category.value }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Give the product a descriptive name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ good.name }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Do you know the product's control list entry?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ good.is_good_controlled.value }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            {% if good.is_good_controlled.key == "True" %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Do you know the product's control list entry?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% for clc in good.control_list_entries %}
+                            {{ clc.rating }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Does the product have a government security grading or classification?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ good.is_pv_graded.value }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What is the calibre of the product?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ firearm_details.calibre }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Is the product a replica firearm?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ firearm_details.is_replica|yesno|title }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Are you a registered firearms dealer?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ is_user_rfd|yesno|title }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Do you have a document that shows what your product is and what it’s designed to do?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ good.is_document_available|yesno|title }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            {% if good.is_document_available %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Is the document rated above Official-sensitive?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ good.is_document_sensitive|yesno|title }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+                {% if not good.is_document_sensitive %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Upload a document that shows what your product is designed to do
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% for document in good.documents %}
+                                {% if document.safe %}
+                                    <a href="{% url 'goods:document' pk=good.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                        {{ document.name }}
+                                    </a>
+                                {% else %}
+                                    {{ document.name }}
+                                {% endif %}
+                            {% endfor %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                        </div>
+                {% endif %}
+            {% endif %}
+        </dl>
+
+        <a class="govuk-button" href="#">Continue</a>
+    {% endwith %}
+
+{% endblock %}

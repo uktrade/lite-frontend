@@ -384,7 +384,7 @@ def test_add_good_firearm_with_rfd_document_submission(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:add_good_summary",
+        "applications:product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -503,7 +503,7 @@ def test_add_good_firearm_without_rfd_document_submission(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:add_good_summary",
+        "applications:product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
