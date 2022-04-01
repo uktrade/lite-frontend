@@ -47,21 +47,17 @@ class BaseFirearmForm(forms.Form):
 
         self.helper.layout = Layout(
             HTML.h1(self.Layout.TITLE),
-            *self.Layout.FIELDS,
+            *self.get_layout_fields(),
             Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
         )
+
+    def get_layout_fields(self):
+        raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
 
 
 class FirearmCategoryForm(BaseFirearmForm):
     class Layout:
         TITLE = "Firearm category"
-        FIELDS = (
-            HTML.p("Some firearm categories require a criminal conviction check and additonal documentation."),
-            Field(
-                "category",
-                template="gds/layout/checkboxes_with_divider.html",
-            ),
-        )
 
     class CategoryChoices(models.TextChoices):
         NON_AUTOMATIC_SHOTGUN = "NON_AUTOMATIC_SHOTGUN", "Non automatic shotgun"
@@ -92,6 +88,15 @@ class FirearmCategoryForm(BaseFirearmForm):
         widget=forms.CheckboxSelectMultiple(),
     )
 
+    def get_layout_fields(self):
+        return (
+            HTML.p("Some firearm categories require a criminal conviction check and additonal documentation."),
+            Field(
+                "category",
+                template="gds/layout/checkboxes_with_divider.html",
+            ),
+        )
+
     def clean_category(self):
         data = self.cleaned_data["category"]
 
@@ -107,7 +112,16 @@ class FirearmCategoryForm(BaseFirearmForm):
 class FirearmNameForm(BaseFirearmForm):
     class Layout:
         TITLE = "Give the product a descriptive name"
-        FIELDS = (
+
+    name = forms.CharField(
+        label="",
+        error_messages={
+            "required": "Enter a descriptive name",
+        },
+    )
+
+    def get_layout_fields(self):
+        return (
             HTML.p(
                 "Try to match the name as closely as possible to any documentation such as the technical "
                 "specification, end user certificate or firearm certificate.",
@@ -119,38 +133,10 @@ class FirearmNameForm(BaseFirearmForm):
             ),
         )
 
-    name = forms.CharField(
-        label="",
-        error_messages={
-            "required": "Enter a descriptive name",
-        },
-    )
-
 
 class FirearmProductControlListEntryForm(BaseFirearmForm):
     class Layout:
         TITLE = "Do you know the product's control list entry?"
-        FIELDS = (
-            ConditionalRadios(
-                "is_good_controlled",
-                ConditionalQuestion(
-                    "Yes",
-                    "control_list_entries",
-                ),
-                ConditionalQuestion(
-                    "No",
-                    HTML.p(
-                        "The product will be assessed and given a control list entry. "
-                        "If the product isn't subject to any controls, you'll be issued "
-                        "with a 'no licence required' document."
-                    ),
-                ),
-            ),
-            HTML.details(
-                "Help with control list entries",
-                render_to_string("goods/forms/firearms/help_with_control_list_entries.html"),
-            ),
-        )
 
     is_good_controlled = forms.TypedChoiceField(
         choices=(
@@ -178,6 +164,29 @@ class FirearmProductControlListEntryForm(BaseFirearmForm):
         clc_list = get_control_list_entries(request)
         self.fields["control_list_entries"].choices = [(entry["rating"], entry["rating"]) for entry in clc_list]
 
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_good_controlled",
+                ConditionalQuestion(
+                    "Yes",
+                    "control_list_entries",
+                ),
+                ConditionalQuestion(
+                    "No",
+                    HTML.p(
+                        "The product will be assessed and given a control list entry. "
+                        "If the product isn't subject to any controls, you'll be issued "
+                        "with a 'no licence required' document."
+                    ),
+                ),
+            ),
+            HTML.details(
+                "Help with control list entries",
+                render_to_string("goods/forms/firearms/help_with_control_list_entries.html"),
+            ),
+        )
+
     def clean(self):
         cleaned_data = super().clean()
 
@@ -193,14 +202,6 @@ class FirearmProductControlListEntryForm(BaseFirearmForm):
 class FirearmPvGradingForm(BaseFirearmForm):
     class Layout:
         TITLE = "Does the product have a government security grading or classification?"
-        FIELDS = (
-            HTML.p("For example, UK Official or NATO Restricted."),
-            "is_pv_graded",
-            HTML.details(
-                "Help with security gradings",
-                render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
-            ),
-        )
 
     is_pv_graded = forms.TypedChoiceField(
         choices=(
@@ -215,22 +216,20 @@ class FirearmPvGradingForm(BaseFirearmForm):
         },
     )
 
-
-class FirearmPvGradingDetailsForm(BaseFirearmForm):
-    class Layout:
-        TITLE = "What is the security grading or classification?"
-        FIELDS = (
-            "prefix",
-            "grading",
-            "suffix",
-            "issuing_authority",
-            "reference",
-            "date_of_issue",
+    def get_layout_fields(self):
+        return (
+            HTML.p("For example, UK Official or NATO Restricted."),
+            "is_pv_graded",
             HTML.details(
                 "Help with security gradings",
                 render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
             ),
         )
+
+
+class FirearmPvGradingDetailsForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "What is the security grading or classification?"
 
     prefix = forms.CharField(
         required=False, label="Enter a prefix (optional)", help_text="For example, UK, NATO or OCCAR"
@@ -291,11 +290,24 @@ class FirearmPvGradingDetailsForm(BaseFirearmForm):
         gradings = [(key, display) for grading in get_pv_gradings_v2(request) for key, display in grading.items()]
         self.fields["grading"].choices += gradings
 
+    def get_layout_fields(self):
+        return (
+            "prefix",
+            "grading",
+            "suffix",
+            "issuing_authority",
+            "reference",
+            "date_of_issue",
+            HTML.details(
+                "Help with security gradings",
+                render_to_string("goods/forms/firearms/help_with_security_gradings.html"),
+            ),
+        )
+
 
 class FirearmCalibreForm(BaseFirearmForm):
     class Layout:
         TITLE = "What is the calibre of the product?"
-        FIELDS = ("calibre",)
 
     calibre = forms.CharField(
         label="",
@@ -304,20 +316,13 @@ class FirearmCalibreForm(BaseFirearmForm):
         },
     )
 
+    def get_layout_fields(self):
+        return ("calibre",)
+
 
 class FirearmReplicaForm(BaseFirearmForm):
     class Layout:
         TITLE = "Is the product a replica firearm?"
-        FIELDS = (
-            ConditionalRadios(
-                "is_replica",
-                ConditionalQuestion(
-                    "Yes",
-                    "replica_description",
-                ),
-                "No",
-            ),
-        )
 
     is_replica = forms.TypedChoiceField(
         choices=(
@@ -337,6 +342,18 @@ class FirearmReplicaForm(BaseFirearmForm):
         label="Describe the firearm the product is a replica of",
         required=False,
     )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_replica",
+                ConditionalQuestion(
+                    "Yes",
+                    "replica_description",
+                ),
+                "No",
+            ),
+        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -368,34 +385,34 @@ class FirearmRFDValidityForm(BaseFirearmForm):
     )
 
     def __init__(self, rfd_certificate, *args, **kwargs):
-        rfd_certificate_download_url = reverse(
+        self.rfd_certificate_download_url = reverse(
             "organisation:document",
             kwargs={
                 "pk": rfd_certificate["id"],
             },
         )
-        rfd_certificate_name = rfd_certificate["document"]["name"]
+        self.rfd_certificate_name = rfd_certificate["document"]["name"]
 
-        self.Layout.FIELDS = (
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return (
             HTML.p(
                 render_to_string(
                     "goods/forms/firearms/rfd_certificate_download_link.html",
                     {
-                        "url": rfd_certificate_download_url,
-                        "name": rfd_certificate_name,
+                        "url": self.rfd_certificate_download_url,
+                        "name": self.rfd_certificate_name,
                     },
                 ),
             ),
             "is_rfd_valid",
         )
 
-        super().__init__(*args, **kwargs)
-
 
 class FirearmRegisteredFirearmsDealerForm(BaseFirearmForm):
     class Layout:
         TITLE = "Are you a registered firearms dealer?"
-        FIELDS = ("is_registered_firearm_dealer",)
 
     is_registered_firearm_dealer = forms.TypedChoiceField(
         choices=(
@@ -410,15 +427,13 @@ class FirearmRegisteredFirearmsDealerForm(BaseFirearmForm):
         },
     )
 
+    def get_layout_fields(self):
+        return ("is_registered_firearm_dealer",)
+
 
 class FirearmAttachRFDCertificate(BaseFirearmForm):
     class Layout:
         TITLE = "Upload a registered firearms dealer certificate"
-        FIELDS = (
-            "file",
-            "reference_code",
-            "expiry_date",
-        )
 
     file = forms.FileField(
         label="",
@@ -460,18 +475,17 @@ class FirearmAttachRFDCertificate(BaseFirearmForm):
         ],
     )
 
+    def get_layout_fields(self):
+        return (
+            "file",
+            "reference_code",
+            "expiry_date",
+        )
+
 
 class FirearmDocumentAvailability(BaseFirearmForm):
     class Layout:
         TITLE = "Do you have a document that shows what your product is and what it's designed to do?"
-        FIELDS = (
-            HTML.p(render_to_string("goods/forms/firearms/product_document_hint_text.html")),
-            ConditionalRadios(
-                "is_document_available",
-                "Yes",
-                ConditionalQuestion("No", "no_document_comments"),
-            ),
-        )
 
     is_document_available = forms.TypedChoiceField(
         choices=(
@@ -492,6 +506,16 @@ class FirearmDocumentAvailability(BaseFirearmForm):
         required=False,
     )
 
+    def get_layout_fields(self):
+        return (
+            HTML.p(render_to_string("goods/forms/firearms/product_document_hint_text.html")),
+            ConditionalRadios(
+                "is_document_available",
+                "Yes",
+                ConditionalQuestion("No", "no_document_comments"),
+            ),
+        )
+
     def clean(self):
         cleaned_data = super().clean()
 
@@ -508,15 +532,6 @@ class FirearmDocumentAvailability(BaseFirearmForm):
 class FirearmDocumentSensitivityForm(BaseFirearmForm):
     class Layout:
         TITLE = "Is the document rated above Official-sensitive?"
-        FIELDS = (
-            ConditionalRadios(
-                "is_document_sensitive",
-                ConditionalQuestion(
-                    "Yes", HTML.p(render_to_string("goods/forms/firearms/product_document_contact_ecju.html"))
-                ),
-                "No",
-            ),
-        )
 
     is_document_sensitive = forms.TypedChoiceField(
         choices=(
@@ -531,14 +546,22 @@ class FirearmDocumentSensitivityForm(BaseFirearmForm):
         },
     )
 
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_document_sensitive",
+                ConditionalQuestion(
+                    "Yes",
+                    HTML.p(render_to_string("goods/forms/firearms/product_document_contact_ecju.html")),
+                ),
+                "No",
+            ),
+        )
+
 
 class FirearmDocumentUploadForm(BaseFirearmForm):
     class Layout:
         TITLE = "Upload a document that shows what your product is designed to do"
-        FIELDS = (
-            "product_document",
-            "description",
-        )
 
     product_document = forms.FileField(
         label="Upload a file",
@@ -552,3 +575,9 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
         help_text="Description (optional)",
         required=False,
     )
+
+    def get_layout_fields(self):
+        return (
+            "product_document",
+            "description",
+        )
