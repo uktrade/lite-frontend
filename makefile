@@ -2,6 +2,7 @@ ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 
 docker-e2e = docker-compose -p lite -f docker-compose.e2e.yml
 wait-for-caseworker = dockerize -wait http://localhost:8200/healthcheck -timeout 5m -wait-retry-interval 5s
+wait-for-exporter = dockerize -wait http://localhost:8300/healthcheck -timeout 5m -wait-retry-interval 5s
 
 manage_caseworker:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py $(ARGUMENTS)
@@ -66,11 +67,21 @@ secrets:
 .PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
 
 start-caseworker:
-	$(docker-e2e) up --build -d
+	$(docker-e2e) up --build -d caseworker redis
 
 stop-caseworker:
 	$(docker-e2e) down --remove-orphans
 
+start-exporter:
+	$(docker-e2e) up --build -d exporter redis
+
+stop-exporter:
+	$(docker-e2e) down --remove-orphans
+
 caseworker-e2e-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
-	$(docker-e2e) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest playwright_tests/specs/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos'
+	$(docker-e2e) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest playwright_tests/specs/caseworker/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8200/'
+
+exporter-e2e-test:
+	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
+	$(docker-e2e) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest playwright_tests/specs/exporter/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8300/'
