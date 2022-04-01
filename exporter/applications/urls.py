@@ -37,6 +37,7 @@ from exporter.goods.views import (
     EditYearOfManufactureView,
     UpdateSerialNumbersView,
 )
+from exporter.applications.views.goods.add_good_firearm import FirearmProductSummary
 
 app_name = "applications"
 urlpatterns = [
@@ -131,6 +132,11 @@ urlpatterns = [
         "<uuid:pk>/goods/add-new/<uuid:good_pk>/good-detail-summary/",
         AddGoodsSummary.as_view(),
         name="add_good_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary/",
+        FirearmProductSummary.as_view(),
+        name="product_summary",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),
