@@ -687,14 +687,6 @@ def get_file_upload_path(filename):  # noqa
     return file_to_upload_abs_path
 
 
-@when("I agree to the declaration")
-def agree_to_the_declaration(driver):  # noqa
-    declaration_page = DeclarationPage(driver)
-    declaration_page.agree_to_foi()
-    declaration_page.agree_to_declaration(driver)
-    functions.click_submit(driver)
-
-
 @given(parsers.parse('I create "{decision}" final advice'))  # noqa
 def final_advice(context, decision, api_test_client):  # noqa
     api_test_client.cases.create_final_advice(

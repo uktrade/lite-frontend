@@ -73,7 +73,7 @@ Feature: I want to indicate the standard licence I want
     And I see "No" for EU transfer
     And I see "Joe Bloggs" for end user name
     And I see "Commercial Organisation" for type
-    And I see "123 Main street, France" as address
+    And I see "123 Main Street, France" as address
     And I see "N/A" as website
     And I see "Joe Bloggs" as signatory
     And I see "No, I do not have an end-user undertaking or stockist undertaking" for end user document
@@ -82,6 +82,9 @@ Feature: I want to indicate the standard licence I want
     And I see "No information added to this section." for "Third parties"
     And I see "No information added to this section." for "Supporting documents"
     And I see "No information added to this section." for Notes
+    When I click continue
+    And I agree to the declaration
+    Then application is submitted
 
 
   @skip @legacy

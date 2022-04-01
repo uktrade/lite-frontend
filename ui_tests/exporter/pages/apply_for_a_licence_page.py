@@ -61,7 +61,7 @@ class ApplyForALicencePage(BasePage):
         self.driver.find_element_by_id(self.REFERENCE_NUMBER).send_keys(string)
 
     def is_success_panel_present(self):
-        return len(self.driver.find_elements_by_css_selector(self.SUCCESS_BANNER_CLASS)) > 0
+        return len(self.driver.find_elements(by=By.CSS_SELECTOR, value=self.SUCCESS_BANNER_CLASS)) > 0
 
     def select_trade_control_activity(self):
         self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_ID).click()
