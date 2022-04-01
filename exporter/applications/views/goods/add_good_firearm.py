@@ -18,6 +18,7 @@ from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmCalibreForm,
     FirearmCategoryForm,
+    FirearmFirearmAct1968Form,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
@@ -50,6 +51,7 @@ class AddGoodFirearmSteps:
     PRODUCT_DOCUMENT_AVAILABILITY = "PRODUCT_DOCUMENT_AVAILABILITY"
     PRODUCT_DOCUMENT_SENSITIVITY = "PRODUCT_DOCUMENT_SENSITIVITY"
     PRODUCT_DOCUMENT_UPLOAD = "PRODUCT_DOCUMENT_UPLOAD"
+    FIREARM_ACT_1968 = "FIREARM_ACT_1968"
 
 
 def is_product_document_available(wizard):
@@ -71,18 +73,25 @@ def is_pv_graded(wizard):
     return add_goods_cleaned_data.get("is_pv_graded")
 
 
-def has_user_marked_rfd_certificate_invalid(wizard):
+def is_rfd_certificate_invalid(wizard):
     is_rfd_certificate_valid_cleaned_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
     )
     return not is_rfd_certificate_valid_cleaned_data.get("is_rfd_valid", False)
 
 
-def has_user_marked_as_registered_firearms_dealer(wizard):
+def is_registered_firearms_dealer(wizard):
     is_registered_firearms_dealer_cleaned_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER
     )
     return is_registered_firearms_dealer_cleaned_data.get("is_registered_firearm_dealer", False)
+
+
+def should_display_is_registered_firearms_dealer_step(wizard):
+    if has_rfd_certificate(wizard) and is_rfd_certificate_invalid(wizard):
+        return True
+
+    return not has_rfd_certificate(wizard)
 
 
 def get_cleaned_data(form):
@@ -99,6 +108,27 @@ def get_pv_grading_good_payload(form):
     payload = form.cleaned_data.copy()
     payload["date_of_issue"] = payload["date_of_issue"].isoformat()
     return payload
+
+
+def get_firearm_act_1968_payload(form):
+    firearms_act_section = form.cleaned_data["firearms_act_section"]
+
+    if firearms_act_section == FirearmFirearmAct1968Form.SectionChoices.NO:
+        return {
+            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+        }
+
+    if firearms_act_section == FirearmFirearmAct1968Form.SectionChoices.DONT_KNOW:
+        not_covered_explanation = form.cleaned_data["not_covered_explanation"]
+        return {
+            "is_covered_by_firearm_act_section_one_two_or_five": "Unsure",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": not_covered_explanation,
+        }
+
+    return {
+        "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+        "firearms_act_section": firearms_act_section,
+    }
 
 
 class ServiceError(Exception):
@@ -121,20 +151,19 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
+        (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
     ]
-
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
-        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: (
-            C(has_rfd_certificate) & C(has_user_marked_rfd_certificate_invalid)
-        )
-        | ~C(has_rfd_certificate),
-        AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: has_user_marked_as_registered_firearms_dealer,
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
+        AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
+        & ~C(is_registered_firearms_dealer),
+        AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: is_registered_firearms_dealer,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
@@ -151,6 +180,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.CALIBRE: get_cleaned_data,
         AddGoodFirearmSteps.IS_REPLICA: get_cleaned_data,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_cleaned_data,
+        AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
     }
 
     def dispatch(self, request, *args, **kwargs):

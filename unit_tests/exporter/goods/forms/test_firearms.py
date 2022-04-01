@@ -11,6 +11,7 @@ from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmCalibreForm,
     FirearmCategoryForm,
+    FirearmFirearmAct1968Form,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
@@ -443,5 +444,31 @@ def test_firearm_document_sensitivity_form(data, is_valid, errors):
 )
 def test_firearm_product_document_upload_form(data, files, is_valid, errors):
     form = FirearmDocumentUploadForm(data=data, files=files)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {"firearms_act_section": ["Select which section of the Firearms Act 1968 the is product covered by"]},
+        ),
+        (
+            {"firearms_act_section": "firearms_act_section1"},
+            True,
+            {},
+        ),
+        (
+            {"firearms_act_section": "dont_know"},
+            False,
+            {"not_covered_explanation": ["Explain why you don't know"]},
+        ),
+    ),
+)
+def test_firearm_firearm_act_1968_form(data, is_valid, errors):
+    form = FirearmFirearmAct1968Form(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

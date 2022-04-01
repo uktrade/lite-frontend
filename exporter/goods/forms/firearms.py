@@ -581,3 +581,59 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
             "product_document",
             "description",
         )
+
+
+class FirearmFirearmAct1968Form(BaseFirearmForm):
+    class Layout:
+        TITLE = "Which section of the Firearms Act 1968 is the product covered by?"
+
+    class SectionChoices(models.TextChoices):
+        SECTION_1 = "firearms_act_section1", "Section 1"
+        SECTION_2 = "firearms_act_section2", "Section 2"
+        SECTION_5 = "firearms_act_section5", "Section 5"
+        NO = "no", "No"
+        DONT_KNOW = "dont_know", "Don't know"
+
+    firearms_act_section = forms.ChoiceField(
+        choices=SectionChoices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select which section of the Firearms Act 1968 the is product covered by",
+        },
+    )
+
+    not_covered_explanation = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Explain",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "firearms_act_section",
+                self.SectionChoices.SECTION_1.label,
+                self.SectionChoices.SECTION_2.label,
+                self.SectionChoices.SECTION_5.label,
+                self.SectionChoices.NO.label,
+                ConditionalQuestion(
+                    self.SectionChoices.DONT_KNOW.label,
+                    "not_covered_explanation",
+                ),
+            ),
+            HTML.details(
+                "More information about the Firearms Act 1968",
+                render_to_string("goods/forms/firearms/firearms_act_1968_information.html"),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        firearms_act_section = cleaned_data.get("firearms_act_section")
+        not_covered_explanation = cleaned_data.get("not_covered_explanation")
+        if firearms_act_section == self.SectionChoices.DONT_KNOW and not not_covered_explanation:
+            self.add_error("not_covered_explanation", "Explain why you don't know")
+
+        return cleaned_data

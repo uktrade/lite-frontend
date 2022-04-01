@@ -3,10 +3,11 @@ import pytest
 import uuid
 
 from pytest_django.asserts import assertContains
+from unittest.mock import patch
+
 from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from unittest.mock import patch
 
 from core import client
 from exporter.core.constants import AddGoodFormSteps
@@ -15,10 +16,11 @@ from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSte
 from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmCategoryForm,
-    FirearmRegisteredFirearmsDealerForm,
-    FirearmRFDValidityForm,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
+    FirearmFirearmAct1968Form,
+    FirearmRegisteredFirearmsDealerForm,
+    FirearmRFDValidityForm,
 )
 
 
@@ -290,6 +292,20 @@ def test_add_good_firearm_product_document_available_but_not_sensitive(
     assert isinstance(response.context["form"], FirearmCategoryForm)
 
 
+def test_add_good_firearm_not_registered_firearm_dealer(
+    application_without_rfd_document,
+    goto_step,
+    post_to_step,
+):
+    goto_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER)
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": False},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmFirearmAct1968Form)
+
+
 def test_add_good_firearm_with_rfd_document_submission(
     authorized_client,
     new_good_firearm_url,
@@ -362,26 +378,22 @@ def test_add_good_firearm_with_rfd_document_submission(
         AddGoodFirearmSteps.IS_REPLICA,
         {"is_replica": True, "replica_description": "This is a replica"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
         {"is_rfd_valid": True},
     )
-
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": True},
     )
-
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         {"is_document_sensitive": False},
     )
-
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
         {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
     )
-
     assert response.status_code == 302
     assert response.url == reverse(
         "applications:add_good_summary",
@@ -422,7 +434,7 @@ def test_add_good_firearm_with_rfd_document_submission(
     assert doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
 
 
-def test_add_good_firearm_without_rfd_document_submission(
+def test_add_good_firearm_without_rfd_document_submission_registered_firearms_dealer(
     authorized_client,
     new_good_firearm_url,
     post_to_step,
@@ -487,7 +499,7 @@ def test_add_good_firearm_without_rfd_document_submission(
     )
     expiry_date = datetime.date.today() + datetime.timedelta(days=5)
     file_name = "test"
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE,
         {
             "reference_code": "12345",
@@ -495,7 +507,6 @@ def test_add_good_firearm_without_rfd_document_submission(
             **decompose_date("expiry_date", expiry_date),
         },
     )
-
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
@@ -541,6 +552,156 @@ def test_add_good_firearm_without_rfd_document_submission(
             "reference_code": "12345",
             "document_type": "rfd-certificate",
         },
+    }
+
+
+@pytest.mark.parametrize(
+    "firearm_act_post_data, firearm_act_payload_data",
+    (
+        (
+            {
+                "firearms_act_section": "firearms_act_section1",
+            },
+            {
+                "firearms_act_section": "firearms_act_section1",
+                "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            },
+        ),
+        (
+            {
+                "firearms_act_section": "firearms_act_section2",
+            },
+            {
+                "firearms_act_section": "firearms_act_section2",
+                "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            },
+        ),
+        (
+            {
+                "firearms_act_section": "firearms_act_section5",
+            },
+            {
+                "firearms_act_section": "firearms_act_section5",
+                "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            },
+        ),
+        (
+            {
+                "firearms_act_section": "no",
+            },
+            {
+                "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            },
+        ),
+        (
+            {
+                "firearms_act_section": "dont_know",
+                "not_covered_explanation": "firearms act not covered explanation",
+            },
+            {
+                "is_covered_by_firearm_act_section_one_two_or_five": "Unsure",
+                "is_covered_by_firearm_act_section_one_two_or_five_explanation": "firearms act not covered explanation",
+            },
+        ),
+    ),
+)
+def test_add_good_firearm_without_rfd_document_submission_not_registered_firearms_dealer(
+    authorized_client,
+    new_good_firearm_url,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    control_list_entries,
+    application_without_rfd_document,
+    application,
+    firearm_act_post_data,
+    firearm_act_payload_data,
+):
+    authorized_client.get(new_good_firearm_url)
+
+    good_id = str(uuid.uuid4())
+
+    post_goods_matcher = requests_mock.post(
+        "/goods/",
+        status_code=201,
+        json={
+            "good": {
+                "id": good_id,
+            },
+        },
+    )
+
+    post_to_step(
+        AddGoodFirearmSteps.CATEGORY,
+        {"category": ["NON_AUTOMATIC_SHOTGUN"]},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.NAME,
+        {"name": "TEST NAME"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        firearm_act_post_data,
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:add_good_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+    assert post_goods_matcher.called_once
+    last_request = post_goods_matcher.last_request
+    assert last_request.json() == {
+        "firearm_details": {
+            "calibre": "calibre 123",
+            "category": ["NON_AUTOMATIC_SHOTGUN"],
+            "is_registered_firearm_dealer": False,
+            "is_replica": True,
+            "replica_description": "This is a replica",
+            "type": "firearms",
+            **firearm_act_payload_data,
+        },
+        "control_list_entries": ["ML1", "ML1a"],
+        "name": "TEST NAME",
+        "is_good_controlled": True,
+        "is_pv_graded": "no",
+        "item_category": "group2_firearms",
+        "is_document_available": False,
+        "no_document_comments": "product not manufactured yet",
     }
 
 
