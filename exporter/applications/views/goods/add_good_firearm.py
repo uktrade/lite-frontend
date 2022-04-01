@@ -85,6 +85,22 @@ def has_user_marked_as_registered_firearms_dealer(wizard):
     return is_registered_firearms_dealer_cleaned_data.get("is_registered_firearm_dealer", False)
 
 
+def get_cleaned_data(form):
+    return form.cleaned_data
+
+
+def get_pv_grading_payload(form):
+    return {
+        "is_pv_graded": "yes" if form.cleaned_data["is_pv_graded"] else "no",
+    }
+
+
+def get_pv_grading_good_payload(form):
+    payload = form.cleaned_data.copy()
+    payload["date_of_issue"] = payload["date_of_issue"].isoformat()
+    return payload
+
+
 class ServiceError(Exception):
     def __init__(self, status_code, response, log_message, user_message):
         super().__init__()
@@ -121,6 +137,20 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: has_user_marked_as_registered_firearms_dealer,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+    }
+    good_payload_dict = {
+        AddGoodFirearmSteps.NAME: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
+        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+    firearm_payload_dict = {
+        AddGoodFirearmSteps.CATEGORY: get_cleaned_data,
+        AddGoodFirearmSteps.CALIBRE: get_cleaned_data,
+        AddGoodFirearmSteps.IS_REPLICA: get_cleaned_data,
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_cleaned_data,
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -162,41 +192,22 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return kwargs
 
-    def get_payload(self, form_list):
-        firearm_data_keys = [
-            "calibre",
-            "category",
-            "is_replica",
-            "replica_description",
-            "is_registered_firearm_dealer",
-        ]
+    def get_payload(self, form_dict):
+        good_payload = {}
+        for step_name, payload_func in self.good_payload_dict.items():
+            form = form_dict.get(step_name)
+            if form:
+                good_payload.update(payload_func(form))
 
-        keys_to_remove = [
-            "is_rfd_valid",
-            "expiry_date",
-            "reference_code",
-            "file",
-            "product_document",
-        ]
+        firearm_payload = {}
+        for step_name, payload_func in self.firearm_payload_dict.items():
+            form = form_dict.get(step_name)
+            if form:
+                firearm_payload.update(payload_func(form))
 
-        payload = {}
-        firearm_data = {}
-        for form in form_list:
-            for k, v in form.cleaned_data.items():
-                if k in keys_to_remove:
-                    continue
+        good_payload["firearm_details"] = firearm_payload
 
-                if k in firearm_data_keys:
-                    firearm_data[k] = v
-                else:
-                    payload[k] = v
-
-        payload["firearm_details"] = firearm_data
-
-        if payload.get("is_pv_graded"):
-            payload["date_of_issue"] = payload["date_of_issue"].isoformat()
-
-        return payload
+        return good_payload
 
     def has_rfd_certificate_data(self):
         return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
@@ -235,8 +246,8 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             kwargs={"pk": pk, "good_pk": good_pk},
         )
 
-    def post_firearm(self, form_list):
-        payload = self.get_payload(form_list)
+    def post_firearm(self, form_dict):
+        payload = self.get_payload(form_dict)
         api_resp_data, status_code = post_firearm(
             self.request,
             payload,
@@ -293,9 +304,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         )
         return error_page(self.request, service_error.user_message)
 
-    def done(self, form_list, **kwargs):
+    def done(self, form_list, form_dict, **kwargs):
         try:
-            application_pk, good_pk = self.post_firearm(form_list)
+            application_pk, good_pk = self.post_firearm(form_dict)
 
             if self.has_rfd_certificate_data():
                 self.post_rfd_certificate(application_pk)
