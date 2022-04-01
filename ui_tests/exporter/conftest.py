@@ -28,7 +28,6 @@ from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
 from ui_tests.exporter.pages.end_use_details_form_page import EndUseDetailsFormPage
 from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
 from ui_tests.exporter.pages.generic_application.additional_documents import AdditionalDocumentsPage
-from ui_tests.exporter.pages.generic_application.declaration import DeclarationPage
 from ui_tests.exporter.pages.generic_application.task_list import TaskListPage
 from ui_tests.exporter.pages.hub_page import Hub
 from ui_tests.exporter.pages.mod_clearances.ExhibitionClearanceDetails import ExhibitionClearanceDetailsPage
@@ -451,7 +450,7 @@ def enter_query_response(driver, response):  # noqa
 
 @when(parsers.parse('I click "{button_value}"'))  # noqa
 def click_button(driver, button_value):  # noqa
-    functions.click_submit(driver, button_value=button_value)
+    functions.click_submit(driver)
 
 
 @when(parsers.parse('I enter "{response}" for the response and click submit'))  # noqa
