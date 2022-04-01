@@ -14,8 +14,10 @@ from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
 from exporter.goods.forms.firearms import (
+    FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
     FirearmCategoryForm,
+    FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
@@ -220,7 +222,7 @@ def test_add_good_firearm_shows_registered_firearms_step_after_confirming_certif
     application_with_rfd_document, rfd_certificate, goto_step, post_to_step
 ):
     goto_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID)
-    response = post_to_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, {"is_rfd_valid": False})
+    response = post_to_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, {"is_rfd_certificate_valid": False})
 
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmRegisteredFirearmsDealerForm)
@@ -306,6 +308,39 @@ def test_add_good_firearm_not_registered_firearm_dealer(
     assert isinstance(response.context["form"], FirearmFirearmAct1968Form)
 
 
+@pytest.mark.parametrize(
+    "form_data, expected_next_form",
+    (
+        (
+            {"firearms_act_section": "no"},
+            FirearmDocumentAvailability,
+        ),
+        (
+            {"firearms_act_section": "dont_know", "not_covered_explanation": "explanation"},
+            FirearmDocumentAvailability,
+        ),
+        (
+            {"firearms_act_section": "firearms_act_section1"},
+            FirearmAttachFirearmCertificateForm,
+        ),
+    ),
+)
+def test_add_good_firearm_act_selection(
+    application_without_rfd_document,
+    goto_step,
+    post_to_step,
+    form_data,
+    expected_next_form,
+):
+    goto_step(AddGoodFirearmSteps.FIREARM_ACT_1968)
+    response = post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        form_data,
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], expected_next_form)
+
+
 def test_add_good_firearm_with_rfd_document_submission(
     authorized_client,
     new_good_firearm_url,
@@ -380,7 +415,7 @@ def test_add_good_firearm_with_rfd_document_submission(
     )
     post_to_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
-        {"is_rfd_valid": True},
+        {"is_rfd_certificate_valid": True},
     )
     post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -410,6 +445,7 @@ def test_add_good_firearm_with_rfd_document_submission(
             "calibre": "calibre 123",
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "is_replica": True,
+            "is_rfd_certificate_valid": True,
             "replica_description": "This is a replica",
             "type": "firearms",
         },
@@ -560,15 +596,6 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     (
         (
             {
-                "firearms_act_section": "firearms_act_section1",
-            },
-            {
-                "firearms_act_section": "firearms_act_section1",
-                "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
-            },
-        ),
-        (
-            {
                 "firearms_act_section": "firearms_act_section2",
             },
             {
@@ -705,6 +732,135 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     }
 
 
+def test_add_good_firearm_without_rfd_document_submission_not_registered_firearms_dealer_section_1(
+    authorized_client,
+    new_good_firearm_url,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    control_list_entries,
+    application_without_rfd_document,
+    application,
+):
+    authorized_client.get(new_good_firearm_url)
+
+    good_id = str(uuid.uuid4())
+
+    post_goods_matcher = requests_mock.post(
+        "/goods/",
+        status_code=201,
+        json={
+            "good": {
+                "id": good_id,
+            },
+        },
+    )
+
+    post_application_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
+        status_code=201,
+        json={},
+    )
+
+    post_to_step(
+        AddGoodFirearmSteps.CATEGORY,
+        {"category": ["NON_AUTOMATIC_SHOTGUN"]},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.NAME,
+        {"name": "TEST NAME"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        {"firearms_act_section": "firearms_act_section1"},
+    )
+    certificate_expiry_date = datetime.date.today() + datetime.timedelta(days=5)
+    post_to_step(
+        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
+        {
+            "file": SimpleUploadedFile("firearm_certificate.pdf", b"This is the firearm certificate"),
+            "section_certificate_number": "12345",
+            **decompose_date("section_certificate_date_of_expiry", certificate_expiry_date),
+        },
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:add_good_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+    assert post_goods_matcher.called_once
+    last_request = post_goods_matcher.last_request
+    assert last_request.json() == {
+        "firearm_details": {
+            "calibre": "calibre 123",
+            "category": ["NON_AUTOMATIC_SHOTGUN"],
+            "firearms_act_section": "firearms_act_section1",
+            "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            "is_registered_firearm_dealer": False,
+            "is_replica": True,
+            "replica_description": "This is a replica",
+            "section_certificate_date_of_expiry": certificate_expiry_date.isoformat(),
+            "section_certificate_missing": False,
+            "section_certificate_number": "12345",
+            "type": "firearms",
+        },
+        "control_list_entries": ["ML1", "ML1a"],
+        "name": "TEST NAME",
+        "is_good_controlled": True,
+        "is_pv_graded": "no",
+        "item_category": "group2_firearms",
+        "is_document_available": False,
+        "no_document_comments": "product not manufactured yet",
+    }
+
+    assert post_application_document_matcher.called_once
+    last_request = post_application_document_matcher.last_request
+    assert last_request.json() == {
+        "document_on_organisation": {
+            "document_type": "section-one-certificate",
+            "expiry_date": certificate_expiry_date.isoformat(),
+            "reference_code": "12345",
+        },
+        "name": "firearm_certificate.pdf",
+        "s3_key": "firearm_certificate.pdf",
+        "size": 0,
+    }
+
+
 def test_add_good_firearm_submission_error(
     authorized_client,
     new_good_firearm_url,
@@ -754,7 +910,7 @@ def test_add_good_firearm_submission_error(
     )
     response = post_to_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
-        {"is_rfd_valid": True},
+        {"is_rfd_certificate_valid": True},
     )
 
     response = post_to_step(

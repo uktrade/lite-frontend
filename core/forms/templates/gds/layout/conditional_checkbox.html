@@ -1,0 +1,20 @@
+{% load l10n crispy_forms_gds %}
+<div class="govuk-form-group {% if field.errors %}govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset"{% if field.help_text or field.errors %} aria-describedby="{% if field.help_text %}{{ field.auto_id }}_hint{% endif %}{% for error in field.errors %} {{ field.auto_id }}_{{ forloop.counter }}_error{% endfor %}"{% endif %}>
+
+        {% include 'gds/layout/help_text_and_errors.html' %}
+
+        <div class="govuk-checkboxes{% if checkboxes_small %} govuk-checkboxes--small{% endif %}" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                {% crispy_gds_field field %}
+                <label class="govuk-label govuk-checkboxes__label" for="{{ field.id_for_label }}">
+                    {{ field.label|safe }}
+                </label>
+            </div>
+            <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="{{ conditional_control }}">
+                {{ conditional_content|safe }}
+            </div>
+        </div>
+
+    </fieldset>
+</div>

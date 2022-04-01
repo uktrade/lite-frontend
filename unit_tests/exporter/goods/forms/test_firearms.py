@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
+    FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
     FirearmCalibreForm,
     FirearmCategoryForm,
@@ -254,8 +255,12 @@ def test_firearm_replica_form(data, is_valid, errors):
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
-        ({}, False, {"is_rfd_valid": ["Select yes if your registered firearms dealer certificate is still valid"]}),
-        ({"is_rfd_valid": True}, True, {}),
+        (
+            {},
+            False,
+            {"is_rfd_certificate_valid": ["Select yes if your registered firearms dealer certificate is still valid"]},
+        ),
+        ({"is_rfd_certificate_valid": True}, True, {}),
     ),
 )
 def test_firearm_validity_form(data, is_valid, errors):
@@ -470,5 +475,70 @@ def test_firearm_product_document_upload_form(data, files, is_valid, errors):
 )
 def test_firearm_firearm_act_1968_form(data, is_valid, errors):
     form = FirearmFirearmAct1968Form(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, files, is_valid, errors",
+    (
+        (
+            {},
+            {},
+            False,
+            {
+                "file": ["Select a firearm certificate"],
+                "section_certificate_number": ["Enter the certificate number"],
+                "section_certificate_date_of_expiry": ["Enter the expiry date"],
+            },
+        ),
+        (
+            decompose_date("section_certificate_date_of_expiry", datetime.date.today() - datetime.timedelta(days=10)),
+            {},
+            False,
+            {
+                "file": ["Select a firearm certificate"],
+                "section_certificate_number": ["Enter the certificate number"],
+                "section_certificate_date_of_expiry": ["Expiry date must be in the future"],
+            },
+        ),
+        (
+            decompose_date(
+                "section_certificate_date_of_expiry", datetime.date.today() + relativedelta(years=5, days=1)
+            ),
+            {},
+            False,
+            {
+                "file": ["Select a firearm certificate"],
+                "section_certificate_number": ["Enter the certificate number"],
+                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+            },
+        ),
+        (
+            {
+                "section_certificate_number": "abcdef",
+                **decompose_date(
+                    "section_certificate_date_of_expiry",
+                    datetime.date.today() + datetime.timedelta(days=1),
+                ),
+            },
+            {"file": SimpleUploadedFile("test", b"test content")},
+            True,
+            {},
+        ),
+        (
+            {
+                "section_certificate_missing": True,
+            },
+            {},
+            False,
+            {
+                "section_certificate_missing_reason": ["Enter a reason why you do not have a section 1 certificate"],
+            },
+        ),
+    ),
+)
+def test_firearm_attach_firearm_certificate_form(data, files, is_valid, errors):
+    form = FirearmAttachFirearmCertificateForm(data=data, files=files)
     assert form.is_valid() == is_valid
     assert form.errors == errors

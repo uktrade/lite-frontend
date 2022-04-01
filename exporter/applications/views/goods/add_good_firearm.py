@@ -10,11 +10,12 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 
-from exporter.applications.services import get_application, post_additional_document
+from exporter.applications.services import get_application, post_additional_document, post_application_document
 from exporter.core.helpers import get_document_data, get_rfd_certificate, has_valid_rfd_certificate
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
+    FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
     FirearmCalibreForm,
     FirearmCategoryForm,
@@ -52,6 +53,7 @@ class AddGoodFirearmSteps:
     PRODUCT_DOCUMENT_SENSITIVITY = "PRODUCT_DOCUMENT_SENSITIVITY"
     PRODUCT_DOCUMENT_UPLOAD = "PRODUCT_DOCUMENT_UPLOAD"
     FIREARM_ACT_1968 = "FIREARM_ACT_1968"
+    ATTACH_FIREARM_CERTIFICATE = "ATTACH_FIREARM_CERTIFICATE"
 
 
 def is_product_document_available(wizard):
@@ -77,7 +79,7 @@ def is_rfd_certificate_invalid(wizard):
     is_rfd_certificate_valid_cleaned_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
     )
-    return not is_rfd_certificate_valid_cleaned_data.get("is_rfd_valid", False)
+    return not is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid", False)
 
 
 def is_registered_firearms_dealer(wizard):
@@ -92,6 +94,13 @@ def should_display_is_registered_firearms_dealer_step(wizard):
         return True
 
     return not has_rfd_certificate(wizard)
+
+
+def is_product_covered_by_section_1(wizard):
+    firearm_act_1968_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFirearmSteps.FIREARM_ACT_1968)
+    return (
+        firearm_act_1968_cleaned_data.get("firearms_act_section") == FirearmFirearmAct1968Form.SectionChoices.SECTION_1
+    )
 
 
 def get_cleaned_data(form):
@@ -131,6 +140,24 @@ def get_firearm_act_1968_payload(form):
     }
 
 
+def get_attach_firearm_certificate_payload(form):
+    firearm_certificate_data = form.cleaned_data
+
+    if firearm_certificate_data["section_certificate_missing"]:
+        return {
+            "section_certificate_missing": True,
+            "section_certificate_missing_reason": firearm_certificate_data["section_certificate_missing_reason"],
+        }
+
+    return {
+        "section_certificate_missing": False,
+        "section_certificate_number": firearm_certificate_data["section_certificate_number"],
+        "section_certificate_date_of_expiry": firearm_certificate_data[
+            "section_certificate_date_of_expiry"
+        ].isoformat(),
+    }
+
+
 class ServiceError(Exception):
     def __init__(self, status_code, response, log_message, user_message):
         super().__init__()
@@ -152,6 +179,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
+        (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
@@ -163,6 +191,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
+        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: is_product_covered_by_section_1,
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: is_registered_firearms_dealer,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
@@ -179,8 +208,10 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.CATEGORY: get_cleaned_data,
         AddGoodFirearmSteps.CALIBRE: get_cleaned_data,
         AddGoodFirearmSteps.IS_REPLICA: get_cleaned_data,
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: get_cleaned_data,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_cleaned_data,
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
+        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_certificate_payload,
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -325,6 +356,39 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 "Unexpected error adding document to firearm",
             )
 
+    def has_firearm_certificate(self):
+        attach_firearm_certificate = self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE)
+        return bool(attach_firearm_certificate.get("file"))
+
+    def get_firearm_certificate_payload(self):
+        data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE)
+        certificate = data["file"]
+        payload = {
+            **get_document_data(certificate),
+            "document_on_organisation": {
+                "expiry_date": data["section_certificate_date_of_expiry"].isoformat(),
+                "reference_code": data["section_certificate_number"],
+                "document_type": "section-one-certificate",
+            },
+        }
+        return payload
+
+    def post_firearm_certificate(self, application_pk, good_pk):
+        firearm_certificate_payload = self.get_firearm_certificate_payload()
+        api_resp_data, status_code = post_application_document(
+            request=self.request,
+            pk=application_pk,
+            good_pk=good_pk,
+            data=firearm_certificate_payload,
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error adding firearm certificate when creating firearm - response was: %s - %s",
+                "Unexpected error adding firearm certificate",
+            )
+
     def handle_service_error(self, service_error):
         logger.error(
             service_error.log_message,
@@ -340,6 +404,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
             if self.has_rfd_certificate_data():
                 self.post_rfd_certificate(application_pk)
+
+            if self.has_firearm_certificate():
+                self.post_firearm_certificate(application_pk, good_pk)
 
             if self.has_product_documentation():
                 self.post_product_documentation(good_pk)
