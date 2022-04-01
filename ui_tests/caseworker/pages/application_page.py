@@ -75,9 +75,8 @@ class ApplicationPage(BasePage):
         self.driver.execute_script(f'document.getElementById("{self.INPUT_CASE_NOTE_ID}").value = "{text[:-1]}"')
         self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).send_keys(text[-1:])
 
-    def enter_counternsign_note(self, text):
-        self.driver.execute_script(f'document.getElementById("{self.COUNTERSIGN_NOTE_ID}").value = "{text[:-1]}"')
-        self.driver.find_element_by_id(self.COUNTERSIGN_NOTE_ID).send_keys(text[-1:])
+    def enter_countersign_note(self, text):
+        self.driver.find_element(by=By.ID, value=self.COUNTERSIGN_NOTE_ID).send_keys(text)
 
     def set_next_review_date(self, day, month, year, context):
         self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_DAY_ID).clear()

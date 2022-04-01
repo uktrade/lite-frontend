@@ -821,3 +821,17 @@ def check_first_goods_row(driver, value, name):  # noqa
 @then(parsers.parse('for the second good I see "{value}" for "{name}"'))
 def check_second_goods_row(driver, value, name):  # noqa
     assert value == CasePage(driver).get_goods_row_with_headers(row_num=2)[name]
+
+
+@then("I see the application destinations")
+def i_see_destinations(driver, context):  # noqa
+    destinations = [context.consignee, context.end_user, context.third_party, context.ultimate_end_user]
+    destinations_table_text = CasePage(driver).get_destinations_text()
+
+    for destination in destinations:
+        assert destination["name"] in destinations_table_text
+
+
+@then("I click on Notes and timeline")
+def click_on_notes_and_timeline(driver):  # noqa
+    ApplicationPage(driver).click_on_notes_and_timeline()

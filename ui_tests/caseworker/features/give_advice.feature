@@ -261,6 +261,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
+
   @lu_nlr_advice
   Scenario: LU NLR advice journey
     # Setup
@@ -268,6 +269,10 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create standard application or standard application has been previously created
     And I prepare the application for final review NLR
     # Scenario starts
+    When I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
     Then for the first good I see "N/A" for "Rating"
     And for the first good I see "No" for "Licence required"
     And for the first good I see "ARS" for "ARS"
@@ -298,16 +303,24 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     When I go to my profile page
+    And I change my team to "Admin" and default queue to "All cases"
+    And I go to my case list
+    And I click the application previously created
+    And I click edit flags link
+    And I unset a "Enforcement Check Req" flag
+    When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Team Leader to Countersign"
     And I go to my case list
     And I click the application previously created
     Then I see the application destinations
     When I click edit flags on the last destination
-    And I select a "LU Countersign Required" flag
+    And I set a "LU Countersign Required" flag
     And I click I'm done
-    And Click on details
-    And I enter "Decision has been made with reasons" as the case note
+    And I click on details
+    And I enter "Decision has been made with reasons" as the countersign note
     And I click submit
+    And I go to application previously created
+    Then I see the case status is now "Under final review"
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Head of Licensing Unit countersigning"
     And I go to my case list

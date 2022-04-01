@@ -2,6 +2,7 @@ from pytest_bdd import when, then, parsers, scenarios
 import time
 
 from tests_common import functions
+from ui_tests.caseworker.pages.assign_flags_to_case import CaseFlagsPages
 
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.advice import RecommendationsAndDecisionPage
@@ -9,7 +10,6 @@ from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.generate_decision_documents_page import GeneratedDecisionDocuments
 from ui_tests.caseworker.pages.generate_document_page import GeneratedDocument
 from ui_tests.caseworker.pages.give_advice_pages import GiveAdvicePages
-from ui_tests.caseworker.pages.assign_flags_to_case import CaseFlagsPages
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 
 scenarios("../features/give_advice.feature", strict_gherkin=False)
@@ -185,13 +185,16 @@ def select_clearance_level(driver, clearance_level):
     GiveAdvicePages(driver).select_clearance_grading(clearance_level)
 
 
-@then("I see the application destinations")
-def i_see_destinations(driver, context):
-    destinations = [context.consignee, context.end_user, context.third_party, context.ultimate_end_user]
-    destinations_table_text = CasePage(driver).get_destinations_text()
+@when(parsers.parse('I set a "{level}" flag'))  # noqa
+def assign_flags_to_case(driver, context, level):  # noqa
+    CaseFlagsPages(driver).select_flag(level)
+    functions.click_submit(driver)
 
-    for destination in destinations:
-        assert destination["name"] in destinations_table_text
+
+@when(parsers.parse('I unset a "{level}" flag'))  # noqa
+def assign_flags_to_case(driver, context, level):  # noqa
+    CaseFlagsPages(driver).deselect_flag(level)
+    functions.click_submit(driver)
 
 
 @when("I click edit flags on the last destination")
@@ -202,30 +205,19 @@ def click_edit_destination_flags_link(driver):
     case_page.click_edit_destinations_flags()
 
 
-@when(parsers.parse('I select a "{level}" flag'))  # noqa
-def assign_flags_to_case(driver, context, level):  # noqa
-    CaseFlagsPages(driver).select_flag(level)
-    functions.click_submit(driver)
-
-
-@when("Click on details")
+@when("I click on details")
 def click_on_link(driver):
     Shared(driver).expand_govuk_details()
     time.sleep(1)
 
 
-@when(parsers.parse('I enter "{text}" as the case note'))
+@when(parsers.parse('I enter "{text}" as the countersign note'))
 def enter_case_note_text(driver, text, context):
     application_page = ApplicationPage(driver)
     if text == "too many characters":
         text = "T" * 2201
     context.text = text
-    application_page.enter_counternsign_note(text)
-
-
-@then("I click on Notes and timeline")
-def click_on_notes_and_timeline(driver):
-    ApplicationPage(driver).click_on_notes_and_timeline()
+    application_page.enter_countersign_note(text)
 
 
 @then(parsers.parse('I see the case is assigned to "{queue}"'))  # noqa

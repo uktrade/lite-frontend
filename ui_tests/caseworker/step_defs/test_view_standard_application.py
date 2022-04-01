@@ -44,15 +44,6 @@ def changes_have_been_made_to_case(driver, context, api_test_client):
     assert len(ApplicationPage(driver).get_case_notification_anchor())
 
 
-@then("I see the application destinations")
-def i_see_destinations(driver, context):
-    destinations = [context.consignee, context.end_user, context.third_party, context.ultimate_end_user]
-    destinations_table_text = CasePage(driver).get_destinations_text()
-
-    for destination in destinations:
-        assert destination["name"] in destinations_table_text
-
-
 @then("I should see the view link displayed against a good")  # noqa
 def i_see_good_details_view_link(driver, context):  # noqa
     goods = CasePage(driver).get_goods()
