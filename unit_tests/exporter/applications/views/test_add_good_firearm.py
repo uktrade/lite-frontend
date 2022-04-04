@@ -7,6 +7,7 @@ from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from unittest.mock import patch
+from requests.exceptions import HTTPError
 
 from core import client
 from exporter.core.constants import AddGoodFormSteps
@@ -144,8 +145,9 @@ def test_add_good_firearm_invalid_application(
 ):
     app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     requests_mock.get(url=app_url, status_code=404)
-    response = authorized_client.get(new_good_firearm_url)
-    assert response.status_code == 404
+    with pytest.raises(HTTPError):
+        response = authorized_client.get(new_good_firearm_url)
+        assert response.status_code == 404
 
 
 def test_add_good_firearm_start(authorized_client, new_good_firearm_url, new_good_url, application):

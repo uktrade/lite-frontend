@@ -1,5 +1,4 @@
 import logging
-import requests
 
 from http import HTTPStatus
 
@@ -13,12 +12,12 @@ from django.views.generic import TemplateView, FormView
 from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application, post_additional_document
-from exporter.core.constants import FirearmsProductType
+from exporter.core.constants import FirearmsProductType, AddGoodFormSteps
 from exporter.core.helpers import get_document_data, get_rfd_certificate, has_valid_rfd_certificate
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.goods.forms import GroupTwoProductTypeForm
 from exporter.goods.forms.firearms import (
+    FirearmProductTypeForm,
     FirearmAttachRFDCertificate,
     FirearmCalibreForm,
     FirearmCategoryForm,
@@ -34,6 +33,7 @@ from exporter.goods.forms.firearms import (
     FirearmDocumentUploadForm,
 )
 from exporter.goods.services import post_firearm, post_good_documents, get_good, get_good_documents, edit_firearm
+from exporter.organisation.services import delete_document_on_organisation
 from lite_forms.generators import error_page
 
 
@@ -54,6 +54,40 @@ class AddGoodFirearmSteps:
     PRODUCT_DOCUMENT_AVAILABILITY = "PRODUCT_DOCUMENT_AVAILABILITY"
     PRODUCT_DOCUMENT_SENSITIVITY = "PRODUCT_DOCUMENT_SENSITIVITY"
     PRODUCT_DOCUMENT_UPLOAD = "PRODUCT_DOCUMENT_UPLOAD"
+
+
+def is_firearm_only(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
+    return cleaned_data.get("type") == FirearmsProductType.FIREARMS
+
+
+def is_firearm_software_or_technology(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
+    return cleaned_data.get("type") in (
+        FirearmsProductType.SOFTWARE_RELATED_TO_FIREARM,
+        FirearmsProductType.TECHNOLOGY_RELATED_TO_FIREARM,
+    )
+
+
+def is_firearm_or_ammunition(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
+    return cleaned_data.get("type") in (
+        FirearmsProductType.FIREARMS,
+        FirearmsProductType.COMPONENTS_FOR_FIREARMS,
+        FirearmsProductType.AMMUNITION,
+        FirearmsProductType.COMPONENTS_FOR_AMMUNITION,
+    )
+
+
+def is_firearm_ammunition_or_accessory(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
+    return cleaned_data.get("type") in (
+        FirearmsProductType.FIREARMS,
+        FirearmsProductType.COMPONENTS_FOR_FIREARMS,
+        FirearmsProductType.AMMUNITION,
+        FirearmsProductType.COMPONENTS_FOR_AMMUNITION,
+        FirearmsProductType.FIREARMS_ACCESSORY,
+    )
 
 
 def is_product_document_available(wizard):
@@ -157,13 +191,16 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_cleaned_data,
     }
 
+    @cached_property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        try:
-            self.application = get_application(self.request, self.kwargs["pk"])
-        except requests.exceptions.HTTPError:
             raise Http404
 
         return super().dispatch(request, *args, **kwargs)
@@ -387,6 +424,12 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
 class FirearmEditView(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
     @cached_property
     def application_id(self):
         return str(self.kwargs["pk"])
@@ -407,8 +450,88 @@ class FirearmEditView(LoginRequiredMixin, FormView):
         return reverse("applications:product_summary", kwargs=self.kwargs)
 
 
-class FirearmEditProductType(FirearmEditView):
-    form_class = GroupTwoProductTypeForm
+class FirearmEditProductType(AddGoodFirearm):
 
-    def get_initial(self):
-        return {"type": self.good["firearm_details"]["type"]["key"]}
+    form_list = [
+        (AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, FirearmProductTypeForm),
+        (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
+        (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
+        (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
+        (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
+        (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
+        (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
+    ]
+
+    condition_dict = {
+        AddGoodFirearmSteps.CATEGORY: is_firearm_ammunition_or_accessory,
+        AddGoodFirearmSteps.CALIBRE: is_firearm_or_ammunition,
+        AddGoodFirearmSteps.IS_REPLICA: is_firearm_only,
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: C(is_firearm_or_ammunition) & C(has_rfd_certificate),
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: C(is_firearm_or_ammunition)
+        & ((C(has_rfd_certificate) & C(has_user_marked_rfd_certificate_invalid)) | ~C(has_rfd_certificate)),
+        AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: C(is_firearm_or_ammunition)
+        & C(has_user_marked_as_registered_firearms_dealer),
+    }
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
+    @cached_property
+    def good_id(self):
+        return str(self.kwargs["good_pk"])
+
+    @cached_property
+    def good(self):
+        return get_good(self.request, self.good_id, full_detail=True)[0]
+
+    def get_form_initial(self, step):
+        is_rfd_valid = has_valid_rfd_certificate(self.application)
+        firearm_details = self.good["firearm_details"]
+        categories = [category["key"] for category in firearm_details["category"]]
+        return {
+            "is_rfd_valid": is_rfd_valid,
+            "type": firearm_details["type"]["key"],
+            "category": categories,
+            "calibre": firearm_details["calibre"],
+            "is_replica": firearm_details["is_replica"],
+        }
+
+    def edit_firearm(self, form_dict):
+        payload = self.get_payload(form_dict)
+        api_resp_data, status_code = edit_firearm(
+            self.request,
+            self.good_id,
+            payload,
+        )
+        if status_code != HTTPStatus.OK:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error editing firearm - response was: %s - %s",
+                "Unexpected error editing firearm",
+            )
+
+    def replace_rfd_certificate(self):
+        # If there is a valid RFD and user providing another one then
+        # we will replace with the new certificate
+        existing_rfd = get_rfd_certificate(self.application)
+        self.post_rfd_certificate(self.application_id)
+
+        if existing_rfd:
+            organisation_id = self.application["organisation"]["id"]
+            delete_document_on_organisation(self.request, organisation_id, existing_rfd["id"])
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_firearm(form_dict)
+
+            if self.has_rfd_certificate_data():
+                self.replace_rfd_certificate()
+
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url(self.application_id, self.good_id))

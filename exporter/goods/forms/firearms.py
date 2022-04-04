@@ -55,6 +55,36 @@ class BaseFirearmForm(forms.Form):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
 
 
+class FirearmProductTypeForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Select the type of product"
+
+    type = forms.TypedChoiceField(
+        choices=(
+            ("firearms", "Firearm"),
+            ("ammunition", "Ammunition"),
+            ("components_for_firearms", "Component of a firearm"),
+            ("components_for_ammunition", "Component of firearm ammunition"),
+            ("firearms_accessory", "Accessory of a firearm"),
+            ("software_related_to_firearms", "Software relating to a firearm"),
+            ("technology_related_to_firearms", "Technology relating to a firearm"),
+        ),
+        error_messages={
+            "required": "Select the type of product",
+        },
+        widget=forms.RadioSelect,
+        label="",
+    )
+
+    def get_layout_fields(self):
+        return ("type",)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["product_type_step"] = True
+        return cleaned_data
+
+
 class FirearmCategoryForm(BaseFirearmForm):
     class Layout:
         TITLE = "Firearm category"
