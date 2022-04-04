@@ -66,6 +66,13 @@ def post_firearm(request, json):
     return data.json(), data.status_code
 
 
+def edit_firearm(request, pk, json):
+    json["item_category"] = PRODUCT_CATEGORY_FIREARM
+    response = client.put(request, f"/goods/{pk}", json)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def add_section_certificate_details(firearm_details, json):
     if "section_certificate_step" in json:
         firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = json.get(
