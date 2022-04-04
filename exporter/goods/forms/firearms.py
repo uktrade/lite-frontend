@@ -639,10 +639,10 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
         return cleaned_data
 
 
-def get_base_firearm_act_certificate_form(certificate_type):
+def get_base_firearm_act_attach_file_form(file_type):
     class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
         class Layout:
-            TITLE = f"Upload your {certificate_type} certificate"
+            TITLE = f"Upload your {file_type}"
 
         file = forms.FileField(
             label="",
@@ -680,12 +680,12 @@ def get_base_firearm_act_certificate_form(certificate_type):
         )
 
         section_certificate_missing = forms.BooleanField(
-            label=f"I do not have a {certificate_type} certificate",
+            label=f"I do not have a {file_type}",
             required=False,
         )
 
         section_certificate_missing_reason = forms.CharField(
-            label=f"Explain why you do not have a {certificate_type} certificate",
+            label=f"Explain why you do not have a {file_type}",
             required=False,
             widget=forms.Textarea(attrs={"rows": "5"}),
         )
@@ -709,7 +709,7 @@ def get_base_firearm_act_certificate_form(certificate_type):
             if not section_certificate_missing:
                 file = cleaned_data.get("file")
                 if not file:
-                    self.add_error("file", f"Select a {certificate_type} certificate")
+                    self.add_error("file", f"Select a {file_type}")
 
                 section_certificate_number = cleaned_data.get("section_certificate_number")
                 if not section_certificate_number:
@@ -727,7 +727,7 @@ def get_base_firearm_act_certificate_form(certificate_type):
                 if not section_certificate_missing_reason:
                     self.add_error(
                         "section_certificate_missing_reason",
-                        f"Enter a reason why you do not have a {certificate_type} certificate",
+                        f"Enter a reason why you do not have a {file_type}",
                     )
 
             return cleaned_data
@@ -735,9 +735,15 @@ def get_base_firearm_act_certificate_form(certificate_type):
     return BaseAttachFirearmActCertificateForm
 
 
-class FirearmAttachFirearmCertificateForm(get_base_firearm_act_certificate_form("firearm")):
+class FirearmAttachFirearmCertificateForm(get_base_firearm_act_attach_file_form("firearm certificate")):
     pass
 
 
-class FirearmAttachShotgunCertificateForm(get_base_firearm_act_certificate_form("shotgun")):
+class FirearmAttachShotgunCertificateForm(get_base_firearm_act_attach_file_form("shotgun certificate")):
+    pass
+
+
+class FirearmAttachSection5LetterOfAuthorityForm(
+    get_base_firearm_act_attach_file_form("section 5 letter of authority")
+):
     pass

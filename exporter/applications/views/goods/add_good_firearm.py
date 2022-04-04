@@ -17,6 +17,7 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
+    FirearmAttachSection5LetterOfAuthorityForm,
     FirearmAttachShotgunCertificateForm,
     FirearmCalibreForm,
     FirearmCategoryForm,
@@ -56,6 +57,7 @@ class AddGoodFirearmSteps:
     FIREARM_ACT_1968 = "FIREARM_ACT_1968"
     ATTACH_FIREARM_CERTIFICATE = "ATTACH_FIREARM_CERTIFICATE"
     ATTACH_SHOTGUN_CERTIFICATE = "ATTACH_SHOTGUN_CERTIFICATE"
+    ATTACH_SECTION_5_LETTER_OF_AUTHORITY = "ATTACH_SECTION_5_LETTER_OF_AUTHORITY"
 
 
 def is_product_document_available(wizard):
@@ -184,6 +186,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
         (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
         (AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
+        (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
@@ -200,6 +203,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         ),
         AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: is_product_covered_by_firearm_act_section(
             FirearmFirearmAct1968Form.SectionChoices.SECTION_2
+        ),
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: is_product_covered_by_firearm_act_section(
+            FirearmFirearmAct1968Form.SectionChoices.SECTION_5
         ),
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: is_registered_firearms_dealer,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
@@ -222,6 +228,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
         AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -427,6 +434,14 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                     "section-two-certificate",
+                    application_pk,
+                    good_pk,
+                )
+
+            if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY):
+                self.post_firearm_act_certificate(
+                    AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
+                    "section-five-certificate",
                     application_pk,
                     good_pk,
                 )

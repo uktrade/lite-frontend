@@ -10,6 +10,7 @@ from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
+    FirearmAttachSection5LetterOfAuthorityForm,
     FirearmAttachShotgunCertificateForm,
     FirearmCalibreForm,
     FirearmCategoryForm,
@@ -606,5 +607,72 @@ def test_firearm_attach_firearm_certificate_form(data, files, is_valid, errors):
 )
 def test_firearm_attach_shotgun_certificate_form(data, files, is_valid, errors):
     form = FirearmAttachShotgunCertificateForm(data=data, files=files)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, files, is_valid, errors",
+    (
+        (
+            {},
+            {},
+            False,
+            {
+                "file": ["Select a section 5 letter of authority"],
+                "section_certificate_number": ["Enter the certificate number"],
+                "section_certificate_date_of_expiry": ["Enter the expiry date"],
+            },
+        ),
+        (
+            decompose_date("section_certificate_date_of_expiry", datetime.date.today() - datetime.timedelta(days=10)),
+            {},
+            False,
+            {
+                "file": ["Select a section 5 letter of authority"],
+                "section_certificate_number": ["Enter the certificate number"],
+                "section_certificate_date_of_expiry": ["Expiry date must be in the future"],
+            },
+        ),
+        (
+            decompose_date(
+                "section_certificate_date_of_expiry", datetime.date.today() + relativedelta(years=5, days=1)
+            ),
+            {},
+            False,
+            {
+                "file": ["Select a section 5 letter of authority"],
+                "section_certificate_number": ["Enter the certificate number"],
+                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+            },
+        ),
+        (
+            {
+                "section_certificate_number": "abcdef",
+                **decompose_date(
+                    "section_certificate_date_of_expiry",
+                    datetime.date.today() + datetime.timedelta(days=1),
+                ),
+            },
+            {"file": SimpleUploadedFile("test", b"test content")},
+            True,
+            {},
+        ),
+        (
+            {
+                "section_certificate_missing": True,
+            },
+            {},
+            False,
+            {
+                "section_certificate_missing_reason": [
+                    "Enter a reason why you do not have a section 5 letter of authority"
+                ],
+            },
+        ),
+    ),
+)
+def test_firearm_attach_section_5_letter_of_authority_form(data, files, is_valid, errors):
+    form = FirearmAttachSection5LetterOfAuthorityForm(data=data, files=files)
     assert form.is_valid() == is_valid
     assert form.errors == errors
