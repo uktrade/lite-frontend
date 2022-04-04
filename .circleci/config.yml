@@ -244,7 +244,7 @@ jobs:
 
   caseworker_ui_test:
     machine:
-      image: ubuntu-2004:202201-02
+      image: ubuntu-2004:202008-01
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -265,7 +265,7 @@ jobs:
 
   exporter_ui_test:
     machine:
-      image: ubuntu-2004:202201-02
+      image: ubuntu-2004:202008-01
       docker_layer_caching: true
     environment:
       <<: *common_env_vars
@@ -313,4 +313,6 @@ workflows:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
       - caseworker_ui_test
-      - exporter_ui_test
+      - exporter_ui_test:
+          requires:
+           - caseworker_ui_test
