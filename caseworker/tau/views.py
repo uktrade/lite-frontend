@@ -33,7 +33,7 @@ class TAUHome(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
-        form_kwargs["goods"] = self.unassessed_goods
+        form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         return form_kwargs
 
     def is_assessed(self, good):
@@ -42,19 +42,11 @@ class TAUHome(LoginRequiredMixin, FormView):
 
     @property
     def assessed_goods(self):
-        return {
-            item["id"]: item["good"].get("name") or item["good"].get("part_number")
-            for item in self.case.goods
-            if self.is_assessed(item)
-        }
+        return [item for item in self.case.goods if self.is_assessed(item)]
 
     @property
     def unassessed_goods(self):
-        return {
-            item["id"]: item["good"].get("name") or item["good"].get("part_number")
-            for item in self.case.goods
-            if not self.is_assessed(item)
-        }
+        return [item for item in self.case.goods if not self.is_assessed(item)]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -44,6 +44,7 @@ def test_tau_home_auth(authorized_client, url, mock_get_control_list_entries):
     assert response.status_code == 200
 
 
+@pytest.mark.skip("The /tau view doesn't return case details anymore but it might in the future")
 def test_case_info(authorized_client, url, mock_get_control_list_entries):
     """GET /tau would return a case info panel"""
     response = authorized_client.get(url)
@@ -103,6 +104,22 @@ def test_case_info(authorized_client, url, mock_get_control_list_entries):
     assert get_cells(soup, "table-end-use") == ["44"]
 
 
+def test_home_content(authorized_client, url, data_standard_case, mock_get_control_list_entries):
+    """GET /tau would return a case info panel"""
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="subtitle").text == "Assess 1 product(s) going from Great Britain to Abu Dhabi, United Kingdom"
+    assert get_cells(soup, "assessed-products") == ["1", "", "444", "", "No", "scale compelling technologies", "TBC"]
+
+
 def test_tau_home_noauth(client, url):
     """GET /tau should return 302 with an unauthorised client"""
     response = client.get(url)
@@ -124,7 +141,9 @@ def test_form(authorized_client, url, data_standard_case, requests_mock, mock_ge
     # unassessed products should have 1 entry
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
-    assert good["id"] in soup.find(id="unassessed-products").text
+    unassessed_products = soup.find(id="unassessed-products").find_all("input")
+    assert len(unassessed_products) == 1
+    assert unassessed_products[0].attrs["value"] == good["id"]
     response = authorized_client.post(
         url, data={"report_summary": "test", "goods": [good["id"]], "does_not_have_control_list_entries": True}
     )

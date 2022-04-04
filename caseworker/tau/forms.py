@@ -2,7 +2,7 @@ from django import forms
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
 
-from core.forms.widgets import GridmultipleSelect
+from caseworker.tau.widgets import GoodsMultipleSelect
 
 
 class TAUAssessmentForm(forms.Form):
@@ -47,11 +47,12 @@ class TAUAssessmentForm(forms.Form):
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.fields["goods"] = forms.MultipleChoiceField(
             choices=goods.items(),
-            widget=GridmultipleSelect(),
-            label="Select the products that you want to assess",
+            widget=GoodsMultipleSelect(),
+            label="Select a product to begin. Or you can select multiple products to give them the same assessment.",
             error_messages={"required": "Select the products that you want to assess"},
         )
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             "goods",
             "control_list_entries",
