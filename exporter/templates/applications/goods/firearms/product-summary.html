@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    {% with firearm_details=good.firearm_details %}
+    {% with firearm_type=good.firearm_details.type.key firearm_details=good.firearm_details %}
         <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
@@ -30,18 +30,20 @@
                     <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_firearm_product_type' application_id good.id %}">Change</a>
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Firearm category
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {% for category in firearm_details.category %}
-                        {{ category.value }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                </dd>
-            </div>
+            {% if firearm_type in product_types.firearms_ammunition_accessory %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Firearm category
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% for category in firearm_details.category %}
+                            {{ category.value }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Give the product a descriptive name
@@ -84,26 +86,31 @@
                 <dd class="govuk-summary-list__actions">
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    What is the calibre of the product?
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ firearm_details.calibre }}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Is the product a replica firearm?
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ firearm_details.is_replica|yesno|title }}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                </dd>
-            </div>
+            {% if firearm_type in product_types.firearms_ammunition_accessory and firearm_type != "ammunition" %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What is the calibre of the product?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.calibre }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
+            {% if firearm_type in product_types.firearms %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Is the product a replica firearm?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.is_replica|yesno|title }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
+            {% if firearm_type in product_types.firearms_ammunition_components %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Are you a registered firearms dealer?
@@ -114,6 +121,7 @@
                 <dd class="govuk-summary-list__actions">
                 </dd>
             </div>
+            {% endif %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Do you have a document that shows what your product is and what it’s designed to do?

@@ -326,6 +326,29 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 class FirearmProductSummary(LoginRequiredMixin, TemplateView):
     template_name = "applications/goods/firearms/product-summary.html"
 
+    @property
+    def firearm_types(self):
+        return {
+            "firearms": (FirearmsProductType.FIREARMS),
+            "firearms_ammunition_components": (
+                FirearmsProductType.FIREARMS,
+                FirearmsProductType.COMPONENTS_FOR_FIREARMS,
+                FirearmsProductType.AMMUNITION,
+                FirearmsProductType.COMPONENTS_FOR_AMMUNITION,
+            ),
+            "firearms_ammunition_accessory": (
+                FirearmsProductType.FIREARMS,
+                FirearmsProductType.COMPONENTS_FOR_FIREARMS,
+                FirearmsProductType.AMMUNITION,
+                FirearmsProductType.COMPONENTS_FOR_AMMUNITION,
+                FirearmsProductType.FIREARMS_ACCESSORY,
+            ),
+            "firearms_software_technology": (
+                FirearmsProductType.SOFTWARE_RELATED_TO_FIREARM,
+                FirearmsProductType.TECHNOLOGY_RELATED_TO_FIREARM,
+            ),
+        }
+
     @cached_property
     def application_id(self):
         return str(self.kwargs["pk"])
@@ -354,8 +377,10 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
             **context,
             "is_user_rfd": is_user_rfd,
             "application_id": self.application_id,
+            "firearm_type": self.good["firearm_details"]["type"]["key"],
             "good": self.good,
             "documents": documents,
+            "product_types": self.firearm_types,
         }
 
 
