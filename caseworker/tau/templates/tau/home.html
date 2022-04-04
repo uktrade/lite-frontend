@@ -1,36 +1,62 @@
 {% extends 'layouts/case.html' %}
 
-{% load static custom_tags crispy_forms_tags %}
+{% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
 
 {% block body %}
 
 <div class="govuk-width-container">
     <a href="../" class="govuk-back-link">Back</a>
+    <h1 class="govuk-heading-l">Product Assessment</h1>
+    <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} product(s) going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h2>Unassessed Products: (This is a placeholder atm, to be replaced by a pretty table with checkboxes and info)</h2>
-                <ul id="unassessed-products">
-                    {% for id, name in unassessed_goods.items %}
-                    <li>ID: {{ id }}   Name: {{ name }}</li>
+            {% if unassessed_goods %}
+            <form id="tau-form" action="." method="POST">
+                {% csrf_token %}
+                <div class="govuk-grid-column-two-thirds">
+                    {{ form.goods | as_crispy_field }}
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    {% for field in form %}
+                    {% if field.name != "goods" %}
+                    {{ field | as_crispy_field }}
+                    {% endif %}
+                {% endfor %}
+                    <div class="form-actions">
+                        <input type="submit" name="submit" value="Submit recommendation" class="govuk-button" id="submit-id-submit">
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+        <div class="govuk-grid-row">
+            <table id="assessed-products" class="govuk-table">
+                <caption class="govuk-table__caption govuk-table__caption--m">Assessed Products</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header"></th>
+                        <th scope="col" class="govuk-table__header"></th>
+                        <th scope="col" class="govuk-table__header">Quantities</th>
+                        <th scope="col" class="govuk-table__header">Control Entry</th>
+                        <th scope="col" class="govuk-table__header">License</th>
+                        <th scope="col" class="govuk-table__header">Report Summary</th>
+                        <th scope="col" class="govuk-table__header">Assessment notes</th>
+                  </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for good in assessed_goods %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ forloop.counter }}</td>
+                        <td class="govuk-table__cell">{{ good.name }}</td>
+                        <td class="govuk-table__cell">{{ good.quantity|floatformat }}</td>
+                        <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
+                        <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
+                        <td class="govuk-table__cell">{{ good.report_summary }}</td>
+                        <td class="govuk-table__cell">TBC</td>
+                    </tr>
                     {% endfor %}
-                </ul>
-                <hr>
-                <h2>Assessed Products: (This is a placeholder atm, to check if the form works)</h2>
-                <ul id="assessed-products">
-                    {% for id, name in assessed_goods.items %}
-                    <li>ID: {{ id }}   Name: {{ name }}</li>
-                    {% endfor %}
-                </ul>
-                <hr>
-                <h2>The OG case details - would probably be merged into the table</h2>
-                {% include "tau/case_detail.html" %}
-            </div>
-            <div class="govuk-grid-column-one-third">
-                {% if unassessed_goods %}
-                {% crispy form %}
-                {% endif %}
-            </div>
+                </tbody>
+              </table>
         </div>
     </main>
 </div>

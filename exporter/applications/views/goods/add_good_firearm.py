@@ -33,7 +33,7 @@ from exporter.goods.forms.firearms import (
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
 )
-from exporter.goods.services import post_firearm, edit_firearm, post_good_documents, get_good, get_good_documents
+from exporter.goods.services import post_firearm, post_good_documents, get_good, get_good_documents, edit_firearm
 from lite_forms.generators import error_page
 
 

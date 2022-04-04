@@ -36,11 +36,7 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {% for category in firearm_details.category %}
-                        {%if not forloop.last %}
-                            {{ category.value }},
-                        {% else %}
-                            {{ category.value }}
-                        {% endif %}
+                        {{ category.value }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </dd>
                 <dd class="govuk-summary-list__actions">
@@ -73,11 +69,7 @@
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {% for clc in good.control_list_entries %}
-                            {%if not forloop.last %}
-                                {{ clc.rating }},
-                            {% else %}
-                                {{ clc.rating }}
-                            {% endif %}
+                            {{ clc.rating }}{% if not forloop.last %}, {% endif %}
                         {% endfor %}
                     </dd>
                 </div>
