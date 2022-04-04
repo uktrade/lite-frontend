@@ -47,7 +47,9 @@ commands:
     steps:
       - run:
           name: Copy config
-          command: cp ci.caseworker.env caseworker.env
+          command: |
+            cp ci.caseworker.env caseworker.env
+            cp ci.exporter.env exporter.env
       - run:
           name: << parameters.label >>
           command: make << parameters.target >>
@@ -296,6 +298,18 @@ jobs:
           target: start-caseworker caseworker-e2e-test
       - store_playwright_artifacts
 
+  exporter_e2e_test:
+    machine:
+      image: ubuntu-2004:202008-01
+    resource_class: large
+    steps:
+      - checkout
+      - run: git submodule update --init
+      - run_make:
+          label: Run exporter e2e tests
+          target: start-exporter exporter-e2e-test
+      - store_playwright_artifacts
+
 workflows:
   version: 2
   tests:
@@ -305,6 +319,7 @@ workflows:
       - caseworker_unit_test
       - exporter_unit_test
       - caseworker_e2e_test
+      - exporter_e2e_test
       - upload_coverage:
           requires:
            - caseworker_unit_test
