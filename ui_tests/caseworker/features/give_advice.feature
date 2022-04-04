@@ -303,12 +303,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     When I go to my profile page
-    And I change my team to "Admin" and default queue to "All cases"
-    And I go to my case list
-    And I click the application previously created
-    And I click edit flags link
-    And I unset a "Enforcement Check Req" flag
-    When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Team Leader to Countersign"
     And I go to my case list
     And I click the application previously created

@@ -555,7 +555,7 @@ def i_create_an_standard_advice_picklist(context, add_a_standard_advice_picklist
 
 
 @when(parsers.parse('I expand the details for "{details_text}"'))
-def expand_details(driver, details_text):  # noqa
+def expand_details_for(driver, details_text):  # noqa
     driver.find_element_by_xpath(
         f"//details[@class='govuk-details']/summary/span[contains(text(), '{details_text}')]"
     ).click()
