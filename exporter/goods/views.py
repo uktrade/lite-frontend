@@ -27,7 +27,7 @@ from exporter.applications.services import (
     post_case_notes,
 )
 from exporter.applications.views.goods import is_firearm_certificate_needed
-from exporter.core.constants import AddGoodFormSteps
+from exporter.core.constants import AddGoodFormSteps, FirearmActDocumentType
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
     is_category_firearms,
@@ -856,9 +856,9 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             fetch_and_delete_previous_application_documents(request, kwargs["pk"], kwargs["good_pk"])
 
             document_types = {
-                "Section 1": "section-one-certificate",
-                "Section 2": "section-two-certificate",
-                "Section 5": "section-five-certificate",
+                "Section 1": FirearmActDocumentType.SECTION_1,
+                "Section 2": FirearmActDocumentType.SECTION_2,
+                "Section 5": FirearmActDocumentType.SECTION_5,
             }
 
             doc_data["document_on_organisation"] = {

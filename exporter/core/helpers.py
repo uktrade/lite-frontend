@@ -237,8 +237,12 @@ def has_valid_rfd_certificate(application):
     return bool(document) and not document["is_expired"]
 
 
+def get_organisation_documents(application):
+    return {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
+
+
 def get_rfd_certificate(application):
-    documents = {item["document_type"]: item for item in application.get("organisation", {}).get("documents", [])}
+    documents = get_organisation_documents(application)
     return documents.get("rfd-certificate")
 
 
@@ -271,3 +275,8 @@ def get_document_data(file):
         "s3_key": file.name,
         "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
     }
+
+
+def has_firearm_act_document(application, document_type):
+    documents = get_organisation_documents(application)
+    return document_type in documents

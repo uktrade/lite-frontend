@@ -351,6 +351,58 @@ def test_add_good_firearm_act_selection(
     assert isinstance(response.context["form"], expected_next_form)
 
 
+@pytest.fixture
+def application_with_document(data_standard_case, requests_mock, document_type):
+    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    case = data_standard_case["case"]
+    case["organisation"] = {
+        "documents": [
+            {
+                "id": str(uuid.uuid4()),
+                "document": {
+                    "name": f"{document_type}.txt",
+                },
+                "document_type": document_type,
+                "is_expired": False,
+            }
+        ],
+    }
+    matcher = requests_mock.get(url=app_url, json=case)
+    return matcher
+
+
+@pytest.mark.parametrize(
+    "form_data, document_type",
+    (
+        (
+            {"firearms_act_section": "firearms_act_section1"},
+            "section-one-certificate",
+        ),
+        (
+            {"firearms_act_section": "firearms_act_section2"},
+            "section-two-certificate",
+        ),
+        (
+            {"firearms_act_section": "firearms_act_section5"},
+            "section-five-certificate",
+        ),
+    ),
+)
+def test_add_good_firearm_act_selection_skips_when_valid_certificate_already_exists(
+    goto_step,
+    post_to_step,
+    form_data,
+    application_with_document,
+):
+    goto_step(AddGoodFirearmSteps.FIREARM_ACT_1968)
+    response = post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        form_data,
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentAvailability)
+
+
 def test_add_good_firearm_with_rfd_document_submission(
     authorized_client,
     new_good_firearm_url,
