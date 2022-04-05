@@ -48,6 +48,7 @@
                     {{ good.name }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-good-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_name' application_id good.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">

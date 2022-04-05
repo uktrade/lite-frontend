@@ -45,7 +45,14 @@ from exporter.goods.forms.firearms import (
     FirearmRFDValidityForm,
     FirearmSection5Form,
 )
-from exporter.goods.services import post_firearm, post_good_documents, get_good, get_good_documents, edit_firearm
+from exporter.goods.services import (
+    post_firearm,
+    post_good_documents,
+    get_good,
+    get_good_documents,
+    edit_firearm,
+    edit_good,
+)
 from lite_forms.generators import error_page
 
 
@@ -550,9 +557,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         }
 
 
-class FirearmEditView(LoginRequiredMixin, FormView):
-    template_name = "core/form.html"
-
+class GoodsMixin:
     @cached_property
     def application_id(self):
         return str(self.kwargs["pk"])
@@ -569,6 +574,26 @@ class FirearmEditView(LoginRequiredMixin, FormView):
             raise Http404
 
         return good
+
+
+class EditNameView(GoodsMixin, FormView):
+    form_class = FirearmNameForm
+
+    def get_initial(self):
+        return {
+            "name": self.good["name"],
+        }
+
+    def form_valid(self, form):
+        edit_good(self.request, self.good_id, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:product_summary", kwargs=self.kwargs)
+
+
+class FirearmEditView(LoginRequiredMixin, GoodsMixin, FormView):
+    template_name = "core/form.html"
 
     def form_valid(self, form):
         edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
