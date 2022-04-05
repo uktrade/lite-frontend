@@ -37,7 +37,7 @@ from exporter.goods.views import (
     EditYearOfManufactureView,
     UpdateSerialNumbersView,
 )
-from exporter.applications.views.goods.add_good_firearm import FirearmProductSummary
+from exporter.applications.views.goods.add_good_firearm import FirearmProductSummary, FirearmEditCategory
 
 app_name = "applications"
 urlpatterns = [
@@ -74,6 +74,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/add-firearms-certificate/",
         goods.AttachFirearmActSectionDocument.as_view(),
         name="attach-firearms-certificate-existing-good",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/category/",
+        FirearmEditCategory.as_view(),
+        name="firearm_edit_category",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",

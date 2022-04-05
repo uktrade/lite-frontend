@@ -583,7 +583,16 @@ def data_standard_case():
                                 "value": "Document is above OFFICIAL-SENSITIVE",
                             },
                             "software_or_technology_details": None,
-                            "firearm_details": None,
+                            "firearm_details": {
+                                "type": "firearms",
+                                "category": [
+                                    {"key": "NON_AUTOMATIC_SHOTGUN", "value": "Non automatic shotgun"},
+                                    {
+                                        "key": "NON_AUTOMATIC_RIM_FIRED_HANDGUN",
+                                        "value": "Non automatic rim-fired handgun",
+                                    },
+                                ],
+                            },
                         },
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
                         "quantity": 444.0,
