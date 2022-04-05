@@ -130,6 +130,11 @@ class RecommendationsAndDecisionPage(BasePage):
         el.clear()
         el.send_keys(footnote)
 
+    def enter_optional_decision_note(self, note):
+        el = self.driver.find_element(by=By.ID, value="note")
+        el.clear()
+        el.send_keys(note)
+
     def get_reasons_for_approving(self):
         return self.driver.find_element(
             by=By.XPATH,

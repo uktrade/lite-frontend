@@ -30,6 +30,7 @@ class Shared(BasePage):
     CASES_FORM_ID = "form-cases"
     FIRST_LINK_IN_ROW = ".govuk-table__row .govuk-link"
     GOVUK_HEADING = ".govuk-heading-xl"
+    GOVUK_DETAILS = "govuk-details__summary-text"
 
     def click_submit(self):
         self.driver.find_element(by=By.CSS_SELECTOR, value=self.SUBMIT_BUTTON).click()
@@ -116,6 +117,9 @@ class Shared(BasePage):
 
     def click_first_link_in_row(self):
         self.driver.find_element_by_css_selector(self.FIRST_LINK_IN_ROW).click()
+
+    def expand_govuk_details(self):
+        self.driver.find_element_by_class_name(self.GOVUK_DETAILS).click()
 
     def try_open_filters(self):
         WebDriverWait(self.driver, 30).until(
