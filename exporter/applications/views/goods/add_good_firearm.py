@@ -541,7 +541,13 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         application = get_application(self.request, self.application_id)
         is_user_rfd = has_valid_rfd_certificate(application)
 
-        return {**context, "is_user_rfd": is_user_rfd, "good": self.good, "documents": documents}
+        return {
+            **context,
+            "is_user_rfd": is_user_rfd,
+            "application_id": self.application_id,
+            "good": self.good,
+            "documents": documents,
+        }
 
 
 class FirearmEditView(LoginRequiredMixin, FormView):
@@ -555,7 +561,7 @@ class FirearmEditView(LoginRequiredMixin, FormView):
     def good_id(self):
         return str(self.kwargs["good_pk"])
 
-    @property
+    @cached_property
     def good(self):
         return get_good(self.request, self.good_id, full_detail=True)[0]
 
@@ -565,3 +571,12 @@ class FirearmEditView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse("applications:product_summary", kwargs=self.kwargs)
+
+
+class FirearmEditCategory(FirearmEditView):
+    form_class = FirearmCategoryForm
+
+    def get_initial(self):
+        firearm_details = self.good["firearm_details"]
+        categories = [category["key"] for category in firearm_details["category"]]
+        return {"category": categories}
