@@ -563,7 +563,12 @@ class FirearmEditView(LoginRequiredMixin, FormView):
 
     @cached_property
     def good(self):
-        return get_good(self.request, self.good_id, full_detail=True)[0]
+        try:
+            good = get_good(self.request, self.good_id, full_detail=True)[0]
+        except requests.exceptions.HTTPError:
+            raise Http404
+
+        return good
 
     def form_valid(self, form):
         edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})

@@ -76,7 +76,7 @@ urlpatterns = [
         name="attach-firearms-certificate-existing-good",
     ),
     path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/category",
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/category/",
         FirearmEditCategory.as_view(),
         name="firearm_edit_category",
     ),

@@ -67,7 +67,6 @@ def post_firearm(request, json):
 
 
 def edit_firearm(request, pk, json):
-    json["item_category"] = PRODUCT_CATEGORY_FIREARM
     response = client.put(request, f"/goods/{pk}", json)
     response.raise_for_status()
     return response.json(), response.status_code
