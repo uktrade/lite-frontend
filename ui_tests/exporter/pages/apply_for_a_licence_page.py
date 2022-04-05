@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from tests_common import functions
 from ui_tests.exporter.pages.BasePage import BasePage
 
@@ -20,12 +22,12 @@ class ApplyForALicencePage(BasePage):
     OIEL_EXPORT_TYPE_RADIO_BUTTON_ID = "goodstype_category-"
 
     def enter_name_or_reference_for_application(self, name):
-        element = self.driver.find_element_by_id(self.NAME_OR_REFERENCE_INPUT_ID)
+        element = self.driver.find_element(by=By.ID, value=self.NAME_OR_REFERENCE_INPUT_ID)
         element.clear()
         element.send_keys(name)
 
     def select_licence_type(self, type):
-        self.driver.find_element_by_id(f"{self.LICENCE_TYPE_PARTIAL_ID}{type}").click()
+        self.driver.find_element(by=By.ID, value=f"{self.LICENCE_TYPE_PARTIAL_ID}{type}").click()
 
     def select_mod_application_type(self, type):
         self.driver.find_element_by_id(f"{self.MOD_APPLICATION_TYPE_PARTIAL_ID}{type}").click()
@@ -36,7 +38,9 @@ class ApplyForALicencePage(BasePage):
         functions.click_submit(self.driver)
 
     def click_export_licence(self, export_type):
-        return self.driver.find_element_by_css_selector(self.RADIOBUTTON_LICENCE_ID_PARTIAL + export_type).click()
+        return self.driver.find_element(
+            by=By.CSS_SELECTOR, value=self.RADIOBUTTON_LICENCE_ID_PARTIAL + export_type
+        ).click()
 
     def select_types_of_clearance(self):
         checkboxes = self.driver.find_elements_by_name(self.F680_CLEARANCE_TYPE_CHECKBOXES_NAME)
@@ -57,7 +61,7 @@ class ApplyForALicencePage(BasePage):
         self.driver.find_element_by_id(self.REFERENCE_NUMBER).send_keys(string)
 
     def is_success_panel_present(self):
-        return len(self.driver.find_elements_by_css_selector(self.SUCCESS_BANNER_CLASS)) > 0
+        return len(self.driver.find_elements(by=By.CSS_SELECTOR, value=self.SUCCESS_BANNER_CLASS)) > 0
 
     def select_trade_control_activity(self):
         self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_ID).click()

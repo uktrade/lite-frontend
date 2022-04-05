@@ -40,10 +40,11 @@ class Shared(BasePage):
         return self.driver.find_element_by_id(self.ORG_NAME_HEADING_ID).text
 
     def get_radio_buttons_elements(self):
-        return self.driver.find_elements_by_css_selector(self.RADIO_BUTTONS)
+        return self.driver.find_elements(by=By.CSS_SELECTOR, value=self.RADIO_BUTTONS)
 
     def click_on_radio_buttons(self, no):
-        return self.driver.find_elements_by_css_selector(self.RADIO_BUTTONS)[no].click()
+        radios = self.get_radio_buttons_elements()
+        radios[no].click()
 
     def get_gov_table_cell_links(self):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_CELL_LINKS)

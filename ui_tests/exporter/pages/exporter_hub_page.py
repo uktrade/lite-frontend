@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 from tests_common.tools.helpers import scroll_to_element_by_id
 
@@ -16,7 +18,7 @@ class ExporterHubPage(BasePage):
 
     def click_apply_for_a_licence(self):
         scroll_to_element_by_id(self.driver, self.BUTTON_APPLY_FOR_A_LICENCE_ID)
-        self.driver.find_element_by_id(self.BUTTON_APPLY_FOR_A_LICENCE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_APPLY_FOR_A_LICENCE_ID).click()
 
     def click_raise_hmrc_query(self):
         scroll_to_element_by_id(self.driver, self.BUTTON_HMRC_QUERY_ID)

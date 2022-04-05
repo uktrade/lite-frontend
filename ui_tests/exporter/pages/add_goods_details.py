@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from faker import Faker
 
 from ui_tests.exporter.pages.BasePage import BasePage
@@ -75,6 +76,7 @@ class AddGoodDetails(BasePage):
     FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "identification_markings_details"
     FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID = "no_identification_markings_details"
     FIREARMS_NUMBER_OF_ITEMS = "number_of_items"
+    FIREARMS_SERIAL_NUMBERS = "serial_numbers"
 
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
@@ -91,26 +93,30 @@ class AddGoodDetails(BasePage):
             self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
 
     def set_identification_details(self, has_markings, details):
-        has_markings = self.true_or_false(has_markings)
-        markings_id = f"has_identification_markings-{has_markings}"
-        self.driver.find_element_by_id(markings_id).click()
-        if has_markings is False:
-            self.enter_related_field_details("identification_markings_details", details)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{has_markings}']").click()
+        if has_markings == "NOT_AVAILABLE":
+            self.enter_related_field_details("id_IDENTIFICATION_MARKINGS-no_identification_markings_details", details)
 
     def enter_number_of_items(self, number_of_items):
-        element = self.driver.find_element_by_id(self.FIREARMS_NUMBER_OF_ITEMS)
+        element = self.driver.find_element(
+            by=By.XPATH, value=f"//input[@type='text' and contains(@id, '{self.FIREARMS_NUMBER_OF_ITEMS}')]"
+        )
+
         element.clear()
         element.send_keys(number_of_items)
 
-    def enter_serial_numbers(self, number_of_items, serial_numbers):
-        for index, serial_number in enumerate(serial_numbers):
-            element = self.driver.find_element_by_id(f"serial_number_input_{index}")
-            element.clear()
-            element.send_keys(serial_number)
+    def enter_serial_numbers(self, serial_numbers):
+        for i, el in enumerate(
+            self.driver.find_elements(
+                by=By.XPATH, value=f"//input[@type='text' and contains(@id, '{self.FIREARMS_SERIAL_NUMBERS}')]"
+            )
+        ):
+            el.clear()
+            el.send_keys(serial_numbers[i].strip())
 
     def set_product_document_availability(self, choice):
         choice = choice.lower()
-        self.driver.find_element_by_id(f"is_document_available-{choice}").click()
+        self.driver.find_element(by=By.ID, value=f"is_document_available-{choice}").click()
 
     def set_product_document_sensitive(self, choice):
         choice = choice.lower()
@@ -156,7 +162,7 @@ class AddGoodDetails(BasePage):
             details = fake.sentence(nb_words=5)
         else:
             details = text
-        details_element = self.driver.find_element_by_id(related_details_field_id)
+        details_element = self.driver.find_element(by=By.ID, value=related_details_field_id)
         details_element.clear()
         details_element.send_keys(details)
 
@@ -170,23 +176,26 @@ class AddGoodDetails(BasePage):
 
     def select_firearm_product_type(self, option):
         """Only applicable to firearm goods"""
-        if option == "firearm":
-            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_ID).click()
+        if option == "Firearm":
+            self.driver.find_element(by=By.CSS_SELECTOR, value="input[value='firearms']").click()
         if option == "components_for_firearm":
-            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_COMPONENT_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_COMPONENT_ID).click()
         if option == "ammunition":
-            self.driver.find_element_by_id(self.FIREARM_TYPE_AMMUNITION_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_AMMUNITION_ID).click()
         if option == "component_for_ammunition":
-            self.driver.find_element_by_id(self.FIREARM_TYPE_AMMUNITION_COMPONENT_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_AMMUNITION_COMPONENT_ID).click()
         if option == "firearm_accessory":
-            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_ACCESSORY_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_ACCESSORY_ID).click()
         if option == "software_for_firearm":
-            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_SOFTWARE_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_SOFTWARE_ID).click()
         if option == "technology_for_firearm":
-            self.driver.find_element_by_id(self.FIREARM_TYPE_FIREARM_TECHNOLOGY_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_TECHNOLOGY_ID).click()
 
     def enter_year_of_manufacture(self, year):
-        self.enter_related_field_details(self.FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID, text=year)
+        self.driver.find_element(
+            by=By.XPATH,
+            value=f"//input[contains(@id, '{self.FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID}')]",
+        ).send_keys(year)
 
     def select_replica_status(self, status, description=""):
         status = self.true_or_false(status)
@@ -197,7 +206,9 @@ class AddGoodDetails(BasePage):
             desc.send_keys(description)
 
     def enter_calibre(self, calibre):
-        self.enter_related_field_details(self.FIREARM_CALIBRE_TEXTFIELD_ID, text=calibre)
+        self.driver.find_element(
+            by=By.XPATH, value=f"//input[contains(@id, '{self.FIREARM_CALIBRE_TEXTFIELD_ID}')]"
+        ).send_keys(calibre)
 
     def select_do_firearms_act_sections_apply(self, choice):
         if choice == "Yes":

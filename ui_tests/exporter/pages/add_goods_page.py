@@ -1,7 +1,7 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from tests_common import functions
-from tests_common.tools.helpers import scroll_to_element_by_id
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -17,9 +17,9 @@ class AddGoodPage(BasePage):
 
     # Add a good
     PART_NUMBER = "part_number"  # ID
-    IS_CONTROLLED = "is_good_controlled-"  # Partial ID
-    IS_PV_GRADED = "is_pv_graded-"
-    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#pane_control_list_entries .tokenfield-input"
+    IS_CONTROLLED = "is_good_controlled"
+    IS_PV_GRADED = "is_pv_graded"
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#control_list_entries .tokenfield-input"
     DESCRIPTION = "description"  # ID
 
     # Not sure form
@@ -33,19 +33,23 @@ class AddGoodPage(BasePage):
         element.send_keys(text)
 
     def enter_good_name(self, name):
-        self.input_element_by_id("name", name)
+        self.driver.find_element(by=By.XPATH, value="//input[@type='text' and contains(@id, 'name')]").send_keys(name)
 
     def enter_description_of_goods(self, description):
         self.input_element_by_id(self.DESCRIPTION, description)
 
     def select_is_your_good_controlled(self, option):
-        # The options accepted here are 'True', 'False' and 'None'
-        scroll_to_element_by_id(self.driver, self.IS_CONTROLLED + option)
-        self.driver.find_element_by_id(self.IS_CONTROLLED + option).click()
+        # The only options accepted here are True and False
+        self._select_radio(self.IS_CONTROLLED, option)
 
     def select_is_your_good_graded(self, option):
-        # The only options accepted here are 'yes', 'no' and 'grading_required'
-        self.driver.find_element_by_id(self.IS_PV_GRADED + option.lower()).click()
+        # The only options accepted here are 'yes' and 'no'
+        self._select_radio(self.IS_PV_GRADED, option)
+
+    def _select_radio(self, identifier, option):
+        self.driver.find_element(
+            by=By.XPATH, value=f"//input[@type='radio' and contains(@id, '{identifier}') and @value='{option}']"
+        ).click()
 
     def enter_control_list_entries(self, control_list_entry: str):
         functions.send_tokens_to_token_bar(
