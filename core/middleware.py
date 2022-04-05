@@ -1,7 +1,6 @@
 import time
 import logging
 import requests
-from s3chunkuploader.file_handler import UploadFailed
 from urllib.parse import urlparse
 import jwt
 from authlib.oauth2 import OAuth2Error
@@ -16,6 +15,7 @@ from django.shortcuts import redirect
 from django.utils.cache import add_never_cache_headers
 from django.http import HttpResponseForbidden
 
+from core.file_handler import UploadFailed
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
 

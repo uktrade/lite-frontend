@@ -1,10 +1,22 @@
 import magic
-
+from boto3 import client as boto3_client
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from s3chunkuploader.file_handler import S3FileUploadHandler
+from django_chunk_upload_handlers.s3 import (
+    AWS_ACCESS_KEY_ID,
+    AWS_REGION,
+    AWS_S3_ENDPOINT_URL,
+    AWS_SECRET_ACCESS_KEY,
+    S3FileUploadHandler,
+)
 
-from storages.backends.s3boto3 import S3Boto3StorageFile
+s3_client = boto3_client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    region_name=AWS_REGION,
+    endpoint_url=AWS_S3_ENDPOINT_URL,
+)
 
 
 class SafeS3FileUploadHandler(S3FileUploadHandler):
@@ -23,7 +35,7 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
         if start == 0:
             mime = magic.from_buffer(raw_data, mime=True)
             if mime not in self.ACCEPTED_FILE_UPLOAD_MIME_TYPES:
-                self.abort(PermissionDenied("Unsupported file type"))
+                raise UploadFailed(PermissionDenied("Unsupported file type"))
         super().receive_data_chunk(raw_data, start)
 
     def file_complete(self, *args, **kwargs):
@@ -33,11 +45,11 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
         Some frameworks, e.g. formtools' SessionWizardView will fall over
         if these attributes aren't present.
         """
-        super().file_complete(*args, **kwargs)
+        file = super().file_complete(*args, **kwargs)
+        file.charset = self.charset
 
-        self.file = S3Boto3StorageFile(self.s3_key, "r", self.storage)
-        self.file.original_name = self.file_name
-        self.file.content_type = self.content_type
-        self.file.charset = self.charset
+        return file
 
-        return self.file
+
+class UploadFailed(Exception):
+    pass

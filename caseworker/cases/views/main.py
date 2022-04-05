@@ -8,10 +8,9 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import TemplateView
 
-from s3chunkuploader.file_handler import s3_client
-
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
+from core.file_handler import s3_client
 
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import DoneWithCaseOnQueueForm, Manage

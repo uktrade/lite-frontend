@@ -1,7 +1,11 @@
 {
     "_meta": {
         "hash": {
+<<<<<<< HEAD
             "sha256": "3458ceed0ad475bf2923b4524258f34dda0faedaed582c84dbbc84219cb45e06"
+=======
+            "sha256": "6edfc78ed0342c03f3eeba57e1d7ac6e1b049f1e133278c8b806b64ccd61fd46"
+>>>>>>> d7cee0a3 (Switch to using django-chunk-s3-av-upload-handlers)
         },
         "pipfile-spec": 6,
         "requires": {
@@ -59,7 +63,7 @@
                 "sha256:f04e857b59d9d1ccc39ce2da1021d196e47234873820cbeaad210724b1ee28ac",
                 "sha256:fadbfe37f74051d024037f223b8e001611eac868b5c5b06144ef4d8b799862f2"
             ],
-            "markers": "python_version < '3.9'",
+            "markers": "python_version >= '3.6' and python_version < '3.9'",
             "version": "==0.2.1"
         },
         "beautifulsoup4": {
@@ -254,6 +258,13 @@
             "markers": "python_version >= '3.6'",
             "version": "==1.0.5"
         },
+        "django-chunk-upload-handlers": {
+            "hashes": [
+                "sha256:2c7bd8ad378ac25d8755349b2d22d53c0f899188ae03ebb9afa4ea520d676c02"
+            ],
+            "index": "pypi",
+            "version": "==0.0.12"
+        },
         "django-compressor": {
             "hashes": [
                 "sha256:3358077605c146fdcca5f9eaffb50aa5dbe15f238f8854679115ebf31c0415e0",
@@ -350,11 +361,11 @@
         },
         "django-storages": {
             "hashes": [
-                "sha256:0a9b7e620e969fb0797523695329ed223bf540bbfdf6cd163b061fc11dab2d1c",
-                "sha256:9322ab74ba6371e2e0fccc350c741686ade829e43085597b26b07ae8955a0a00"
+                "sha256:c823dbf56c9e35b0999a13d7e05062b837bae36c518a40255d522fbe3750fbb4",
+                "sha256:f28765826d507a0309cfaa849bd084894bc71d81bf0d09479168d44785396f80"
             ],
             "index": "pypi",
-            "version": "==1.8"
+            "version": "==1.11.1"
         },
         "djangorestframework": {
             "hashes": [
@@ -726,14 +737,6 @@
             ],
             "version": "==1.1.0"
         },
-        "s3chunkuploader": {
-            "hashes": [
-                "sha256:0b89de42e05d4302db57335fc8a889ec12f1507591ee9e0f78893164f5399be3",
-                "sha256:6d7663790373c954675662c01003106aa0477e25c1cd7649dad85ae654d4db06"
-            ],
-            "index": "pypi",
-            "version": "==0.8"
-        },
         "s3transfer": {
             "hashes": [
                 "sha256:7a6f4c4d1fdb9a2b640244008e142cbc2cd3ae34b386584ef044dd0f27101971",
@@ -749,14 +752,6 @@
             ],
             "index": "pypi",
             "version": "==0.20.3"
-        },
-        "setuptools": {
-            "hashes": [
-                "sha256:7999cbd87f1b6e1f33bf47efa368b224bed5e27b5ef2c4d46580186cbcb1a86a",
-                "sha256:a65e3802053e99fc64c6b3b29c11132943d5b8c8facbcc461157511546510967"
-            ],
-            "markers": "python_version >= '3.7'",
-            "version": "==62.0.0"
         },
         "sigauth": {
             "hashes": [
@@ -775,11 +770,11 @@
         },
         "soupsieve": {
             "hashes": [
-                "sha256:1a3cca2617c6b38c0343ed661b1fa5de5637f257d4fe22bd9f1338010a1efefb",
-                "sha256:b8d49b1cd4f037c7082a9683dfa1801aa2597fb11c3a1155b7a5b94829b4f1f9"
+                "sha256:0bcc6d7432153063e3df09c3ac9442af3eba488715bfcad6a4c38ccb2a523124",
+                "sha256:a714129d3021ec17ce5be346b1007300558b378332c289a1a20e7d4de6ff18a5"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==2.3.1"
+            "version": "==2.3.2"
         },
         "sqlparse": {
             "hashes": [
@@ -1082,7 +1077,7 @@
                 "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330",
                 "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version >= '3.5'",
             "version": "==5.1.1"
         },
         "directory-client-core": {
@@ -1429,6 +1424,7 @@
             "hashes": [
                 "sha256:9ff82852bcb65d139813e2a5197627a94966245c897796760a3a2a8eb66f020b"
             ],
+            "markers": "python_version >= '3.0'",
             "version": "==1.19.0"
         },
         "parse-type": {
@@ -1813,7 +1809,7 @@
                 "sha256:9124b0fa5808660e2ae65a06049dfe248a7b7df73f8e9d48d0ad7f7c790690ad",
                 "sha256:d9fa8da14813500f6f94752c2bf4a6cf33d13e9f2140947f7df0149f1537437b"
             ],
-            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
+            "markers": "python_version < '4' and python_full_version >= '3.6.2'",
             "version": "==1.0.3"
         },
         "selenium": {
@@ -1831,14 +1827,6 @@
             ],
             "index": "pypi",
             "version": "==0.3.0"
-        },
-        "setuptools": {
-            "hashes": [
-                "sha256:7999cbd87f1b6e1f33bf47efa368b224bed5e27b5ef2c4d46580186cbcb1a86a",
-                "sha256:a65e3802053e99fc64c6b3b29c11132943d5b8c8facbcc461157511546510967"
-            ],
-            "markers": "python_version >= '3.7'",
-            "version": "==62.0.0"
         },
         "sigauth": {
             "hashes": [
@@ -1898,7 +1886,7 @@
                 "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b",
                 "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.10.2"
         },
         "tomli": {
@@ -1950,7 +1938,7 @@
                 "sha256:f8afcf15cc511ada719a88e013cec87c11aff7b91f019295eb4530f96fe5ef2f",
                 "sha256:fb1bbeac803adea29cedd70781399c99138358c26d05fcbd23c13016b7f5ec65"
             ],
-            "markers": "python_version < '3.8' and implementation_name == 'cpython'",
+            "markers": "python_version < '3.8' and implementation_name == 'cpython' and implementation_name == 'cpython'",
             "version": "==1.4.3"
         },
         "typing-extensions": {
