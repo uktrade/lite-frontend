@@ -8,7 +8,8 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from core.forms.layouts import ConditionalQuestion, ConditionalRadios
+from core.forms.layouts import ConditionalCheckbox, ConditionalQuestion, ConditionalRadios
+from exporter.core.constants import FirearmsActSections
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import FutureDateValidator, PastDateValidator, RelativeDeltaDateValidator
 
@@ -371,7 +372,7 @@ class FirearmRFDValidityForm(BaseFirearmForm):
     class Layout:
         TITLE = "Is your registered firearms dealer certificate still valid?"
 
-    is_rfd_valid = forms.TypedChoiceField(
+    is_rfd_certificate_valid = forms.TypedChoiceField(
         choices=(
             (True, "Yes"),
             (False, "No"),
@@ -406,7 +407,7 @@ class FirearmRFDValidityForm(BaseFirearmForm):
                     },
                 ),
             ),
-            "is_rfd_valid",
+            "is_rfd_certificate_valid",
         )
 
 
@@ -581,3 +582,220 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
             "product_document",
             "description",
         )
+
+
+class FirearmFirearmAct1968Form(BaseFirearmForm):
+    class Layout:
+        TITLE = "Which section of the Firearms Act 1968 is the product covered by?"
+
+    class SectionChoices(models.TextChoices):
+        SECTION_1 = FirearmsActSections.SECTION_1, "Section 1"
+        SECTION_2 = FirearmsActSections.SECTION_2, "Section 2"
+        SECTION_5 = FirearmsActSections.SECTION_5, "Section 5"
+        NO = "no", "No"
+        DONT_KNOW = "dont_know", "Don't know"
+
+    firearms_act_section = forms.ChoiceField(
+        choices=SectionChoices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select which section of the Firearms Act 1968 the is product covered by",
+        },
+    )
+
+    not_covered_explanation = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Explain",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "firearms_act_section",
+                self.SectionChoices.SECTION_1.label,
+                self.SectionChoices.SECTION_2.label,
+                self.SectionChoices.SECTION_5.label,
+                self.SectionChoices.NO.label,
+                ConditionalQuestion(
+                    self.SectionChoices.DONT_KNOW.label,
+                    "not_covered_explanation",
+                ),
+            ),
+            HTML.details(
+                "More information about the Firearms Act 1968",
+                render_to_string("goods/forms/firearms/firearms_act_1968_information.html"),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        firearms_act_section = cleaned_data.get("firearms_act_section")
+        not_covered_explanation = cleaned_data.get("not_covered_explanation")
+        if firearms_act_section == self.SectionChoices.DONT_KNOW and not not_covered_explanation:
+            self.add_error("not_covered_explanation", "Explain why you don't know")
+
+        return cleaned_data
+
+
+class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
+    file_type = None
+
+    class Layout:
+        pass
+
+    file = forms.FileField(
+        label="",
+        required=False,
+    )
+
+    section_certificate_number = forms.CharField(
+        label="Certificate number",
+        required=False,
+    )
+
+    section_certificate_date_of_expiry = CustomErrorDateInputField(
+        label="Expiry date",
+        require_all_fields=False,
+        help_text="For example, 30 9 2024",
+        required=False,
+        error_messages={
+            "day": {
+                "incomplete": "Expiry date must include a day",
+                "invalid": "Expiry date must be a real date",
+            },
+            "month": {
+                "incomplete": "Expiry date must include a month",
+                "invalid": "Expiry date must be a real date",
+            },
+            "year": {
+                "incomplete": "Expiry date must include a year",
+                "invalid": "Expiry date must be a real date",
+            },
+        },
+        validators=[
+            FutureDateValidator("Expiry date must be in the future"),
+            RelativeDeltaDateValidator("Expiry date must be with 5 years", years=5),
+        ],
+    )
+
+    section_certificate_missing = forms.BooleanField(
+        required=False,
+    )
+
+    section_certificate_missing_reason = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": "5"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.Layout.TITLE = f"Upload your {self.file_type}"
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["section_certificate_missing"].label = f"I do not have a {self.file_type}"
+        self.fields["section_certificate_missing_reason"].label = f"Explain why you do not have a {self.file_type}"
+
+    def get_layout_fields(self):
+        return (
+            "file",
+            "section_certificate_number",
+            "section_certificate_date_of_expiry",
+            HTML.p("Or"),
+            ConditionalCheckbox(
+                "section_certificate_missing",
+                "section_certificate_missing_reason",
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        section_certificate_missing = cleaned_data.get("section_certificate_missing")
+        if not section_certificate_missing:
+            file = cleaned_data.get("file")
+            if not file:
+                self.add_error("file", f"Select a {self.file_type}")
+
+            section_certificate_number = cleaned_data.get("section_certificate_number")
+            if not section_certificate_number:
+                self.add_error("section_certificate_number", "Enter the certificate number")
+
+            try:
+                section_certificate_date_of_expiry = cleaned_data["section_certificate_date_of_expiry"]
+            except KeyError:
+                pass  # Some other validation has picked this up and this is why it's not in cleaned_data
+            else:
+                if not section_certificate_date_of_expiry:
+                    self.add_error("section_certificate_date_of_expiry", "Enter the expiry date")
+        else:
+            section_certificate_missing_reason = cleaned_data.get("section_certificate_missing_reason")
+            if not section_certificate_missing_reason:
+                self.add_error(
+                    "section_certificate_missing_reason",
+                    f"Enter a reason why you do not have a {self.file_type}",
+                )
+
+        return cleaned_data
+
+
+class FirearmAttachFirearmCertificateForm(BaseAttachFirearmActCertificateForm):
+    file_type = "firearm certificate"
+
+
+class FirearmAttachShotgunCertificateForm(BaseAttachFirearmActCertificateForm):
+    file_type = "shotgun certificate"
+
+
+class FirearmAttachSection5LetterOfAuthorityForm(BaseAttachFirearmActCertificateForm):
+    file_type = "section 5 letter of authority"
+
+
+class FirearmSection5Form(BaseFirearmForm):
+    class Layout:
+        TITLE = "Is the product covered by section 5 of the Firearms Act 1968?"
+
+    class Section5Choices(models.TextChoices):
+        YES = "yes", "Yes"
+        NO = "no", "No"
+        DONT_KNOW = "dont_know", "Don't know"
+
+    is_covered_by_section_5 = forms.ChoiceField(
+        choices=Section5Choices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select whether the product is covered by section 5 of the Firearms Act 1968",
+        },
+    )
+
+    not_covered_explanation = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Explain",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_covered_by_section_5",
+                self.Section5Choices.YES.label,
+                self.Section5Choices.NO.label,
+                ConditionalQuestion(
+                    self.Section5Choices.DONT_KNOW.label,
+                    "not_covered_explanation",
+                ),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_covered_by_section_5 = cleaned_data.get("is_covered_by_section_5")
+        not_covered_explanation = cleaned_data.get("not_covered_explanation")
+        if is_covered_by_section_5 == self.Section5Choices.DONT_KNOW and not not_covered_explanation:
+            self.add_error("not_covered_explanation", "Explain why you don't know")
+
+        return cleaned_data

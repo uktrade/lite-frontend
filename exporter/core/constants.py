@@ -238,3 +238,15 @@ class PartyDocumentType:
     END_USER_ENGLISH_TRANSLATION_DOCUMENT = "end_user_english_translation_document"
     END_USER_COMPANY_LETTERHEAD_DOCUMENT = "end_user_company_letterhead_document"
     END_USER_EC3_DOCUMENT = "end_user_ec3_document"
+
+
+class FirearmsActDocumentType:
+    SECTION_1 = "section-one-certificate"
+    SECTION_2 = "section-two-certificate"
+    SECTION_5 = "section-five-certificate"
+
+
+class FirearmsActSections:
+    SECTION_1 = "firearms_act_section1"
+    SECTION_2 = "firearms_act_section2"
+    SECTION_5 = "firearms_act_section5"

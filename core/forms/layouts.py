@@ -79,3 +79,43 @@ class ConditionalRadios(TemplateNameMixin):
         )
 
         return render_to_string(template, context.flatten())
+
+
+class ConditionalCheckbox(TemplateNameMixin):
+    template = "%s/layout/conditional_checkbox.html"
+
+    def __init__(self, field, *fields):
+        if not isinstance(field, str):
+            raise TypeError(f"{self.__class__.__name__} only accepts field as a string parameter")
+
+        self.field = field
+        self.fields = list(fields)
+
+    def render_fields(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        return "".join(
+            [
+                render_field(field, form, form_style, context, template_pack=template_pack, **kwargs)
+                for field in self.fields
+            ]
+        )
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        template = self.get_template_name(template_pack)
+
+        bound_field = form[self.field]
+        conditional_control = f"conditional-{bound_field.html_name}"
+        bound_field.field.widget.attrs = {"data-aria-controls": conditional_control}
+
+        conditional_content = ""
+        for field in self.fields:
+            conditional_content += render_field(field, form, form_style, context, template_pack=template_pack, **kwargs)
+
+        context.update(
+            {
+                "field": bound_field,
+                "conditional_control": conditional_control,
+                "conditional_content": conditional_content,
+            }
+        )
+
+        return render_to_string(template, context.flatten())
