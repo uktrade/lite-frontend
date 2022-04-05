@@ -363,6 +363,30 @@ def test_add_good_firearm_not_registered_firearm_dealer(
     assert isinstance(response.context["form"], FirearmFirearmAct1968Form)
 
 
+def test_add_good_firearm_does_not_display_section_5_if_already_answered(
+    application_with_rfd_document,
+    goto_step,
+    post_to_step,
+):
+    goto_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID)
+    post_to_step(
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
+        {"is_rfd_certificate_valid": False},
+    )
+    goto_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER)
+    post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": False},
+    )
+    goto_step(AddGoodFirearmSteps.FIREARM_ACT_1968)
+    response = post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        {"firearms_act_section": "firearms_act_section1"},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmAttachFirearmCertificateForm)
+
+
 @pytest.mark.parametrize(
     "form_data, expected_next_form",
     (
