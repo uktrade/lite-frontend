@@ -16,6 +16,7 @@ urlpatterns = [
     ),
     path("<uuid:pk>/edit-grading/", views.EditGrading.as_view(), name="edit_grading"),
     path("<uuid:pk>/edit-firearm-details/type/", views.EditFirearmProductTypeView.as_view(), name="firearm_type"),
+    path("<uuid:pk>/edit-firearm-details/name/", views.EditNameView.as_view(), name="firearm_name"),
     path(
         "<uuid:pk>/edit-firearm-details/year-of-manufacture/",
         views.EditYearOfManufactureView.as_view(),

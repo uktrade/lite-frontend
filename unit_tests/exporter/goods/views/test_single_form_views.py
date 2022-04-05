@@ -13,6 +13,26 @@ def good_pk():
     return str(uuid.uuid4())
 
 
+def test_edit_name_view(authorized_client, requests_mock, good_pk):
+    url = reverse("goods:firearm_name", kwargs={"pk": good_pk})
+    requests_mock.get(
+        f"/goods/{good_pk}/?pk={good_pk}",
+        json={"good": {"name": ""}},
+    )
+    requests_mock.put(f"/goods/{good_pk}/", json={})
+
+    response = authorized_client.post(
+        url,
+        data={
+            "name": "Double barrel gun",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
+    assert requests_mock.last_request.json()["name"] == "Double barrel gun"
+
+
 def test_edit_number_of_items_view(authorized_client, requests_mock, good_pk):
     pk = str(uuid.uuid4())
     url = reverse("applications:number_of_items", kwargs={"pk": pk, "good_pk": good_pk})

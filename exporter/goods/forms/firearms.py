@@ -113,6 +113,7 @@ class FirearmNameForm(BaseFirearmForm):
     class Layout:
         TITLE = "Give the product a descriptive name"
 
+    title = Layout.TITLE
     name = forms.CharField(
         label="",
         error_messages={

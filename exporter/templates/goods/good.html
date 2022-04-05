@@ -149,7 +149,7 @@
 						{% if draft_pk %}
 						<a id="link-edit-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit-add-application' good.id draft_pk %}#name">Change</a>
 						{% else %}
-						<a id="link-edit-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:edit' good.id %}#name">Change</a>
+						<a id="link-edit-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'goods:firearm_name' good.id %}">Change</a>
 						{% endif %}
 					{% endif %}
 				</dd>

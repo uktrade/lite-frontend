@@ -68,6 +68,7 @@ from exporter.goods.forms import (
     raise_a_goods_query,
     upload_firearms_act_certificate_form,
 )
+from exporter.goods.forms.firearms import FirearmNameForm
 from exporter.goods.helpers import (
     COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP,
     is_firearms_act_status_changed,
@@ -540,6 +541,31 @@ class EditGood(LoginRequiredMixin, SingleFormView):
             )
         else:
             return reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
+
+
+class EditNameView(LoginRequiredMixin, GoodCommonMixin, FormView):
+    form_class = FirearmNameForm
+
+    def get_initial(self):
+        data = get_good(self.request, self.object_id)[0]
+        return {
+            "name": data["name"],
+        }
+
+    def form_valid(self, form):
+        edit_good(self.request, self.object_id, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if self.draft_id:
+            return reverse(
+                "goods:good_detail_application",
+                kwargs={"pk": self.object_id, "type": "application", "draft_pk": self.object_id},
+            )
+        elif self.application_id and self.object_id:
+            return return_to_good_summary(self.kwargs, self.application_id, self.object_id)
+        elif self.object_id:
+            return reverse("goods:good", kwargs={"pk": self.object_id})
 
 
 class EditGrading(LoginRequiredMixin, SingleFormView):
