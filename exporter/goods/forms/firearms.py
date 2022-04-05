@@ -640,114 +640,117 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
         return cleaned_data
 
 
-def get_base_firearm_act_attach_file_form(file_type):
-    class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
-        class Layout:
-            TITLE = f"Upload your {file_type}"
+class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
+    file_type = None
 
-        file = forms.FileField(
-            label="",
-            required=False,
-        )
+    class Layout:
+        pass
 
-        section_certificate_number = forms.CharField(
-            label="Certificate number",
-            required=False,
-        )
+    file = forms.FileField(
+        label="",
+        required=False,
+    )
 
-        section_certificate_date_of_expiry = CustomErrorDateInputField(
-            label="Expiry date",
-            require_all_fields=False,
-            help_text="For example, 30 9 2024",
-            required=False,
-            error_messages={
-                "day": {
-                    "incomplete": "Expiry date must include a day",
-                    "invalid": "Expiry date must be a real date",
-                },
-                "month": {
-                    "incomplete": "Expiry date must include a month",
-                    "invalid": "Expiry date must be a real date",
-                },
-                "year": {
-                    "incomplete": "Expiry date must include a year",
-                    "invalid": "Expiry date must be a real date",
-                },
+    section_certificate_number = forms.CharField(
+        label="Certificate number",
+        required=False,
+    )
+
+    section_certificate_date_of_expiry = CustomErrorDateInputField(
+        label="Expiry date",
+        require_all_fields=False,
+        help_text="For example, 30 9 2024",
+        required=False,
+        error_messages={
+            "day": {
+                "incomplete": "Expiry date must include a day",
+                "invalid": "Expiry date must be a real date",
             },
-            validators=[
-                FutureDateValidator("Expiry date must be in the future"),
-                RelativeDeltaDateValidator("Expiry date must be with 5 years", years=5),
-            ],
+            "month": {
+                "incomplete": "Expiry date must include a month",
+                "invalid": "Expiry date must be a real date",
+            },
+            "year": {
+                "incomplete": "Expiry date must include a year",
+                "invalid": "Expiry date must be a real date",
+            },
+        },
+        validators=[
+            FutureDateValidator("Expiry date must be in the future"),
+            RelativeDeltaDateValidator("Expiry date must be with 5 years", years=5),
+        ],
+    )
+
+    section_certificate_missing = forms.BooleanField(
+        required=False,
+    )
+
+    section_certificate_missing_reason = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": "5"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.Layout.TITLE = f"Upload your {self.file_type}"
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["section_certificate_missing"].label = f"I do not have a {self.file_type}"
+        self.fields["section_certificate_missing_reason"].label = f"Explain why you do not have a {self.file_type}"
+
+    def get_layout_fields(self):
+        return (
+            "file",
+            "section_certificate_number",
+            "section_certificate_date_of_expiry",
+            HTML.p("Or"),
+            ConditionalCheckbox(
+                "section_certificate_missing",
+                "section_certificate_missing_reason",
+            ),
         )
 
-        section_certificate_missing = forms.BooleanField(
-            label=f"I do not have a {file_type}",
-            required=False,
-        )
+    def clean(self):
+        cleaned_data = super().clean()
 
-        section_certificate_missing_reason = forms.CharField(
-            label=f"Explain why you do not have a {file_type}",
-            required=False,
-            widget=forms.Textarea(attrs={"rows": "5"}),
-        )
+        section_certificate_missing = cleaned_data.get("section_certificate_missing")
+        if not section_certificate_missing:
+            file = cleaned_data.get("file")
+            if not file:
+                self.add_error("file", f"Select a {self.file_type}")
 
-        def get_layout_fields(self):
-            return (
-                "file",
-                "section_certificate_number",
-                "section_certificate_date_of_expiry",
-                HTML.p("Or"),
-                ConditionalCheckbox(
-                    "section_certificate_missing",
-                    "section_certificate_missing_reason",
-                ),
-            )
+            section_certificate_number = cleaned_data.get("section_certificate_number")
+            if not section_certificate_number:
+                self.add_error("section_certificate_number", "Enter the certificate number")
 
-        def clean(self):
-            cleaned_data = super().clean()
-
-            section_certificate_missing = cleaned_data.get("section_certificate_missing")
-            if not section_certificate_missing:
-                file = cleaned_data.get("file")
-                if not file:
-                    self.add_error("file", f"Select a {file_type}")
-
-                section_certificate_number = cleaned_data.get("section_certificate_number")
-                if not section_certificate_number:
-                    self.add_error("section_certificate_number", "Enter the certificate number")
-
-                try:
-                    section_certificate_date_of_expiry = cleaned_data["section_certificate_date_of_expiry"]
-                except KeyError:
-                    pass  # Some other validation has picked this up and this is why it's not in cleaned_data
-                else:
-                    if not section_certificate_date_of_expiry:
-                        self.add_error("section_certificate_date_of_expiry", "Enter the expiry date")
+            try:
+                section_certificate_date_of_expiry = cleaned_data["section_certificate_date_of_expiry"]
+            except KeyError:
+                pass  # Some other validation has picked this up and this is why it's not in cleaned_data
             else:
-                section_certificate_missing_reason = cleaned_data.get("section_certificate_missing_reason")
-                if not section_certificate_missing_reason:
-                    self.add_error(
-                        "section_certificate_missing_reason",
-                        f"Enter a reason why you do not have a {file_type}",
-                    )
+                if not section_certificate_date_of_expiry:
+                    self.add_error("section_certificate_date_of_expiry", "Enter the expiry date")
+        else:
+            section_certificate_missing_reason = cleaned_data.get("section_certificate_missing_reason")
+            if not section_certificate_missing_reason:
+                self.add_error(
+                    "section_certificate_missing_reason",
+                    f"Enter a reason why you do not have a {self.file_type}",
+                )
 
-            return cleaned_data
-
-    return BaseAttachFirearmActCertificateForm
-
-
-class FirearmAttachFirearmCertificateForm(get_base_firearm_act_attach_file_form("firearm certificate")):
-    pass
+        return cleaned_data
 
 
-class FirearmAttachShotgunCertificateForm(get_base_firearm_act_attach_file_form("shotgun certificate")):
-    pass
+class FirearmAttachFirearmCertificateForm(BaseAttachFirearmActCertificateForm):
+    file_type = "firearm certificate"
 
 
-class FirearmAttachSection5LetterOfAuthorityForm(
-    get_base_firearm_act_attach_file_form("section 5 letter of authority")
-):
-    pass
+class FirearmAttachShotgunCertificateForm(BaseAttachFirearmActCertificateForm):
+    file_type = "shotgun certificate"
+
+
+class FirearmAttachSection5LetterOfAuthorityForm(BaseAttachFirearmActCertificateForm):
+    file_type = "section 5 letter of authority"
 
 
 class FirearmSection5Form(BaseFirearmForm):
