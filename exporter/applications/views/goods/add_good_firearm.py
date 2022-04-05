@@ -131,6 +131,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodFirearmSteps.IS_REPLICA: is_pv_graded,
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: (
             C(has_rfd_certificate) & C(has_user_marked_rfd_certificate_invalid)
