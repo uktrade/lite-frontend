@@ -27,7 +27,7 @@ from exporter.applications.services import (
     post_case_notes,
 )
 from exporter.applications.views.goods import is_firearm_certificate_needed
-from exporter.core.constants import AddGoodFormSteps, FirearmActDocumentType
+from exporter.core.constants import AddGoodFormSteps, FirearmsActDocumentType, FirearmsActSections
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
     is_category_firearms,
@@ -783,11 +783,11 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
         self.data = get_good_details(request, self.object_pk)[0]["firearm_details"]
 
         self.selected_section = "section"
-        if self.data["firearms_act_section"] == "firearms_act_section1":
+        if self.data["firearms_act_section"] == FirearmsActSections.SECTION_1:
             self.selected_section = "Section 1"
-        elif self.data["firearms_act_section"] == "firearms_act_section2":
+        elif self.data["firearms_act_section"] == FirearmsActSections.SECTION_2:
             self.selected_section = "Section 2"
-        elif self.data["firearms_act_section"] == "firearms_act_section5":
+        elif self.data["firearms_act_section"] == FirearmsActSections.SECTION_5:
             self.selected_section = "Section 5"
 
         self.certificate_filename = ""
@@ -856,9 +856,9 @@ class EditFirearmActCertificateDetails(LoginRequiredMixin, SingleFormView):
             fetch_and_delete_previous_application_documents(request, kwargs["pk"], kwargs["good_pk"])
 
             document_types = {
-                "Section 1": FirearmActDocumentType.SECTION_1,
-                "Section 2": FirearmActDocumentType.SECTION_2,
-                "Section 5": FirearmActDocumentType.SECTION_5,
+                "Section 1": FirearmsActDocumentType.SECTION_1,
+                "Section 2": FirearmsActDocumentType.SECTION_2,
+                "Section 5": FirearmsActDocumentType.SECTION_5,
             }
 
             doc_data["document_on_organisation"] = {

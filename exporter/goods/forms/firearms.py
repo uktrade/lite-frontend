@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from core.forms.layouts import ConditionalCheckbox, ConditionalQuestion, ConditionalRadios
+from exporter.core.constants import FirearmsActSections
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import FutureDateValidator, PastDateValidator, RelativeDeltaDateValidator
 
@@ -588,9 +589,9 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
         TITLE = "Which section of the Firearms Act 1968 is the product covered by?"
 
     class SectionChoices(models.TextChoices):
-        SECTION_1 = "firearms_act_section1", "Section 1"
-        SECTION_2 = "firearms_act_section2", "Section 2"
-        SECTION_5 = "firearms_act_section5", "Section 5"
+        SECTION_1 = FirearmsActSections.SECTION_1, "Section 1"
+        SECTION_2 = FirearmsActSections.SECTION_2, "Section 2"
+        SECTION_5 = FirearmsActSections.SECTION_5, "Section 5"
         NO = "no", "No"
         DONT_KNOW = "dont_know", "Don't know"
 
@@ -747,3 +748,51 @@ class FirearmAttachSection5LetterOfAuthorityForm(
     get_base_firearm_act_attach_file_form("section 5 letter of authority")
 ):
     pass
+
+
+class FirearmSection5Form(BaseFirearmForm):
+    class Layout:
+        TITLE = "Is the product covered by section 5 of the Firearms Act 1968?"
+
+    class Section5Choices(models.TextChoices):
+        YES = "yes", "Yes"
+        NO = "no", "No"
+        DONT_KNOW = "dont_know", "Don't know"
+
+    is_covered_by_section_5 = forms.ChoiceField(
+        choices=Section5Choices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select whether the product is covered by section 5 of the Firearms Act 1968",
+        },
+    )
+
+    not_covered_explanation = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Explain",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_covered_by_section_5",
+                self.Section5Choices.YES.label,
+                self.Section5Choices.NO.label,
+                ConditionalQuestion(
+                    self.Section5Choices.DONT_KNOW.label,
+                    "not_covered_explanation",
+                ),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_covered_by_section_5 = cleaned_data.get("is_covered_by_section_5")
+        not_covered_explanation = cleaned_data.get("not_covered_explanation")
+        if is_covered_by_section_5 == self.Section5Choices.DONT_KNOW and not not_covered_explanation:
+            self.add_error("not_covered_explanation", "Explain why you don't know")
+
+        return cleaned_data

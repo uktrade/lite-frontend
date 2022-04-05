@@ -105,12 +105,12 @@ class SectionDocumentMixin:
             good_firearms_details_act_section = good_firearms_details.get("firearms_act_section")
 
         firearm_section = self.request.POST.get("firearms_act_section") or good_firearms_details_act_section
-        if firearm_section == "firearms_act_section1":
-            return documents[constants.FirearmActDocumentType.SECTION_1]
-        elif firearm_section == "firearms_act_section2":
-            return documents[constants.FirearmActDocumentType.SECTION_2]
-        elif firearm_section == "firearms_act_section5":
-            return documents[constants.FirearmActDocumentType.SECTION_5]
+        if firearm_section == constants.FirearmsActSections.SECTION_1:
+            return documents[constants.FirearmsActDocumentType.SECTION_1]
+        elif firearm_section == constants.FirearmsActSections.SECTION_2:
+            return documents[constants.FirearmsActDocumentType.SECTION_2]
+        elif firearm_section == constants.FirearmsActSections.SECTION_5:
+            return documents[constants.FirearmsActDocumentType.SECTION_5]
 
 
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
@@ -421,11 +421,11 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
         self.certificate_filename = ""
         post_data = request.session[self.firearms_data_id]
 
-        if post_data["firearms_act_section"] == "firearms_act_section1":
+        if post_data["firearms_act_section"] == constants.FirearmsActSections.SECTION_1:
             self.selected_section = "Section 1"
-        elif post_data["firearms_act_section"] == "firearms_act_section2":
+        elif post_data["firearms_act_section"] == constants.FirearmsActSections.SECTION_2:
             self.selected_section = "Section 2"
-        elif post_data["firearms_act_section"] == "firearms_act_section5":
+        elif post_data["firearms_act_section"] == constants.FirearmsActSections.SECTION_5:
             self.selected_section = "Section 5"
 
         return super().dispatch(request, **kwargs)
@@ -512,9 +512,9 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
 
         if certificate_available and new_file_selected:
             document_types = {
-                "Section 1": constants.FirearmActDocumentType.SECTION_1,
-                "Section 2": constants.FirearmActDocumentType.SECTION_2,
-                "Section 5": constants.FirearmActDocumentType.SECTION_5,
+                "Section 1": constants.FirearmsActDocumentType.SECTION_1,
+                "Section 2": constants.FirearmsActDocumentType.SECTION_2,
+                "Section 5": constants.FirearmsActDocumentType.SECTION_5,
             }
             doc_data["document_on_organisation"] = {
                 "expiry_date": format_date(request.POST, "section_certificate_date_of_expiry"),
@@ -834,12 +834,12 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
             good_firearms_details_act_section = good_firearms_details.get("firearms_act_section")
 
         firearm_section = all_data.get("firearms_act_section") or good_firearms_details_act_section
-        if firearm_section == "firearms_act_section1":
-            return documents[constants.FirearmActDocumentType.SECTION_1]
-        elif firearm_section == "firearms_act_section2":
-            return documents[constants.FirearmActDocumentType.SECTION_2]
-        elif firearm_section == "firearms_act_section5":
-            return documents[constants.FirearmActDocumentType.SECTION_5]
+        if firearm_section == constants.FirearmsActSections.SECTION_1:
+            return documents[constants.FirearmsActDocumentType.SECTION_1]
+        elif firearm_section == constants.FirearmsActSections.SECTION_2:
+            return documents[constants.FirearmsActDocumentType.SECTION_2]
+        elif firearm_section == constants.FirearmsActSections.SECTION_5:
+            return documents[constants.FirearmsActDocumentType.SECTION_5]
 
     def done(self, form_list, **kwargs):
         all_data = self.get_good_on_application_data(form_list)
@@ -996,7 +996,7 @@ class AddGoodsSummary(LoginRequiredMixin, SectionDocumentMixin, TemplateView):
 
 
 def is_firearm_certificate_needed(application, selected_section):
-    firearm_sections = ["firearms_act_section1", "firearms_act_section2"]
+    firearm_sections = [constants.FirearmsActSections.SECTION_1, constants.FirearmsActSections.SECTION_2]
     if not has_valid_section_five_certificate(application):
         firearm_sections.append("firearms_act_section5")
     return selected_section in firearm_sections

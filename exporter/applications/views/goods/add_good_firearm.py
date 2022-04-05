@@ -11,7 +11,10 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application, post_additional_document, post_application_document
-from exporter.core.constants import FirearmActDocumentType
+from exporter.core.constants import (
+    FirearmsActSections,
+    FirearmsActDocumentType,
+)
 from exporter.core.helpers import (
     get_document_data,
     get_rfd_certificate,
@@ -38,6 +41,7 @@ from exporter.goods.forms.firearms import (
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
+    FirearmSection5Form,
 )
 from exporter.goods.services import post_firearm, post_good_documents
 from lite_forms.generators import error_page
@@ -64,6 +68,7 @@ class AddGoodFirearmSteps:
     ATTACH_FIREARM_CERTIFICATE = "ATTACH_FIREARM_CERTIFICATE"
     ATTACH_SHOTGUN_CERTIFICATE = "ATTACH_SHOTGUN_CERTIFICATE"
     ATTACH_SECTION_5_LETTER_OF_AUTHORITY = "ATTACH_SECTION_5_LETTER_OF_AUTHORITY"
+    IS_COVERED_BY_SECTION_5 = "IS_COVERED_BY_SECTION_5"
 
 
 def is_product_document_available(wizard):
@@ -116,7 +121,20 @@ def should_display_is_registered_firearms_dealer_step(wizard):
 def is_product_covered_by_firearm_act_section(section):
     def _is_product_covered_by_section(wizard):
         firearm_act_1968_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFirearmSteps.FIREARM_ACT_1968)
-        return firearm_act_1968_cleaned_data.get("firearms_act_section") == section
+        firearms_act_section = firearm_act_1968_cleaned_data.get("firearms_act_section")
+        if firearms_act_section == section:
+            return True
+
+        is_covered_by_section_5_cleaned_data = wizard.get_cleaned_data_for_step(
+            AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5
+        )
+        if is_covered_by_section_5_cleaned_data and section == FirearmsActSections.SECTION_5:
+            return (
+                is_covered_by_section_5_cleaned_data.get("is_covered_by_section_5")
+                == FirearmSection5Form.Section5Choices.YES
+            )
+
+        return False
 
     return _is_product_covered_by_section
 
@@ -155,6 +173,27 @@ def get_firearm_act_1968_payload(form):
     return {
         "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
         "firearms_act_section": firearms_act_section,
+    }
+
+
+def get_firearm_section_5_payload(form):
+    is_covered_by_section_5 = form.cleaned_data["is_covered_by_section_5"]
+
+    if is_covered_by_section_5 == FirearmSection5Form.Section5Choices.NO:
+        return {
+            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+        }
+
+    if is_covered_by_section_5 == FirearmSection5Form.Section5Choices.DONT_KNOW:
+        not_covered_explanation = form.cleaned_data["not_covered_explanation"]
+        return {
+            "is_covered_by_firearm_act_section_one_two_or_five": "Unsure",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": not_covered_explanation,
+        }
+
+    return {
+        "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+        "firearms_act_section": "firearms_act_section5",
     }
 
 
@@ -197,10 +236,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
+        (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
+        (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
         (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
         (AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
-        (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
@@ -209,20 +249,21 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: C(has_rfd_certificate) | C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmFirearmAct1968Form.SectionChoices.SECTION_1)
+            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_1)
         )
-        & ~C(has_firearm_act_document(FirearmActDocumentType.SECTION_1)),
+        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_1)),
         AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmFirearmAct1968Form.SectionChoices.SECTION_2)
+            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_2)
         )
-        & ~C(has_firearm_act_document(FirearmActDocumentType.SECTION_2)),
+        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_2)),
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
-            is_product_covered_by_firearm_act_section(FirearmFirearmAct1968Form.SectionChoices.SECTION_5)
+            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
         )
-        & ~C(has_firearm_act_document(FirearmActDocumentType.SECTION_5)),
+        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_5)),
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: is_registered_firearms_dealer,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
@@ -242,6 +283,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: get_cleaned_data,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_cleaned_data,
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
         AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
@@ -441,7 +483,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE):
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
-                    FirearmActDocumentType.SECTION_1,
+                    FirearmsActDocumentType.SECTION_1,
                     application_pk,
                     good_pk,
                 )
@@ -449,7 +491,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE):
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
-                    FirearmActDocumentType.SECTION_2,
+                    FirearmsActDocumentType.SECTION_2,
                     application_pk,
                     good_pk,
                 )
@@ -457,7 +499,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY):
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
-                    FirearmActDocumentType.SECTION_5,
+                    FirearmsActDocumentType.SECTION_5,
                     application_pk,
                     good_pk,
                 )

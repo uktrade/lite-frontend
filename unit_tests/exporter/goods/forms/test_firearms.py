@@ -25,6 +25,7 @@ from exporter.goods.forms.firearms import (
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
+    FirearmSection5Form,
 )
 
 
@@ -674,5 +675,56 @@ def test_firearm_attach_shotgun_certificate_form(data, files, is_valid, errors):
 )
 def test_firearm_attach_section_5_letter_of_authority_form(data, files, is_valid, errors):
     form = FirearmAttachSection5LetterOfAuthorityForm(data=data, files=files)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "is_covered_by_section_5": [
+                    "Select whether the product is covered by section 5 of the Firearms Act 1968"
+                ]
+            },
+        ),
+        (
+            {
+                "is_covered_by_section_5": "dont_know",
+            },
+            False,
+            {
+                "not_covered_explanation": ["Explain why you don't know"],
+            },
+        ),
+        (
+            {
+                "is_covered_by_section_5": "dont_know",
+                "not_covered_explanation": "Explanation",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "is_covered_by_section_5": "yes",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "is_covered_by_section_5": "no",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_section_5_form(data, is_valid, errors):
+    form = FirearmSection5Form(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
