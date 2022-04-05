@@ -279,7 +279,7 @@ def get_additional_document(request, pk, doc_pk):
     return data.json(), data.status_code
 
 
-def delete_additional_party_document(request, pk, doc_pk):
+def delete_additional_document(request, pk, doc_pk):
     data = client.delete(request, f"/applications/{pk}/documents/{doc_pk}/")
     return data.status_code
 

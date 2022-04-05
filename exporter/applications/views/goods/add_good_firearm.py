@@ -12,7 +12,12 @@ from django.views.generic import TemplateView, FormView
 
 from core.auth.views import LoginRequiredMixin
 
-from exporter.applications.services import get_application, post_additional_document, post_application_document
+from exporter.applications.services import (
+    delete_additional_document,
+    get_application,
+    post_additional_document,
+    post_application_document,
+)
 from exporter.core.constants import (
     FirearmsActSections,
     FirearmsActDocumentType,
@@ -467,6 +472,34 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 "Unexpected error adding firearm certificate",
             )
 
+    def should_delete_current_rfd_certificate(self):
+        if not has_valid_rfd_certificate(self.application):
+            return False
+
+        is_rfd_certificate_valid_data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID)
+        if not is_rfd_certificate_valid_data:
+            return False
+
+        if is_rfd_certificate_valid_data.get("is_rfd_certificate_valid"):
+            return False
+
+        return True
+
+    def delete_current_rfd_certificate(self):
+        document = get_rfd_certificate(self.application)
+        status_code = delete_additional_document(
+            request=self.request,
+            pk=self.application["id"],
+            doc_pk=document["document"]["id"],
+        )
+        if status_code != HTTPStatus.NO_CONTENT:
+            raise ServiceError(
+                status_code,
+                {},
+                "Error deleting firearm certificate when creating firearm - response was: %s - %s",
+                "Unexpected error removing invalid firearm certificate",
+            )
+
     def handle_service_error(self, service_error):
         logger.error(
             service_error.log_message,
@@ -479,6 +512,9 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     def done(self, form_list, form_dict, **kwargs):
         try:
             application_pk, good_pk = self.post_firearm(form_dict)
+
+            if self.should_delete_current_rfd_certificate():
+                self.delete_current_rfd_certificate()
 
             if self.has_rfd_certificate_data():
                 self.post_rfd_certificate(application_pk)

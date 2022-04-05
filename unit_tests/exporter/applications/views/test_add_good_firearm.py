@@ -78,6 +78,7 @@ def rfd_certificate():
     return {
         "id": str(uuid.uuid4()),
         "document": {
+            "id": str(uuid.uuid4()),
             "name": "testdocument.txt",
         },
         "document_type": "rfd-certificate",
@@ -612,6 +613,137 @@ def test_add_good_firearm_with_rfd_document_submission(
     assert post_good_document_matcher.called_once
     doc_request = post_good_document_matcher.last_request
     assert doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
+
+
+def test_add_good_firearm_with_rfd_document_submission_should_remove_rfd_certificate(
+    authorized_client,
+    new_good_firearm_url,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    control_list_entries,
+    pv_gradings,
+    application_with_rfd_document,
+    good_id,
+    rfd_certificate,
+):
+    authorized_client.get(new_good_firearm_url)
+
+    post_goods_matcher = requests_mock.post(
+        f"/goods/",
+        status_code=201,
+        json={
+            "good": {
+                "id": good_id,
+            },
+        },
+    )
+
+    delete_additional_document_matcher = requests_mock.delete(
+        f"/applications/{data_standard_case['case']['id']}/documents/{rfd_certificate['document']['id']}/",
+        status_code=204,
+    )
+
+    post_to_step(
+        AddGoodFirearmSteps.CATEGORY,
+        {"category": ["NON_AUTOMATIC_SHOTGUN"]},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.NAME,
+        {"name": "TEST NAME"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": True},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING_DETAILS,
+        {
+            "prefix": "NATO",
+            "grading": "official",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue_0": "20",
+            "date_of_issue_1": "02",
+            "date_of_issue_2": "2020",
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
+        {"is_rfd_certificate_valid": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        {"firearms_act_section": "no"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {
+            "is_document_available": False,
+            "no_document_comments": "no document",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+    assert post_goods_matcher.called_once
+    last_request = post_goods_matcher.last_request
+    assert last_request.json() == {
+        "firearm_details": {
+            "calibre": "calibre 123",
+            "category": ["NON_AUTOMATIC_SHOTGUN"],
+            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_registered_firearm_dealer": False,
+            "is_replica": True,
+            "is_rfd_certificate_valid": False,
+            "replica_description": "This is a replica",
+            "type": "firearms",
+        },
+        "control_list_entries": ["ML1", "ML1a"],
+        "name": "TEST NAME",
+        "is_good_controlled": True,
+        "is_pv_graded": "yes",
+        "prefix": "NATO",
+        "grading": "official",
+        "suffix": "",
+        "issuing_authority": "Government entity",
+        "reference": "GR123",
+        "date_of_issue": "2020-02-20",
+        "item_category": "group2_firearms",
+        "is_document_available": False,
+        "no_document_comments": "no document",
+    }
+
+    assert delete_additional_document_matcher.called_once
 
 
 def test_add_good_firearm_without_rfd_document_submission_registered_firearms_dealer(
