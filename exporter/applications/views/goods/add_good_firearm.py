@@ -577,6 +577,7 @@ class GoodsMixin:
 
 
 class EditNameView(GoodsMixin, FormView):
+    template_name = "core/form.html"
     form_class = FirearmNameForm
 
     def get_initial(self):
