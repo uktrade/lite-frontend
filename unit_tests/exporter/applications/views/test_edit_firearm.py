@@ -8,23 +8,32 @@ def setup(mock_good_get, mock_good_put, mock_control_list_entries_get, settings)
 
 
 @pytest.mark.parametrize(
-    "url_name, form_data",
+    "url_name, form_data, expected",
     (
+        (
+            "firearm_edit_name",
+            {"name": "new good"},
+            {"name": "new good"},
+        ),
         (
             "firearm_edit_category",
             {"category": ["NON_AUTOMATIC_SHOTGUN", "NON_AUTOMATIC_RIM_FIRED_HANDGUN"]},
+            {"firearm_details": {"category": ["NON_AUTOMATIC_SHOTGUN", "NON_AUTOMATIC_RIM_FIRED_HANDGUN"]}},
         ),
-        (
-            "firearm_edit_calibre",
-            {"calibre": "2"},
-        ),
+        ("firearm_edit_calibre", {"calibre": "2"}, {"firearm_details": {"calibre": "2"}}),
         (
             "firearm_edit_replica",
             {"is_replica": True, "replica_description": "photocopy of real item"},
+            {"firearm_details": {"is_replica": True, "replica_description": "photocopy of real item"}},
+        ),
+        (
+            "firearm_edit_replica",
+            {"is_replica": False, "replica_description": "photocopy of real item"},
+            {"firearm_details": {"is_replica": False, "replica_description": ""}},
         ),
     ),
 )
-def test_edit_firearm(authorized_client, data_standard_case, requests_mock, url_name, form_data):
+def test_edit_firearm(authorized_client, data_standard_case, requests_mock, url_name, form_data, expected):
     application_id = data_standard_case["case"]["data"]["id"]
     good = data_standard_case["case"]["data"]["goods"][0]["good"]
     url = reverse(f"applications:{url_name}", kwargs={"pk": application_id, "good_pk": good["id"]})
@@ -35,23 +44,7 @@ def test_edit_firearm(authorized_client, data_standard_case, requests_mock, url_
     )
 
     assert response.status_code == 302
-    assert requests_mock.last_request.json() == {
-        "firearm_details": form_data,
-    }
-
-
-def test_edit_good_name(authorized_client, data_standard_case, requests_mock):
-    application_id = data_standard_case["case"]["data"]["id"]
-    good = data_standard_case["case"]["data"]["goods"][0]["good"]
-    url = reverse("applications:firearm_edit_name", kwargs={"pk": application_id, "good_pk": good["id"]})
-
-    response = authorized_client.post(
-        url,
-        data={"name": "new good"},
-    )
-
-    assert response.status_code == 302
-    assert requests_mock.last_request.json() == {"name": "new good"}
+    assert requests_mock.last_request.json() == expected
 
 
 @pytest.mark.parametrize(

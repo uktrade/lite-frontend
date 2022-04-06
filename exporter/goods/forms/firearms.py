@@ -364,6 +364,8 @@ class FirearmReplicaForm(BaseFirearmForm):
 
         if is_replica and not replica_description:
             self.add_error("replica_description", "Enter a description")
+        if not is_replica:
+            cleaned_data["replica_description"] = ""
 
         return cleaned_data
 
