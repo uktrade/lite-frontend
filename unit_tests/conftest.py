@@ -587,6 +587,8 @@ def data_standard_case():
                             "firearm_details": {
                                 "type": "firearms",
                                 "calibre": "0.25",
+                                "is_replica": False,
+                                "replica_description": None,
                                 "category": [
                                     {"key": "NON_AUTOMATIC_SHOTGUN", "value": "Non automatic shotgun"},
                                     {
