@@ -3,8 +3,8 @@ from django.urls import reverse
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_good_get, mock_good_put):
-    pass
+def setup(mock_good_get, mock_good_put, settings):
+    settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
 
 def test_edit_firearm_category(authorized_client, data_standard_case, requests_mock):

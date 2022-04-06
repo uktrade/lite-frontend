@@ -557,7 +557,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         }
 
 
-class EditView(LoginRequiredMixin, FormView):
+class BaseEditView(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
 
     @cached_property
@@ -577,12 +577,24 @@ class EditView(LoginRequiredMixin, FormView):
 
         return good
 
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse("applications:product_summary", kwargs=self.kwargs)
 
+    def form_valid(self, form):
+        self.process_valid_form(form)
+        return super().form_valid(form)
 
-class EditNameView(EditView):
-    template_name = "core/form.html"
+    def process_valid_form(self, form):
+        raise NotImplementedError(f"`process_valid_form` should be implemented on {self.__class__.__name__}")
+
+
+class EditNameView(BaseEditView):
     form_class = FirearmNameForm
 
     def get_initial(self):
@@ -590,15 +602,11 @@ class EditNameView(EditView):
             "name": self.good["name"],
         }
 
-    def form_valid(self, form):
+    def process_valid_form(self, form):
         edit_good(self.request, self.good_id, form.cleaned_data)
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("applications:product_summary", kwargs=self.kwargs)
 
 
-class FirearmEditCategory(EditView):
+class FirearmEditCategory(BaseEditView):
     form_class = FirearmCategoryForm
 
     def get_initial(self):
@@ -606,6 +614,5 @@ class FirearmEditCategory(EditView):
         categories = [category["key"] for category in firearm_details["category"]]
         return {"category": categories}
 
-    def form_valid(self, form):
+    def process_valid_form(self, form):
         edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
-        return super().form_valid(form)
