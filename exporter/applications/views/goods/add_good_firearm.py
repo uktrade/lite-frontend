@@ -644,3 +644,14 @@ class FirearmEditControlListEntry(BaseGoodEditView):
             "is_good_controlled": is_good_controlled,
             "control_list_entries": control_list_entries,
         }
+
+
+class FirearmEditReplica(BaseFirearmEditView):
+    form_class = FirearmReplicaForm
+
+    def get_initial(self):
+        firearm_details = self.good["firearm_details"]
+        return {
+            "is_replica": firearm_details["is_replica"],
+            "replica_description": firearm_details["replica_description"],
+        }
