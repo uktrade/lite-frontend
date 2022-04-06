@@ -612,7 +612,20 @@ class FirearmEditCategory(FirearmBaseEditView):
         categories = [category["key"] for category in firearm_details["category"]]
         return {"category": categories}
 
+    def process_valid_form(self, form):
+        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
 
+
+class FirearmEditCalibre(BaseEditView):
+    form_class = FirearmCalibreForm
+
+    def get_initial(self):
+        return {"calibre": self.good["firearm_details"]["calibre"]}
+
+    def process_valid_form(self, form):
+        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
+
+        
 class EditControlListEntry(BaseEditView):
     form_class = FirearmProductControlListEntryForm
 

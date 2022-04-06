@@ -39,6 +39,8 @@ from exporter.goods.views import (
 )
 from exporter.applications.views.goods.add_good_firearm import (
     FirearmProductSummary,
+    FirearmEditCalibre,
+    EditNameView,
     FirearmEditCategory,
     EditNameView,
     EditControlListEntry,
@@ -84,6 +86,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/category/",
         FirearmEditCategory.as_view(),
         name="firearm_edit_category",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/calibre/",
+        FirearmEditCalibre.as_view(),
+        name="firearm_edit_calibre",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
