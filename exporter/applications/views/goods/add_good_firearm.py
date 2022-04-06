@@ -258,7 +258,8 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
-        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: C(has_rfd_certificate) | C(is_registered_firearms_dealer),
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: (C(has_rfd_certificate) & ~C(is_rfd_certificate_invalid))
+        | C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
@@ -587,26 +588,23 @@ class BaseEditView(LoginRequiredMixin, FormView):
         return reverse("applications:product_summary", kwargs=self.kwargs)
 
     def form_valid(self, form):
-        self.process_valid_form(form)
+        edit_good(self.request, self.good_id, form.cleaned_data)
         return super().form_valid(form)
 
+
+class FirearmBaseEditView(BaseEditView):
     def process_valid_form(self, form):
-        raise NotImplementedError(f"`process_valid_form` should be implemented on {self.__class__.__name__}")
+        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
 
 
 class EditNameView(BaseEditView):
     form_class = FirearmNameForm
 
     def get_initial(self):
-        return {
-            "name": self.good["name"],
-        }
-
-    def process_valid_form(self, form):
-        edit_good(self.request, self.good_id, form.cleaned_data)
+        return {"name": self.good["name"]}
 
 
-class FirearmEditCategory(BaseEditView):
+class FirearmEditCategory(FirearmBaseEditView):
     form_class = FirearmCategoryForm
 
     def get_initial(self):
@@ -626,3 +624,22 @@ class FirearmEditCalibre(BaseEditView):
 
     def process_valid_form(self, form):
         edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
+
+        
+class EditControlListEntry(BaseEditView):
+    form_class = FirearmProductControlListEntryForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {**kwargs, "request": self.request}
+
+    def get_initial(self):
+        control_list_entries = []
+        is_good_controlled = self.good["is_good_controlled"]["key"]
+        if is_good_controlled == "True":
+            control_list_entries = [clc["rating"] for clc in self.good.get("control_list_entries", [])]
+
+        return {
+            "is_good_controlled": is_good_controlled,
+            "control_list_entries": control_list_entries,
+        }
