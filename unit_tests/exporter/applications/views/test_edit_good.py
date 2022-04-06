@@ -10,7 +10,7 @@ def setup(mock_good_get, mock_good_put, mock_control_list_entries_get, settings)
 def test_edit_good_name(authorized_client, data_standard_case, requests_mock):
     application_id = data_standard_case["case"]["data"]["id"]
     good = data_standard_case["case"]["data"]["goods"][0]["good"]
-    url = reverse("applications:edit_name", kwargs={"pk": application_id, "good_pk": good["id"]})
+    url = reverse("applications:firearm_edit_name", kwargs={"pk": application_id, "good_pk": good["id"]})
 
     response = authorized_client.post(
         url,
@@ -39,7 +39,9 @@ def test_edit_good_name(authorized_client, data_standard_case, requests_mock):
 def test_edit_good_control_list_entry_options(authorized_client, data_standard_case, requests_mock, data, expected):
     application_id = data_standard_case["case"]["data"]["id"]
     good = data_standard_case["case"]["data"]["goods"][0]["good"]
-    url = reverse("applications:edit_control_list_entries", kwargs={"pk": application_id, "good_pk": good["id"]})
+    url = reverse(
+        "applications:firearm_edit_control_list_entries", kwargs={"pk": application_id, "good_pk": good["id"]}
+    )
 
     response = authorized_client.post(url, data=data)
 
