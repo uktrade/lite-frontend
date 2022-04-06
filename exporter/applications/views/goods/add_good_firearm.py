@@ -616,3 +616,13 @@ class FirearmEditCategory(BaseEditView):
 
     def process_valid_form(self, form):
         edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
+
+
+class FirearmEditCalibre(BaseEditView):
+    form_class = FirearmCalibreForm
+
+    def get_initial(self):
+        return {"calibre": self.good["firearm_details"]["calibre"]}
+
+    def process_valid_form(self, form):
+        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})

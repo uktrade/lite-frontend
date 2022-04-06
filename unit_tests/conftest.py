@@ -586,6 +586,7 @@ def data_standard_case():
                             "software_or_technology_details": None,
                             "firearm_details": {
                                 "type": "firearms",
+                                "calibre": "0.25",
                                 "category": [
                                     {"key": "NON_AUTOMATIC_SHOTGUN", "value": "Non automatic shotgun"},
                                     {

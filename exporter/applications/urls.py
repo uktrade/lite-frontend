@@ -37,7 +37,12 @@ from exporter.goods.views import (
     EditYearOfManufactureView,
     UpdateSerialNumbersView,
 )
-from exporter.applications.views.goods.add_good_firearm import FirearmProductSummary, FirearmEditCategory, EditNameView
+from exporter.applications.views.goods.add_good_firearm import (
+    FirearmProductSummary,
+    FirearmEditCalibre,
+    EditNameView,
+    FirearmEditCategory,
+)
 
 app_name = "applications"
 urlpatterns = [
@@ -79,6 +84,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/category/",
         FirearmEditCategory.as_view(),
         name="firearm_edit_category",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/calibre/",
+        FirearmEditCalibre.as_view(),
+        name="firearm_edit_calibre",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
