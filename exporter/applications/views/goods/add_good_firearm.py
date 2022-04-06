@@ -557,7 +557,9 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         }
 
 
-class GoodsMixin:
+class EditView(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+
     @cached_property
     def application_id(self):
         return str(self.kwargs["pk"])
@@ -575,8 +577,11 @@ class GoodsMixin:
 
         return good
 
+    def get_success_url(self):
+        return reverse("applications:product_summary", kwargs=self.kwargs)
 
-class EditNameView(GoodsMixin, FormView):
+
+class EditNameView(EditView):
     template_name = "core/form.html"
     form_class = FirearmNameForm
 
@@ -593,21 +598,14 @@ class EditNameView(GoodsMixin, FormView):
         return reverse("applications:product_summary", kwargs=self.kwargs)
 
 
-class FirearmEditView(LoginRequiredMixin, GoodsMixin, FormView):
-    template_name = "core/form.html"
-
-    def form_valid(self, form):
-        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("applications:product_summary", kwargs=self.kwargs)
-
-
-class FirearmEditCategory(FirearmEditView):
+class FirearmEditCategory(EditView):
     form_class = FirearmCategoryForm
 
     def get_initial(self):
         firearm_details = self.good["firearm_details"]
         categories = [category["key"] for category in firearm_details["category"]]
         return {"category": categories}
+
+    def form_valid(self, form):
+        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
+        return super().form_valid(form)

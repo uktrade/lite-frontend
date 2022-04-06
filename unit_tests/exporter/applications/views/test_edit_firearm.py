@@ -1,4 +1,10 @@
+import pytest
 from django.urls import reverse
+
+
+@pytest.fixture(autouse=True)
+def setup(mock_good_get, mock_good_put):
+    pass
 
 
 def test_edit_firearm_category(authorized_client, data_standard_case, requests_mock):

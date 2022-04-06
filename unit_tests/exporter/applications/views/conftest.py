@@ -14,8 +14,3 @@ def mock_good_put(requests_mock, data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]["good"]
     url = client._build_absolute_uri(f'/goods/{good["id"]}/')
     yield requests_mock.put(url=url, json={})
-
-
-@pytest.fixture(autouse=True)
-def setup(mock_good_get, mock_good_put):
-    pass
