@@ -52,7 +52,7 @@
                         <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
                         <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
                         <td class="govuk-table__cell">{{ good.report_summary }}</td>
-                        <td class="govuk-table__cell">TBC</td>
+                        <td class="govuk-table__cell"><a href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit assessment</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
