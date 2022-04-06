@@ -59,6 +59,7 @@
                     {{ good.is_good_controlled.value }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_control_list_entries' application_id good.id %}">Change</a>
                 </dd>
             </div>
             {% if good.is_good_controlled.key == "True" %}
