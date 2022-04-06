@@ -8,18 +8,16 @@ from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 
 
-class TAUHome(LoginRequiredMixin, FormView):
-    """This renders a placeholder home page for TAU 2.0."""
-
-    template_name = "tau/home.html"
-    form_class = TAUAssessmentForm
-
-    def get_success_url(self):
-        return self.request.path
+class TAUMixin:
+    """Mixin containing some useful functions used in TAU views."""
 
     @cached_property
     def case_id(self):
         return str(self.kwargs["pk"])
+
+    @cached_property
+    def queue_id(self):
+        return str(self.kwargs["queue_pk"])
 
     @cached_property
     def case(self):
@@ -29,12 +27,6 @@ class TAUHome(LoginRequiredMixin, FormView):
     def control_list_entries(self):
         control_list_entries = get_control_list_entries(self.request, convert_to_options=True)
         return [(item.value, item.key) for item in control_list_entries]
-
-    def get_form_kwargs(self):
-        form_kwargs = super().get_form_kwargs()
-        form_kwargs["control_list_entries_choices"] = self.control_list_entries
-        form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
-        return form_kwargs
 
     def is_assessed(self, good):
         """Returns True if a good has been assessed"""
@@ -48,11 +40,32 @@ class TAUHome(LoginRequiredMixin, FormView):
     def unassessed_goods(self):
         return [item for item in self.case.goods if not self.is_assessed(item)]
 
+    @property
+    def good_id(self):
+        return str(self.kwargs["good_id"])
+
+
+class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
+    """This renders a placeholder home page for TAU 2.0."""
+
+    template_name = "tau/home.html"
+    form_class = TAUAssessmentForm
+
+    def get_success_url(self):
+        return self.request.path
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["control_list_entries_choices"] = self.control_list_entries
+        form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
+        return form_kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return {
             **context,
             "case": self.case,
+            "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
         }
