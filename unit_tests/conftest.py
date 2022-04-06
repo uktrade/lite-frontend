@@ -559,6 +559,7 @@ def data_standard_case():
                         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
                         "good": {
                             "id": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+                            "name": "p1",
                             "description": "444",
                             "part_number": "44",
                             "control_list_entries": [],
@@ -616,6 +617,7 @@ def data_standard_case():
                         "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
                         "good": {
                             "id": "6a7fc61f-698b-46b6-9876-6ac0fddfb1a2",
+                            "name": "p2",
                             "description": "444",
                             "part_number": "44",
                             "control_list_entries": [],

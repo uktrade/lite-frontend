@@ -45,7 +45,14 @@ from exporter.goods.forms.firearms import (
     FirearmRFDValidityForm,
     FirearmSection5Form,
 )
-from exporter.goods.services import post_firearm, post_good_documents, get_good, get_good_documents, edit_firearm
+from exporter.goods.services import (
+    post_firearm,
+    post_good_documents,
+    get_good,
+    get_good_documents,
+    edit_firearm,
+    edit_good,
+)
 from lite_forms.generators import error_page
 
 
@@ -550,7 +557,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         }
 
 
-class FirearmEditView(LoginRequiredMixin, FormView):
+class BaseEditView(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
 
     @cached_property
@@ -570,18 +577,42 @@ class FirearmEditView(LoginRequiredMixin, FormView):
 
         return good
 
-    def form_valid(self, form):
-        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
-        return super().form_valid(form)
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse("applications:product_summary", kwargs=self.kwargs)
 
+    def form_valid(self, form):
+        self.process_valid_form(form)
+        return super().form_valid(form)
 
-class FirearmEditCategory(FirearmEditView):
+    def process_valid_form(self, form):
+        raise NotImplementedError(f"`process_valid_form` should be implemented on {self.__class__.__name__}")
+
+
+class EditNameView(BaseEditView):
+    form_class = FirearmNameForm
+
+    def get_initial(self):
+        return {
+            "name": self.good["name"],
+        }
+
+    def process_valid_form(self, form):
+        edit_good(self.request, self.good_id, form.cleaned_data)
+
+
+class FirearmEditCategory(BaseEditView):
     form_class = FirearmCategoryForm
 
     def get_initial(self):
         firearm_details = self.good["firearm_details"]
         categories = [category["key"] for category in firearm_details["category"]]
         return {"category": categories}
+
+    def process_valid_form(self, form):
+        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
