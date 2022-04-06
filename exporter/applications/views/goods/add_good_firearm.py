@@ -258,7 +258,8 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
-        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: C(has_rfd_certificate) | C(is_registered_firearms_dealer),
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: (C(has_rfd_certificate) & ~C(is_rfd_certificate_invalid))
+        | C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
