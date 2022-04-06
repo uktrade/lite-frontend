@@ -1,7 +1,9 @@
 import logging
 import requests
 
+from deepmerge import always_merger
 from http import HTTPStatus
+from functools import wraps
 
 from django.conf import settings
 from django.http import Http404
@@ -151,6 +153,19 @@ def get_cleaned_data(form):
     return form.cleaned_data
 
 
+def firearm_details_payload(f):
+    @wraps(f)
+    def wrapper(form):
+        return {"firearm_details": f(form)}
+
+    return wrapper
+
+
+@firearm_details_payload
+def get_firearm_details_cleaned_data(form):
+    return get_cleaned_data(form)
+
+
 def get_pv_grading_payload(form):
     return {
         "is_pv_graded": "yes" if form.cleaned_data["is_pv_graded"] else "no",
@@ -163,6 +178,7 @@ def get_pv_grading_good_payload(form):
     return payload
 
 
+@firearm_details_payload
 def get_firearm_act_1968_payload(form):
     firearms_act_section = form.cleaned_data["firearms_act_section"]
 
@@ -184,6 +200,7 @@ def get_firearm_act_1968_payload(form):
     }
 
 
+@firearm_details_payload
 def get_firearm_section_5_payload(form):
     is_covered_by_section_5 = form.cleaned_data["is_covered_by_section_5"]
 
@@ -205,6 +222,7 @@ def get_firearm_section_5_payload(form):
     }
 
 
+@firearm_details_payload
 def get_attach_firearm_act_certificate_payload(form):
     firearm_certificate_data = form.cleaned_data
 
@@ -277,20 +295,18 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
-    good_payload_dict = {
+    payload_dict = {
         AddGoodFirearmSteps.NAME: get_cleaned_data,
         AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
         AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
         AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
-    }
-    firearm_payload_dict = {
-        AddGoodFirearmSteps.CATEGORY: get_cleaned_data,
-        AddGoodFirearmSteps.CALIBRE: get_cleaned_data,
-        AddGoodFirearmSteps.IS_REPLICA: get_cleaned_data,
-        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: get_cleaned_data,
-        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_cleaned_data,
+        AddGoodFirearmSteps.CATEGORY: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.CALIBRE: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.IS_REPLICA: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
         AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
@@ -338,21 +354,13 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         return kwargs
 
     def get_payload(self, form_dict):
-        good_payload = {}
-        for step_name, payload_func in self.good_payload_dict.items():
+        payload = {}
+        for step_name, payload_func in self.payload_dict.items():
             form = form_dict.get(step_name)
             if form:
-                good_payload.update(payload_func(form))
+                always_merger.merge(payload, payload_func(form))
 
-        firearm_payload = {}
-        for step_name, payload_func in self.firearm_payload_dict.items():
-            form = form_dict.get(step_name)
-            if form:
-                firearm_payload.update(payload_func(form))
-
-        good_payload["firearm_details"] = firearm_payload
-
-        return good_payload
+        return payload
 
     def has_rfd_certificate_data(self):
         return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
@@ -596,12 +604,12 @@ class BaseEditView(LoginRequiredMixin, FormView):
 
 class BaseGoodEditView(BaseEditView):
     def get_edit_payload(self, form):
-        return form.cleaned_data
+        return get_cleaned_data(form)
 
 
 class BaseFirearmEditView(BaseEditView):
     def get_edit_payload(self, form):
-        return {"firearm_details": form.cleaned_data}
+        return get_firearm_details_cleaned_data(form)
 
 
 class FirearmEditName(BaseGoodEditView):
