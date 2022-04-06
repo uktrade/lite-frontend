@@ -38,12 +38,11 @@ from exporter.goods.views import (
     UpdateSerialNumbersView,
 )
 from exporter.applications.views.goods.add_good_firearm import (
-    FirearmProductSummary,
     FirearmEditCalibre,
-    EditNameView,
     FirearmEditCategory,
-    EditNameView,
-    EditControlListEntry,
+    FirearmEditName,
+    FirearmEditControlListEntry,
+    FirearmProductSummary,
 )
 
 app_name = "applications"
@@ -86,6 +85,12 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/category/",
         FirearmEditCategory.as_view(),
         name="firearm_edit_category",
+    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/name/", FirearmEditName.as_view(), name="firearm_edit_name"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/control-list-entries/",
+        FirearmEditControlListEntry.as_view(),
+        name="firearm_edit_control_list_entries",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/calibre/",
@@ -154,12 +159,6 @@ urlpatterns = [
         "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary/",
         FirearmProductSummary.as_view(),
         name="product_summary",
-    ),
-    path("<uuid:pk>/goods/<uuid:good_pk>/edit-name/", EditNameView.as_view(), name="edit_name"),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/control-list-entries/",
-        EditControlListEntry.as_view(),
-        name="edit_control_list_entries",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),

@@ -51,7 +51,6 @@ from exporter.goods.services import (
     get_good,
     get_good_documents,
     edit_firearm,
-    edit_good,
 )
 from lite_forms.generators import error_page
 
@@ -587,24 +586,32 @@ class BaseEditView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse("applications:product_summary", kwargs=self.kwargs)
 
+    def get_edit_payload(self, form):
+        raise NotImplementedError(f"Implement `get_edit_payload` for {self.__class__.__name__}")
+
     def form_valid(self, form):
-        edit_good(self.request, self.good_id, form.cleaned_data)
+        edit_firearm(self.request, self.good_id, self.get_edit_payload(form))
         return super().form_valid(form)
 
 
-class FirearmBaseEditView(BaseEditView):
-    def process_valid_form(self, form):
-        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
+class BaseGoodEditView(BaseEditView):
+    def get_edit_payload(self, form):
+        return form.cleaned_data
 
 
-class EditNameView(BaseEditView):
+class BaseFirearmEditView(BaseEditView):
+    def get_edit_payload(self, form):
+        return {"firearm_details": form.cleaned_data}
+
+
+class FirearmEditName(BaseGoodEditView):
     form_class = FirearmNameForm
 
     def get_initial(self):
         return {"name": self.good["name"]}
 
 
-class FirearmEditCategory(FirearmBaseEditView):
+class FirearmEditCategory(BaseFirearmEditView):
     form_class = FirearmCategoryForm
 
     def get_initial(self):
@@ -612,21 +619,15 @@ class FirearmEditCategory(FirearmBaseEditView):
         categories = [category["key"] for category in firearm_details["category"]]
         return {"category": categories}
 
-    def process_valid_form(self, form):
-        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
 
-
-class FirearmEditCalibre(BaseEditView):
+class FirearmEditCalibre(BaseFirearmEditView):
     form_class = FirearmCalibreForm
 
     def get_initial(self):
         return {"calibre": self.good["firearm_details"]["calibre"]}
 
-    def process_valid_form(self, form):
-        edit_firearm(self.request, self.good_id, {"firearm_details": form.cleaned_data})
 
-        
-class EditControlListEntry(BaseEditView):
+class FirearmEditControlListEntry(BaseGoodEditView):
     form_class = FirearmProductControlListEntryForm
 
     def get_form_kwargs(self):
