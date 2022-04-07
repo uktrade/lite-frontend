@@ -54,6 +54,7 @@ from exporter.goods.services import (
     get_good_documents,
     edit_firearm,
 )
+from exporter.organisation.services import delete_document_on_organisation
 from lite_forms.generators import error_page
 
 
@@ -429,6 +430,30 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         )
         return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid", False)
 
+    def is_existing_organisation_rfd_certificate_invalid(self, application):
+        if not has_valid_organisation_rfd_certificate(application):
+            return False
+
+        is_rfd_certificate_valid_cleaned_data = self.get_cleaned_data_for_step(
+            AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
+        )
+        return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid") is False
+
+    def delete_existing_organisation_rfd_certificate(self, application):
+        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
+        status_code = delete_document_on_organisation(
+            self.request,
+            organisation_id=organisation_rfd_certificate_data["organisation"],
+            document_id=organisation_rfd_certificate_data["id"],
+        )
+        if status_code != HTTPStatus.NO_CONTENT:
+            raise ServiceError(
+                status_code,
+                {},
+                "Error deleting existing rfd certificate to application - response was: %s - %s",
+                "Unexpected error adding firearm",
+            )
+
     def attach_rfd_certificate_to_application(self, application):
         organisation_rfd_certificate_data = get_rfd_certificate(self.application)
         document = organisation_rfd_certificate_data["document"]
@@ -528,8 +553,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
             if self.has_existing_valid_organisation_rfd_certificate(self.application):
                 self.attach_rfd_certificate_to_application(self.application)
-            elif self.has_organisation_rfd_certificate_data():
-                self.post_rfd_certificate(application_pk)
+            else:
+                if self.is_existing_organisation_rfd_certificate_invalid(self.application):
+                    self.delete_existing_organisation_rfd_certificate(self.application)
+                if self.has_organisation_rfd_certificate_data():
+                    self.post_rfd_certificate(application_pk)
 
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE):
                 self.post_firearm_act_certificate(
