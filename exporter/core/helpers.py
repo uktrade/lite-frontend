@@ -243,7 +243,7 @@ def get_organisation_documents(application):
 
 def get_rfd_certificate(application):
     documents = get_organisation_documents(application)
-    return documents.get("rfd-certificate")
+    return documents.get(constants.DocumentType.RFD_CERTIFICATE)
 
 
 def is_end_user_document_available(wizard):

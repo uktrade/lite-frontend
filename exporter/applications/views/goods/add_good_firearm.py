@@ -16,6 +16,7 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application, post_additional_document, post_application_document
 from exporter.core.constants import (
+    DocumentType,
     FirearmsActSections,
     FirearmsActDocumentType,
 )
@@ -102,7 +103,7 @@ def has_application_rfd_certificate(wizard):
         return False
 
     for additional_document in additional_documents:
-        if additional_document.get("document_type") == "rfd-certificate":
+        if additional_document.get("document_type") == DocumentType.RFD_CERTIFICATE:
             return True
 
     return False
@@ -394,11 +395,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         rfd_certificate_payload = {
             **get_document_data(cert_file),
             "description": "Registered firearm dealer certificate",
-            "document_type": "rfd-certificate",
+            "document_type": DocumentType.RFD_CERTIFICATE,
             "document_on_organisation": {
                 "expiry_date": expiry_date.isoformat(),
                 "reference_code": reference_code,
-                "document_type": "rfd-certificate",
+                "document_type": DocumentType.RFD_CERTIFICATE,
             },
         }
         return rfd_certificate_payload
@@ -484,7 +485,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 "s3_key": document["s3_key"],
                 "safe": document["safe"],
                 "size": document["size"],
-                "document_type": "rfd-certificate",
+                "document_type": DocumentType.RFD_CERTIFICATE,
                 "description": "Registered firearm dealer certificate",
             },
         )

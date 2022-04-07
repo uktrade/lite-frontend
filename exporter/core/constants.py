@@ -240,6 +240,10 @@ class PartyDocumentType:
     END_USER_EC3_DOCUMENT = "end_user_ec3_document"
 
 
+class DocumentType:
+    RFD_CERTIFICATE = "rfd-certificate"
+
+
 class FirearmsActDocumentType:
     SECTION_1 = "section-one-certificate"
     SECTION_2 = "section-two-certificate"
