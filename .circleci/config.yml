@@ -69,7 +69,7 @@ commands:
             sudo apt update && sudo apt install apt-transport-https
             sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
             sudo apt-key add openvpn-repo-pkg-key.pub
-              
+
             ### The repository URL will depend on your Ubuntu release name (here we chose "focal" since Ubuntu 20.04 is used
             sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-focal.list
             sudo apt update && sudo apt install openvpn3
@@ -86,16 +86,16 @@ commands:
           background: true
           command: |
             echo ${<<parameters.config>>:?} | base64 --decode > /tmp/config.ovpn
-  
+
             ### IMPORTANT: Include the following line to exclude the connection from CircleCI and the link-local range
             phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
-              
+
             if [ -n "$phone_home" ]; then
               echo -e "\nroute $phone_home 255.255.255.255 net_gateway" >> /tmp/config.ovpn
             fi
-              
+
             echo "\nroute 169.254.0.0 255.255.0.0 net_gateway" >> /tmp/config.ovpn
-              
+
             # This will start the connection
             sudo openvpn3 session-start \
               --config /tmp/config.ovpn \
@@ -103,7 +103,7 @@ commands:
 
             dig great.dev.uktrade.digital +short
             curl -I https://great.dev.uktrade.digital/
-      
+
       - run:
           name: VPN logs
           background: true
@@ -328,4 +328,6 @@ workflows:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
       - caseworker_ui_test
-      - exporter_ui_test
+      - exporter_ui_test:
+          requires:
+           - caseworker_ui_test
