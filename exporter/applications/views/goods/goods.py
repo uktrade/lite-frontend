@@ -776,6 +776,9 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
             AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE,
         ):
             kwargs["good"] = self.good
+            kwargs["number_of_items"] = self.get_cleaned_data_for_step(
+                AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS
+            ).get("number_of_items", 0)
 
         if step == AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE:
             kwargs["request"] = self.request
