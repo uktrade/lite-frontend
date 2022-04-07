@@ -389,7 +389,7 @@ def generate_file(result):
 
 
 def download_document_from_s3(s3_key, original_file_name):
-    s3_response = s3_client.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=s3_key)
+    s3_response = s3_client().get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=s3_key)
     _kwargs = {}
     if s3_response.get("ContentType"):
         _kwargs["content_type"] = s3_response["ContentType"]

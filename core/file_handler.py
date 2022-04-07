@@ -1,5 +1,7 @@
+import logging
+
+import boto3
 import magic
-from boto3 import client as boto3_client
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django_chunk_upload_handlers.s3 import (
@@ -10,13 +12,40 @@ from django_chunk_upload_handlers.s3 import (
     S3FileUploadHandler,
 )
 
-s3_client = boto3_client(
-    "s3",
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    region_name=AWS_REGION,
-    endpoint_url=AWS_S3_ENDPOINT_URL,
-)
+logger = logging.getLogger(__name__)
+
+
+class S3Wrapper:
+    """
+    A wrapper around the S3 client ensuring only one client is instantiated and reused.
+    """
+
+    _s3_client = None
+
+    @classmethod
+    def get_client(cls):
+        if not cls._s3_client:
+            logger.debug("Instantiating S3 client")
+            extra_kwargs = {}
+            if AWS_S3_ENDPOINT_URL:
+                extra_kwargs["endpoint_url"] = AWS_S3_ENDPOINT_URL
+
+            cls._s3_client = boto3.client(
+                "s3",
+                aws_access_key_id=AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                region_name=AWS_REGION,
+                **extra_kwargs,
+            )
+
+        return cls._s3_client
+
+
+def s3_client():
+    """
+    A handy method to get a reusable S3 client
+    """
+    return S3Wrapper.get_client()
 
 
 class SafeS3FileUploadHandler(S3FileUploadHandler):
