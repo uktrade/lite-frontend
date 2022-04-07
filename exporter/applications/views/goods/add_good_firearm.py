@@ -96,6 +96,18 @@ def has_organisation_rfd_certificate(wizard):
     return has_valid_organisation_rfd_certificate(wizard.application)
 
 
+def has_application_rfd_certificate(wizard):
+    additional_documents = wizard.application.get("additional_documents")
+    if not additional_documents:
+        return False
+
+    for additional_document in additional_documents:
+        if additional_document.get("document_type") == "rfd-certificate":
+            return True
+
+    return False
+
+
 def has_firearm_act_document(document_type):
     def check(wizard):
         return _has_firearm_act_document(wizard.application, document_type)
@@ -123,7 +135,11 @@ def is_registered_firearms_dealer(wizard):
 
 
 def should_display_is_registered_firearms_dealer_step(wizard):
-    if has_organisation_rfd_certificate(wizard) and is_rfd_certificate_invalid(wizard):
+    if (
+        has_organisation_rfd_certificate(wizard)
+        and not has_application_rfd_certificate(wizard)
+        and is_rfd_certificate_invalid(wizard)
+    ):
         return True
 
     return not has_organisation_rfd_certificate(wizard)
@@ -274,7 +290,8 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     ]
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
-        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_organisation_rfd_certificate,
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: C(has_organisation_rfd_certificate)
+        & ~C(has_application_rfd_certificate),
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: (
             C(has_organisation_rfd_certificate) & ~C(is_rfd_certificate_invalid)
