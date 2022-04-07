@@ -23,7 +23,7 @@ from exporter.core.helpers import (
     get_document_data,
     get_rfd_certificate,
     has_firearm_act_document as _has_firearm_act_document,
-    has_valid_rfd_certificate,
+    has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
@@ -91,8 +91,8 @@ def is_document_sensitive(wizard):
     return cleaned_data.get("is_document_sensitive")
 
 
-def has_rfd_certificate(wizard):
-    return has_valid_rfd_certificate(wizard.application)
+def has_organisation_rfd_certificate(wizard):
+    return has_valid_organisation_rfd_certificate(wizard.application)
 
 
 def has_firearm_act_document(document_type):
@@ -122,10 +122,10 @@ def is_registered_firearms_dealer(wizard):
 
 
 def should_display_is_registered_firearms_dealer_step(wizard):
-    if has_rfd_certificate(wizard) and is_rfd_certificate_invalid(wizard):
+    if has_organisation_rfd_certificate(wizard) and is_rfd_certificate_invalid(wizard):
         return True
 
-    return not has_rfd_certificate(wizard)
+    return not has_organisation_rfd_certificate(wizard)
 
 
 def is_product_covered_by_firearm_act_section(section):
@@ -273,9 +273,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     ]
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
-        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_organisation_rfd_certificate,
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
-        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: (C(has_rfd_certificate) & ~C(is_rfd_certificate_invalid))
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: (
+            C(has_organisation_rfd_certificate) & ~C(is_rfd_certificate_invalid)
+        )
         | C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
@@ -362,7 +364,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return payload
 
-    def has_rfd_certificate_data(self):
+    def has_organisation_rfd_certificate_data(self):
         return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
 
     def get_rfd_certificate_payload(self):
@@ -494,7 +496,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         try:
             application_pk, good_pk = self.post_firearm(form_dict)
 
-            if self.has_rfd_certificate_data():
+            if self.has_organisation_rfd_certificate_data():
                 self.post_rfd_certificate(application_pk)
 
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE):
@@ -554,7 +556,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         documents = get_good_documents(self.request, self.good_id)
         application = get_application(self.request, self.application_id)
-        is_user_rfd = has_valid_rfd_certificate(application)
+        is_user_rfd = has_valid_organisation_rfd_certificate(application)
 
         return {
             **context,
