@@ -257,6 +257,11 @@ def delete_good_document(request, pk, doc_pk):
     return data.json(), data.status_code
 
 
+def update_good_document_data(request, pk, doc_pk, data):
+    response = client.put(request, f"/goods/{pk}/documents/{doc_pk}/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
 # Document Sensitivity
 def get_document_missing_reasons(request):
     data = client.get(request, "/static/missing-document-reasons/")

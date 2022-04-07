@@ -579,11 +579,38 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
         required=False,
     )
 
+    def __init__(self, *args, **kwargs):
+        good_id = kwargs.pop("good_id", None)
+        self.document = kwargs.pop("document", None)
+        if self.document:
+            self.product_document_download_url = reverse(
+                "goods:document",
+                kwargs={
+                    "pk": good_id,
+                    "file_pk": self.document["id"],
+                },
+            )
+            self.document_name = self.document["name"]
+
+        super().__init__(*args, **kwargs)
+
     def get_layout_fields(self):
-        return (
-            "product_document",
-            "description",
-        )
+        layout_fields = ("product_document", "description")
+        if self.document:
+            self.fields["product_document"].required = False
+            layout_fields = (
+                HTML.p(
+                    render_to_string(
+                        "goods/forms/firearms/product_document_download_link.html",
+                        {
+                            "url": self.product_document_download_url,
+                            "name": self.document_name,
+                        },
+                    ),
+                ),
+            ) + layout_fields
+
+        return layout_fields
 
 
 class FirearmFirearmAct1968Form(BaseFirearmForm):
