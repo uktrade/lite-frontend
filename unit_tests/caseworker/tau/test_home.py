@@ -18,34 +18,18 @@ def url(data_queue, data_standard_case):
     )
 
 
-@pytest.fixture
-def mock_get_control_list_entries(requests_mock):
-    url = client._build_absolute_uri("/static/control-list-entries/")
-    yield requests_mock.get(
-        url=url,
-        json={
-            "control_list_entries": [
-                {"rating": "A", "text": "A"},
-                {"rating": "B", "text": "B"},
-                {"rating": "C", "text": "C"},
-                {"rating": "D", "text": "D"},
-            ]
-        },
-    )
-
-
 def get_cells(soup, table_id):
     return [td.text for td in soup.find(id=table_id).find_all("td")]
 
 
-def test_tau_home_auth(authorized_client, url, mock_get_control_list_entries):
+def test_tau_home_auth(authorized_client, url, mock_control_list_entries):
     """GET /tau should return 200 with an authorised client"""
     response = authorized_client.get(url)
     assert response.status_code == 200
 
 
 @pytest.mark.skip("The /tau view doesn't return case details anymore but it might in the future")
-def test_case_info(authorized_client, url, mock_get_control_list_entries):
+def test_case_info(authorized_client, url, mock_control_list_entries):
     """GET /tau would return a case info panel"""
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -104,7 +88,7 @@ def test_case_info(authorized_client, url, mock_get_control_list_entries):
     assert get_cells(soup, "table-end-use") == ["44"]
 
 
-def test_home_content(authorized_client, url, data_standard_case, mock_get_control_list_entries):
+def test_home_content(authorized_client, url, data_queue, data_standard_case, mock_control_list_entries):
     """GET /tau would return a case info panel"""
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
@@ -117,7 +101,27 @@ def test_home_content(authorized_client, url, data_standard_case, mock_get_contr
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="subtitle").text == "Assess 1 product(s) going from Great Britain to Abu Dhabi, United Kingdom"
-    assert get_cells(soup, "assessed-products") == ["1", "", "444", "", "No", "scale compelling technologies", "TBC"]
+    assert get_cells(soup, "assessed-products") == [
+        "1",
+        "",
+        "444",
+        "",
+        "No",
+        "scale compelling technologies",
+        "Edit assessment",
+    ]
+
+    # Test if the link to edit assessed-products is sane
+    assessed_good_id = data_standard_case["case"]["data"]["goods"][1]["id"]
+    edit_url = reverse(
+        "cases:tau:edit",
+        kwargs={
+            "queue_pk": data_queue["id"],
+            "pk": data_standard_case["case"]["id"],
+            "good_id": assessed_good_id,
+        },
+    )
+    assert edit_url == soup.find(id="assessed-products").find("a").attrs["href"]
 
 
 def test_tau_home_noauth(client, url):
@@ -126,7 +130,7 @@ def test_tau_home_noauth(client, url):
     assert response.status_code == 302
 
 
-def test_form(authorized_client, url, data_standard_case, requests_mock, mock_get_control_list_entries):
+def test_form(authorized_client, url, data_standard_case, requests_mock, mock_control_list_entries):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
     """
@@ -134,7 +138,6 @@ def test_form(authorized_client, url, data_standard_case, requests_mock, mock_ge
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
-    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=data_standard_case)
     requests_mock.post(
         client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
     )
