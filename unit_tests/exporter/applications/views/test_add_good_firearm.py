@@ -626,6 +626,8 @@ def test_add_good_firearm_with_rfd_document_submission(
     assert post_applications_document_matcher.called_once
     application_doc_request = post_applications_document_matcher.last_request
     assert application_doc_request.json() == {
+        "description": "Registered firearm dealer certificate",
+        "document_type": "rfd-certificate",
         "name": "rfd_certificate.txt",
         "s3_key": "rfd_certificate.txt.s3_key",
         "safe": True,
@@ -873,14 +875,16 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     assert post_additional_document_matcher.called_once
     last_request = post_additional_document_matcher.last_request
     assert last_request.json() == {
-        "name": file_name,
-        "s3_key": file_name,
-        "size": 0,
+        "description": "Registered firearm dealer certificate",
         "document_on_organisation": {
             "expiry_date": expiry_date.isoformat(),
             "reference_code": "12345",
             "document_type": "rfd-certificate",
         },
+        "document_type": "rfd-certificate",
+        "name": file_name,
+        "s3_key": file_name,
+        "size": 0,
     }
 
 
@@ -1502,6 +1506,8 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
     assert post_applications_document_matcher.called_once
     application_doc_request = post_applications_document_matcher.last_request
     assert application_doc_request.json() == {
+        "description": "Registered firearm dealer certificate",
+        "document_type": "rfd-certificate",
         "name": "rfd_certificate.txt",
         "s3_key": "rfd_certificate.txt.s3_key",
         "safe": True,
@@ -1610,6 +1616,8 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
     assert post_applications_document_matcher.called_once
     application_doc_request = post_applications_document_matcher.last_request
     assert application_doc_request.json() == {
+        "description": "Registered firearm dealer certificate",
+        "document_type": "rfd-certificate",
         "name": "rfd_certificate.txt",
         "s3_key": "rfd_certificate.txt.s3_key",
         "safe": True,

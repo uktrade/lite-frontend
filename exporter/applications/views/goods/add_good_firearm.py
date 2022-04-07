@@ -376,6 +376,8 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         rfd_certificate_payload = {
             **get_document_data(cert_file),
+            "description": "Registered firearm dealer certificate",
+            "document_type": "rfd-certificate",
             "document_on_organisation": {
                 "expiry_date": expiry_date.isoformat(),
                 "reference_code": reference_code,
@@ -465,6 +467,8 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 "s3_key": document["s3_key"],
                 "safe": document["safe"],
                 "size": document["size"],
+                "document_type": "rfd-certificate",
+                "description": "Registered firearm dealer certificate",
             },
         )
         if status_code != HTTPStatus.CREATED:
