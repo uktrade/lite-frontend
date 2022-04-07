@@ -78,7 +78,10 @@ def rfd_certificate():
     return {
         "id": str(uuid.uuid4()),
         "document": {
-            "name": "testdocument.txt",
+            "name": "rfd_certificate.txt",
+            "s3_key": "rfd_certificate.txt.s3_key",
+            "safe": True,
+            "size": 3,
         },
         "document_type": "rfd-certificate",
         "is_expired": False,
@@ -509,6 +512,12 @@ def test_add_good_firearm_with_rfd_document_submission(
         json={},
     )
 
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
+        status_code=201,
+        json={},
+    )
+
     post_to_step(
         AddGoodFirearmSteps.CATEGORY,
         {"category": ["NON_AUTOMATIC_SHOTGUN"]},
@@ -610,8 +619,17 @@ def test_add_good_firearm_with_rfd_document_submission(
     }
 
     assert post_good_document_matcher.called_once
-    doc_request = post_good_document_matcher.last_request
-    assert doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
+    good_doc_request = post_good_document_matcher.last_request
+    assert good_doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
+
+    assert post_applications_document_matcher.called_once
+    application_doc_request = post_applications_document_matcher.last_request
+    assert application_doc_request.json() == {
+        "name": "rfd_certificate.txt",
+        "s3_key": "rfd_certificate.txt.s3_key",
+        "safe": True,
+        "size": 3,
+    }
 
 
 def test_add_good_firearm_without_rfd_document_submission_registered_firearms_dealer(
@@ -1245,8 +1263,14 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         },
     )
 
-    post_application_document_matcher = requests_mock.post(
+    post_application_goods_document_matcher = requests_mock.post(
         f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
+        status_code=201,
+        json={},
+    )
+
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
     )
@@ -1330,8 +1354,8 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         "no_document_comments": "product not manufactured yet",
     }
 
-    assert post_application_document_matcher.called_once
-    last_request = post_application_document_matcher.last_request
+    assert post_application_goods_document_matcher.called_once
+    last_request = post_application_goods_document_matcher.last_request
     assert last_request.json() == {
         "document_on_organisation": {
             "document_type": "section-five-certificate",
@@ -1341,6 +1365,15 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         "name": "letter_of_authority.pdf",
         "s3_key": "letter_of_authority.pdf",
         "size": 0,
+    }
+
+    assert post_applications_document_matcher.called_once
+    application_doc_request = post_applications_document_matcher.last_request
+    assert application_doc_request.json() == {
+        "name": "rfd_certificate.txt",
+        "s3_key": "rfd_certificate.txt.s3_key",
+        "safe": True,
+        "size": 3,
     }
 
 
@@ -1367,6 +1400,12 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
                 "id": good_id,
             },
         },
+    )
+
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
+        status_code=201,
+        json={},
     )
 
     post_to_step(
@@ -1434,6 +1473,15 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+    }
+
+    assert post_applications_document_matcher.called_once
+    application_doc_request = post_applications_document_matcher.last_request
+    assert application_doc_request.json() == {
+        "name": "rfd_certificate.txt",
+        "s3_key": "rfd_certificate.txt.s3_key",
+        "safe": True,
+        "size": 3,
     }
 
 
