@@ -1254,7 +1254,7 @@ class ProductComponentForm(forms.Form):
         return cleaned_data
 
 
-def get_unit_quantity_value_summary_list_items(good):
+def get_unit_quantity_value_summary_list_items(good, number_of_items):
     summary_list_items = [
         ("Name", good["description"] if not good["name"] else good["name"]),
         ("Control list entries", convert_control_list_entries(good["control_list_entries"])),
@@ -1266,7 +1266,7 @@ def get_unit_quantity_value_summary_list_items(good):
 
         if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:
             summary_list_items.append(
-                ("Number of items", str(good["firearm_details"].get("number_of_items"))),
+                ("Number of items", str(number_of_items)),
             )
 
     return summary_list_items
@@ -1347,15 +1347,13 @@ class FirearmsUnitQuantityValueForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        good = kwargs.pop("good")
-
+    def __init__(self, *args, good, number_of_items, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            summary_list(get_unit_quantity_value_summary_list_items(good, number_of_items)),
             Field("value", template="forms/currency_field.html"),
             Field.radios("is_good_incorporated", inline=True),
             ConditionalRadios(
@@ -1508,15 +1506,13 @@ class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        good = kwargs.pop("good")
-
+    def __init__(self, *args, good, number_of_items, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            summary_list(get_unit_quantity_value_summary_list_items(good, number_of_items)),
             Field("value", template="forms/currency_field.html"),
             Field.radios("is_good_incorporated", inline=True),
             ConditionalRadios(
@@ -1650,15 +1646,13 @@ class ComponentOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        good = kwargs.pop("good")
-
+    def __init__(self, *args, good, number_of_items, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            summary_list(get_unit_quantity_value_summary_list_items(good, number_of_items)),
             Field("value", template="forms/currency_field.html"),
             Field.radios("is_good_incorporated", inline=True),
             ConditionalRadios(
@@ -1741,10 +1735,7 @@ class UnitQuantityValueForm(forms.Form):
 
     OPTIONAL_VALUE = "ITG"
 
-    def __init__(self, *args, **kwargs):
-        good = kwargs.pop("good")
-        request = kwargs.pop("request")
-
+    def __init__(self, *args, good, number_of_items, request, **kwargs):
         super().__init__(*args, **kwargs)
 
         unit_field = self.fields["unit"]
@@ -1754,7 +1745,7 @@ class UnitQuantityValueForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            summary_list(get_unit_quantity_value_summary_list_items(good)),
+            summary_list(get_unit_quantity_value_summary_list_items(good, number_of_items)),
             Field(
                 "unit",
                 data_unit_toggle=json.dumps(
