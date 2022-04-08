@@ -126,6 +126,9 @@ def is_rfd_certificate_invalid(wizard):
     is_rfd_certificate_valid_cleaned_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
     )
+    if not is_rfd_certificate_valid_cleaned_data:
+        return False
+
     return not is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid", False)
 
 

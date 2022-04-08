@@ -282,7 +282,7 @@ def test_add_good_firearm_skips_rfd_validity_step_if_application_already_has_rfd
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentAvailability)
+    assert isinstance(response.context["form"], FirearmSection5Form)
 
 
 def test_add_good_firearm_skips_rfd_validity_step(application_without_rfd_document, goto_step, post_to_step):
