@@ -22,6 +22,7 @@ from exporter.core.constants import (
 )
 from exporter.core.helpers import (
     get_document_data,
+    get_organisation_documents,
     get_rfd_certificate,
     has_firearm_act_document as _has_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
@@ -639,6 +640,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         documents = get_good_documents(self.request, self.good_id)
         application = get_application(self.request, self.application_id)
         is_user_rfd = has_valid_organisation_rfd_certificate(application)
+        organisation_documents = {k.replace("-", "_"): v for k, v in get_organisation_documents(application).items()}
 
         return {
             **context,
@@ -646,6 +648,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
             "application_id": self.application_id,
             "good": self.good,
             "documents": documents,
+            "organisation_documents": organisation_documents,
         }
 
 
