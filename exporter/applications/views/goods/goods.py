@@ -776,9 +776,20 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
             AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE,
         ):
             kwargs["good"] = self.good
+
+            # The number of items can be derived from two different places.
+            # Either because it has been set explicitly by the user as part of
+            # a previous step within this wizard flow or from a previously saved
+            # good.
+            # We always try to default to default to whatever the user input on
+            # this wizard, if not we defer back to the saved good and then
+            # eventually if neither return we return a sensible default.
             kwargs["number_of_items"] = self.get_cleaned_data_for_step(
                 AddGoodToApplicationFormSteps.FIREARMS_NUMBER_OF_ITEMS
-            ).get("number_of_items", 0)
+            ).get(
+                "number_of_items",
+                self.good["firearm_details"].get("number_of_items", 0),
+            )
 
         if step == AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE:
             kwargs["request"] = self.request
