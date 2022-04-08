@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load date firearm_details_summary %}
+
 {% block back_link %}
 {% endblock %}
 
@@ -116,6 +118,106 @@
                 <dd class="govuk-summary-list__actions">
                 </dd>
             </div>
+            {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Which section of the Firearms Act 1968 is the product covered by?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.firearms_act_section|firearm_act_section_label }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+                {% if firearm_details.firearms_act_section == "firearms_act_section1" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Upload your firearm certificate
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% with document=organisation_documents.section_one_certificate %}
+                                {% if document.document.safe %}
+                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                                {% else %}
+                                    {{ document.document.name }}
+                                {% endif %}
+                            {% endwith %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+                {% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Upload your shotgun certificate
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% with document=organisation_documents.section_two_certificate %}
+                                {% if document.document.safe %}
+                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                                {% else %}
+                                    {{ document.document.name }}
+                                {% endif %}
+                            {% endwith %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+                {% elif firearm_details.firearms_act_section == "firearms_act_section5" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Upload your section 5 letter of authority
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% with document=organisation_documents.section_five_certificate %}
+                                {% if document.document.safe %}
+                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                                {% else %}
+                                    {{ document.document.name }}
+                                {% endif %}
+                            {% endwith %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+                {% endif %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Certificate reference number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.section_certificate_number }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Certificate date of expiry
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Which section of the Firearms Act 1968 is the product covered by?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}
+                        {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation %}
+                            <div class="govuk-hint">
+                                {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation }}
+                            </div>
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Do you have a document that shows what your product is and what it’s designed to do?
@@ -145,7 +247,7 @@
                         <dd class="govuk-summary-list__value">
                             {% for document in good.documents %}
                                 {% if document.safe %}
-                                    <a href="{% url 'goods:document' pk=good.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    <a href="{% url 'goods:document' pk=good.id file_pk=document.id %}" class="govuk-link govuk-link--no-visited-state">
                                         {{ document.name }}
                                     </a>
                                 {% else %}
