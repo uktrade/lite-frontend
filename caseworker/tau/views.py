@@ -1,8 +1,10 @@
 from django.http import Http404
-from django.views.generic import FormView
+from django.shortcuts import redirect
+from django.views.generic import FormView, View
 from django.utils.functional import cached_property
 from django.urls import reverse
 
+from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
 from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
 from core.auth.views import LoginRequiredMixin
@@ -141,3 +143,15 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         }
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
         return super().form_valid(form)
+
+
+class TAUMoveCaseForward(LoginRequiredMixin, TAUMixin, View):
+    """This is a transient view that move the case forward for TAU 2.0
+    and redirects to the queue view"""
+
+    def post(self, request, queue_pk, pk):
+        queue_pk = str(queue_pk)
+        case_pk = str(pk)
+        move_case_forward(request, case_pk, queue_pk)
+        queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
+        return redirect(queue_url)
