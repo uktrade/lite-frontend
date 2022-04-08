@@ -54,6 +54,7 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
 )
 from exporter.goods.services import (
+    edit_good,
     post_firearm,
     post_good_documents,
     delete_good_document,
@@ -945,8 +946,201 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
                 raise ServiceError(
                     status_code,
                     api_resp_data,
-                    "Error deleting the product document - response was: %s - %s",
-                    "Unexpected error deleting product document",
+                    "Error updating the product document description - response was: %s - %s",
+                    "Unexpected error updating product document description",
                 )
+
+        return redirect(self.get_success_url())
+
+
+class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, BaseSessionWizardView):
+    form_list = [
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+    ]
+
+    condition_dict = {
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+    }
+
+    payload_dict = {
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+
+    @cached_property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def good_id(self):
+        return str(self.kwargs["good_pk"])
+
+    @cached_property
+    def good(self):
+        try:
+            good = get_good(self.request, self.good_id, full_detail=True)[0]
+        except requests.exceptions.HTTPError:
+            raise Http404
+
+        return good
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
+    @cached_property
+    def product_document(self):
+        is_document_available = self.good["is_document_available"]
+        is_document_sensitive = self.good["is_document_sensitive"]
+        if not is_document_available or is_document_sensitive:
+            return None
+
+        if not self.good["documents"]:
+            return None
+
+        # when creating new product we can only add one document but we save it as
+        # a list because from the product detail page user can add multiple documents
+        return self.good["documents"][0]
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD:
+            kwargs["good_id"] = self.good_id
+            kwargs["document"] = self.product_document
+
+        return kwargs
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+
+        ctx["hide_step_count"] = True
+        ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
+        ctx["title"] = form.Layout.TITLE
+        return ctx
+
+    def get_form_initial(self, step):
+        return {
+            "is_document_available": self.good["is_document_available"],
+            "is_document_sensitive": self.good["is_document_sensitive"],
+            "description": self.product_document["description"] if self.product_document else "",
+        }
+
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        return {**cleaned_data, "is_document_available": True}
+
+    def get_success_url(self):
+        return reverse("applications:product_summary", kwargs=self.kwargs)
+
+    def existing_product_document(self):
+        return self.product_document
+
+    def has_updated_product_documentation(self):
+        data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
+        return data.get("product_document", None)
+
+    def get_product_document_payload(self):
+        data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
+        document = data["product_document"]
+        payload = {
+            **get_document_data(document),
+            "description": data["description"],
+        }
+        return payload
+
+    def get_payload(self, form_dict):
+        payload = {}
+        for step_name, payload_func in self.payload_dict.items():
+            form = form_dict.get(step_name)
+            if form:
+                always_merger.merge(payload, payload_func(form))
+
+        return payload
+
+    def post_product_documentation(self, good_pk):
+        document_payload = self.get_product_document_payload()
+        api_resp_data, status_code = post_good_documents(
+            request=self.request,
+            pk=good_pk,
+            json=document_payload,
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error product document when creating firearm - response was: %s - %s",
+                "Unexpected error adding document to firearm",
+            )
+
+    def delete_product_documentation(self, good_pk, document_pk):
+        api_resp_data, status_code = delete_good_document(self.request, good_pk, document_pk)
+        if status_code != HTTPStatus.OK:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error deleting the product document - response was: %s - %s",
+                "Unexpected error deleting product document",
+            )
+
+    def update_product_document_data(self, good_pk, document_pk, payload):
+        api_resp_data, status_code = update_good_document_data(self.request, good_pk, document_pk, payload)
+        if status_code != HTTPStatus.OK:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error updating the product document description - response was: %s - %s",
+                "Unexpected error updating product document description",
+            )
+
+    def edit_firearm(self, good_pk, form_dict):
+        payload = self.get_payload(form_dict)
+        api_resp_data, status_code = edit_firearm(
+            self.request,
+            good_pk,
+            payload,
+        )
+        if status_code != HTTPStatus.OK:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error updating firearm - response was: %s - %s",
+                "Unexpected error updating firearm",
+            )
+
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        return error_page(self.request, service_error.user_message)
+
+    def done(self, form_list, form_dict, **kwargs):
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        is_document_sensitive = all_data.pop("is_document_sensitive", None)
+
+        try:
+            self.edit_firearm(self.good_id, form_dict)
+
+            existing_product_document = self.product_document
+            if is_document_sensitive:
+                if existing_product_document:
+                    self.delete_product_documentation(self.good_id, existing_product_document["id"])
+            else:
+                description = all_data.pop("description", "")
+                if self.has_updated_product_documentation():
+                    self.post_product_documentation(self.good_id)
+                    if existing_product_document:
+                        self.delete_product_documentation(self.good_id, existing_product_document["id"])
+                elif existing_product_document and existing_product_document["description"] != description:
+                    payload = {"description": description}
+                    self.update_product_document_data(self.good_id, existing_product_document["id"], payload)
+
+        except ServiceError as e:
+            return self.handle_service_error(e)
 
         return redirect(self.get_success_url())
