@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, TemplateView, RedirectView
 
-from exporter.core.constants import Permissions
+from exporter.core.constants import DocumentType, Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend.organisation import Tabs
@@ -100,7 +100,7 @@ class UploadFirearmsCertificate(AbstractOrganisationUpload):
     template_name = "core/form.html"
     form_class = forms.UploadFirearmsCertificateForm
     success_url = reverse_lazy("organisation:details")
-    document_type = "rfd-certificate"
+    document_type = DocumentType.RFD_CERTIFICATE
 
     def get_context_data(self, *args, **kwargs):
         return super().get_context_data(

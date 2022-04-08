@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% load svg %}
+{% load additional_documents svg %}
 
 {% block back_link %}
 	<a href="{% url 'applications:task_list' application_id %}#supporting-documents" id="back-link" class="govuk-back-link">{% lcs 'AdditionalDocuments.BACK' %}</a>
@@ -47,7 +47,7 @@
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
-						{% if editable %}
+						{% if editable and not additional_document|is_system_document %}
 							<a href="{% url 'applications:delete_additional_document' application_id additional_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
 								{% lcs 'AdditionalDocuments.Documents.DELETE_DOCUMENT' %}
 							</a>

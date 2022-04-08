@@ -16,6 +16,7 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application, post_additional_document, post_application_document
 from exporter.core.constants import (
+    DocumentType,
     FirearmsActSections,
     FirearmsActDocumentType,
 )
@@ -23,7 +24,7 @@ from exporter.core.helpers import (
     get_document_data,
     get_rfd_certificate,
     has_firearm_act_document as _has_firearm_act_document,
-    has_valid_rfd_certificate,
+    has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
@@ -54,6 +55,7 @@ from exporter.goods.services import (
     get_good_documents,
     edit_firearm,
 )
+from exporter.organisation.services import delete_document_on_organisation
 from lite_forms.generators import error_page
 
 
@@ -91,8 +93,20 @@ def is_document_sensitive(wizard):
     return cleaned_data.get("is_document_sensitive")
 
 
-def has_rfd_certificate(wizard):
-    return has_valid_rfd_certificate(wizard.application)
+def has_organisation_rfd_certificate(wizard):
+    return has_valid_organisation_rfd_certificate(wizard.application)
+
+
+def has_application_rfd_certificate(wizard):
+    additional_documents = wizard.application.get("additional_documents")
+    if not additional_documents:
+        return False
+
+    for additional_document in additional_documents:
+        if additional_document.get("document_type") == DocumentType.RFD_CERTIFICATE:
+            return True
+
+    return False
 
 
 def has_firearm_act_document(document_type):
@@ -122,10 +136,14 @@ def is_registered_firearms_dealer(wizard):
 
 
 def should_display_is_registered_firearms_dealer_step(wizard):
-    if has_rfd_certificate(wizard) and is_rfd_certificate_invalid(wizard):
+    if (
+        has_organisation_rfd_certificate(wizard)
+        and not has_application_rfd_certificate(wizard)
+        and is_rfd_certificate_invalid(wizard)
+    ):
         return True
 
-    return not has_rfd_certificate(wizard)
+    return not has_organisation_rfd_certificate(wizard)
 
 
 def is_product_covered_by_firearm_act_section(section):
@@ -273,9 +291,12 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     ]
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
-        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: has_rfd_certificate,
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: C(has_organisation_rfd_certificate)
+        & ~C(has_application_rfd_certificate),
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: should_display_is_registered_firearms_dealer_step,
-        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: (C(has_rfd_certificate) & ~C(is_rfd_certificate_invalid))
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: (
+            C(has_organisation_rfd_certificate) & ~C(is_rfd_certificate_invalid)
+        )
         | C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
@@ -362,7 +383,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return payload
 
-    def has_rfd_certificate_data(self):
+    def has_organisation_rfd_certificate_data(self):
         return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
 
     def get_rfd_certificate_payload(self):
@@ -373,10 +394,12 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         rfd_certificate_payload = {
             **get_document_data(cert_file),
+            "description": "Registered firearm dealer certificate",
+            "document_type": DocumentType.RFD_CERTIFICATE,
             "document_on_organisation": {
                 "expiry_date": expiry_date.isoformat(),
                 "reference_code": reference_code,
-                "document_type": "rfd-certificate",
+                "document_type": DocumentType.RFD_CERTIFICATE,
             },
         }
         return rfd_certificate_payload
@@ -417,6 +440,62 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         good_pk = api_resp_data["good"]["id"]
 
         return application_pk, good_pk
+
+    def has_existing_valid_organisation_rfd_certificate(self, application):
+        if not has_valid_organisation_rfd_certificate(application):
+            return False
+
+        is_rfd_certificate_valid_cleaned_data = self.get_cleaned_data_for_step(
+            AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
+        )
+        return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid", False)
+
+    def is_existing_organisation_rfd_certificate_invalid(self, application):
+        if not has_valid_organisation_rfd_certificate(application):
+            return False
+
+        is_rfd_certificate_valid_cleaned_data = self.get_cleaned_data_for_step(
+            AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
+        )
+        return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid") is False
+
+    def delete_existing_organisation_rfd_certificate(self, application):
+        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
+        status_code = delete_document_on_organisation(
+            self.request,
+            organisation_id=organisation_rfd_certificate_data["organisation"],
+            document_id=organisation_rfd_certificate_data["id"],
+        )
+        if status_code != HTTPStatus.NO_CONTENT:
+            raise ServiceError(
+                status_code,
+                {},
+                "Error deleting existing rfd certificate to application - response was: %s - %s",
+                "Unexpected error adding firearm",
+            )
+
+    def attach_rfd_certificate_to_application(self, application):
+        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
+        document = organisation_rfd_certificate_data["document"]
+        api_resp_data, status_code = post_additional_document(
+            self.request,
+            pk=application["id"],
+            json={
+                "name": document["name"],
+                "s3_key": document["s3_key"],
+                "safe": document["safe"],
+                "size": document["size"],
+                "document_type": DocumentType.RFD_CERTIFICATE,
+                "description": "Registered firearm dealer certificate",
+            },
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error attaching existing rfd certificate to application - response was: %s - %s",
+                "Unexpected error adding firearm",
+            )
 
     def post_rfd_certificate(self, application_pk):
         rfd_certificate_payload = self.get_rfd_certificate_payload()
@@ -494,8 +573,13 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         try:
             application_pk, good_pk = self.post_firearm(form_dict)
 
-            if self.has_rfd_certificate_data():
-                self.post_rfd_certificate(application_pk)
+            if self.has_existing_valid_organisation_rfd_certificate(self.application):
+                self.attach_rfd_certificate_to_application(self.application)
+            else:
+                if self.is_existing_organisation_rfd_certificate_invalid(self.application):
+                    self.delete_existing_organisation_rfd_certificate(self.application)
+                if self.has_organisation_rfd_certificate_data():
+                    self.post_rfd_certificate(application_pk)
 
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE):
                 self.post_firearm_act_certificate(
@@ -554,7 +638,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         documents = get_good_documents(self.request, self.good_id)
         application = get_application(self.request, self.application_id)
-        is_user_rfd = has_valid_rfd_certificate(application)
+        is_user_rfd = has_valid_organisation_rfd_certificate(application)
 
         return {
             **context,

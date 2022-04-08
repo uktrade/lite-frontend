@@ -78,20 +78,40 @@ def rfd_certificate():
     return {
         "id": str(uuid.uuid4()),
         "document": {
-            "name": "testdocument.txt",
+            "name": "rfd_certificate.txt",
+            "s3_key": "rfd_certificate.txt.s3_key",
+            "safe": True,
+            "size": 3,
         },
         "document_type": "rfd-certificate",
         "is_expired": False,
+        "organisation": str(uuid.uuid4()),
     }
 
 
 @pytest.fixture
-def application_with_rfd_document(data_standard_case, requests_mock, rfd_certificate):
+def application_with_organisation_rfd_document(data_standard_case, requests_mock, rfd_certificate):
     app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     case = data_standard_case["case"]
     case["organisation"] = {
         "documents": [rfd_certificate],
     }
+    matcher = requests_mock.get(url=app_url, json=case)
+    return matcher
+
+
+@pytest.fixture
+def application_with_organisation_and_application_rfd_document(data_standard_case, requests_mock, rfd_certificate):
+    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    case = data_standard_case["case"]
+    case["organisation"] = {
+        "documents": [rfd_certificate],
+    }
+    case["additional_documents"] = [
+        {
+            "document_type": "rfd-certificate",
+        }
+    ]
     matcher = requests_mock.get(url=app_url, json=case)
     return matcher
 
@@ -236,7 +256,7 @@ def post_to_step(authorized_client, new_good_firearm_url):
 
 
 def test_add_good_firearm_displays_rfd_validity_step(
-    application_with_rfd_document, rfd_certificate, goto_step, post_to_step
+    application_with_organisation_rfd_document, rfd_certificate, goto_step, post_to_step
 ):
     goto_step(AddGoodFirearmSteps.IS_REPLICA)
     response = post_to_step(
@@ -252,6 +272,19 @@ def test_add_good_firearm_displays_rfd_validity_step(
     assertContains(response, rfd_certificate_name)
 
 
+def test_add_good_firearm_skips_rfd_validity_step_if_application_already_has_rfd_document(
+    application_with_organisation_and_application_rfd_document, rfd_certificate, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmSteps.IS_REPLICA)
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentAvailability)
+
+
 def test_add_good_firearm_skips_rfd_validity_step(application_without_rfd_document, goto_step, post_to_step):
     goto_step(AddGoodFirearmSteps.IS_REPLICA)
     response = post_to_step(
@@ -264,7 +297,7 @@ def test_add_good_firearm_skips_rfd_validity_step(application_without_rfd_docume
 
 
 def test_add_good_firearm_shows_registered_firearms_step_after_confirming_certificate_invalid(
-    application_with_rfd_document, rfd_certificate, goto_step, post_to_step
+    application_with_organisation_rfd_document, rfd_certificate, goto_step, post_to_step
 ):
     goto_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID)
     response = post_to_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, {"is_rfd_certificate_valid": False})
@@ -274,7 +307,7 @@ def test_add_good_firearm_shows_registered_firearms_step_after_confirming_certif
 
 
 def test_add_good_firearm_shows_registered_firearms_step_after_confirming_certificate_valid(
-    application_with_rfd_document, rfd_certificate, goto_step, post_to_step
+    application_with_organisation_rfd_document, rfd_certificate, goto_step, post_to_step
 ):
     goto_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID)
     response = post_to_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, {"is_rfd_certificate_valid": True})
@@ -293,7 +326,9 @@ def test_add_good_firearm_shows_upload_rfd_step_after_confirmed_as_registered_fi
     assert isinstance(response.context["form"], FirearmAttachRFDCertificate)
 
 
-def test_add_good_firearm_product_document_not_available(application_with_rfd_document, goto_step, post_to_step):
+def test_add_good_firearm_product_document_not_available(
+    application_with_organisation_rfd_document, goto_step, post_to_step
+):
     goto_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY)
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -305,7 +340,7 @@ def test_add_good_firearm_product_document_not_available(application_with_rfd_do
 
 
 def test_add_good_firearm_product_document_available_but_sensitive(
-    application_with_rfd_document, goto_step, post_to_step
+    application_with_organisation_rfd_document, goto_step, post_to_step
 ):
     goto_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY)
     response = post_to_step(
@@ -324,7 +359,7 @@ def test_add_good_firearm_product_document_available_but_sensitive(
 
 
 def test_add_good_firearm_product_document_available_but_not_sensitive(
-    application_with_rfd_document, goto_step, post_to_step
+    application_with_organisation_rfd_document, goto_step, post_to_step
 ):
     goto_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY)
     response = post_to_step(
@@ -364,7 +399,7 @@ def test_add_good_firearm_not_registered_firearm_dealer(
 
 
 def test_add_good_firearm_does_not_display_section_5_if_already_answered(
-    application_with_rfd_document,
+    application_with_organisation_rfd_document,
     goto_step,
     post_to_step,
 ):
@@ -488,7 +523,7 @@ def test_add_good_firearm_with_rfd_document_submission(
     data_standard_case,
     control_list_entries,
     pv_gradings,
-    application_with_rfd_document,
+    application_with_organisation_rfd_document,
     good_id,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -505,6 +540,12 @@ def test_add_good_firearm_with_rfd_document_submission(
 
     post_good_document_matcher = requests_mock.post(
         f"/goods/{good_id}/documents/",
+        status_code=201,
+        json={},
+    )
+
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
     )
@@ -610,8 +651,150 @@ def test_add_good_firearm_with_rfd_document_submission(
     }
 
     assert post_good_document_matcher.called_once
-    doc_request = post_good_document_matcher.last_request
-    assert doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
+    good_doc_request = post_good_document_matcher.last_request
+    assert good_doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
+
+    assert post_applications_document_matcher.called_once
+    application_doc_request = post_applications_document_matcher.last_request
+    assert application_doc_request.json() == {
+        "description": "Registered firearm dealer certificate",
+        "document_type": "rfd-certificate",
+        "name": "rfd_certificate.txt",
+        "s3_key": "rfd_certificate.txt.s3_key",
+        "safe": True,
+        "size": 3,
+    }
+
+
+def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
+    authorized_client,
+    new_good_firearm_url,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    control_list_entries,
+    pv_gradings,
+    application_with_organisation_rfd_document,
+    good_id,
+    rfd_certificate,
+):
+    authorized_client.get(new_good_firearm_url)
+
+    post_goods_matcher = requests_mock.post(
+        f"/goods/",
+        status_code=201,
+        json={
+            "good": {
+                "id": good_id,
+            },
+        },
+    )
+
+    document_id = rfd_certificate["id"]
+    organisation_id = rfd_certificate["organisation"]
+    post_applications_document_matcher = requests_mock.delete(
+        f"/organisations/{organisation_id}/document/{document_id}/",
+        status_code=204,
+        json={},
+    )
+
+    post_to_step(
+        AddGoodFirearmSteps.CATEGORY,
+        {"category": ["NON_AUTOMATIC_SHOTGUN"]},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.NAME,
+        {"name": "TEST NAME"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": True},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.PV_GRADING_DETAILS,
+        {
+            "prefix": "NATO",
+            "grading": "official",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue_0": "20",
+            "date_of_issue_1": "02",
+            "date_of_issue_2": "2020",
+        },
+    )
+    post_to_step(
+        AddGoodFirearmSteps.CALIBRE,
+        {"calibre": "calibre 123"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REPLICA,
+        {"is_replica": True, "replica_description": "This is a replica"},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
+        {"is_rfd_certificate_valid": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": False},
+    )
+    post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        {"firearms_act_section": "no"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+    assert post_goods_matcher.called_once
+    last_request = post_goods_matcher.last_request
+    assert last_request.json() == {
+        "firearm_details": {
+            "calibre": "calibre 123",
+            "category": ["NON_AUTOMATIC_SHOTGUN"],
+            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_registered_firearm_dealer": False,
+            "is_replica": True,
+            "is_rfd_certificate_valid": False,
+            "replica_description": "This is a replica",
+            "type": "firearms",
+        },
+        "control_list_entries": ["ML1", "ML1a"],
+        "name": "TEST NAME",
+        "is_good_controlled": True,
+        "is_pv_graded": "yes",
+        "prefix": "NATO",
+        "grading": "official",
+        "suffix": "",
+        "issuing_authority": "Government entity",
+        "reference": "GR123",
+        "date_of_issue": "2020-02-20",
+        "item_category": "group2_firearms",
+        "is_document_available": False,
+        "no_document_comments": "product not manufactured yet",
+    }
+
+    assert post_applications_document_matcher.called_once
 
 
 def test_add_good_firearm_without_rfd_document_submission_registered_firearms_dealer(
@@ -723,14 +906,16 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     assert post_additional_document_matcher.called_once
     last_request = post_additional_document_matcher.last_request
     assert last_request.json() == {
-        "name": file_name,
-        "s3_key": file_name,
-        "size": 0,
+        "description": "Registered firearm dealer certificate",
         "document_on_organisation": {
             "expiry_date": expiry_date.isoformat(),
             "reference_code": "12345",
             "document_type": "rfd-certificate",
         },
+        "document_type": "rfd-certificate",
+        "name": file_name,
+        "s3_key": file_name,
+        "size": 0,
     }
 
 
@@ -1227,7 +1412,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
     requests_mock,
     data_standard_case,
     control_list_entries,
-    application_with_rfd_document,
+    application_with_organisation_rfd_document,
     rfd_certificate,
     application,
     good_id,
@@ -1245,8 +1430,14 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         },
     )
 
-    post_application_document_matcher = requests_mock.post(
+    post_application_goods_document_matcher = requests_mock.post(
         f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
+        status_code=201,
+        json={},
+    )
+
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
     )
@@ -1330,8 +1521,8 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         "no_document_comments": "product not manufactured yet",
     }
 
-    assert post_application_document_matcher.called_once
-    last_request = post_application_document_matcher.last_request
+    assert post_application_goods_document_matcher.called_once
+    last_request = post_application_goods_document_matcher.last_request
     assert last_request.json() == {
         "document_on_organisation": {
             "document_type": "section-five-certificate",
@@ -1341,6 +1532,17 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         "name": "letter_of_authority.pdf",
         "s3_key": "letter_of_authority.pdf",
         "size": 0,
+    }
+
+    assert post_applications_document_matcher.called_once
+    application_doc_request = post_applications_document_matcher.last_request
+    assert application_doc_request.json() == {
+        "description": "Registered firearm dealer certificate",
+        "document_type": "rfd-certificate",
+        "name": "rfd_certificate.txt",
+        "s3_key": "rfd_certificate.txt.s3_key",
+        "safe": True,
+        "size": 3,
     }
 
 
@@ -1367,6 +1569,12 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
                 "id": good_id,
             },
         },
+    )
+
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
+        status_code=201,
+        json={},
     )
 
     post_to_step(
@@ -1436,6 +1644,17 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
         "no_document_comments": "product not manufactured yet",
     }
 
+    assert post_applications_document_matcher.called_once
+    application_doc_request = post_applications_document_matcher.last_request
+    assert application_doc_request.json() == {
+        "description": "Registered firearm dealer certificate",
+        "document_type": "rfd-certificate",
+        "name": "rfd_certificate.txt",
+        "s3_key": "rfd_certificate.txt.s3_key",
+        "safe": True,
+        "size": 3,
+    }
+
 
 def test_add_good_firearm_submission_error(
     authorized_client,
@@ -1444,7 +1663,7 @@ def test_add_good_firearm_submission_error(
     requests_mock,
     data_standard_case,
     control_list_entries,
-    application_with_rfd_document,
+    application_with_organisation_rfd_document,
 ):
     authorized_client.get(new_good_firearm_url)
 

@@ -10,6 +10,7 @@ ROOT_URLCONF = "exporter.urls"
 
 INSTALLED_APPS += [
     "exporter.core",
+    "exporter.applications",
     "exporter.organisation",
 ]
 
