@@ -5,10 +5,30 @@
 {% block body %}
 
 <div class="govuk-width-container">
-    <a href="../" class="govuk-back-link">Back</a>
-    <h1 class="govuk-heading-l">Product Assessment</h1>
-    <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} product(s) going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
     <main class="govuk-main-wrapper">
+
+        <a href="../" class="govuk-back-link">Back</a>
+
+        <div class="govuk-grid-row">
+            <!-- Heading -->
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Product Assessment</h1>
+                <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} product(s) going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+            </div>
+            <!-- Move case forward form -->
+            <div class="govuk-grid-column-one-third">
+                {% if not unassessed_goods %}
+                <div class="govuk-grid-column-full" style="text-align: right;">
+                    <form action="{% url 'cases:tau:move_case_forward' queue_id case.id %}" method="POST">
+                        {% csrf_token %}
+                        <input class="govuk-button" type="submit" value="Move case forward">
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form -->
         <div class="govuk-grid-row">
             {% if unassessed_goods %}
             <form id="tau-form" action="." method="POST">
@@ -29,34 +49,38 @@
             </form>
             {% endif %}
         </div>
+
+        <!-- Assessed products table -->
         <div class="govuk-grid-row">
-            <table id="assessed-products" class="govuk-table">
-                <caption class="govuk-table__caption govuk-table__caption--m">Assessed Products</caption>
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header"></th>
-                        <th scope="col" class="govuk-table__header"></th>
-                        <th scope="col" class="govuk-table__header">Quantities</th>
-                        <th scope="col" class="govuk-table__header">Control Entry</th>
-                        <th scope="col" class="govuk-table__header">License</th>
-                        <th scope="col" class="govuk-table__header">Report Summary</th>
-                        <th scope="col" class="govuk-table__header">Assessment notes</th>
-                  </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% for good in assessed_goods %}
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">{{ forloop.counter }}</td>
-                        <td class="govuk-table__cell">{{ good.name }}</td>
-                        <td class="govuk-table__cell">{{ good.quantity|floatformat }}</td>
-                        <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
-                        <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
-                        <td class="govuk-table__cell">{{ good.report_summary }}</td>
-                        <td class="govuk-table__cell"><a href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit assessment</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-              </table>
+            <div class="govuk-grid-column-full">
+                <table id="assessed-products" class="govuk-table">
+                    <caption class="govuk-table__caption govuk-table__caption--m">Assessed Products</caption>
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header"></th>
+                            <th scope="col" class="govuk-table__header"></th>
+                            <th scope="col" class="govuk-table__header">Quantities</th>
+                            <th scope="col" class="govuk-table__header">Control Entry</th>
+                            <th scope="col" class="govuk-table__header">License</th>
+                            <th scope="col" class="govuk-table__header">Report Summary</th>
+                            <th scope="col" class="govuk-table__header">Assessment notes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for good in assessed_goods %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ forloop.counter }}</td>
+                            <td class="govuk-table__cell">{{ good.name }}</td>
+                            <td class="govuk-table__cell">{{ good.quantity|floatformat }}</td>
+                            <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
+                            <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
+                            <td class="govuk-table__cell">{{ good.report_summary }}</td>
+                            <td class="govuk-table__cell"><a href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit assessment</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 </div>

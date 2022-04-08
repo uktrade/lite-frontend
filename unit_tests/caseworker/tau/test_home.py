@@ -159,3 +159,19 @@ def test_form(authorized_client, url, data_standard_case, requests_mock, mock_co
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
         "is_good_controlled": False,
     }
+
+
+def test_move_case_forward(authorized_client, url, data_queue, data_standard_case, mock_control_list_entries):
+    """
+    When all products has been assessed, we will get a move-case-forward form.
+    """
+    response = authorized_client.get(url)
+    assert response.context["unassessed_goods"] == []
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    forms = soup.find_all("form")
+    assert len(forms) == 1
+    assert forms[0].attrs["action"] == reverse(
+        "cases:tau:move_case_forward",
+        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
+    )
