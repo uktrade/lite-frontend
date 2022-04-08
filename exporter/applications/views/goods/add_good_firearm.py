@@ -1,3 +1,4 @@
+import datetime
 import logging
 import requests
 
@@ -378,12 +379,50 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
         return kwargs
 
+    def has_skipped_firearms_attach_step(self, form_dict, firearm_details, section_value, attach_step_name):
+        firearms_act_section = firearm_details["firearms_act_section"]
+        return firearms_act_section == section_value and attach_step_name not in form_dict
+
     def get_payload(self, form_dict):
         payload = {}
         for step_name, payload_func in self.payload_dict.items():
             form = form_dict.get(step_name)
             if form:
                 always_merger.merge(payload, payload_func(form))
+
+        firearm_details = payload["firearm_details"]
+        if firearm_details.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+            for section_value, attach_step_name, document_type in (
+                (
+                    FirearmsActSections.SECTION_1,
+                    AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
+                    FirearmsActDocumentType.SECTION_1,
+                ),
+                (
+                    FirearmsActSections.SECTION_2,
+                    AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
+                    FirearmsActDocumentType.SECTION_2,
+                ),
+                (
+                    FirearmsActSections.SECTION_5,
+                    AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
+                    FirearmsActDocumentType.SECTION_5,
+                ),
+            ):
+                if self.has_skipped_firearms_attach_step(form_dict, firearm_details, section_value, attach_step_name):
+                    certificate = get_organisation_documents(self.application)[document_type]
+                    firearm_details.update(
+                        {
+                            "section_certificate_missing": False,
+                            "section_certificate_number": certificate["reference_code"],
+                            "section_certificate_date_of_expiry": datetime.datetime.strptime(
+                                certificate["expiry_date"], "%d %B %Y"
+                            )
+                            .date()
+                            .isoformat(),
+                        }
+                    )
+                    break
 
         return payload
 

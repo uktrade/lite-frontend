@@ -130,6 +130,8 @@ def section_5_document():
         },
         "document_type": "section-five-certificate",
         "is_expired": False,
+        "reference_code": "section 5 ref",
+        "expiry_date": "30 September 2024",
     }
 
 
@@ -1633,6 +1635,9 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
             "is_replica": True,
             "is_rfd_certificate_valid": True,
             "replica_description": "This is a replica",
+            "section_certificate_date_of_expiry": "2024-09-30",
+            "section_certificate_missing": False,
+            "section_certificate_number": "section 5 ref",
             "type": "firearms",
         },
         "control_list_entries": ["ML1", "ML1a"],
