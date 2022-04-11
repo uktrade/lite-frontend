@@ -567,10 +567,19 @@ def data_standard_case():
                             "is_good_controlled": {"key": "True", "value": "Yes"},
                             "report_summary": "scale compelling technologies",
                             "flags": [],
-                            "documents": [],
                             "is_pv_graded": None,
+                            "documents": [
+                                {
+                                    "id": "6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335",
+                                    "name": "data_sheet.pdf",
+                                    "description": "product data sheet",
+                                }
+                            ],
                             "grading_comment": None,
                             "pv_grading_details": None,
+                            "is_document_available": True,
+                            "no_document_comments": "",
+                            "is_document_sensitive": False,
                             "status": {"key": "verified", "value": "Verified"},
                             "item_category": {"key": "group1_device", "value": "Device, equipment or object"},
                             "is_military_use": {"key": "no", "value": "No"},

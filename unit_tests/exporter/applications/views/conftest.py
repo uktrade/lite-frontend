@@ -29,3 +29,26 @@ def pv_gradings(requests_mock):
         "/static/private-venture-gradings/v2/",
         json={"pv_gradings": [{"official": "Official"}, {"restricted": "Restricted"}]},
     )
+
+
+@pytest.fixture
+def mock_good_document_post(requests_mock, data_standard_case):
+    good = data_standard_case["case"]["data"]["goods"][0]["good"]
+    url = client._build_absolute_uri(f'/goods/{good["id"]}/documents/')
+    yield requests_mock.post(url=url, json={}, status_code=201)
+
+
+@pytest.fixture
+def mock_good_document_put(requests_mock, data_standard_case):
+    good = data_standard_case["case"]["data"]["goods"][0]["good"]
+    document_pk = good["documents"][0]["id"]
+    url = client._build_absolute_uri(f'/goods/{good["id"]}/documents/{document_pk}/')
+    yield requests_mock.put(url=url, json={})
+
+
+@pytest.fixture
+def mock_good_document_delete(requests_mock, data_standard_case):
+    good = data_standard_case["case"]["data"]["goods"][0]["good"]
+    document_pk = good["documents"][0]["id"]
+    url = client._build_absolute_uri(f'/goods/{good["id"]}/documents/{document_pk}/')
+    yield requests_mock.delete(url=url, json={})
