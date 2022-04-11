@@ -529,6 +529,9 @@ class FirearmDocumentAvailability(BaseFirearmForm):
                 "Enter a reason why you cannot upload a product document",
             )
 
+        if cleaned_data.get("is_document_available") is True:
+            cleaned_data["no_document_comments"] = ""
+
         return cleaned_data
 
 
