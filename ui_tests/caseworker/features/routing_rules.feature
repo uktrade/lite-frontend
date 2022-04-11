@@ -74,24 +74,25 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I filter by my routing rule queue
     Then I see the routing rule in the list as "Deactivated" and tier "1"
 
-    Scenario: Move case along in workflow
-      Given I sign in to SSO or am signed into SSO
-      And I create standard application or standard application has been previously created
-      When I go to my profile page
-      And I change my team to "Licensing Reception" and default queue to "Open cases"
-      And I go to my case list
-      And I switch to queue "Licensing Reception SIEL applications"
-      Then I see previously created application
-      When I click on the application previously created
-      Then I should see the button "I'm done"
-      When I click I'm done
-      And I click submit
-      Then the case should have been removed from my default queue
-      When I go to my profile page
-      And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"
-      And I go to my case list
-      Then I should see my case in the cases list
-      When I go to my profile page
-      And I change my team to "Technical Assessment Unit" and default queue to "Technical Assessment Unit SIELs to Review"
-      And I go to my case list
-      Then I should see my case in the cases list
+
+  Scenario: Move case along in workflow
+    Given I sign in to SSO or am signed into SSO
+    And I create standard application or standard application has been previously created
+    When I go to my profile page
+    And I change my team to "Licensing Reception" and default queue to "Open cases"
+    And I go to my case list
+    And I switch to queue "Licensing Reception SIEL applications"
+    Then I see previously created application
+    When I click on the application previously created
+    Then I should see the button "I'm done"
+    When I click I'm done
+    And I click submit
+    Then the case should have been removed from my default queue
+    When I go to my profile page
+    And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"
+    And I go to my case list
+    Then I should see my case in the cases list
+    When I go to my profile page
+    And I change my team to "Technical Assessment Unit" and default queue to "Technical Assessment Unit SIELs to Review"
+    And I go to my case list
+    Then I should see my case in the cases list

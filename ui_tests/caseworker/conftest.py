@@ -1,5 +1,3 @@
-import time
-
 from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
@@ -195,10 +193,9 @@ def prepare_case(api_test_client, nlr):  # noqa
 @when("I click continue")
 @when("I click submit")
 def submit_form(driver):  # noqa
+    old_page = driver.find_element_by_tag_name("html")
     Shared(driver).click_submit()
-    # handle case when scenario clicks submit in consecutive steps: there is a race condition resulting in the same
-    # submit button being clicked for each step
-    time.sleep(2)
+    WebDriverWait(driver, 20).until(expected_conditions.staleness_of(old_page))
 
 
 @when(parsers.parse('I click "{button_text}"'))
