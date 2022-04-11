@@ -889,7 +889,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
     def product_document(self):
         is_document_available = self.good["is_document_available"]
         is_document_sensitive = self.good["is_document_sensitive"]
-        if not is_document_available or is_document_sensitive:
+        if not is_document_available or (is_document_available and is_document_sensitive):
             return None
 
         if not self.good["documents"]:
@@ -907,6 +907,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
         return {"description": self.product_document["description"] if self.product_document else ""}
 
     def form_valid(self, form):
+        existing_product_document = self.product_document
         product_document = form.cleaned_data.pop("product_document", None)
         description = form.cleaned_data.pop("description", "")
         payload = {"description": description}
@@ -929,14 +930,17 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
                 )
 
             # Delete existing document
-            api_resp_data, status_code = delete_good_document(self.request, self.good_id, self.product_document["id"])
-            if status_code != HTTPStatus.OK:
-                raise ServiceError(
-                    status_code,
-                    api_resp_data,
-                    "Error deleting the product document - response was: %s - %s",
-                    "Unexpected error deleting product document",
+            if existing_product_document:
+                api_resp_data, status_code = delete_good_document(
+                    self.request, self.good_id, self.product_document["id"]
                 )
+                if status_code != HTTPStatus.OK:
+                    raise ServiceError(
+                        status_code,
+                        api_resp_data,
+                        "Error deleting the product document - response was: %s - %s",
+                        "Unexpected error deleting product document",
+                    )
         elif self.product_document["description"] != description:
             api_resp_data, status_code = update_good_document_data(
                 self.request, self.good_id, self.product_document["id"], payload
