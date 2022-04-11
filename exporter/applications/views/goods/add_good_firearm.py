@@ -834,16 +834,12 @@ class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
     def get_form_initial(self, step):
         initial = {}
         if step == AddGoodFirearmSteps.PV_GRADING:
-            initial = {
-                "is_pv_graded": str_to_bool(self.good["is_pv_graded"]["key"])
-                if self.good["is_pv_graded"].get("key")
-                else None
-            }
+            initial = {"is_pv_graded": str_to_bool(self.good["is_pv_graded"].get("key"))}
         elif step == AddGoodFirearmSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
             pv_grading_details = self.good["pv_grading_details"]
             initial = {
                 "prefix": pv_grading_details.get("prefix"),
-                "grading": pv_grading_details["grading"]["key"] if pv_grading_details["grading"].get("key") else None,
+                "grading": pv_grading_details["grading"].get("key"),
                 "suffix": pv_grading_details.get("suffix"),
                 "issuing_authority": pv_grading_details.get("issuing_authority"),
                 "reference": pv_grading_details.get("reference"),
@@ -877,7 +873,7 @@ class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
             payload,
         )
 
-        return api_resp_data, api_resp_data
+        return api_resp_data, status_code
 
     def done(self, form_list, form_dict, **kwargs):
         self.edit_firearm(form_dict)
