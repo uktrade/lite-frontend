@@ -157,14 +157,6 @@ def control_list_entries(requests_mock):
 
 
 @pytest.fixture
-def pv_gradings(requests_mock):
-    requests_mock.get(
-        "/static/private-venture-gradings/v2/",
-        json={"pv_gradings": [{"official": "Official"}, {"restricted": "Restricted"}]},
-    )
-
-
-@pytest.fixture
 def good_id():
     return str(uuid.uuid4())
 
@@ -640,12 +632,14 @@ def test_add_good_firearm_with_rfd_document_submission(
         "name": "TEST NAME",
         "is_good_controlled": True,
         "is_pv_graded": "yes",
-        "prefix": "NATO",
-        "grading": "official",
-        "suffix": "",
-        "issuing_authority": "Government entity",
-        "reference": "GR123",
-        "date_of_issue": "2020-02-20",
+        "pv_grading_details": {
+            "prefix": "NATO",
+            "grading": "official",
+            "suffix": "",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue": "2020-02-20",
+        },
         "item_category": "group2_firearms",
         "is_document_available": True,
         "no_document_comments": "",
@@ -785,12 +779,14 @@ def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
         "name": "TEST NAME",
         "is_good_controlled": True,
         "is_pv_graded": "yes",
-        "prefix": "NATO",
-        "grading": "official",
-        "suffix": "",
-        "issuing_authority": "Government entity",
-        "reference": "GR123",
-        "date_of_issue": "2020-02-20",
+        "pv_grading_details": {
+            "prefix": "NATO",
+            "grading": "official",
+            "suffix": "",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue": "2020-02-20",
+        },
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",

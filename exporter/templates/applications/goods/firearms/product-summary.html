@@ -84,6 +84,7 @@
                     {{ good.is_pv_graded.value }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading' application_id good.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -94,7 +95,7 @@
                     {{ firearm_details.calibre }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_calibre' application_id good.id %}">Change</a>
+                    <a id="change-good-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_calibre' application_id good.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
