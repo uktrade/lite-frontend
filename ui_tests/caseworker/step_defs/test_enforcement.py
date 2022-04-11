@@ -34,10 +34,10 @@ def enforcement_file_download_check(filename):
 
 @then("an XML file is downloaded onto my device")
 def xml_file_downloaded(driver):
-    i = 5
+    i = 10
     EU_XML_PATH = "/tmp/enforcement_check.xml"
     while not os.path.exists(EU_XML_PATH) and i > 0:
-        time.sleep(1)
+        time.sleep(0.1)
         i -= 1
 
     assert os.path.exists(EU_XML_PATH)
