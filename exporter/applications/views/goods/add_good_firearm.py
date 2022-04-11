@@ -54,7 +54,6 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
 )
 from exporter.goods.services import (
-    edit_good,
     post_firearm,
     post_good_documents,
     delete_good_document,
@@ -953,20 +952,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
         return redirect(self.get_success_url())
 
 
-class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, BaseSessionWizardView):
-    form_list = [
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
-    ]
-
-    condition_dict = {
-        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
-    }
-
-    payload_dict = {
-        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
-    }
-
+class AddGoodWizardCommon:
     @cached_property
     def application_id(self):
         return str(self.kwargs["pk"])
@@ -990,11 +976,48 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, BaseSessionWizar
 
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+
+        ctx["hide_step_count"] = True
+        ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
+        ctx["title"] = form.Layout.TITLE
+        return ctx
+
+    def get_success_url(self):
+        return reverse("applications:product_summary", kwargs=self.kwargs)
+
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        return error_page(self.request, service_error.user_message)
+
+    def edit_firearm(self, good_pk, form_dict):
+        payload = self.get_payload(form_dict)
+        api_resp_data, status_code = edit_firearm(
+            self.request,
+            good_pk,
+            payload,
+        )
+        if status_code != HTTPStatus.OK:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error updating firearm - response was: %s - %s",
+                "Unexpected error updating firearm",
+            )
+
+
+class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
     @cached_property
     def product_document(self):
         is_document_available = self.good["is_document_available"]
         is_document_sensitive = self.good["is_document_sensitive"]
-        if not is_document_available or is_document_sensitive:
+        if not is_document_available or (is_document_available and is_document_sensitive):
             return None
 
         if not self.good["documents"]:
@@ -1013,30 +1036,13 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, BaseSessionWizar
 
         return kwargs
 
-    def get_context_data(self, form, **kwargs):
-        ctx = super().get_context_data(form, **kwargs)
-
-        ctx["hide_step_count"] = True
-        ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
-        ctx["title"] = form.Layout.TITLE
-        return ctx
-
     def get_form_initial(self, step):
         return {
             "is_document_available": self.good["is_document_available"],
+            "no_document_comments": self.good["no_document_comments"],
             "is_document_sensitive": self.good["is_document_sensitive"],
             "description": self.product_document["description"] if self.product_document else "",
         }
-
-    def get_cleaned_data_for_step(self, step):
-        cleaned_data = super().get_cleaned_data_for_step(step)
-        return {**cleaned_data, "is_document_available": True}
-
-    def get_success_url(self):
-        return reverse("applications:product_summary", kwargs=self.kwargs)
-
-    def existing_product_document(self):
-        return self.product_document
 
     def has_updated_product_documentation(self):
         data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
@@ -1095,29 +1101,24 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, BaseSessionWizar
                 "Unexpected error updating product document description",
             )
 
-    def edit_firearm(self, good_pk, form_dict):
-        payload = self.get_payload(form_dict)
-        api_resp_data, status_code = edit_firearm(
-            self.request,
-            good_pk,
-            payload,
-        )
-        if status_code != HTTPStatus.OK:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error updating firearm - response was: %s - %s",
-                "Unexpected error updating firearm",
-            )
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        return error_page(self.request, service_error.user_message)
+class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, AddGoodDocumentWizardCommon, BaseSessionWizardView):
+    form_list = [
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+    ]
+
+    condition_dict = {
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+    }
+
+    payload_dict = {
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+
+    def get_cleaned_data_for_step(self, step):
+        cleaned_data = super().get_cleaned_data_for_step(step)
+        return {**cleaned_data, "is_document_available": True}
 
     def done(self, form_list, form_dict, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
@@ -1128,6 +1129,51 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, BaseSessionWizar
 
             existing_product_document = self.product_document
             if is_document_sensitive:
+                if existing_product_document:
+                    self.delete_product_documentation(self.good_id, existing_product_document["id"])
+            else:
+                description = all_data.pop("description", "")
+                if self.has_updated_product_documentation():
+                    self.post_product_documentation(self.good_id)
+                    if existing_product_document:
+                        self.delete_product_documentation(self.good_id, existing_product_document["id"])
+                elif existing_product_document and existing_product_document["description"] != description:
+                    payload = {"description": description}
+                    self.update_product_document_data(self.good_id, existing_product_document["id"], payload)
+
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
+
+
+class FirearmEditProductDocumentAvailability(LoginRequiredMixin, AddGoodDocumentWizardCommon, BaseSessionWizardView):
+    form_list = [
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+    ]
+
+    condition_dict = {
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+    }
+
+    payload_dict = {
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+
+    def done(self, form_list, form_dict, **kwargs):
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        is_document_available = all_data.pop("is_document_available", None)
+        is_document_sensitive = all_data.pop("is_document_sensitive", None)
+
+        try:
+            self.edit_firearm(self.good_id, form_dict)
+
+            existing_product_document = self.product_document
+            if not is_document_available or (is_document_available and is_document_sensitive):
                 if existing_product_document:
                     self.delete_product_documentation(self.good_id, existing_product_document["id"])
             else:

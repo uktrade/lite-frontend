@@ -227,6 +227,7 @@
                     {{ good.is_document_available|yesno|title }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_product_document_availability' application_id good.id %}">Change</a>
                 </dd>
             </div>
             {% if good.is_document_available %}

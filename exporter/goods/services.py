@@ -262,6 +262,7 @@ def update_good_document_data(request, pk, doc_pk, data):
     response.raise_for_status()
     return response.json(), response.status_code
 
+
 # Document Sensitivity
 def get_document_missing_reasons(request):
     data = client.get(request, "/static/missing-document-reasons/")
