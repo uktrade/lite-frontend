@@ -1,6 +1,7 @@
 import datetime
 import logging
 import requests
+from datetime import date
 
 from deepmerge import always_merger
 from http import HTTPStatus
@@ -27,7 +28,9 @@ from exporter.core.helpers import (
     get_rfd_certificate,
     has_firearm_act_document as _has_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
+    str_to_bool,
 )
+
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
@@ -198,7 +201,7 @@ def get_pv_grading_payload(form):
 def get_pv_grading_good_payload(form):
     payload = form.cleaned_data.copy()
     payload["date_of_issue"] = payload["date_of_issue"].isoformat()
-    return payload
+    return {"pv_grading_details": payload}
 
 
 @firearm_details_payload
@@ -792,3 +795,90 @@ class FirearmEditReplica(BaseFirearmEditView):
             "is_replica": firearm_details["is_replica"],
             "replica_description": firearm_details["replica_description"],
         }
+
+
+class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
+
+    form_list = [
+        (AddGoodFirearmSteps.PV_GRADING, FirearmPvGradingForm),
+        (AddGoodFirearmSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+    ]
+
+    condition_dict = {
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
+    }
+
+    payload_dict = {
+        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+    }
+
+    @cached_property
+    def good_id(self):
+        return str(self.kwargs["good_pk"])
+
+    @cached_property
+    def good(self):
+        try:
+            good = get_good(self.request, self.good_id, full_detail=True)[0]
+        except requests.exceptions.HTTPError:
+            raise Http404
+
+        return good
+
+    def get_pv_grading_payload(self, dict):
+        return {
+            "is_pv_graded": "yes" if dict["is_pv_graded"] else "no",
+        }
+
+    def get_form_initial(self, step):
+        initial = {}
+        if step == AddGoodFirearmSteps.PV_GRADING:
+            initial = {
+                "is_pv_graded": str_to_bool(self.good["is_pv_graded"]["key"])
+                if self.good["is_pv_graded"].get("key")
+                else None
+            }
+        elif step == AddGoodFirearmSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
+            pv_grading_details = self.good["pv_grading_details"]
+            initial = {
+                "prefix": pv_grading_details.get("prefix"),
+                "grading": pv_grading_details["grading"]["key"] if pv_grading_details["grading"].get("key") else None,
+                "suffix": pv_grading_details.get("suffix"),
+                "issuing_authority": pv_grading_details.get("issuing_authority"),
+                "reference": pv_grading_details.get("reference"),
+                "date_of_issue": date.fromisoformat(pv_grading_details["date_of_issue"])
+                if pv_grading_details["date_of_issue"]
+                else None,
+            }
+        return initial
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == AddGoodFirearmSteps.PV_GRADING_DETAILS:
+            kwargs["request"] = self.request
+        return kwargs
+
+    def get_payload(self, form_dict):
+        payload = {}
+        for step_name, payload_func in self.payload_dict.items():
+            form = form_dict.get(step_name)
+            if form:
+                always_merger.merge(payload, payload_func(form))
+
+        return payload
+
+    def edit_firearm(self, form_dict):
+        payload = self.get_payload(form_dict)
+        api_resp_data, status_code = edit_firearm(
+            self.request,
+            self.good_id,
+            payload,
+        )
+
+        return api_resp_data, api_resp_data
+
+    def done(self, form_list, form_dict, **kwargs):
+        self.edit_firearm(form_dict)
+        return redirect(reverse("applications:product_summary", kwargs=self.kwargs))

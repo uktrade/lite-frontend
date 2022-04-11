@@ -1,10 +1,55 @@
 import pytest
 from django.urls import reverse
 
+from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
+
 
 @pytest.fixture(autouse=True)
 def setup(mock_good_get, mock_good_put, mock_control_list_entries_get, settings):
     settings.FEATURE_FLAG_PRODUCT_2_0 = True
+
+
+@pytest.fixture
+def step_data_params(data_standard_case):
+    application_id = data_standard_case["case"]["data"]["id"]
+    good = data_standard_case["case"]["data"]["goods"][0]["good"]
+    return {
+        AddGoodFirearmSteps.PV_GRADING: (
+            "firearm_edit_pv_grading",
+            reverse("applications:firearm_edit_pv_grading", kwargs={"pk": application_id, "good_pk": good["id"]}),
+        ),
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: (
+            "firearm_edit_pv_grading",
+            reverse("applications:firearm_edit_pv_grading", kwargs={"pk": application_id, "good_pk": good["id"]}),
+        ),
+    }
+
+
+@pytest.fixture
+def post_to_step(authorized_client, step_data_params):
+    def _post_to_step(step_name, data):
+        return authorized_client.post(
+            step_data_params[step_name][1],
+            data={
+                f"{step_data_params[step_name][0]}-current_step": step_name,
+                **{f"{step_name}-{key}": value for key, value in data.items()},
+            },
+        )
+
+    return _post_to_step
+
+
+@pytest.fixture
+def goto_step(authorized_client, step_data_params):
+    def _goto_step(step_name):
+        return authorized_client.post(
+            step_data_params[step_name][1],
+            data={
+                "wizard_goto_step": step_name,
+            },
+        )
+
+    return _goto_step
 
 
 @pytest.mark.parametrize(
@@ -73,3 +118,42 @@ def test_edit_good_control_list_entry_options(authorized_client, data_standard_c
 
     assert response.status_code == 302
     assert requests_mock.last_request.json() == expected
+
+
+def test_edit_pv_grading(goto_step, post_to_step, pv_gradings, requests_mock):
+
+    response = goto_step(AddGoodFirearmSteps.PV_GRADING)
+    assert response.status_code == 200
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PV_GRADING,
+        {"is_pv_graded": True},
+    )
+
+    assert response.status_code == 200
+
+    response = post_to_step(
+        AddGoodFirearmSteps.PV_GRADING_DETAILS,
+        {
+            "prefix": "NATO",
+            "grading": "official",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue_0": "20",
+            "date_of_issue_1": "02",
+            "date_of_issue_2": "2020",
+        },
+    )
+
+    assert response.status_code == 302
+    assert requests_mock.last_request.json() == {
+        "is_pv_graded": "yes",
+        "pv_grading_details": {
+            "prefix": "NATO",
+            "grading": "official",
+            "suffix": "",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue": "2020-02-20",
+        },
+    }
