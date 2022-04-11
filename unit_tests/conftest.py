@@ -568,7 +568,7 @@ def data_standard_case():
                             "report_summary": "scale compelling technologies",
                             "flags": [],
                             "documents": [],
-                            "is_pv_graded": {"key": "no", "value": "No"},
+                            "is_pv_graded": None,
                             "grading_comment": None,
                             "pv_grading_details": None,
                             "status": {"key": "verified", "value": "Verified"},
