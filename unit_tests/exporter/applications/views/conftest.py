@@ -3,6 +3,13 @@ from core import client
 
 
 @pytest.fixture
+def mock_application_get(requests_mock, data_standard_case):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/applications/{application["id"]}/')
+    yield requests_mock.get(url=url, json={})
+
+
+@pytest.fixture
 def mock_good_get(requests_mock, data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}

@@ -269,6 +269,20 @@ def get_attach_firearm_act_certificate_payload(form):
     }
 
 
+def get_product_document(good):
+    is_document_available = good["is_document_available"]
+    is_document_sensitive = good["is_document_sensitive"]
+    if not is_document_available or (is_document_available and is_document_sensitive):
+        return None
+
+    if not good["documents"]:
+        return None
+
+    # when creating new product we can only add one document but we save it as
+    # a list because from the product detail page user can add multiple documents
+    return good["documents"][0]
+
+
 class ServiceError(Exception):
     def __init__(self, status_code, response, log_message, user_message):
         super().__init__()
@@ -887,17 +901,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
 
     @cached_property
     def product_document(self):
-        is_document_available = self.good["is_document_available"]
-        is_document_sensitive = self.good["is_document_sensitive"]
-        if not is_document_available or (is_document_available and is_document_sensitive):
-            return None
-
-        if not self.good["documents"]:
-            return None
-
-        # when creating new product we can only add one document but we save it as
-        # a list because from the product detail page user can add multiple documents
-        return self.good["documents"][0]
+        return get_product_document(self.good)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -908,8 +912,8 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
 
     def form_valid(self, form):
         existing_product_document = self.product_document
-        product_document = form.cleaned_data.pop("product_document", None)
-        description = form.cleaned_data.pop("description", "")
+        product_document = form.cleaned_data.get("product_document", None)
+        description = form.cleaned_data.get("description", "")
         payload = {"description": description}
         if product_document:
             payload = {
@@ -978,6 +982,11 @@ class AddGoodWizardCommon:
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
             raise Http404
 
+        try:
+            self.application = get_application(self.request, self.application_id)
+        except requests.exceptions.HTTPError:
+            raise Http404
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
@@ -1000,6 +1009,15 @@ class AddGoodWizardCommon:
         )
         return error_page(self.request, service_error.user_message)
 
+    def get_payload(self, form_dict):
+        payload = {}
+        for step_name, payload_func in self.payload_dict.items():
+            form = form_dict.get(step_name)
+            if form:
+                always_merger.merge(payload, payload_func(form))
+
+        return payload
+
     def edit_firearm(self, good_pk, form_dict):
         payload = self.get_payload(form_dict)
         api_resp_data, status_code = edit_firearm(
@@ -1019,17 +1037,7 @@ class AddGoodWizardCommon:
 class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
     @cached_property
     def product_document(self):
-        is_document_available = self.good["is_document_available"]
-        is_document_sensitive = self.good["is_document_sensitive"]
-        if not is_document_available or (is_document_available and is_document_sensitive):
-            return None
-
-        if not self.good["documents"]:
-            return None
-
-        # when creating new product we can only add one document but we save it as
-        # a list because from the product detail page user can add multiple documents
-        return self.good["documents"][0]
+        return get_product_document(self.good)
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
@@ -1061,15 +1069,6 @@ class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
         }
         return payload
 
-    def get_payload(self, form_dict):
-        payload = {}
-        for step_name, payload_func in self.payload_dict.items():
-            form = form_dict.get(step_name)
-            if form:
-                always_merger.merge(payload, payload_func(form))
-
-        return payload
-
     def post_product_documentation(self, good_pk):
         document_payload = self.get_product_document_payload()
         api_resp_data, status_code = post_good_documents(
@@ -1081,7 +1080,7 @@ class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
             raise ServiceError(
                 status_code,
                 api_resp_data,
-                "Error product document when creating firearm - response was: %s - %s",
+                "Error adding product document when creating firearm - response was: %s - %s",
                 "Unexpected error adding document to firearm",
             )
 
@@ -1126,7 +1125,7 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, AddGoodDocumentW
 
     def done(self, form_list, form_dict, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
-        is_document_sensitive = all_data.pop("is_document_sensitive", None)
+        is_document_sensitive = all_data.get("is_document_sensitive", None)
 
         try:
             self.edit_firearm(self.good_id, form_dict)
@@ -1136,7 +1135,7 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, AddGoodDocumentW
                 if existing_product_document:
                     self.delete_product_documentation(self.good_id, existing_product_document["id"])
             else:
-                description = all_data.pop("description", "")
+                description = all_data.get("description", "")
                 if self.has_updated_product_documentation():
                     self.post_product_documentation(self.good_id)
                     if existing_product_document:
@@ -1170,8 +1169,8 @@ class FirearmEditProductDocumentAvailability(LoginRequiredMixin, AddGoodDocument
 
     def done(self, form_list, form_dict, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
-        is_document_available = all_data.pop("is_document_available", None)
-        is_document_sensitive = all_data.pop("is_document_sensitive", None)
+        is_document_available = all_data.get("is_document_available", None)
+        is_document_sensitive = all_data.get("is_document_sensitive", None)
 
         try:
             self.edit_firearm(self.good_id, form_dict)
@@ -1181,7 +1180,7 @@ class FirearmEditProductDocumentAvailability(LoginRequiredMixin, AddGoodDocument
                 if existing_product_document:
                     self.delete_product_documentation(self.good_id, existing_product_document["id"])
             else:
-                description = all_data.pop("description", "")
+                description = all_data.get("description", "")
                 if self.has_updated_product_documentation():
                     self.post_product_documentation(self.good_id)
                     if existing_product_document:

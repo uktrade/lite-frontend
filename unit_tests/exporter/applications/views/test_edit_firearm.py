@@ -2,17 +2,15 @@ import pytest
 
 from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings
 from django.urls import reverse
 from unittest.mock import patch
-
-from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
 
 from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
 
 
 @pytest.fixture(autouse=True)
 def setup(
+    mock_application_get,
     mock_good_get,
     mock_good_put,
     mock_control_list_entries_get,
@@ -33,7 +31,7 @@ def setup(
         def delete(self, name):
             pass
 
-    with override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=False), patch(
+    with patch(
         "exporter.applications.views.goods.add_good_firearm.FirearmEditProductDocumentSensitivity.file_storage",
         new=NoOpStorage(),
     ), patch(

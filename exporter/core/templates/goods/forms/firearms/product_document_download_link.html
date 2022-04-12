@@ -1,1 +1,5 @@
-<a class="govuk-link" href="{{ url }}">{{ name }}</a>
+{% if safe %}
+    <a class="govuk-link" href="{{ url }}">{{ name }}</a>
+{% else %}
+    {{ name }}
+{% endif %}

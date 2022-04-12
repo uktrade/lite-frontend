@@ -582,9 +582,8 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        good_id = kwargs.pop("good_id", None)
-        self.document = kwargs.pop("document", None)
+    def __init__(self, *args, good_id=None, document=None, **kwargs):
+        self.document = document
         if self.document:
             self.product_document_download_url = reverse(
                 "goods:document",
@@ -606,6 +605,7 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
                     render_to_string(
                         "goods/forms/firearms/product_document_download_link.html",
                         {
+                            "safe": self.document.get("safe", False),
                             "url": self.product_document_download_url,
                             "name": self.document_name,
                         },
