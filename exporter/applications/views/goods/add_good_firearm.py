@@ -3,7 +3,6 @@ import logging
 import requests
 from datetime import date
 
-from deepmerge import always_merger
 from http import HTTPStatus
 from functools import wraps
 
@@ -32,6 +31,7 @@ from exporter.core.helpers import (
 )
 
 from exporter.core.wizard.conditionals import C
+from exporter.core.wizard.payloads import MergingPayloadBuilder
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -292,6 +292,27 @@ class ServiceError(Exception):
         self.user_message = user_message
 
 
+class AddGoodFirearmPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmSteps.NAME: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
+        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+        AddGoodFirearmSteps.CATEGORY: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.CALIBRE: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.IS_REPLICA: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
+        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
+    }
+
+
 class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
@@ -340,24 +361,6 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
-    payload_dict = {
-        AddGoodFirearmSteps.NAME: get_cleaned_data,
-        AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
-        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
-        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
-        AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
-        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
-        AddGoodFirearmSteps.CATEGORY: get_firearm_details_cleaned_data,
-        AddGoodFirearmSteps.CALIBRE: get_firearm_details_cleaned_data,
-        AddGoodFirearmSteps.IS_REPLICA: get_firearm_details_cleaned_data,
-        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID: get_firearm_details_cleaned_data,
-        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
-        AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
-        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
-        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
-    }
 
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
@@ -403,11 +406,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         return firearms_act_section == section_value and attach_step_name not in form_dict
 
     def get_payload(self, form_dict):
-        payload = {}
-        for step_name, payload_func in self.payload_dict.items():
-            form = form_dict.get(step_name)
-            if form:
-                always_merger.merge(payload, payload_func(form))
+        payload = AddGoodFirearmPayloadBuilder().build(form_dict)
 
         firearm_details = payload["firearm_details"]
         if firearm_details.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
@@ -813,6 +812,13 @@ class FirearmEditReplica(BaseFirearmEditView):
         }
 
 
+class FirearmEditPvGradingPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+    }
+
+
 class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
 
     form_list = [
@@ -822,11 +828,6 @@ class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
 
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
-    }
-
-    payload_dict = {
-        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
-        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
     }
 
     @cached_property
@@ -873,13 +874,7 @@ class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
         return kwargs
 
     def get_payload(self, form_dict):
-        payload = {}
-        for step_name, payload_func in self.payload_dict.items():
-            form = form_dict.get(step_name)
-            if form:
-                always_merger.merge(payload, payload_func(form))
-
-        return payload
+        return FirearmEditPvGradingPayloadBuilder().build(form_dict)
 
     def edit_firearm(self, form_dict):
         payload = self.get_payload(form_dict)
