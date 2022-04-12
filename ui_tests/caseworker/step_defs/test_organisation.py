@@ -1,4 +1,7 @@
+from random import randint
+
 from faker import Faker
+from pytest import fixture
 from pytest_bdd import scenarios, when, then, given, parsers
 from selenium.webdriver.common.by import By
 
@@ -221,3 +224,13 @@ def organisation_warning(driver):
 def step_impl(driver, context):
     pass
     # assert CasePage(driver).is_flag_applied(context.flag_name), "Flag " + context.flag_name + " is not applied"
+
+
+@fixture(scope="function")
+def get_eori_number():
+    return "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])
+
+
+@fixture(scope="function")
+def get_registration_number():
+    return "".join([str(randint(0, 9)) for _ in range(8)])
