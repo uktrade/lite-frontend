@@ -80,7 +80,7 @@ class ApplicationPage(BasePage):
 
     def respond_to_ecju_query(self, no):
         response = '//a[contains(text(), "' + self.ECJU_QUERY_RESPONSE_TEXT + '")]'
-        self.driver.find_elements_by_xpath(response)[no].click()
+        self.driver.find_elements(by=By.XPATH, value=response)[no].click()
 
     def find_edit_application_button(self):
         return self.driver.find_elements_by_id(self.BUTTON_EDIT_APPLICATION_ID)

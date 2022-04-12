@@ -1,9 +1,10 @@
-from pytest_bdd import when, then, parsers, scenarios
 import time
+
+from pytest_bdd import when, then, parsers, scenarios
+from selenium.webdriver.common.by import By
 
 from tests_common import functions
 from ui_tests.caseworker.pages.assign_flags_to_case import CaseFlagsPages
-
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.advice import RecommendationsAndDecisionPage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs

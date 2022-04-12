@@ -193,7 +193,7 @@ def prepare_case(api_test_client, nlr):  # noqa
 @when("I click continue")
 @when("I click submit")
 def submit_form(driver):  # noqa
-    old_page = driver.find_element_by_tag_name("html")
+    old_page = driver.find_element(by=By.TAG_NAME, value="html")
     Shared(driver).click_submit()
     WebDriverWait(driver, 20).until(expected_conditions.staleness_of(old_page))
 

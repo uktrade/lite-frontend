@@ -178,7 +178,7 @@ class CaseListPage(BasePage):
         self.driver.find_element_by_id(self.FILTER_SEARCH_BOX).send_keys(text)
 
     def get_case_row(self, case_id):
-        return self.driver.find_element_by_id(case_id)
+        return self.driver.find_element(by=By.ID, value=case_id)
 
     def assert_all_advanced_filters_available(self):
         for advanced_filter in self.ADVANCED_FILTERS:
