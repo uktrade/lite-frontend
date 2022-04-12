@@ -529,6 +529,9 @@ class FirearmDocumentAvailability(BaseFirearmForm):
                 "Enter a reason why you cannot upload a product document",
             )
 
+        if cleaned_data.get("is_document_available") is True:
+            cleaned_data["no_document_comments"] = ""
+
         return cleaned_data
 
 
@@ -579,11 +582,38 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
         required=False,
     )
 
+    def __init__(self, *args, good_id=None, document=None, **kwargs):
+        self.document = document
+        if self.document:
+            self.product_document_download_url = reverse(
+                "goods:document",
+                kwargs={
+                    "pk": good_id,
+                    "file_pk": self.document["id"],
+                },
+            )
+            self.document_name = self.document["name"]
+
+        super().__init__(*args, **kwargs)
+
     def get_layout_fields(self):
-        return (
-            "product_document",
-            "description",
-        )
+        layout_fields = ("product_document", "description")
+        if self.document:
+            self.fields["product_document"].required = False
+            layout_fields = (
+                HTML.p(
+                    render_to_string(
+                        "goods/forms/firearms/product_document_download_link.html",
+                        {
+                            "safe": self.document.get("safe", False),
+                            "url": self.product_document_download_url,
+                            "name": self.document_name,
+                        },
+                    ),
+                ),
+            ) + layout_fields
+
+        return layout_fields
 
 
 class FirearmFirearmAct1968Form(BaseFirearmForm):

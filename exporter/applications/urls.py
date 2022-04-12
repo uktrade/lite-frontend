@@ -45,6 +45,9 @@ from exporter.applications.views.goods.add_good_firearm import (
     FirearmProductSummary,
     FirearmEditReplica,
     FirearmEditPvGrading,
+    FirearmEditProductDocumentView,
+    FirearmEditProductDocumentSensitivity,
+    FirearmEditProductDocumentAvailability,
 )
 
 app_name = "applications"
@@ -108,6 +111,21 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/pv-grading/",
         FirearmEditPvGrading.as_view(),
         name="firearm_edit_pv_grading",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-document-availability/",
+        FirearmEditProductDocumentAvailability.as_view(),
+        name="firearm_edit_product_document_availability",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-document-sensitivity/",
+        FirearmEditProductDocumentSensitivity.as_view(),
+        name="firearm_edit_product_document_sensitivity",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-document/",
+        FirearmEditProductDocumentView.as_view(),
+        name="firearm_edit_product_document",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
