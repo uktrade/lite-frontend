@@ -165,7 +165,7 @@ class CaseListPage(BasePage):
         Select(self.driver.find_element_by_id(self.USER_STATUS_DROPDOWN_ID)).select_by_visible_text(status)
 
     def select_filter_case_type_from_dropdown(self, status):
-        Select(self.driver.find_element_by_id(self.CASE_TYPE_DROPDOWN)).select_by_visible_text(status)
+        Select(self.driver.find_element(by=By.ID, value=self.CASE_TYPE_DROPDOWN)).select_by_visible_text(status)
 
     def click_on_exporter_amendments_banner(self):
         self.driver.find_element_by_id(self.BANNER_EXPORTER_AMENDMENTS_ID).click()

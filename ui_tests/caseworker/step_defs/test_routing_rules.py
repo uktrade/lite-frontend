@@ -126,12 +126,12 @@ def go_to_team_edit_page(driver, team, queue):  # noqa
 
 @when("I click on the application previously created")
 def click_on_case(driver, context):
-    driver.find_element_by_id(f"case-{context.case_id}").click()
+    driver.find_element(by=By.ID, value=f"case-{context.case_id}").click()
 
 
 @then('I should see the button "I\'m done"')
 def done_button_on_page(driver):
-    assert driver.find_element_by_id("button-done")
+    assert driver.find_element(by=By.ID, value="button-done")
 
 
 @then("the case should have been removed from my default queue")

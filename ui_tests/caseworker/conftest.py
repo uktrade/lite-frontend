@@ -118,9 +118,9 @@ def create_application(
 
 @then(parsers.parse('I should see the product name as "{product_name}" with product rating as "{clc_rating}"'))
 def check_product_name_and_rating(driver, product_name, clc_rating):  # noqa
-    product_table = driver.find_element_by_id("table-goods")
-    name_element = product_table.find_element_by_xpath("//tbody/tr/td[3]")
-    rating_element = product_table.find_element_by_xpath("//tbody/tr/td[6]")
+    product_table = driver.find_element(by=By.ID, value="table-goods")
+    name_element = product_table.find_element(by=By.XPATH, value="//tbody/tr/td[3]")
+    rating_element = product_table.find_element(by=By.XPATH, value="//tbody/tr/td[6]")
     assert name_element.text == product_name
     assert rating_element.text == clc_rating
 
@@ -267,7 +267,7 @@ def should_see_previously_created_application(driver, context):  # noqa
     functions.try_open_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
-    assert driver.find_element_by_id(context.case_id).is_displayed()
+    assert driver.find_element(by=By.ID, value=context.case_id).is_displayed()
 
 
 @when("I click on show filters")
@@ -277,7 +277,7 @@ def i_show_filters(driver):  # noqa
 
 @when(parsers.parse('I click on "{tab_name}" tab'))
 def i_click_on_case_details_tab(driver, tab_name):  # noqa
-    tabs = driver.find_element_by_class_name("lite-tabs")
+    tabs = driver.find_element(by=By.CLASS_NAME, value="lite-tabs")
     target = tabs.find_element_by_link_text(tab_name)
     target.click()
 
@@ -341,8 +341,8 @@ def i_click_application_previously_created(driver, context):  # noqa
 
 @when(parsers.parse('I switch to queue "{queue}"'))  # noqa
 def switch_queue_dropdown(driver, queue):  # noqa
-    driver.find_element_by_id("link-queue").click()
-    queues = driver.find_element_by_id("queues")
+    driver.find_element(by=By.ID, value="link-queue").click()
+    queues = driver.find_element(by=By.ID, value="queues")
     queues.find_element_by_xpath(f"//a[contains(text(), '{queue}')]").click()
 
 
@@ -742,7 +742,7 @@ def assign_case_to_queue(driver, queue):  # noqa
 
 @then(parsers.parse('I remove the case from "{queue}" queue'))  # noqa
 def remove_case_from_queue(driver, queue):  # noqa
-    driver.find_element_by_id("link-change-queues").click()
+    driver.find_element(by=By.ID, value="link-change-queues").click()
     select_queue(driver, queue, False)
     functions.click_submit(driver)
 

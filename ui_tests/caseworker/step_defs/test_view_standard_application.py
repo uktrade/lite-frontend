@@ -1,11 +1,12 @@
 from datetime import date
 
+from selenium.webdriver.common.by import By
+
 import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.case_page import CasePage
 from pytest_bdd import then, scenarios, when, given, parsers
-from tests_common import functions
 
 scenarios("../features/view_standard_application.feature", strict_gherkin=False)
 
@@ -86,7 +87,7 @@ def filter_by_application_type(driver, end_use_expected):
 
 @then("I should see a link to download the document")
 def i_see_link_to_download_document(driver):
-    docs = driver.find_elements_by_class_name("app-documents__item")
+    docs = driver.find_elements(by=By.CLASS_NAME, value="app-documents__item")
     assert len(docs) == 1
     link = docs[0].find_element_by_class_name("app-documents__item-details")
     assert link.text.startswith(f"Application Form - {date.today().isoformat()}")
