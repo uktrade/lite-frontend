@@ -252,7 +252,7 @@ jobs:
       <<: *common_env_vars
       # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
       DJANGO_SETTINGS_MODULE: conf.caseworker
-      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations
+      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations -n2
     steps:
       - run: sudo apt-get update
       - run: sudo apt-get --only-upgrade install google-chrome-stable
