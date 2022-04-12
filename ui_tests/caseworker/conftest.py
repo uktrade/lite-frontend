@@ -215,7 +215,7 @@ def click_button_with_text(driver, button_text):  # noqa
 
 @when("I click back")
 def click_back_link(driver):  # noqa
-    driver.find_element_by_link_text("Back").click()
+    driver.find_element(by=By.LINK_TEXT, value="Back").click()
 
 
 @when("I click change status")  # noqa
@@ -553,8 +553,8 @@ def i_create_an_standard_advice_picklist(context, add_a_standard_advice_picklist
 
 @when(parsers.parse('I expand the details for "{details_text}"'))
 def expand_details_for(driver, details_text):  # noqa
-    driver.find_element_by_xpath(
-        f"//details[@class='govuk-details']/summary/span[contains(text(), '{details_text}')]"
+    driver.find_element(
+        by=By.XPATH, value=f"//details[@class='govuk-details']/summary/span[contains(text(), '{details_text}')]"
     ).click()
 
 
@@ -638,7 +638,7 @@ def dont_see_previously_created_application(driver, context):  # noqa
     functions.try_open_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
-    assert context.reference_code not in driver.find_element_by_id("main-content").text
+    assert context.reference_code not in driver.find_element(by=By.ID, value="main-content").text
 
 
 @when("I click clear filters")  # noqa
@@ -715,7 +715,7 @@ def licence_audit(driver, context, internal_url):  # noqa
 def select_queue(driver, queue_name, check):  # noqa
     # selects the queue from the list of checkboxes and checks/unchecks
     # depending on the input state
-    queues = driver.find_elements_by_class_name("govuk-checkboxes__item")
+    queues = driver.find_elements(by=By.CLASS_NAME, value="govuk-checkboxes__item")
     target_queue = None
     for item in queues:
         label = item.find_element_by_xpath(".//label")
@@ -735,7 +735,7 @@ def select_queue(driver, queue_name, check):  # noqa
 
 @when(parsers.parse('I assign the case to "{queue}" queue'))  # noqa
 def assign_case_to_queue(driver, queue):  # noqa
-    driver.find_element_by_id("link-change-queues").click()
+    driver.find_element(by=By.ID, value="link-change-queues").click()
     select_queue(driver, queue, True)
     functions.click_submit(driver)
 

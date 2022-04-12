@@ -20,14 +20,25 @@ def exporter_info(request, environment):
 
 
 @fixture(scope="session")
-def internal_info(request, environment):
+def internal_info(request, environment, worker_id):
+    # For parallel execution, ensure that a TEST_SSO_EMAIL_n and TEST_SSO_PASSWORD_n
+    # pair of environment variables exist for each worker. n is zero-based and is
+    # supplied by the -n option on the command line.
+    try:
+        worker_num = int(worker_id[2:])
+    except ValueError:
+        worker_num = 0
+
+    email = environment(f"TEST_SSO_EMAIL_{worker_num}", default=environment("TEST_SSO_EMAIL"))
+    password = environment(f"TEST_SSO_PASSWORD_{worker_num}", default=environment("TEST_SSO_PASSWORD"))
+
     first_name, last_name = environment("TEST_SSO_NAME").split(" ")
     return {
-        "email": environment("TEST_SSO_EMAIL"),
+        "email": email,
         "name": environment("TEST_SSO_NAME"),
         "first_name": first_name,
         "last_name": last_name,
-        "password": environment("TEST_SSO_PASSWORD"),
+        "password": password,
     }
 
 

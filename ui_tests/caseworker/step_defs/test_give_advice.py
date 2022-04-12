@@ -91,7 +91,7 @@ def enter_reporting_footnote(driver, footnote, context):  # noqa
 
 @then(parsers.parse('I should see my recommendation for "{countries}" with "{reasons}"'))
 def should_see_recommendation(driver, countries, reasons):  # noqa
-    text = driver.find_element_by_xpath("//main[@class='govuk-main-wrapper']//*").text
+    text = driver.find_element(by=By.XPATH, value="//main[@class='govuk-main-wrapper']//*").text
     for country in countries.split(","):
         assert country.strip() in text
     assert reasons.strip() in text
