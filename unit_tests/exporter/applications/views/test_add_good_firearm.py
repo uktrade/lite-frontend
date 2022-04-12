@@ -3,9 +3,7 @@ import pytest
 import uuid
 
 from pytest_django.asserts import assertContains
-from unittest.mock import patch
 
-from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
@@ -30,19 +28,8 @@ from exporter.goods.forms.firearms import (
 
 
 @pytest.fixture(autouse=True)
-def setup():
-    class NoOpStorage(Storage):
-        def save(self, name, content, max_length=None):
-            return name
-
-        def open(self, name, mode="rb"):
-            return None
-
-        def delete(self, name):
-            pass
-
-    with patch("exporter.applications.views.goods.add_good_firearm.AddGoodFirearm.file_storage", new=NoOpStorage()):
-        yield
+def setup(no_op_storage):
+    pass
 
 
 @pytest.fixture

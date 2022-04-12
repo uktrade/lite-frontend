@@ -36,21 +36,8 @@ ADD_GOOD_VIEW = "add_good"
 
 
 @pytest.fixture(autouse=True)
-def setup():
-    class NoOpStorage(Storage):
-        def save(self, name, content, max_length=None):
-            return name
-
-        def open(self, name, mode="rb"):
-            return None
-
-        def delete(self, name):
-            pass
-
-    with override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=False), patch(
-        "exporter.applications.views.goods.AddGood.file_storage", new=NoOpStorage()
-    ):
-        yield
+def setup(no_op_storage, settings):
+    settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = False
 
 
 @pytest.fixture(autouse=True)

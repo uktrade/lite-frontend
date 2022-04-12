@@ -1,10 +1,7 @@
-import uuid
-from unittest.mock import patch
-
 import pytest
-from django.core.files.storage import Storage
+import uuid
+
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings
 from django.urls import reverse
 
 from core import client
@@ -29,21 +26,8 @@ ADD_GOOD_VIEW = "add_good"
 
 
 @pytest.fixture(autouse=True)
-def setup():
-    class NoOpStorage(Storage):
-        def save(self, name, content, max_length=None):
-            return name
-
-        def open(self, name, mode="rb"):
-            return None
-
-        def delete(self, name):
-            pass
-
-    with override_settings(FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS=False), patch(
-        "exporter.goods.views.AddGood.file_storage", new=NoOpStorage()
-    ):
-        yield
+def setup(settings, no_op_storage):
+    settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = False
 
 
 @pytest.fixture(autouse=True)
