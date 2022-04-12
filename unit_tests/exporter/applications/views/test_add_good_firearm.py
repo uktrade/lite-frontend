@@ -10,7 +10,7 @@ from django.urls import reverse
 from core import client
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
-from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
+from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,

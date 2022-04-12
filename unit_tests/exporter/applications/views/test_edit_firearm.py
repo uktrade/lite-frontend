@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from unittest.mock import patch
 
-from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
+from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 
 
 @pytest.fixture(autouse=True)
