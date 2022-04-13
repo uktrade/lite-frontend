@@ -54,89 +54,6 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def application(data_standard_case, requests_mock):
-    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
-    matcher = requests_mock.get(url=app_url, json=data_standard_case["case"])
-    return matcher
-
-
-@pytest.fixture
-def rfd_certificate():
-    return {
-        "id": str(uuid.uuid4()),
-        "document": {
-            "name": "rfd_certificate.txt",
-            "s3_key": "rfd_certificate.txt.s3_key",
-            "safe": True,
-            "size": 3,
-        },
-        "document_type": "rfd-certificate",
-        "is_expired": False,
-        "organisation": str(uuid.uuid4()),
-    }
-
-
-@pytest.fixture
-def application_with_organisation_rfd_document(data_standard_case, requests_mock, rfd_certificate):
-    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
-    case = data_standard_case["case"]
-    case["organisation"] = {
-        "documents": [rfd_certificate],
-    }
-    matcher = requests_mock.get(url=app_url, json=case)
-    return matcher
-
-
-@pytest.fixture
-def application_with_organisation_and_application_rfd_document(data_standard_case, requests_mock, rfd_certificate):
-    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
-    case = data_standard_case["case"]
-    case["organisation"] = {
-        "documents": [rfd_certificate],
-    }
-    case["additional_documents"] = [
-        {
-            "document_type": "rfd-certificate",
-        }
-    ]
-    matcher = requests_mock.get(url=app_url, json=case)
-    return matcher
-
-
-@pytest.fixture
-def application_without_rfd_document(application):
-    return application
-
-
-@pytest.fixture
-def section_5_document():
-    return {
-        "id": str(uuid.uuid4()),
-        "document": {
-            "name": "section5.txt",
-        },
-        "document_type": "section-five-certificate",
-        "is_expired": False,
-        "reference_code": "section 5 ref",
-        "expiry_date": "30 September 2024",
-    }
-
-
-@pytest.fixture
-def application_with_rfd_and_section_5_document(data_standard_case, requests_mock, rfd_certificate, section_5_document):
-    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
-    case = data_standard_case["case"]
-    case["organisation"] = {
-        "documents": [
-            rfd_certificate,
-            section_5_document,
-        ],
-    }
-    matcher = requests_mock.get(url=app_url, json=case)
-    return matcher
-
-
-@pytest.fixture
 def control_list_entries(requests_mock):
     clc_url = client._build_absolute_uri("/static/control-list-entries/")
     matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
@@ -146,17 +63,6 @@ def control_list_entries(requests_mock):
 @pytest.fixture
 def good_id():
     return str(uuid.uuid4())
-
-
-@pytest.fixture
-def product_summary_url(data_standard_case, good_id):
-    return reverse(
-        "applications:product_summary",
-        kwargs={
-            "pk": data_standard_case["case"]["id"],
-            "good_pk": good_id,
-        },
-    )
 
 
 def test_firearm_category_redirects_to_new_wizard(
@@ -606,6 +512,7 @@ def test_add_good_firearm_with_rfd_document_submission(
             "calibre": "calibre 123",
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
             "is_replica": True,
             "is_rfd_certificate_valid": True,
             "replica_description": "This is a replica",
@@ -871,6 +778,7 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
             "calibre": "calibre 123",
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
             "is_registered_firearm_dealer": True,
             "is_replica": True,
             "replica_description": "This is a replica",
@@ -1465,6 +1373,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "firearms_act_section": "firearms_act_section5",
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
             "is_replica": True,
             "is_rfd_certificate_valid": True,
             "replica_description": "This is a replica",
@@ -1591,6 +1500,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
             "category": ["NON_AUTOMATIC_SHOTGUN"],
             "firearms_act_section": "firearms_act_section5",
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
             "is_replica": True,
             "is_rfd_certificate_valid": True,
             "replica_description": "This is a replica",

@@ -19,6 +19,7 @@ from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 
 from django import forms
+from django.forms.widgets import ClearableFileInput
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit, Layout, HTML
 
@@ -256,3 +257,33 @@ class RegisterNameForm(forms.Form):
             "last_name",
             Submit("submit", "Continue"),
         )
+
+
+class CurrentFile:
+    def __init__(self, name, url, safe):
+        self.name = name
+        self.url = url
+        self.safe = safe
+
+    def __str__(self):
+        return self.name
+
+
+class PotentiallyUnsafeClearableFileInput(ClearableFileInput):
+    template_name = "core/widgets/potentially_unsafe_clearable_file_input.html"
+
+    def __init__(self, *args, force_required=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.force_required = force_required
+
+    def is_initial(self, value):
+        return isinstance(value, CurrentFile)
+
+    def get_context(self, *args, **kwargs):
+        context = super().get_context(*args, **kwargs)
+
+        if self.force_required is not None:
+            context["widget"]["required"] = self.force_required
+
+        return context

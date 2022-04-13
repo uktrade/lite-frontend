@@ -61,14 +61,6 @@ def edit_product_sensitivity_url(application, good_on_application):
     )
 
 
-@pytest.fixture
-def product_summary_url(application, good_on_application):
-    return reverse(
-        "applications:product_summary",
-        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
-    )
-
-
 @pytest.fixture(autouse=True)
 def product_document():
     return {
