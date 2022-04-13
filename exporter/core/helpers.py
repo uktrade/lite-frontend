@@ -1,3 +1,5 @@
+import datetime
+
 from dateutil.parser import parse
 from html import escape
 from typing import List
@@ -280,3 +282,12 @@ def get_document_data(file):
 def has_firearm_act_document(application, document_type):
     documents = get_organisation_documents(application)
     return document_type in documents
+
+
+def get_firearm_act_document(application, document_type):
+    documents = get_organisation_documents(application)
+    return documents[document_type]
+
+
+def convert_api_date_string_to_date(date_str):
+    return datetime.datetime.strptime(date_str, "%d %B %Y").date()

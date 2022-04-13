@@ -37,18 +37,19 @@ from exporter.goods.views import (
     EditYearOfManufactureView,
     UpdateSerialNumbersView,
 )
-from exporter.applications.views.goods.add_good_firearm import (
+from exporter.applications.views.goods.add_good_firearm.views.add import AddGoodFirearm
+from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditCalibre,
     FirearmEditCategory,
-    FirearmEditName,
     FirearmEditControlListEntry,
-    FirearmProductSummary,
+    FirearmEditName,
     FirearmEditReplica,
     FirearmEditPvGrading,
     FirearmEditProductDocumentView,
     FirearmEditProductDocumentSensitivity,
     FirearmEditProductDocumentAvailability,
 )
+from exporter.applications.views.goods.add_good_firearm.views.summary import FirearmProductSummary
 
 app_name = "applications"
 urlpatterns = [
@@ -75,7 +76,7 @@ urlpatterns = [
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
-    path("<uuid:pk>/goods/add-new/firearm/", goods.AddGoodFirearm.as_view(), name="new_good_firearm"),
+    path("<uuid:pk>/goods/add-new/firearm/", AddGoodFirearm.as_view(), name="new_good_firearm"),
     path(
         "<uuid:pk>/goods/add-firearms-certificate/",
         goods.AttachFirearmActSectionDocument.as_view(),

@@ -51,20 +51,15 @@ def mock_post_party_document(requests_mock, data_standard_case):
 
 @pytest.fixture(autouse=True)
 def setup(
-    mock_countries, mock_application, mock_party_create, mock_party_get, mock_party_put, mock_post_party_document
+    mock_countries,
+    mock_application,
+    mock_party_create,
+    mock_party_get,
+    mock_party_put,
+    mock_post_party_document,
+    no_op_storage,
 ):
-    class NoOpStorage(Storage):
-        def save(self, name, content, max_length=None):
-            return name
-
-        def open(self, name, mode="rb"):
-            return None
-
-        def delete(self, name):
-            pass
-
-    with patch("exporter.applications.views.parties.end_users.SetPartyView.file_storage", new=NoOpStorage()):
-        yield
+    pass
 
 
 @pytest.fixture

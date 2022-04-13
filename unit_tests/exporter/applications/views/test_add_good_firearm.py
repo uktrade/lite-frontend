@@ -3,16 +3,14 @@ import pytest
 import uuid
 
 from pytest_django.asserts import assertContains
-from unittest.mock import patch
 
-from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
-from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
+from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
@@ -30,19 +28,8 @@ from exporter.goods.forms.firearms import (
 
 
 @pytest.fixture(autouse=True)
-def setup():
-    class NoOpStorage(Storage):
-        def save(self, name, content, max_length=None):
-            return name
-
-        def open(self, name, mode="rb"):
-            return None
-
-        def delete(self, name):
-            pass
-
-    with patch("exporter.applications.views.goods.add_good_firearm.AddGoodFirearm.file_storage", new=NoOpStorage()):
-        yield
+def setup(no_op_storage):
+    pass
 
 
 @pytest.fixture

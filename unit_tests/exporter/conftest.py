@@ -4,6 +4,7 @@ import pytest
 from dotenv import load_dotenv
 
 from django.conf import settings
+from django.core.files.storage import Storage
 from django.test import Client
 
 from conf import exporter
@@ -193,3 +194,18 @@ def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
     data = {"applications": True}
     requests_mock.get(url=url, json=data)
     yield data
+
+
+@pytest.fixture
+def no_op_storage(mocker):
+    class NoOpStorage(Storage):
+        def save(self, name, content, max_length=None):
+            return name
+
+        def open(self, name, mode="rb"):
+            return None
+
+        def delete(self, name):
+            pass
+
+    mocker.patch("exporter.core.wizard.views.BaseSessionWizardView.file_storage", new=NoOpStorage())

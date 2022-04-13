@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from unittest.mock import patch
 
-from exporter.applications.views.goods.add_good_firearm import AddGoodFirearmSteps
+from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 
 
 @pytest.fixture(autouse=True)
@@ -18,22 +18,11 @@ def setup(
     mock_good_document_put,
     mock_good_document_delete,
     settings,
+    no_op_storage,
 ):
     settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
-    class NoOpStorage(Storage):
-        def save(self, name, content, max_length=None):
-            return name
-
-        def open(self, name, mode="rb"):
-            return None
-
-        def delete(self, name):
-            pass
-
-    with patch("exporter.core.wizard.views.BaseSessionWizardView.file_storage", new=NoOpStorage()), patch(
-        "exporter.core.wizard.views.BaseSessionWizardView.get_prefix"
-    ) as mock_prefix:
+    with patch("exporter.core.wizard.views.BaseSessionWizardView.get_prefix") as mock_prefix:
         mock_prefix.return_value = "add_good_firearm"
         yield
 
