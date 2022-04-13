@@ -90,7 +90,6 @@ def build_organisation_with_primary_site(name, type, eori_number, uk_vat_number,
     }
 
 
-
 def build_good(name, description, control_list_entry="ML1a", part_number="1234"):
     return {
         "name": name,
