@@ -27,10 +27,12 @@
   },
   "homepage": "https://github.com/uktrade/lite-frontend#readme",
   "browserslist": "> 0.25%, not dead",
-  "devDependencies": {},
+  "devDependencies": {
+    "events": "^3.3.0"
+  },
   "dependencies": {
-    "@parcel/transformer-image": "^2.2.1",
-    "@parcel/transformer-sass": "^2.2.1",
+    "@parcel/transformer-image": "^2.4.1",
+    "@parcel/transformer-sass": "^2.4.1",
     "@popperjs/core": "^2.4.4",
     "@tarekraafat/autocomplete.js": "^8.3.2",
     "@testing-library/cypress": "^8.0.2",
@@ -45,7 +47,7 @@
     "mark.js": "^8.11.1",
     "moment": "^2.29.2",
     "npm-run-all": "^4.1.5",
-    "parcel": "^2.2.1",
+    "parcel": "^2.4.1",
     "sass": "^1.38.0",
     "sortablejs": "^1.11.2-alpha.3",
     "tippy.js": "^6.2.6",
