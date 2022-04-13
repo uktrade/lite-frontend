@@ -114,32 +114,13 @@ def test_add_good_firearm_start(authorized_client, new_good_firearm_url, new_goo
 
 
 @pytest.fixture
-def goto_step(authorized_client, new_good_firearm_url):
-    def _goto_step(step_name):
-        return authorized_client.post(
-            new_good_firearm_url,
-            data={
-                "wizard_goto_step": step_name,
-            },
-        )
-
-    return _goto_step
+def goto_step(goto_step_factory, new_good_firearm_url):
+    return goto_step_factory(new_good_firearm_url)
 
 
 @pytest.fixture
-def post_to_step(authorized_client, new_good_firearm_url):
-    ADD_GOOD_FIREARM_VIEW = "add_good_firearm"
-
-    def _post_to_step(step_name, data):
-        return authorized_client.post(
-            new_good_firearm_url,
-            data={
-                f"{ADD_GOOD_FIREARM_VIEW}-current_step": step_name,
-                **{f"{step_name}-{key}": value for key, value in data.items()},
-            },
-        )
-
-    return _post_to_step
+def post_to_step(post_to_step_factory, new_good_firearm_url):
+    return post_to_step_factory(new_good_firearm_url)
 
 
 def test_add_good_firearm_displays_rfd_validity_step(

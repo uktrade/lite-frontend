@@ -33,30 +33,13 @@ def edit_registered_firearms_dealer_url(data_standard_case):
 
 
 @pytest.fixture
-def goto_step(authorized_client, edit_registered_firearms_dealer_url):
-    def _goto_step(step_name):
-        return authorized_client.post(
-            edit_registered_firearms_dealer_url,
-            data={
-                "wizard_goto_step": step_name,
-            },
-        )
-
-    return _goto_step
+def goto_step(goto_step_factory, edit_registered_firearms_dealer_url):
+    return goto_step_factory(edit_registered_firearms_dealer_url)
 
 
 @pytest.fixture
-def post_to_step(authorized_client, edit_registered_firearms_dealer_url):
-    def _post_to_step(step_name, data):
-        return authorized_client.post(
-            edit_registered_firearms_dealer_url,
-            data={
-                "firearm_edit_registered_firearms_dealer-current_step": step_name,
-                **{f"{step_name}-{key}": value for key, value in data.items()},
-            },
-        )
-
-    return _post_to_step
+def post_to_step(post_to_step_factory, edit_registered_firearms_dealer_url):
+    return post_to_step_factory(edit_registered_firearms_dealer_url)
 
 
 def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
@@ -81,7 +64,7 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
         json={},
     )
 
-    post_to_step(
+    response = post_to_step(
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
         {"is_registered_firearm_dealer": True},
     )
