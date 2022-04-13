@@ -7,6 +7,7 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
@@ -15,6 +16,7 @@ from exporter.applications.services import (
     get_application,
     post_additional_document,
     post_application_document,
+    post_good_on_application,
 )
 from exporter.core.constants import (
     DocumentType,
@@ -49,8 +51,11 @@ from exporter.goods.forms.firearms import (
     FirearmReplicaForm,
     FirearmRFDValidityForm,
     FirearmSection5Form,
+    FirearmMadeBefore1938Form,
+    FirearmYearOfManufactureForm,
 )
 from exporter.goods.services import (
+    get_good,
     post_firearm,
     post_good_documents,
 )
@@ -67,6 +72,7 @@ from .conditionals import (
     is_rfd_certificate_invalid,
     is_pv_graded,
     should_display_is_registered_firearms_dealer_step,
+    is_product_made_before_1938,
 )
 from .constants import AddGoodFirearmSteps
 from .exceptions import ServiceError
@@ -447,3 +453,108 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             return self.handle_service_error(e)
 
         return redirect(self.get_success_url(application_pk, good_pk))
+
+
+class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
+    form_list = [
+        (AddGoodFirearmSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
+        (AddGoodFirearmSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
+    ]
+
+    condition_dict = {AddGoodFirearmSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938)}
+
+    @cached_property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def good_id(self):
+        return str(self.kwargs["good_pk"])
+
+    @cached_property
+    def good(self):
+        try:
+            good = get_good(self.request, self.good_id, full_detail=True)[0]
+        except requests.exceptions.HTTPError:
+            raise Http404
+
+        return good
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        try:
+            self.application = get_application(self.request, self.application_id)
+        except requests.exceptions.HTTPError:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+
+        ctx["hide_step_count"] = True
+        ctx["back_link_url"] = reverse(
+            "applications:new_good",
+            kwargs={
+                "pk": self.kwargs["pk"],
+            },
+        )
+        ctx["title"] = form.Layout.TITLE
+
+        return ctx
+
+    def get_success_url(self, pk, good_pk):
+        return reverse(
+            "applications:product_summary_2",
+            kwargs={"pk": pk, "good_pk": good_pk},
+        )
+
+    def get_firearm_details_payload(self, all_data):
+        payload = {}
+        firearm_details = self.good.get("firearm_details", {})
+        payload["type"] = firearm_details["type"]["key"]
+        payload["category"] = [category["key"] for category in firearm_details["category"]]
+
+        payload["is_made_before_1938"] = all_data.get("is_made_before_1938", None)
+        payload["year_of_manufacture"] = all_data.get("year_of_manufacture", None)
+
+        return payload
+
+    def get_good_on_application_data(self, form_list):
+        good_on_application_payload = {}
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+
+        good_on_application_payload["firearm_details"] = self.get_firearm_details_payload(all_data)
+
+        return good_on_application_payload
+
+    def post_firearm_to_application(self, form_list):
+        all_data = self.get_good_on_application_data(form_list)
+
+        api_resp_data, status_code = post_good_on_application(self.request, self.application["id"], all_data)
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error adding firearm to application - response was: %s - %s",
+                "Unexpected error adding firearm to application",
+            )
+
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        return error_page(self.request, service_error.user_message)
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.post_firearm_to_application(form_list)
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url(self.application_id, self.good_id))

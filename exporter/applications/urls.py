@@ -37,7 +37,7 @@ from exporter.goods.views import (
     EditYearOfManufactureView,
     UpdateSerialNumbersView,
 )
-from exporter.applications.views.goods.add_good_firearm.views.add import AddGoodFirearm
+from exporter.applications.views.goods.add_good_firearm.views.add import AddGoodFirearm, AddGoodFirearmToApplication
 from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditCalibre,
     FirearmEditCategory,
@@ -49,7 +49,10 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditProductDocumentSensitivity,
     FirearmEditProductDocumentAvailability,
 )
-from exporter.applications.views.goods.add_good_firearm.views.summary import FirearmProductSummary
+from exporter.applications.views.goods.add_good_firearm.views.summary import (
+    FirearmProductSummary,
+    FirearmProductSummary2,
+)
 
 app_name = "applications"
 urlpatterns = [
@@ -77,6 +80,11 @@ urlpatterns = [
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
     path("<uuid:pk>/goods/add-new/firearm/", AddGoodFirearm.as_view(), name="new_good_firearm"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add-new/firearm-to-application/",
+        AddGoodFirearmToApplication.as_view(),
+        name="new_good_firearm_to_application",
+    ),
     path(
         "<uuid:pk>/goods/add-firearms-certificate/",
         goods.AttachFirearmActSectionDocument.as_view(),
@@ -190,6 +198,11 @@ urlpatterns = [
         "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary/",
         FirearmProductSummary.as_view(),
         name="product_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary2/",
+        FirearmProductSummary2.as_view(),
+        name="product_summary_2",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),

@@ -52,3 +52,7 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
             "documents": documents,
             "organisation_documents": organisation_documents,
         }
+
+
+class FirearmProductSummary2(FirearmProductSummary):
+    template_name = "applications/goods/firearms/product-summary2.html"

@@ -11,7 +11,12 @@ from django.urls import reverse
 from core.forms.layouts import ConditionalCheckbox, ConditionalQuestion, ConditionalRadios
 from exporter.core.constants import FirearmsActSections
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
-from exporter.core.validators import FutureDateValidator, PastDateValidator, RelativeDeltaDateValidator
+from exporter.core.validators import (
+    FutureDateValidator,
+    PastDateValidator,
+    RelativeDeltaDateValidator,
+    RelativeDeltaYearValidator,
+)
 
 
 class CustomErrorDateInputField(DateInputField):
@@ -831,3 +836,42 @@ class FirearmSection5Form(BaseFirearmForm):
             self.add_error("not_covered_explanation", "Explain why you don't know")
 
         return cleaned_data
+
+
+class FirearmMadeBefore1938Form(BaseFirearmForm):
+    class Layout:
+        TITLE = "Was the produce made before 1938?"
+
+    is_made_before_1938 = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product was made before 1938",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("is_made_before_1938",)
+
+
+class FirearmYearOfManufactureForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "What year was it made?"
+
+    year_of_manufacture = forms.IntegerField(
+        label="For example, 2007",
+        error_messages={
+            "required": "Enter the year it was made",
+        },
+        validators=[
+            RelativeDeltaYearValidator("The year must be before 1938", year=1938),
+        ],
+    )
+
+    def get_layout_fields(self):
+        return ("year_of_manufacture",)

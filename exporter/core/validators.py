@@ -69,3 +69,13 @@ class RelativeDeltaDateValidator:
     def __call__(self, value):
         if value > (date.today() + self.relativedelta):
             raise ValidationError(self.message)
+
+
+class RelativeDeltaYearValidator:
+    def __init__(self, message, **kwargs):
+        self.message = message
+        self.relativedelta = relativedelta(**kwargs)
+
+    def __call__(self, value):
+        if value >= self.relativedelta.year:
+            raise ValidationError(self.message)

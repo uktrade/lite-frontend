@@ -266,7 +266,7 @@
             {% endif %}
         </dl>
 
-        <a class="govuk-button" href="#">Continue</a>
+        <a class="govuk-button" href="{% url 'applications:new_good_firearm_to_application' application_id good.id %}">Continue</a>
     {% endwith %}
 
 {% endblock %}
