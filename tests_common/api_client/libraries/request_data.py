@@ -66,6 +66,30 @@ def build_organisation(name, type, address, eori_number, registration_number):
     }
 
 
+def build_organisation_with_primary_site(name, type, eori_number, uk_vat_number, primary_site, phone_number):
+    return {
+        "name": name,
+        "type": type,
+        "eori_number": eori_number,
+        "sic_number": "12345",
+        "vat_number": uk_vat_number,
+        "phone_number": phone_number,
+        "registration_number": "12345678",
+        "website": "http://www.example-org.com",
+        "user": {"email": "name@example.com"},
+        "site": {
+            "name": primary_site,
+            "address": {
+                "address_line_1": "42 Question Road",
+                "postcode": "BC1 2DE",
+                "city": "London",
+                "region": "London",
+                "country": "GB",
+            },
+        },
+    }
+
+
 def build_good(name, description, control_list_entry="ML1a", part_number="1234"):
     return {
         "name": name,
