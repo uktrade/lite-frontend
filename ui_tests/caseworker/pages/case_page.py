@@ -109,12 +109,12 @@ class CasePage(BasePage):
         return dict(zip(headers, values))
 
     def get_destinations(self):
-        return self.driver.find_elements_by_css_selector(
-            f"#{self.TABLE_DESTINATIONS_ID} {Shared(self.driver).TABLE_ROW_CSS}"
+        return self.driver.find_elements(
+            by=By.CSS_SELECTOR, value=f"#{self.TABLE_DESTINATIONS_ID} {Shared(self.driver).TABLE_ROW_CSS}"
         )
 
     def get_destinations_text(self):
-        return self.driver.find_element_by_id(self.TABLE_DESTINATIONS_ID).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_DESTINATIONS_ID).text
 
     def get_deleted_entities_text(self):
         return self.driver.find_element_by_id(self.TABLE_DELETED_ENTITIES_ID).text
@@ -144,11 +144,13 @@ class CasePage(BasePage):
 
     def click_edit_destinations_flags(self):
         scroll_to_element_by_id(self.driver, self.BUTTON_SET_DESTINATIONS_FLAGS_ID)
-        self.driver.find_element_by_id(self.BUTTON_SET_DESTINATIONS_FLAGS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_SET_DESTINATIONS_FLAGS_ID).click()
 
     def select_destination(self, index):
         scroll_to_element_by_id(self.driver, self.TABLE_DESTINATIONS_ID)
-        self.driver.find_elements_by_css_selector(f"#{self.TABLE_DESTINATIONS_ID} {selectors.CHECKBOX}")[index].click()
+        self.driver.find_elements(by=By.CSS_SELECTOR, value=f"#{self.TABLE_DESTINATIONS_ID} {selectors.CHECKBOX}")[
+            index
+        ].click()
 
     def get_reference_code_text(self):
         return self.driver.find_element_by_id(self.BANNER_REFERENCE_CODE_ID).text

@@ -47,7 +47,7 @@ class Shared(BasePage):
         radios[no].click()
 
     def get_gov_table_cell_links(self):
-        return self.driver.find_elements_by_css_selector(self.GOV_TABLE_CELL_LINKS)
+        return self.driver.find_elements(by=By.CSS_SELECTOR, value=self.GOV_TABLE_CELL_LINKS)
 
     def get_table_row(self, no):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW)[no]

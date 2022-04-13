@@ -50,7 +50,7 @@ def enforcement_file_content_check(party_type, tag, value):
 
     # get values of all party_types as the file can contain multiple entries
     nodes = root.findall(f".//STAKEHOLDER[SH_TYPE='{party_type}']")
-    party_values = set([child.text for node in nodes for child in node.getchildren() if child.tag == tag])
+    party_values = set([child.text for node in nodes for child in node if child.tag == tag])
     assert value in party_values
 
 
@@ -125,16 +125,16 @@ def import_enforcement_xml(driver, import_eu_btn_text):
 
 @when("I attach the file above")
 def i_attach_updated_file(driver):  # noqa
-    file_input = driver.find_element_by_name("file")
+    file_input = driver.find_element(by=By.NAME, value="file")
     file_input.clear()
     file_input.send_keys("/tmp/enforcement_check_import.xml")
-    upload_btn = driver.find_element_by_class_name("govuk-button")
+    upload_btn = driver.find_element(by=By.CLASS_NAME, value="govuk-button")
     upload_btn.click()
 
-    banner = driver.find_element_by_class_name("app-snackbar__content")
+    banner = driver.find_element(by=By.CLASS_NAME, value="app-snackbar__content")
     assert "Enforcement XML imported successfully" in banner.text
 
-    driver.find_element_by_link_text("Back to queue").click()
+    driver.find_element(by=By.LINK_TEXT, value="Back to queue").click()
 
 
 @then(parsers.parse('the application is removed from "{queue}" queue'))
@@ -143,7 +143,7 @@ def application_removed_from_queue(driver, queue):
     WebDriverWait(driver, 30).until(
         expected_conditions.presence_of_element_located((By.ID, ASSIGNED_QUEUES_ID))
     ).is_enabled()
-    queue_list = driver.find_element_by_id(ASSIGNED_QUEUES_ID).text.split("\n")
+    queue_list = driver.find_element(by=By.ID, value=ASSIGNED_QUEUES_ID).text.split("\n")
     assert queue not in queue_list
 
 

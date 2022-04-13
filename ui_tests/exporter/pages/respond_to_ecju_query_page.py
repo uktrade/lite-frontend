@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from ui_tests.exporter.pages.BasePage import BasePage
@@ -9,7 +10,7 @@ class RespondToEcjuQueryPage(BasePage):
     UPLOADED_DOCUMENT_ITEM_CLASS = "app-documents__item"
 
     def enter_form_response(self, value):
-        response_tb = self.driver.find_element_by_id(self.RESPONSE_FORM)
+        response_tb = self.driver.find_element(by=By.ID, value=self.RESPONSE_FORM)
         response_tb.clear()
         response_tb.send_keys(value)
 

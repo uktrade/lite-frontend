@@ -1,7 +1,10 @@
-from faker import Faker
-from pytest_bdd import scenarios, when, then, given, parsers
+from random import randint
 
-from ui_tests.exporter.fixtures.register_organisation import get_eori_number, get_registration_number
+from faker import Faker
+from pytest import fixture
+from pytest_bdd import scenarios, when, then, given, parsers
+from selenium.webdriver.common.by import By
+
 from ui_tests.caseworker.pages.header_page import HeaderPage
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.organisation_page import OrganisationPage
@@ -183,7 +186,7 @@ def click_active_tab(driver):
 @then("I should see details of organisation previously created")
 def organisation_in_list(driver, context):
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
-    assert driver.find_element_by_id(context.organisation_id).is_displayed()
+    assert driver.find_element(by=By.ID, value=context.organisation_id).is_displayed()
 
 
 @when("I click review")
@@ -202,8 +205,8 @@ def organisation_summary(driver, context):
     assert context.organisation_registration in summary
     assert context.organisation_address in summary
 
-    assert driver.find_element_by_id("status-active").is_enabled()
-    assert driver.find_element_by_id("status-rejected").is_enabled()
+    assert driver.find_element(by=By.ID, value="status-active").is_enabled()
+    assert driver.find_element(by=By.ID, value="status-rejected").is_enabled()
 
 
 @then("I should see a summary along with primary site")
@@ -263,3 +266,13 @@ def organisation_warning(driver):
 def step_impl(driver, context):
     pass
     # assert CasePage(driver).is_flag_applied(context.flag_name), "Flag " + context.flag_name + " is not applied"
+
+
+@fixture(scope="function")
+def get_eori_number():
+    return "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])
+
+
+@fixture(scope="function")
+def get_registration_number():
+    return "".join([str(randint(0, 9)) for _ in range(8)])

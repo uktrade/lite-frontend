@@ -98,7 +98,7 @@ class Shared(BasePage):
         self.driver.execute_script("document.getElementById('app-header').style.position = 'relative';")
 
     def get_audit_trail_text(self):
-        return self.driver.find_element_by_id(self.AUDIT_TRAIL_ID).text
+        return self.driver.find_element(by=By.ID, value=self.AUDIT_TRAIL_ID).text
 
     def go_to_last_page(self):
         self.driver.implicitly_wait(0)

@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.caseworker.pages.BasePage import BasePage
 
 
@@ -32,19 +34,19 @@ class OrganisationPage(BasePage):
         }
 
     def click_review_organisation(self):
-        self.driver.find_element_by_id(self.REVIEW_ORGANISATION_BUTTON_ID).click()
+        self.driver.find_element(by=By.ID, value=self.REVIEW_ORGANISATION_BUTTON_ID).click()
 
     def get_organisation_summary(self):
-        return self.driver.find_element_by_css_selector(self.ORGANISATION_SUMMARY_CSS_SELECTOR).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.ORGANISATION_SUMMARY_CSS_SELECTOR).text
 
     def select_approve_organisation(self):
-        self.driver.find_element_by_id(self.REVIEW_PARTIAL_ID + "active").click()
+        self.driver.find_element(by=By.ID, value=self.REVIEW_PARTIAL_ID + "active").click()
 
     def select_reject_organisation(self):
-        self.driver.find_element_by_id(self.REVIEW_PARTIAL_ID + "rejected").click()
+        self.driver.find_element(by=By.ID, value=self.REVIEW_PARTIAL_ID + "rejected").click()
 
     def get_status(self):
-        return self.driver.find_element_by_id(self.ORGANISATION_STATUS_ID).text
+        return self.driver.find_element(by=By.ID, value=self.ORGANISATION_STATUS_ID).text
 
     def get_warning(self):
-        return self.driver.find_element_by_id(self.WARNING_BANNER_ID).text
+        return self.driver.find_element(by=By.ID, value=self.WARNING_BANNER_ID).text
