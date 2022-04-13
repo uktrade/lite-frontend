@@ -6,9 +6,9 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse, NoReverseMatch
 from django.views.generic import TemplateView
-from s3chunkuploader.file_handler import s3_client
 
 from caseworker.cases.services import get_document
+from core.file_handler import s3_client
 from exporter.applications.forms.documents import attach_document_form, delete_document_confirmation_form
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
 from exporter.applications.services import (

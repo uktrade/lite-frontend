@@ -12,7 +12,7 @@ from exporter.organisation.roles.services import get_user_permissions
 from exporter.organisation import forms
 from exporter.organisation.services import post_document_on_organisation, get_document_on_organisation
 from core.auth.views import LoginRequiredMixin
-from s3chunkuploader.file_handler import s3_client
+from core.file_handler import s3_client
 
 
 class OrganisationView(TemplateView):
