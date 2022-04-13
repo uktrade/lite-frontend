@@ -624,7 +624,6 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
         SECTION_1 = FirearmsActSections.SECTION_1, "Section 1"
         SECTION_2 = FirearmsActSections.SECTION_2, "Section 2"
         SECTION_5 = FirearmsActSections.SECTION_5, "Section 5"
-        NO = "no", "No"
         DONT_KNOW = "dont_know", "Don't know"
 
     firearms_act_section = forms.ChoiceField(
@@ -649,7 +648,6 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
                 self.SectionChoices.SECTION_1.label,
                 self.SectionChoices.SECTION_2.label,
                 self.SectionChoices.SECTION_5.label,
-                self.SectionChoices.NO.label,
                 ConditionalQuestion(
                     self.SectionChoices.DONT_KNOW.label,
                     "not_covered_explanation",

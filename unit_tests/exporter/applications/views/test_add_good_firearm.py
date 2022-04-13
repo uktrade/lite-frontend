@@ -407,10 +407,6 @@ def test_add_good_firearm_does_not_display_section_5_if_already_answered(
     "form_data, expected_next_form",
     (
         (
-            {"firearms_act_section": "no"},
-            FirearmDocumentAvailability,
-        ),
-        (
             {"firearms_act_section": "dont_know", "not_covered_explanation": "explanation"},
             FirearmDocumentAvailability,
         ),
@@ -733,7 +729,7 @@ def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
     )
     post_to_step(
         AddGoodFirearmSteps.FIREARM_ACT_1968,
-        {"firearms_act_section": "no"},
+        {"firearms_act_section": "dont_know", "not_covered_explanation": "not covered"},
     )
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -755,7 +751,8 @@ def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
         "firearm_details": {
             "calibre": "calibre 123",
             "category": ["NON_AUTOMATIC_SHOTGUN"],
-            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five": "Unsure",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "not covered",
             "is_registered_firearm_dealer": False,
             "is_replica": True,
             "is_rfd_certificate_valid": False,
@@ -904,29 +901,6 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     }
 
 
-@pytest.mark.parametrize(
-    "firearm_act_post_data, firearm_act_payload_data",
-    (
-        (
-            {
-                "firearms_act_section": "no",
-            },
-            {
-                "is_covered_by_firearm_act_section_one_two_or_five": "No",
-            },
-        ),
-        (
-            {
-                "firearms_act_section": "dont_know",
-                "not_covered_explanation": "firearms act not covered explanation",
-            },
-            {
-                "is_covered_by_firearm_act_section_one_two_or_five": "Unsure",
-                "is_covered_by_firearm_act_section_one_two_or_five_explanation": "firearms act not covered explanation",
-            },
-        ),
-    ),
-)
 def test_add_good_firearm_without_rfd_document_submission_not_registered_firearms_dealer(
     authorized_client,
     new_good_firearm_url,
@@ -936,8 +910,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     control_list_entries,
     application_without_rfd_document,
     application,
-    firearm_act_post_data,
-    firearm_act_payload_data,
     good_id,
     product_summary_url,
 ):
@@ -989,7 +961,10 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     )
     post_to_step(
         AddGoodFirearmSteps.FIREARM_ACT_1968,
-        firearm_act_post_data,
+        {
+            "firearms_act_section": "dont_know",
+            "not_covered_explanation": "firearms act not covered explanation",
+        },
     )
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -1009,7 +984,8 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
             "is_replica": True,
             "replica_description": "This is a replica",
             "type": "firearms",
-            **firearm_act_payload_data,
+            "is_covered_by_firearm_act_section_one_two_or_five": "Unsure",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "firearms act not covered explanation",
         },
         "control_list_entries": ["ML1", "ML1a"],
         "name": "TEST NAME",
