@@ -36,12 +36,12 @@ def test_valid_file_upload(mock_handler):
 def test_invalid_file_type_upload(mock_handler):
     with open(f"{TEST_FILES_PATH}/invalid_type.zip", "rb") as f:
         content = f.read()
-        with pytest.raises(UploadFailed):
+        with pytest.raises(UploadFailed, match="Unsupported file type: application/zip"):
             mock_handler.receive_data_chunk(content, 0)
 
 
 def test_invalid_file_mime_type_upload(mock_handler):
     with open(f"{TEST_FILES_PATH}/invalid_mime.txt", "rb") as f:
         content = f.read()
-        with pytest.raises(UploadFailed):
+        with pytest.raises(UploadFailed, match="Unsupported file type: application/zip"):
             mock_handler.receive_data_chunk(content, 0)
