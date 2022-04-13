@@ -61,11 +61,6 @@ def get_pv_grading_good_payload(form):
 def get_firearm_act_1968_payload(form):
     firearms_act_section = form.cleaned_data["firearms_act_section"]
 
-    if firearms_act_section == FirearmFirearmAct1968Form.SectionChoices.NO:
-        return {
-            "is_covered_by_firearm_act_section_one_two_or_five": "No",
-        }
-
     if firearms_act_section == FirearmFirearmAct1968Form.SectionChoices.DONT_KNOW:
         not_covered_explanation = form.cleaned_data["not_covered_explanation"]
         return {
