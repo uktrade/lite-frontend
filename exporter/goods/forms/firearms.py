@@ -339,8 +339,8 @@ class FirearmReplicaForm(BaseFirearmForm):
     )
 
     replica_description = forms.CharField(
-        widget=forms.Textarea,
-        label="Describe the firearm the product is a replica of",
+        widget=forms.TextInput,
+        label="Describe the firearm the product is a replica of ",
         required=False,
     )
 
