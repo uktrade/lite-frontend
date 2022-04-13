@@ -117,6 +117,7 @@ def click_organisation(driver, context):
     OrganisationsPage(driver).click_organisation(context.organisation_name)
     OrganisationPage(driver).click_review_organisation()
 
+
 @when("I click on the organisation")
 def click_organisation(driver, context):
     OrganisationsPage(driver).click_organisation(context.organisation_name)
@@ -148,15 +149,12 @@ def in_review_organisation(context, api_test_client, get_eori_number, get_regist
     context.organisation_address = data["site"]["address"]["address_line_1"]
 
 
-@given("an anonymous user creates and organisation for review with <eori_number>,<uk_vat_number>,<primary_site>,<phone_number>")
+@given(
+    "an anonymous user creates and organisation for review with <eori_number>,<uk_vat_number>,<primary_site>,<phone_number>"
+)
 def create_organisation_with_primary_site(context, api_test_client, eori_number, uk_vat_number, primary_site, phone_number):
     data = build_organisation_with_primary_site(
-        f"Org-{get_current_date_time()}",
-        "commercial",
-        eori_number,
-        uk_vat_number,
-        primary_site,
-        phone_number
+        f"Org-{get_current_date_time()}", "commercial", eori_number, uk_vat_number, primary_site, phone_number
     )
     response = api_test_client.organisations.anonymous_user_create_org(data)
     context.organisation_id = response["id"]
