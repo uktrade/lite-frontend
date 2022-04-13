@@ -156,7 +156,6 @@ STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "whitenoise.storage.Compres
 # https://github.com/uktrade/django-chunk-s3-av-upload-handlers
 STREAMING_CHUNK_SIZE = 8192
 FILE_UPLOAD_HANDLERS = env.list("FILE_UPLOAD_HANDLERS", default=["core.file_handler.SafeS3FileUploadHandler"])
-DEFAULT_FILE_STORAGE = env.str("DEFAULT_FILE_STORAGE", "storages.backends.s3boto3.S3Boto3Storage")
 ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
     "ACCEPTED_FILE_UPLOAD_MIME_TYPES",
     default=(
