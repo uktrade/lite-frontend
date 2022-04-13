@@ -27,6 +27,11 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
+    is_wassenaar = forms.BooleanField(
+        label="This product falls under the WASSENAAR regime",
+        required=False,
+    )
+
     report_summary = forms.CharField(
         label="Select an annual report summary",
         help_text="Type to get suggestions. For example, components for body armour.",
@@ -47,6 +52,7 @@ class TAUEditForm(forms.Form):
         self.helper.layout = Layout(
             "control_list_entries",
             "does_not_have_control_list_entries",
+            "is_wassenaar",
             "report_summary",
             "comment",
             Submit("submit", "Submit"),
