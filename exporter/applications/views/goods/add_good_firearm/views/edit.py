@@ -524,6 +524,76 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
 
         return ctx
 
+    def get_document_url(self, document):
+        return reverse(
+            "organisation:document",
+            kwargs={
+                "pk": document["id"],
+            },
+        )
+
+    def get_attach_rfd_certificate_initial_data(self):
+        rfd_certificate = get_rfd_certificate(self.application)
+        if not rfd_certificate:
+            return {}
+
+        return {
+            "expiry_date": convert_api_date_string_to_date(rfd_certificate["expiry_date"]),
+            "reference_code": rfd_certificate["reference_code"],
+            "file": CurrentFile(
+                rfd_certificate["document"]["name"],
+                self.get_document_url(rfd_certificate),
+                rfd_certificate["document"]["safe"],
+            ),
+        }
+
+    def get_is_covered_by_section_5_initial_data(self):
+        firearm_details = self.good["firearm_details"]
+        is_covered_by_firearm_act_section_one_two_or_five = firearm_details.get(
+            "is_covered_by_firearm_act_section_one_two_or_five"
+        )
+
+        if is_covered_by_firearm_act_section_one_two_or_five is None:
+            return {}
+
+        if (
+            is_covered_by_firearm_act_section_one_two_or_five == "Yes"
+            and firearm_details["firearms_act_section"] == "firearms_act_section5"
+        ):
+            return {"is_covered_by_section_5": FirearmSection5Form.Section5Choices.YES}
+
+        if is_covered_by_firearm_act_section_one_two_or_five == "No":
+            return {"is_covered_by_section_5": FirearmSection5Form.Section5Choices.NO}
+
+        if is_covered_by_firearm_act_section_one_two_or_five == "Unsure":
+            is_covered_by_firearm_act_section_one_two_or_five_explanation = firearm_details[
+                "is_covered_by_firearm_act_section_one_two_or_five_explanation"
+            ]
+            return {
+                "is_covered_by_section_5": FirearmSection5Form.Section5Choices.DONT_KNOW,
+                "not_covered_explanation": is_covered_by_firearm_act_section_one_two_or_five_explanation,
+            }
+
+    def get_attach_section_5_letter_of_authority_initial_data(self):
+        if not has_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5):
+            return {}
+
+        section_5_document = get_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5)
+        firearm_details = self.good["firearm_details"]
+        return {
+            "section_certificate_missing": firearm_details["section_certificate_missing"],
+            "section_certificate_number": firearm_details["section_certificate_number"],
+            "section_certificate_date_of_expiry": datetime.fromisoformat(
+                firearm_details["section_certificate_date_of_expiry"]
+            ).date(),
+            "section_certificate_missing_reason": firearm_details["section_certificate_missing_reason"],
+            "file": CurrentFile(
+                section_5_document["document"]["name"],
+                self.get_document_url(section_5_document),
+                section_5_document["document"]["safe"],
+            ),
+        }
+
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
 
@@ -531,72 +601,13 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             initial["is_registered_firearm_dealer"] = has_valid_organisation_rfd_certificate(self.application)
 
         if step == AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE:
-            rfd_certificate = get_rfd_certificate(self.application)
-            if rfd_certificate:
-                initial.update(
-                    {
-                        "expiry_date": convert_api_date_string_to_date(rfd_certificate["expiry_date"]),
-                        "reference_code": rfd_certificate["reference_code"],
-                        "file": CurrentFile(
-                            rfd_certificate["document"]["name"],
-                            reverse(
-                                "organisation:document",
-                                kwargs={
-                                    "pk": rfd_certificate["id"],
-                                },
-                            ),
-                            rfd_certificate["document"]["safe"],
-                        ),
-                    }
-                )
+            initial.update(self.get_attach_rfd_certificate_initial_data())
 
         if step == AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5:
-            firearm_details = self.good["firearm_details"]
-            is_covered_by_firearm_act_section_one_two_or_five = firearm_details.get(
-                "is_covered_by_firearm_act_section_one_two_or_five"
-            )
-            if is_covered_by_firearm_act_section_one_two_or_five is not None:
-                if (
-                    is_covered_by_firearm_act_section_one_two_or_five == "Yes"
-                    and firearm_details["firearms_act_section"] == "firearms_act_section5"
-                ):
-                    initial["is_covered_by_section_5"] = FirearmSection5Form.Section5Choices.YES
-                elif is_covered_by_firearm_act_section_one_two_or_five == "No":
-                    initial["is_covered_by_section_5"] = FirearmSection5Form.Section5Choices.NO
-                elif is_covered_by_firearm_act_section_one_two_or_five == "Unsure":
-                    is_covered_by_firearm_act_section_one_two_or_five_explanation = firearm_details[
-                        "is_covered_by_firearm_act_section_one_two_or_five_explanation"
-                    ]
-                    initial.update(
-                        {
-                            "is_covered_by_section_5": FirearmSection5Form.Section5Choices.DONT_KNOW,
-                            "not_covered_explanation": is_covered_by_firearm_act_section_one_two_or_five_explanation,
-                        }
-                    )
+            initial.update(self.get_is_covered_by_section_5_initial_data())
+
         if step == AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY:
-            if has_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5):
-                section_5_document = get_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5)
-                firearm_details = self.good["firearm_details"]
-                initial.update(
-                    {
-                        "section_certificate_missing": firearm_details["section_certificate_missing"],
-                        "section_certificate_number": firearm_details["section_certificate_number"],
-                        "section_certificate_date_of_expiry": datetime.fromisoformat(
-                            firearm_details["section_certificate_date_of_expiry"]
-                        ).date(),
-                        "section_certificate_missing_reason": firearm_details["section_certificate_missing_reason"],
-                        "file": CurrentFile(
-                            section_5_document["document"]["name"],
-                            reverse(
-                                "organisation:document",
-                                kwargs={
-                                    "pk": section_5_document["id"],
-                                },
-                            ),
-                            section_5_document["document"]["safe"],
-                        ),
-                    }
-                )
+            initial.update(self.get_attach_section_5_letter_of_authority_initial_data())
 
         return initial
 
