@@ -3,7 +3,7 @@ from http import HTTPStatus
 from exporter.applications.services import post_application_document
 from exporter.core.helpers import get_document_data
 
-from .exceptions import ServiceError
+from .decorators import expect_status
 
 
 class PostFirearmActCertificateAction:
@@ -32,21 +32,19 @@ class PostFirearmActCertificateAction:
         }
         return payload
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding firearm certificate when creating firearm",
+        "Unexpected error adding firearm certificate",
+    )
     def post_firearm_act_certificate(self):
         firearm_certificate_payload = self.get_firearm_act_certificate_payload()
-        api_resp_data, status_code = post_application_document(
+        return post_application_document(
             request=self.request,
             pk=self.application["id"],
             good_pk=self.good["id"],
             data=firearm_certificate_payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error adding firearm certificate when creating firearm - response was: %s - %s",
-                "Unexpected error adding firearm certificate",
-            )
 
     def run(self):
         if not self.has_firearm_act_certificate():

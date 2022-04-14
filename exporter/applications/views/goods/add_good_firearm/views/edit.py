@@ -1,5 +1,4 @@
 import logging
-import requests
 
 from datetime import date, datetime
 from http import HTTPStatus
@@ -58,6 +57,7 @@ from .conditionals import (
 )
 from .actions import PostFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps
+from .decorators import expect_status
 from .exceptions import ServiceError
 from .mixins import ApplicationMixin, GoodMixin
 from .payloads import (
@@ -191,20 +191,10 @@ class BaseEditWizardView(GoodMixin, ApplicationMixin, LoginRequiredMixin, BaseSe
     def get_payload(self, form_dict):
         raise NotImplementedError(f"Implement `get_payload` on f{self.__class__.__name__}")
 
+    @expect_status(HTTPStatus.OK, "Error updating firearm", "Unexpected error updating firearm")
     def edit_firearm(self, good_pk, form_dict):
         payload = self.get_payload(form_dict)
-        api_resp_data, status_code = edit_firearm(
-            self.request,
-            good_pk,
-            payload,
-        )
-        if status_code != HTTPStatus.OK:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error updating firearm - response was: %s - %s",
-                "Unexpected error updating firearm",
-            )
+        return edit_firearm(self.request, good_pk, payload)
 
 
 class FirearmEditPvGrading(BaseEditWizardView):
@@ -371,40 +361,30 @@ class BaseEditProductDocumentView(BaseEditWizardView):
         }
         return payload
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding product document when creating firearm",
+        "Unexpected error adding document to firearm",
+    )
     def post_product_documentation(self, good_pk):
         document_payload = self.get_product_document_payload()
-        api_resp_data, status_code = post_good_documents(
+        return post_good_documents(
             request=self.request,
             pk=good_pk,
             json=document_payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error adding product document when creating firearm - response was: %s - %s",
-                "Unexpected error adding document to firearm",
-            )
 
+    @expect_status(HTTPStatus.OK, "Error deleting the product document", "Unexpected error deleting product document")
     def delete_product_documentation(self, good_pk, document_pk):
-        api_resp_data, status_code = delete_good_document(self.request, good_pk, document_pk)
-        if status_code != HTTPStatus.OK:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error deleting the product document - response was: %s - %s",
-                "Unexpected error deleting product document",
-            )
+        return delete_good_document(self.request, good_pk, document_pk)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating the product document description",
+        "Unexpected error updating product document description",
+    )
     def update_product_document_data(self, good_pk, document_pk, payload):
-        api_resp_data, status_code = update_good_document_data(self.request, good_pk, document_pk, payload)
-        if status_code != HTTPStatus.OK:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error updating the product document description - response was: %s - %s",
-                "Unexpected error updating product document description",
-            )
+        return update_good_document_data(self.request, good_pk, document_pk, payload)
 
 
 class FirearmEditProductDocumentSensitivity(BaseEditProductDocumentView):
@@ -596,47 +576,17 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
 
         return initial
 
-    def get_success_url(self):
-        return reverse(
-            "applications:product_summary",
-            kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
-        )
-
-    def has_existing_valid_organisation_rfd_certificate(self, application):
-        if not has_valid_organisation_rfd_certificate(application):
-            return False
-
-        is_rfd_certificate_valid_cleaned_data = self.get_cleaned_data_for_step(
-            AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
-        )
-        return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid", False)
-
-    def is_existing_organisation_rfd_certificate_invalid(self, application):
-        if not has_valid_organisation_rfd_certificate(application):
-            return False
-
-        is_rfd_certificate_valid_cleaned_data = self.get_cleaned_data_for_step(
-            AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID
-        )
-        return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid") is False
-
     def has_organisation_rfd_certificate_data(self):
         return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
 
+    @expect_status(HTTPStatus.CREATED, "Error rfd certificate when creating firearm", "Unexpected error adding firearm")
     def post_rfd_certificate(self, application):
         rfd_certificate_payload = self.get_rfd_certificate_payload()
-        api_resp_data, status_code = post_additional_document(
+        return post_additional_document(
             request=self.request,
             pk=application["id"],
             json=rfd_certificate_payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error rfd certificate when creating firearm - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
 
     def get_rfd_certificate_payload(self):
         rfd_certificate_cleaned_data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE)
