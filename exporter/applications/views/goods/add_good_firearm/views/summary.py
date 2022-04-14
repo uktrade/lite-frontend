@@ -54,5 +54,5 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         }
 
 
-class FirearmProductSummary2(FirearmProductSummary):
+class FirearmProductOnApplicationSummary(FirearmProductSummary):
     template_name = "applications/goods/firearms/product-summary2.html"

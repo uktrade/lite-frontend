@@ -51,7 +51,7 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
 )
 from exporter.applications.views.goods.add_good_firearm.views.summary import (
     FirearmProductSummary,
-    FirearmProductSummary2,
+    FirearmProductOnApplicationSummary,
 )
 
 app_name = "applications"
@@ -201,7 +201,7 @@ urlpatterns = [
     ),
     path(
         "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary2/",
-        FirearmProductSummary2.as_view(),
+        FirearmProductOnApplicationSummary.as_view(),
         name="product_summary_2",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),

@@ -1,6 +1,7 @@
 import logging
 import requests
 
+from deepmerge import always_merger
 from http import HTTPStatus
 
 from django.conf import settings
@@ -16,7 +17,7 @@ from exporter.applications.services import (
     get_application,
     post_additional_document,
     post_application_document,
-    post_good_on_application,
+    post_firearm_good_on_application,
 )
 from exporter.core.constants import (
     DocumentType,
@@ -74,9 +75,9 @@ from .conditionals import (
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
 )
-from .constants import AddGoodFirearmSteps
+from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .exceptions import ServiceError
-from .payloads import AddGoodFirearmPayloadBuilder
+from .payloads import AddGoodFirearmPayloadBuilder, AddGoodFirearmToApplicationPayloadBuilder
 
 
 logger = logging.getLogger(__name__)
@@ -457,11 +458,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
 class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
-        (AddGoodFirearmSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
-        (AddGoodFirearmSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
+        (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
+        (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
     ]
 
-    condition_dict = {AddGoodFirearmSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938)}
+    condition_dict = {AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938)}
 
     @cached_property
     def application_id(self):
@@ -511,29 +512,24 @@ class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
             kwargs={"pk": pk, "good_pk": good_pk},
         )
 
-    def get_firearm_details_payload(self, all_data):
-        payload = {}
-        firearm_details = self.good.get("firearm_details", {})
-        payload["type"] = firearm_details["type"]["key"]
-        payload["category"] = [category["key"] for category in firearm_details["category"]]
+    def get_good_payload(self, good):
+        if not good.get("firearm_details"):
+            raise Http404
 
-        payload["is_made_before_1938"] = all_data.get("is_made_before_1938", None)
-        payload["year_of_manufacture"] = all_data.get("year_of_manufacture", None)
+        # Any modifications to firearm_details can be done here
 
-        return payload
+        return good
 
-    def get_good_on_application_data(self, form_list):
-        good_on_application_payload = {}
-        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
-
-        good_on_application_payload["firearm_details"] = self.get_firearm_details_payload(all_data)
-
+    def get_payload(self, form_dict):
+        good_payload = self.get_good_payload(self.good)
+        good_on_application_payload = AddGoodFirearmToApplicationPayloadBuilder().build(form_dict)
+        always_merger.merge(good_on_application_payload, good_payload)
         return good_on_application_payload
 
-    def post_firearm_to_application(self, form_list):
-        all_data = self.get_good_on_application_data(form_list)
+    def post_firearm_to_application(self, form_dict):
+        payload = self.get_payload(form_dict)
 
-        api_resp_data, status_code = post_good_on_application(self.request, self.application["id"], all_data)
+        api_resp_data, status_code = post_firearm_good_on_application(self.request, self.application["id"], payload)
         if status_code != HTTPStatus.CREATED:
             raise ServiceError(
                 status_code,
@@ -552,8 +548,9 @@ class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
         return error_page(self.request, service_error.user_message)
 
     def done(self, form_list, form_dict, **kwargs):
+
         try:
-            self.post_firearm_to_application(form_list)
+            self.post_firearm_to_application(form_dict)
         except ServiceError as e:
             return self.handle_service_error(e)
 

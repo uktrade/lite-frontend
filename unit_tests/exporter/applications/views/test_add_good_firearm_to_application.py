@@ -1,15 +1,9 @@
-import datetime
 import pytest
-import uuid
-
-from pytest_django.asserts import assertContains
 
 from django.urls import reverse
 
-from core import client
-from exporter.core.constants import AddGoodFormSteps
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
-from exporter.goods.forms.firearms import FirearmMadeBefore1938Form, FirearmYearOfManufactureForm
+from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
+from exporter.goods.forms.firearms import FirearmYearOfManufactureForm
 
 
 @pytest.fixture(autouse=True)
@@ -32,6 +26,11 @@ def new_firearm_to_application_url(application):
             "good_pk": good["id"],
         },
     )
+
+
+@pytest.fixture
+def expected_good_data(application):
+    return application["goods"][0]["good"]
 
 
 @pytest.fixture(autouse=True)
@@ -70,9 +69,9 @@ def post_to_step(authorized_client, new_firearm_to_application_url):
 
 
 def test_add_firearm_to_application_product_made_before_1938_step(goto_step, post_to_step):
-    goto_step(AddGoodFirearmSteps.MADE_BEFORE_1938)
+    goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
     response = post_to_step(
-        AddGoodFirearmSteps.MADE_BEFORE_1938,
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
         {"is_made_before_1938": True},
     )
 
@@ -80,47 +79,34 @@ def test_add_firearm_to_application_product_made_before_1938_step(goto_step, pos
     assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
 
 
-def test_add_firearm_to_application_product_not_made_before_1938_step(requests_mock, goto_step, post_to_step):
-    goto_step(AddGoodFirearmSteps.MADE_BEFORE_1938)
+def test_add_firearm_to_application_product_not_made_before_1938_step(
+    requests_mock, expected_good_data, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
     response = post_to_step(
-        AddGoodFirearmSteps.MADE_BEFORE_1938,
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
         {"is_made_before_1938": False},
     )
 
     assert response.status_code == 302
-    assert requests_mock.last_request.json() == {
-        "firearm_details": {
-            "type": "firearms",
-            "is_made_before_1938": False,
-            "year_of_manufacture": None,
-            "category": [
-                "NON_AUTOMATIC_SHOTGUN",
-                "NON_AUTOMATIC_RIM_FIRED_HANDGUN",
-            ],
-        }
-    }
+    expected_good_data["firearm_details"]["is_made_before_1938"] = False
+    assert requests_mock.last_request.json() == expected_good_data
 
 
-def test_add_firearm_to_application_year_of_manufacture_step(requests_mock, goto_step, post_to_step):
-    goto_step(AddGoodFirearmSteps.MADE_BEFORE_1938)
+def test_add_firearm_to_application_year_of_manufacture_step(
+    requests_mock, expected_good_data, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
     response = post_to_step(
-        AddGoodFirearmSteps.MADE_BEFORE_1938,
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
         {"is_made_before_1938": True},
     )
     response = post_to_step(
-        AddGoodFirearmSteps.YEAR_OF_MANUFACTURE,
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
         {"year_of_manufacture": 1937},
     )
 
     assert response.status_code == 302
-    assert requests_mock.last_request.json() == {
-        "firearm_details": {
-            "type": "firearms",
-            "is_made_before_1938": True,
-            "year_of_manufacture": 1937,
-            "category": [
-                "NON_AUTOMATIC_SHOTGUN",
-                "NON_AUTOMATIC_RIM_FIRED_HANDGUN",
-            ],
-        }
-    }
+    expected_good_data["firearm_details"]["is_made_before_1938"] = True
+    expected_good_data["firearm_details"]["year_of_manufacture"] = 1937
+    assert requests_mock.last_request.json() == expected_good_data

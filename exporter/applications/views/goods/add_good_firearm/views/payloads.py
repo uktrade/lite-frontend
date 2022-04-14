@@ -6,7 +6,7 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
 )
 
-from .constants import AddGoodFirearmSteps
+from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 
 
 def firearm_details_payload(f):
@@ -132,4 +132,11 @@ class FirearmEditProductDocumentAvailabilityPayloadBuilder(MergingPayloadBuilder
 class FirearmEditProductDocumentSensitivityPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+
+
+class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
     }

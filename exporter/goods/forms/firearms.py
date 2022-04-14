@@ -15,7 +15,6 @@ from exporter.core.validators import (
     FutureDateValidator,
     PastDateValidator,
     RelativeDeltaDateValidator,
-    RelativeDeltaYearValidator,
 )
 
 
@@ -865,13 +864,18 @@ class FirearmYearOfManufactureForm(BaseFirearmForm):
 
     year_of_manufacture = forms.IntegerField(
         label="For example, 2007",
+        widget=forms.TextInput,
         error_messages={
             "required": "Enter the year it was made",
         },
-        validators=[
-            RelativeDeltaYearValidator("The year must be before 1938", year=1938),
-        ],
     )
 
     def get_layout_fields(self):
         return ("year_of_manufacture",)
+
+    def clean(self):
+        year_of_manufacture = self.cleaned_data.get("year_of_manufacture")
+        if year_of_manufacture and year_of_manufacture >= 1938:
+            self.add_error("year_of_manufacture", "The year must be before 1938")
+
+        return self.cleaned_data
