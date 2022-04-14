@@ -666,10 +666,10 @@ class FirearmEditRegisteredFirearmsDealer(LoginRequiredMixin, BaseSessionWizardV
 
         return initial
 
-    def get_success_url(self, pk, good_pk):
+    def get_success_url(self):
         return reverse(
             "applications:product_summary",
-            kwargs={"pk": pk, "good_pk": good_pk},
+            kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
     def has_existing_valid_organisation_rfd_certificate(self, application):
@@ -748,12 +748,12 @@ class FirearmEditRegisteredFirearmsDealer(LoginRequiredMixin, BaseSessionWizardV
         attach_firearm_certificate = self.get_cleaned_data_for_step(step_name)
         return bool(attach_firearm_certificate.get("file"))
 
-    def post_firearm_act_certificate(self, step_name, document_type, application_pk, good_pk):
+    def post_firearm_act_certificate(self, step_name, document_type, application, good):
         firearm_certificate_payload = self.get_firearm_act_certificate_payload(step_name, document_type)
         api_resp_data, status_code = post_application_document(
             request=self.request,
-            pk=application_pk,
-            good_pk=good_pk,
+            pk=application["id"],
+            good_pk=good["id"],
             data=firearm_certificate_payload,
         )
         if status_code != HTTPStatus.CREATED:
@@ -797,10 +797,10 @@ class FirearmEditRegisteredFirearmsDealer(LoginRequiredMixin, BaseSessionWizardV
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                     FirearmsActDocumentType.SECTION_5,
-                    self.application["id"],
-                    self.good["id"],
+                    self.application,
+                    self.good,
                 )
         except ServiceError as e:
             return self.handle_service_error(e)
 
-        return redirect(self.get_success_url(self.application_id, self.good_id))
+        return redirect(self.get_success_url())

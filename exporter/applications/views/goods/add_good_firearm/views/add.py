@@ -252,10 +252,10 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         }
         return payload
 
-    def get_success_url(self, pk, good_pk):
+    def get_success_url(self):
         return reverse(
             "applications:product_summary",
-            kwargs={"pk": pk, "good_pk": good_pk},
+            kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
     def post_firearm(self, form_dict):
@@ -272,10 +272,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 "Unexpected error adding firearm",
             )
 
-        application_pk = str(self.kwargs["pk"])
-        good_pk = api_resp_data["good"]["id"]
-
-        return application_pk, good_pk
+        self.good = api_resp_data["good"]
 
     def has_existing_valid_organisation_rfd_certificate(self, application):
         if not has_valid_organisation_rfd_certificate(application):
@@ -296,7 +293,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid") is False
 
     def delete_existing_organisation_rfd_certificate(self, application):
-        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
+        organisation_rfd_certificate_data = get_rfd_certificate(application)
         status_code = delete_document_on_organisation(
             self.request,
             organisation_id=organisation_rfd_certificate_data["organisation"],
@@ -311,7 +308,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
             )
 
     def attach_rfd_certificate_to_application(self, application):
-        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
+        organisation_rfd_certificate_data = get_rfd_certificate(application)
         document = organisation_rfd_certificate_data["document"]
         api_resp_data, status_code = post_additional_document(
             self.request,
@@ -348,11 +345,11 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 "Unexpected error adding firearm",
             )
 
-    def post_product_documentation(self, good_pk):
+    def post_product_documentation(self, good):
         document_payload = self.get_product_document_payload()
         api_resp_data, status_code = post_good_documents(
             request=self.request,
-            pk=good_pk,
+            pk=good["id"],
             json=document_payload,
         )
         if status_code != HTTPStatus.CREATED:
@@ -380,12 +377,12 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
         }
         return payload
 
-    def post_firearm_act_certificate(self, step_name, document_type, application_pk, good_pk):
+    def post_firearm_act_certificate(self, step_name, document_type, application, good):
         firearm_certificate_payload = self.get_firearm_act_certificate_payload(step_name, document_type)
         api_resp_data, status_code = post_application_document(
             request=self.request,
-            pk=application_pk,
-            good_pk=good_pk,
+            pk=application["id"],
+            good_pk=good["id"],
             data=firearm_certificate_payload,
         )
         if status_code != HTTPStatus.CREATED:
@@ -407,7 +404,7 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            application_pk, good_pk = self.post_firearm(form_dict)
+            self.post_firearm(form_dict)
 
             if self.has_existing_valid_organisation_rfd_certificate(self.application):
                 self.attach_rfd_certificate_to_application(self.application)
@@ -421,29 +418,29 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
                     FirearmsActDocumentType.SECTION_1,
-                    application_pk,
-                    good_pk,
+                    self.application,
+                    self.good,
                 )
 
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE):
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                     FirearmsActDocumentType.SECTION_2,
-                    application_pk,
-                    good_pk,
+                    self.application,
+                    self.good,
                 )
 
             if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY):
                 self.post_firearm_act_certificate(
                     AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                     FirearmsActDocumentType.SECTION_5,
-                    application_pk,
-                    good_pk,
+                    self.application,
+                    self.good,
                 )
 
             if self.has_product_documentation():
-                self.post_product_documentation(good_pk)
+                self.post_product_documentation(self.good)
         except ServiceError as e:
             return self.handle_service_error(e)
 
-        return redirect(self.get_success_url(application_pk, good_pk))
+        return redirect(self.get_success_url())
