@@ -5,6 +5,8 @@ from ..api_client.libraries.request_data import build_request_data
 from ..api_client.sub_helpers.users import create_great_sso_user
 from ..tools.utils import build_test_helper
 
+MAX_WORKERS = 3
+
 
 @fixture(scope="session")
 def context(request):
@@ -20,14 +22,28 @@ def exporter_info(request, environment):
 
 
 @fixture(scope="session")
-def internal_info(request, environment):
+def internal_info(request, environment, worker_id):
+    # For parallel execution, ensure that a TEST_SSO_EMAIL_n and TEST_SSO_PASSWORD_n
+    # pair of environment variables exist for each worker. n is zero-based and is
+    # controlled with the -n command line option.
+    try:
+        worker_num = int(worker_id[2:])
+    except ValueError:
+        worker_num = 0
+
+    if (worker_num + 1) > MAX_WORKERS:
+        raise RuntimeError(f"Can only support {MAX_WORKERS} parallel workers")
+
+    email = environment(f"TEST_SSO_EMAIL_{worker_num}", default=environment("TEST_SSO_EMAIL"))
+    password = environment(f"TEST_SSO_PASSWORD_{worker_num}", default=environment("TEST_SSO_PASSWORD"))
+
     first_name, last_name = environment("TEST_SSO_NAME").split(" ")
     return {
-        "email": environment("TEST_SSO_EMAIL"),
+        "email": email,
         "name": environment("TEST_SSO_NAME"),
         "first_name": first_name,
         "last_name": last_name,
-        "password": environment("TEST_SSO_PASSWORD"),
+        "password": password,
     }
 
 

@@ -1,7 +1,10 @@
-from faker import Faker
-from pytest_bdd import scenarios, when, then, given, parsers
+from random import randint
 
-from ui_tests.exporter.fixtures.register_organisation import get_eori_number, get_registration_number
+from faker import Faker
+from pytest import fixture
+from pytest_bdd import scenarios, when, then, given, parsers
+from selenium.webdriver.common.by import By
+
 from ui_tests.caseworker.pages.header_page import HeaderPage
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.organisation_page import OrganisationPage
@@ -9,7 +12,7 @@ from ui_tests.caseworker.pages.organisations_form_page import OrganisationsFormP
 from ui_tests.caseworker.pages.organisations_page import OrganisationsPage
 from tests_common import functions
 from tests_common.tools.wait import wait_until_page_is_loaded
-from tests_common.api_client.libraries.request_data import build_organisation
+from tests_common.api_client.libraries.request_data import build_organisation, build_organisation_with_primary_site
 from tests_common.functions import click_submit
 from tests_common.tools.helpers import get_current_date_time
 
@@ -118,6 +121,11 @@ def click_organisation(driver, context):
     OrganisationPage(driver).click_review_organisation()
 
 
+@when("I click on the organisation")
+def click_organisation(driver, context):
+    OrganisationsPage(driver).click_organisation(context.organisation_name)
+
+
 @when("I edit the organisation")
 def click_edit(driver, context):
     OrganisationPage(driver).click_edit_organisation_link()
@@ -144,6 +152,27 @@ def in_review_organisation(context, api_test_client, get_eori_number, get_regist
     context.organisation_address = data["site"]["address"]["address_line_1"]
 
 
+@given(
+    "an anonymous user creates and organisation for review with <eori_number>,<uk_vat_number>,<primary_site>,<phone_number>"
+)
+def create_organisation_with_primary_site(
+    context, api_test_client, eori_number, uk_vat_number, primary_site, phone_number
+):
+    data = build_organisation_with_primary_site(
+        f"Org-{get_current_date_time()}", "commercial", eori_number, uk_vat_number, primary_site, phone_number
+    )
+    response = api_test_client.organisations.anonymous_user_create_org(data)
+    context.organisation_id = response["id"]
+    context.organisation_name = response["name"]
+    context.organisation_type = response["type"]["value"]
+    context.organisation_eori = response["eori_number"]
+    context.organisation_sic = response["sic_number"]
+    context.organisation_vat = response["vat_number"]
+    context.organisation_registration = response["registration_number"]
+    context.organisation_primary_site = data["site"]["name"]
+    context.organisation_address = data["site"]["address"]["address_line_1"]
+
+
 @when("I click on In review tab")
 def click_in_review_tab(driver):
     OrganisationsPage(driver).go_to_in_review_tab()
@@ -157,7 +186,7 @@ def click_active_tab(driver):
 @then("I should see details of organisation previously created")
 def organisation_in_list(driver, context):
     OrganisationsPage(driver).search_for_org_in_filter(context.organisation_name)
-    assert driver.find_element_by_id(context.organisation_id).is_displayed()
+    assert driver.find_element(by=By.ID, value=context.organisation_id).is_displayed()
 
 
 @when("I click review")
@@ -175,6 +204,22 @@ def organisation_summary(driver, context):
     assert context.organisation_vat in summary
     assert context.organisation_registration in summary
     assert context.organisation_address in summary
+
+    assert driver.find_element(by=By.ID, value="status-active").is_enabled()
+    assert driver.find_element(by=By.ID, value="status-rejected").is_enabled()
+
+
+@then("I should see a summary along with primary site")
+def organisation_primaty_site(driver, context):
+    summary = OrganisationPage(driver).get_organisation_summary()
+    assert context.organisation_name in summary
+    assert context.organisation_type in summary
+    assert context.organisation_eori in summary
+    assert context.organisation_sic in summary
+    assert context.organisation_vat in summary
+    assert context.organisation_registration in summary
+    assert context.organisation_address in summary
+    assert context.organisation_primary_site in summary
 
     assert driver.find_element_by_id("status-active").is_enabled()
     assert driver.find_element_by_id("status-rejected").is_enabled()
@@ -221,3 +266,13 @@ def organisation_warning(driver):
 def step_impl(driver, context):
     pass
     # assert CasePage(driver).is_flag_applied(context.flag_name), "Flag " + context.flag_name + " is not applied"
+
+
+@fixture(scope="function")
+def get_eori_number():
+    return "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])
+
+
+@fixture(scope="function")
+def get_registration_number():
+    return "".join([str(randint(0, 9)) for _ in range(8)])

@@ -61,11 +61,6 @@ def get_pv_grading_good_payload(form):
 def get_firearm_act_1968_payload(form):
     firearms_act_section = form.cleaned_data["firearms_act_section"]
 
-    if firearms_act_section == FirearmFirearmAct1968Form.SectionChoices.NO:
-        return {
-            "is_covered_by_firearm_act_section_one_two_or_five": "No",
-        }
-
     if firearms_act_section == FirearmFirearmAct1968Form.SectionChoices.DONT_KNOW:
         not_covered_explanation = form.cleaned_data["not_covered_explanation"]
         return {
@@ -86,6 +81,7 @@ def get_firearm_section_5_payload(form):
     if is_covered_by_section_5 == FirearmSection5Form.Section5Choices.NO:
         return {
             "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
         }
 
     if is_covered_by_section_5 == FirearmSection5Form.Section5Choices.DONT_KNOW:
@@ -97,6 +93,7 @@ def get_firearm_section_5_payload(form):
 
     return {
         "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+        "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
         "firearms_act_section": "firearms_act_section5",
     }
 
@@ -132,6 +129,21 @@ class FirearmEditProductDocumentAvailabilityPayloadBuilder(MergingPayloadBuilder
 class FirearmEditProductDocumentSensitivityPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+
+
+class FirearmEditPvGradingPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+    }
+
+
+class FirearmEditRegisteredFirearmsDealerPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
     }
 
 

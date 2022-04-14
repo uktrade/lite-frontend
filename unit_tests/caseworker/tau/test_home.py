@@ -103,7 +103,7 @@ def test_home_content(authorized_client, url, data_queue, data_standard_case, mo
     assert soup.find(id="subtitle").text == "Assess 1 product(s) going from Great Britain to Abu Dhabi, United Kingdom"
     assert get_cells(soup, "assessed-products") == [
         "1",
-        "",
+        "p2",
         "444",
         "",
         "No",
@@ -158,6 +158,7 @@ def test_form(authorized_client, url, data_standard_case, requests_mock, mock_co
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
         "is_good_controlled": False,
+        "is_wassenaar": False,
     }
 
 

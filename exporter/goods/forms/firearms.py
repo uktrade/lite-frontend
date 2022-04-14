@@ -10,6 +10,7 @@ from django.urls import reverse
 
 from core.forms.layouts import ConditionalCheckbox, ConditionalQuestion, ConditionalRadios
 from exporter.core.constants import FirearmsActSections
+from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import (
     FutureDateValidator,
@@ -343,8 +344,8 @@ class FirearmReplicaForm(BaseFirearmForm):
     )
 
     replica_description = forms.CharField(
-        widget=forms.Textarea,
-        label="Describe the firearm the product is a replica of",
+        widget=forms.TextInput,
+        label="Describe the firearm the product is a replica of ",
         required=False,
     )
 
@@ -447,6 +448,7 @@ class FirearmAttachRFDCertificate(BaseFirearmForm):
         error_messages={
             "required": "Select a registered firearms dealer certificate",
         },
+        widget=PotentiallyUnsafeClearableFileInput,
     )
 
     reference_code = forms.CharField(
@@ -628,7 +630,6 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
         SECTION_1 = FirearmsActSections.SECTION_1, "Section 1"
         SECTION_2 = FirearmsActSections.SECTION_2, "Section 2"
         SECTION_5 = FirearmsActSections.SECTION_5, "Section 5"
-        NO = "no", "No"
         DONT_KNOW = "dont_know", "Don't know"
 
     firearms_act_section = forms.ChoiceField(
@@ -653,7 +654,6 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
                 self.SectionChoices.SECTION_1.label,
                 self.SectionChoices.SECTION_2.label,
                 self.SectionChoices.SECTION_5.label,
-                self.SectionChoices.NO.label,
                 ConditionalQuestion(
                     self.SectionChoices.DONT_KNOW.label,
                     "not_covered_explanation",

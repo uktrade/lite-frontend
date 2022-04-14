@@ -322,7 +322,7 @@ def choose_location_type(driver, choice):  # noqa
 @when(parsers.parse('I select "{choice}" when asked if the products are being permanently exported'))
 @when(parsers.parse('I select "{choice}" when asked who the products are going to'))
 def choose_who_products_going_to(driver, choice):  # noqa
-    driver.find_element_by_xpath(f"//label/span[contains(text(), '{choice}')]").click()
+    driver.find_element(by=By.XPATH, value=f"//label/span[contains(text(), '{choice}')]").click()
     functions.click_submit(driver)
 
 
@@ -453,7 +453,6 @@ def click_button(driver, button_value):  # noqa
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter "{response}" for the response and click submit'))  # noqa
 @when(parsers.parse('I enter "{response}" for ecju query and click submit'))  # noqa
 def respond_to_query(driver, response):  # noqa
     response_page = RespondToEcjuQueryPage(driver)
@@ -1310,6 +1309,6 @@ def should_see_notification_check_progress(driver):  # noqa
 
 @then("I see a notification next to the application")
 def should_see_notification_application(driver, context):  # noqa
-    elements = driver.find_elements_by_css_selector(".govuk-table__row")
+    elements = driver.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__row")
     no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
     assert "1" in elements[no].find_element_by_css_selector(Shared(driver).NOTIFICATION).text

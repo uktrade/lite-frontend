@@ -1,10 +1,9 @@
 from pytest_bdd import given, then, when, scenarios, parsers
+from selenium.webdriver.common.by import By
 from tests_common import functions
 
 from ui_tests.exporter.pages.application_page import ApplicationPage
-from ui_tests.exporter.pages.hub_page import Hub
 from ui_tests.exporter.pages.respond_to_ecju_query_page import RespondToEcjuQueryPage, DocumentGradingPage
-from ui_tests.exporter.pages.shared import Shared
 
 
 scenarios("../features/ecju_queries.feature", strict_gherkin=False)
@@ -75,3 +74,10 @@ def should_see_query_in_open_queries(driver, query):
 @then(parsers.parse('I see "{response}" as the response under closed queries'))
 def should_see_response_in_closed_queries(driver, response):
     assert response in ApplicationPage(driver).get_closed_queries_text()
+
+
+@when(parsers.parse('I enter "{response}" for the response and click submit'))  # noqa
+def respond_to_query(driver, response):  # noqa
+    response_page = RespondToEcjuQueryPage(driver)
+    response_page.enter_form_response(response)
+    driver.find_element(by=By.CSS_SELECTOR, value="button[value='submit']").click()

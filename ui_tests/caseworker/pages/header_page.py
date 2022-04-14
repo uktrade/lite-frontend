@@ -18,7 +18,7 @@ class HeaderPage(BasePage):
 
     def click_lite_menu(self):
         wait_until_page_is_loaded(self.driver)
-        self.driver.find_element_by_id(self.MENU_BUTTON).click()
+        self.driver.find_element(by=By.ID, value=self.MENU_BUTTON).click()
 
     def click_organisations(self):
         WebDriverWait(self.driver, 30).until(

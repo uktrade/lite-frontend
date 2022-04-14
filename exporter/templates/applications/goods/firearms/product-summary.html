@@ -67,7 +67,7 @@
             {% if good.is_good_controlled.key == "True" %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Do you know the product's control list entry?
+                        Enter the control list entry
                     </dt>
                     <dd class="govuk-summary-list__value">
                         {% for clc in good.control_list_entries %}
@@ -106,7 +106,7 @@
                     {{ firearm_details.is_replica|yesno|title }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-replica'" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_replica' application_id good.id %}">Change</a>
+                    <a id="change-good-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_replica' application_id good.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">

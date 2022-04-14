@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "formtools",
     "core.cookies",
     "core.goods",
+    "django_chunk_upload_handlers",
 ]
 
 MIDDLEWARE = [
@@ -152,14 +153,8 @@ STATICFILES_FINDERS = (
 STATICFILES_STORAGE = env.str("STATICFILES_STORAGE", "whitenoise.storage.CompressedManifestStaticFilesStorage")
 
 # File Upload
-# https://github.com/uktrade/s3chunkuploader
-S3_DOCUMENT_ROOT_DIRECTORY = ""
-S3_APPEND_DATETIME_ON_UPLOAD = True
-S3_PREFIX_QUERY_PARAM_NAME = ""
-S3_DOWNLOAD_LINK_EXPIRY_SECONDS = 180
+# https://github.com/uktrade/django-chunk-s3-av-upload-handlers
 STREAMING_CHUNK_SIZE = 8192
-S3_MIN_PART_SIZE = 5 * 1024 * 1024
-MAX_UPLOAD_SIZE = 50 * 1024 * 1024
 FILE_UPLOAD_HANDLERS = env.list("FILE_UPLOAD_HANDLERS", default=["core.file_handler.SafeS3FileUploadHandler"])
 ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
     "ACCEPTED_FILE_UPLOAD_MIME_TYPES",
@@ -179,6 +174,10 @@ ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
         "image/tiff",
     ),
 )
+# AV is performed by the API, but these empty settings are required by django-chunk-s3-av-upload-handlers
+CLAM_AV_USERNAME = env.str("CLAM_AV_USERNAME", "")
+CLAM_AV_PASSWORD = env.str("CLAM_AV_PASSWORD", "")
+CLAM_AV_DOMAIN = env.str("CLAM_AV_DOMAIN", "")
 
 # AWS
 VCAP_SERVICES = env.json("VCAP_SERVICES", {})
@@ -187,6 +186,7 @@ AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = env.str("AWS_REGION")
 AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
+AWS_DEFAULT_ACL = env.str("AWS_DEFAULT_ACL", None)
 
 LOGGING = {
     "version": 1,
