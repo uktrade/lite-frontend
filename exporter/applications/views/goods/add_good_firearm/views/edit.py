@@ -161,18 +161,57 @@ class FirearmEditReplica(BaseFirearmEditView):
         }
 
 
-class FirearmEditPvGrading(
-    GoodMixin,
-    ApplicationMixin,
-    LoginRequiredMixin,
-    BaseSessionWizardView,
-):
+class BaseEditWizardView(GoodMixin, ApplicationMixin, LoginRequiredMixin, BaseSessionWizardView):
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        return error_page(self.request, service_error.user_message)
 
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+
+        ctx["hide_step_count"] = True
+        ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
+        ctx["title"] = form.Layout.TITLE
+        return ctx
+
+    def get_success_url(self):
+        return reverse("applications:product_summary", kwargs=self.kwargs)
+
+    def get_payload(self, form_dict):
+        raise NotImplementedError(f"Implement `get_payload` on f{self.__class__.__name__}")
+
+    def edit_firearm(self, good_pk, form_dict):
+        payload = self.get_payload(form_dict)
+        api_resp_data, status_code = edit_firearm(
+            self.request,
+            good_pk,
+            payload,
+        )
+        if status_code != HTTPStatus.OK:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error updating firearm - response was: %s - %s",
+                "Unexpected error updating firearm",
+            )
+
+
+class FirearmEditPvGrading(BaseEditWizardView):
     form_list = [
         (AddGoodFirearmSteps.PV_GRADING, FirearmPvGradingForm),
         (AddGoodFirearmSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
     ]
-
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
     }
@@ -210,19 +249,13 @@ class FirearmEditPvGrading(
     def get_payload(self, form_dict):
         return FirearmEditPvGradingPayloadBuilder().build(form_dict)
 
-    def edit_firearm(self, form_dict):
-        payload = self.get_payload(form_dict)
-        api_resp_data, status_code = edit_firearm(
-            self.request,
-            self.good["id"],
-            payload,
-        )
-
-        return api_resp_data, status_code
-
     def done(self, form_list, form_dict, **kwargs):
-        self.edit_firearm(form_dict)
-        return redirect(reverse("applications:product_summary", kwargs=self.kwargs))
+        try:
+            self.edit_firearm(self.good["id"], form_dict)
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
 
 
 def get_product_document(good):
@@ -303,53 +336,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
         return redirect(self.get_success_url())
 
 
-class AddGoodWizardCommon:
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, form, **kwargs):
-        ctx = super().get_context_data(form, **kwargs)
-
-        ctx["hide_step_count"] = True
-        ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
-        ctx["title"] = form.Layout.TITLE
-        return ctx
-
-    def get_success_url(self):
-        return reverse("applications:product_summary", kwargs=self.kwargs)
-
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        return error_page(self.request, service_error.user_message)
-
-    def get_payload(self, form_dict):
-        raise NotImplementedError(f"Implement `get_payload` on f{self.__class__.__name__}")
-
-    def edit_firearm(self, good_pk, form_dict):
-        payload = self.get_payload(form_dict)
-        api_resp_data, status_code = edit_firearm(
-            self.request,
-            good_pk,
-            payload,
-        )
-        if status_code != HTTPStatus.OK:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error updating firearm - response was: %s - %s",
-                "Unexpected error updating firearm",
-            )
-
-
-class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
+class BaseEditProductDocumentView(BaseEditWizardView):
     @cached_property
     def product_document(self):
         return get_product_document(self.good)
@@ -420,13 +407,7 @@ class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
             )
 
 
-class FirearmEditProductDocumentSensitivity(
-    GoodMixin,
-    ApplicationMixin,
-    LoginRequiredMixin,
-    AddGoodDocumentWizardCommon,
-    BaseSessionWizardView,
-):
+class FirearmEditProductDocumentSensitivity(BaseEditProductDocumentView):
     form_list = [
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
@@ -470,13 +451,7 @@ class FirearmEditProductDocumentSensitivity(
         return redirect(self.get_success_url())
 
 
-class FirearmEditProductDocumentAvailability(
-    GoodMixin,
-    ApplicationMixin,
-    LoginRequiredMixin,
-    AddGoodDocumentWizardCommon,
-    BaseSessionWizardView,
-):
+class FirearmEditProductDocumentAvailability(BaseEditProductDocumentView):
     form_list = [
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
@@ -519,12 +494,7 @@ class FirearmEditProductDocumentAvailability(
         return redirect(self.get_success_url())
 
 
-class FirearmEditRegisteredFirearmsDealer(
-    ApplicationMixin,
-    GoodMixin,
-    LoginRequiredMixin,
-    BaseSessionWizardView,
-):
+class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
     form_list = [
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
@@ -689,33 +659,9 @@ class FirearmEditRegisteredFirearmsDealer(
     def get_payload(self, form_dict):
         return FirearmEditRegisteredFirearmsDealerPayloadBuilder().build(form_dict)
 
-    def post_firearm(self, form_dict):
-        payload = self.get_payload(form_dict)
-        api_resp_data, status_code = edit_firearm(
-            self.request,
-            self.good["id"],
-            payload,
-        )
-        if status_code != HTTPStatus.OK:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error updating firearm - response was: %s - %s",
-                "Unexpected error updating firearm",
-            )
-
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        return error_page(self.request, service_error.user_message)
-
     def done(self, form_list, form_dict, **kwargs):
         try:
-            self.post_firearm(form_dict)
+            self.edit_firearm(self.good["id"], form_dict)
 
             if self.has_organisation_rfd_certificate_data():
                 self.post_rfd_certificate(self.application)
