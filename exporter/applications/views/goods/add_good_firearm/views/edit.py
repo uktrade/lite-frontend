@@ -14,10 +14,7 @@ from django.views.generic import FormView
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
 
-from exporter.applications.services import (
-    get_application,
-    post_additional_document,
-)
+from exporter.applications.services import post_additional_document
 from exporter.core.constants import DocumentType, FirearmsActDocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
@@ -34,7 +31,6 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.services import (
     delete_good_document,
     edit_firearm,
-    get_good,
     post_good_documents,
     update_good_document_data,
 )
@@ -63,6 +59,7 @@ from .conditionals import (
 from .actions import PostFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps
 from .exceptions import ServiceError
+from .mixins import ApplicationMixin, GoodMixin
 from .payloads import (
     FirearmEditProductDocumentAvailabilityPayloadBuilder,
     FirearmEditProductDocumentSensitivityPayloadBuilder,
@@ -76,25 +73,13 @@ from .payloads import (
 logger = logging.getLogger(__name__)
 
 
-class BaseEditView(LoginRequiredMixin, FormView):
+class BaseEditView(
+    GoodMixin,
+    ApplicationMixin,
+    LoginRequiredMixin,
+    FormView,
+):
     template_name = "core/form.html"
-
-    @cached_property
-    def application_id(self):
-        return str(self.kwargs["pk"])
-
-    @cached_property
-    def good_id(self):
-        return str(self.kwargs["good_pk"])
-
-    @cached_property
-    def good(self):
-        try:
-            good = get_good(self.request, self.good_id, full_detail=True)[0]
-        except requests.exceptions.HTTPError:
-            raise Http404
-
-        return good
 
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
@@ -109,7 +94,7 @@ class BaseEditView(LoginRequiredMixin, FormView):
         raise NotImplementedError(f"Implement `get_edit_payload` for {self.__class__.__name__}")
 
     def form_valid(self, form):
-        edit_firearm(self.request, self.good_id, self.get_edit_payload(form))
+        edit_firearm(self.request, self.good["id"], self.get_edit_payload(form))
         return super().form_valid(form)
 
 
@@ -176,7 +161,12 @@ class FirearmEditReplica(BaseFirearmEditView):
         }
 
 
-class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
+class FirearmEditPvGrading(
+    GoodMixin,
+    ApplicationMixin,
+    LoginRequiredMixin,
+    BaseSessionWizardView,
+):
 
     form_list = [
         (AddGoodFirearmSteps.PV_GRADING, FirearmPvGradingForm),
@@ -186,19 +176,6 @@ class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
     }
-
-    @cached_property
-    def good_id(self):
-        return str(self.kwargs["good_pk"])
-
-    @cached_property
-    def good(self):
-        try:
-            good = get_good(self.request, self.good_id, full_detail=True)[0]
-        except requests.exceptions.HTTPError:
-            raise Http404
-
-        return good
 
     def get_pv_grading_payload(self, dict):
         return {
@@ -237,7 +214,7 @@ class FirearmEditPvGrading(LoginRequiredMixin, BaseSessionWizardView):
         payload = self.get_payload(form_dict)
         api_resp_data, status_code = edit_firearm(
             self.request,
-            self.good_id,
+            self.good["id"],
             payload,
         )
 
@@ -271,7 +248,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        return {**kwargs, "good_id": self.good_id, "document": self.product_document}
+        return {**kwargs, "good_id": self.good["id"], "document": self.product_document}
 
     def get_initial(self):
         return {"description": self.product_document["description"] if self.product_document else ""}
@@ -288,7 +265,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
             }
             api_resp_data, status_code = post_good_documents(
                 request=self.request,
-                pk=self.good_id,
+                pk=self.good["id"],
                 json=payload,
             )
             if status_code != HTTPStatus.CREATED:
@@ -302,7 +279,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
             # Delete existing document
             if existing_product_document:
                 api_resp_data, status_code = delete_good_document(
-                    self.request, self.good_id, self.product_document["id"]
+                    self.request, self.good["id"], self.product_document["id"]
                 )
                 if status_code != HTTPStatus.OK:
                     raise ServiceError(
@@ -313,7 +290,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
                     )
         elif self.product_document["description"] != description:
             api_resp_data, status_code = update_good_document_data(
-                self.request, self.good_id, self.product_document["id"], payload
+                self.request, self.good["id"], self.product_document["id"], payload
             )
             if status_code != HTTPStatus.OK:
                 raise ServiceError(
@@ -327,30 +304,8 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
 
 
 class AddGoodWizardCommon:
-    @cached_property
-    def application_id(self):
-        return str(self.kwargs["pk"])
-
-    @cached_property
-    def good_id(self):
-        return str(self.kwargs["good_pk"])
-
-    @cached_property
-    def good(self):
-        try:
-            good = get_good(self.request, self.good_id, full_detail=True)[0]
-        except requests.exceptions.HTTPError:
-            raise Http404
-
-        return good
-
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        try:
-            self.application = get_application(self.request, self.application_id)
-        except requests.exceptions.HTTPError:
             raise Http404
 
         return super().dispatch(request, *args, **kwargs)
@@ -403,7 +358,7 @@ class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
         kwargs = super().get_form_kwargs(step)
 
         if step == AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD:
-            kwargs["good_id"] = self.good_id
+            kwargs["good_id"] = self.good["id"]
             kwargs["document"] = self.product_document
 
         return kwargs
@@ -465,7 +420,13 @@ class AddGoodDocumentWizardCommon(AddGoodWizardCommon):
             )
 
 
-class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, AddGoodDocumentWizardCommon, BaseSessionWizardView):
+class FirearmEditProductDocumentSensitivity(
+    GoodMixin,
+    ApplicationMixin,
+    LoginRequiredMixin,
+    AddGoodDocumentWizardCommon,
+    BaseSessionWizardView,
+):
     form_list = [
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
@@ -487,21 +448,21 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, AddGoodDocumentW
         is_document_sensitive = all_data.get("is_document_sensitive", None)
 
         try:
-            self.edit_firearm(self.good_id, form_dict)
+            self.edit_firearm(self.good["id"], form_dict)
 
             existing_product_document = self.product_document
             if is_document_sensitive:
                 if existing_product_document:
-                    self.delete_product_documentation(self.good_id, existing_product_document["id"])
+                    self.delete_product_documentation(self.good["id"], existing_product_document["id"])
             else:
                 description = all_data.get("description", "")
                 if self.has_updated_product_documentation():
-                    self.post_product_documentation(self.good_id)
+                    self.post_product_documentation(self.good["id"])
                     if existing_product_document:
-                        self.delete_product_documentation(self.good_id, existing_product_document["id"])
+                        self.delete_product_documentation(self.good["id"], existing_product_document["id"])
                 elif existing_product_document and existing_product_document["description"] != description:
                     payload = {"description": description}
-                    self.update_product_document_data(self.good_id, existing_product_document["id"], payload)
+                    self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)
 
         except ServiceError as e:
             return self.handle_service_error(e)
@@ -509,7 +470,13 @@ class FirearmEditProductDocumentSensitivity(LoginRequiredMixin, AddGoodDocumentW
         return redirect(self.get_success_url())
 
 
-class FirearmEditProductDocumentAvailability(LoginRequiredMixin, AddGoodDocumentWizardCommon, BaseSessionWizardView):
+class FirearmEditProductDocumentAvailability(
+    GoodMixin,
+    ApplicationMixin,
+    LoginRequiredMixin,
+    AddGoodDocumentWizardCommon,
+    BaseSessionWizardView,
+):
     form_list = [
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
@@ -530,21 +497,21 @@ class FirearmEditProductDocumentAvailability(LoginRequiredMixin, AddGoodDocument
         is_document_sensitive = all_data.get("is_document_sensitive", None)
 
         try:
-            self.edit_firearm(self.good_id, form_dict)
+            self.edit_firearm(self.good["id"], form_dict)
 
             existing_product_document = self.product_document
             if not is_document_available or (is_document_available and is_document_sensitive):
                 if existing_product_document:
-                    self.delete_product_documentation(self.good_id, existing_product_document["id"])
+                    self.delete_product_documentation(self.good["id"], existing_product_document["id"])
             else:
                 description = all_data.get("description", "")
                 if self.has_updated_product_documentation():
-                    self.post_product_documentation(self.good_id)
+                    self.post_product_documentation(self.good["id"])
                     if existing_product_document:
-                        self.delete_product_documentation(self.good_id, existing_product_document["id"])
+                        self.delete_product_documentation(self.good["id"], existing_product_document["id"])
                 elif existing_product_document and existing_product_document["description"] != description:
                     payload = {"description": description}
-                    self.update_product_document_data(self.good_id, existing_product_document["id"], payload)
+                    self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)
 
         except ServiceError as e:
             return self.handle_service_error(e)
@@ -552,7 +519,12 @@ class FirearmEditProductDocumentAvailability(LoginRequiredMixin, AddGoodDocument
         return redirect(self.get_success_url())
 
 
-class FirearmEditRegisteredFirearmsDealer(LoginRequiredMixin, BaseSessionWizardView):
+class FirearmEditRegisteredFirearmsDealer(
+    ApplicationMixin,
+    GoodMixin,
+    LoginRequiredMixin,
+    BaseSessionWizardView,
+):
     form_list = [
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
@@ -563,18 +535,6 @@ class FirearmEditRegisteredFirearmsDealer(LoginRequiredMixin, BaseSessionWizardV
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
             raise Http404
-
-        try:
-            self.application = get_application(self.request, kwargs["pk"])
-        except requests.exceptions.HTTPError:
-            raise Http404
-        self.application_id = self.application["id"]
-
-        try:
-            self.good = get_good(self.request, kwargs["good_pk"], full_detail=True)[0]
-        except requests.exceptions.HTTPError:
-            raise Http404
-        self.good_id = self.good["id"]
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -733,7 +693,7 @@ class FirearmEditRegisteredFirearmsDealer(LoginRequiredMixin, BaseSessionWizardV
         payload = self.get_payload(form_dict)
         api_resp_data, status_code = edit_firearm(
             self.request,
-            self.good_id,
+            self.good["id"],
             payload,
         )
         if status_code != HTTPStatus.OK:

@@ -11,10 +11,7 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
 
-from exporter.applications.services import (
-    get_application,
-    post_additional_document,
-)
+from exporter.applications.services import post_additional_document
 from exporter.core.constants import (
     DocumentType,
     FirearmsActDocumentType,
@@ -70,6 +67,7 @@ from .conditionals import (
 from .actions import PostFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps
 from .exceptions import ServiceError
+from .mixins import ApplicationMixin
 from .payloads import AddGoodFirearmPayloadBuilder
 
 
@@ -90,7 +88,11 @@ def get_product_document(good):
     return good["documents"][0]
 
 
-class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
+class AddGoodFirearm(
+    ApplicationMixin,
+    LoginRequiredMixin,
+    BaseSessionWizardView,
+):
     form_list = [
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
         (AddGoodFirearmSteps.NAME, FirearmNameForm),
@@ -141,11 +143,6 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
 
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        try:
-            self.application = get_application(self.request, self.kwargs["pk"])
-        except requests.exceptions.HTTPError:
             raise Http404
 
         return super().dispatch(request, *args, **kwargs)
