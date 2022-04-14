@@ -143,58 +143,24 @@ def mock_application_without_documents_request(requests_mock, case_without_docum
     return requests_mock.get(url=app_url, json=case_without_documents)
 
 
-@pytest.fixture()
-def goto_step_preexisting(preexisting_url, authorized_client):
-    def _goto_step(step_name):
-        return authorized_client.post(
-            preexisting_url,
-            data={
-                "wizard_goto_step": step_name,
-            },
-        )
-
-    return _goto_step
+@pytest.fixture
+def goto_step_preexisting(goto_step_factory, preexisting_url):
+    return goto_step_factory(preexisting_url)
 
 
-@pytest.fixture()
-def goto_step_not_preexisting(not_preexisting_url, authorized_client):
-    def _goto_step(step_name):
-        return authorized_client.post(
-            not_preexisting_url,
-            data={
-                "wizard_goto_step": step_name,
-            },
-        )
-
-    return _goto_step
+@pytest.fixture
+def goto_step_not_preexisting(goto_step_factory, not_preexisting_url):
+    return goto_step_factory(not_preexisting_url)
 
 
-@pytest.fixture()
-def post_to_step_preexisting(preexisting_url, authorized_client):
-    def _post_to_step(step_name, data):
-        return authorized_client.post(
-            preexisting_url,
-            data={
-                f"{ADD_GOOD_TO_APPLICATION_VIEW}-current_step": step_name,
-                **{f"{step_name}-{key}": value for key, value in data.items()},
-            },
-        )
-
-    return _post_to_step
+@pytest.fixture
+def post_to_step_preexisting(post_to_step_factory, preexisting_url):
+    return post_to_step_factory(preexisting_url)
 
 
-@pytest.fixture()
-def post_to_step_not_preexisting(not_preexisting_url, authorized_client):
-    def _post_to_step(step_name, data):
-        return authorized_client.post(
-            not_preexisting_url,
-            data={
-                f"{ADD_GOOD_TO_APPLICATION_VIEW}-current_step": step_name,
-                **{f"{step_name}-{key}": value for key, value in data.items()},
-            },
-        )
-
-    return _post_to_step
+@pytest.fixture
+def post_to_step_not_preexisting(post_to_step_factory, not_preexisting_url):
+    return post_to_step_factory(not_preexisting_url)
 
 
 def test_add_good_to_application_preexisting_start(

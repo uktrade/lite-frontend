@@ -22,10 +22,6 @@ def setup(
 ):
     settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
-    with patch("exporter.core.wizard.views.BaseSessionWizardView.get_prefix") as mock_prefix:
-        mock_prefix.return_value = "add_good_firearm"
-        yield
-
 
 @pytest.fixture(autouse=True)
 def application(data_standard_case):
@@ -61,49 +57,12 @@ def edit_product_sensitivity_url(application, good_on_application):
     )
 
 
-@pytest.fixture
-def product_summary_url(application, good_on_application):
-    return reverse(
-        "applications:product_summary",
-        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
-    )
-
-
 @pytest.fixture(autouse=True)
 def product_document():
     return {
         "product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle"),
         "description": "product data sheet",
     }
-
-
-@pytest.fixture
-def post_to_step(authorized_client):
-    ADD_GOOD_FIREARM_VIEW = "add_good_firearm"
-
-    def _post_to_step(url, step_name, data):
-        return authorized_client.post(
-            url,
-            data={
-                f"{ADD_GOOD_FIREARM_VIEW}-current_step": step_name,
-                **{f"{step_name}-{key}": value for key, value in data.items()},
-            },
-        )
-
-    return _post_to_step
-
-
-@pytest.fixture
-def goto_step(authorized_client):
-    def _goto_step(url, step_name):
-        return authorized_client.post(
-            url,
-            data={
-                "wizard_goto_step": step_name,
-            },
-        )
-
-    return _goto_step
 
 
 @pytest.mark.parametrize(
@@ -173,21 +132,30 @@ def test_edit_good_control_list_entry_options(
     assert requests_mock.last_request.json() == expected
 
 
-def test_edit_pv_grading(requests_mock, pv_gradings, goto_step, post_to_step, edit_pv_grading_url):
+@pytest.fixture
+def goto_step_pv_grading(goto_step_factory, edit_pv_grading_url):
+    return goto_step_factory(edit_pv_grading_url)
 
-    response = goto_step(edit_pv_grading_url, AddGoodFirearmSteps.PV_GRADING)
+
+@pytest.fixture
+def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
+    return post_to_step_factory(edit_pv_grading_url)
+
+
+def test_edit_pv_grading(
+    requests_mock, pv_gradings, goto_step_pv_grading, post_to_step_pv_grading, edit_pv_grading_url
+):
+    response = goto_step_pv_grading(AddGoodFirearmSteps.PV_GRADING)
     assert response.status_code == 200
 
-    response = post_to_step(
-        edit_pv_grading_url,
+    response = post_to_step_pv_grading(
         AddGoodFirearmSteps.PV_GRADING,
         {"is_pv_graded": True},
     )
 
     assert response.status_code == 200
 
-    response = post_to_step(
-        edit_pv_grading_url,
+    response = post_to_step_pv_grading(
         AddGoodFirearmSteps.PV_GRADING_DETAILS,
         {
             "prefix": "NATO",
@@ -236,10 +204,9 @@ def test_edit_product_document_upload_form(
 
 
 def test_edit_product_document_is_sensitive(
-    requests_mock, post_to_step, edit_product_sensitivity_url, product_summary_url
+    requests_mock, post_to_step_edit_product_document_sensitivity, product_summary_url
 ):
-    response = post_to_step(
-        edit_product_sensitivity_url,
+    response = post_to_step_edit_product_document_sensitivity(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": True},
     )
@@ -255,16 +222,22 @@ def test_edit_product_document_is_sensitive(
     assert requests_mock.last_request.json() == {"is_document_sensitive": True}
 
 
+@pytest.fixture
+def post_to_step_edit_product_document_sensitivity(post_to_step_factory, edit_product_sensitivity_url):
+    return post_to_step_factory(edit_product_sensitivity_url)
+
+
 def test_upload_new_product_document_to_replace_existing_one(
-    requests_mock, post_to_step, product_document, edit_product_sensitivity_url, product_summary_url
+    requests_mock,
+    post_to_step_edit_product_document_sensitivity,
+    product_document,
+    product_summary_url,
 ):
-    response = post_to_step(
-        edit_product_sensitivity_url,
+    response = post_to_step_edit_product_document_sensitivity(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": False},
     )
-    response = post_to_step(
-        edit_product_sensitivity_url,
+    response = post_to_step_edit_product_document_sensitivity(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
         data=product_document,
     )
@@ -283,11 +256,15 @@ def test_upload_new_product_document_to_replace_existing_one(
     assert requests_mock.request_history.pop().json() == {"is_document_sensitive": False}
 
 
+@pytest.fixture
+def post_to_step_edit_product_document_availability(post_to_step_factory, edit_product_availability_url):
+    return post_to_step_factory(edit_product_availability_url)
+
+
 def test_edit_product_document_availability_select_not_available(
-    requests_mock, post_to_step, edit_product_availability_url, product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, product_summary_url
 ):
-    response = post_to_step(
-        edit_product_availability_url,
+    response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": False, "no_document_comments": "Product not manufactured yet"},
     )
@@ -306,15 +283,13 @@ def test_edit_product_document_availability_select_not_available(
 
 
 def test_edit_product_document_availability_select_available_but_sensitive(
-    requests_mock, post_to_step, edit_product_availability_url, product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, product_summary_url
 ):
-    response = post_to_step(
-        edit_product_availability_url,
+    response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": True},
     )
-    response = post_to_step(
-        edit_product_availability_url,
+    response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": True},
     )
@@ -334,20 +309,17 @@ def test_edit_product_document_availability_select_available_but_sensitive(
 
 
 def test_edit_product_document_availability_upload_new_document(
-    requests_mock, post_to_step, product_document, edit_product_availability_url, product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, product_document, product_summary_url
 ):
-    response = post_to_step(
-        edit_product_availability_url,
+    response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": True},
     )
-    response = post_to_step(
-        edit_product_availability_url,
+    response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": False},
     )
-    response = post_to_step(
-        edit_product_availability_url,
+    response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
         data=product_document,
     )

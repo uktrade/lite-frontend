@@ -10,6 +10,7 @@ from django.urls import reverse
 
 from core.forms.layouts import ConditionalCheckbox, ConditionalQuestion, ConditionalRadios
 from exporter.core.constants import FirearmsActSections
+from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import FutureDateValidator, PastDateValidator, RelativeDeltaDateValidator
 
@@ -443,6 +444,7 @@ class FirearmAttachRFDCertificate(BaseFirearmForm):
         error_messages={
             "required": "Select a registered firearms dealer certificate",
         },
+        widget=PotentiallyUnsafeClearableFileInput,
     )
 
     reference_code = forms.CharField(
