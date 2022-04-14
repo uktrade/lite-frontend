@@ -14,7 +14,6 @@ from lite_forms.generators import error_page
 from exporter.applications.services import (
     get_application,
     post_additional_document,
-    post_application_document,
 )
 from exporter.core.constants import (
     DocumentType,
@@ -68,6 +67,7 @@ from .conditionals import (
     is_pv_graded,
     should_display_is_registered_firearms_dealer_step,
 )
+from .actions import PostFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps
 from .exceptions import ServiceError
 from .payloads import AddGoodFirearmPayloadBuilder
@@ -360,39 +360,6 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 "Unexpected error adding document to firearm",
             )
 
-    def has_firearm_act_certificate(self, step_name):
-        attach_firearm_certificate = self.get_cleaned_data_for_step(step_name)
-        return bool(attach_firearm_certificate.get("file"))
-
-    def get_firearm_act_certificate_payload(self, step_name, document_type):
-        data = self.get_cleaned_data_for_step(step_name)
-        certificate = data["file"]
-        payload = {
-            **get_document_data(certificate),
-            "document_on_organisation": {
-                "expiry_date": data["section_certificate_date_of_expiry"].isoformat(),
-                "reference_code": data["section_certificate_number"],
-                "document_type": document_type,
-            },
-        }
-        return payload
-
-    def post_firearm_act_certificate(self, step_name, document_type, application, good):
-        firearm_certificate_payload = self.get_firearm_act_certificate_payload(step_name, document_type)
-        api_resp_data, status_code = post_application_document(
-            request=self.request,
-            pk=application["id"],
-            good_pk=good["id"],
-            data=firearm_certificate_payload,
-        )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error adding firearm certificate when creating firearm - response was: %s - %s",
-                "Unexpected error adding firearm certificate",
-            )
-
     def handle_service_error(self, service_error):
         logger.error(
             service_error.log_message,
@@ -414,29 +381,23 @@ class AddGoodFirearm(LoginRequiredMixin, BaseSessionWizardView):
                 if self.has_organisation_rfd_certificate_data():
                     self.post_rfd_certificate(self.application)
 
-            if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE):
-                self.post_firearm_act_certificate(
-                    AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
-                    FirearmsActDocumentType.SECTION_1,
-                    self.application,
-                    self.good,
-                )
+            PostFirearmActCertificateAction(
+                AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
+                FirearmsActDocumentType.SECTION_1,
+                self,
+            ).run()
 
-            if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE):
-                self.post_firearm_act_certificate(
-                    AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
-                    FirearmsActDocumentType.SECTION_2,
-                    self.application,
-                    self.good,
-                )
+            PostFirearmActCertificateAction(
+                AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
+                FirearmsActDocumentType.SECTION_2,
+                self,
+            ).run()
 
-            if self.has_firearm_act_certificate(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY):
-                self.post_firearm_act_certificate(
-                    AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
-                    FirearmsActDocumentType.SECTION_5,
-                    self.application,
-                    self.good,
-                )
+            PostFirearmActCertificateAction(
+                AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
+                FirearmsActDocumentType.SECTION_5,
+                self,
+            ).run()
 
             if self.has_product_documentation():
                 self.post_product_documentation(self.good)

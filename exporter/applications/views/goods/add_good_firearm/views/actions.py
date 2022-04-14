@@ -1,0 +1,55 @@
+from http import HTTPStatus
+
+from exporter.applications.services import post_application_document
+from exporter.core.helpers import get_document_data
+
+from .exceptions import ServiceError
+
+
+class PostFirearmActCertificateAction:
+    def __init__(self, step_name, document_type, wizard):
+        self.step_name = step_name
+        self.document_type = document_type
+        self.wizard = wizard
+        self.request = wizard.request
+        self.application = wizard.application
+        self.good = wizard.good
+
+    def has_firearm_act_certificate(self):
+        attach_firearm_certificate = self.wizard.get_cleaned_data_for_step(self.step_name)
+        return bool(attach_firearm_certificate.get("file"))
+
+    def get_firearm_act_certificate_payload(self):
+        data = self.wizard.get_cleaned_data_for_step(self.step_name)
+        certificate = data["file"]
+        payload = {
+            **get_document_data(certificate),
+            "document_on_organisation": {
+                "expiry_date": data["section_certificate_date_of_expiry"].isoformat(),
+                "reference_code": data["section_certificate_number"],
+                "document_type": self.document_type,
+            },
+        }
+        return payload
+
+    def post_firearm_act_certificate(self):
+        firearm_certificate_payload = self.get_firearm_act_certificate_payload()
+        api_resp_data, status_code = post_application_document(
+            request=self.request,
+            pk=self.application["id"],
+            good_pk=self.good["id"],
+            data=firearm_certificate_payload,
+        )
+        if status_code != HTTPStatus.CREATED:
+            raise ServiceError(
+                status_code,
+                api_resp_data,
+                "Error adding firearm certificate when creating firearm - response was: %s - %s",
+                "Unexpected error adding firearm certificate",
+            )
+
+    def run(self):
+        if not self.has_firearm_act_certificate():
+            return
+
+        self.post_firearm_act_certificate()
