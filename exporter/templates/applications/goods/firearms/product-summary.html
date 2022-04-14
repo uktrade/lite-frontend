@@ -117,7 +117,6 @@
                     {{ is_user_rfd|yesno|title }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-rfd-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_registered_firearms_dealer' application_id good.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
