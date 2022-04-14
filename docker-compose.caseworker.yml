@@ -30,7 +30,8 @@ services:
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
-       npm run build_caseworker
-       ./manage.py runserver 0.0.0.0:${PORT:-8200}
+      dockerize -wait tcp://api:8100 -timeout 5m
+      npm run build_caseworker
+      ./manage.py runserver 0.0.0.0:${PORT:-8200}
     stdin_open: true
     tty: true

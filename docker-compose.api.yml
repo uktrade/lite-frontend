@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   api:
-    image: gcr.io/sre-docker-registry/github.com/uktrade/lite-api:master
+    image: gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
     env_file:
       - api.env
     depends_on:
