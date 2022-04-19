@@ -192,6 +192,24 @@
                     <a id="change-rfd-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_registered_firearms_dealer' application_id good.id %}">Change</a>
                 </dd>
             </div>
+            {% if is_user_rfd %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Upload a registered firearms dealer certificate
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% with document=organisation_documents.rfd_certificate %}
+                            {% if document.document.safe %}
+                                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                            {% else %}
+                                {{ document.document.name }}
+                            {% endif %}
+                        {% endwith %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
             {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
