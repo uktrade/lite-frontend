@@ -1,3 +1,4 @@
+from datetime import datetime
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
@@ -269,7 +270,7 @@ class FirearmPvGradingDetailsForm(BaseFirearmForm):
     date_of_issue = CustomErrorDateInputField(
         label="Date of issue",
         require_all_fields=False,
-        help_text="For example, 20 02 2020",
+        help_text=f"For example, 20 2 {datetime.now().year-2}",
         error_messages={
             "required": "Enter the date of issue",
             "incomplete": "Enter the date of issue",
