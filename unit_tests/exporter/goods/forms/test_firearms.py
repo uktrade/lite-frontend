@@ -695,15 +695,12 @@ def test_firearm_attach_section_5_letter_of_authority_form(data, files, is_valid
             {
                 "is_covered_by_section_5": "dont_know",
             },
-            False,
-            {
-                "not_covered_explanation": ["Explain why you don't know"],
-            },
+            True,
+            {},
         ),
         (
             {
                 "is_covered_by_section_5": "dont_know",
-                "not_covered_explanation": "Explanation",
             },
             True,
             {},
