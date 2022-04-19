@@ -80,7 +80,12 @@ def mock_good_document_delete(requests_mock, data_standard_case):
 
 
 @pytest.fixture
-def rfd_certificate():
+def organisation_id():
+    return str(uuid.uuid4())
+
+
+@pytest.fixture
+def rfd_certificate(organisation_id):
     expiry_date = datetime.date.today() + datetime.timedelta(days=100)
     return {
         "id": str(uuid.uuid4()),
@@ -92,14 +97,14 @@ def rfd_certificate():
         },
         "document_type": "rfd-certificate",
         "is_expired": False,
-        "organisation": str(uuid.uuid4()),
+        "organisation": organisation_id,
         "expiry_date": expiry_date.strftime("%d %B %Y"),
         "reference_code": "RFD123",
     }
 
 
 @pytest.fixture
-def section_5_document():
+def section_5_document(organisation_id):
     return {
         "id": str(uuid.uuid4()),
         "document": {
@@ -110,6 +115,7 @@ def section_5_document():
         },
         "document_type": "section-five-certificate",
         "is_expired": False,
+        "organisation": organisation_id,
         "reference_code": "section 5 ref",
         "expiry_date": "30 September 2024",
     }

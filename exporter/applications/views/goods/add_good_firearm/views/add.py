@@ -61,6 +61,7 @@ from exporter.goods.services import (
 )
 from exporter.organisation.services import delete_document_on_organisation
 
+from .actions import CreateOrUpdateFirearmActCertificateAction
 from .conditionals import (
     has_application_rfd_certificate,
     has_firearm_act_document,
@@ -74,7 +75,6 @@ from .conditionals import (
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
 )
-from .actions import PostFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .exceptions import ServiceError
 from .mixins import ApplicationMixin
@@ -387,19 +387,19 @@ class AddGoodFirearm(
                 if self.has_organisation_rfd_certificate_data():
                     self.post_rfd_certificate(self.application)
 
-            PostFirearmActCertificateAction(
+            CreateOrUpdateFirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_1,
                 self,
             ).run()
 
-            PostFirearmActCertificateAction(
+            CreateOrUpdateFirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_2,
                 self,
             ).run()
 
-            PostFirearmActCertificateAction(
+            CreateOrUpdateFirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                 FirearmsActDocumentType.SECTION_5,
                 self,
