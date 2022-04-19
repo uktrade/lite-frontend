@@ -51,12 +51,15 @@ from exporter.goods.forms.firearms import (
 )
 from exporter.organisation.services import update_document_on_organisation
 
+from .actions import (
+    CreateOrUpdateFirearmActCertificateAction,
+    CreateOrUpdateRfdCertificateAction,
+)
 from .conditionals import (
     is_document_sensitive,
     is_product_document_available,
     is_pv_graded,
 )
-from .actions import CreateOrUpdateFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps
 from .decorators import expect_status
 from .exceptions import ServiceError
@@ -601,72 +604,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
 
         return initial
 
-    def has_organisation_rfd_certificate_data(self):
-        return bool(self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE))
-
-    def is_new_rfd_certificate(self):
-        attach_rfd_certificate_cleaned_data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE)
-        file = attach_rfd_certificate_cleaned_data["file"]
-        return not isinstance(file, CurrentFile)
-
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error rfd certificate when creating firearm",
-        "Unexpected error updating firearm",
-    )
-    def post_rfd_certificate(self, application):
-        rfd_certificate_payload = self.get_rfd_certificate_payload()
-        return post_additional_document(
-            request=self.request,
-            pk=application["id"],
-            json=rfd_certificate_payload,
-        )
-
-    def get_organisation_document_payload(self):
-        rfd_certificate_cleaned_data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE)
-        expiry_date = rfd_certificate_cleaned_data["expiry_date"]
-        reference_code = rfd_certificate_cleaned_data["reference_code"]
-
-        rfd_certificate_payload = {
-            "expiry_date": expiry_date.isoformat(),
-            "reference_code": reference_code,
-            "document_type": DocumentType.RFD_CERTIFICATE,
-        }
-        return rfd_certificate_payload
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating rfd certificate when creating firearm",
-        "Unexpected error updating firearm",
-    )
-    def update_rfd_certificate(self, application):
-        rfd_document = get_rfd_certificate(application)
-        rfd_certificate_payload = self.get_organisation_document_payload()
-        return update_document_on_organisation(
-            request=self.request,
-            organisation_id=rfd_document["organisation"],
-            document_id=rfd_document["id"],
-            data=rfd_certificate_payload,
-        )
-
-    def get_rfd_certificate_payload(self):
-        rfd_certificate_cleaned_data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE)
-        cert_file = rfd_certificate_cleaned_data["file"]
-        expiry_date = rfd_certificate_cleaned_data["expiry_date"]
-        reference_code = rfd_certificate_cleaned_data["reference_code"]
-
-        rfd_certificate_payload = {
-            **get_document_data(cert_file),
-            "description": "Registered firearm dealer certificate",
-            "document_type": DocumentType.RFD_CERTIFICATE,
-            "document_on_organisation": {
-                "expiry_date": expiry_date.isoformat(),
-                "reference_code": reference_code,
-                "document_type": DocumentType.RFD_CERTIFICATE,
-            },
-        }
-        return rfd_certificate_payload
-
     def get_payload(self, form_dict):
         return FirearmEditRegisteredFirearmsDealerPayloadBuilder().build(form_dict)
 
@@ -674,11 +611,10 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         try:
             self.edit_firearm(self.good["id"], form_dict)
 
-            if self.has_organisation_rfd_certificate_data():
-                if self.is_new_rfd_certificate():
-                    self.post_rfd_certificate(self.application)
-                else:
-                    self.update_rfd_certificate(self.application)
+            CreateOrUpdateRfdCertificateAction(
+                AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE,
+                self,
+            ).run()
 
             CreateOrUpdateFirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,

@@ -64,7 +64,7 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
         json={},
     )
 
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
         {"is_registered_firearm_dealer": True},
     )
@@ -136,7 +136,7 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
     }
 
 
-def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details(
+def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new_files(
     data_standard_case,
     application_with_rfd_and_section_5_document,
     mock_good_put,
