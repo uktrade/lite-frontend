@@ -1,6 +1,7 @@
 ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 
-docker-e2e = docker-compose -p lite -f docker-compose.e2e.yml
+docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
+docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
 wait-for-caseworker = dockerize -wait http://localhost:8200/healthcheck -timeout 5m -wait-retry-interval 5s
 wait-for-exporter = dockerize -wait http://localhost:8300/healthcheck -timeout 5m -wait-retry-interval 5s
 
@@ -67,16 +68,16 @@ secrets:
 .PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
 
 start-caseworker:
-	$(docker-e2e) up --build -d caseworker redis
+	$(docker-e2e-caseworker) up --build --force-recreate -d 
 
 stop-caseworker:
-	$(docker-e2e) down --remove-orphans
+	$(docker-e2e-caseworker) down --remove-orphans
 
 start-exporter:
-	$(docker-e2e) up --build -d exporter redis
+	$(docker-e2e-exporter) up --build --force-recreate -d
 
 stop-exporter:
-	$(docker-e2e) down --remove-orphans
+	$(docker-e2e-exporter) down --remove-orphans
 
 caseworker-e2e-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
