@@ -263,6 +263,18 @@
                         </dd>
                     </div>
                 {% endif %}
+            {% else %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Explain why you are not able to upload a product document
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ good.no_document_comments }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_product_document' application_id good.id %}">Change</a>
+                    </dd>
+                </div>
             {% endif %}
         </dl>
 
