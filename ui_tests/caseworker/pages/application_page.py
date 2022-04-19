@@ -310,11 +310,14 @@ class ApplicationPage(BasePage):
         """Return a list of names that have denial matches based on
         the supplied match_type - one of "PARTIAL MATCH" or "EXACT MATCH".
         """
+        table = WebDriverWait(self.driver, 30).until(
+            expected_conditions.presence_of_element_located((By.XPATH, "//table[@id='table-denial-matches']"))
+        )
+
         return [
             td.text
-            for td in self.driver.find_elements(
-                by=By.XPATH,
-                value=f"//table[@id='table-denial-matches']/tbody/tr/td[3][contains(preceding-sibling::td/strong/text(), '{match_type}')]",
+            for td in table.find_elements(
+                by=By.XPATH, value=f"tbody/tr/td[3][contains(preceding-sibling::td/strong/text(), '{match_type}')]"
             )
         ]
 
