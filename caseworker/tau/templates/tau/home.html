@@ -70,7 +70,7 @@
                         {% for good in assessed_goods %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">{{ forloop.counter }}</td>
-                            <td class="govuk-table__cell">{{ good.name }}</td>
+                            <td class="govuk-table__cell">{{ good.good.name }}</td>
                             <td class="govuk-table__cell">{{ good.quantity|floatformat }}</td>
                             <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
                             <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>

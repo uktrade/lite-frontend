@@ -106,7 +106,7 @@
                     {{ firearm_details.is_replica|yesno|title }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-replica'" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_replica' application_id good.id %}">Change</a>
+                    <a id="change-good-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_replica' application_id good.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -266,7 +266,7 @@
             {% endif %}
         </dl>
 
-        <a class="govuk-button" href="#">Continue</a>
+        <a class="govuk-button" href="{% url 'applications:new_good_firearm_to_application' application_id good.id %}">Continue</a>
     {% endwith %}
 
 {% endblock %}

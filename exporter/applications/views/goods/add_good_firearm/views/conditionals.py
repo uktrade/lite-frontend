@@ -5,7 +5,7 @@ from exporter.core.helpers import (
 )
 from exporter.goods.forms.firearms import FirearmSection5Form
 
-from .constants import AddGoodFirearmSteps
+from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 
 
 def is_pv_graded(wizard):
@@ -93,3 +93,10 @@ def is_product_covered_by_firearm_act_section(section):
         return False
 
     return _is_product_covered_by_section
+
+
+def is_product_made_before_1938(wizard):
+    is_made_before_1938_cleaned_data = wizard.get_cleaned_data_for_step(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938
+    )
+    return is_made_before_1938_cleaned_data.get("is_made_before_1938", False)

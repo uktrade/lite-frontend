@@ -130,6 +130,12 @@ def get_application_goods_types(request, pk):
     return data.json().get("goods") if data.status_code == HTTPStatus.OK else None
 
 
+def post_firearm_good_on_application(request, pk, json):
+    response = client.post(request, f"/applications/{pk}/goods/", json)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def post_good_on_application(request, pk, json):
     good = None
     preexisting = str_to_bool(request.GET.get("preexisting"))

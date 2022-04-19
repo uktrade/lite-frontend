@@ -114,7 +114,8 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["data"] = self.request.POST or {
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
-            "report_summary": good["good"]["report_summary"],
+            "is_wassenaar": "WASSENAAR" in {flag["name"] for flag in good["flags"]},
+            "report_summary": good["report_summary"],
             "comment": good["comment"],
         }
         return form_kwargs

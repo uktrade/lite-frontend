@@ -50,6 +50,7 @@ commands:
           command: |
             cp ci.caseworker.env caseworker.env
             cp ci.exporter.env exporter.env
+            cp ci.api.env api.env
       - run:
           name: << parameters.label >>
           command: make << parameters.target >>
@@ -295,7 +296,7 @@ jobs:
       - run: git submodule update --init
       - run_make:
           label: Run caseworker e2e tests
-          target: start-caseworker caseworker-e2e-test
+          target: start-caseworker
       - store_playwright_artifacts
 
   exporter_e2e_test:
@@ -307,7 +308,7 @@ jobs:
       - run: git submodule update --init
       - run_make:
           label: Run exporter e2e tests
-          target: start-exporter exporter-e2e-test
+          target: start-exporter
       - store_playwright_artifacts
 
 workflows:

@@ -26,6 +26,8 @@ from exporter.goods.forms.firearms import (
     FirearmReplicaForm,
     FirearmRFDValidityForm,
     FirearmSection5Form,
+    FirearmMadeBefore1938Form,
+    FirearmYearOfManufactureForm,
 )
 
 
@@ -723,5 +725,34 @@ def test_firearm_attach_section_5_letter_of_authority_form(data, files, is_valid
 )
 def test_firearm_section_5_form(data, is_valid, errors):
     form = FirearmSection5Form(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_made_before_1938": ["Select yes if the product was made before 1938"]}),
+        ({"is_made_before_1938": True}, True, {}),
+        ({"is_made_before_1938": False}, True, {}),
+    ),
+)
+def test_firearm_made_before_1938_form(data, is_valid, errors):
+    form = FirearmMadeBefore1938Form(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"year_of_manufacture": ["Enter the year it was made"]}),
+        ({"year_of_manufacture": 2022}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
+        ({"year_of_manufacture": 1938}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
+        ({"year_of_manufacture": 1937}, True, {}),
+    ),
+)
+def test_firearm_year_of_manufacture_form(data, is_valid, errors):
+    form = FirearmYearOfManufactureForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

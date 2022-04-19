@@ -594,7 +594,7 @@ def data_standard_case():
                             },
                             "software_or_technology_details": None,
                             "firearm_details": {
-                                "type": "firearms",
+                                "type": {"key": "firearms", "value": "Firearms"},
                                 "calibre": "0.25",
                                 "is_replica": False,
                                 "replica_description": None,
@@ -605,6 +605,9 @@ def data_standard_case():
                                         "value": "Non automatic rim-fired handgun",
                                     },
                                 ],
+                                "number_of_items": 2,
+                                "serial_numbers_available": "AVAILABLE",
+                                "serial_numbers": ["12345", "ABC-123"],
                             },
                         },
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
