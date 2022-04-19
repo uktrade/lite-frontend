@@ -182,6 +182,39 @@ def test_edit_pv_grading(
     }
 
 
+def test_edit_pv_grading_details(authorized_client, application, good_on_application, requests_mock, pv_gradings):
+    url = reverse(
+        "applications:firearm_edit_pv_grading_details",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+    response = authorized_client.post(
+        url,
+        data={
+            "prefix": "NATO",
+            "grading": "official",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue_0": "20",
+            "date_of_issue_1": "02",
+            "date_of_issue_2": "2020",
+        },
+    )
+
+    assert response.status_code == 302
+    assert requests_mock.last_request.json() == {
+        "is_pv_graded": "yes",
+        "pv_grading_details": {
+            "prefix": "NATO",
+            "grading": "official",
+            "suffix": "",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue": "2020-02-20",
+        },
+    }
+
+
 def test_edit_product_document_upload_form(
     authorized_client, requests_mock, application, good_on_application, product_document, product_summary_url
 ):

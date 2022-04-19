@@ -67,6 +67,7 @@ from .payloads import (
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     get_cleaned_data,
     get_firearm_details_cleaned_data,
+    get_pv_grading_good_payload,
 )
 
 
@@ -246,6 +247,31 @@ class FirearmEditPvGrading(BaseEditWizardView):
             return self.handle_service_error(e)
 
         return redirect(self.get_success_url())
+
+
+class FirearmEditPVGradingDetails(BaseGoodEditView):
+    form_class = FirearmPvGradingDetailsForm
+
+    def get_initial(self):
+        pv_grading_details = self.good["pv_grading_details"]
+        return {
+            "prefix": pv_grading_details.get("prefix"),
+            "grading": pv_grading_details["grading"].get("key"),
+            "suffix": pv_grading_details.get("suffix"),
+            "issuing_authority": pv_grading_details.get("issuing_authority"),
+            "reference": pv_grading_details.get("reference"),
+            "date_of_issue": date.fromisoformat(pv_grading_details["date_of_issue"])
+            if pv_grading_details["date_of_issue"]
+            else None,
+        }
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {**kwargs, "request": self.request}
+
+    def get_edit_payload(self, form):
+        grading_details = get_pv_grading_good_payload(form)
+        return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
 def get_product_document(good):

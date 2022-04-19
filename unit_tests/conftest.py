@@ -567,7 +567,7 @@ def data_standard_case():
                             "is_good_controlled": {"key": "True", "value": "Yes"},
                             "report_summary": "scale compelling technologies",
                             "flags": [],
-                            "is_pv_graded": None,
+                            "is_pv_graded": "yes",
                             "documents": [
                                 {
                                     "id": "6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335",
@@ -576,7 +576,13 @@ def data_standard_case():
                                 }
                             ],
                             "grading_comment": None,
-                            "pv_grading_details": None,
+                            "pv_grading_details": {
+                                "prefix": "NATO",
+                                "grading": {"key": "official", "value": "Official"},
+                                "issuing_authority": "Government entity",
+                                "reference": "GR123",
+                                "date_of_issue": "2020-02-20",
+                            },
                             "is_document_available": True,
                             "no_document_comments": "",
                             "is_document_sensitive": False,
