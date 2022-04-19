@@ -1,5 +1,6 @@
 import requests
 
+from django.conf import settings
 from django.http import Http404
 
 from exporter.applications.services import get_application
@@ -21,6 +22,14 @@ class GoodMixin:
         try:
             self.good = get_good(self.request, kwargs["good_pk"], full_detail=True)[0]
         except requests.exceptions.HTTPError:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+class Product2FlagMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
             raise Http404
 
         return super().dispatch(request, *args, **kwargs)

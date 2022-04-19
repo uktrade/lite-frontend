@@ -4,17 +4,14 @@ import requests
 from deepmerge import always_merger
 from http import HTTPStatus
 
-from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.functional import cached_property
 
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
 
 from exporter.applications.services import (
-    get_application,
     post_additional_document,
     post_firearm_good_on_application,
 )
@@ -55,7 +52,6 @@ from exporter.goods.forms.firearms import (
     FirearmYearOfManufactureForm,
 )
 from exporter.goods.services import (
-    get_good,
     post_firearm,
     post_good_documents,
 )
@@ -78,7 +74,7 @@ from .conditionals import (
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
 from .exceptions import ServiceError
-from .mixins import ApplicationMixin
+from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import AddGoodFirearmPayloadBuilder, AddGoodFirearmToApplicationPayloadBuilder
 
 
@@ -100,8 +96,9 @@ def get_product_document(good):
 
 
 class AddGoodFirearm(
-    ApplicationMixin,
     LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
     BaseSessionWizardView,
 ):
     form_list = [
@@ -151,12 +148,6 @@ class AddGoodFirearm(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
-
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -404,41 +395,19 @@ class AddGoodFirearm(
         return redirect(self.get_success_url())
 
 
-class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
+class AddGoodFirearmToApplication(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodMixin,
+    BaseSessionWizardView,
+):
     form_list = [
         (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
         (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
     ]
 
     condition_dict = {AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938)}
-
-    @cached_property
-    def application_id(self):
-        return str(self.kwargs["pk"])
-
-    @cached_property
-    def good_id(self):
-        return str(self.kwargs["good_pk"])
-
-    @cached_property
-    def good(self):
-        try:
-            good = get_good(self.request, self.good_id, full_detail=True)[0]
-        except requests.exceptions.HTTPError:
-            raise Http404
-
-        return good
-
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        try:
-            self.application = get_application(self.request, self.application_id)
-        except requests.exceptions.HTTPError:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -495,10 +464,9 @@ class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
         return error_page(self.request, service_error.user_message)
 
     def done(self, form_list, form_dict, **kwargs):
-
         try:
             self.post_firearm_to_application(form_dict)
         except ServiceError as e:
             return self.handle_service_error(e)
 
-        return redirect(self.get_success_url(self.application_id, self.good_id))
+        return redirect(self.get_success_url(self.application["id"], self.good["id"]))

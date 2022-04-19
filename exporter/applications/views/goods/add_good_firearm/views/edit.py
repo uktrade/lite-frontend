@@ -60,7 +60,7 @@ from .actions import CreateOrUpdateFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps
 from .decorators import expect_status
 from .exceptions import ServiceError
-from .mixins import ApplicationMixin, GoodMixin
+from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
     FirearmEditProductDocumentAvailabilityPayloadBuilder,
     FirearmEditProductDocumentSensitivityPayloadBuilder,
@@ -76,18 +76,13 @@ logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    GoodMixin,
-    ApplicationMixin,
     LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodMixin,
     FormView,
 ):
     template_name = "core/form.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse("applications:product_summary", kwargs=self.kwargs)
@@ -163,7 +158,13 @@ class FirearmEditReplica(BaseFirearmEditView):
         }
 
 
-class BaseEditWizardView(GoodMixin, ApplicationMixin, LoginRequiredMixin, BaseSessionWizardView):
+class BaseEditWizardView(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodMixin,
+    BaseSessionWizardView,
+):
     def handle_service_error(self, service_error):
         logger.error(
             service_error.log_message,
@@ -172,12 +173,6 @@ class BaseEditWizardView(GoodMixin, ApplicationMixin, LoginRequiredMixin, BaseSe
             exc_info=True,
         )
         return error_page(self.request, service_error.user_message)
-
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -507,12 +502,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
     ]
-
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
