@@ -85,10 +85,8 @@ def get_firearm_section_5_payload(form):
         }
 
     if is_covered_by_section_5 == FirearmSection5Form.Section5Choices.DONT_KNOW:
-        not_covered_explanation = form.cleaned_data["not_covered_explanation"]
         return {
             "is_covered_by_firearm_act_section_one_two_or_five": "Unsure",
-            "is_covered_by_firearm_act_section_one_two_or_five_explanation": not_covered_explanation,
         }
 
     return {

@@ -807,34 +807,15 @@ class FirearmSection5Form(BaseFirearmForm):
         },
     )
 
-    not_covered_explanation = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "5"}),
-        label="Explain",
-        required=False,
-    )
-
     def get_layout_fields(self):
         return (
             ConditionalRadios(
                 "is_covered_by_section_5",
                 self.Section5Choices.YES.label,
                 self.Section5Choices.NO.label,
-                ConditionalQuestion(
-                    self.Section5Choices.DONT_KNOW.label,
-                    "not_covered_explanation",
-                ),
+                self.Section5Choices.DONT_KNOW.label,
             ),
         )
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        is_covered_by_section_5 = cleaned_data.get("is_covered_by_section_5")
-        not_covered_explanation = cleaned_data.get("not_covered_explanation")
-        if is_covered_by_section_5 == self.Section5Choices.DONT_KNOW and not not_covered_explanation:
-            self.add_error("not_covered_explanation", "Explain why you don't know")
-
-        return cleaned_data
 
 
 class FirearmMadeBefore1938Form(BaseFirearmForm):
