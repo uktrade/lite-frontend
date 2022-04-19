@@ -76,6 +76,7 @@ from .conditionals import (
     is_product_made_before_1938,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
+from .decorators import expect_status
 from .exceptions import ServiceError
 from .mixins import ApplicationMixin
 from .payloads import AddGoodFirearmPayloadBuilder, AddGoodFirearmToApplicationPayloadBuilder
@@ -264,21 +265,17 @@ class AddGoodFirearm(
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating firearm",
+        "Unexpected error adding firearm",
+    )
     def post_firearm(self, form_dict):
         payload = self.get_payload(form_dict)
-        api_resp_data, status_code = post_firearm(
+        return post_firearm(
             self.request,
             payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error creating firearm - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
-
-        self.good = api_resp_data["good"]
 
     def has_existing_valid_organisation_rfd_certificate(self, application):
         if not has_valid_organisation_rfd_certificate(application):
@@ -298,6 +295,11 @@ class AddGoodFirearm(
         )
         return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid") is False
 
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting existing rfd certificate to application",
+        "Unexpected error adding firearm",
+    )
     def delete_existing_organisation_rfd_certificate(self, application):
         organisation_rfd_certificate_data = get_rfd_certificate(application)
         status_code = delete_document_on_organisation(
@@ -305,18 +307,17 @@ class AddGoodFirearm(
             organisation_id=organisation_rfd_certificate_data["organisation"],
             document_id=organisation_rfd_certificate_data["id"],
         )
-        if status_code != HTTPStatus.NO_CONTENT:
-            raise ServiceError(
-                status_code,
-                {},
-                "Error deleting existing rfd certificate to application - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
+        return {}, status_code
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error attaching existing rfd certificate to application",
+        "Unexpected error adding firearm",
+    )
     def attach_rfd_certificate_to_application(self, application):
         organisation_rfd_certificate_data = get_rfd_certificate(application)
         document = organisation_rfd_certificate_data["document"]
-        api_resp_data, status_code = post_additional_document(
+        return post_additional_document(
             self.request,
             pk=application["id"],
             json={
@@ -328,43 +329,32 @@ class AddGoodFirearm(
                 "description": "Registered firearm dealer certificate",
             },
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error attaching existing rfd certificate to application - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error with rfd certificate when creating firearm",
+        "Unexpected error adding firearm",
+    )
     def post_rfd_certificate(self, application):
         rfd_certificate_payload = self.get_rfd_certificate_payload()
-        api_resp_data, status_code = post_additional_document(
+        return post_additional_document(
             request=self.request,
             pk=application["id"],
             json=rfd_certificate_payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error rfd certificate when creating firearm - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error with product document when creating firearm",
+        "Unexpected error adding firearm",
+    )
     def post_product_documentation(self, good):
         document_payload = self.get_product_document_payload()
-        api_resp_data, status_code = post_good_documents(
+        return post_good_documents(
             request=self.request,
             pk=good["id"],
             json=document_payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error product document when creating firearm - response was: %s - %s",
-                "Unexpected error adding document to firearm",
-            )
 
     def handle_service_error(self, service_error):
         logger.error(
@@ -377,7 +367,8 @@ class AddGoodFirearm(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            self.post_firearm(form_dict)
+            good, _ = self.post_firearm(form_dict)
+            self.good = good["good"]
 
             if self.has_existing_valid_organisation_rfd_certificate(self.application):
                 self.attach_rfd_certificate_to_application(self.application)

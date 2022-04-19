@@ -15,6 +15,7 @@ def expect_status(expected_status, logger_message, error_message):
                     f"{logger_message} - response was: %s - %s",
                     error_message,
                 )
+            return response, status_code
 
         return wrapper
 
