@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+
+{% load date firearm_details_summary %}
+
+{% block back_link %}
+{% endblock %}
+
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-xl">
+                {% block title %} Product summary {% endblock %}
+            </h1>
+        </div>
+    </div>
+
+    {% with firearm_details=good.firearm_details %}
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Was the product made before 1938?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ firearm_details.is_made_before_1938|default_na }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            {% if firearm_details.is_made_before_1938 %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What year was it made?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.year_of_manufacture }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
+
+        </dl>
+
+        <a class="govuk-button" href="#">Submit</a>
+    {% endwith %}
+
+{% endblock %}

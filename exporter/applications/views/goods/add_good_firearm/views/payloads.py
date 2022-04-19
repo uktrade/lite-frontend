@@ -6,7 +6,7 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
 )
 
-from .constants import AddGoodFirearmSteps
+from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 
 
 def firearm_details_payload(f):
@@ -144,4 +144,11 @@ class FirearmEditRegisteredFirearmsDealerPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
+    }
+
+
+class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
     }

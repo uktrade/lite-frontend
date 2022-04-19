@@ -17,7 +17,7 @@ def good_id(data_standard_case):
 def mock_application_get(requests_mock, data_standard_case):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/')
-    yield requests_mock.get(url=url, json={})
+    yield requests_mock.get(url=url, json=application)
 
 
 @pytest.fixture
@@ -33,6 +33,13 @@ def mock_good_put(requests_mock, data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]["good"]
     url = client._build_absolute_uri(f'/goods/{good["id"]}/')
     return requests_mock.put(url=url, json={})
+
+
+@pytest.fixture
+def mock_good_on_application_post(requests_mock, data_standard_case):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
+    yield requests_mock.post(url=url, json={}, status_code=201)
 
 
 @pytest.fixture
