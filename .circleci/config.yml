@@ -261,10 +261,7 @@ jobs:
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
-      - vpn_install
-      - vpn_connect
       - ui_tests
-      - vpn_disconnect
 
   exporter_ui_test:
     machine:
@@ -282,10 +279,7 @@ jobs:
       - run: pyenv global 3.7.0
       - run: pip install pipenv
       - setup_code
-      - vpn_install
-      - vpn_connect
       - ui_tests
-      - vpn_disconnect
 
   caseworker_e2e_test:
     machine:
@@ -329,6 +323,4 @@ workflows:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
       - caseworker_ui_test
-      - exporter_ui_test:
-          requires:
-           - caseworker_ui_test
+      - exporter_ui_test

@@ -1,15 +1,13 @@
-import os
+import base64
 
-from selenium import webdriver
+from seleniumwire import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
 from _pytest.fixtures import fixture
 
-from ..fixtures.cci import enable_browser_stack
-
 
 @fixture(scope="session", autouse=True)
-def driver(request, api_client):
+def driver(request, api_client, environment):
     is_headless = request.config.getoption("--headless")
 
     chrome_options = webdriver.ChromeOptions()
@@ -26,6 +24,19 @@ def driver(request, api_client):
     driver.implicitly_wait(20)
     driver.get("about:blank")
     driver.maximize_window()
+
+    if environment("BASIC_AUTH_ENABLED", default="False") == "True":
+        auth = (
+            base64.encodebytes(f"{environment('AUTH_USER_NAME')}:{environment('AUTH_USER_PASSWORD')}".encode())
+            .decode()
+            .strip()
+        )
+
+        def interceptor(req):
+            if req.host.endswith("uktrade.digital"):
+                req.headers["Authorization"] = f"Basic {auth}"
+
+        driver.request_interceptor = interceptor
 
     yield driver
 
