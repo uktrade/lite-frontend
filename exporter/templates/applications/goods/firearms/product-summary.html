@@ -112,7 +112,7 @@
                         <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
                     </dd>
                 </div>
-                    {% if good.pv_grading_details.suffix %}
+                {% if good.pv_grading_details.suffix %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Enter a suffix (optional)
@@ -361,10 +361,8 @@
                     </dd>
                 </div>
             {% endif %}
-        {% endif %}
         </dl>
 
         <a class="govuk-button" href="{% url 'applications:new_good_firearm_to_application' application_id good.id %}">Continue</a>
     {% endwith %}
-
 {% endblock %}
