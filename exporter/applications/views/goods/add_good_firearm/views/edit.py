@@ -181,7 +181,6 @@ class BaseEditWizardView(GoodMixin, ApplicationMixin, LoginRequiredMixin, BaseSe
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
 
-        ctx["hide_step_count"] = True
         ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
         ctx["title"] = form.Layout.TITLE
         return ctx
@@ -517,7 +516,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
 
-        ctx["hide_step_count"] = True
         ctx["back_link_url"] = reverse(
             "applications:product_summary",
             kwargs={"pk": self.kwargs["pk"], "good_pk": self.kwargs["good_pk"]},

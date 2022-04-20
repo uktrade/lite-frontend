@@ -35,9 +35,6 @@
                 {% include "gds/layout/error_summary.html" %}
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
-                        {% if not hide_step_count %}
-                            <span class="govuk-caption-xl">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
-                        {% endif %}
 
                         {{ wizard.management_form }}
 

@@ -108,7 +108,6 @@ def test_add_good_firearm_start(authorized_client, new_good_firearm_url, new_goo
     response = authorized_client.get(new_good_firearm_url)
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmCategoryForm)
-    assert response.context["hide_step_count"]
     assert response.context["back_link_url"] == new_good_url
     assert response.context["title"] == "Firearm category"
 
