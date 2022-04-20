@@ -87,6 +87,78 @@
                     <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading' application_id good.id %}">Change</a>
                 </dd>
             </div>
+            {% if good.is_pv_graded.key == "yes" %}
+                {% if good.pv_grading_details.prefix %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Enter a prefix (optional)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ good.pv_grading_details.prefix }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
+                        </dd>
+                    </div>
+                {% endif %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What is the security grading or classification?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ good.pv_grading_details.grading.value }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
+                    </dd>
+                </div>
+                    {% if good.pv_grading_details.suffix %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Enter a suffix (optional)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ good.pv_grading_details.suffix }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
+                        </dd>
+                    </div>
+                {% endif %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Name and address of the issuing authority
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ good.pv_grading_details.issuing_authority|linebreaksbr }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Reference
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ good.pv_grading_details.reference }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date of issue
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ good.pv_grading_details.date_of_issue|to_date|date:"d-m-Y" }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
+                    </dd>
+                </div>
+            {% endif %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     What is the calibre of the product?

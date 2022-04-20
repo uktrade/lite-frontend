@@ -23,7 +23,7 @@ def mock_application_get(requests_mock, data_standard_case):
 @pytest.fixture
 def mock_good_get(requests_mock, data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]
-    good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}
+    good["good"]["is_pv_graded"] = {"key": "yes", "value": "Yes"}
     url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
     return requests_mock.get(url=url, json=good)
 
