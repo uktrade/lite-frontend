@@ -94,6 +94,7 @@ def rfd_certificate(organisation_id):
             "s3_key": "rfd_certificate.txt.s3_key",
             "safe": True,
             "size": 3,
+            "id": str(uuid.uuid4()),
         },
         "document_type": "rfd-certificate",
         "is_expired": False,

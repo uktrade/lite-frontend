@@ -1,9 +1,9 @@
 import logging
-import requests
 
 from deepmerge import always_merger
 from http import HTTPStatus
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -354,6 +354,8 @@ class AddGoodFirearm(
             service_error.response,
             exc_info=True,
         )
+        if settings.DEBUG:
+            raise service_error
         return error_page(self.request, service_error.user_message)
 
     def done(self, form_list, form_dict, **kwargs):
@@ -448,6 +450,7 @@ class AddGoodFirearmToApplication(
         api_resp_data, status_code = post_firearm_good_on_application(self.request, self.application["id"], payload)
         if status_code != HTTPStatus.CREATED:
             raise ServiceError(
+                "Error adding firearm to application",
                 status_code,
                 api_resp_data,
                 "Error adding firearm to application - response was: %s - %s",
@@ -461,6 +464,8 @@ class AddGoodFirearmToApplication(
             service_error.response,
             exc_info=True,
         )
+        if settings.DEBUG:
+            raise service_error
         return error_page(self.request, service_error.user_message)
 
     def done(self, form_list, form_dict, **kwargs):

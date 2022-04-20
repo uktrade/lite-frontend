@@ -4,7 +4,6 @@ from datetime import date, datetime
 from http import HTTPStatus
 
 from django.conf import settings
-from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -13,8 +12,7 @@ from django.views.generic import FormView
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
 
-from exporter.applications.services import post_additional_document
-from exporter.core.constants import DocumentType, FirearmsActDocumentType
+from exporter.core.constants import FirearmsActDocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
@@ -49,11 +47,10 @@ from exporter.goods.forms.firearms import (
     FirearmReplicaForm,
     FirearmSection5Form,
 )
-from exporter.organisation.services import update_document_on_organisation
 
 from .actions import (
     CreateOrUpdateFirearmActCertificateAction,
-    CreateOrUpdateRfdCertificateAction,
+    RfdCertificateAction,
 )
 from .conditionals import (
     is_document_sensitive,
@@ -175,6 +172,8 @@ class BaseEditWizardView(
             service_error.response,
             exc_info=True,
         )
+        if settings.DEBUG:
+            raise service_error
         return error_page(self.request, service_error.user_message)
 
     def get_context_data(self, form, **kwargs):
@@ -317,6 +316,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
             )
             if status_code != HTTPStatus.CREATED:
                 raise ServiceError(
+                    "Error product document when creating firearm",
                     status_code,
                     api_resp_data,
                     "Error product document when creating firearm - response was: %s - %s",
@@ -330,6 +330,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
                 )
                 if status_code != HTTPStatus.OK:
                     raise ServiceError(
+                        "Error deleting the product document",
                         status_code,
                         api_resp_data,
                         "Error deleting the product document - response was: %s - %s",
@@ -341,6 +342,7 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
             )
             if status_code != HTTPStatus.OK:
                 raise ServiceError(
+                    "Error updating the product document description",
                     status_code,
                     api_resp_data,
                     "Error updating the product document description - response was: %s - %s",
@@ -611,7 +613,7 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         try:
             self.edit_firearm(self.good["id"], form_dict)
 
-            CreateOrUpdateRfdCertificateAction(
+            RfdCertificateAction(
                 AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE,
                 self,
             ).run()

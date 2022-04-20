@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from exporter.applications.services import (
+    delete_additional_document,
     post_additional_document,
     post_application_document,
 )
@@ -12,7 +13,10 @@ from exporter.core.helpers import (
     get_rfd_certificate,
     has_valid_rfd_certificate,
 )
-from exporter.organisation.services import update_document_on_organisation
+from exporter.organisation.services import (
+    delete_document_on_organisation,
+    update_document_on_organisation,
+)
 
 from .decorators import expect_status
 
@@ -99,7 +103,7 @@ class CreateOrUpdateFirearmActCertificateAction:
             self.update_firearm_act_certificate()
 
 
-class CreateOrUpdateRfdCertificateAction:
+class RfdCertificateAction:
     def __init__(self, step_name, wizard):
         self.wizard = wizard
         self.request = wizard.request
@@ -175,6 +179,35 @@ class CreateOrUpdateRfdCertificateAction:
             data=rfd_certificate_payload,
         )
 
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting existing rfd certificate on organisation",
+        "Unexpected error adding firearm",
+    )
+    def delete_existing_organisation_rfd_certificate(self):
+        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
+        status_code = delete_document_on_organisation(
+            self.request,
+            organisation_id=organisation_rfd_certificate_data["organisation"],
+            document_id=organisation_rfd_certificate_data["id"],
+        )
+        return {}, status_code
+
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting existing rfd certificate on application",
+        "Unexpected error adding firearm",
+    )
+    def delete_existing_application_rfd_certificate(self):
+        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
+        document = organisation_rfd_certificate_data["document"]
+        status_code = delete_additional_document(
+            self.request,
+            pk=self.application["id"],
+            doc_pk=document["id"],
+        )
+        return {}, status_code
+
     def run(self):
         if not self.has_organisation_rfd_certificate_data():
             return
@@ -186,3 +219,7 @@ class CreateOrUpdateRfdCertificateAction:
         if not self.has_replacement_file():
             self.update_rfd_certificate()
             return
+
+        self.delete_existing_organisation_rfd_certificate()
+        self.delete_existing_application_rfd_certificate()
+        self.post_rfd_certificate()

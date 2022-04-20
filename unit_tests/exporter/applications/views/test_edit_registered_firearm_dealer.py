@@ -172,6 +172,18 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
         json={},
     )
 
+    delete_rfd_organisation_document_matcher = requests_mock.delete(
+        f"/organisations/{rfd_certificate['organisation']}/document/{rfd_certificate['id']}/",
+        status_code=204,
+        json={},
+    )
+
+    delete_rfd_application_document_matcher = requests_mock.delete(
+        f"/applications/{data_standard_case['case']['id']}/documents/{rfd_certificate['document']['id']}/",
+        status_code=204,
+        json={},
+    )
+
     response = goto_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER)
     form = response.context["form"]
     assert isinstance(form, FirearmRegisteredFirearmsDealerForm)
@@ -241,6 +253,9 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
             "section_certificate_number": "12345",
         },
     }
+
+    assert delete_rfd_organisation_document_matcher.called_once
+    assert delete_rfd_application_document_matcher.called_once
 
     assert post_applications_document_matcher.called_once
     application_doc_request = post_applications_document_matcher.last_request
@@ -379,7 +394,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     assert put_rfd_document_matcher.called_once
     last_request = put_rfd_document_matcher.last_request
     assert last_request.json() == {
-        "expiry_date": "2022-04-24",
+        "expiry_date": rfd_expiry_date.isoformat(),
         "reference_code": "67890",
         "document_type": "rfd-certificate",
     }
@@ -388,6 +403,6 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     last_request = put_firearm_document_matcher.last_request
     assert last_request.json() == {
         "document_type": "section-five-certificate",
-        "expiry_date": "2022-04-29",
+        "expiry_date": section_5_letter_expiry_date.isoformat(),
         "reference_code": "12345",
     }
