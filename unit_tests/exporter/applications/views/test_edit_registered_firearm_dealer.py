@@ -7,7 +7,7 @@ from django.urls import reverse
 from core import client
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 from exporter.core.forms import CurrentFile
-from exporter.core.helpers import decompose_date
+from exporter.core.helpers import convert_api_date_string_to_date, decompose_date
 from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmAttachSection5LetterOfAuthorityForm,
@@ -144,30 +144,17 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     requests_mock,
     goto_step,
     post_to_step,
+    section_5_document,
     rfd_certificate,
     good_id,
 ):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}
-    firearm_details = good["good"]["firearm_details"]
-    firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = "Unsure"
-    firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"] = "Unsure explanation"
-    firearm_details["section_certificate_missing"] = False
-    firearm_details["section_certificate_number"] = "12345"
-    section_5_letter_expiry_date = datetime.date.today() + datetime.timedelta(days=10)
-    firearm_details["section_certificate_date_of_expiry"] = section_5_letter_expiry_date.isoformat()
-    firearm_details["section_certificate_missing_reason"] = ""
     url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
     requests_mock.get(url=url, json=good)
 
     post_applications_document_matcher = requests_mock.post(
         f"/applications/{data_standard_case['case']['id']}/documents/",
-        status_code=201,
-        json={},
-    )
-
-    post_application_goods_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
         status_code=201,
         json={},
     )
@@ -216,10 +203,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {
-        "is_covered_by_section_5": FirearmSection5Form.Section5Choices.DONT_KNOW,
-        "not_covered_explanation": "Unsure explanation",
-    }
+    assert form.initial == {}
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
@@ -227,30 +211,19 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
             "is_covered_by_section_5": "yes",
         },
     )
-    form = response.context["form"]
-    assert isinstance(form, FirearmAttachSection5LetterOfAuthorityForm)
-
-    section_5_letter_expiry_date = datetime.date.today() + datetime.timedelta(days=10)
-    response = post_to_step(
-        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
-        {
-            "file": SimpleUploadedFile("new_letter_of_authority.pdf", b"This is the letter of authority"),
-            "section_certificate_number": "12345",
-            **decompose_date("section_certificate_date_of_expiry", section_5_letter_expiry_date),
-        },
-    )
 
     assert response.status_code == 302
     assert response.url == product_summary_url
+    section_certificate_date_of_expiry = convert_api_date_string_to_date(section_5_document["expiry_date"]).isoformat()
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
             "firearms_act_section": "firearms_act_section5",
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
             "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
             "is_registered_firearm_dealer": True,
-            "section_certificate_date_of_expiry": section_5_letter_expiry_date.isoformat(),
+            "section_certificate_date_of_expiry": section_certificate_date_of_expiry,
             "section_certificate_missing": False,
-            "section_certificate_number": "12345",
+            "section_certificate_number": "section 5 ref",
         },
     }
 
@@ -272,19 +245,6 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
         "size": 0,
     }
 
-    assert post_application_goods_document_matcher.called_once
-    last_request = post_application_goods_document_matcher.last_request
-    assert last_request.json() == {
-        "document_on_organisation": {
-            "document_type": "section-five-certificate",
-            "expiry_date": section_5_letter_expiry_date.isoformat(),
-            "reference_code": "12345",
-        },
-        "name": "new_letter_of_authority.pdf",
-        "s3_key": "new_letter_of_authority.pdf",
-        "size": 0,
-    }
-
 
 def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping_existing_files(
     data_standard_case,
@@ -300,25 +260,11 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
 ):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}
-    firearm_details = good["good"]["firearm_details"]
-    firearm_details["is_covered_by_firearm_act_section_one_two_or_five"] = "Unsure"
-    firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"] = "Unsure explanation"
-    firearm_details["section_certificate_missing"] = False
-    firearm_details["section_certificate_number"] = "12345"
-    section_5_letter_expiry_date = datetime.date.today() + datetime.timedelta(days=10)
-    firearm_details["section_certificate_date_of_expiry"] = section_5_letter_expiry_date.isoformat()
-    firearm_details["section_certificate_missing_reason"] = ""
     url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
     requests_mock.get(url=url, json=good)
 
     put_rfd_document_matcher = requests_mock.put(
         f"/organisations/{rfd_certificate['organisation']}/document/{rfd_certificate['id']}/",
-        status_code=200,
-        json={},
-    )
-
-    put_firearm_document_matcher = requests_mock.put(
-        f"/organisations/{section_5_document['organisation']}/document/{section_5_document['id']}/",
         status_code=200,
         json={},
     )
@@ -354,10 +300,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {
-        "is_covered_by_section_5": FirearmSection5Form.Section5Choices.DONT_KNOW,
-        "not_covered_explanation": "Unsure explanation",
-    }
+    assert form.initial == {}
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
@@ -365,29 +308,19 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
             "is_covered_by_section_5": "yes",
         },
     )
-    form = response.context["form"]
-    assert isinstance(form, FirearmAttachSection5LetterOfAuthorityForm)
-
-    section_5_letter_expiry_date = datetime.date.today() + datetime.timedelta(days=10)
-    response = post_to_step(
-        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
-        {
-            "section_certificate_number": "12345",
-            **decompose_date("section_certificate_date_of_expiry", section_5_letter_expiry_date),
-        },
-    )
 
     assert response.status_code == 302
     assert response.url == product_summary_url
+    section_certificate_date_of_expiry = convert_api_date_string_to_date(section_5_document["expiry_date"]).isoformat()
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
             "firearms_act_section": "firearms_act_section5",
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
             "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
             "is_registered_firearm_dealer": True,
-            "section_certificate_date_of_expiry": section_5_letter_expiry_date.isoformat(),
+            "section_certificate_date_of_expiry": section_certificate_date_of_expiry,
             "section_certificate_missing": False,
-            "section_certificate_number": "12345",
+            "section_certificate_number": "section 5 ref",
         },
     }
 
@@ -397,12 +330,4 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
         "expiry_date": rfd_expiry_date.isoformat(),
         "reference_code": "67890",
         "document_type": "rfd-certificate",
-    }
-
-    assert put_firearm_document_matcher.called_once
-    last_request = put_firearm_document_matcher.last_request
-    assert last_request.json() == {
-        "document_type": "section-five-certificate",
-        "expiry_date": section_5_letter_expiry_date.isoformat(),
-        "reference_code": "12345",
     }

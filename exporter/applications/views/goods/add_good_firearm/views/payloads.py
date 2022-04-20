@@ -1,5 +1,13 @@
 from functools import wraps
 
+from exporter.core.constants import (
+    FirearmsActDocumentType,
+    FirearmsActSections,
+)
+from exporter.core.helpers import (
+    convert_api_date_string_to_date,
+    get_organisation_documents,
+)
 from exporter.core.wizard.payloads import MergingPayloadBuilder
 from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
@@ -150,3 +158,53 @@ class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
     }
+
+
+class FirearmsActPayloadBuilder:
+    def __init__(self, application, firearm_details):
+        self.application = application
+        self.firearm_details = firearm_details
+
+    def has_skipped_firearms_attach_step(self, form_dict, firearm_details, section_value, attach_step_name):
+        firearms_act_section = firearm_details["firearms_act_section"]
+        return firearms_act_section == section_value and attach_step_name not in form_dict
+
+    def get_payload(self, form_dict):
+        if not self.firearm_details.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+            return {}
+
+        for section_value, attach_step_name, document_type in (
+            (
+                FirearmsActSections.SECTION_1,
+                AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
+                FirearmsActDocumentType.SECTION_1,
+            ),
+            (
+                FirearmsActSections.SECTION_2,
+                AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
+                FirearmsActDocumentType.SECTION_2,
+            ),
+            (
+                FirearmsActSections.SECTION_5,
+                AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
+                FirearmsActDocumentType.SECTION_5,
+            ),
+        ):
+            if not self.has_skipped_firearms_attach_step(
+                form_dict, self.firearm_details, section_value, attach_step_name
+            ):
+                continue
+
+            certificate = get_organisation_documents(self.application)[document_type]
+            return {
+                "section_certificate_missing": False,
+                "section_certificate_number": certificate["reference_code"],
+                "section_certificate_date_of_expiry": convert_api_date_string_to_date(
+                    certificate["expiry_date"]
+                ).isoformat(),
+            }
+
+        return {}
+
+    def build(self, form_dict):
+        return {"firearm_details": self.get_payload(form_dict)}

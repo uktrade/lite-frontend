@@ -1,6 +1,7 @@
 import logging
 
 from datetime import date, datetime
+from deepmerge import always_merger
 from http import HTTPStatus
 
 from django.conf import settings
@@ -12,14 +13,16 @@ from django.views.generic import FormView
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
 
-from exporter.core.constants import FirearmsActDocumentType
+from exporter.core.constants import (
+    FirearmsActDocumentType,
+)
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
     get_document_data,
     get_firearm_act_document,
     get_rfd_certificate,
-    has_firearm_act_document,
+    has_firearm_act_document as _has_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     str_to_bool,
 )
@@ -53,6 +56,7 @@ from .actions import (
     RfdCertificateAction,
 )
 from .conditionals import (
+    has_firearm_act_document,
     is_document_sensitive,
     is_product_document_available,
     is_pv_graded,
@@ -66,6 +70,7 @@ from .payloads import (
     FirearmEditProductDocumentSensitivityPayloadBuilder,
     FirearmEditPvGradingPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
+    FirearmsActPayloadBuilder,
     get_cleaned_data,
     get_firearm_details_cleaned_data,
     get_pv_grading_good_payload,
@@ -507,6 +512,11 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
     ]
+    condition_dict = {
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: ~C(
+            has_firearm_act_document(FirearmsActDocumentType.SECTION_5)
+        ),
+    }
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -570,18 +580,19 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             }
 
     def get_attach_section_5_letter_of_authority_initial_data(self):
-        if not has_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5):
+        if not _has_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5):
             return {}
 
         section_5_document = get_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5)
         firearm_details = self.good["firearm_details"]
+        section_certificate_date_of_expiry = firearm_details.get("section_certificate_date_of_expiry")
+        if section_certificate_date_of_expiry:
+            section_certificate_date_of_expiry = datetime.fromisoformat(section_certificate_date_of_expiry).date()
         return {
-            "section_certificate_missing": firearm_details["section_certificate_missing"],
-            "section_certificate_number": firearm_details["section_certificate_number"],
-            "section_certificate_date_of_expiry": datetime.fromisoformat(
-                firearm_details["section_certificate_date_of_expiry"]
-            ).date(),
-            "section_certificate_missing_reason": firearm_details["section_certificate_missing_reason"],
+            "section_certificate_missing": firearm_details.get("section_certificate_missing"),
+            "section_certificate_number": firearm_details.get("section_certificate_number"),
+            "section_certificate_date_of_expiry": section_certificate_date_of_expiry,
+            "section_certificate_missing_reason": firearm_details.get("section_certificate_missing_reason"),
             "file": CurrentFile(
                 section_5_document["document"]["name"],
                 self.get_document_url(section_5_document),
@@ -606,8 +617,20 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
 
         return initial
 
+    def has_skipped_firearms_attach_step(self, form_dict, firearm_details, section_value, attach_step_name):
+        firearms_act_section = firearm_details["firearms_act_section"]
+        return firearms_act_section == section_value and attach_step_name not in form_dict
+
     def get_payload(self, form_dict):
-        return FirearmEditRegisteredFirearmsDealerPayloadBuilder().build(form_dict)
+        good_payload = FirearmEditRegisteredFirearmsDealerPayloadBuilder().build(form_dict)
+        firearms_act_payload = FirearmsActPayloadBuilder(
+            self.application,
+            good_payload["firearm_details"],
+        ).build(form_dict)
+
+        payload = always_merger.merge(good_payload, firearms_act_payload)
+
+        return payload
 
     def done(self, form_list, form_dict, **kwargs):
         try:

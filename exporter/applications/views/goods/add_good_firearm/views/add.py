@@ -21,10 +21,8 @@ from exporter.core.constants import (
     FirearmsActSections,
 )
 from exporter.core.helpers import (
-    convert_api_date_string_to_date,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     get_document_data,
-    get_organisation_documents,
     get_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
@@ -75,7 +73,11 @@ from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
 from .exceptions import ServiceError
 from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
-from .payloads import AddGoodFirearmPayloadBuilder, AddGoodFirearmToApplicationPayloadBuilder
+from .payloads import (
+    AddGoodFirearmPayloadBuilder,
+    AddGoodFirearmToApplicationPayloadBuilder,
+    FirearmsActPayloadBuilder,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -176,44 +178,14 @@ class AddGoodFirearm(
 
         return kwargs
 
-    def has_skipped_firearms_attach_step(self, form_dict, firearm_details, section_value, attach_step_name):
-        firearms_act_section = firearm_details["firearms_act_section"]
-        return firearms_act_section == section_value and attach_step_name not in form_dict
-
     def get_payload(self, form_dict):
-        payload = AddGoodFirearmPayloadBuilder().build(form_dict)
+        good_payload = AddGoodFirearmPayloadBuilder().build(form_dict)
+        firearms_act_payload = FirearmsActPayloadBuilder(
+            self.application,
+            good_payload["firearm_details"],
+        ).build(form_dict)
 
-        firearm_details = payload["firearm_details"]
-        if firearm_details.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
-            for section_value, attach_step_name, document_type in (
-                (
-                    FirearmsActSections.SECTION_1,
-                    AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
-                    FirearmsActDocumentType.SECTION_1,
-                ),
-                (
-                    FirearmsActSections.SECTION_2,
-                    AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
-                    FirearmsActDocumentType.SECTION_2,
-                ),
-                (
-                    FirearmsActSections.SECTION_5,
-                    AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
-                    FirearmsActDocumentType.SECTION_5,
-                ),
-            ):
-                if self.has_skipped_firearms_attach_step(form_dict, firearm_details, section_value, attach_step_name):
-                    certificate = get_organisation_documents(self.application)[document_type]
-                    firearm_details.update(
-                        {
-                            "section_certificate_missing": False,
-                            "section_certificate_number": certificate["reference_code"],
-                            "section_certificate_date_of_expiry": convert_api_date_string_to_date(
-                                certificate["expiry_date"]
-                            ).isoformat(),
-                        }
-                    )
-                    break
+        payload = always_merger.merge(good_payload, firearms_act_payload)
 
         return payload
 
