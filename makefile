@@ -68,7 +68,7 @@ secrets:
 .PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
 
 start-caseworker:
-	$(docker-e2e-caseworker) up --build --force-recreate -d 
+	$(docker-e2e-caseworker) up --build --force-recreate -d
 
 stop-caseworker:
 	$(docker-e2e-caseworker) down --remove-orphans
@@ -81,8 +81,8 @@ stop-exporter:
 
 caseworker-e2e-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
-	$(docker-e2e) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest playwright_tests/specs/caseworker/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=https://internal.lite.service.devdata.uktrade.digital/'
+	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest playwright_tests/specs/caseworker/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8200/'
 
 exporter-e2e-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
-	$(docker-e2e) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest playwright_tests/specs/exporter/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8300/'
+	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest playwright_tests/specs/exporter/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8300/'
