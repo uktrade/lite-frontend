@@ -7,6 +7,7 @@ load_dotenv("caseworker.env")
 
 api_url = os.environ.get("LITE_API_URL")
 
+
 def post(uri, kwargs):
     return requests.post(f"{api_url}/{uri}", **kwargs)
 
