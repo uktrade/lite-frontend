@@ -55,6 +55,11 @@
                             Finalise case
                         </a>
                     {% endif %}
+                    <!-- TODO: This is temporary and should be removed as soon as we reissue the licenses for LTD-2222 -->
+                    <a role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
+                        Reissue License
+                    </a>
+
 
                     {% if buttons.edit_recommendation %}
                         <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
