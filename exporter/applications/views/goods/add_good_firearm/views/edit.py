@@ -326,6 +326,43 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
     def get_initial(self):
         return {"description": self.product_document["description"] if self.product_document else ""}
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error product document when creating firearm",
+        "Unexpected error adding document to firearm",
+    )
+    def post_good_documents(self, payload):
+        return post_good_documents(
+            request=self.request,
+            pk=self.good["id"],
+            json=payload,
+        )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error deleting the product document",
+        "Unexpected error deleting product document",
+    )
+    def delete_good_document(self):
+        return delete_good_document(
+            self.request,
+            self.good["id"],
+            self.product_document["id"],
+        )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating the product document description",
+        "Unexpected error updating product document description",
+    )
+    def update_good_document_data(self, payload):
+        return update_good_document_data(
+            self.request,
+            self.good["id"],
+            self.product_document["id"],
+            payload,
+        )
+
     def form_valid(self, form):
         existing_product_document = self.product_document
         product_document = form.cleaned_data.get("product_document", None)
@@ -336,45 +373,14 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
                 **get_document_data(product_document),
                 **payload,
             }
-            api_resp_data, status_code = post_good_documents(
-                request=self.request,
-                pk=self.good["id"],
-                json=payload,
-            )
-            if status_code != HTTPStatus.CREATED:
-                raise ServiceError(
-                    "Error product document when creating firearm",
-                    status_code,
-                    api_resp_data,
-                    "Error product document when creating firearm - response was: %s - %s",
-                    "Unexpected error adding document to firearm",
-                )
+            self.post_good_documents(payload)
 
             # Delete existing document
             if existing_product_document:
-                api_resp_data, status_code = delete_good_document(
-                    self.request, self.good["id"], self.product_document["id"]
-                )
-                if status_code != HTTPStatus.OK:
-                    raise ServiceError(
-                        "Error deleting the product document",
-                        status_code,
-                        api_resp_data,
-                        "Error deleting the product document - response was: %s - %s",
-                        "Unexpected error deleting product document",
-                    )
+                self.delete_good_document()
+
         elif self.product_document["description"] != description:
-            api_resp_data, status_code = update_good_document_data(
-                self.request, self.good["id"], self.product_document["id"], payload
-            )
-            if status_code != HTTPStatus.OK:
-                raise ServiceError(
-                    "Error updating the product document description",
-                    status_code,
-                    api_resp_data,
-                    "Error updating the product document description - response was: %s - %s",
-                    "Unexpected error updating product document description",
-                )
+            self.update_good_document_data(payload)
 
         return redirect(self.get_success_url())
 
