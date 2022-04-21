@@ -585,6 +585,14 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         if is_covered_by_firearm_act_section_one_two_or_five == "No":
             return {}
 
+        if is_covered_by_firearm_act_section_one_two_or_five == "Unsure":
+            return {
+                "firearms_act_section": FirearmFirearmAct1968Form.SectionChoices.DONT_KNOW,
+                "not_covered_explanation": firearm_details[
+                    "is_covered_by_firearm_act_section_one_two_or_five_explanation"
+                ],
+            }
+
         return {
             "firearms_act_section": firearm_details["firearms_act_section"],
         }
