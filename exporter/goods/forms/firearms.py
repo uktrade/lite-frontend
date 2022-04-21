@@ -812,14 +812,7 @@ class FirearmSection5Form(BaseFirearmForm):
     )
 
     def get_layout_fields(self):
-        return (
-            ConditionalRadios(
-                "is_covered_by_section_5",
-                self.Section5Choices.YES.label,
-                self.Section5Choices.NO.label,
-                self.Section5Choices.DONT_KNOW.label,
-            ),
-        )
+        return ("is_covered_by_section_5",)
 
 
 class FirearmMadeBefore1938Form(BaseFirearmForm):
