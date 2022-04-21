@@ -371,7 +371,9 @@
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         {% if is_user_rfd %}
-                            <a id="change-firearms-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_firearms_act_1968' application_id good.id %}">Change</a>
+                            <a id="change-section-5-firearms-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_firearms_act_1968' application_id good.id %}">Change</a>
+                        {% else %}
+                            <a id="change-fireams-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_firearms_act_1968' application_id good.id %}">Change</a>
                         {% endif %}
                     </dd>
                 </div>
