@@ -561,17 +561,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_5)),
     }
 
-    def get_context_data(self, form, **kwargs):
-        ctx = super().get_context_data(form, **kwargs)
-
-        ctx["back_link_url"] = reverse(
-            "applications:product_summary",
-            kwargs={"pk": self.kwargs["pk"], "good_pk": self.kwargs["good_pk"]},
-        )
-        ctx["title"] = form.Layout.TITLE
-
-        return ctx
-
     def get_attach_rfd_certificate_initial_data(self):
         rfd_certificate = get_rfd_certificate(self.application)
         if not rfd_certificate:
