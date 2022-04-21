@@ -112,6 +112,13 @@ class BaseEditView(
         edit_firearm(self.request, self.good["id"], self.get_edit_payload(form))
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
+
+        return ctx
+
 
 class BaseGoodEditView(BaseEditView):
     def get_edit_payload(self, form):
