@@ -714,54 +714,42 @@ class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
         return redirect(self.get_success_url())
 
 
+class BaseEditCertificateView(BaseFirearmEditView):
+    def get_initial(self):
+        return get_attach_certificate_initial_data(
+            self.document_type,
+            self.application,
+            self.good,
+        )
+
+    def get_edit_payload(self, form):
+        return get_attach_firearm_act_certificate_payload(form)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        FirearmActCertificateAction(
+            self.document_type,
+            self,
+            form.cleaned_data,
+        ).run()
+
+        return response
+
+
 class FirearmEditFirearmCertificate(BaseFirearmEditView):
     form_class = FirearmAttachFirearmCertificateForm
-
-    def get_initial(self):
-        return get_attach_certificate_initial_data(
-            FirearmsActDocumentType.SECTION_1,
-            self.application,
-            self.good,
-        )
-
-    def get_edit_payload(self, form):
-        return get_attach_firearm_act_certificate_payload(form)
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        FirearmActCertificateAction(
-            FirearmsActDocumentType.SECTION_1,
-            self,
-            form.cleaned_data,
-        ).run()
-
-        return response
+    document_type = FirearmsActDocumentType.SECTION_1
 
 
-class FirearmEditLetterOfAuthority(BaseFirearmEditView):
+class FirearmEditShotgunCertificate(BaseEditCertificateView):
+    form_class = FirearmAttachShotgunCertificateForm
+    document_type = FirearmsActDocumentType.SECTION_2
+
+
+class FirearmEditLetterOfAuthority(BaseEditCertificateView):
     form_class = FirearmAttachSection5LetterOfAuthorityForm
-
-    def get_initial(self):
-        return get_attach_certificate_initial_data(
-            FirearmsActDocumentType.SECTION_5,
-            self.application,
-            self.good,
-        )
-
-    def get_edit_payload(self, form):
-        return get_attach_firearm_act_certificate_payload(form)
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        FirearmActCertificateAction(
-            FirearmsActDocumentType.SECTION_5,
-            self,
-            form.cleaned_data,
-        ).run()
-
-        return response
+    document_type = FirearmsActDocumentType.SECTION_5
 
 
 class FirearmEditFirearmsAct1968(BaseEditWizardView):
