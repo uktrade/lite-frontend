@@ -43,8 +43,9 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditCategory,
     FirearmEditControlListEntry,
     FirearmEditFirearmsAct1968,
+    FirearmEditFirearmCertificate,
+    FirearmEditLetterOfAuthority,
     FirearmEditSection5FirearmsAct1968,
-    FirearmEditSection5LetterOfAuthority,
     FirearmEditName,
     FirearmEditReplica,
     FirearmEditProductDocumentView,
@@ -157,9 +158,14 @@ urlpatterns = [
         name="firearm_edit_section_5_firearms_act_1968",
     ),
     path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/section-5-letter-of-authority/",
-        FirearmEditSection5LetterOfAuthority.as_view(),
-        name="firearm_edit_section_5_letter_of_authority",
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/firearm-certificate/",
+        FirearmEditFirearmCertificate.as_view(),
+        name="firearm_edit_firearm_certificate",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/letter-of-authority/",
+        FirearmEditLetterOfAuthority.as_view(),
+        name="firearm_edit_letter_of_authority",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/firearms-act-1968/",

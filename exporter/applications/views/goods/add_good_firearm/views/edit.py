@@ -72,7 +72,7 @@ from .decorators import expect_status
 from .exceptions import ServiceError
 from .helpers import get_document_url
 from .initial import (
-    get_attach_section_5_letter_of_authority_initial_data,
+    get_attach_certificate_initial_data,
     get_firearm_act_1968_initial_data,
     get_is_covered_by_section_5_initial_data,
 )
@@ -596,8 +596,23 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         if step == AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5:
             initial.update(get_is_covered_by_section_5_initial_data(self.good["firearm_details"]))
 
+        if step == AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE:
+            initial.update(
+                get_attach_certificate_initial_data(
+                    FirearmsActDocumentType.SECTION_1,
+                    self.application,
+                    self.good,
+                )
+            )
+
         if step == AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY:
-            initial.update(get_attach_section_5_letter_of_authority_initial_data(self.application, self.good))
+            initial.update(
+                get_attach_certificate_initial_data(
+                    FirearmsActDocumentType.SECTION_5,
+                    self.application,
+                    self.good,
+                )
+            )
 
         return initial
 
@@ -699,11 +714,40 @@ class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
         return redirect(self.get_success_url())
 
 
-class FirearmEditSection5LetterOfAuthority(BaseFirearmEditView):
+class FirearmEditFirearmCertificate(BaseFirearmEditView):
+    form_class = FirearmAttachFirearmCertificateForm
+
+    def get_initial(self):
+        return get_attach_certificate_initial_data(
+            FirearmsActDocumentType.SECTION_1,
+            self.application,
+            self.good,
+        )
+
+    def get_edit_payload(self, form):
+        return get_attach_firearm_act_certificate_payload(form)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        FirearmActCertificateAction(
+            FirearmsActDocumentType.SECTION_1,
+            self,
+            form.cleaned_data,
+        ).run()
+
+        return response
+
+
+class FirearmEditLetterOfAuthority(BaseFirearmEditView):
     form_class = FirearmAttachSection5LetterOfAuthorityForm
 
     def get_initial(self):
-        return get_attach_section_5_letter_of_authority_initial_data(self.application, self.good)
+        return get_attach_certificate_initial_data(
+            FirearmsActDocumentType.SECTION_5,
+            self.application,
+            self.good,
+        )
 
     def get_edit_payload(self, form):
         return get_attach_firearm_act_certificate_payload(form)
@@ -749,7 +793,13 @@ class FirearmEditFirearmsAct1968(BaseEditWizardView):
             initial.update(get_firearm_act_1968_initial_data(self.good["firearm_details"]))
 
         if step == AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY:
-            initial.update(get_attach_section_5_letter_of_authority_initial_data(self.application, self.good))
+            initial.update(
+                get_attach_certificate_initial_data(
+                    FirearmsActDocumentType.SECTION_5,
+                    self.application,
+                    self.good,
+                )
+            )
 
         return initial
 

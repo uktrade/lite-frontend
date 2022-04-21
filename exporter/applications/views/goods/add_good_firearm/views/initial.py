@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from exporter.core.constants import FirearmsActDocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     get_firearm_act_document,
@@ -43,11 +42,11 @@ def get_is_covered_by_section_5_initial_data(firearm_details):
     return {}
 
 
-def get_attach_section_5_letter_of_authority_initial_data(application, good):
-    if not _has_firearm_act_document(application, FirearmsActDocumentType.SECTION_5):
+def get_attach_certificate_initial_data(document_type, application, good):
+    if not _has_firearm_act_document(application, document_type):
         return {}
 
-    section_5_document = get_firearm_act_document(application, FirearmsActDocumentType.SECTION_5)
+    document = get_firearm_act_document(application, document_type)
     firearm_details = good["firearm_details"]
     section_certificate_date_of_expiry = firearm_details.get("section_certificate_date_of_expiry")
     if section_certificate_date_of_expiry:
@@ -58,9 +57,9 @@ def get_attach_section_5_letter_of_authority_initial_data(application, good):
         "section_certificate_date_of_expiry": section_certificate_date_of_expiry,
         "section_certificate_missing_reason": firearm_details.get("section_certificate_missing_reason"),
         "file": CurrentFile(
-            section_5_document["document"]["name"],
-            get_document_url(section_5_document),
-            section_5_document["document"]["safe"],
+            document["document"]["name"],
+            get_document_url(document),
+            document["document"]["safe"],
         ),
     }
 

@@ -230,8 +230,33 @@
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-firearm-certificate-date-of-expiry" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_firearm_certificate' application_id good.id %}">Change</a>
                         </dd>
                     </div>
+                    {% if not firearm_details.section_certificate_missing %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Certificate reference number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ firearm_details.section_certificate_number }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a id="change-firearm-certificate-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_firearm_certificate' application_id good.id %}">Change</a>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Certificate date of expiry
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a id="change-firearm-certificate-date-of-expiry" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_firearm_certificate' application_id good.id %}">Change</a>
+                            </dd>
+                        </div>
+                    {% endif %}
                 {% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -278,33 +303,33 @@
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a id="change-section-5-letter-of-authority-file" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_letter_of_authority' application_id good.id %}">Change</a>
+                            <a id="change-section-5-letter-of-authority-file" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_letter_of_authority' application_id good.id %}">Change</a>
                         </dd>
                     </div>
-                {% endif %}
-                {% if not firearm_details.section_certificate_missing %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Certificate reference number
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ firearm_details.section_certificate_number }}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_letter_of_authority' application_id good.id %}">Change</a>
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Certificate date of expiry
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_letter_of_authority' application_id good.id %}">Change</a>
-                        </dd>
-                    </div>
+                    {% if not firearm_details.section_certificate_missing %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Certificate reference number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ firearm_details.section_certificate_number }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_letter_of_authority' application_id good.id %}">Change</a>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Certificate date of expiry
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_letter_of_authority' application_id good.id %}">Change</a>
+                            </dd>
+                        </div>
+                    {% endif %}
                 {% endif %}
             {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
                 <div class="govuk-summary-list__row">
