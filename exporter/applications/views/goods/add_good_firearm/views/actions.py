@@ -11,6 +11,7 @@ from exporter.core.helpers import (
     get_document_data,
     get_firearm_act_document,
     get_rfd_certificate,
+    has_firearm_act_document,
     has_valid_rfd_certificate,
 )
 from exporter.organisation.services import (
@@ -22,25 +23,27 @@ from .decorators import expect_status
 
 
 class FirearmActCertificateAction:
-    def __init__(self, step_name, document_type, wizard):
-        self.step_name = step_name
+    def __init__(self, document_type, view, cleaned_data):
         self.document_type = document_type
-        self.wizard = wizard
-        self.request = wizard.request
-        self.application = wizard.application
-        self.good = wizard.good
+        self.view = view
+        self.request = view.request
+        self.application = view.application
+        self.good = view.good
+        self.cleaned_data = cleaned_data
 
     def has_firearm_act_certificate(self):
-        attach_firearm_certificate = self.wizard.get_cleaned_data_for_step(self.step_name)
+        attach_firearm_certificate = self.cleaned_data
         return bool(attach_firearm_certificate.get("file"))
 
-    def is_new_firearm_act_certificate(self):
-        attach_firearm_certificate = self.wizard.get_cleaned_data_for_step(self.step_name)
-        file = attach_firearm_certificate["file"]
+    def has_existing_firearm_act_certificate(self):
+        return has_firearm_act_document(self.application, self.document_type)
+
+    def has_replacement_file(self):
+        file = self.cleaned_data["file"]
         return not isinstance(file, CurrentFile)
 
     def get_firearm_act_certificate_payload(self):
-        data = self.wizard.get_cleaned_data_for_step(self.step_name)
+        data = self.cleaned_data
         certificate = data["file"]
         payload = {
             **get_document_data(certificate),
@@ -67,7 +70,7 @@ class FirearmActCertificateAction:
         )
 
     def get_organisation_document_payload(self):
-        firearm_certificate_cleaned_data = self.wizard.get_cleaned_data_for_step(self.step_name)
+        firearm_certificate_cleaned_data = self.cleaned_data
         expiry_date = firearm_certificate_cleaned_data["section_certificate_date_of_expiry"]
         reference_code = firearm_certificate_cleaned_data["section_certificate_number"]
 
@@ -93,14 +96,34 @@ class FirearmActCertificateAction:
             data=document_payload,
         )
 
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting existing firearm act document",
+        "Unexpected error editing firearm",
+    )
+    def delete_existing_organisation_firearm_act_certificate(self):
+        certificate_data = get_firearm_act_document(self.application, self.document_type)
+        status_code = delete_document_on_organisation(
+            self.request,
+            organisation_id=certificate_data["organisation"],
+            document_id=certificate_data["id"],
+        )
+        return {}, status_code
+
     def run(self):
         if not self.has_firearm_act_certificate():
             return
 
-        if self.is_new_firearm_act_certificate():
+        if not self.has_existing_firearm_act_certificate():
             self.post_firearm_act_certificate()
-        else:
+            return
+
+        if not self.has_replacement_file():
             self.update_firearm_act_certificate()
+            return
+
+        self.delete_existing_organisation_firearm_act_certificate()
+        self.post_firearm_act_certificate()
 
 
 def delete_existing_organisation_rfd_certificate(request, application):

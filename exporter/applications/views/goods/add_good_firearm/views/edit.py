@@ -1,8 +1,7 @@
 import logging
 
-from datetime import date, datetime
+from datetime import date
 
-from django.http import HttpResponse
 from deepmerge import always_merger
 from http import HTTPStatus
 
@@ -23,9 +22,7 @@ from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
     get_document_data,
-    get_firearm_act_document,
     get_rfd_certificate,
-    has_firearm_act_document as _has_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     str_to_bool,
 )
@@ -73,7 +70,11 @@ from .conditionals import (
 from .constants import AddGoodFirearmSteps
 from .decorators import expect_status
 from .exceptions import ServiceError
-from .initial import get_is_covered_by_section_5_initial_data
+from .helpers import get_document_url
+from .initial import (
+    get_attach_section_5_letter_of_authority_initial_data,
+    get_is_covered_by_section_5_initial_data,
+)
 from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
     FirearmsActPayloadBuilder,
@@ -82,6 +83,7 @@ from .payloads import (
     FirearmEditPvGradingPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     FirearmEditSection5FirearmsAct1968PayloadBuilder,
+    get_attach_firearm_act_certificate_payload,
     get_cleaned_data,
     get_firearm_details_cleaned_data,
     get_pv_grading_good_payload,
@@ -555,14 +557,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
 
         return ctx
 
-    def get_document_url(self, document):
-        return reverse(
-            "organisation:document",
-            kwargs={
-                "pk": document["id"],
-            },
-        )
-
     def get_attach_rfd_certificate_initial_data(self):
         rfd_certificate = get_rfd_certificate(self.application)
         if not rfd_certificate:
@@ -573,7 +567,7 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             "reference_code": rfd_certificate["reference_code"],
             "file": CurrentFile(
                 rfd_certificate["document"]["name"],
-                self.get_document_url(rfd_certificate),
+                get_document_url(rfd_certificate),
                 rfd_certificate["document"]["safe"],
             ),
         }
@@ -601,27 +595,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             "firearms_act_section": firearm_details["firearms_act_section"],
         }
 
-    def get_attach_section_5_letter_of_authority_initial_data(self):
-        if not _has_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5):
-            return {}
-
-        section_5_document = get_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5)
-        firearm_details = self.good["firearm_details"]
-        section_certificate_date_of_expiry = firearm_details.get("section_certificate_date_of_expiry")
-        if section_certificate_date_of_expiry:
-            section_certificate_date_of_expiry = datetime.fromisoformat(section_certificate_date_of_expiry).date()
-        return {
-            "section_certificate_missing": firearm_details.get("section_certificate_missing"),
-            "section_certificate_number": firearm_details.get("section_certificate_number"),
-            "section_certificate_date_of_expiry": section_certificate_date_of_expiry,
-            "section_certificate_missing_reason": firearm_details.get("section_certificate_missing_reason"),
-            "file": CurrentFile(
-                section_5_document["document"]["name"],
-                self.get_document_url(section_5_document),
-                section_5_document["document"]["safe"],
-            ),
-        }
-
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
 
@@ -638,7 +611,7 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             initial.update(get_is_covered_by_section_5_initial_data(self.good["firearm_details"]))
 
         if step == AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY:
-            initial.update(self.get_attach_section_5_letter_of_authority_initial_data())
+            initial.update(get_attach_section_5_letter_of_authority_initial_data(self.application, self.good))
 
         return initial
 
@@ -672,21 +645,21 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_1,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_2,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                 FirearmsActDocumentType.SECTION_5,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
         except ServiceError as e:
             return self.handle_service_error(e)
@@ -730,11 +703,32 @@ class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
             self.edit_firearm(self.good["id"], form_dict)
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                 FirearmsActDocumentType.SECTION_5,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
         except ServiceError as e:
             return self.handle_service_error(e)
 
         return redirect(self.get_success_url())
+
+
+class FirearmEditSection5LetterOfAuthority(BaseFirearmEditView):
+    form_class = FirearmAttachSection5LetterOfAuthorityForm
+
+    def get_initial(self):
+        return get_attach_section_5_letter_of_authority_initial_data(self.application, self.good)
+
+    def get_edit_payload(self, form):
+        return get_attach_firearm_act_certificate_payload(form)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        FirearmActCertificateAction(
+            FirearmsActDocumentType.SECTION_5,
+            self,
+            form.cleaned_data,
+        ).run()
+
+        return response

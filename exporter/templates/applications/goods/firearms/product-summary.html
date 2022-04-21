@@ -274,6 +274,7 @@
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-5-letter-of-authority-file" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_letter_of_authority' application_id good.id %}">Change</a>
                         </dd>
                     </div>
                 {% endif %}
@@ -286,6 +287,7 @@
                             {{ firearm_details.section_certificate_number }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_letter_of_authority' application_id good.id %}">Change</a>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -296,6 +298,7 @@
                             {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_letter_of_authority' application_id good.id %}">Change</a>
                         </dd>
                     </div>
                 {% endif %}
