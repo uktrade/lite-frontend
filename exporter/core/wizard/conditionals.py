@@ -20,6 +20,9 @@ class Not(BaseConditional):
     def __call__(self, wizard):
         return not self.conditional(wizard)
 
+    def __repr__(self):
+        return f"<Not: {self.conditional}>"
+
 
 class And(BaseConditional):
     def __init__(self, left, right):
@@ -28,6 +31,9 @@ class And(BaseConditional):
 
     def __call__(self, wizard):
         return self.left(wizard) and self.right(wizard)
+
+    def __repr__(self):
+        return f"<And: {self.left} & {self.right}>"
 
 
 class Or(BaseConditional):
@@ -38,6 +44,9 @@ class Or(BaseConditional):
     def __call__(self, wizard):
         return self.left(wizard) or self.right(wizard)
 
+    def __repr__(self):
+        return f"<Or: {self.left} | {self.right}>"
+
 
 class C(BaseConditional):
     def __init__(self, conditional_func):
@@ -45,6 +54,9 @@ class C(BaseConditional):
 
     def __call__(self, wizard):
         return self.conditional_func(wizard)
+
+    def __repr__(self):
+        return f"<C: {self.conditional_func.__name__}>"
 
 
 class Flag(BaseConditional):
@@ -56,3 +68,6 @@ class Flag(BaseConditional):
         if self.key:
             return getattr(self.flag, self.key)
         return self.flag
+
+    def __repr__(self):
+        return f"<Flag: {self.flag} {self.key}>"
