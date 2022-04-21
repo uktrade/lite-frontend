@@ -6,7 +6,10 @@ from exporter.core.helpers import (
     get_firearm_act_document,
     has_firearm_act_document as _has_firearm_act_document,
 )
-from exporter.goods.forms.firearms import FirearmSection5Form
+from exporter.goods.forms.firearms import (
+    FirearmFirearmAct1968Form,
+    FirearmSection5Form,
+)
 
 from .helpers import get_document_url
 
@@ -37,6 +40,8 @@ def get_is_covered_by_section_5_initial_data(firearm_details):
             "not_covered_explanation": is_covered_by_firearm_act_section_one_two_or_five_explanation,
         }
 
+    return {}
+
 
 def get_attach_section_5_letter_of_authority_initial_data(application, good):
     if not _has_firearm_act_document(application, FirearmsActDocumentType.SECTION_5):
@@ -57,4 +62,25 @@ def get_attach_section_5_letter_of_authority_initial_data(application, good):
             get_document_url(section_5_document),
             section_5_document["document"]["safe"],
         ),
+    }
+
+
+def get_firearm_act_1968_initial_data(firearm_details):
+    is_covered_by_firearm_act_section_one_two_or_five = firearm_details.get(
+        "is_covered_by_firearm_act_section_one_two_or_five"
+    )
+    if not is_covered_by_firearm_act_section_one_two_or_five:
+        return {}
+
+    if is_covered_by_firearm_act_section_one_two_or_five == "No":
+        return {}
+
+    if is_covered_by_firearm_act_section_one_two_or_five == "Unsure":
+        return {
+            "firearms_act_section": FirearmFirearmAct1968Form.SectionChoices.DONT_KNOW,
+            "not_covered_explanation": firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"],
+        }
+
+    return {
+        "firearms_act_section": firearm_details["firearms_act_section"],
     }
