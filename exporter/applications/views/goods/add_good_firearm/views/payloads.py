@@ -160,6 +160,9 @@ class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_firearm_details_cleaned_data,
     }
 
 

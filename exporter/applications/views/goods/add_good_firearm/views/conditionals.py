@@ -104,3 +104,8 @@ def is_product_made_before_1938(wizard):
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938
     )
     return is_made_before_1938_cleaned_data.get("is_made_before_1938", False)
+
+
+def is_onward_exported(wizard):
+    is_onward_exported_data = wizard.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
+    return is_onward_exported_data.get("is_onward_exported", False)

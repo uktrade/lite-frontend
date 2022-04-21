@@ -864,3 +864,129 @@ class FirearmYearOfManufactureForm(BaseFirearmForm):
             self.add_error("year_of_manufacture", "The year must be before 1938")
 
         return self.cleaned_data
+
+
+class FirearmOnwardExportedForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Will the product be onward exported to any additional countries?"
+
+    is_onward_exported = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product will be onward exported to additional countries",
+        },
+    )
+
+    def get_layout_fields(self):
+        return (
+            HTML.p(
+                "Tell us if the item will be exported again, beyond its first destination."
+                "This includes when the product has been incorporated into another item."
+            ),
+            "is_onward_exported",
+            HTML.details(
+                "Help with incorporated products",
+                render_to_string("goods/forms/firearms/help_with_incorporated_products.html"),
+            ),
+        )
+
+
+class FirearmOnwardAlteredProcessedForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Will the item be altered or processed before it is exported again?"
+
+    is_onward_altered_processed = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No, it will be onward exported in its original state"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the item will be altered or processed before it is exported again",
+        },
+    )
+
+    is_onward_altered_processed_comments = forms.CharField(
+        widget=forms.Textarea,
+        label="Explain how the product will be processed or altered",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_onward_altered_processed",
+                ConditionalQuestion("Yes", "is_onward_altered_processed_comments"),
+                "No, it will be onward exported in its original state",
+            ),
+            HTML.details(
+                "Help with altered or processed products",
+                render_to_string("goods/forms/firearms/help_with_altered_processed_products.html"),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_onward_altered_processed = cleaned_data.get("is_onward_altered_processed")
+        is_onward_altered_processed_comments = cleaned_data.get("is_onward_altered_processed_comments")
+
+        if is_onward_altered_processed and not is_onward_altered_processed_comments:
+            self.add_error("is_onward_altered_processed_comments", "Enter how the product will be altered or processed")
+
+        return cleaned_data
+
+
+class FirearmOnwardIncorporatedForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Will the product be incorporated into another item before it is onward exported?"
+
+    is_onward_incorporated = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product will be incorporated into another item before it is onward exported",
+        },
+    )
+
+    is_onward_incorporated_comments = forms.CharField(
+        widget=forms.Textarea,
+        label="Describe what you are incorporating the product into",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            HTML.p("For example, will it be integrated into a higher system, platform or software?"),
+            ConditionalRadios(
+                "is_onward_incorporated",
+                ConditionalQuestion("Yes", "is_onward_incorporated_comments"),
+                "No",
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_onward_incorporated = cleaned_data.get("is_onward_incorporated")
+        is_onward_incorporated_comments = cleaned_data.get("is_onward_incorporated_comments")
+
+        if is_onward_incorporated and not is_onward_incorporated_comments:
+            self.add_error(
+                "is_onward_incorporated_comments", "Enter a description of what you are incorporating the product into"
+            )
+
+        return cleaned_data

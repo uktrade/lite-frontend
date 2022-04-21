@@ -48,6 +48,9 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
+    FirearmOnwardExportedForm,
+    FirearmOnwardAlteredProcessedForm,
+    FirearmOnwardIncorporatedForm,
 )
 from exporter.goods.services import (
     post_firearm,
@@ -68,6 +71,7 @@ from .conditionals import (
     is_pv_graded,
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
+    is_onward_exported,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
@@ -379,9 +383,16 @@ class AddGoodFirearmToApplication(
     form_list = [
         (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
         (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
     ]
 
-    condition_dict = {AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938)}
+    condition_dict = {
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938),
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: C(is_onward_exported),
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
+    }
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -407,7 +418,6 @@ class AddGoodFirearmToApplication(
             raise Http404
 
         # Any modifications to firearm_details can be done here
-
         return good
 
     def get_payload(self, form_dict):
