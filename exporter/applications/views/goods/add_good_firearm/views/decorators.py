@@ -10,11 +10,13 @@ def expect_status(expected_status, logger_message, error_message):
             response, status_code = f(*args, **kwargs)
             if status_code != expected_status:
                 raise ServiceError(
+                    logger_message,
                     status_code,
                     response,
                     f"{logger_message} - response was: %s - %s",
                     error_message,
                 )
+            return response, status_code
 
         return wrapper
 

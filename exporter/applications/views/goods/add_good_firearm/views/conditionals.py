@@ -40,10 +40,10 @@ def has_application_rfd_certificate(wizard):
 
 
 def has_firearm_act_document(document_type):
-    def check(wizard):
+    def check_has_firearm_act_document(wizard):
         return _has_firearm_act_document(wizard.application, document_type)
 
-    return check
+    return check_has_firearm_act_document
 
 
 def is_rfd_certificate_invalid(wizard):
@@ -81,9 +81,13 @@ def is_product_covered_by_firearm_act_section(section):
         if firearms_act_section == section:
             return True
 
-        is_covered_by_section_5_cleaned_data = wizard.get_cleaned_data_for_step(
-            AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5
-        )
+        try:
+            is_covered_by_section_5_cleaned_data = wizard.get_cleaned_data_for_step(
+                AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5
+            )
+        except TypeError:
+            return False
+
         if is_covered_by_section_5_cleaned_data and section == FirearmsActSections.SECTION_5:
             return (
                 is_covered_by_section_5_cleaned_data.get("is_covered_by_section_5")

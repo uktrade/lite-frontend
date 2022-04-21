@@ -1,5 +1,4 @@
 import logging
-import requests
 
 from deepmerge import always_merger
 from http import HTTPStatus
@@ -8,13 +7,11 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.functional import cached_property
 
 from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
 
 from exporter.applications.services import (
-    get_application,
     post_additional_document,
     post_firearm_good_on_application,
 )
@@ -24,10 +21,8 @@ from exporter.core.constants import (
     FirearmsActSections,
 )
 from exporter.core.helpers import (
-    convert_api_date_string_to_date,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     get_document_data,
-    get_organisation_documents,
     get_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
@@ -55,12 +50,12 @@ from exporter.goods.forms.firearms import (
     FirearmYearOfManufactureForm,
 )
 from exporter.goods.services import (
-    get_good,
     post_firearm,
     post_good_documents,
 )
 from exporter.organisation.services import delete_document_on_organisation
 
+from .actions import FirearmActCertificateAction
 from .conditionals import (
     has_application_rfd_certificate,
     has_firearm_act_document,
@@ -74,11 +69,15 @@ from .conditionals import (
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
 )
-from .actions import PostFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
+from .decorators import expect_status
 from .exceptions import ServiceError
-from .mixins import ApplicationMixin
-from .payloads import AddGoodFirearmPayloadBuilder, AddGoodFirearmToApplicationPayloadBuilder
+from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
+from .payloads import (
+    AddGoodFirearmPayloadBuilder,
+    AddGoodFirearmToApplicationPayloadBuilder,
+    FirearmsActPayloadBuilder,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -99,8 +98,9 @@ def get_product_document(good):
 
 
 class AddGoodFirearm(
-    ApplicationMixin,
     LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
     BaseSessionWizardView,
 ):
     form_list = [
@@ -151,12 +151,6 @@ class AddGoodFirearm(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
 
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
-
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
 
@@ -184,44 +178,14 @@ class AddGoodFirearm(
 
         return kwargs
 
-    def has_skipped_firearms_attach_step(self, form_dict, firearm_details, section_value, attach_step_name):
-        firearms_act_section = firearm_details["firearms_act_section"]
-        return firearms_act_section == section_value and attach_step_name not in form_dict
-
     def get_payload(self, form_dict):
-        payload = AddGoodFirearmPayloadBuilder().build(form_dict)
+        good_payload = AddGoodFirearmPayloadBuilder().build(form_dict)
+        firearms_act_payload = FirearmsActPayloadBuilder(
+            self.application,
+            good_payload["firearm_details"],
+        ).build(form_dict)
 
-        firearm_details = payload["firearm_details"]
-        if firearm_details.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
-            for section_value, attach_step_name, document_type in (
-                (
-                    FirearmsActSections.SECTION_1,
-                    AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
-                    FirearmsActDocumentType.SECTION_1,
-                ),
-                (
-                    FirearmsActSections.SECTION_2,
-                    AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
-                    FirearmsActDocumentType.SECTION_2,
-                ),
-                (
-                    FirearmsActSections.SECTION_5,
-                    AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
-                    FirearmsActDocumentType.SECTION_5,
-                ),
-            ):
-                if self.has_skipped_firearms_attach_step(form_dict, firearm_details, section_value, attach_step_name):
-                    certificate = get_organisation_documents(self.application)[document_type]
-                    firearm_details.update(
-                        {
-                            "section_certificate_missing": False,
-                            "section_certificate_number": certificate["reference_code"],
-                            "section_certificate_date_of_expiry": convert_api_date_string_to_date(
-                                certificate["expiry_date"]
-                            ).isoformat(),
-                        }
-                    )
-                    break
+        payload = always_merger.merge(good_payload, firearms_act_payload)
 
         return payload
 
@@ -264,21 +228,17 @@ class AddGoodFirearm(
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating firearm",
+        "Unexpected error adding firearm",
+    )
     def post_firearm(self, form_dict):
         payload = self.get_payload(form_dict)
-        api_resp_data, status_code = post_firearm(
+        return post_firearm(
             self.request,
             payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error creating firearm - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
-
-        self.good = api_resp_data["good"]
 
     def has_existing_valid_organisation_rfd_certificate(self, application):
         if not has_valid_organisation_rfd_certificate(application):
@@ -298,6 +258,11 @@ class AddGoodFirearm(
         )
         return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid") is False
 
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting existing rfd certificate to application",
+        "Unexpected error adding firearm",
+    )
     def delete_existing_organisation_rfd_certificate(self, application):
         organisation_rfd_certificate_data = get_rfd_certificate(application)
         status_code = delete_document_on_organisation(
@@ -305,18 +270,17 @@ class AddGoodFirearm(
             organisation_id=organisation_rfd_certificate_data["organisation"],
             document_id=organisation_rfd_certificate_data["id"],
         )
-        if status_code != HTTPStatus.NO_CONTENT:
-            raise ServiceError(
-                status_code,
-                {},
-                "Error deleting existing rfd certificate to application - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
+        return {}, status_code
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error attaching existing rfd certificate to application",
+        "Unexpected error adding firearm",
+    )
     def attach_rfd_certificate_to_application(self, application):
         organisation_rfd_certificate_data = get_rfd_certificate(application)
         document = organisation_rfd_certificate_data["document"]
-        api_resp_data, status_code = post_additional_document(
+        return post_additional_document(
             self.request,
             pk=application["id"],
             json={
@@ -328,43 +292,32 @@ class AddGoodFirearm(
                 "description": "Registered firearm dealer certificate",
             },
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error attaching existing rfd certificate to application - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error with rfd certificate when creating firearm",
+        "Unexpected error adding firearm",
+    )
     def post_rfd_certificate(self, application):
         rfd_certificate_payload = self.get_rfd_certificate_payload()
-        api_resp_data, status_code = post_additional_document(
+        return post_additional_document(
             request=self.request,
             pk=application["id"],
             json=rfd_certificate_payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error rfd certificate when creating firearm - response was: %s - %s",
-                "Unexpected error adding firearm",
-            )
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error with product document when creating firearm",
+        "Unexpected error adding firearm",
+    )
     def post_product_documentation(self, good):
         document_payload = self.get_product_document_payload()
-        api_resp_data, status_code = post_good_documents(
+        return post_good_documents(
             request=self.request,
             pk=good["id"],
             json=document_payload,
         )
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                status_code,
-                api_resp_data,
-                "Error product document when creating firearm - response was: %s - %s",
-                "Unexpected error adding document to firearm",
-            )
 
     def handle_service_error(self, service_error):
         logger.error(
@@ -373,11 +326,14 @@ class AddGoodFirearm(
             service_error.response,
             exc_info=True,
         )
+        if settings.DEBUG:
+            raise service_error
         return error_page(self.request, service_error.user_message)
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            self.post_firearm(form_dict)
+            good, _ = self.post_firearm(form_dict)
+            self.good = good["good"]
 
             if self.has_existing_valid_organisation_rfd_certificate(self.application):
                 self.attach_rfd_certificate_to_application(self.application)
@@ -387,19 +343,19 @@ class AddGoodFirearm(
                 if self.has_organisation_rfd_certificate_data():
                     self.post_rfd_certificate(self.application)
 
-            PostFirearmActCertificateAction(
+            FirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_1,
                 self,
             ).run()
 
-            PostFirearmActCertificateAction(
+            FirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_2,
                 self,
             ).run()
 
-            PostFirearmActCertificateAction(
+            FirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                 FirearmsActDocumentType.SECTION_5,
                 self,
@@ -413,41 +369,19 @@ class AddGoodFirearm(
         return redirect(self.get_success_url())
 
 
-class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
+class AddGoodFirearmToApplication(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodMixin,
+    BaseSessionWizardView,
+):
     form_list = [
         (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
         (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
     ]
 
     condition_dict = {AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938)}
-
-    @cached_property
-    def application_id(self):
-        return str(self.kwargs["pk"])
-
-    @cached_property
-    def good_id(self):
-        return str(self.kwargs["good_pk"])
-
-    @cached_property
-    def good(self):
-        try:
-            good = get_good(self.request, self.good_id, full_detail=True)[0]
-        except requests.exceptions.HTTPError:
-            raise Http404
-
-        return good
-
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404
-
-        try:
-            self.application = get_application(self.request, self.application_id)
-        except requests.exceptions.HTTPError:
-            raise Http404
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -488,6 +422,7 @@ class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
         api_resp_data, status_code = post_firearm_good_on_application(self.request, self.application["id"], payload)
         if status_code != HTTPStatus.CREATED:
             raise ServiceError(
+                "Error adding firearm to application",
                 status_code,
                 api_resp_data,
                 "Error adding firearm to application - response was: %s - %s",
@@ -501,13 +436,14 @@ class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
             service_error.response,
             exc_info=True,
         )
+        if settings.DEBUG:
+            raise service_error
         return error_page(self.request, service_error.user_message)
 
     def done(self, form_list, form_dict, **kwargs):
-
         try:
             self.post_firearm_to_application(form_dict)
         except ServiceError as e:
             return self.handle_service_error(e)
 
-        return redirect(self.get_success_url(self.application_id, self.good_id))
+        return redirect(self.get_success_url(self.application["id"], self.good["id"]))

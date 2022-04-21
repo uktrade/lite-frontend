@@ -686,6 +686,9 @@ class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
     file = forms.FileField(
         label="",
         required=False,
+        widget=PotentiallyUnsafeClearableFileInput(
+            force_required=True,
+        ),
     )
 
     section_certificate_number = forms.CharField(

@@ -189,6 +189,7 @@
                     {{ is_user_rfd|yesno|title }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-rfd-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_registered_firearms_dealer' application_id good.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
@@ -208,13 +209,20 @@
                             Upload your firearm certificate
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% with document=organisation_documents.section_one_certificate %}
-                                {% if document.document.safe %}
-                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
-                                {% else %}
-                                    {{ document.document.name }}
-                                {% endif %}
-                            {% endwith %}
+                            {% if firearm_details.section_certificate_missing %}
+                                I do not have a firearm certificate
+                                <div class="govuk-hint">
+                                    {{ firearm_details.section_certificate_missing_reason }}
+                                </div>
+                            {% else %}
+                                {% with document=organisation_documents.section_one_certificate %}
+                                    {% if document.document.safe %}
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                                    {% else %}
+                                        {{ document.document.name }}
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                         </dd>
@@ -225,13 +233,20 @@
                             Upload your shotgun certificate
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% with document=organisation_documents.section_two_certificate %}
-                                {% if document.document.safe %}
-                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
-                                {% else %}
-                                    {{ document.document.name }}
-                                {% endif %}
-                            {% endwith %}
+                            {% if firearm_details.section_certificate_missing %}
+                                I do not have a shotgun certificate
+                                <div class="govuk-hint">
+                                    {{ firearm_details.section_certificate_missing_reason }}
+                                </div>
+                            {% else %}
+                                {% with document=organisation_documents.section_two_certificate %}
+                                    {% if document.document.safe %}
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                                    {% else %}
+                                        {{ document.document.name }}
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                         </dd>
@@ -242,38 +257,47 @@
                             Upload your section 5 letter of authority
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% with document=organisation_documents.section_five_certificate %}
-                                {% if document.document.safe %}
-                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
-                                {% else %}
-                                    {{ document.document.name }}
-                                {% endif %}
-                            {% endwith %}
+                            {% if firearm_details.section_certificate_missing %}
+                                I do not have a section 5 letter of authority
+                                <div class="govuk-hint">
+                                    {{ firearm_details.section_certificate_missing_reason }}
+                                </div>
+                            {% else %}
+                                {% with document=organisation_documents.section_five_certificate %}
+                                    {% if document.document.safe %}
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                                    {% else %}
+                                        {{ document.document.name }}
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                         </dd>
                     </div>
                 {% endif %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Certificate reference number
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ firearm_details.section_certificate_number }}
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Certificate date of expiry
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                    </dd>
-                </div>
+                {% if not firearm_details.section_certificate_missing %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Certificate reference number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ firearm_details.section_certificate_number }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Certificate date of expiry
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+                {% endif %}
             {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
