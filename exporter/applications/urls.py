@@ -42,6 +42,7 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditCalibre,
     FirearmEditCategory,
     FirearmEditControlListEntry,
+    FirearmEditSection5FirearmsAct1968,
     FirearmEditName,
     FirearmEditReplica,
     FirearmEditProductDocumentView,
@@ -147,6 +148,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/registered-firearms-dealer/",
         FirearmEditRegisteredFirearmsDealer.as_view(),
         name="firearm_edit_registered_firearms_dealer",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/firearms-act-1968/",
+        FirearmEditSection5FirearmsAct1968.as_view(),
+        name="firearm_edit_section_5_firearms_act_1968",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
