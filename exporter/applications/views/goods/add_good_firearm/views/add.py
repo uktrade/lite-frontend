@@ -55,7 +55,7 @@ from exporter.goods.services import (
 )
 from exporter.organisation.services import delete_document_on_organisation
 
-from .actions import CreateOrUpdateFirearmActCertificateAction
+from .actions import FirearmActCertificateAction
 from .conditionals import (
     has_application_rfd_certificate,
     has_firearm_act_document,
@@ -343,19 +343,19 @@ class AddGoodFirearm(
                 if self.has_organisation_rfd_certificate_data():
                     self.post_rfd_certificate(self.application)
 
-            CreateOrUpdateFirearmActCertificateAction(
+            FirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_1,
                 self,
             ).run()
 
-            CreateOrUpdateFirearmActCertificateAction(
+            FirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_2,
                 self,
             ).run()
 
-            CreateOrUpdateFirearmActCertificateAction(
+            FirearmActCertificateAction(
                 AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                 FirearmsActDocumentType.SECTION_5,
                 self,

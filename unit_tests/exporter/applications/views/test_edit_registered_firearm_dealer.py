@@ -11,6 +11,7 @@ from exporter.core.helpers import convert_api_date_string_to_date, decompose_dat
 from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmAttachSection5LetterOfAuthorityForm,
+    FirearmFirearmAct1968Form,
     FirearmRegisteredFirearmsDealerForm,
     FirearmSection5Form,
 )
@@ -64,12 +65,14 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
         json={},
     )
 
-    post_to_step(
+    response = post_to_step(
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
         {"is_registered_firearm_dealer": True},
     )
+    assert isinstance(response.context["form"], FirearmAttachRFDCertificate)
+
     rfd_expiry_date = datetime.date.today() + datetime.timedelta(days=5)
-    post_to_step(
+    response = post_to_step(
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE,
         {
             "reference_code": "12345",
@@ -77,12 +80,16 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
             **decompose_date("expiry_date", rfd_expiry_date),
         },
     )
-    post_to_step(
+    assert isinstance(response.context["form"], FirearmSection5Form)
+
+    response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
         {
             "is_covered_by_section_5": "yes",
         },
     )
+    assert isinstance(response.context["form"], FirearmAttachSection5LetterOfAuthorityForm)
+
     section_5_letter_expiry_date = datetime.date.today() + datetime.timedelta(days=10)
     response = post_to_step(
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
@@ -331,3 +338,49 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
         "reference_code": "67890",
         "document_type": "rfd-certificate",
     }
+
+
+def test_edit_registered_firearms_dealer_rfd_to_not_rfd(
+    data_standard_case,
+    application_with_organisation_and_application_rfd_document,
+    mock_good_get,
+    mock_good_put,
+    product_summary_url,
+    requests_mock,
+    post_to_step,
+    good_id,
+    rfd_certificate,
+):
+    delete_rfd_organisation_document_matcher = requests_mock.delete(
+        f"/organisations/{rfd_certificate['organisation']}/document/{rfd_certificate['id']}/",
+        status_code=204,
+        json={},
+    )
+
+    delete_rfd_application_document_matcher = requests_mock.delete(
+        f"/applications/{data_standard_case['case']['id']}/documents/{rfd_certificate['document']['id']}/",
+        status_code=204,
+        json={},
+    )
+
+    response = post_to_step(
+        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
+        {"is_registered_firearm_dealer": False},
+    )
+    form = response.context["form"]
+    assert isinstance(form, FirearmFirearmAct1968Form)
+    assert form.initial == {}
+
+    response = post_to_step(
+        AddGoodFirearmSteps.FIREARM_ACT_1968,
+        {
+            "firearms_act_section": "dont_know",
+            "not_covered_explanation": "firearms act not covered explanation",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == product_summary_url
+
+    assert delete_rfd_organisation_document_matcher.called_once
+    assert delete_rfd_application_document_matcher.called_once

@@ -21,7 +21,7 @@ from exporter.organisation.services import (
 from .decorators import expect_status
 
 
-class CreateOrUpdateFirearmActCertificateAction:
+class FirearmActCertificateAction:
     def __init__(self, step_name, document_type, wizard):
         self.step_name = step_name
         self.document_type = document_type
@@ -101,6 +101,68 @@ class CreateOrUpdateFirearmActCertificateAction:
             self.post_firearm_act_certificate()
         else:
             self.update_firearm_act_certificate()
+
+
+def delete_existing_organisation_rfd_certificate(request, application):
+    organisation_rfd_certificate_data = get_rfd_certificate(application)
+    status_code = delete_document_on_organisation(
+        request,
+        organisation_id=organisation_rfd_certificate_data["organisation"],
+        document_id=organisation_rfd_certificate_data["id"],
+    )
+    return {}, status_code
+
+
+def delete_existing_application_rfd_certificate(request, application):
+    organisation_rfd_certificate_data = get_rfd_certificate(application)
+    document = organisation_rfd_certificate_data["document"]
+    status_code = delete_additional_document(
+        request,
+        pk=application["id"],
+        doc_pk=document["id"],
+    )
+    return {}, status_code
+
+
+class IsRfdAction:
+    def __init__(self, step_name, wizard):
+        self.wizard = wizard
+        self.request = wizard.request
+        self.application = wizard.application
+        self.step_name = step_name
+
+    def is_registered_firearm_dealer(self):
+        cleaned_data = self.wizard.get_cleaned_data_for_step(self.step_name)
+        return cleaned_data["is_registered_firearm_dealer"]
+
+    def has_existing_certificate(self):
+        return has_valid_rfd_certificate(self.application)
+
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting existing rfd certificate on organisation",
+        "Unexpected error editing firearm",
+    )
+    def delete_existing_organisation_rfd_certificate(self):
+        return delete_existing_organisation_rfd_certificate(self.request, self.application)
+
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting existing rfd certificate on application",
+        "Unexpected error editing firearm",
+    )
+    def delete_existing_application_rfd_certificate(self):
+        return delete_existing_application_rfd_certificate(self.request, self.application)
+
+    def run(self):
+        if self.is_registered_firearm_dealer():
+            return
+
+        if not self.has_existing_certificate():
+            return
+
+        self.delete_existing_organisation_rfd_certificate()
+        self.delete_existing_application_rfd_certificate()
 
 
 class RfdCertificateAction:
@@ -185,13 +247,7 @@ class RfdCertificateAction:
         "Unexpected error adding firearm",
     )
     def delete_existing_organisation_rfd_certificate(self):
-        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
-        status_code = delete_document_on_organisation(
-            self.request,
-            organisation_id=organisation_rfd_certificate_data["organisation"],
-            document_id=organisation_rfd_certificate_data["id"],
-        )
-        return {}, status_code
+        return delete_existing_organisation_rfd_certificate(self.request, self.application)
 
     @expect_status(
         HTTPStatus.NO_CONTENT,
@@ -199,14 +255,7 @@ class RfdCertificateAction:
         "Unexpected error adding firearm",
     )
     def delete_existing_application_rfd_certificate(self):
-        organisation_rfd_certificate_data = get_rfd_certificate(self.application)
-        document = organisation_rfd_certificate_data["document"]
-        status_code = delete_additional_document(
-            self.request,
-            pk=self.application["id"],
-            doc_pk=document["id"],
-        )
-        return {}, status_code
+        return delete_existing_application_rfd_certificate(self.request, self.application)
 
     def run(self):
         if not self.has_organisation_rfd_certificate_data():

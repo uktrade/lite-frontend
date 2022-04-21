@@ -148,7 +148,10 @@ class FirearmEditPvGradingPayloadBuilder(MergingPayloadBuilder):
 class FirearmEditRegisteredFirearmsDealerPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
+        AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
+        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
     }
 
