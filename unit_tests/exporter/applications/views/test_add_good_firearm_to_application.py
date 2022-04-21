@@ -3,7 +3,12 @@ import pytest
 from django.urls import reverse
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
-from exporter.goods.forms.firearms import FirearmYearOfManufactureForm
+from exporter.goods.forms.firearms import (
+    FirearmYearOfManufactureForm,
+    FirearmOnwardExportedForm,
+    FirearmOnwardAlteredProcessedForm,
+    FirearmOnwardIncorporatedForm,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -88,9 +93,8 @@ def test_add_firearm_to_application_product_not_made_before_1938_step(
         {"is_made_before_1938": False},
     )
 
-    assert response.status_code == 302
-    expected_good_data["firearm_details"]["is_made_before_1938"] = False
-    assert requests_mock.last_request.json() == expected_good_data
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
 
 
 def test_add_firearm_to_application_year_of_manufacture_step(
@@ -106,7 +110,27 @@ def test_add_firearm_to_application_year_of_manufacture_step(
         {"year_of_manufacture": 1937},
     )
 
-    assert response.status_code == 302
-    expected_good_data["firearm_details"]["is_made_before_1938"] = True
-    expected_good_data["firearm_details"]["year_of_manufacture"] = 1937
-    assert requests_mock.last_request.json() == expected_good_data
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+
+
+def test_add_firearm_to_application_onward_exported_step(requests_mock, expected_good_data, goto_step, post_to_step):
+    goto_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        {"is_onward_exported": True},
+    )
+    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
+    )
+    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
+    )
+
+    assert response.status_code == 200

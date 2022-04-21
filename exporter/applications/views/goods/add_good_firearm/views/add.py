@@ -53,6 +53,9 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
+    FirearmOnwardExportedForm,
+    FirearmOnwardAlteredProcessedForm,
+    FirearmOnwardIncorporatedForm,
 )
 from exporter.goods.services import (
     get_good,
@@ -73,6 +76,7 @@ from .conditionals import (
     is_pv_graded,
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
+    is_onward_exported,
 )
 from .actions import PostFirearmActCertificateAction
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
@@ -418,9 +422,16 @@ class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
         (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
     ]
 
-    condition_dict = {AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938)}
+    condition_dict = {
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938),
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: C(is_onward_exported),
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
+    }
 
     @cached_property
     def application_id(self):
@@ -475,7 +486,6 @@ class AddGoodFirearmToApplication(LoginRequiredMixin, BaseSessionWizardView):
             raise Http404
 
         # Any modifications to firearm_details can be done here
-
         return good
 
     def get_payload(self, form_dict):
