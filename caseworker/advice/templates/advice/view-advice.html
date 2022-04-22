@@ -35,11 +35,6 @@
         {% endif %}
     {% endif %}
 
-    {% if case.status == "finalised" %}
-    <!-- TODO: This is temporary and should be removed as soon as we reissue the licenses for LTD-2222 -->
-    <a role="button" draggable="false" class="govuk-button govuk-button--warning govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">Reissue License</a>
-    {% endif %}
-
     {% if consolidated_advice %}
         <div class="govuk-width-container">
             <div class="govuk-grid-row govuk-!-margin-top-6">
