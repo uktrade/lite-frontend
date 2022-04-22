@@ -732,7 +732,7 @@ class BaseEditCertificateView(BaseFirearmEditView):
         return response
 
 
-class FirearmEditFirearmCertificate(BaseFirearmEditView):
+class FirearmEditFirearmCertificate(BaseEditCertificateView):
     form_class = FirearmAttachFirearmCertificateForm
     document_type = FirearmsActDocumentType.SECTION_1
 
