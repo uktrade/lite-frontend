@@ -416,13 +416,23 @@ class AddGoodFirearmToApplication(
     def get_good_payload(self, good):
         if not good.get("firearm_details"):
             raise Http404
-
-        # Any modifications to firearm_details can be done here
-        return good
+        # Most of this is hacked to get this working
+        # Hopefully some of these will be populated in coming pages
+        # Else we will need to go back to design
+        return {
+            "good_id": self.good["id"],
+            "is_good_incorporated": False,
+            "quantity": 0,
+            "unit": "GRM",
+            "value": "1",
+        }
 
     def get_payload(self, form_dict):
         good_payload = self.get_good_payload(self.good)
         good_on_application_payload = AddGoodFirearmToApplicationPayloadBuilder().build(form_dict)
+
+        # Temp hack to remove at end of journey
+        good_on_application_payload["firearm_details"].update({"number_of_items": 1})
         always_merger.merge(good_on_application_payload, good_payload)
         return good_on_application_payload
 

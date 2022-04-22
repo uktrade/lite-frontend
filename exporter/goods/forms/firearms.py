@@ -942,6 +942,9 @@ class FirearmOnwardAlteredProcessedForm(BaseFirearmForm):
         if is_onward_altered_processed and not is_onward_altered_processed_comments:
             self.add_error("is_onward_altered_processed_comments", "Enter how the product will be altered or processed")
 
+        if cleaned_data.get("is_onward_altered_processed") is False:
+            cleaned_data["is_onward_altered_processed_comments"] = ""
+
         return cleaned_data
 
 
@@ -988,5 +991,8 @@ class FirearmOnwardIncorporatedForm(BaseFirearmForm):
             self.add_error(
                 "is_onward_incorporated_comments", "Enter a description of what you are incorporating the product into"
             )
+
+        if cleaned_data.get("is_onward_incorporated") is False:
+            cleaned_data["is_onward_incorporated_comments"] = ""
 
         return cleaned_data

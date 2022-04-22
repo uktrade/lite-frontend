@@ -35,7 +35,8 @@ def new_firearm_to_application_url(application):
 
 @pytest.fixture
 def expected_good_data(application):
-    return application["goods"][0]["good"]
+    good = application["goods"][0]["good"]
+    return good
 
 
 @pytest.fixture(autouse=True)
@@ -114,23 +115,58 @@ def test_add_firearm_to_application_year_of_manufacture_step(
     assert isinstance(response.context["form"], FirearmOnwardExportedForm)
 
 
-def test_add_firearm_to_application_onward_exported_step(requests_mock, expected_good_data, goto_step, post_to_step):
-    goto_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
+def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data, goto_step, post_to_step):
+
+    goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
+        {"is_made_before_1938": True},
+    )
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+    assert not response.context["form"].errors
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
+        {"year_of_manufacture": 1937},
+    )
+
+    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert not response.context["form"].errors
+
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
     assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert not response.context["form"].errors
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
     assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
-
+    assert not response.context["form"].errors
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 302
+
+    assert requests_mock.last_request.json() == {
+        "firearm_details": {
+            "is_made_before_1938": True,
+            "year_of_manufacture": 1937,
+            "is_onward_exported": True,
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "processed comments",
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "incorporated comments",
+            "number_of_items": 1,
+        },
+        "good_id": expected_good_data["id"],
+        "is_good_incorporated": False,
+        "quantity": 0,
+        "unit": "GRM",
+        "value": "1",
+    }
