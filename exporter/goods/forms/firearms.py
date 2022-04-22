@@ -824,7 +824,7 @@ class FirearmSection5Form(BaseFirearmForm):
 
 class FirearmMadeBefore1938Form(BaseFirearmForm):
     class Layout:
-        TITLE = "Was the produce made before 1938?"
+        TITLE = "Was the product made before 1938?"
 
     is_made_before_1938 = forms.TypedChoiceField(
         choices=(
