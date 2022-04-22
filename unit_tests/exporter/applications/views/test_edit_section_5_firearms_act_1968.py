@@ -38,7 +38,7 @@ def post_to_step(post_to_step_factory, edit_url):
     return post_to_step_factory(edit_url)
 
 
-def test_yes_without_document(
+def test_edit_section_5_firearms_act_set_yes_without_document(
     data_standard_case,
     application_without_rfd_document,
     mock_good_get,
@@ -104,7 +104,7 @@ def test_yes_without_document(
     }
 
 
-def test_yes_with_document(
+def test_edit_section_5_firearms_act_set_yes_with_document(
     data_standard_case,
     application_with_rfd_and_section_5_document,
     mock_good_get,
@@ -141,7 +141,7 @@ def test_yes_with_document(
     }
 
 
-def test_no(
+def test_edit_section_5_firearms_act_set_no(
     data_standard_case,
     application_with_rfd_and_section_5_document,
     mock_good_get,
@@ -174,7 +174,7 @@ def test_no(
     }
 
 
-def test_dont_know(
+def test_edit_section_5_firearms_act_set_dont_know(
     data_standard_case,
     application_with_rfd_and_section_5_document,
     mock_good_get,

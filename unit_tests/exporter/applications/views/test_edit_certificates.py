@@ -25,7 +25,7 @@ def setup(settings, no_op_storage):
         ("firearm_edit_letter_of_authority", FirearmAttachSection5LetterOfAuthorityForm),
     ),
 )
-def test_view(
+def test_edit_certificate_view_exists(
     data_standard_case,
     application_without_rfd_document,
     mock_good_get,
@@ -52,7 +52,7 @@ def test_view(
         ("firearm_edit_letter_of_authority", "section-five-certificate"),
     ),
 )
-def test_submission(
+def test_edit_certificate_submission_success(
     data_standard_case,
     application_without_rfd_document,
     mock_good_get,
