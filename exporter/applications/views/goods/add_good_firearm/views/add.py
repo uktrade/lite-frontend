@@ -4,7 +4,6 @@ from deepmerge import always_merger
 from http import HTTPStatus
 
 from django.conf import settings
-from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 
@@ -51,6 +50,7 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardExportedForm,
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
+    FirearmQuantityAndValueForm,
 )
 from exporter.goods.services import (
     post_firearm,
@@ -386,6 +386,7 @@ class AddGoodFirearmToApplication(
         (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
+        (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
     ]
 
     condition_dict = {
@@ -413,41 +414,24 @@ class AddGoodFirearmToApplication(
             kwargs={"pk": pk, "good_pk": good_pk},
         )
 
-    def get_good_payload(self, good):
-        if not good.get("firearm_details"):
-            raise Http404
-        # Most of this is hacked to get this working
-        # Hopefully some of these will be populated in coming pages
-        # Else we will need to go back to design
-        return {
-            "good_id": self.good["id"],
-            "is_good_incorporated": False,
-            "quantity": 0,
-            "unit": "GRM",
-            "value": "1",
-        }
-
     def get_payload(self, form_dict):
-        good_payload = self.get_good_payload(self.good)
         good_on_application_payload = AddGoodFirearmToApplicationPayloadBuilder().build(form_dict)
-
-        # Temp hack to remove at end of journey
-        good_on_application_payload["firearm_details"].update({"number_of_items": 1})
-        always_merger.merge(good_on_application_payload, good_payload)
         return good_on_application_payload
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding firearm to application",
+        "Unexpected error adding firearm to application",
+    )
     def post_firearm_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
 
-        api_resp_data, status_code = post_firearm_good_on_application(self.request, self.application["id"], payload)
-        if status_code != HTTPStatus.CREATED:
-            raise ServiceError(
-                "Error adding firearm to application",
-                status_code,
-                api_resp_data,
-                "Error adding firearm to application - response was: %s - %s",
-                "Unexpected error adding firearm to application",
-            )
+        return post_firearm_good_on_application(
+            self.request,
+            self.application["id"],
+            self.good["id"],
+            payload,
+        )
 
     def handle_service_error(self, service_error):
         logger.error(

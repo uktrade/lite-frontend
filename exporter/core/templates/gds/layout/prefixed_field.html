@@ -1,0 +1,18 @@
+{% load i18n crispy_forms_field crispy_forms_gds %}
+
+<{% if tag %}{{ tag }}{% else %}div{% endif %} id="div_{{ field.auto_id }}" class="govuk-form-group{% if form_show_errors%}{% if field.errors %} govuk-form-group--error{% endif %}{% endif %}{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+
+    {% if field.label and form_show_labels %}
+    {% if label_tag %}<{{ label_tag }} class="govuk-label-wrapper">{% endif %}
+    <label for="{{ field.id_for_label }}" class="govuk-label{% if label_size %} {{ label_size }}{% endif %}">
+        {{ field.label|safe }}
+    </label>
+    {% if label_tag %}</{{ label_tag }}>{% endif %}
+    {% endif %}
+
+    {% include 'gds/layout/help_text_and_errors.html' %}
+    <div class="govuk-input__wrapper">
+        <div class="govuk-input__prefix" aria-hidden="true">{{ prefix }}</div>{% crispy_gds_field field %}
+    </div>
+
+</{% if tag %}{{ tag }}{% else %}div{% endif %}>
