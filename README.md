@@ -80,6 +80,20 @@ make run_exporter
   - [http://localhost:8200](http://localhost:8200) for the caseworker frontend
   - [http://localhost:8300](http://localhost:8300) for the exporter frontend
 
+#### Using MinIO instead of AWS S3
+
+Make sure to follow `lite-api` instructions in [the instructions for running it
+  with MinIO](https://github.com/uktrade/lite-api/blob/master/docs/minio.md)
+
+- use following values in both `caseworker.env` and `exporter.env`:
+  - `AWS_ACCESS_KEY_ID=AKIAIEXAMPLE`
+  - `AWS_SECRET_ACCESS_KEY=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
+  - `AWS_STORAGE_BUCKET_NAME=lite-document-store-test`
+  - `AWS_REGION=eu-west-2`
+  - `S3_LOCAL_ENDPOINT_URLhttp://lite-minio-s3:9000`
+
+And run it as you would do with or without docker.
+
 #### Running unit tests
 
 To run unit tests:
