@@ -848,7 +848,7 @@ class FirearmYearOfManufactureForm(BaseFirearmForm):
         TITLE = "What year was it made?"
 
     year_of_manufacture = forms.IntegerField(
-        label="For example, 2007",
+        label="For example, 1930",
         widget=forms.TextInput,
         error_messages={
             "required": "Enter the year it was made",
