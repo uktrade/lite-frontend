@@ -167,7 +167,7 @@ def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data
             "number_of_items": 16,
         },
         "good_id": expected_good_data["id"],
-        "is_good_incorporated": False,
+        "is_good_incorporated": True,
         "quantity": 16,
         "unit": "NAR",
         "value": "16.32",

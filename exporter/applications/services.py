@@ -131,6 +131,11 @@ def get_application_goods_types(request, pk):
 
 
 def post_firearm_good_on_application(request, pk, good_id, json):
+    # We have a default for `is_good_incorporated` however this may get overriden
+    # from the json blob depending on the question asked in the firearm wizard
+    # flow.
+    # This is essentially setting a default value in the case that we don't
+    # have an explicit value passed in from the json blob.
     json = {
         "good_id": good_id,
         "is_good_incorporated": False,
