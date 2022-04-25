@@ -4,10 +4,11 @@ from django.urls import reverse
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
 from exporter.goods.forms.firearms import (
-    FirearmYearOfManufactureForm,
     FirearmOnwardExportedForm,
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
+    FirearmQuantityAndValueForm,
+    FirearmYearOfManufactureForm,
 )
 
 
@@ -46,32 +47,13 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def goto_step(authorized_client, new_firearm_to_application_url):
-    def _goto_step(step_name):
-        return authorized_client.post(
-            new_firearm_to_application_url,
-            data={
-                "wizard_goto_step": step_name,
-            },
-        )
-
-    return _goto_step
+def goto_step(goto_step_factory, new_firearm_to_application_url):
+    return goto_step_factory(new_firearm_to_application_url)
 
 
 @pytest.fixture
-def post_to_step(authorized_client, new_firearm_to_application_url):
-    ADD_GOOD_FIREARM_TO_APPLICATION_VIEW = "add_good_firearm_to_application"
-
-    def _post_to_step(step_name, data):
-        return authorized_client.post(
-            new_firearm_to_application_url,
-            data={
-                f"{ADD_GOOD_FIREARM_TO_APPLICATION_VIEW}-current_step": step_name,
-                **{f"{step_name}-{key}": value for key, value in data.items()},
-            },
-        )
-
-    return _post_to_step
+def post_to_step(post_to_step_factory, new_firearm_to_application_url):
+    return post_to_step_factory(new_firearm_to_application_url)
 
 
 def test_add_firearm_to_application_product_made_before_1938_step(goto_step, post_to_step):
@@ -115,6 +97,19 @@ def test_add_firearm_to_application_year_of_manufacture_step(
     assert isinstance(response.context["form"], FirearmOnwardExportedForm)
 
 
+def test_add_firearm_to_application_onward_exported_step_not_onward_export(
+    requests_mock, expected_good_data, goto_step, post_to_step
+):
+    goto_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        {"is_onward_exported": False},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+
+
 def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data, goto_step, post_to_step):
 
     goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
@@ -151,8 +146,15 @@ def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
 
-    assert response.status_code == 302
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
+        {"number_of_items": "16", "value": "16.32"},
+    )
+
+    assert response.status_code == 302
     assert requests_mock.last_request.json() == {
         "firearm_details": {
             "is_made_before_1938": True,
@@ -162,11 +164,11 @@ def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data
             "is_onward_altered_processed_comments": "processed comments",
             "is_onward_incorporated": True,
             "is_onward_incorporated_comments": "incorporated comments",
-            "number_of_items": 1,
+            "number_of_items": 16,
         },
         "good_id": expected_good_data["id"],
         "is_good_incorporated": False,
-        "quantity": 0,
-        "unit": "GRM",
-        "value": "1",
+        "quantity": 16,
+        "unit": "NAR",
+        "value": "16.32",
     }

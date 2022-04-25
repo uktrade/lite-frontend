@@ -104,6 +104,17 @@ def get_firearm_section_5_payload(form):
     }
 
 
+def get_quantity_and_value_payload(form):
+    return {
+        "unit": "NAR",
+        "quantity": form.cleaned_data["number_of_items"],
+        "value": str(form.cleaned_data["value"]),
+        "firearm_details": {
+            "number_of_items": form.cleaned_data["number_of_items"],
+        },
+    }
+
+
 class AddGoodFirearmPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.NAME: get_cleaned_data,
@@ -163,6 +174,7 @@ class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
     }
 
 

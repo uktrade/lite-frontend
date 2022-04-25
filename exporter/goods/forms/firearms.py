@@ -1,15 +1,24 @@
 from datetime import datetime
+from decimal import Decimal
+
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
 from django import forms
+from django.core import validators
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from core.forms.layouts import ConditionalCheckbox, ConditionalQuestion, ConditionalRadios
+from core.forms.layouts import (
+    ConditionalCheckbox,
+    ConditionalQuestion,
+    ConditionalRadios,
+    Prefixed,
+)
 from exporter.core.constants import FirearmsActSections
 from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
@@ -996,3 +1005,42 @@ class FirearmOnwardIncorporatedForm(BaseFirearmForm):
             cleaned_data["is_onward_incorporated_comments"] = ""
 
         return cleaned_data
+
+
+class FirearmQuantityAndValueForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Quantity and value"
+
+    number_of_items = forms.IntegerField(
+        error_messages={
+            "invalid": "Number of items must be a number, like 16",
+            "required": "Enter the number of items",
+        },
+        validators=[
+            validators.MinValueValidator(1, "Number of items must be 1 or more"),
+        ],
+        widget=forms.TextInput,
+    )
+    value = forms.DecimalField(
+        error_messages={
+            "invalid": "Total value must be a number, like 16.32",
+            "required": "Enter the total value",
+        },
+        label="Total value",
+        validators=[
+            validators.MinValueValidator(Decimal("0.01"), "Total value must be 0.01 or more"),
+        ],
+        widget=forms.TextInput,
+    )
+
+    def clean_value(self):
+        value = self.cleaned_data["value"]
+        if "." not in str(value):
+            raise ValidationError("Total value must include pence, like 123.45 or 156.00")
+        return value
+
+    def get_layout_fields(self):
+        return (
+            Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
+            Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
+        )

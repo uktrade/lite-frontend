@@ -130,7 +130,12 @@ def get_application_goods_types(request, pk):
     return data.json().get("goods") if data.status_code == HTTPStatus.OK else None
 
 
-def post_firearm_good_on_application(request, pk, json):
+def post_firearm_good_on_application(request, pk, good_id, json):
+    json = {
+        "good_id": good_id,
+        "is_good_incorporated": False,
+        **json,
+    }
     response = client.post(request, f"/applications/{pk}/goods/", json)
     response.raise_for_status()
     return response.json(), response.status_code
