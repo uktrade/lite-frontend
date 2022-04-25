@@ -1,6 +1,7 @@
 import logging
 
-from datetime import date, datetime
+from datetime import date
+
 from deepmerge import always_merger
 from http import HTTPStatus
 
@@ -21,9 +22,7 @@ from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
     get_document_data,
-    get_firearm_act_document,
     get_rfd_certificate,
-    has_firearm_act_document as _has_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     str_to_bool,
 )
@@ -71,13 +70,22 @@ from .conditionals import (
 from .constants import AddGoodFirearmSteps
 from .decorators import expect_status
 from .exceptions import ServiceError
+from .helpers import get_document_url
+from .initial import (
+    get_attach_certificate_initial_data,
+    get_firearm_act_1968_initial_data,
+    get_is_covered_by_section_5_initial_data,
+)
 from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
+    FirearmsActPayloadBuilder,
+    FirearmEditFirearmsAct1968PayloadBuilder,
     FirearmEditProductDocumentAvailabilityPayloadBuilder,
     FirearmEditProductDocumentSensitivityPayloadBuilder,
     FirearmEditPvGradingPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
-    FirearmsActPayloadBuilder,
+    FirearmEditSection5FirearmsAct1968PayloadBuilder,
+    get_attach_firearm_act_certificate_payload,
     get_cleaned_data,
     get_firearm_details_cleaned_data,
     get_pv_grading_good_payload,
@@ -105,6 +113,13 @@ class BaseEditView(
     def form_valid(self, form):
         edit_firearm(self.request, self.good["id"], self.get_edit_payload(form))
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["back_link_url"] = reverse("applications:product_summary", kwargs=self.kwargs)
+
+        return ctx
 
 
 class BaseGoodEditView(BaseEditView):
@@ -311,6 +326,43 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
     def get_initial(self):
         return {"description": self.product_document["description"] if self.product_document else ""}
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error product document when creating firearm",
+        "Unexpected error adding document to firearm",
+    )
+    def post_good_documents(self, payload):
+        return post_good_documents(
+            request=self.request,
+            pk=self.good["id"],
+            json=payload,
+        )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error deleting the product document",
+        "Unexpected error deleting product document",
+    )
+    def delete_good_document(self):
+        return delete_good_document(
+            self.request,
+            self.good["id"],
+            self.product_document["id"],
+        )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating the product document description",
+        "Unexpected error updating product document description",
+    )
+    def update_good_document_data(self, payload):
+        return update_good_document_data(
+            self.request,
+            self.good["id"],
+            self.product_document["id"],
+            payload,
+        )
+
     def form_valid(self, form):
         existing_product_document = self.product_document
         product_document = form.cleaned_data.get("product_document", None)
@@ -321,45 +373,14 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
                 **get_document_data(product_document),
                 **payload,
             }
-            api_resp_data, status_code = post_good_documents(
-                request=self.request,
-                pk=self.good["id"],
-                json=payload,
-            )
-            if status_code != HTTPStatus.CREATED:
-                raise ServiceError(
-                    "Error product document when creating firearm",
-                    status_code,
-                    api_resp_data,
-                    "Error product document when creating firearm - response was: %s - %s",
-                    "Unexpected error adding document to firearm",
-                )
+            self.post_good_documents(payload)
 
             # Delete existing document
             if existing_product_document:
-                api_resp_data, status_code = delete_good_document(
-                    self.request, self.good["id"], self.product_document["id"]
-                )
-                if status_code != HTTPStatus.OK:
-                    raise ServiceError(
-                        "Error deleting the product document",
-                        status_code,
-                        api_resp_data,
-                        "Error deleting the product document - response was: %s - %s",
-                        "Unexpected error deleting product document",
-                    )
+                self.delete_good_document()
+
         elif self.product_document["description"] != description:
-            api_resp_data, status_code = update_good_document_data(
-                self.request, self.good["id"], self.product_document["id"], payload
-            )
-            if status_code != HTTPStatus.OK:
-                raise ServiceError(
-                    "Error updating the product document description",
-                    status_code,
-                    api_resp_data,
-                    "Error updating the product document description - response was: %s - %s",
-                    "Unexpected error updating product document description",
-                )
+            self.update_good_document_data(payload)
 
         return redirect(self.get_success_url())
 
@@ -540,25 +561,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_5)),
     }
 
-    def get_context_data(self, form, **kwargs):
-        ctx = super().get_context_data(form, **kwargs)
-
-        ctx["back_link_url"] = reverse(
-            "applications:product_summary",
-            kwargs={"pk": self.kwargs["pk"], "good_pk": self.kwargs["good_pk"]},
-        )
-        ctx["title"] = form.Layout.TITLE
-
-        return ctx
-
-    def get_document_url(self, document):
-        return reverse(
-            "organisation:document",
-            kwargs={
-                "pk": document["id"],
-            },
-        )
-
     def get_attach_rfd_certificate_initial_data(self):
         rfd_certificate = get_rfd_certificate(self.application)
         if not rfd_certificate:
@@ -569,79 +571,8 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             "reference_code": rfd_certificate["reference_code"],
             "file": CurrentFile(
                 rfd_certificate["document"]["name"],
-                self.get_document_url(rfd_certificate),
+                get_document_url(rfd_certificate),
                 rfd_certificate["document"]["safe"],
-            ),
-        }
-
-    def get_firearm_act_1968_initial_data(self):
-        firearm_details = self.good["firearm_details"]
-        is_covered_by_firearm_act_section_one_two_or_five = firearm_details.get(
-            "is_covered_by_firearm_act_section_one_two_or_five"
-        )
-        if not is_covered_by_firearm_act_section_one_two_or_five:
-            return {}
-
-        if is_covered_by_firearm_act_section_one_two_or_five == "No":
-            return {}
-
-        if is_covered_by_firearm_act_section_one_two_or_five == "Unsure":
-            return {
-                "firearms_act_section": FirearmFirearmAct1968Form.SectionChoices.DONT_KNOW,
-                "not_covered_explanation": firearm_details[
-                    "is_covered_by_firearm_act_section_one_two_or_five_explanation"
-                ],
-            }
-
-        return {
-            "firearms_act_section": firearm_details["firearms_act_section"],
-        }
-
-    def get_is_covered_by_section_5_initial_data(self):
-        firearm_details = self.good["firearm_details"]
-        is_covered_by_firearm_act_section_one_two_or_five = firearm_details.get(
-            "is_covered_by_firearm_act_section_one_two_or_five"
-        )
-
-        if is_covered_by_firearm_act_section_one_two_or_five is None:
-            return {}
-
-        if (
-            is_covered_by_firearm_act_section_one_two_or_five == "Yes"
-            and firearm_details["firearms_act_section"] == "firearms_act_section5"
-        ):
-            return {"is_covered_by_section_5": FirearmSection5Form.Section5Choices.YES}
-
-        if is_covered_by_firearm_act_section_one_two_or_five == "No":
-            return {"is_covered_by_section_5": FirearmSection5Form.Section5Choices.NO}
-
-        if is_covered_by_firearm_act_section_one_two_or_five == "Unsure":
-            is_covered_by_firearm_act_section_one_two_or_five_explanation = firearm_details[
-                "is_covered_by_firearm_act_section_one_two_or_five_explanation"
-            ]
-            return {
-                "is_covered_by_section_5": FirearmSection5Form.Section5Choices.DONT_KNOW,
-                "not_covered_explanation": is_covered_by_firearm_act_section_one_two_or_five_explanation,
-            }
-
-    def get_attach_section_5_letter_of_authority_initial_data(self):
-        if not _has_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5):
-            return {}
-
-        section_5_document = get_firearm_act_document(self.application, FirearmsActDocumentType.SECTION_5)
-        firearm_details = self.good["firearm_details"]
-        section_certificate_date_of_expiry = firearm_details.get("section_certificate_date_of_expiry")
-        if section_certificate_date_of_expiry:
-            section_certificate_date_of_expiry = datetime.fromisoformat(section_certificate_date_of_expiry).date()
-        return {
-            "section_certificate_missing": firearm_details.get("section_certificate_missing"),
-            "section_certificate_number": firearm_details.get("section_certificate_number"),
-            "section_certificate_date_of_expiry": section_certificate_date_of_expiry,
-            "section_certificate_missing_reason": firearm_details.get("section_certificate_missing_reason"),
-            "file": CurrentFile(
-                section_5_document["document"]["name"],
-                self.get_document_url(section_5_document),
-                section_5_document["document"]["safe"],
             ),
         }
 
@@ -655,13 +586,28 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             initial.update(self.get_attach_rfd_certificate_initial_data())
 
         if step == AddGoodFirearmSteps.FIREARM_ACT_1968:
-            initial.update(self.get_firearm_act_1968_initial_data())
+            initial.update(get_firearm_act_1968_initial_data(self.good["firearm_details"]))
 
         if step == AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5:
-            initial.update(self.get_is_covered_by_section_5_initial_data())
+            initial.update(get_is_covered_by_section_5_initial_data(self.good["firearm_details"]))
+
+        if step == AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE:
+            initial.update(
+                get_attach_certificate_initial_data(
+                    FirearmsActDocumentType.SECTION_1,
+                    self.application,
+                    self.good,
+                )
+            )
 
         if step == AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY:
-            initial.update(self.get_attach_section_5_letter_of_authority_initial_data())
+            initial.update(
+                get_attach_certificate_initial_data(
+                    FirearmsActDocumentType.SECTION_5,
+                    self.application,
+                    self.good,
+                )
+            )
 
         return initial
 
@@ -695,21 +641,182 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_1,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_2,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                 FirearmsActDocumentType.SECTION_5,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
+            ).run()
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
+
+
+class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
+    form_list = [
+        (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
+        (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
+    ]
+    condition_dict = {
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
+            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
+        )
+        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_5)),
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        if step == AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5:
+            initial.update(get_is_covered_by_section_5_initial_data(self.good["firearm_details"]))
+
+        return initial
+
+    def get_payload(self, form_dict):
+        good_payload = payload = FirearmEditSection5FirearmsAct1968PayloadBuilder().build(form_dict)
+        firearms_act_payload = FirearmsActPayloadBuilder(
+            self.application,
+            good_payload["firearm_details"],
+        ).build(form_dict)
+
+        payload = always_merger.merge(good_payload, firearms_act_payload)
+
+        return payload
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_firearm(self.good["id"], form_dict)
+
+            FirearmActCertificateAction(
+                FirearmsActDocumentType.SECTION_5,
+                self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
+            ).run()
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
+
+
+class BaseEditCertificateView(BaseFirearmEditView):
+    def get_initial(self):
+        return get_attach_certificate_initial_data(
+            self.document_type,
+            self.application,
+            self.good,
+        )
+
+    def get_edit_payload(self, form):
+        return get_attach_firearm_act_certificate_payload(form)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        FirearmActCertificateAction(
+            self.document_type,
+            self,
+            form.cleaned_data,
+        ).run()
+
+        return response
+
+
+class FirearmEditFirearmCertificate(BaseEditCertificateView):
+    form_class = FirearmAttachFirearmCertificateForm
+    document_type = FirearmsActDocumentType.SECTION_1
+
+
+class FirearmEditShotgunCertificate(BaseEditCertificateView):
+    form_class = FirearmAttachShotgunCertificateForm
+    document_type = FirearmsActDocumentType.SECTION_2
+
+
+class FirearmEditLetterOfAuthority(BaseEditCertificateView):
+    form_class = FirearmAttachSection5LetterOfAuthorityForm
+    document_type = FirearmsActDocumentType.SECTION_5
+
+
+class FirearmEditFirearmsAct1968(BaseEditWizardView):
+    form_list = [
+        (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
+        (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
+        (AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
+        (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
+    ]
+    condition_dict = {
+        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
+            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_1)
+        )
+        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_1)),
+        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: C(
+            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_2)
+        )
+        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_2)),
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
+            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
+        )
+        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_5)),
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        if step == AddGoodFirearmSteps.FIREARM_ACT_1968:
+            initial.update(get_firearm_act_1968_initial_data(self.good["firearm_details"]))
+
+        if step == AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY:
+            initial.update(
+                get_attach_certificate_initial_data(
+                    FirearmsActDocumentType.SECTION_5,
+                    self.application,
+                    self.good,
+                )
+            )
+
+        return initial
+
+    def get_payload(self, form_dict):
+        good_payload = FirearmEditFirearmsAct1968PayloadBuilder().build(form_dict)
+        firearms_act_payload = FirearmsActPayloadBuilder(
+            self.application,
+            good_payload["firearm_details"],
+        ).build(form_dict)
+
+        payload = always_merger.merge(good_payload, firearms_act_payload)
+
+        return payload
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_firearm(self.good["id"], form_dict)
+
+            FirearmActCertificateAction(
+                FirearmsActDocumentType.SECTION_1,
+                self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
+            ).run()
+
+            FirearmActCertificateAction(
+                FirearmsActDocumentType.SECTION_2,
+                self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
+            ).run()
+
+            FirearmActCertificateAction(
+                FirearmsActDocumentType.SECTION_5,
+                self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
         except ServiceError as e:
             return self.handle_service_error(e)

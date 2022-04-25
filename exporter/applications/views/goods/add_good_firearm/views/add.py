@@ -348,21 +348,21 @@ class AddGoodFirearm(
                     self.post_rfd_certificate(self.application)
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_1,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
                 FirearmsActDocumentType.SECTION_2,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
             ).run()
 
             FirearmActCertificateAction(
-                AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
                 FirearmsActDocumentType.SECTION_5,
                 self,
+                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
 
             if self.has_product_documentation():

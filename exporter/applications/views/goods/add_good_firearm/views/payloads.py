@@ -226,3 +226,19 @@ class FirearmsActPayloadBuilder:
 
     def build(self, form_dict):
         return {"firearm_details": self.get_payload(form_dict)}
+
+
+class FirearmEditSection5FirearmsAct1968PayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
+    }
+
+
+class FirearmEditFirearmsAct1968PayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
+        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
+    }
