@@ -104,6 +104,20 @@ def get_firearm_section_5_payload(form):
     }
 
 
+def get_onward_incorporated_payload(form):
+    firearm_details = get_firearm_details_cleaned_data(form)
+
+    # We copy the value back to the original field as well as populating the new
+    # field.
+    # Because we are going to have firearm products coming from the new wizard
+    # and the old wizard we want to make sure that we synchronise this value
+    # back to the old field.
+    return {
+        "is_good_incorporated": form.cleaned_data["is_onward_incorporated"],
+        **firearm_details,
+    }
+
+
 def get_quantity_and_value_payload(form):
     return {
         "unit": "NAR",
@@ -173,7 +187,7 @@ class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
-        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
     }
 
