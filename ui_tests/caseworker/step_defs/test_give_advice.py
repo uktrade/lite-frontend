@@ -151,7 +151,7 @@ def should_see_application_ref_on_refusal_letter(driver, context):  # noqa
 @then("I see the licence number on the SIEL licence preview")
 def should_see_licence_number_on_siel_licence_preview(driver, context):  # noqa
     text = GeneratedDocument(driver).get_document_preview_text()
-    assert f"{context.reference_code}-01" in text
+    assert context.reference_code in text
 
 
 @then(parsers.parse('I see that "{item_name}" is "{value}" on the SIEL licence preview'))  # noqa
