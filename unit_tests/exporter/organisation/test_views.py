@@ -7,8 +7,9 @@ from unit_tests.helpers import mocked_now
 
 
 @mock.patch("django.utils.timezone.now", side_effect=mocked_now)
-def test_upload_firearm_registered_dealer_certificate(mock_timezone, authorized_client, requests_mock, organisation_pk):
-    requests_mock.post(client._build_absolute_uri(f"/organisations/{organisation_pk}/documents/"), status_code=200)
+def test_upload_firearm_registered_dealer_certificate(
+    mock_timezone, authorized_client, mock_organisation_document_post
+):
 
     url = reverse("organisation:upload-firearms-certificate")
     data = {
@@ -26,8 +27,7 @@ def test_upload_firearm_registered_dealer_certificate(mock_timezone, authorized_
 
 
 @mock.patch("django.utils.timezone.now", side_effect=mocked_now)
-def test_upload_section_five_certificate(mock_timezone, authorized_client, requests_mock, organisation_pk):
-    requests_mock.post(client._build_absolute_uri(f"/organisations/{organisation_pk}/documents/"), status_code=200)
+def test_upload_section_five_certificate(mock_timezone, authorized_client, mock_organisation_document_post):
 
     url = reverse("organisation:upload-section-five-certificate")
     data = {

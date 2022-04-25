@@ -1,3 +1,4 @@
+import datetime
 import pytest
 
 from core import client
@@ -869,6 +870,69 @@ def data_good_on_application(data_standard_case):
 
 
 @pytest.fixture
+def firearm_good():
+    return {
+        "id": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+        "name": "Bolt action rifle",
+        "description": "Action rifle",
+        "part_number": "BN-12345",
+        "control_list_entries": [{"rating": "ML1a"}, {"rating": "ML22b"}],
+        "comment": None,
+        "is_good_controlled": {"key": "True", "value": "Yes"},
+        "report_summary": "firearms",
+        "flags": [],
+        "is_pv_graded": {"key": "yes", "value": "Yes"},
+        "documents": [
+            {
+                "id": "6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335",
+                "name": "data_sheet.pdf",
+                "description": "product data sheet",
+            }
+        ],
+        "grading_comment": None,
+        "pv_grading_details": {
+            "prefix": "NATO",
+            "grading": {"key": "official", "value": "Official"},
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue": "2020-02-20",
+        },
+        "is_document_available": True,
+        "no_document_comments": "",
+        "is_document_sensitive": False,
+        "status": {"key": "verified", "value": "Verified"},
+        "item_category": {"key": "group1_device", "value": "Device, equipment or object"},
+        "is_military_use": {"key": "no", "value": "No"},
+        "is_component": {"key": "no", "value": "No"},
+        "uses_information_security": False,
+        "modified_military_use_details": None,
+        "component_details": None,
+        "information_security_details": None,
+        "missing_document_reason": {
+            "key": "OFFICIAL_SENSITIVE",
+            "value": "Document is above OFFICIAL-SENSITIVE",
+        },
+        "software_or_technology_details": None,
+        "firearm_details": {
+            "type": {"key": "firearms", "value": "Firearms"},
+            "calibre": "0.25",
+            "is_replica": False,
+            "replica_description": None,
+            "category": [
+                {"key": "NON_AUTOMATIC_SHOTGUN", "value": "Non automatic shotgun"},
+                {
+                    "key": "NON_AUTOMATIC_RIM_FIRED_HANDGUN",
+                    "value": "Non automatic rim-fired handgun",
+                },
+            ],
+            "number_of_items": 2,
+            "serial_numbers_available": "AVAILABLE",
+            "serial_numbers": ["12345", "ABC-123"],
+        },
+    }
+
+
+@pytest.fixture
 def data_countries():
     return {
         "countries": [
@@ -1168,6 +1232,8 @@ def mock_get_countries(requests_mock, data_countries):
 
 @pytest.fixture
 def data_organisation():
+    expiry_date = datetime.date.today() + datetime.timedelta(days=100)
+
     return {
         "id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",
         "primary_site": {
@@ -1222,6 +1288,22 @@ def data_organisation():
         "sic_number": "2345",
         "vat_number": "GB123456789",
         "registration_number": "09876543",
+        "documents": [
+            {
+                "id": "b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a",
+                "document_type": "rfd-certificate",
+                "expiry_date": expiry_date.strftime("%d %B %Y"),
+                "reference_code": "RFD123",
+                "is_expired": False,
+                "document": {
+                    "id": "9c2222db-98e5-47e8-9e01-653354e95322",
+                    "name": "rfd_certificate.txt",
+                    "s3_key": "rfd_certificate.txt.s3_key",
+                    "size": 0,
+                    "safe": True,
+                },
+            }
+        ],
     }
 
 
@@ -1234,3 +1316,9 @@ def organisation_pk(data_organisation):
 def mock_get_organisation(requests_mock, data_organisation, organisation_pk):
     url = client._build_absolute_uri(f"/organisations/{organisation_pk}/")
     yield requests_mock.get(url=url, json=data_organisation)
+
+
+@pytest.fixture
+def mock_organisation_document_post(requests_mock, data_organisation):
+    url = client._build_absolute_uri(f"/organisations/{data_organisation['id']}/documents/")
+    yield requests_mock.post(url=url, json={}, status_code=201)
