@@ -86,14 +86,14 @@
 				{% if application_type|application_type_in_list:"HAS_GOODS_TYPES" %}
 					{% url 'applications:goods_types' application.id as goods_types_url %}
 					{% tld goodstypes 'product' 'products' as goods_description %}
-					{% include "includes/task-list-item.html" with id='goods' title=strings.GOODS url=goods_types_url status=goodstypes|task_list_item_status description=goods_description %}
+					{% include "includes/task-list-item.html" with id='goods' title="Tell us about the products" url=goods_types_url status=goodstypes|task_list_item_status description=goods_description %}
 				{% endif %}
 
 				{# Goods #}
 				{% if application_type|application_type_in_list:"HAS_GOODS" %}
 					{% url 'applications:goods' application.id as goods_url %}
 					{% tld goods 'product' 'products' as goods_description %}
-					{% include "includes/task-list-item.html" with id='goods' title=strings.GOODS url=goods_url status=goods|task_list_item_status description=goods_description %}
+					{% include "includes/task-list-item.html" with id='goods' title="Tell us about the products" url=goods_url status=goods|task_list_item_status description=goods_description %}
 				{% endif %}
 
 				{# End use details #}
