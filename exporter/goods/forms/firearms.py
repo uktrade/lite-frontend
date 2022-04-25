@@ -365,7 +365,7 @@ class FirearmReplicaForm(BaseFirearmForm):
                 "is_replica",
                 ConditionalQuestion(
                     "Yes",
-                    "replica_description",
+                    Field("replica_description", css_class="input-force-default-width"),
                 ),
                 "No",
             ),
