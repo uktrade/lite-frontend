@@ -129,6 +129,19 @@ def get_quantity_and_value_payload(form):
     }
 
 
+@firearm_details_payload
+def get_serial_numbers_payload(form):
+    firearm_serial_numbers_data = form.cleaned_data
+
+    def sort_key(key):
+        return int(key.replace("serial_number_input_", ""))
+
+    keys = [key for key in firearm_serial_numbers_data.keys() if key.startswith("serial_number_input_")]
+    sorted_keys = sorted(keys, key=sort_key)
+    data = [firearm_serial_numbers_data[k] for k in sorted_keys]
+    return {"serial_numbers": data}
+
+
 class AddGoodFirearmPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.NAME: get_cleaned_data,
@@ -189,6 +202,8 @@ class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: get_serial_numbers_payload,
     }
 
 
