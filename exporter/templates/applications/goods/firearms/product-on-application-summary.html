@@ -15,14 +15,14 @@
         </div>
     </div>
 
-    {% with firearm_details=good.firearm_details %}
+    {% with firearm_details=good_on_application.firearm_details %}
         <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Was the product made before 1938?
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    {{ firearm_details.is_made_before_1938|default_na }}
+                    {{ firearm_details.is_made_before_1938|yesno|capfirst }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
                 </dd>
@@ -39,10 +39,6 @@
                     </dd>
                 </div>
             {% endif %}
-
         </dl>
-
-        <a class="govuk-button" href="#">Submit</a>
     {% endwith %}
-
 {% endblock %}

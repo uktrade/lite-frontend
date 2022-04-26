@@ -13,6 +13,7 @@ from exporter.core.helpers import (
 from exporter.goods.services import (
     get_good,
     get_good_documents,
+    get_good_on_application,
 )
 
 
@@ -54,5 +55,36 @@ class FirearmProductSummary(LoginRequiredMixin, TemplateView):
         }
 
 
-class FirearmProductOnApplicationSummary(FirearmProductSummary):
+class FirearmProductOnApplicationSummary(LoginRequiredMixin, TemplateView):
     template_name = "applications/goods/firearms/product-on-application-summary.html"
+
+    @cached_property
+    def good_id(self):
+        return self.good_on_application["good"]["id"]
+
+    @cached_property
+    def good(self):
+        return get_good(self.request, self.good_id, full_detail=True)[0]
+
+    @cached_property
+    def good_on_application_id(self):
+        return str(self.kwargs["good_on_application_pk"])
+
+    @cached_property
+    def good_on_application(self):
+        return get_good_on_application(self.request, self.good_on_application_id)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return {
+            **context,
+            "good": self.good,
+            "good_on_application": self.good_on_application,
+        }

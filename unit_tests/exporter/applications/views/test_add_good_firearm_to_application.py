@@ -110,8 +110,9 @@ def test_add_firearm_to_application_onward_exported_step_not_onward_export(
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
 
-def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data, goto_step, post_to_step):
-
+def test_add_firearm_to_application_end_to_end(
+    requests_mock, expected_good_data, application, good_on_application, goto_step, post_to_step
+):
     goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
@@ -155,6 +156,14 @@ def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data
     )
 
     assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:product_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
+
     assert requests_mock.last_request.json() == {
         "firearm_details": {
             "is_made_before_1938": True,

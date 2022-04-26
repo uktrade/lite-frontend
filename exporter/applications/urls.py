@@ -242,7 +242,7 @@ urlpatterns = [
         name="product_summary",
     ),
     path(
-        "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-on-application-summary/",
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/",
         FirearmProductOnApplicationSummary.as_view(),
         name="product_on_application_summary",
     ),
