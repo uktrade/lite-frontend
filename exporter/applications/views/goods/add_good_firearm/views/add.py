@@ -51,6 +51,8 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
+    FirearmSerialIdentificationMarkingsForm,
+    FirearmSerialNumbersForm,
 )
 from exporter.goods.services import (
     post_firearm,
@@ -72,6 +74,7 @@ from .conditionals import (
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
     is_onward_exported,
+    is_serial_available,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
@@ -387,13 +390,24 @@ class AddGoodFirearmToApplication(
         (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
         (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, FirearmSerialIdentificationMarkingsForm),
+        (AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS, FirearmSerialNumbersForm),
     ]
 
     condition_dict = {
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938),
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: C(is_onward_exported),
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: C(is_serial_available),
     }
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+        if step == AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS:
+            quantity_step_data = self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE)
+            kwargs["number_of_items"] = quantity_step_data["number_of_items"]
+
+        return kwargs
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -425,7 +439,6 @@ class AddGoodFirearmToApplication(
     )
     def post_firearm_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
-
         return post_firearm_good_on_application(
             self.request,
             self.application["id"],
