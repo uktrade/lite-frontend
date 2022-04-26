@@ -27,6 +27,7 @@ from exporter.core.validators import (
     PastDateValidator,
     RelativeDeltaDateValidator,
 )
+from exporter.goods.forms.goods import SerialNumbersField
 
 
 class CustomErrorDateInputField(DateInputField):
@@ -1044,3 +1045,99 @@ class FirearmSummaryForm(forms.Form):
     # can have a summary page at the end of the product summary wizard
     class Layout:
         TITLE = "Product summary"
+
+
+class FirearmSerialIdentificationMarkingsForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Will each product have a serial number or other identification marking?"
+
+    class SerialChoices(models.TextChoices):
+        AVAILABLE = "AVAILABLE", "Yes, I can add serial numbers now"
+        LATER = "LATER", "Yes, I can add serial numbers later"
+        NOT_AVAILABLE = "NOT_AVAILABLE", "No"
+
+    serial_numbers_available = forms.ChoiceField(
+        choices=SerialChoices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select if each product will have a serial number",
+        },
+    )
+
+    no_identification_markings_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea,
+        label="Explain why the product has not been marked",
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "serial_numbers_available",
+                self.SerialChoices.AVAILABLE.label,
+                ConditionalQuestion(
+                    self.SerialChoices.LATER.label,
+                    HTML.p(
+                        "You must submit the serial numbers before you can export the products.<br/><br/>"
+                        "You can check your application progress, view issued licences and add serial numbers from your dashboard."
+                    ),
+                ),
+                ConditionalQuestion(
+                    self.SerialChoices.NOT_AVAILABLE.label,
+                    "no_identification_markings_details",
+                ),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        serial_numbers_available = cleaned_data.get("serial_numbers_available")
+        no_identification_markings_details = cleaned_data.get("no_identification_markings_details")
+
+        if (
+            serial_numbers_available == self.SerialChoices.NOT_AVAILABLE.value
+        ) and not no_identification_markings_details:
+            self.add_error("no_identification_markings_details", "Enter why products will not have serial numbers")
+
+        if serial_numbers_available != self.SerialChoices.NOT_AVAILABLE.value:
+            cleaned_data["no_identification_markings_details"] = ""
+
+        return cleaned_data
+
+
+class FirearmSerialNumbersForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Enter serial numbers or other identification markings"
+
+    serial_numbers = None
+
+    def __init__(self, number_of_items, *args, **kwargs):
+        self.number_of_items = number_of_items
+        super().__init__(*args, **kwargs)
+
+        self.fields["serial_numbers"] = SerialNumbersField(
+            number_of_items,
+            label="",
+            required=False,
+        )
+
+    def get_layout_fields(self):
+        return (
+            HTML.p("Enter one serial number for every row"),
+            HTML.p(f"{self.number_of_items} item" + "s" if self.number_of_items > 1 else ""),
+            "serial_numbers",
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        try:
+            serial_numbers = cleaned_data.pop("serial_numbers")
+        except KeyError:
+            return cleaned_data
+
+        for i, serial_number in enumerate(serial_numbers):
+            cleaned_data[f"serial_number_input_{i}"] = serial_number
+
+        return cleaned_data

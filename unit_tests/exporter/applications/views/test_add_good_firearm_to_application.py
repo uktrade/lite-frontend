@@ -10,6 +10,8 @@ from exporter.goods.forms.firearms import (
     FirearmQuantityAndValueForm,
     FirearmSummaryForm,
     FirearmYearOfManufactureForm,
+    FirearmSerialIdentificationMarkingsForm,
+    FirearmSerialNumbersForm,
 )
 
 
@@ -157,7 +159,24 @@ def test_add_firearm_to_application_end_to_end(
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
-        {"number_of_items": "16", "value": "16.32"},
+        {"number_of_items": "2", "value": "16.32"},
+    )
+
+    assert isinstance(response.context["form"], FirearmSerialIdentificationMarkingsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        {"serial_numbers_available": "AVAILABLE"},
+    )
+
+    assert isinstance(response.context["form"], FirearmSerialNumbersForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS,
+        {
+            "serial_numbers_0": "s111",
+            "serial_numbers_1": "s222",
+        },
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmSummaryForm)
@@ -179,11 +198,14 @@ def test_add_firearm_to_application_end_to_end(
             "is_onward_altered_processed_comments": "processed comments",
             "is_onward_incorporated": True,
             "is_onward_incorporated_comments": "incorporated comments",
-            "number_of_items": 16,
+            "number_of_items": 2,
+            "serial_numbers_available": "AVAILABLE",
+            "no_identification_markings_details": "",
+            "serial_numbers": ["s111", "s222"],
         },
         "good_id": expected_good_data["id"],
         "is_good_incorporated": True,
-        "quantity": 16,
+        "quantity": 2,
         "unit": "NAR",
         "value": "16.32",
     }
