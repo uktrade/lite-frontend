@@ -11,7 +11,7 @@ Feature: I want to indicate the standard licence I want
     And I select SIEL
     And I enter "application1" as name
     And I select "no" to receiving a letter
-    And I click on "Products"
+    And I click on "Tell us about the products"
     And I click on "Add a new product"
     And I select product type "Firearm"
     And I enter "1" for number of items
