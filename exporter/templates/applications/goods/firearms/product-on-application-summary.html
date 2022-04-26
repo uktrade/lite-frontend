@@ -1,0 +1,106 @@
+{% extends 'layouts/base.html' %}
+
+{% load date firearm_details_summary %}
+
+{% block back_link %}
+{% endblock %}
+
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-xl">
+                {% block title %} Product summary {% endblock %}
+            </h1>
+        </div>
+    </div>
+
+    {% with firearm_details=good_on_application.firearm_details %}
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Was the product made before 1938?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ firearm_details.is_made_before_1938|yesno|capfirst }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            {% if firearm_details.is_made_before_1938 %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What year was it made?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.year_of_manufacture }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Will the product be onward exported to any additional countries?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ firearm_details.is_onward_exported|yesno|capfirst }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            {% if firearm_details.is_onward_exported %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Will the item be altered or processed before it is exported again?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.is_onward_altered_processed|yesno|capfirst }}
+                        {% if firearm_details.is_onward_altered_processed %}
+                            <div class="govuk-hint">
+                                {{ firearm_details.is_onward_altered_processed_comments }}
+                            </div>
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Will the product be incorporated into another item before it is onward exported?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.is_onward_incorporated|yesno|capfirst }}
+                        {% if firearm_details.is_onward_incorporated %}
+                            <div class="govuk-hint">
+                                {{ firearm_details.is_onward_incorporated_comments }}
+                            </div>
+                        {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Number of items
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ firearm_details.number_of_items }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Total value
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    £{{ good_on_application.value }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+        </dl>
+    {% endwith %}
+{% endblock %}

@@ -408,10 +408,13 @@ class AddGoodFirearmToApplication(
 
         return ctx
 
-    def get_success_url(self, pk, good_pk):
+    def get_success_url(self):
         return reverse(
-            "applications:product_summary_2",
-            kwargs={"pk": pk, "good_pk": good_pk},
+            "applications:product_on_application_summary",
+            kwargs={
+                "pk": self.application["id"],
+                "good_on_application_pk": self.good_on_application["id"],
+            },
         )
 
     def get_payload(self, form_dict):
@@ -446,8 +449,10 @@ class AddGoodFirearmToApplication(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            self.post_firearm_to_application(form_dict)
+            good_on_application, _ = self.post_firearm_to_application(form_dict)
         except ServiceError as e:
             return self.handle_service_error(e)
 
-        return redirect(self.get_success_url(self.application["id"], self.good["id"]))
+        self.good_on_application = good_on_application["good"]
+
+        return redirect(self.get_success_url())

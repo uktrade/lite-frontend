@@ -242,9 +242,9 @@ urlpatterns = [
         name="product_summary",
     ),
     path(
-        "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary2/",
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/",
         FirearmProductOnApplicationSummary.as_view(),
-        name="product_summary_2",
+        name="product_on_application_summary",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),

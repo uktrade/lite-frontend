@@ -36,10 +36,15 @@ def mock_good_put(requests_mock, data_standard_case):
 
 
 @pytest.fixture
-def mock_good_on_application_post(requests_mock, data_standard_case):
+def good_on_application():
+    return {"good": {"id": str(uuid.uuid4())}}
+
+
+@pytest.fixture
+def mock_good_on_application_post(requests_mock, data_standard_case, good_on_application):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
-    yield requests_mock.post(url=url, json={}, status_code=201)
+    return requests_mock.post(url=url, json=good_on_application, status_code=201)
 
 
 @pytest.fixture
