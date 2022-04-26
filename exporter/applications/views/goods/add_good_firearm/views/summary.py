@@ -16,15 +16,7 @@ from .mixins import (
 )
 
 
-class FirearmProductSummary(
-    LoginRequiredMixin,
-    Product2FlagMixin,
-    ApplicationMixin,
-    GoodMixin,
-    TemplateView,
-):
-    template_name = "applications/goods/firearms/product-summary.html"
-
+class ProductSummaryContextMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         documents = get_good_documents(self.request, self.good["id"])
@@ -42,11 +34,23 @@ class FirearmProductSummary(
         }
 
 
+class FirearmProductSummary(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodMixin,
+    ProductSummaryContextMixin,
+    TemplateView,
+):
+    template_name = "applications/goods/firearms/product-summary.html"
+
+
 class FirearmProductOnApplicationSummary(
     LoginRequiredMixin,
     Product2FlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
+    ProductSummaryContextMixin,
     TemplateView,
 ):
     template_name = "applications/goods/firearms/product-on-application-summary.html"
@@ -56,6 +60,5 @@ class FirearmProductOnApplicationSummary(
 
         return {
             **context,
-            "good": self.good,
             "good_on_application": self.good_on_application,
         }
