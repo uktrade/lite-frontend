@@ -410,7 +410,7 @@ class AddGoodFirearmToApplication(
 
     def get_success_url(self, pk, good_pk):
         return reverse(
-            "applications:product_summary_2",
+            "applications:product_on_application_summary",
             kwargs={"pk": pk, "good_pk": good_pk},
         )
 
