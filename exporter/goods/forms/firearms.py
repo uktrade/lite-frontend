@@ -1104,8 +1104,6 @@ class FirearmSerialNumbersForm(BaseFirearmForm):
     class Layout:
         TITLE = "Enter serial numbers or other identification markings"
 
-    serial_numbers = None
-
     def __init__(self, number_of_items, *args, **kwargs):
         self.number_of_items = number_of_items
         super().__init__(*args, **kwargs)

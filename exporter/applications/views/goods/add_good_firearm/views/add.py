@@ -79,7 +79,7 @@ from .conditionals import (
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
     is_onward_exported,
-    is_serial_available,
+    is_serial_numbers_available,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
@@ -404,7 +404,7 @@ class AddGoodFirearmToApplication(
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938),
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: C(is_onward_exported),
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
-        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: C(is_serial_available),
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: C(is_serial_numbers_available),
     }
 
     def get_form_kwargs(self, step=None):
