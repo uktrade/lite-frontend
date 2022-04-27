@@ -11,12 +11,19 @@ from exporter.goods.services import get_good_documents
 from .mixins import (
     ApplicationMixin,
     GoodMixin,
-    GoodOnApplicationMixin,
     Product2FlagMixin,
 )
 
 
-class ProductSummaryContextMixin:
+class FirearmProductSummary(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodMixin,
+    TemplateView,
+):
+    template_name = "applications/goods/firearms/product-summary.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         documents = get_good_documents(self.request, self.good["id"])
@@ -31,34 +38,4 @@ class ProductSummaryContextMixin:
             "good": self.good,
             "documents": documents,
             "organisation_documents": organisation_documents,
-        }
-
-
-class FirearmProductSummary(
-    LoginRequiredMixin,
-    Product2FlagMixin,
-    ApplicationMixin,
-    GoodMixin,
-    ProductSummaryContextMixin,
-    TemplateView,
-):
-    template_name = "applications/goods/firearms/product-summary.html"
-
-
-class FirearmProductOnApplicationSummary(
-    LoginRequiredMixin,
-    Product2FlagMixin,
-    ApplicationMixin,
-    GoodOnApplicationMixin,
-    ProductSummaryContextMixin,
-    TemplateView,
-):
-    template_name = "applications/goods/firearms/product-on-application-summary.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        return {
-            **context,
-            "good_on_application": self.good_on_application,
         }
