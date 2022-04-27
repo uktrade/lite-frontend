@@ -1041,14 +1041,13 @@ class FirearmDeactivationDetailsForm(BaseFirearmForm):
         if not is_deactivated_to_standard and not not_deactivated_to_standard_comments:
             self.add_error(
                 "not_deactivated_to_standard_comments",
-                "Enter who deactivated the product and to what standard it was done"
+                "Enter who deactivated the product and to what standard it was done",
             )
 
         if cleaned_data.get("is_deactivated_to_standard") is True:
             cleaned_data["not_deactivated_to_standard_comments"] = ""
 
         return cleaned_data
-
 
 
 class FirearmOnwardIncorporatedForm(BaseFirearmForm):

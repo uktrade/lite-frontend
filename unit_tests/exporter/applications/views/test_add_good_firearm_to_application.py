@@ -153,9 +153,7 @@ def test_add_firearm_to_application_onward_exported_step_not_onward_export(goto_
     assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
 
 
-def test_add_firearm_to_application_is_deactivated_false(
-    requests_mock, expected_good_data, goto_step, post_to_step
-):
+def test_add_firearm_to_application_is_deactivated_false(requests_mock, expected_good_data, goto_step, post_to_step):
     goto_step(AddGoodFirearmToApplicationSteps.IS_DEACTIVATED)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
@@ -166,9 +164,7 @@ def test_add_firearm_to_application_is_deactivated_false(
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
 
-def test_add_firearm_to_application_is_deactivated_empty(
-    requests_mock, expected_good_data, goto_step, post_to_step
-):
+def test_add_firearm_to_application_is_deactivated_empty(requests_mock, expected_good_data, goto_step, post_to_step):
     goto_step(AddGoodFirearmToApplicationSteps.IS_DEACTIVATED)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
