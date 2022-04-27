@@ -1,6 +1,19 @@
+const SLICED_WORDS = 3; // Select exporter suggestion "ML1"
+const NO_CLE_STRING = "None";
+
+const clearCleList = () => {
+  const notListedSuggestionItem = document
+    .querySelector("#control_list_entries")
+    .querySelector(".tokenfield-set")
+    .querySelectorAll("li");
+  notListedSuggestionItem.forEach((child) => {
+    child.remove();
+  });
+};
+
 const createTokenFieldSetItem = (suggestionSentence) => {
   sentenceSplit = suggestionSentence.split(" ");
-  cleName = sentenceSplit.slice(3).join(" ");
+  cleName = sentenceSplit.slice(SLICED_WORDS).join(" ");
 
   const tokenFieldInput = document
     .querySelector("#control_list_entries")
@@ -28,7 +41,7 @@ const createNoCleEntry = () => {
 
   const newSpan = document.createElement("span");
   newSpan.classList.add("item-label");
-  newSpan.innerText = "Not Listed";
+  newSpan.innerText = NO_CLE_STRING;
 
   const newHref = document.createElement("a");
   newHref.classList.add("item-remove");
@@ -36,12 +49,9 @@ const createNoCleEntry = () => {
   newHref.innerText = "×";
   newHref.href = "#";
 
-  const newInput = document.createElement("input");
-  newInput.classList.add("item-input");
-  newInput.type = "hidden";
-  newInput.name = "control_list_entries";
+  newLi.append(newSpan, newHref);
 
-  newLi.append(newSpan, newHref, newInput);
+  clearCleList();
 
   tokenFieldInput.style.display = "none";
   notListedSuggestionField.appendChild(newLi);
@@ -51,12 +61,8 @@ const removeNoCleEntry = () => {
   const tokenFieldInput = document
     .querySelector("#control_list_entries")
     .querySelector(".tokenfield-input");
-  const notListedSuggestionItem = document
-    .querySelector("#control_list_entries")
-    .querySelector(".tokenfield-set")
-    .querySelector("li");
   tokenFieldInput.style.removeProperty("display");
-  notListedSuggestionItem.remove();
+  clearCleList();
 };
 
 const initTauControlListEntry = () => {
@@ -68,7 +74,8 @@ const initTauControlListEntry = () => {
 
   cleList.forEach((cle) =>
     cle.addEventListener("click", (event) => {
-      createTokenFieldSetItem(event.target.innerText);
+      !doesNotHaveCleSentence.checked &&
+        createTokenFieldSetItem(event.target.innerText);
     })
   );
 

@@ -22,7 +22,7 @@ class TAUEditForm(forms.Form):
     )
 
     does_not_have_control_list_entries = forms.BooleanField(
-        label="This product does not have a control list entry",
+        label="Choose not to add a control list entry or end-use control",
         required=False,
     )
 
