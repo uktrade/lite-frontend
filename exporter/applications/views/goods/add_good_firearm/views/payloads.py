@@ -118,6 +118,16 @@ def get_onward_incorporated_payload(form):
     }
 
 
+@firearm_details_payload
+def get_deactivation_details_payload(form):
+    firearm_deactivation_details_data = form.cleaned_data
+    return {
+        "date_of_deactivation": firearm_deactivation_details_data["date_of_deactivation"].isoformat(),
+        "is_deactivated_to_standard": firearm_deactivation_details_data["is_deactivated_to_standard"],
+        "not_deactivated_to_standard_comments": firearm_deactivation_details_data["not_deactivated_to_standard_comments"],
+    }
+
+
 def get_quantity_and_value_payload(form):
     return {
         "unit": "NAR",
@@ -202,7 +212,7 @@ class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED: get_firearm_details_cleaned_data,
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_deactivation_details_payload,
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: get_serial_numbers_payload,

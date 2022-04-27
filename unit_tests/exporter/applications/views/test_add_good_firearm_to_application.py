@@ -164,71 +164,7 @@ def test_add_firearm_to_application_is_deactivated_false(requests_mock, expected
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
 
-def test_add_firearm_to_application_is_deactivated_empty(requests_mock, expected_good_data, goto_step, post_to_step):
-    goto_step(AddGoodFirearmToApplicationSteps.IS_DEACTIVATED)
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
-        {"is_deactivated": ""},
-    )
-
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
-    assert len(response.context["form"].errors) == 1
-
-
-def test_add_firearm_to_application_deactivation_details_date_empty(
-    requests_mock, expected_good_data, goto_step, post_to_step
-):
-    goto_step(AddGoodFirearmToApplicationSteps.IS_DEACTIVATED)
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
-        {"is_deactivated": True},
-    )
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
-        {
-            "date_of_deactivation_0": "",
-            "date_of_deactivation_1": "",
-            "date_of_deactivation_2": "",
-            "is_deactivated_to_standard": True,
-        },
-    )
-
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
-    assert len(response.context["form"].errors) == 1
-
-
-def test_add_firearm_to_application_deactivation_details_deactivated_to_standard_empty(
-    requests_mock, expected_good_data, goto_step, post_to_step
-):
-    goto_step(AddGoodFirearmToApplicationSteps.IS_DEACTIVATED)
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
-        {"is_deactivated": True},
-    )
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
-        {
-            "date_of_deactivation_0": "12",
-            "date_of_deactivation_1": "11",
-            "date_of_deactivation_2": "2007",
-            "is_deactivated_to_standard": "",
-        },
-    )
-
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
-    assert len(response.context["form"].errors) == 2
-
-
-def test_add_firearm_to_application_deactivation_details_comments_empty(
-    requests_mock, expected_good_data, goto_step, post_to_step
-):
+def test_add_firearm_to_application_is_deactivated_true(requests_mock, expected_good_data, goto_step, post_to_step):
     goto_step(AddGoodFirearmToApplicationSteps.IS_DEACTIVATED)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
@@ -237,19 +173,6 @@ def test_add_firearm_to_application_deactivation_details_comments_empty(
 
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
-        {
-            "date_of_deactivation_0": "12",
-            "date_of_deactivation_1": "11",
-            "date_of_deactivation_2": "2007",
-            "is_deactivated_to_standard": False,
-        },
-    )
-
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
-    assert len(response.context["form"].errors) == 1
 
 
 def test_add_firearm_to_application_serial_numbers_later(post_to_step, advance_to_step):
@@ -352,7 +275,7 @@ def test_add_firearm_to_application_end_to_end(
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
-        {"number_of_items": "16", "value": "16.32"},
+        {"number_of_items": "2", "value": "16.32"},
     )
 
     assert isinstance(response.context["form"], FirearmSerialIdentificationMarkingsForm)

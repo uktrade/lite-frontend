@@ -1031,10 +1031,6 @@ class FirearmDeactivationDetailsForm(BaseFirearmForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        date_of_deactivation = cleaned_data.get("date_of_deactivation")
-        if date_of_deactivation:
-            cleaned_data["date_of_deactivation"] = date_of_deactivation.isoformat()
-
         is_deactivated_to_standard = cleaned_data.get("is_deactivated_to_standard")
         not_deactivated_to_standard_comments = cleaned_data.get("not_deactivated_to_standard_comments")
 
@@ -1044,7 +1040,7 @@ class FirearmDeactivationDetailsForm(BaseFirearmForm):
                 "Enter who deactivated the product and to what standard it was done",
             )
 
-        if cleaned_data.get("is_deactivated_to_standard") is True:
+        if cleaned_data.get("is_deactivated_to_standard"):
             cleaned_data["not_deactivated_to_standard_comments"] = ""
 
         return cleaned_data
