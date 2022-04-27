@@ -27,6 +27,24 @@
       padding: 12px 20px 0 0;
     }
   }
+
+  #div_id_does_not_have_control_list_entries {
+
+    .govuk-checkboxes__label {
+      padding: 0;
+      text-decoration: underline;
+      cursor: pointer;
+      color: $base-blue;
+    }
+
+    .govuk-checkboxes__label::before, ::after {
+      position: absolute;
+      top: -1000px;
+    }
+    .govuk-checkboxes__item {
+      padding-left: 0;
+    }
+  }
 } 
 
 #tau-form {

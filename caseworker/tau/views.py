@@ -95,7 +95,6 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
 
     def form_valid(self, form):
         data = form.cleaned_data
-        assert False, data
         # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
