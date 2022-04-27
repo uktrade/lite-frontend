@@ -14,8 +14,7 @@ class TAUEditForm(forms.Form):
     MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
 
     control_list_entries = forms.MultipleChoiceField(
-        label="What is the correct control list entry for this product?",
-        help_text="Type to get suggestions. For example ML1a.",
+        label="",
         choices=[],  # set in __init__
         required=False,
         # setting id for javascript to use
