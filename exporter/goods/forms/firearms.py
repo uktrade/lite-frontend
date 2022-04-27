@@ -1040,13 +1040,6 @@ class FirearmQuantityAndValueForm(BaseFirearmForm):
         )
 
 
-class FirearmSummaryForm(forms.Form):
-    # This doesn't need to provide any data, it's just a blank form so that we
-    # can have a summary page at the end of the product summary wizard
-    class Layout:
-        TITLE = "Product summary"
-
-
 class FirearmSerialIdentificationMarkingsForm(BaseFirearmForm):
     class Layout:
         TITLE = "Will each product have a serial number or other identification marking?"
@@ -1141,3 +1134,10 @@ class FirearmSerialNumbersForm(BaseFirearmForm):
             cleaned_data[f"serial_number_input_{i}"] = serial_number
 
         return cleaned_data
+
+
+class FirearmSummaryForm(forms.Form):
+    # This doesn't need to provide any data, it's just a blank form so that we
+    # can have a summary page at the end of the product summary wizard
+    class Layout:
+        TITLE = "Product summary"
