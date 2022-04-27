@@ -972,7 +972,6 @@ class FirearmIsDeactivatedForm(BaseFirearmForm):
         return ("is_deactivated",)
 
 
-
 class FirearmDeactivationDetailsForm(BaseFirearmForm):
     class Layout:
         TITLE = "Has the product been deactivated?"
@@ -1040,7 +1039,10 @@ class FirearmDeactivationDetailsForm(BaseFirearmForm):
         not_deactivated_to_standard_comments = cleaned_data.get("not_deactivated_to_standard_comments")
 
         if not is_deactivated_to_standard and not not_deactivated_to_standard_comments:
-            self.add_error("not_deactivated_to_standard_comments", "Enter who deactivated the product and to what standard it was done")
+            self.add_error(
+                "not_deactivated_to_standard_comments",
+                "Enter who deactivated the product and to what standard it was done"
+            )
 
         if cleaned_data.get("is_deactivated_to_standard") is True:
             cleaned_data["not_deactivated_to_standard_comments"] = ""
