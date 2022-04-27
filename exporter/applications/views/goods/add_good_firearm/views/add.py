@@ -57,7 +57,6 @@ from exporter.goods.forms.firearms import (
     FirearmSerialNumbersForm,
     FirearmSummaryForm,
 )
-
 from exporter.goods.services import (
     get_good_documents,
     post_firearm,
@@ -414,19 +413,6 @@ class AddGoodFirearmToApplication(
             kwargs["number_of_items"] = quantity_step_data["number_of_items"]
 
         return kwargs
-
-    def get_context_data(self, form, **kwargs):
-        ctx = super().get_context_data(form, **kwargs)
-
-        ctx["back_link_url"] = reverse(
-            "applications:new_good",
-            kwargs={
-                "pk": self.kwargs["pk"],
-            },
-        )
-        ctx["title"] = form.Layout.TITLE
-
-        return ctx
 
     def get_success_url(self):
         return reverse(

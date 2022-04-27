@@ -59,6 +59,14 @@ def post_to_step(post_to_step_factory, new_firearm_to_application_url):
     return post_to_step_factory(new_firearm_to_application_url)
 
 
+@pytest.fixture(autouse=True)
+def mock_get_document(requests_mock, expected_good_data):
+    return requests_mock.get(
+        f"/goods/{expected_good_data['id']}/documents/",
+        json={},
+    )
+
+
 @pytest.fixture
 def steps_data():
     return [
@@ -117,11 +125,9 @@ def test_add_firearm_to_application_product_not_made_before_1938_step(
     assert isinstance(response.context["form"], FirearmOnwardExportedForm)
 
 
-def test_add_firearm_to_application_year_of_manufacture_step(
-    requests_mock, expected_good_data, goto_step, post_to_step
-):
+def test_add_firearm_to_application_year_of_manufacture_step(goto_step, post_to_step):
     goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
         {"is_made_before_1938": True},
     )
@@ -134,9 +140,7 @@ def test_add_firearm_to_application_year_of_manufacture_step(
     assert isinstance(response.context["form"], FirearmOnwardExportedForm)
 
 
-def test_add_firearm_to_application_onward_exported_step_not_onward_export(
-    requests_mock, expected_good_data, goto_step, post_to_step
-):
+def test_add_firearm_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
     goto_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
@@ -147,31 +151,20 @@ def test_add_firearm_to_application_onward_exported_step_not_onward_export(
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
 
-def test_add_firearm_to_application_serial_numbers_later(
-    requests_mock, application, good_on_application, post_to_step, advance_to_step
-):
+def test_add_firearm_to_application_serial_numbers_later(post_to_step, advance_to_step):
 
     advance_to_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
-
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
         {"serial_numbers_available": "LATER"},
     )
 
-    assert response.status_code == 302
-
-    assert response.url == reverse(
-        "applications:product_on_application_summary",
-        kwargs={
-            "pk": application["id"],
-            "good_on_application_pk": good_on_application["good"]["id"],
-        },
-    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmSummaryForm)
 
 
-def test_add_firearm_to_application_serial_numbers_not_available(
-    requests_mock, application, good_on_application, post_to_step, advance_to_step
-):
+def test_add_firearm_to_application_serial_numbers_not_available(post_to_step, advance_to_step):
+
     advance_to_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
@@ -188,24 +181,11 @@ def test_add_firearm_to_application_serial_numbers_not_available(
         {"serial_numbers_available": "NOT_AVAILABLE", "no_identification_markings_details": "lost"},
     )
 
-    assert response.status_code == 302
-
-    assert response.url == reverse(
-        "applications:product_on_application_summary",
-        kwargs={
-            "pk": application["id"],
-            "good_on_application_pk": good_on_application["good"]["id"],
-        },
-    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmSummaryForm)
 
 
-def test_add_firearm_to_application_end_to_end(
-    requests_mock, expected_good_data, application, good_on_application, goto_step, post_to_step
-):
-    requests_mock.get(
-        f"/goods/{expected_good_data['id']}/documents/",
-        json={},
-    )
+def test_add_firearm_to_application_end_to_end(requests_mock, expected_good_data, application, goto_step, post_to_step):
 
     goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
     response = post_to_step(
@@ -264,6 +244,7 @@ def test_add_firearm_to_application_end_to_end(
             "serial_numbers_1": "s222",
         },
     )
+
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmSummaryForm)
 
@@ -273,6 +254,7 @@ def test_add_firearm_to_application_end_to_end(
     )
 
     assert response.status_code == 302
+
     assert response.url == reverse("applications:goods", kwargs={"pk": application["id"]})
 
     assert requests_mock.last_request.json() == {
