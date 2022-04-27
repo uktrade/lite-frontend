@@ -7,6 +7,7 @@ from django.urls import reverse
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
 from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
+from caseworker.tau.services import get_recent_precedent
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
@@ -42,7 +43,13 @@ class TAUMixin:
 
     @property
     def unassessed_goods(self):
-        return [item for item in self.case.goods if not self.is_assessed(item)]
+        precedents = get_recent_precedent(self.request, self.case)
+        goods = []
+        for item in self.case.goods:
+            if not self.is_assessed(item):
+                item["precedent"] = precedents[item["id"]]
+                goods.append(item)
+        return goods
 
     @property
     def good_id(self):
