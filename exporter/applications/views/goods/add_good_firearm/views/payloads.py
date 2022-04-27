@@ -124,7 +124,9 @@ def get_deactivation_details_payload(form):
     return {
         "date_of_deactivation": firearm_deactivation_details_data["date_of_deactivation"].isoformat(),
         "is_deactivated_to_standard": firearm_deactivation_details_data["is_deactivated_to_standard"],
-        "not_deactivated_to_standard_comments": firearm_deactivation_details_data["not_deactivated_to_standard_comments"],
+        "not_deactivated_to_standard_comments": firearm_deactivation_details_data[
+            "not_deactivated_to_standard_comments"
+        ],
     }
 
 

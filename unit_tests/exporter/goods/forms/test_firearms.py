@@ -806,9 +806,7 @@ def test_firearm_quantity_and_value(data, is_valid, errors):
 
 @pytest.mark.parametrize(
     "data, is_valid, errors",
-    (
-        ({}, False, {"is_deactivated": ["Select yes if the product has been deactivated"]}),
-    ),
+    (({}, False, {"is_deactivated": ["Select yes if the product has been deactivated"]}),),
 )
 def test_firearm_is_deactivated_form(data, is_valid, errors):
     form = FirearmIsDeactivatedForm(data=data)
@@ -824,9 +822,13 @@ def test_firearm_is_deactivated_form(data, is_valid, errors):
             False,
             {
                 "date_of_deactivation": ["Enter the deactivation date"],
-                "is_deactivated_to_standard": ["Select yes if the product has been deactivated to UK proof house standards"],
-                "not_deactivated_to_standard_comments": ["Enter who deactivated the product and to what standard it was done"],
-            }
+                "is_deactivated_to_standard": [
+                    "Select yes if the product has been deactivated to UK proof house standards"
+                ],
+                "not_deactivated_to_standard_comments": [
+                    "Enter who deactivated the product and to what standard it was done"
+                ],
+            },
         ),
     ),
 )
