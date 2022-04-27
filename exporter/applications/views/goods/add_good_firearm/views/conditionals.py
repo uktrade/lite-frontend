@@ -111,6 +111,11 @@ def is_onward_exported(wizard):
     return is_onward_exported_data.get("is_onward_exported", False)
 
 
+def is_deactivated(wizard):
+    is_deactivated = wizard.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.IS_DEACTIVATED)
+    return is_deactivated.get("is_deactivated", False)
+
+
 def is_serial_numbers_available(wizard):
     serial_numbers_available_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING

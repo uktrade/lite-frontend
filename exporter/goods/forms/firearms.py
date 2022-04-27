@@ -951,6 +951,104 @@ class FirearmOnwardAlteredProcessedForm(BaseFirearmForm):
         return cleaned_data
 
 
+class FirearmIsDeactivatedForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Has the product been deactivated?"
+
+    is_deactivated = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product has been deactivated",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("is_deactivated",)
+
+
+
+class FirearmDeactivationDetailsForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "Has the product been deactivated?"
+
+    date_of_deactivation = CustomErrorDateInputField(
+        label="When was the item deactivated?",
+        require_all_fields=False,
+        help_text="For example, 12 11 2007",
+        error_messages={
+            "required": "Enter the deactivation date",
+            "incomplete": "Enter the deactivation date",
+            "day": {
+                "incomplete": "Deactivation date must include a day",
+                "invalid": "Deactivation date must be a real date",
+            },
+            "month": {
+                "incomplete": "Deactivation date must include a month",
+                "invalid": "Deactivation date must be a real date",
+            },
+            "year": {
+                "incomplete": "Deactivation date must include a year",
+                "invalid": "Deactivation date must be a real date",
+            },
+        },
+        validators=[
+            PastDateValidator("Deactivation date must be in the past"),
+        ],
+    )
+    is_deactivated_to_standard = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="Has the item been deactivated to UK proof house standards?",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product has been deactivated to UK proof house standards",
+        },
+    )
+    not_deactivated_to_standard_comments = forms.CharField(
+        widget=forms.Textarea,
+        label="Describe who deactivated the product and to what standard it was done",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            "date_of_deactivation",
+            ConditionalRadios(
+                "is_deactivated_to_standard",
+                "Yes",
+                ConditionalQuestion("No", "not_deactivated_to_standard_comments"),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        date_of_deactivation = cleaned_data.get("date_of_deactivation")
+        if date_of_deactivation:
+            cleaned_data["date_of_deactivation"] = date_of_deactivation.isoformat()
+
+        is_deactivated_to_standard = cleaned_data.get("is_deactivated_to_standard")
+        not_deactivated_to_standard_comments = cleaned_data.get("not_deactivated_to_standard_comments")
+
+        if not is_deactivated_to_standard and not not_deactivated_to_standard_comments:
+            self.add_error("not_deactivated_to_standard_comments", "Enter who deactivated the product and to what standard it was done")
+
+        if cleaned_data.get("is_deactivated_to_standard") is True:
+            cleaned_data["not_deactivated_to_standard_comments"] = ""
+
+        return cleaned_data
+
+
+
 class FirearmOnwardIncorporatedForm(BaseFirearmForm):
     class Layout:
         TITLE = "Will the product be incorporated into another item before it is onward exported?"

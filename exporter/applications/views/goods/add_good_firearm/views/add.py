@@ -35,10 +35,12 @@ from exporter.goods.forms.firearms import (
     FirearmAttachShotgunCertificateForm,
     FirearmCalibreForm,
     FirearmCategoryForm,
+    FirearmDeactivationDetailsForm,
     FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
+    FirearmIsDeactivatedForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
@@ -78,6 +80,7 @@ from .conditionals import (
     should_display_is_registered_firearms_dealer_step,
     is_product_made_before_1938,
     is_onward_exported,
+    is_deactivated,
     is_serial_numbers_available,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
@@ -393,6 +396,8 @@ class AddGoodFirearmToApplication(
         (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
+        (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED, FirearmIsDeactivatedForm),
+        (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD, FirearmDeactivationDetailsForm),
         (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
         (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, FirearmSerialIdentificationMarkingsForm),
         (AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS, FirearmSerialNumbersForm),
@@ -403,6 +408,7 @@ class AddGoodFirearmToApplication(
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938),
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: C(is_onward_exported),
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: C(is_deactivated),
         AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: C(is_serial_numbers_available),
     }
 
