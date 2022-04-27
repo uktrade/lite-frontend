@@ -13,7 +13,11 @@
             <!-- Heading -->
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-l">Product Assessment</h1>
+                {% if unassessed_goods %}
                 <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} product(s) going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+                {% else %}
+                <p id="subtitle" class="govuk-body-l">{{ assessed_goods|length }} product(s) going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+                {% endif %}
             </div>
             <!-- Move case forward form -->
             <div class="govuk-grid-column-one-third">
@@ -41,7 +45,7 @@
                     {% if field.name != "goods" %}
                     {{ field | as_crispy_field }}
                     {% endif %}
-                {% endfor %}
+                    {% endfor %}
                     <div class="form-actions">
                         <input type="submit" name="submit" value="Submit recommendation" class="govuk-button" id="submit-id-submit">
                     </div>
@@ -51,6 +55,7 @@
         </div>
 
         <!-- Assessed products table -->
+        {% if assessed_goods %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <table id="assessed-products" class="govuk-table">
@@ -82,6 +87,7 @@
                 </table>
             </div>
         </div>
+        {% endif %}
     </main>
 </div>
 {% endblock %}
