@@ -1,33 +1,18 @@
-const createTokenFieldSetItem = (cleName) => {
-  suggestionSplit = cleName.split(" ");
-  suggestion = suggestionSplit[suggestionSplit.length - 1];
+const createTokenFieldSetItem = (suggestionSentence) => {
+  sentenceSplit = suggestionSentence.split(" ");
+  cleName = sentenceSplit.slice(3).join(" ");
 
-  const inputSuggestion = document
+  const tokenFieldInput = document
     .querySelector("#control_list_entries")
-    .querySelector(".tokenfield-set")
-    .querySelector("ul");
-  const newLi = document.createElement("li");
-  newLi.classList.add("tokenfield-set-item");
+    .querySelector(".tokenfield-input");
 
-  const newSpan = document.createElement("span");
-  newSpan.classList.add("item-label");
-  newSpan.innerText = suggestion;
+  tokenFieldInput.value = cleName;
+  tokenFieldInput.click();
 
-  const newHref = document.createElement("a");
-  newHref.classList.add("item-remove");
-  newHref.tabIndex = -1;
-  newHref.innerText = "×";
-  newHref.href = "#";
-
-  const newInput = document.createElement("input");
-  newInput.classList.add("item-input");
-  newInput.type = "hidden";
-  newInput.name = "control_list_entries";
-  newInput.value = suggestion;
-
-  newLi.append(newSpan, newHref, newInput);
-
-  inputSuggestion.appendChild(newLi);
+  const tokenFieldSuggestList = document
+    .querySelector("#control_list_entries")
+    .querySelectorAll(".tokenfield-suggest-item");
+  tokenFieldSuggestList[0].click();
 };
 
 const initTauControlListEntry = () => {
@@ -51,7 +36,8 @@ const initTauControlListEntry = () => {
             cle.classList.remove("app-hidden--force");
           return;
         }
-        cle.classList.add("app-hidden--force");
+        id === cle.getAttribute("name") &&
+          cle.classList.add("app-hidden--force");
       });
     });
   });
