@@ -463,6 +463,7 @@ class AddGoodFirearmToApplication(
             },
         )
         ctx["title"] = form.Layout.TITLE
+        ctx["AddGoodFirearmToApplicationSteps"] = AddGoodFirearmToApplicationSteps
 
         if self.steps.current == AddGoodFirearmToApplicationSteps.SUMMARY:
             documents = get_good_documents(self.request, self.good["id"])

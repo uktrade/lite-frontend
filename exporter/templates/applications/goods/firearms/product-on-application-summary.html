@@ -40,6 +40,7 @@
                                 {{ firearm_details.is_made_before_1938|yesno|capfirst }}
                             </dd>
                             <dd class="govuk-summary-list__actions">
+                                <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938 }}" class="lite-button--link">Change</button>
                             </dd>
                         </div>
                         {% if firearm_details.is_made_before_1938 %}
@@ -51,6 +52,7 @@
                                     {{ firearm_details.year_of_manufacture }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
+                                    <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE }}" class="lite-button--link">Change</button>
                                 </dd>
                             </div>
                         {% endif %}
@@ -62,6 +64,7 @@
                                 {{ firearm_details.is_onward_exported|yesno|capfirst }}
                             </dd>
                             <dd class="govuk-summary-list__actions">
+                                <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED }}" class="lite-button--link">Change</button>
                             </dd>
                         </div>
                         {% if firearm_details.is_onward_exported %}
@@ -78,6 +81,7 @@
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
+                                    <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED }}" class="lite-button--link">Change</button>
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
@@ -93,6 +97,7 @@
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
+                                    <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED }}" class="lite-button--link">Change</button>
                                 </dd>
                             </div>
                         {% endif %}
@@ -104,6 +109,7 @@
                                 {{ firearm_details.number_of_items }}
                             </dd>
                             <dd class="govuk-summary-list__actions">
+                                <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE }}" class="lite-button--link">Change</button>
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -114,6 +120,7 @@
                                 £{{ good_on_application.value }}
                             </dd>
                             <dd class="govuk-summary-list__actions">
+                                <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE }}" class="lite-button--link">Change</button>
                             </dd>
                         </div>
                     </dl>
