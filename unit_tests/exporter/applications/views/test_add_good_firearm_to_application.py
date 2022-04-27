@@ -58,6 +58,40 @@ def post_to_step(post_to_step_factory, new_firearm_to_application_url):
     return post_to_step_factory(new_firearm_to_application_url)
 
 
+@pytest.fixture
+def steps_data():
+    return [
+        (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, {"is_made_before_1938": True}),
+        (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, {"year_of_manufacture": 1937}),
+        (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, {"is_onward_exported": True}),
+        (
+            AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+            {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
+        ),
+        (
+            AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+            {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
+        ),
+        (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, {"number_of_items": "2", "value": "16.32"}),
+        (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, {"serial_numbers_available": "AVAILABLE"}),
+    ]
+
+
+@pytest.fixture
+def advance_to_step(post_to_step, steps_data):
+    def advance(step_name):
+        for step in steps_data:
+            if step_name == step[0]:
+                return
+            else:
+                post_to_step(
+                    step[0],
+                    step[1],
+                )
+
+    return advance
+
+
 def test_add_firearm_to_application_product_made_before_1938_step(goto_step, post_to_step):
     goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
     response = post_to_step(
@@ -110,6 +144,58 @@ def test_add_firearm_to_application_onward_exported_step_not_onward_export(
 
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+
+
+def test_add_firearm_to_application_serial_numbers_later(
+    requests_mock, application, good_on_application, post_to_step, advance_to_step
+):
+
+    advance_to_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        {"serial_numbers_available": "LATER"},
+    )
+
+    assert response.status_code == 302
+
+    assert response.url == reverse(
+        "applications:product_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
+
+
+def test_add_firearm_to_application_serial_numbers_not_available(
+    requests_mock, application, good_on_application, post_to_step, advance_to_step
+):
+    advance_to_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        {"serial_numbers_available": "NOT_AVAILABLE"},
+    )
+
+    assert response.status_code == 200
+    assert response.context["form"].errors == {
+        "no_identification_markings_details": ["Enter why products will not have serial numbers"]
+    }
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        {"serial_numbers_available": "NOT_AVAILABLE", "no_identification_markings_details": "lost"},
+    )
+
+    assert response.status_code == 302
+
+    assert response.url == reverse(
+        "applications:product_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
 
 
 def test_add_firearm_to_application_end_to_end(
