@@ -1,5 +1,6 @@
 import logging
 
+from collections import OrderedDict
 from deepmerge import always_merger
 from http import HTTPStatus
 
@@ -22,6 +23,7 @@ from exporter.core.constants import (
 from exporter.core.helpers import (
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     get_document_data,
+    get_organisation_documents,
     get_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
@@ -51,8 +53,10 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
+    FirearmSummaryForm,
 )
 from exporter.goods.services import (
+    get_good_documents,
     post_firearm,
     post_good_documents,
 )
@@ -387,6 +391,7 @@ class AddGoodFirearmToApplication(
         (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
         (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AddGoodFirearmToApplicationSteps.SUMMARY, FirearmSummaryForm),
     ]
 
     condition_dict = {
@@ -395,25 +400,11 @@ class AddGoodFirearmToApplication(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
     }
 
-    def get_context_data(self, form, **kwargs):
-        ctx = super().get_context_data(form, **kwargs)
-
-        ctx["back_link_url"] = reverse(
-            "applications:new_good",
-            kwargs={
-                "pk": self.kwargs["pk"],
-            },
-        )
-        ctx["title"] = form.Layout.TITLE
-
-        return ctx
-
     def get_success_url(self):
         return reverse(
-            "applications:product_on_application_summary",
+            "applications:goods",
             kwargs={
-                "pk": self.application["id"],
-                "good_on_application_pk": self.good_on_application["id"],
+                "pk": self.kwargs["pk"],
             },
         )
 
@@ -446,6 +437,52 @@ class AddGoodFirearmToApplication(
         if settings.DEBUG:
             raise service_error
         return error_page(self.request, service_error.user_message)
+
+    def get_template_names(self):
+        if self.steps.current == AddGoodFirearmToApplicationSteps.SUMMARY:
+            return ["applications/goods/firearms/product-on-application-summary.html"]
+        return super().get_template_names()
+
+    def get_form_dict(self):
+        form_dict = OrderedDict()
+        for form_key in self.get_form_list():
+            form_obj = self.get_form(
+                step=form_key, data=self.storage.get_step_data(form_key), files=self.storage.get_step_files(form_key)
+            )
+            if form_obj.is_valid():
+                form_dict[form_key] = form_obj
+        return form_dict
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+
+        ctx["back_link_url"] = reverse(
+            "applications:new_good",
+            kwargs={
+                "pk": self.kwargs["pk"],
+            },
+        )
+        ctx["title"] = form.Layout.TITLE
+        ctx["AddGoodFirearmToApplicationSteps"] = AddGoodFirearmToApplicationSteps
+
+        if self.steps.current == AddGoodFirearmToApplicationSteps.SUMMARY:
+            documents = get_good_documents(self.request, self.good["id"])
+            is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
+            organisation_documents = {
+                k.replace("-", "_"): v for k, v in get_organisation_documents(self.application).items()
+            }
+
+            return {
+                **ctx,
+                "is_user_rfd": is_user_rfd,
+                "application_id": self.application["id"],
+                "good": self.good,
+                "good_on_application": self.get_payload(self.get_form_dict()),
+                "documents": documents,
+                "organisation_documents": organisation_documents,
+            }
+
+        return ctx
 
     def done(self, form_list, form_dict, **kwargs):
         try:

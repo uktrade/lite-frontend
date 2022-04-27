@@ -1037,3 +1037,10 @@ class FirearmQuantityAndValueForm(BaseFirearmForm):
             Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
         )
+
+
+class FirearmSummaryForm(forms.Form):
+    # This doesn't need to provide any data, it's just a blank form so that we
+    # can have a summary page at the end of the product summary wizard
+    class Layout:
+        TITLE = "Product summary"

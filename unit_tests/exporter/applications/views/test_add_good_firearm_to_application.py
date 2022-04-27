@@ -8,6 +8,7 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
+    FirearmSummaryForm,
     FirearmYearOfManufactureForm,
 )
 
@@ -113,6 +114,11 @@ def test_add_firearm_to_application_onward_exported_step_not_onward_export(
 def test_add_firearm_to_application_end_to_end(
     requests_mock, expected_good_data, application, good_on_application, goto_step, post_to_step
 ):
+    requests_mock.get(
+        f"/goods/{expected_good_data['id']}/documents/",
+        json={},
+    )
+
     goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
@@ -125,7 +131,6 @@ def test_add_firearm_to_application_end_to_end(
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
         {"year_of_manufacture": 1937},
     )
-
     assert isinstance(response.context["form"], FirearmOnwardExportedForm)
     assert not response.context["form"].errors
 
@@ -142,11 +147,11 @@ def test_add_firearm_to_application_end_to_end(
     )
     assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
     assert not response.context["form"].errors
+
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
-
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
@@ -154,15 +159,16 @@ def test_add_firearm_to_application_end_to_end(
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
         {"number_of_items": "16", "value": "16.32"},
     )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmSummaryForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SUMMARY,
+        {},
+    )
 
     assert response.status_code == 302
-    assert response.url == reverse(
-        "applications:product_on_application_summary",
-        kwargs={
-            "pk": application["id"],
-            "good_on_application_pk": good_on_application["good"]["id"],
-        },
-    )
+    assert response.url == reverse("applications:goods", kwargs={"pk": application["id"]})
 
     assert requests_mock.last_request.json() == {
         "firearm_details": {
