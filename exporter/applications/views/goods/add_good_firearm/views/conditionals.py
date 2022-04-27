@@ -3,7 +3,7 @@ from exporter.core.helpers import (
     has_firearm_act_document as _has_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
-from exporter.goods.forms.firearms import FirearmSection5Form
+from exporter.goods.forms.firearms import FirearmSection5Form, FirearmSerialIdentificationMarkingsForm
 
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 
@@ -109,3 +109,13 @@ def is_product_made_before_1938(wizard):
 def is_onward_exported(wizard):
     is_onward_exported_data = wizard.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
     return is_onward_exported_data.get("is_onward_exported", False)
+
+
+def is_serial_numbers_available(wizard):
+    serial_numbers_available_data = wizard.get_cleaned_data_for_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING
+    )
+    return (
+        serial_numbers_available_data.get("serial_numbers_available")
+        == FirearmSerialIdentificationMarkingsForm.SerialChoices.AVAILABLE
+    )
