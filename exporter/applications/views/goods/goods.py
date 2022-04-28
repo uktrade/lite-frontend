@@ -468,6 +468,14 @@ class AttachFirearmActSectionDocument(LoginRequiredMixin, TemplateView):
             form_data=old_post,
         )
 
+        if not request.FILES.get("file"):
+            form = upload_firearms_act_certificate_form(
+                section="section",
+                filename=self.certificate_filename,
+                back_link=back_link,
+            )
+            return form_page(request, form, data=data, errors={"file": ["Select certificate file to upload"]})
+
         errors = validate_expiry_date(request, "section_certificate_date_of_expiry")
         if errors:
             form = upload_firearms_act_certificate_form(
