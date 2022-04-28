@@ -163,6 +163,41 @@
                                 <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE }}" class="lite-button--link">Change</button>
                             </dd>
                         </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Will each product have a serial number or other identification marking?
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if firearm_details.serial_numbers_available == "AVAILABLE" %}
+                                    Yes, I can add serial numbers now
+                                {% elif firearm_details.serial_numbers_available == "LATER" %}
+                                    Yes, I can add serial numbers later
+                                {% else %}
+                                    No
+                                    {% if firearm_details.no_identification_markings_details %}
+                                        <div class="govuk-hint">
+                                            {{ firearm_details.no_identification_markings_details }}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING }}" class="lite-button--link">Change</button>
+                            </dd>
+                        </div>
+                        {% if good.firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Enter serial numbers or other identification markings
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% include "goods/includes/serial_numbers.html" %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS }}" class="lite-button--link">Change</button>
+                                </dd>
+                            </div>
+                        {% endif %}
                     </dl>
                 {% endwith %}
 
