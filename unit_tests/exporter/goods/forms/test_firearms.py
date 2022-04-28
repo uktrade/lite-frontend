@@ -14,10 +14,12 @@ from exporter.goods.forms.firearms import (
     FirearmAttachShotgunCertificateForm,
     FirearmCalibreForm,
     FirearmCategoryForm,
+    FirearmDeactivationDetailsForm,
     FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
+    FirearmIsDeactivatedForm,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
@@ -798,5 +800,39 @@ def test_firearm_year_of_manufacture_form(data, is_valid, errors):
 )
 def test_firearm_quantity_and_value(data, is_valid, errors):
     form = FirearmQuantityAndValueForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (({}, False, {"is_deactivated": ["Select yes if the product has been deactivated"]}),),
+)
+def test_firearm_is_deactivated_form(data, is_valid, errors):
+    form = FirearmIsDeactivatedForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "date_of_deactivation": ["Enter the deactivation date"],
+                "is_deactivated_to_standard": [
+                    "Select yes if the product has been deactivated to UK proof house standards"
+                ],
+                "not_deactivated_to_standard_comments": [
+                    "Enter who deactivated the product and to what standard it was done"
+                ],
+            },
+        ),
+    ),
+)
+def test_firearm_deactivation_details_form(data, is_valid, errors):
+    form = FirearmDeactivationDetailsForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
