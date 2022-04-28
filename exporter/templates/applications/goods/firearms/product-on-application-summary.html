@@ -103,6 +103,46 @@
                         {% endif %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
+                                Has the product been deactivated?
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ firearm_details.is_deactivated|yesno|capfirst }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.IS_DEACTIVATED }}" class="lite-button--link">Change</button>
+                            </dd>
+                        </div>
+                        {% if firearm_details.is_deactivated %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    When was the item deactivated?
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ firearm_details.date_of_deactivation|to_date|date:"j F Y" }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD }}" class="lite-button--link">Change</button>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Has the item been deactivated to UK proof house standards?
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ firearm_details.is_deactivated_to_standard|yesno|capfirst }}
+                                    {% if not firearm_details.is_deactivated_to_standard %}
+                                        <div class="govuk-hint">
+                                            {{ firearm_details.not_deactivated_to_standard_comments }}
+                                        </div>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD }}" class="lite-button--link">Change</button>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
                                 Number of items
                             </dt>
                             <dd class="govuk-summary-list__value">
@@ -245,7 +285,7 @@
                                     Date of issue
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    {{ good.pv_grading_details.date_of_issue|to_date|date:"d-m-Y" }}
+                                    {{ good.pv_grading_details.date_of_issue|to_date|date:"j F Y" }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
                                 </dd>
@@ -264,7 +304,7 @@
                                 Is the product a replica firearm?
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                {{ firearm_details.is_replica|yesno|title }}
+                                {{ firearm_details.is_replica|yesno|capfirst }}
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -272,7 +312,7 @@
                                 Are you a registered firearms dealer?
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                {{ is_user_rfd|yesno|title }}
+                                {{ is_user_rfd|yesno|capfirst }}
                             </dd>
                         </div>
                         {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
@@ -447,7 +487,7 @@
                                 Do you have a document that shows what your product is and what it’s designed to do?
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                {{ good.is_document_available|yesno|title }}
+                                {{ good.is_document_available|yesno|capfirst }}
                             </dd>
                         </div>
                         {% if good.is_document_available %}
@@ -456,7 +496,7 @@
                                     Is the document rated above Official-sensitive?
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    {{ good.is_document_sensitive|yesno|title }}
+                                    {{ good.is_document_sensitive|yesno|capfirst }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
                                 </dd>
