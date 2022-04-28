@@ -18,18 +18,60 @@ def url(data_queue, data_standard_case):
     )
 
 
+@pytest.fixture
+def mock_precedents_api(requests_mock, data_standard_case, data_queue):
+    case_id = data_standard_case["case"]["id"]
+    url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
+    requests_mock.get(
+        url,
+        json={
+            "results": [
+                {
+                    "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+                    "application": case_id,
+                    "queue": data_queue["id"],
+                    "reference": data_standard_case["case"]["reference_code"],
+                    "destinations": ["GB"],
+                    "control_list_entries": ["ML1a"],
+                    "wassenaar": False,
+                    "quantity": 10.0,
+                    "value": "test-value",
+                    "report_summary": "test-report-summary",
+                    "submitted_at": "2021-06-21T11:27:36.145000Z",
+                },
+                {
+                    "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+                    "application": case_id,
+                    "queue": data_queue["id"],
+                    "reference": data_standard_case["case"]["reference_code"],
+                    "destinations": ["GB"],
+                    "control_list_entries": ["ML1a"],
+                    "wassenaar": False,
+                    "quantity": 10.0,
+                    "value": "test-value",
+                    "report_summary": "test-report-summary",
+                    "submitted_at": "2021-06-20T11:27:36.145000Z",
+                },
+            ]
+        },
+    )
+    return requests_mock
+
+
 def get_cells(soup, table_id):
     return [td.text for td in soup.find(id=table_id).find_all("td")]
 
 
-def test_tau_home_auth(authorized_client, url, mock_control_list_entries):
+def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_precedents_api):
     """GET /tau should return 200 with an authorised client"""
     response = authorized_client.get(url)
     assert response.status_code == 200
 
 
 @pytest.mark.skip("The /tau view doesn't return case details anymore but it might in the future")
-def test_case_info(authorized_client, url, mock_control_list_entries):
+def test_case_info(authorized_client, url, mock_control_list_entries, mock_precedents_api):
     """GET /tau would return a case info panel"""
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -88,7 +130,9 @@ def test_case_info(authorized_client, url, mock_control_list_entries):
     assert get_cells(soup, "table-end-use") == ["44"]
 
 
-def test_home_content(authorized_client, url, data_queue, data_standard_case, mock_control_list_entries):
+def test_home_content(
+    authorized_client, url, data_queue, data_standard_case, mock_control_list_entries, mock_precedents_api
+):
     """GET /tau would return a case info panel"""
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
@@ -123,6 +167,40 @@ def test_home_content(authorized_client, url, data_queue, data_standard_case, mo
     )
     assert edit_url == soup.find(id="assessed-products").find("a").attrs["href"]
 
+    # Test if the unassessed products table is sane
+    assert get_cells(soup, "table-products-1") == [
+        "Select the type of firearm product",
+        "Firearms",
+        "Part number (optional)",
+        "44",
+        "Does the product have a government security grading or classification?",
+        "Yes",
+        "Is the product for military use?",
+        "No",
+        "Will the product be onward exported to any additional countries?",
+        "No",
+        "Quantity",
+        "444",
+        "Total value",
+        "£0.00",
+    ]
+
+    # The precedent for the unassessed product
+    assert get_cells(soup, "table-precedents-1") == [
+        "Reference",
+        "GBSIEL/2020/0002687/T",
+        "Control list entry",
+        "ML1a",
+        "Regime",
+        "",
+        "Report summary",
+        "test-report-summary",
+        "Quantity",
+        "10",
+        "Destinations",
+        "GB",
+    ]
+
 
 def test_tau_home_noauth(client, url):
     """GET /tau should return 302 with an unauthorised client"""
@@ -130,7 +208,9 @@ def test_tau_home_noauth(client, url):
     assert response.status_code == 302
 
 
-def test_form(authorized_client, url, data_standard_case, requests_mock, mock_control_list_entries):
+def test_form(
+    authorized_client, url, data_standard_case, requests_mock, mock_control_list_entries, mock_precedents_api
+):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
     """
@@ -162,7 +242,9 @@ def test_form(authorized_client, url, data_standard_case, requests_mock, mock_co
     }
 
 
-def test_move_case_forward(authorized_client, url, data_queue, data_standard_case, mock_control_list_entries):
+def test_move_case_forward(
+    authorized_client, url, data_queue, data_standard_case, mock_control_list_entries, mock_precedents_api
+):
     """
     When all products has been assessed, we will get a move-case-forward form.
     """
