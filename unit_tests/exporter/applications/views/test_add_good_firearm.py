@@ -12,10 +12,8 @@ from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 from exporter.goods.forms.firearms import (
-    FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
     FirearmAttachSection5LetterOfAuthorityForm,
-    FirearmAttachShotgunCertificateForm,
     FirearmCategoryForm,
     FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
@@ -265,30 +263,6 @@ def test_add_good_firearm_not_registered_firearm_dealer(
     assert isinstance(response.context["form"], FirearmFirearmAct1968Form)
 
 
-def test_add_good_firearm_does_not_display_section_5_if_already_answered(
-    application_with_organisation_rfd_document,
-    goto_step,
-    post_to_step,
-):
-    goto_step(AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID)
-    post_to_step(
-        AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID,
-        {"is_rfd_certificate_valid": False},
-    )
-    goto_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER)
-    post_to_step(
-        AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
-        {"is_registered_firearm_dealer": False},
-    )
-    goto_step(AddGoodFirearmSteps.FIREARM_ACT_1968)
-    response = post_to_step(
-        AddGoodFirearmSteps.FIREARM_ACT_1968,
-        {"firearms_act_section": "firearms_act_section1"},
-    )
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmAttachFirearmCertificateForm)
-
-
 @pytest.mark.parametrize(
     "form_data, expected_next_form",
     (
@@ -298,11 +272,11 @@ def test_add_good_firearm_does_not_display_section_5_if_already_answered(
         ),
         (
             {"firearms_act_section": "firearms_act_section1"},
-            FirearmAttachFirearmCertificateForm,
+            FirearmDocumentAvailability,
         ),
         (
             {"firearms_act_section": "firearms_act_section2"},
-            FirearmAttachShotgunCertificateForm,
+            FirearmDocumentAvailability,
         ),
         (
             {"firearms_act_section": "firearms_act_section5"},
@@ -909,12 +883,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         },
     )
 
-    post_application_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
-        status_code=201,
-        json={},
-    )
-
     post_to_step(
         AddGoodFirearmSteps.CATEGORY,
         {"category": ["NON_AUTOMATIC_SHOTGUN"]},
@@ -953,15 +921,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         AddGoodFirearmSteps.FIREARM_ACT_1968,
         {"firearms_act_section": "firearms_act_section1"},
     )
-    certificate_expiry_date = datetime.date.today() + datetime.timedelta(days=5)
-    post_to_step(
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
-        {
-            "file": SimpleUploadedFile("firearm_certificate.pdf", b"This is the firearm certificate"),
-            "section_certificate_number": "12345",
-            **decompose_date("section_certificate_date_of_expiry", certificate_expiry_date),
-        },
-    )
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
@@ -980,9 +939,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
             "is_registered_firearm_dealer": False,
             "is_replica": True,
             "replica_description": "This is a replica",
-            "section_certificate_date_of_expiry": certificate_expiry_date.isoformat(),
-            "section_certificate_missing": False,
-            "section_certificate_number": "12345",
             "type": "firearms",
         },
         "control_list_entries": ["ML1", "ML1a"],
@@ -992,19 +948,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
-    }
-
-    assert post_application_document_matcher.called_once
-    last_request = post_application_document_matcher.last_request
-    assert last_request.json() == {
-        "document_on_organisation": {
-            "document_type": "section-one-certificate",
-            "expiry_date": certificate_expiry_date.isoformat(),
-            "reference_code": "12345",
-        },
-        "name": "firearm_certificate.pdf",
-        "s3_key": "firearm_certificate.pdf",
-        "size": 0,
     }
 
 
@@ -1030,12 +973,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
                 "id": good_id,
             },
         },
-    )
-
-    post_application_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
-        status_code=201,
-        json={},
     )
 
     post_to_step(
@@ -1076,15 +1013,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         AddGoodFirearmSteps.FIREARM_ACT_1968,
         {"firearms_act_section": "firearms_act_section2"},
     )
-    certificate_expiry_date = datetime.date.today() + datetime.timedelta(days=5)
-    post_to_step(
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
-        {
-            "file": SimpleUploadedFile("shotgun_certificate.pdf", b"This is the shotgun certificate"),
-            "section_certificate_number": "12345",
-            **decompose_date("section_certificate_date_of_expiry", certificate_expiry_date),
-        },
-    )
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
@@ -1103,9 +1031,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
             "is_registered_firearm_dealer": False,
             "is_replica": True,
             "replica_description": "This is a replica",
-            "section_certificate_date_of_expiry": certificate_expiry_date.isoformat(),
-            "section_certificate_missing": False,
-            "section_certificate_number": "12345",
             "type": "firearms",
         },
         "control_list_entries": ["ML1", "ML1a"],
@@ -1115,19 +1040,6 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
-    }
-
-    assert post_application_document_matcher.called_once
-    last_request = post_application_document_matcher.last_request
-    assert last_request.json() == {
-        "document_on_organisation": {
-            "document_type": "section-two-certificate",
-            "expiry_date": certificate_expiry_date.isoformat(),
-            "reference_code": "12345",
-        },
-        "name": "shotgun_certificate.pdf",
-        "s3_key": "shotgun_certificate.pdf",
-        "size": 0,
     }
 
 

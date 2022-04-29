@@ -539,22 +539,12 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
-        (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
-        (AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
     ]
     condition_dict = {
         AddGoodFirearmSteps.FIREARM_ACT_1968: ~C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: is_registered_firearms_dealer,
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: C(is_registered_firearms_dealer),
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_1)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_1)),
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_2)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_2)),
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
             is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
         )
@@ -590,15 +580,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
 
         if step == AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5:
             initial.update(get_is_covered_by_section_5_initial_data(self.good["firearm_details"]))
-
-        if step == AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE:
-            initial.update(
-                get_attach_certificate_initial_data(
-                    FirearmsActDocumentType.SECTION_1,
-                    self.application,
-                    self.good,
-                )
-            )
 
         if step == AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY:
             initial.update(
@@ -638,18 +619,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             RfdCertificateAction(
                 AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE,
                 self,
-            ).run()
-
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_1,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
-            ).run()
-
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_2,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
             ).run()
 
             FirearmActCertificateAction(
@@ -750,19 +719,9 @@ class FirearmEditLetterOfAuthority(BaseEditCertificateView):
 class FirearmEditFirearmsAct1968(BaseEditWizardView):
     form_list = [
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
-        (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
-        (AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
     ]
     condition_dict = {
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_1)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_1)),
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_2)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_2)),
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
             is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
         )
@@ -800,18 +759,6 @@ class FirearmEditFirearmsAct1968(BaseEditWizardView):
     def done(self, form_list, form_dict, **kwargs):
         try:
             self.edit_firearm(self.good["id"], form_dict)
-
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_1,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
-            ).run()
-
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_2,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
-            ).run()
 
             FirearmActCertificateAction(
                 FirearmsActDocumentType.SECTION_5,

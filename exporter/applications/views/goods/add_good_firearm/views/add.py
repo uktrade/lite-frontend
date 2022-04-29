@@ -130,8 +130,6 @@ class AddGoodFirearm(
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
-        (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
-        (AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
@@ -148,14 +146,6 @@ class AddGoodFirearm(
         | C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_1)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_1)),
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_2)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_2)),
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
             is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
         )
@@ -356,18 +346,6 @@ class AddGoodFirearm(
                     self.delete_existing_organisation_rfd_certificate(self.application)
                 if self.has_organisation_rfd_certificate_data():
                     self.post_rfd_certificate(self.application)
-
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_1,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
-            ).run()
-
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_2,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
-            ).run()
 
             FirearmActCertificateAction(
                 FirearmsActDocumentType.SECTION_5,
