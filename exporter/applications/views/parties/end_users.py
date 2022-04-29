@@ -363,6 +363,7 @@ class PartyDocumentOptionEditView(PartyEditView):
 
 
 class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, BaseSessionWizardView):
+    template_name = "core/form-wizard.html"
     form_list = [
         (SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
         (SetPartyFormSteps.PARTY_ENGLISH_TRANSLATION_UPLOAD, PartyEnglishTranslationDocumentUploadForm),
