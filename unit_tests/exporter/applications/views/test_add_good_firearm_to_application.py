@@ -1,9 +1,14 @@
+import datetime
 import pytest
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
+from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
+    FirearmAttachFirearmCertificateForm,
+    FirearmAttachShotgunCertificateForm,
     FirearmDeactivationDetailsForm,
     FirearmIsDeactivatedForm,
     FirearmOnwardExportedForm,
@@ -67,40 +72,6 @@ def mock_get_document(requests_mock, expected_good_data):
         f"/goods/{expected_good_data['id']}/documents/",
         json={},
     )
-
-
-@pytest.fixture
-def steps_data():
-    return [
-        (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, {"is_made_before_1938": True}),
-        (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, {"year_of_manufacture": 1937}),
-        (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, {"is_onward_exported": True}),
-        (
-            AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
-            {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
-        ),
-        (
-            AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
-            {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
-        ),
-        (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, {"number_of_items": "2", "value": "16.32"}),
-        (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, {"serial_numbers_available": "AVAILABLE"}),
-    ]
-
-
-@pytest.fixture
-def advance_to_step(post_to_step, steps_data):
-    def advance(step_name):
-        for step in steps_data:
-            if step_name == step[0]:
-                return
-            else:
-                post_to_step(
-                    step[0],
-                    step[1],
-                )
-
-    return advance
 
 
 def test_add_firearm_to_application_product_made_before_1938_step(goto_step, post_to_step):
@@ -175,9 +146,8 @@ def test_add_firearm_to_application_is_deactivated_true(requests_mock, expected_
     assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
 
 
-def test_add_firearm_to_application_serial_numbers_later(post_to_step, advance_to_step):
-
-    advance_to_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
+def test_add_firearm_to_application_serial_numbers_later(post_to_step, goto_step):
+    goto_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
         {"serial_numbers_available": "LATER"},
@@ -187,9 +157,8 @@ def test_add_firearm_to_application_serial_numbers_later(post_to_step, advance_t
     assert isinstance(response.context["form"], FirearmSummaryForm)
 
 
-def test_add_firearm_to_application_serial_numbers_not_available(post_to_step, advance_to_step):
-
-    advance_to_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
+def test_add_firearm_to_application_serial_numbers_not_available(post_to_step, goto_step):
+    goto_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
         {"serial_numbers_available": "NOT_AVAILABLE"},
@@ -209,7 +178,7 @@ def test_add_firearm_to_application_serial_numbers_not_available(post_to_step, a
     assert isinstance(response.context["form"], FirearmSummaryForm)
 
 
-def test_add_firearm_to_application_end_to_end(
+def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
     requests_mock, expected_good_data, application, good_on_application, goto_step, post_to_step
 ):
     requests_mock.get(
@@ -222,44 +191,49 @@ def test_add_firearm_to_application_end_to_end(
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
         {"is_made_before_1938": True},
     )
-    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+    assert response.status_code == 200
     assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
         {"year_of_manufacture": 1937},
     )
-    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert response.status_code == 200
     assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert response.status_code == 200
     assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert response.status_code == 200
     assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
-
-    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
+    assert response.status_code == 200
     assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
         {"is_deactivated": True},
     )
-    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
+    assert response.status_code == 200
     assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
@@ -271,20 +245,23 @@ def test_add_firearm_to_application_end_to_end(
         },
     )
     assert response.status_code == 200
+    assert not response.context["form"].errors
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
         {"number_of_items": "2", "value": "16.32"},
     )
-
+    assert response.status_code == 200
+    assert not response.context["form"].errors
     assert isinstance(response.context["form"], FirearmSerialIdentificationMarkingsForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
         {"serial_numbers_available": "AVAILABLE"},
     )
-
+    assert response.status_code == 200
+    assert not response.context["form"].errors
     assert isinstance(response.context["form"], FirearmSerialNumbersForm)
 
     response = post_to_step(
@@ -294,8 +271,8 @@ def test_add_firearm_to_application_end_to_end(
             "serial_numbers_1": "s222",
         },
     )
-
     assert response.status_code == 200
+    assert not response.context["form"].errors
     assert isinstance(response.context["form"], FirearmSummaryForm)
 
     response = post_to_step(
@@ -320,6 +297,190 @@ def test_add_firearm_to_application_end_to_end(
             "is_deactivated_to_standard": True,
             "not_deactivated_to_standard_comments": "",
             "number_of_items": 2,
+            "serial_numbers_available": "AVAILABLE",
+            "no_identification_markings_details": "",
+            "serial_numbers": ["s111", "s222"],
+        },
+        "good_id": expected_good_data["id"],
+        "is_good_incorporated": True,
+        "quantity": 2,
+        "unit": "NAR",
+        "value": "16.32",
+    }
+
+
+@pytest.mark.parametrize(
+    "firearms_act_section, firearms_certificate_step_name, firearms_certificate_form_class",
+    (
+        (
+            "firearms_act_section1",
+            AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE,
+            FirearmAttachFirearmCertificateForm,
+        ),
+        (
+            "firearms_act_section2",
+            AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE,
+            FirearmAttachShotgunCertificateForm,
+        ),
+    ),
+)
+def test_add_firearm_to_application_end_to_end_firearm_certificate(
+    authorized_client,
+    requests_mock,
+    expected_good_data,
+    application,
+    data_standard_case,
+    good_on_application,
+    goto_step,
+    post_to_step,
+    new_firearm_to_application_url,
+    firearms_act_section,
+    firearms_certificate_step_name,
+    firearms_certificate_form_class,
+):
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["good"]["firearm_details"]["firearms_act_section"] = firearms_act_section
+    requests_mock.get(f'/goods/{good["good"]["id"]}/', json=good)
+
+    requests_mock.get(
+        f"/goods/{expected_good_data['id']}/documents/",
+        json={},
+    )
+
+    response = authorized_client.get(new_firearm_to_application_url)
+    assert isinstance(response.context["form"], firearms_certificate_form_class)
+
+    certificate_expiry_date = datetime.date.today() + datetime.timedelta(days=5)
+    response = post_to_step(
+        firearms_certificate_step_name,
+        {
+            "file": SimpleUploadedFile("certificate.pdf", b"This is the certificate"),
+            "section_certificate_number": "12345",
+            **decompose_date("section_certificate_date_of_expiry", certificate_expiry_date),
+        },
+    )
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
+        {"is_made_before_1938": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
+        {"is_made_before_1938": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
+        {"year_of_manufacture": 1937},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        {"is_onward_exported": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
+        {"is_deactivated": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
+        {
+            "date_of_deactivation_0": "12",
+            "date_of_deactivation_1": "11",
+            "date_of_deactivation_2": "2007",
+            "is_deactivated_to_standard": True,
+        },
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
+        {"number_of_items": "2", "value": "16.32"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmSerialIdentificationMarkingsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        {"serial_numbers_available": "AVAILABLE"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmSerialNumbersForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS,
+        {
+            "serial_numbers_0": "s111",
+            "serial_numbers_1": "s222",
+        },
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmSummaryForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SUMMARY,
+        {},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse("applications:goods", kwargs={"pk": application["id"]})
+
+    assert requests_mock.last_request.json() == {
+        "firearm_details": {
+            "is_made_before_1938": True,
+            "year_of_manufacture": 1937,
+            "is_onward_exported": True,
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "processed comments",
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "incorporated comments",
+            "is_deactivated": True,
+            "date_of_deactivation": "2007-11-12",
+            "is_deactivated_to_standard": True,
+            "not_deactivated_to_standard_comments": "",
+            "number_of_items": 2,
+            "section_certificate_date_of_expiry": certificate_expiry_date.isoformat(),
+            "section_certificate_missing": False,
+            "section_certificate_number": "12345",
             "serial_numbers_available": "AVAILABLE",
             "no_identification_markings_details": "",
             "serial_numbers": ["s111", "s222"],

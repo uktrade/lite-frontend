@@ -204,6 +204,8 @@ class FirearmEditRegisteredFirearmsDealerPayloadBuilder(MergingPayloadBuilder):
 
 class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
+        AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_firearm_details_cleaned_data,

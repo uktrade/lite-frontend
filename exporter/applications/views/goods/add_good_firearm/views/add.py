@@ -71,17 +71,18 @@ from .conditionals import (
     has_application_rfd_certificate,
     has_firearm_act_document,
     has_organisation_rfd_certificate,
+    is_certificate_required,
+    is_deactivated,
     is_document_sensitive,
+    is_onward_exported,
     is_product_covered_by_firearm_act_section,
     is_product_document_available,
+    is_product_made_before_1938,
+    is_pv_graded,
     is_registered_firearms_dealer,
     is_rfd_certificate_invalid,
-    is_pv_graded,
-    should_display_is_registered_firearms_dealer_step,
-    is_product_made_before_1938,
-    is_onward_exported,
-    is_deactivated,
     is_serial_numbers_available,
+    should_display_is_registered_firearms_dealer_step,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
@@ -369,6 +370,8 @@ class AddGoodFirearmToApplication(
     BaseSessionWizardView,
 ):
     form_list = [
+        (AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
+        (AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
         (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
@@ -383,11 +386,17 @@ class AddGoodFirearmToApplication(
     ]
 
     condition_dict = {
-        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938),
-        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: C(is_onward_exported),
-        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: C(is_deactivated),
-        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: C(is_serial_numbers_available),
+        AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE: is_certificate_required(
+            FirearmsActSections.SECTION_1,
+        ),
+        AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE: is_certificate_required(
+            FirearmsActSections.SECTION_2,
+        ),
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: is_product_made_before_1938,
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: is_deactivated,
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: is_serial_numbers_available,
     }
 
     def get_form_kwargs(self, step=None):
@@ -444,7 +453,9 @@ class AddGoodFirearmToApplication(
         form_dict = OrderedDict()
         for form_key in self.get_form_list():
             form_obj = self.get_form(
-                step=form_key, data=self.storage.get_step_data(form_key), files=self.storage.get_step_files(form_key)
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key),
             )
             if form_obj.is_valid():
                 form_dict[form_key] = form_obj
