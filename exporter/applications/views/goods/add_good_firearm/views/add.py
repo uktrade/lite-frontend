@@ -449,6 +449,18 @@ class AddGoodFirearmToApplication(
             return ["applications/goods/firearms/product-on-application-summary.html"]
         return super().get_template_names()
 
+    def get_firearm_document(self, form_dict):
+        form = None
+        if AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE in form_dict:
+            form = form_dict[AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE]
+        elif AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE in form_dict:
+            form = form_dict[AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE]
+
+        if not form:
+            return None
+
+        return form.cleaned_data["file"]
+
     def get_form_dict(self):
         form_dict = OrderedDict()
         for form_key in self.get_form_list():
@@ -474,20 +486,23 @@ class AddGoodFirearmToApplication(
         ctx["AddGoodFirearmToApplicationSteps"] = AddGoodFirearmToApplicationSteps
 
         if self.steps.current == AddGoodFirearmToApplicationSteps.SUMMARY:
+            form_dict = self.get_form_dict()
             documents = get_good_documents(self.request, self.good["id"])
             is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
             organisation_documents = {
                 k.replace("-", "_"): v for k, v in get_organisation_documents(self.application).items()
             }
+            firearm_certificate_document = self.get_firearm_document(form_dict)
 
             return {
                 **ctx,
                 "is_user_rfd": is_user_rfd,
                 "application_id": self.application["id"],
                 "good": self.good,
-                "good_on_application": self.get_payload(self.get_form_dict()),
+                "good_on_application": self.get_payload(form_dict),
                 "documents": documents,
                 "organisation_documents": organisation_documents,
+                "firearm_certificate_document": firearm_certificate_document,
             }
 
         return ctx
