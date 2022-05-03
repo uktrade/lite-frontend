@@ -510,11 +510,8 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
 
     assert post_application_document_matcher.called_once
     assert post_application_document_matcher.last_request.json() == {
-        "document_on_organisation": {
-            "document_type": firearm_certificate_document_type,
-            "expiry_date": certificate_expiry_date.isoformat(),
-            "reference_code": "12345",
-        },
+        "document_type": firearm_certificate_document_type,
+        "good_on_application": good_on_application["good"]["id"],
         "name": "certificate.pdf",
         "s3_key": "certificate.pdf",
         "size": 0,

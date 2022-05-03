@@ -22,7 +22,7 @@ from exporter.organisation.services import (
 from .decorators import expect_status
 
 
-class FirearmActCertificateAction:
+class OrganisationFirearmActCertificateAction:
     def __init__(self, document_type, view, cleaned_data):
         self.document_type = document_type
         self.view = view
@@ -124,6 +124,46 @@ class FirearmActCertificateAction:
 
         self.delete_existing_organisation_firearm_act_certificate()
         self.post_firearm_act_certificate()
+
+
+class GoodOnApplicationFirearmActCertificateAction:
+    def __init__(self, request, document_type, application, good, good_on_application, cleaned_data):
+        self.request = request
+        self.document_type = document_type
+        self.application = application
+        self.good = good
+        self.good_on_application = good_on_application
+        self.cleaned_data = cleaned_data
+
+    def has_certificate_file(self):
+        return self.cleaned_data.get("file") is not None
+
+    def get_firearm_act_certificate_payload(self):
+        certificate = self.cleaned_data["file"]
+        payload = get_document_data(certificate)
+        payload["document_type"] = self.document_type
+        payload["good_on_application"] = self.good_on_application["id"]
+        return payload
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding firearm certificate when creating firearm",
+        "Unexpected error adding firearm certificate",
+    )
+    def post_good_on_application_document(self):
+        firearm_certificate_payload = self.get_firearm_act_certificate_payload()
+        return post_application_document(
+            request=self.request,
+            pk=self.application["id"],
+            good_pk=self.good["id"],
+            data=firearm_certificate_payload,
+        )
+
+    def run(self):
+        if not self.has_certificate_file():
+            return
+
+        self.post_good_on_application_document()
 
 
 def delete_existing_organisation_rfd_certificate(request, application):

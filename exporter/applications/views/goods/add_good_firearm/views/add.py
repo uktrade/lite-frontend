@@ -66,7 +66,7 @@ from exporter.goods.services import (
 )
 from exporter.organisation.services import delete_document_on_organisation
 
-from .actions import FirearmActCertificateAction
+from .actions import GoodOnApplicationFirearmActCertificateAction, OrganisationFirearmActCertificateAction
 from .conditionals import (
     has_application_rfd_certificate,
     has_firearm_act_document,
@@ -348,7 +348,7 @@ class AddGoodFirearm(
                 if self.has_organisation_rfd_certificate_data():
                     self.post_rfd_certificate(self.application)
 
-            FirearmActCertificateAction(
+            OrganisationFirearmActCertificateAction(
                 FirearmsActDocumentType.SECTION_5,
                 self,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
@@ -510,21 +510,28 @@ class AddGoodFirearmToApplication(
     def done(self, form_list, form_dict, **kwargs):
         try:
             good_on_application, _ = self.post_firearm_to_application(form_dict)
+            good_on_application = good_on_application["good"]
 
-            FirearmActCertificateAction(
+            GoodOnApplicationFirearmActCertificateAction(
+                self.request,
                 FirearmsActDocumentType.SECTION_1,
-                self,
+                self.application,
+                self.good,
+                good_on_application,
                 self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE),
             ).run()
 
-            FirearmActCertificateAction(
+            GoodOnApplicationFirearmActCertificateAction(
+                self.request,
                 FirearmsActDocumentType.SECTION_2,
-                self,
+                self.application,
+                self.good,
+                good_on_application,
                 self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE),
             ).run()
         except ServiceError as e:
             return self.handle_service_error(e)
 
-        self.good_on_application = good_on_application["good"]
+        self.good_on_application = good_on_application
 
         return redirect(self.get_success_url())

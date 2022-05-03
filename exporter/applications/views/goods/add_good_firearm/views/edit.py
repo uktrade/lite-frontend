@@ -55,7 +55,7 @@ from exporter.goods.forms.firearms import (
 )
 
 from .actions import (
-    FirearmActCertificateAction,
+    OrganisationFirearmActCertificateAction,
     IsRfdAction,
     RfdCertificateAction,
 )
@@ -621,7 +621,7 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
                 self,
             ).run()
 
-            FirearmActCertificateAction(
+            OrganisationFirearmActCertificateAction(
                 FirearmsActDocumentType.SECTION_5,
                 self,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
@@ -667,7 +667,7 @@ class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
         try:
             self.edit_firearm(self.good["id"], form_dict)
 
-            FirearmActCertificateAction(
+            OrganisationFirearmActCertificateAction(
                 FirearmsActDocumentType.SECTION_5,
                 self,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
@@ -692,7 +692,7 @@ class BaseEditCertificateView(BaseFirearmEditView):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        FirearmActCertificateAction(
+        OrganisationFirearmActCertificateAction(
             self.document_type,
             self,
             form.cleaned_data,
@@ -760,7 +760,7 @@ class FirearmEditFirearmsAct1968(BaseEditWizardView):
         try:
             self.edit_firearm(self.good["id"], form_dict)
 
-            FirearmActCertificateAction(
+            OrganisationFirearmActCertificateAction(
                 FirearmsActDocumentType.SECTION_5,
                 self,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
