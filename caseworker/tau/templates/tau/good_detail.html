@@ -1,7 +1,7 @@
 {% load advice_tags tau_tags %}
 <details class="govuk-details govuk-!-margin-bottom-0" data-module="govuk-details" style="text-align: left;">
     <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">{{ good.good.name }}</span>
+        <span class="govuk-details__summary-text">{{ good.line_number }}.  {{ good.good.name }}</span>
     </summary>
     <div class="govuk-details__text">
       {% include "tau/good_table.html" with good=good %}
