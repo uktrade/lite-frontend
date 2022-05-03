@@ -23,7 +23,7 @@ from exporter.goods.forms.firearms import (
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_application_get, mock_good_get, mock_good_on_application_post, no_op_storage):
+def setup(mock_application_get, mock_good_get, no_op_storage):
     pass
 
 
@@ -179,7 +179,13 @@ def test_add_firearm_to_application_serial_numbers_not_available(post_to_step, g
 
 
 def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
-    requests_mock, expected_good_data, application, good_on_application, goto_step, post_to_step
+    requests_mock,
+    expected_good_data,
+    mock_good_on_application_post,
+    application,
+    good_on_application,
+    goto_step,
+    post_to_step,
 ):
     requests_mock.get(
         f"/goods/{expected_good_data['id']}/documents/",
@@ -283,7 +289,7 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
     assert response.status_code == 302
     assert response.url == reverse("applications:goods", kwargs={"pk": application["id"]})
 
-    assert requests_mock.last_request.json() == {
+    assert mock_good_on_application_post.last_request.json() == {
         "firearm_details": {
             "is_made_before_1938": True,
             "year_of_manufacture": 1937,
@@ -310,23 +316,26 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
 
 
 @pytest.mark.parametrize(
-    "firearms_act_section, firearms_certificate_step_name, firearms_certificate_form_class",
+    "firearms_act_section, firearms_certificate_step_name, firearms_certificate_form_class, firearm_certificate_document_type",
     (
         (
             "firearms_act_section1",
             AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE,
             FirearmAttachFirearmCertificateForm,
+            "section-one-certificate",
         ),
         (
             "firearms_act_section2",
             AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE,
             FirearmAttachShotgunCertificateForm,
+            "section-two-certificate",
         ),
     ),
 )
 def test_add_firearm_to_application_end_to_end_firearm_certificate(
     authorized_client,
     requests_mock,
+    mock_good_on_application_post,
     expected_good_data,
     application,
     data_standard_case,
@@ -337,6 +346,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     firearms_act_section,
     firearms_certificate_step_name,
     firearms_certificate_form_class,
+    firearm_certificate_document_type,
 ):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"]["firearm_details"]["firearms_act_section"] = firearms_act_section
@@ -344,6 +354,12 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
 
     requests_mock.get(
         f"/goods/{expected_good_data['id']}/documents/",
+        json={},
+    )
+
+    post_application_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/goods/{expected_good_data['id']}/documents/",
+        status_code=201,
         json={},
     )
 
@@ -464,7 +480,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     assert response.status_code == 302
     assert response.url == reverse("applications:goods", kwargs={"pk": application["id"]})
 
-    assert requests_mock.last_request.json() == {
+    assert mock_good_on_application_post.last_request.json() == {
         "firearm_details": {
             "is_made_before_1938": True,
             "year_of_manufacture": 1937,
@@ -490,4 +506,16 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
         "quantity": 2,
         "unit": "NAR",
         "value": "16.32",
+    }
+
+    assert post_application_document_matcher.called_once
+    assert post_application_document_matcher.last_request.json() == {
+        "document_on_organisation": {
+            "document_type": firearm_certificate_document_type,
+            "expiry_date": certificate_expiry_date.isoformat(),
+            "reference_code": "12345",
+        },
+        "name": "certificate.pdf",
+        "s3_key": "certificate.pdf",
+        "size": 0,
     }

@@ -495,6 +495,18 @@ class AddGoodFirearmToApplication(
     def done(self, form_list, form_dict, **kwargs):
         try:
             good_on_application, _ = self.post_firearm_to_application(form_dict)
+
+            FirearmActCertificateAction(
+                FirearmsActDocumentType.SECTION_1,
+                self,
+                self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE),
+            ).run()
+
+            FirearmActCertificateAction(
+                FirearmsActDocumentType.SECTION_2,
+                self,
+                self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE),
+            ).run()
         except ServiceError as e:
             return self.handle_service_error(e)
 
