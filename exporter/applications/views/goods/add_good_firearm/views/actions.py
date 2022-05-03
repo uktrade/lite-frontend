@@ -127,9 +127,10 @@ class OrganisationFirearmActCertificateAction:
 
 
 class GoodOnApplicationFirearmActCertificateAction:
-    def __init__(self, request, document_type, application, good, good_on_application, cleaned_data):
+    def __init__(self, request, document_type, description, application, good, good_on_application, cleaned_data):
         self.request = request
         self.document_type = document_type
+        self.description = description
         self.application = application
         self.good = good
         self.good_on_application = good_on_application
@@ -159,11 +160,35 @@ class GoodOnApplicationFirearmActCertificateAction:
             data=firearm_certificate_payload,
         )
 
+    def get_supporting_document_payload(self):
+        cert_file = self.cleaned_data["file"]
+
+        rfd_certificate_payload = {
+            **get_document_data(cert_file),
+            "description": self.description,
+            "document_type": self.document_type,
+        }
+        return rfd_certificate_payload
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding certificate when creating good on application",
+        "Unexpected error updating firearm",
+    )
+    def post_supporting_document(self):
+        supporting_document_payload = self.get_supporting_document_payload()
+        return post_additional_document(
+            request=self.request,
+            pk=self.application["id"],
+            json=supporting_document_payload,
+        )
+
     def run(self):
         if not self.has_certificate_file():
             return
 
         self.post_good_on_application_document()
+        self.post_supporting_document()
 
 
 def delete_existing_organisation_rfd_certificate(request, application):

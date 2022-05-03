@@ -515,6 +515,7 @@ class AddGoodFirearmToApplication(
             GoodOnApplicationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_1,
+                f"Firearm certificate for '{self.good['name']}'",
                 self.application,
                 self.good,
                 good_on_application,
@@ -524,6 +525,7 @@ class AddGoodFirearmToApplication(
             GoodOnApplicationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_2,
+                f"Shotgun certificate for '{self.good['name']}'",
                 self.application,
                 self.good,
                 good_on_application,

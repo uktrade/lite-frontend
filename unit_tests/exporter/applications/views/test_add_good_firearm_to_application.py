@@ -316,19 +316,21 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
 
 
 @pytest.mark.parametrize(
-    "firearms_act_section, firearms_certificate_step_name, firearms_certificate_form_class, firearm_certificate_document_type",
+    "firearms_act_section, firearms_certificate_step_name, firearms_certificate_form_class, firearm_certificate_document_type, document_description",
     (
         (
             "firearms_act_section1",
             AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE,
             FirearmAttachFirearmCertificateForm,
             "section-one-certificate",
+            "Firearm certificate for 'p1'",
         ),
         (
             "firearms_act_section2",
             AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE,
             FirearmAttachShotgunCertificateForm,
             "section-two-certificate",
+            "Shotgun certificate for 'p1'",
         ),
     ),
 )
@@ -347,6 +349,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     firearms_certificate_step_name,
     firearms_certificate_form_class,
     firearm_certificate_document_type,
+    document_description,
 ):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"]["firearm_details"]["firearms_act_section"] = firearms_act_section
@@ -357,8 +360,14 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
         json={},
     )
 
-    post_application_document_matcher = requests_mock.post(
+    post_good_on_application_document_matcher = requests_mock.post(
         f"/applications/{data_standard_case['case']['id']}/goods/{expected_good_data['id']}/documents/",
+        status_code=201,
+        json={},
+    )
+
+    post_application_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
     )
@@ -508,10 +517,19 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
         "value": "16.32",
     }
 
-    assert post_application_document_matcher.called_once
-    assert post_application_document_matcher.last_request.json() == {
+    assert post_good_on_application_document_matcher.called_once
+    assert post_good_on_application_document_matcher.last_request.json() == {
         "document_type": firearm_certificate_document_type,
         "good_on_application": good_on_application["good"]["id"],
+        "name": "certificate.pdf",
+        "s3_key": "certificate.pdf",
+        "size": 0,
+    }
+
+    assert post_application_document_matcher.called_once
+    assert post_application_document_matcher.last_request.json() == {
+        "description": document_description,
+        "document_type": firearm_certificate_document_type,
         "name": "certificate.pdf",
         "s3_key": "certificate.pdf",
         "size": 0,
