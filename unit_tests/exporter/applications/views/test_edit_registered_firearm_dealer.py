@@ -59,12 +59,6 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
         json={},
     )
 
-    post_application_goods_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
-        status_code=201,
-        json={},
-    )
-
     response = post_to_step(
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER,
         {"is_registered_firearm_dealer": True},
@@ -114,9 +108,9 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
         },
     }
 
-    assert post_applications_document_matcher.called_once
-    application_doc_request = post_applications_document_matcher.last_request
-    assert application_doc_request.json() == {
+    assert post_applications_document_matcher.call_count == 2
+
+    assert post_applications_document_matcher.request_history[0].json() == {
         "description": "Registered firearm dealer certificate",
         "document_on_organisation": {
             "document_type": "rfd-certificate",
@@ -129,14 +123,14 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
         "size": 0,
     }
 
-    assert post_application_goods_document_matcher.called_once
-    last_request = post_application_goods_document_matcher.last_request
-    assert last_request.json() == {
+    assert post_applications_document_matcher.request_history[1].json() == {
+        "description": "Letter of authority for 'p1'",
         "document_on_organisation": {
             "document_type": "section-five-certificate",
             "expiry_date": section_5_letter_expiry_date.isoformat(),
             "reference_code": "12345",
         },
+        "document_type": "section-five-certificate",
         "name": "letter_of_authority.pdf",
         "s3_key": "letter_of_authority.pdf",
         "size": 0,

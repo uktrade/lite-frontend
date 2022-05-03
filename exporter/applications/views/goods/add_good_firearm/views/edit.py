@@ -35,10 +35,8 @@ from exporter.goods.services import (
     update_good_document_data,
 )
 from exporter.goods.forms.firearms import (
-    FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
     FirearmAttachSection5LetterOfAuthorityForm,
-    FirearmAttachShotgunCertificateForm,
     FirearmCalibreForm,
     FirearmCategoryForm,
     FirearmDocumentAvailability,
@@ -622,8 +620,11 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             ).run()
 
             OrganisationFirearmActCertificateAction(
+                self.request,
                 FirearmsActDocumentType.SECTION_5,
-                self,
+                f"Letter of authority for '{self.good['name']}'",
+                self.application,
+                self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
         except ServiceError as e:
@@ -668,8 +669,11 @@ class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
             self.edit_firearm(self.good["id"], form_dict)
 
             OrganisationFirearmActCertificateAction(
+                self.request,
                 FirearmsActDocumentType.SECTION_5,
-                self,
+                f"Letter of authority for '{self.good['name']}'",
+                self.application,
+                self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
         except ServiceError as e:
@@ -678,7 +682,10 @@ class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
         return redirect(self.get_success_url())
 
 
-class BaseEditCertificateView(BaseFirearmEditView):
+class FirearmEditLetterOfAuthority(BaseFirearmEditView):
+    form_class = FirearmAttachSection5LetterOfAuthorityForm
+    document_type = FirearmsActDocumentType.SECTION_5
+
     def get_initial(self):
         return get_attach_certificate_initial_data(
             self.document_type,
@@ -693,27 +700,15 @@ class BaseEditCertificateView(BaseFirearmEditView):
         response = super().form_valid(form)
 
         OrganisationFirearmActCertificateAction(
+            self.request,
             self.document_type,
-            self,
+            f"Letter of authority for '{self.good['name']}'",
+            self.application,
+            self.good,
             form.cleaned_data,
         ).run()
 
         return response
-
-
-class FirearmEditFirearmCertificate(BaseEditCertificateView):
-    form_class = FirearmAttachFirearmCertificateForm
-    document_type = FirearmsActDocumentType.SECTION_1
-
-
-class FirearmEditShotgunCertificate(BaseEditCertificateView):
-    form_class = FirearmAttachShotgunCertificateForm
-    document_type = FirearmsActDocumentType.SECTION_2
-
-
-class FirearmEditLetterOfAuthority(BaseEditCertificateView):
-    form_class = FirearmAttachSection5LetterOfAuthorityForm
-    document_type = FirearmsActDocumentType.SECTION_5
 
 
 class FirearmEditFirearmsAct1968(BaseEditWizardView):
@@ -761,8 +756,11 @@ class FirearmEditFirearmsAct1968(BaseEditWizardView):
             self.edit_firearm(self.good["id"], form_dict)
 
             OrganisationFirearmActCertificateAction(
+                self.request,
                 FirearmsActDocumentType.SECTION_5,
-                self,
+                f"Letter of authority for '{self.good['name']}'",
+                self.application,
+                self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
         except ServiceError as e:

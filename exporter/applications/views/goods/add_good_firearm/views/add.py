@@ -349,8 +349,11 @@ class AddGoodFirearm(
                     self.post_rfd_certificate(self.application)
 
             OrganisationFirearmActCertificateAction(
+                self.request,
                 FirearmsActDocumentType.SECTION_5,
-                self,
+                f"Letter of authority for '{self.good['name']}'",
+                self.application,
+                self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
 

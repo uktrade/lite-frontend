@@ -12,4 +12,5 @@ def is_system_document(document):
         DocumentType.RFD_CERTIFICATE,
         FirearmsActDocumentType.SECTION_1,
         FirearmsActDocumentType.SECTION_2,
+        FirearmsActDocumentType.SECTION_5,
     ]

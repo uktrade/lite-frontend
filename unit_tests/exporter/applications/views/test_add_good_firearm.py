@@ -63,6 +63,20 @@ def good_id():
     return str(uuid.uuid4())
 
 
+@pytest.fixture
+def post_goods_matcher(requests_mock, good_id):
+    return requests_mock.post(
+        f"/goods/",
+        status_code=201,
+        json={
+            "good": {
+                "id": good_id,
+                "name": "p1",
+            },
+        },
+    )
+
+
 def test_firearm_category_redirects_to_new_wizard(
     authorized_client,
     new_good_firearm_url,
@@ -362,18 +376,9 @@ def test_add_good_firearm_with_rfd_document_submission(
     pv_gradings,
     application_with_organisation_rfd_document,
     good_id,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
-
-    post_goods_matcher = requests_mock.post(
-        f"/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
 
     post_good_document_matcher = requests_mock.post(
         f"/goods/{good_id}/documents/",
@@ -517,18 +522,9 @@ def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
     application_with_organisation_rfd_document,
     good_id,
     rfd_certificate,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
-
-    post_goods_matcher = requests_mock.post(
-        f"/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
 
     document_id = rfd_certificate["id"]
     organisation_id = rfd_certificate["organisation"]
@@ -651,18 +647,10 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     application,
     product_summary_url,
     good_id,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
 
-    post_goods_matcher = requests_mock.post(
-        "/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
     post_additional_document_matcher = requests_mock.post(
         f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
@@ -774,18 +762,9 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application,
     good_id,
     product_summary_url,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
-
-    post_goods_matcher = requests_mock.post(
-        "/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
 
     post_to_step(
         AddGoodFirearmSteps.CATEGORY,
@@ -870,18 +849,9 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application,
     good_id,
     product_summary_url,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
-
-    post_goods_matcher = requests_mock.post(
-        "/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
 
     post_to_step(
         AddGoodFirearmSteps.CATEGORY,
@@ -962,18 +932,9 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application,
     good_id,
     product_summary_url,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
-
-    post_goods_matcher = requests_mock.post(
-        "/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
 
     post_to_step(
         AddGoodFirearmSteps.CATEGORY,
@@ -1054,21 +1015,12 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application,
     good_id,
     product_summary_url,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
 
-    post_goods_matcher = requests_mock.post(
-        "/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
-
     post_application_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
+        f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
     )
@@ -1155,11 +1107,13 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     assert post_application_document_matcher.called_once
     last_request = post_application_document_matcher.last_request
     assert last_request.json() == {
+        "description": "Letter of authority for 'p1'",
         "document_on_organisation": {
             "document_type": "section-five-certificate",
             "expiry_date": certificate_expiry_date.isoformat(),
             "reference_code": "12345",
         },
+        "document_type": "section-five-certificate",
         "name": "letter_of_authority.pdf",
         "s3_key": "letter_of_authority.pdf",
         "size": 0,
@@ -1178,24 +1132,9 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
     application,
     good_id,
     product_summary_url,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
-
-    post_goods_matcher = requests_mock.post(
-        "/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
-
-    post_application_goods_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
-        status_code=201,
-        json={},
-    )
 
     post_applications_document_matcher = requests_mock.post(
         f"/applications/{data_standard_case['case']['id']}/documents/",
@@ -1283,28 +1222,28 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         "no_document_comments": "product not manufactured yet",
     }
 
-    assert post_application_goods_document_matcher.called_once
-    last_request = post_application_goods_document_matcher.last_request
-    assert last_request.json() == {
-        "document_on_organisation": {
-            "document_type": "section-five-certificate",
-            "expiry_date": certificate_expiry_date.isoformat(),
-            "reference_code": "12345",
-        },
-        "name": "letter_of_authority.pdf",
-        "s3_key": "letter_of_authority.pdf",
-        "size": 0,
-    }
+    assert post_applications_document_matcher.call_count == 2
 
-    assert post_applications_document_matcher.called_once
-    application_doc_request = post_applications_document_matcher.last_request
-    assert application_doc_request.json() == {
+    assert post_applications_document_matcher.request_history[0].json() == {
         "description": "Registered firearm dealer certificate",
         "document_type": "rfd-certificate",
         "name": "rfd_certificate.txt",
         "s3_key": "rfd_certificate.txt.s3_key",
         "safe": True,
         "size": 3,
+    }
+
+    assert post_applications_document_matcher.request_history[1].json() == {
+        "description": "Letter of authority for 'p1'",
+        "document_on_organisation": {
+            "document_type": "section-five-certificate",
+            "expiry_date": certificate_expiry_date.isoformat(),
+            "reference_code": "12345",
+        },
+        "document_type": "section-five-certificate",
+        "name": "letter_of_authority.pdf",
+        "s3_key": "letter_of_authority.pdf",
+        "size": 0,
     }
 
 
@@ -1320,18 +1259,9 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
     application,
     good_id,
     product_summary_url,
+    post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
-
-    post_goods_matcher = requests_mock.post(
-        "/goods/",
-        status_code=201,
-        json={
-            "good": {
-                "id": good_id,
-            },
-        },
-    )
 
     post_applications_document_matcher = requests_mock.post(
         f"/applications/{data_standard_case['case']['id']}/documents/",

@@ -19,11 +19,7 @@ def setup(settings, no_op_storage):
 
 @pytest.mark.parametrize(
     "url_name, form_class",
-    (
-        ("firearm_edit_firearm_certificate", FirearmAttachFirearmCertificateForm),
-        ("firearm_edit_shotgun_certificate", FirearmAttachShotgunCertificateForm),
-        ("firearm_edit_letter_of_authority", FirearmAttachSection5LetterOfAuthorityForm),
-    ),
+    (("firearm_edit_letter_of_authority", FirearmAttachSection5LetterOfAuthorityForm),),
 )
 def test_edit_certificate_view_exists(
     data_standard_case,
@@ -46,11 +42,7 @@ def test_edit_certificate_view_exists(
 
 @pytest.mark.parametrize(
     "url_name, certificate_type",
-    (
-        ("firearm_edit_firearm_certificate", "section-one-certificate"),
-        ("firearm_edit_shotgun_certificate", "section-two-certificate"),
-        ("firearm_edit_letter_of_authority", "section-five-certificate"),
-    ),
+    (("firearm_edit_letter_of_authority", "section-five-certificate"),),
 )
 def test_edit_certificate_submission_success(
     data_standard_case,
@@ -66,8 +58,8 @@ def test_edit_certificate_submission_success(
     application_id = data_standard_case["case"]["data"]["id"]
     good = data_standard_case["case"]["data"]["goods"][0]["good"]
 
-    post_application_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good['id']}/documents/",
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
     )
@@ -94,13 +86,15 @@ def test_edit_certificate_submission_success(
         },
     }
 
-    assert post_application_document_matcher.called_once
-    assert post_application_document_matcher.last_request.json() == {
+    assert post_applications_document_matcher.called_once
+    assert post_applications_document_matcher.last_request.json() == {
+        "description": "Letter of authority for 'p1'",
         "document_on_organisation": {
             "document_type": certificate_type,
             "expiry_date": certificate_expiry_date.isoformat(),
             "reference_code": "12345",
         },
+        "document_type": "section-five-certificate",
         "name": f"{certificate_type}.pdf",
         "s3_key": f"{certificate_type}.pdf",
         "size": 0,

@@ -50,8 +50,8 @@ def test_edit_section_5_firearms_act_set_yes_without_document(
     requests_mock,
     good_id,
 ):
-    post_application_goods_document_matcher = requests_mock.post(
-        f"/applications/{data_standard_case['case']['id']}/goods/{good_id}/documents/",
+    post_applications_document_matcher = requests_mock.post(
+        f"/applications/{data_standard_case['case']['id']}/documents/",
         status_code=201,
         json={},
     )
@@ -91,13 +91,15 @@ def test_edit_section_5_firearms_act_set_yes_without_document(
         },
     }
 
-    assert post_application_goods_document_matcher.called_once
-    assert post_application_goods_document_matcher.last_request.json() == {
+    assert post_applications_document_matcher.called_once
+    assert post_applications_document_matcher.last_request.json() == {
+        "description": "Letter of authority for 'p1'",
         "document_on_organisation": {
             "document_type": "section-five-certificate",
             "expiry_date": section_5_letter_expiry_date.isoformat(),
             "reference_code": "12345",
         },
+        "document_type": "section-five-certificate",
         "name": "letter_of_authority.pdf",
         "s3_key": "letter_of_authority.pdf",
         "size": 0,
