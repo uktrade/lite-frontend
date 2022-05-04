@@ -198,7 +198,11 @@
                         Which section of the Firearms Act 1968 is the product covered by?
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        {{ firearm_details.firearms_act_section|firearm_act_section_label }}
+                        {% if firearm_details.firearms_act_section == "Unsure" %}
+                            Don't know
+                        {%  else  %}
+                            {{ firearm_details.firearms_act_section|firearm_act_section_label }}
+                        {%  endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         {% if is_user_rfd %}
@@ -362,7 +366,11 @@
                         Which section of the Firearms Act 1968 is the product covered by?
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}
+                        {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
+                            Don't know
+                        {%  else  %}
+                            {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}
+                        {%  endif %}
                         {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation %}
                             <div class="govuk-hint">
                                 {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation }}
