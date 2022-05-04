@@ -34,13 +34,37 @@ class CustomErrorDateInputField(DateInputField):
     def __init__(self, error_messages, **kwargs):
         super().__init__(**kwargs)
 
+        self.custom_messages = {}
+
         for key, field in zip(["day", "month", "year"], self.fields):
             field_error_messages = error_messages.pop(key)
             field.error_messages["incomplete"] = field_error_messages["incomplete"]
+
             regex_validator = field.validators[0]
             regex_validator.message = field_error_messages["invalid"]
 
+            self.custom_messages[key] = field_error_messages
+
         self.error_messages = error_messages
+
+    def compress(self, data_list):
+        try:
+            return super().compress(data_list)
+        except ValidationError as e:
+            # These are the error strings that come back from the datetime
+            # library that then get bundled into a ValidationError from the
+            # parent.
+            # In this case the best we can do is to match on these strings
+            # and then give back the error message that makes the most sense.
+            # If we fail to find a matching message we will still give back a
+            # user friendly message.
+            if e.message == "day is out of range for month":
+                raise ValidationError(self.custom_messages["day"]["invalid"])
+            if e.message == "month must be in 1..12":
+                raise ValidationError(self.custom_messages["month"]["invalid"])
+            if e.message == f"year {data_list[2]} is out of range":
+                raise ValidationError(self.custom_messages["year"]["invalid"])
+            raise ValidationError(self.error_messages["invalid"])
 
 
 def coerce_str_to_bool(val):
@@ -284,6 +308,7 @@ class FirearmPvGradingDetailsForm(BaseFirearmForm):
         error_messages={
             "required": "Enter the date of issue",
             "incomplete": "Enter the date of issue",
+            "invalid": "Date of issue must be a real date",
             "day": {
                 "incomplete": "Date of issue must include a day",
                 "invalid": "Date of issue must be a real date",
@@ -476,6 +501,7 @@ class FirearmAttachRFDCertificate(BaseFirearmForm):
         error_messages={
             "required": "Enter the expiry date",
             "incomplete": "Enter the expiry date",
+            "invalid": "Expiry date must be a real date",
             "day": {
                 "incomplete": "Expiry date must include a day",
                 "invalid": "Expiry date must be a real date",
@@ -712,6 +738,9 @@ class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
         help_text="For example, 30 9 2024",
         required=False,
         error_messages={
+            "required": "Enter the expiry date",
+            "incomplete": "Enter the expiry date",
+            "invalid": "Expiry date must be a real date",
             "day": {
                 "incomplete": "Expiry date must include a day",
                 "invalid": "Expiry date must be a real date",
@@ -983,6 +1012,7 @@ class FirearmDeactivationDetailsForm(BaseFirearmForm):
         error_messages={
             "required": "Enter the deactivation date",
             "incomplete": "Enter the deactivation date",
+            "invalid": "Deactivation date must be a real date",
             "day": {
                 "incomplete": "Deactivation date must include a day",
                 "invalid": "Deactivation date must be a real date",

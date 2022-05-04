@@ -195,7 +195,7 @@ def test_firearm_pv_security_gradings_form(data, is_valid, errors):
             },
             False,
             {
-                "date_of_issue": ["day is out of range for month"],
+                "date_of_issue": ["Date of issue must be a real date"],
             },
         ),
         (
@@ -209,7 +209,21 @@ def test_firearm_pv_security_gradings_form(data, is_valid, errors):
             },
             False,
             {
-                "date_of_issue": ["month must be in 1..12"],
+                "date_of_issue": ["Date of issue must be a real date"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "20",
+                "date_of_issue_1": "12",
+                "date_of_issue_2": "10000",
+            },
+            False,
+            {
+                "date_of_issue": ["Date of issue must be a real date"],
             },
         ),
         (
