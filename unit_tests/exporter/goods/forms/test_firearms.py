@@ -533,7 +533,7 @@ def test_firearm_firearm_act_1968_form(data, is_valid, errors):
             {
                 "file": ["Select a firearm certificate"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -598,7 +598,7 @@ def test_firearm_attach_firearm_certificate_form(data, files, is_valid, errors):
             {
                 "file": ["Select a shotgun certificate"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -663,7 +663,7 @@ def test_firearm_attach_shotgun_certificate_form(data, files, is_valid, errors):
             {
                 "file": ["Select a section 5 letter of authority"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
