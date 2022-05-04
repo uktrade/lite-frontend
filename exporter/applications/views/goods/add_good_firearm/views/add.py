@@ -66,22 +66,23 @@ from exporter.goods.services import (
 )
 from exporter.organisation.services import delete_document_on_organisation
 
-from .actions import FirearmActCertificateAction
+from .actions import GoodOnApplicationFirearmActCertificateAction, OrganisationFirearmActCertificateAction
 from .conditionals import (
     has_application_rfd_certificate,
     has_firearm_act_document,
     has_organisation_rfd_certificate,
+    is_certificate_required,
+    is_deactivated,
     is_document_sensitive,
+    is_onward_exported,
     is_product_covered_by_firearm_act_section,
     is_product_document_available,
+    is_product_made_before_1938,
+    is_pv_graded,
     is_registered_firearms_dealer,
     is_rfd_certificate_invalid,
-    is_pv_graded,
-    should_display_is_registered_firearms_dealer_step,
-    is_product_made_before_1938,
-    is_onward_exported,
-    is_deactivated,
     is_serial_numbers_available,
+    should_display_is_registered_firearms_dealer_step,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
@@ -130,8 +131,6 @@ class AddGoodFirearm(
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
-        (AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
-        (AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
@@ -148,14 +147,6 @@ class AddGoodFirearm(
         | C(is_registered_firearms_dealer),
         AddGoodFirearmSteps.FIREARM_ACT_1968: C(should_display_is_registered_firearms_dealer_step)
         & ~C(is_registered_firearms_dealer),
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_1)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_1)),
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: C(
-            is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_2)
-        )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_2)),
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
             is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
         )
@@ -357,21 +348,11 @@ class AddGoodFirearm(
                 if self.has_organisation_rfd_certificate_data():
                     self.post_rfd_certificate(self.application)
 
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_1,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE),
-            ).run()
-
-            FirearmActCertificateAction(
-                FirearmsActDocumentType.SECTION_2,
-                self,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE),
-            ).run()
-
-            FirearmActCertificateAction(
+            OrganisationFirearmActCertificateAction(
+                self.request,
                 FirearmsActDocumentType.SECTION_5,
-                self,
+                self.application,
+                self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
             ).run()
 
@@ -391,6 +372,8 @@ class AddGoodFirearmToApplication(
     BaseSessionWizardView,
 ):
     form_list = [
+        (AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE, FirearmAttachFirearmCertificateForm),
+        (AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
         (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
@@ -405,11 +388,17 @@ class AddGoodFirearmToApplication(
     ]
 
     condition_dict = {
-        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_made_before_1938),
-        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: C(is_onward_exported),
-        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: C(is_onward_exported),
-        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: C(is_deactivated),
-        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: C(is_serial_numbers_available),
+        AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE: is_certificate_required(
+            FirearmsActSections.SECTION_1,
+        ),
+        AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE: is_certificate_required(
+            FirearmsActSections.SECTION_2,
+        ),
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: is_product_made_before_1938,
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: is_deactivated,
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: is_serial_numbers_available,
     }
 
     def get_form_kwargs(self, step=None):
@@ -462,11 +451,25 @@ class AddGoodFirearmToApplication(
             return ["applications/goods/firearms/product-on-application-summary.html"]
         return super().get_template_names()
 
+    def get_firearm_document(self, form_dict):
+        form = None
+        if AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE in form_dict:
+            form = form_dict[AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE]
+        elif AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE in form_dict:
+            form = form_dict[AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE]
+
+        if not form:
+            return None
+
+        return form.cleaned_data["file"]
+
     def get_form_dict(self):
         form_dict = OrderedDict()
         for form_key in self.get_form_list():
             form_obj = self.get_form(
-                step=form_key, data=self.storage.get_step_data(form_key), files=self.storage.get_step_files(form_key)
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key),
             )
             if form_obj.is_valid():
                 form_dict[form_key] = form_obj
@@ -485,20 +488,23 @@ class AddGoodFirearmToApplication(
         ctx["AddGoodFirearmToApplicationSteps"] = AddGoodFirearmToApplicationSteps
 
         if self.steps.current == AddGoodFirearmToApplicationSteps.SUMMARY:
+            form_dict = self.get_form_dict()
             documents = get_good_documents(self.request, self.good["id"])
             is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
             organisation_documents = {
                 k.replace("-", "_"): v for k, v in get_organisation_documents(self.application).items()
             }
+            firearm_certificate_document = self.get_firearm_document(form_dict)
 
             return {
                 **ctx,
                 "is_user_rfd": is_user_rfd,
                 "application_id": self.application["id"],
                 "good": self.good,
-                "good_on_application": self.get_payload(self.get_form_dict()),
+                "good_on_application": self.get_payload(form_dict),
                 "documents": documents,
                 "organisation_documents": organisation_documents,
+                "firearm_certificate_document": firearm_certificate_document,
             }
 
         return ctx
@@ -506,9 +512,28 @@ class AddGoodFirearmToApplication(
     def done(self, form_list, form_dict, **kwargs):
         try:
             good_on_application, _ = self.post_firearm_to_application(form_dict)
+            good_on_application = good_on_application["good"]
+
+            GoodOnApplicationFirearmActCertificateAction(
+                self.request,
+                FirearmsActDocumentType.SECTION_1,
+                self.application,
+                self.good,
+                good_on_application,
+                self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE),
+            ).run()
+
+            GoodOnApplicationFirearmActCertificateAction(
+                self.request,
+                FirearmsActDocumentType.SECTION_2,
+                self.application,
+                self.good,
+                good_on_application,
+                self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE),
+            ).run()
         except ServiceError as e:
             return self.handle_service_error(e)
 
-        self.good_on_application = good_on_application["good"]
+        self.good_on_application = good_on_application
 
         return redirect(self.get_success_url())

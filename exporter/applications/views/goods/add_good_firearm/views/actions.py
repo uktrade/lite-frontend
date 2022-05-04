@@ -5,7 +5,7 @@ from exporter.applications.services import (
     post_additional_document,
     post_application_document,
 )
-from exporter.core.constants import DocumentType
+from exporter.core.constants import DocumentType, FirearmsActDocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     get_document_data,
@@ -22,14 +22,17 @@ from exporter.organisation.services import (
 from .decorators import expect_status
 
 
-class FirearmActCertificateAction:
-    def __init__(self, document_type, view, cleaned_data):
+class OrganisationFirearmActCertificateAction:
+    DESCRIPTION_MAP = {FirearmsActDocumentType.SECTION_5: "Letter of authority for '{}'"}
+
+    def __init__(self, request, document_type, application, good, cleaned_data):
+        self.request = request
         self.document_type = document_type
-        self.view = view
-        self.request = view.request
-        self.application = view.application
-        self.good = view.good
+        self.application = application
+        self.good = good
         self.cleaned_data = cleaned_data
+
+        self.description = self.DESCRIPTION_MAP[document_type].format(self.good["name"])
 
     def has_firearm_act_certificate(self):
         attach_firearm_certificate = self.cleaned_data
@@ -41,33 +44,6 @@ class FirearmActCertificateAction:
     def has_replacement_file(self):
         file = self.cleaned_data["file"]
         return not isinstance(file, CurrentFile)
-
-    def get_firearm_act_certificate_payload(self):
-        data = self.cleaned_data
-        certificate = data["file"]
-        payload = {
-            **get_document_data(certificate),
-            "document_on_organisation": {
-                "expiry_date": data["section_certificate_date_of_expiry"].isoformat(),
-                "reference_code": data["section_certificate_number"],
-                "document_type": self.document_type,
-            },
-        }
-        return payload
-
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error adding firearm certificate when creating firearm",
-        "Unexpected error adding firearm certificate",
-    )
-    def post_firearm_act_certificate(self):
-        firearm_certificate_payload = self.get_firearm_act_certificate_payload()
-        return post_application_document(
-            request=self.request,
-            pk=self.application["id"],
-            good_pk=self.good["id"],
-            data=firearm_certificate_payload,
-        )
 
     def get_organisation_document_payload(self):
         firearm_certificate_cleaned_data = self.cleaned_data
@@ -110,6 +86,34 @@ class FirearmActCertificateAction:
         )
         return {}, status_code
 
+    def get_firearm_act_certificate_payload(self):
+        data = self.cleaned_data
+        certificate = data["file"]
+        payload = {
+            **get_document_data(certificate),
+            "document_on_organisation": {
+                "expiry_date": data["section_certificate_date_of_expiry"].isoformat(),
+                "reference_code": data["section_certificate_number"],
+                "document_type": self.document_type,
+            },
+            "description": self.description,
+            "document_type": self.document_type,
+        }
+        return payload
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding certificate when creating good",
+        "Unexpected error updating firearm",
+    )
+    def post_firearm_act_certificate(self):
+        supporting_document_payload = self.get_firearm_act_certificate_payload()
+        return post_additional_document(
+            request=self.request,
+            pk=self.application["id"],
+            json=supporting_document_payload,
+        )
+
     def run(self):
         if not self.has_firearm_act_certificate():
             return
@@ -124,6 +128,77 @@ class FirearmActCertificateAction:
 
         self.delete_existing_organisation_firearm_act_certificate()
         self.post_firearm_act_certificate()
+
+
+class GoodOnApplicationFirearmActCertificateAction:
+    DESCRIPTION_MAP = {
+        FirearmsActDocumentType.SECTION_1: "Firearm certificate for '{}'",
+        FirearmsActDocumentType.SECTION_2: "Shotgun certificate for '{}'",
+    }
+
+    def __init__(self, request, document_type, application, good, good_on_application, cleaned_data):
+        self.request = request
+        self.document_type = document_type
+        self.application = application
+        self.good = good
+        self.good_on_application = good_on_application
+        self.cleaned_data = cleaned_data
+
+        self.description = self.DESCRIPTION_MAP[document_type].format(self.good["name"])
+
+    def has_certificate_file(self):
+        return self.cleaned_data.get("file") is not None
+
+    def get_firearm_act_certificate_payload(self):
+        certificate = self.cleaned_data["file"]
+        payload = get_document_data(certificate)
+        payload["document_type"] = self.document_type
+        payload["good_on_application"] = self.good_on_application["id"]
+        return payload
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding firearm certificate when creating firearm",
+        "Unexpected error adding firearm certificate",
+    )
+    def post_good_on_application_document(self):
+        firearm_certificate_payload = self.get_firearm_act_certificate_payload()
+        return post_application_document(
+            request=self.request,
+            pk=self.application["id"],
+            good_pk=self.good["id"],
+            data=firearm_certificate_payload,
+        )
+
+    def get_supporting_document_payload(self):
+        cert_file = self.cleaned_data["file"]
+
+        rfd_certificate_payload = {
+            **get_document_data(cert_file),
+            "description": self.description,
+            "document_type": self.document_type,
+        }
+        return rfd_certificate_payload
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding certificate when creating good on application",
+        "Unexpected error updating firearm",
+    )
+    def post_supporting_document(self):
+        supporting_document_payload = self.get_supporting_document_payload()
+        return post_additional_document(
+            request=self.request,
+            pk=self.application["id"],
+            json=supporting_document_payload,
+        )
+
+    def run(self):
+        if not self.has_certificate_file():
+            return
+
+        self.post_good_on_application_document()
+        self.post_supporting_document()
 
 
 def delete_existing_organisation_rfd_certificate(request, application):

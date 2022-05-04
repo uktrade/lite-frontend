@@ -169,8 +169,6 @@ class AddGoodFirearmPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
     }
 
@@ -200,14 +198,14 @@ class FirearmEditRegisteredFirearmsDealerPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5: get_firearm_section_5_payload,
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
     }
 
 
 class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
+        AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_firearm_details_cleaned_data,
@@ -235,16 +233,6 @@ class FirearmsActPayloadBuilder:
             return {}
 
         for section_value, attach_step_name, document_type in (
-            (
-                FirearmsActSections.SECTION_1,
-                AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE,
-                FirearmsActDocumentType.SECTION_1,
-            ),
-            (
-                FirearmsActSections.SECTION_2,
-                AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE,
-                FirearmsActDocumentType.SECTION_2,
-            ),
             (
                 FirearmsActSections.SECTION_5,
                 AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
@@ -281,7 +269,5 @@ class FirearmEditSection5FirearmsAct1968PayloadBuilder(MergingPayloadBuilder):
 class FirearmEditFirearmsAct1968PayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
-        AddGoodFirearmSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
-        AddGoodFirearmSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
     }

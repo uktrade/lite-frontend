@@ -124,3 +124,10 @@ def is_serial_numbers_available(wizard):
         serial_numbers_available_data.get("serial_numbers_available")
         == FirearmSerialIdentificationMarkingsForm.SerialChoices.AVAILABLE
     )
+
+
+def is_certificate_required(document_type):
+    def _is_certificate_required(wizard):
+        return wizard.good["firearm_details"].get("firearms_act_section") == document_type
+
+    return _is_certificate_required
