@@ -152,7 +152,7 @@
                         Date of issue
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        {{ good.pv_grading_details.date_of_issue|to_date|date:"d-m-Y" }}
+                        {{ good.pv_grading_details.date_of_issue|to_date|date:"j F Y" }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a id="change-good-calibre-pv-grading" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_pv_grading_details' application_id good.id %}">Change</a>
