@@ -128,7 +128,7 @@ def i_attach_updated_file(driver):  # noqa
     file_input = driver.find_element(by=By.NAME, value="file")
     file_input.clear()
     file_input.send_keys("/tmp/enforcement_check_import.xml")
-    upload_btn = driver.find_element(by=By.CLASS_NAME, value="govuk-button")
+    upload_btn = driver.find_element(by=By.XPATH, value="//button[@type='submit']")
     upload_btn.click()
 
     banner = driver.find_element(by=By.CLASS_NAME, value="app-snackbar__content")
