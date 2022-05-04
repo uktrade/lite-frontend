@@ -73,6 +73,9 @@
                             {{ clc.rating }}{% if not forloop.last %}, {% endif %}
                         {% endfor %}
                     </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_control_list_entries' application_id good.id %}">Change</a>
+                    </dd>
                 </div>
             {% endif %}
             <div class="govuk-summary-list__row">
