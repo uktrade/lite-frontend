@@ -175,6 +175,11 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ firearm_details.is_replica|yesno|title }}
+                    {% if firearm_details.is_replica %}
+                        <div class="govuk-hint">
+                            {{ firearm_details.replica_description }}
+                        </div>
+                    {% endif %}
                 </dd>
                 <dd class="govuk-summary-list__actions">
                     <a id="change-good-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_replica' application_id good.id %}">Change</a>
