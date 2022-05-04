@@ -29,6 +29,15 @@ class TAUMixin:
         return get_case(self.request, self.case_id)
 
     @cached_property
+    def goods(self):
+        goods = []
+        precedents = get_recent_precedent(self.request, self.case)
+        for item in self.case.goods:
+            item["precedent"] = precedents[item["id"]]
+            goods.append(item)
+        return goods
+
+    @cached_property
     def control_list_entries(self):
         control_list_entries = get_control_list_entries(self.request, convert_to_options=True)
         return [(item.value, item.key) for item in control_list_entries]
@@ -39,17 +48,11 @@ class TAUMixin:
 
     @property
     def assessed_goods(self):
-        return [item for item in self.case.goods if self.is_assessed(item)]
+        return [item for item in self.goods if self.is_assessed(item)]
 
     @property
     def unassessed_goods(self):
-        precedents = get_recent_precedent(self.request, self.case)
-        goods = []
-        for item in self.case.goods:
-            if not self.is_assessed(item):
-                item["precedent"] = precedents[item["id"]]
-                goods.append(item)
-        return goods
+        return [item for item in self.goods if not self.is_assessed(item)]
 
     @property
     def good_id(self):
@@ -83,7 +86,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_goods(self, good_ids):
         good_ids_set = set(good_ids)
-        for good in self.case.goods:
+        for good in self.goods:
             if good["id"] in good_ids_set:
                 yield good
 
@@ -128,7 +131,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         return form_kwargs
 
     def get_good(self):
-        for good in self.case.goods:
+        for good in self.goods:
             if good["id"] == self.good_id:
                 return good
         raise Http404
