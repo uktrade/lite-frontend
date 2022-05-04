@@ -885,17 +885,14 @@ class FirearmYearOfManufactureForm(BaseFirearmForm):
         error_messages={
             "required": "Enter the year it was made",
         },
+        validators=[
+            validators.MinValueValidator(1000, "The year it was made must be a real year"),
+            validators.MaxValueValidator(1937, "The year must be before 1938"),
+        ],
     )
 
     def get_layout_fields(self):
         return ("year_of_manufacture",)
-
-    def clean(self):
-        year_of_manufacture = self.cleaned_data.get("year_of_manufacture")
-        if year_of_manufacture and year_of_manufacture >= 1938:
-            self.add_error("year_of_manufacture", "The year must be before 1938")
-
-        return self.cleaned_data
 
 
 class FirearmOnwardExportedForm(BaseFirearmForm):

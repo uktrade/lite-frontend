@@ -766,6 +766,9 @@ def test_firearm_made_before_1938_form(data, is_valid, errors):
         ({}, False, {"year_of_manufacture": ["Enter the year it was made"]}),
         ({"year_of_manufacture": 2022}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
         ({"year_of_manufacture": 1938}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
+        ({"year_of_manufacture": 999}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
+        ({"year_of_manufacture": 1}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
+        ({"year_of_manufacture": "-1"}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
         ({"year_of_manufacture": 1937}, True, {}),
     ),
 )
