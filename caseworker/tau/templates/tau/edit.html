@@ -1,9 +1,6 @@
 {% extends 'layouts/case.html' %}
-
 {% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
-
 {% block body %}
-
 <div class="govuk-width-container">
     <a href="../" class="govuk-back-link">Back</a>
     <h1 class="govuk-heading-l">Product Assessment</h1>
@@ -11,6 +8,17 @@
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
+                <div>
+                    <h3 class="govuk-heading-m">{{ good.line_number }}.  {{ good.good.name }}</h3>
+                    <div>
+                      {% include "tau/good_table.html" with good=good %}
+                      {% if good.precedent %}
+                      {% include "tau/precedent_table.html" with precedent=good.precedent %}
+                      {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
                 {% crispy form %}
             </div>
         </div>
