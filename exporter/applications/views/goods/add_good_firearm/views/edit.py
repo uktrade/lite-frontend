@@ -622,7 +622,6 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
             OrganisationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_5,
-                f"Letter of authority for '{self.good['name']}'",
                 self.application,
                 self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
@@ -671,7 +670,6 @@ class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
             OrganisationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_5,
-                f"Letter of authority for '{self.good['name']}'",
                 self.application,
                 self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
@@ -702,7 +700,6 @@ class FirearmEditLetterOfAuthority(BaseFirearmEditView):
         OrganisationFirearmActCertificateAction(
             self.request,
             self.document_type,
-            f"Letter of authority for '{self.good['name']}'",
             self.application,
             self.good,
             form.cleaned_data,
@@ -758,7 +755,6 @@ class FirearmEditFirearmsAct1968(BaseEditWizardView):
             OrganisationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_5,
-                f"Letter of authority for '{self.good['name']}'",
                 self.application,
                 self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),

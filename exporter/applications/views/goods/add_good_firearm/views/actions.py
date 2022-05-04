@@ -5,7 +5,7 @@ from exporter.applications.services import (
     post_additional_document,
     post_application_document,
 )
-from exporter.core.constants import DocumentType
+from exporter.core.constants import DocumentType, FirearmsActDocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     get_document_data,
@@ -23,13 +23,16 @@ from .decorators import expect_status
 
 
 class OrganisationFirearmActCertificateAction:
-    def __init__(self, request, document_type, description, application, good, cleaned_data):
+    DESCRIPTION_MAP = {FirearmsActDocumentType.SECTION_5: "Letter of authority for '{}'"}
+
+    def __init__(self, request, document_type, application, good, cleaned_data):
         self.request = request
         self.document_type = document_type
-        self.description = description
         self.application = application
         self.good = good
         self.cleaned_data = cleaned_data
+
+        self.description = self.DESCRIPTION_MAP[document_type].format(self.good["name"])
 
     def has_firearm_act_certificate(self):
         attach_firearm_certificate = self.cleaned_data
@@ -128,14 +131,20 @@ class OrganisationFirearmActCertificateAction:
 
 
 class GoodOnApplicationFirearmActCertificateAction:
-    def __init__(self, request, document_type, description, application, good, good_on_application, cleaned_data):
+    DESCRIPTION_MAP = {
+        FirearmsActDocumentType.SECTION_1: "Firearm certificate for '{}'",
+        FirearmsActDocumentType.SECTION_2: "Shotgun certificate for '{}'",
+    }
+
+    def __init__(self, request, document_type, application, good, good_on_application, cleaned_data):
         self.request = request
         self.document_type = document_type
-        self.description = description
         self.application = application
         self.good = good
         self.good_on_application = good_on_application
         self.cleaned_data = cleaned_data
+
+        self.description = self.DESCRIPTION_MAP[document_type].format(self.good["name"])
 
     def has_certificate_file(self):
         return self.cleaned_data.get("file") is not None

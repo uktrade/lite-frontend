@@ -351,7 +351,6 @@ class AddGoodFirearm(
             OrganisationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_5,
-                f"Letter of authority for '{self.good['name']}'",
                 self.application,
                 self.good,
                 self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
@@ -518,7 +517,6 @@ class AddGoodFirearmToApplication(
             GoodOnApplicationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_1,
-                f"Firearm certificate for '{self.good['name']}'",
                 self.application,
                 self.good,
                 good_on_application,
@@ -528,7 +526,6 @@ class AddGoodFirearmToApplication(
             GoodOnApplicationFirearmActCertificateAction(
                 self.request,
                 FirearmsActDocumentType.SECTION_2,
-                f"Shotgun certificate for '{self.good['name']}'",
                 self.application,
                 self.good,
                 good_on_application,
