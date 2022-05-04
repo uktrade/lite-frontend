@@ -37,12 +37,12 @@
             {% if unassessed_goods %}
             <form id="tau-form" action="." method="POST">
                 {% csrf_token %}
-                <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-grid-column-two-thirds tau__first-column">
                     {{ form.goods | as_crispy_field }}
                 </div>
                 
                 <div class="govuk-grid-column-one-third">
-                    <label for="control_list_entries" class="govuk-label"><span>Add a control list entry or end-use control</span></label>
+                    <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
                         <ol class="govuk-list">
                         {% for item in case.goods %}
                             {% if item.good.control_list_entries %}
@@ -54,7 +54,7 @@
                             {% endif %}
                         {% endfor %}
                         </ol>
-                    <div class="govuk-label"><span class="govuk-label">or type for suggestions.</span></div>
+                    <div class="govuk-label"><span>or type for suggestions.</span></div>
                     {% for field in form %}
                     {% if field.name != "goods" %}
                     {{ field | as_crispy_field }}

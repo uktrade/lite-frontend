@@ -3,6 +3,12 @@
     text-align: left;
   }
 
+  &__first-column--options {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+  }
+
   &__list {
     padding: 0 0 0 0;
     list-style-type: decimal;
@@ -39,7 +45,7 @@
 
     .govuk-checkboxes__label::before, ::after {
       position: absolute;
-      top: -1000px;
+      left: -1000px;
     }
     .govuk-checkboxes__item {
       padding-left: 0;

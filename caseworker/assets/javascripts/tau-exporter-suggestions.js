@@ -1,41 +1,39 @@
 const SLICED_WORDS = 3; // Select exporter suggestion "ML1"
 const NO_CLE_STRING = "None";
 
+const createTokenFieldSetItem = (suggestionSentence) => {
+  const sentenceSplit = suggestionSentence.split(" ");
+  const cleName = sentenceSplit.slice(SLICED_WORDS).join(" ");
+
+  const tokenFieldInput = document.querySelector(
+    "#control_list_entries .tokenfield-input"
+  );
+
+  tokenFieldInput.value = cleName;
+  tokenFieldInput.click();
+
+  const tokenFieldSuggestList = document.querySelector(
+    "#control_list_entries .tokenfield-suggest-item"
+  );
+  tokenFieldSuggestList.click();
+};
+
 const clearCleList = () => {
   const notListedSuggestionItem = document
-    .querySelector("#control_list_entries")
-    .querySelector(".tokenfield-set")
+    .querySelector("#control_list_entries .tokenfield-set")
     .querySelectorAll("li");
   notListedSuggestionItem.forEach((child) => {
     child.remove();
   });
 };
 
-const createTokenFieldSetItem = (suggestionSentence) => {
-  sentenceSplit = suggestionSentence.split(" ");
-  cleName = sentenceSplit.slice(SLICED_WORDS).join(" ");
-
-  const tokenFieldInput = document
-    .querySelector("#control_list_entries")
-    .querySelector(".tokenfield-input");
-
-  tokenFieldInput.value = cleName;
-  tokenFieldInput.click();
-
-  const tokenFieldSuggestList = document
-    .querySelector("#control_list_entries")
-    .querySelectorAll(".tokenfield-suggest-item");
-  tokenFieldSuggestList[0].click();
-};
-
 const createNoCleEntry = () => {
-  const tokenFieldInput = document
-    .querySelector("#control_list_entries")
-    .querySelector(".tokenfield-input");
-  const notListedSuggestionField = document
-    .querySelector("#control_list_entries")
-    .querySelector(".tokenfield-set")
-    .querySelector("ul");
+  const tokenFieldInput = document.querySelector(
+    "#control_list_entries .tokenfield-input"
+  );
+  const notListedSuggestionField = document.querySelector(
+    "#control_list_entries .tokenfield-set ul"
+  );
   const newLi = document.createElement("li");
   newLi.classList.add("tokenfield-set-item");
 
@@ -48,7 +46,13 @@ const createNoCleEntry = () => {
   newHref.tabIndex = -1;
   newHref.innerText = "×";
   newHref.href = "#";
+  newHref.addEventListener("click", () => {
+    const doesNotHaveCleSentenceChecked = document.querySelector(
+      "#div_id_does_not_have_control_list_entries input"
+    );
 
+    doesNotHaveCleSentenceChecked.checked = false;
+  });
   newLi.append(newSpan, newHref);
 
   clearCleList();
@@ -58,19 +62,78 @@ const createNoCleEntry = () => {
 };
 
 const removeNoCleEntry = () => {
-  const tokenFieldInput = document
-    .querySelector("#control_list_entries")
-    .querySelector(".tokenfield-input");
+  const tokenFieldInput = document.querySelector(
+    "#control_list_entries .tokenfield-input"
+  );
   tokenFieldInput.style.removeProperty("display");
   clearCleList();
+};
+
+const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
+  checked = product.checked;
+  id = product.value;
+
+  cleList.forEach((cle) => {
+    // Hide items.
+    if (checked) {
+      id === cle.getAttribute("name") &&
+        cle.classList.remove("app-hidden--force");
+      return;
+    }
+    // Unhide items.
+    !selectAll &&
+      id === cle.getAttribute("name") &&
+      cle.classList.add("app-hidden--force");
+  });
+};
+
+const addSelectAllExpandAll = (checkboxProducts, cleList) => {
+  const goods = document.querySelector(".tau__first-column #div_id_goods");
+
+  const createDivOptions = document.createElement("div");
+  createDivOptions.classList.add("tau__first-column--options");
+
+  goods.insertBefore(
+    createDivOptions,
+    goods.firstElementChild.nextElementSibling
+  );
+
+  const selectAllButton = document.createElement("button");
+  selectAllButton.innerText = "Select all";
+  selectAllButton.classList.add("lite-button--link");
+  const expandAllButton = document.createElement("button");
+  expandAllButton.innerText = "Expand all";
+  expandAllButton.classList.add("lite-button--link");
+
+  createDivOptions.append(selectAllButton, expandAllButton);
+
+  selectAllButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    const selectAll = true;
+    checkboxProducts.forEach((product) => {
+      product.checked = true;
+      hideUnhideExporterCle(product, cleList, selectAll);
+    });
+  });
+
+  expandAllButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    document
+      .querySelector(".tau__list")
+      .querySelectorAll(".govuk-details")
+      .forEach((product) => product.setAttribute("open", ""));
+  });
 };
 
 const initTauControlListEntry = () => {
   const cleList = document.querySelectorAll(".control-list__list");
   const checkboxProducts = document.querySelectorAll("[id^='id_goods_']");
-  const doesNotHaveCleSentence = document
-    .querySelector("#div_id_does_not_have_control_list_entries")
-    .querySelector("input");
+  const doesNotHaveCleSentence = document.querySelector(
+    "#div_id_does_not_have_control_list_entries input"
+  );
+
+  // Add Select All and Expand All
+  addSelectAllExpandAll(checkboxProducts, cleList);
 
   cleList.forEach((cle) =>
     cle.addEventListener("click", (event) => {
@@ -81,18 +144,7 @@ const initTauControlListEntry = () => {
 
   checkboxProducts.forEach((product) => {
     product.addEventListener("click", () => {
-      checked = product.checked;
-      id = product.value;
-
-      cleList.forEach((cle) => {
-        if (checked) {
-          id === cle.getAttribute("name") &&
-            cle.classList.remove("app-hidden--force");
-          return;
-        }
-        id === cle.getAttribute("name") &&
-          cle.classList.add("app-hidden--force");
-      });
+      hideUnhideExporterCle(product, cleList);
     });
   });
 

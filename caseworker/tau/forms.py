@@ -79,6 +79,7 @@ class TAUAssessmentForm(TAUEditForm):
     MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
 
     def __init__(self, goods, control_list_entries_choices, *args, **kwargs):
+
         super().__init__(control_list_entries_choices, *args, **kwargs)
         self.fields["goods"] = forms.MultipleChoiceField(
             choices=goods.items(),
