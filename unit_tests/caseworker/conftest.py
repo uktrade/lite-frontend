@@ -1225,3 +1225,45 @@ def form_team_data():
         "part_of_ecju": True,
         "is_ogd": True,
     }
+
+
+@pytest.fixture
+def mock_precedents_api(requests_mock, data_standard_case, data_queue):
+    case_id = data_standard_case["case"]["id"]
+    url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
+    requests_mock.get(
+        url,
+        json={
+            "results": [
+                {
+                    "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+                    "application": case_id,
+                    "queue": data_queue["id"],
+                    "reference": data_standard_case["case"]["reference_code"],
+                    "destinations": ["GB"],
+                    "control_list_entries": ["ML1a"],
+                    "wassenaar": False,
+                    "quantity": 10.0,
+                    "value": "test-value",
+                    "report_summary": "test-report-summary",
+                    "submitted_at": "2021-06-21T11:27:36.145000Z",
+                },
+                {
+                    "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+                    "application": case_id,
+                    "queue": data_queue["id"],
+                    "reference": data_standard_case["case"]["reference_code"],
+                    "destinations": ["GB"],
+                    "control_list_entries": ["ML1a"],
+                    "wassenaar": False,
+                    "quantity": 10.0,
+                    "value": "test-value",
+                    "report_summary": "test-report-summary",
+                    "submitted_at": "2021-06-20T11:27:36.145000Z",
+                },
+            ]
+        },
+    )
+    return requests_mock
