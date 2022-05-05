@@ -244,7 +244,7 @@
                                 Total value
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                £{{ good_on_application.value }}
+                                £{{ good_on_application.value|floatformat:2 }}
                             </dd>
                             <dd class="govuk-summary-list__actions">
                                 <button name="wizard_goto_step" type="submit" value="{{ AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE }}" class="lite-button--link">Change</button>

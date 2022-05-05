@@ -7,7 +7,6 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
 from django import forms
-from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
@@ -884,11 +883,11 @@ class FirearmYearOfManufactureForm(BaseFirearmForm):
         widget=forms.TextInput,
         error_messages={
             "required": "Enter the year it was made",
+            "min_value": "The year it was made must be a real year",
+            "max_value": "The year must be before 1938",
         },
-        validators=[
-            validators.MinValueValidator(1000, "The year it was made must be a real year"),
-            validators.MaxValueValidator(1937, "The year must be before 1938"),
-        ],
+        min_value=1000,
+        max_value=1937,
     )
 
     def get_layout_fields(self):
@@ -1131,29 +1130,23 @@ class FirearmQuantityAndValueForm(BaseFirearmForm):
         error_messages={
             "invalid": "Number of items must be a number, like 16",
             "required": "Enter the number of items",
+            "min_value": "Number of items must be 1 or more",
         },
-        validators=[
-            validators.MinValueValidator(1, "Number of items must be 1 or more"),
-        ],
+        min_value=1,
         widget=forms.TextInput,
     )
     value = forms.DecimalField(
+        decimal_places=2,
         error_messages={
             "invalid": "Total value must be a number, like 16.32",
             "required": "Enter the total value",
+            "max_decimal_places": "Total value must not be more than 2 decimals",
+            "min_value": "Total value must be 0.01 or more",
         },
         label="Total value",
-        validators=[
-            validators.MinValueValidator(Decimal("0.01"), "Total value must be 0.01 or more"),
-        ],
+        min_value=Decimal("0.01"),
         widget=forms.TextInput,
     )
-
-    def clean_value(self):
-        value = self.cleaned_data["value"]
-        if "." not in str(value):
-            raise ValidationError("Total value must include pence, like 123.45 or 156.00")
-        return value
 
     def get_layout_fields(self):
         return (

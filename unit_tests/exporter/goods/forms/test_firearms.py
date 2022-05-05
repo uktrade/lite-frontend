@@ -804,9 +804,14 @@ def test_firearm_year_of_manufacture_form(data, is_valid, errors):
         ),
         ({"number_of_items": "1", "value": "0"}, False, {"value": ["Total value must be 0.01 or more"]}),
         (
-            {"number_of_items": "1", "value": "16"},
+            {"number_of_items": "1", "value": "16.12345"},
             False,
-            {"value": ["Total value must include pence, like 123.45 or 156.00"]},
+            {"value": ["Total value must not be more than 2 decimals"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "16"},
+            True,
+            {},
         ),
         (
             {"number_of_items": "1", "value": "16.32"},
