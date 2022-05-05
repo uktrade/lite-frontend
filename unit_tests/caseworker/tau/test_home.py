@@ -104,7 +104,7 @@ def test_home_content(
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="subtitle").text == "Assess 1 product(s) going from Great Britain to Abu Dhabi, United Kingdom"
     assert get_cells(soup, "assessed-products") == [
-        "1",
+        "2",
         "p2",
         "444",
         "",
