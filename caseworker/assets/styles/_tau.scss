@@ -1,0 +1,30 @@
+.tau {
+  .govuk-checkboxes__label {
+    text-align: left;
+  }
+
+  &__list {
+    padding: 0 0 0 0;
+    list-style-type: decimal;
+    counter-reset: my-counter;
+    list-style: none;
+
+    li:first-child {
+      border-top: 3px solid $base-grey;
+      border-bottom: 3px solid $base-grey;
+    }
+
+    li {
+      padding-top: 20px;
+      counter-increment: my-counter;
+      position: relative;
+      display:flex;
+      border-bottom: 2px solid $base-grey;
+    }
+
+    li::before {
+      content: counter(my-counter) ".";
+      padding: 12px 20px 0 0;
+    }
+  }
+} 
