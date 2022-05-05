@@ -1138,22 +1138,17 @@ class FirearmQuantityAndValueForm(BaseFirearmForm):
         widget=forms.TextInput,
     )
     value = forms.DecimalField(
+        decimal_places=2,
         error_messages={
             "invalid": "Total value must be a number, like 16.32",
             "required": "Enter the total value",
+            "max_decimal_places": "Total value must not be more than 2 decimals",
+            "min_value": "Total value must be 0.01 or more",
         },
         label="Total value",
-        validators=[
-            validators.MinValueValidator(Decimal("0.01"), "Total value must be 0.01 or more"),
-        ],
+        min_value=Decimal("0.01"),
         widget=forms.TextInput,
     )
-
-    def clean_value(self):
-        value = self.cleaned_data["value"]
-        if "." not in str(value):
-            raise ValidationError("Total value must include pence, like 123.45 or 156.00")
-        return value
 
     def get_layout_fields(self):
         return (
