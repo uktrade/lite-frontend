@@ -187,7 +187,7 @@ class FirearmProductControlListEntryForm(BaseFirearmForm):
         coerce=coerce_str_to_bool,
         label="",
         error_messages={
-            "required": "Select yes if you know the products control list entry",
+            "required": "Select yes if you know the product's control list entry",
         },
     )
 

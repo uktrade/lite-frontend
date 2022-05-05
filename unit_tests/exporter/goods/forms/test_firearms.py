@@ -98,7 +98,7 @@ def test_firearm_product_control_list_entry_form_init_control_list_entries(reque
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
-        ({}, False, {"is_good_controlled": ["Select yes if you know the products control list entry"]}),
+        ({}, False, {"is_good_controlled": ["Select yes if you know the product's control list entry"]}),
         ({"is_good_controlled": True}, False, {"control_list_entries": ["Enter the control list entry"]}),
         ({"is_good_controlled": True, "control_list_entries": ["ML1", "ML1a"]}, True, {}),
         ({"is_good_controlled": False}, True, {}),
