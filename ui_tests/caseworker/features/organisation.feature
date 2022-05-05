@@ -81,4 +81,4 @@ Feature: I want to add a company to LITE
 
     Examples:
     |eori_number    | uk_vat_number | primary_site              | phone_number   |
-    |GB205672212000 | 123456789     | HQ London United Kingdom  | +441234567890  |
+    |GB205672212000 | 123456789     | HQ London United Kingdom  | +448922296634  |
