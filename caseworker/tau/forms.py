@@ -4,6 +4,13 @@ from crispy_forms_gds.layout import Layout, Submit
 
 from caseworker.tau.widgets import GoodsMultipleSelect
 
+from core.forms.layouts import (
+    ConditionalCheckbox,
+    ConditionalQuestion,
+    ConditionalRadios,
+    Prefixed,
+)
+
 
 class TAUEditForm(forms.Form):
     """
@@ -45,6 +52,17 @@ class TAUEditForm(forms.Form):
         widget=forms.Textarea,
     )
 
+    upload_evidence = forms.BooleanField(
+        label="upload evidence(for example, screenshots or documents)",
+        required=False,
+    )
+    file_evidence = forms.FileField(
+        label="Upload a file",
+        error_messages={
+            "required": "Select a document that shows what your product is designed to do",
+        },
+    )
+
     def __init__(self, control_list_entries_choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["control_list_entries"].choices = control_list_entries_choices
@@ -55,6 +73,10 @@ class TAUEditForm(forms.Form):
             "is_wassenaar",
             "report_summary",
             "comment",
+            ConditionalCheckbox(
+                "True",
+                "file_evidence",
+            ),
             Submit("submit", "Submit"),
         )
 
