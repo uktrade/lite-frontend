@@ -74,7 +74,7 @@ class TAUEditForm(forms.Form):
             "report_summary",
             "comment",
             ConditionalCheckbox(
-                "True",
+                "upload_evidence",
                 "file_evidence",
             ),
             Submit("submit", "Submit"),
