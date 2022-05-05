@@ -1,6 +1,5 @@
 import logging
 
-from collections import OrderedDict
 from deepmerge import always_merger
 from http import HTTPStatus
 
@@ -23,7 +22,6 @@ from exporter.core.constants import (
 from exporter.core.helpers import (
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     get_document_data,
-    get_organisation_documents,
     get_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
@@ -59,7 +57,6 @@ from exporter.goods.forms.firearms import (
     FirearmSerialNumbersForm,
 )
 from exporter.goods.services import (
-    get_good_documents,
     post_firearm,
     post_good_documents,
 )
@@ -409,9 +406,10 @@ class AddGoodFirearmToApplication(
 
     def get_success_url(self):
         return reverse(
-            "applications:goods",
+            "applications:product_on_application_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
+                "good_on_application_pk": self.good_on_application["id"],
             },
         )
 

@@ -262,7 +262,13 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
     )
 
     assert response.status_code == 302
-    assert response.url == reverse("applications:goods", kwargs={"pk": application["id"]})
+    assert response.url == reverse(
+        "applications:product_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
 
     assert mock_good_on_application_post.last_request.json() == {
         "firearm_details": {
@@ -454,7 +460,13 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     )
 
     assert response.status_code == 302
-    assert response.url == reverse("applications:goods", kwargs={"pk": application["id"]})
+    assert response.url == reverse(
+        "applications:product_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
 
     assert mock_good_on_application_post.last_request.json() == {
         "firearm_details": {
