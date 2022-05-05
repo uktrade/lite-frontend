@@ -1,4 +1,5 @@
 from pytest_bdd import scenarios, when, then, parsers, given
+from selenium.webdriver.common.by import By
 
 from ui_tests.exporter.pages.end_use_details_form_page import EndUseDetailsFormPage
 from ui_tests.exporter.conftest import (
@@ -678,3 +679,44 @@ def check_party_section_text(driver, no_info_text, party_type):
 @then(parsers.parse('I see "{no_info_text}" for Notes'))
 def check_notes(driver, no_info_text):
     assert no_info_text == CheckYourAnswers(driver).get_notes_text()
+
+
+@then("I see a banner reminding me to add serial numbers")
+def add_serial_numbers_reminder_banner(driver):
+    banner = driver.find_element(by=By.ID, value="govuk-notification-banner-title")
+    assert banner.text == "Important"
+    banner_heading = driver.find_element(by=By.CLASS_NAME, value="govuk-notification-banner__heading")
+    assert "You need to provide serial numbers for your products before you can export them." in banner_heading.text
+
+
+@then("I don't see a banner reminding me to add serial numbers")
+def check_serial_numbers_banner_missing(driver):
+    elements = driver.find_elements(by=By.XPATH, value="//*[@id]")
+    elements = [item.get_attribute("id") for item in elements]
+
+    assert "govuk-notification-banner-title" not in elements
+
+
+@when(parsers.parse('I click on "{link_text}"'))
+def click_add_serial_numbers_link(driver, link_text):
+    serial_numbers_link = driver.find_element(by=By.LINK_TEXT, value=link_text)
+    serial_numbers_link.click()
+
+
+@when(parsers.parse('I input "{serial_number}" as serial numbers for items "{items}" and press submit'))
+def enter_serial_numbers(driver, serial_number, items):
+    for item in items.split(","):
+        index = int(item) - 1
+        input_element = driver.find_element(by=By.ID, value=f"id_serial_numbers_{index}")
+        input_element.clear()
+        input_element.send_keys(serial_number.strip())
+
+    functions.click_submit(driver)
+
+
+@then(parsers.parse('I see serial numbers for items "{items}" as "{serial_number}"'))
+def verify_serial_numbers(driver, serial_number, items):
+    for item in items.split(","):
+        index = int(item) - 1
+        input_element = driver.find_element(by=By.ID, value=f"id_serial_numbers_{index}")
+        assert input_element.get_property("value") == serial_number
