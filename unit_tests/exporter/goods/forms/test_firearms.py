@@ -533,7 +533,7 @@ def test_firearm_firearm_act_1968_form(data, is_valid, errors):
             {
                 "file": ["Select a firearm certificate"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -598,7 +598,7 @@ def test_firearm_attach_firearm_certificate_form(data, files, is_valid, errors):
             {
                 "file": ["Select a shotgun certificate"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -663,7 +663,7 @@ def test_firearm_attach_shotgun_certificate_form(data, files, is_valid, errors):
             {
                 "file": ["Select a section 5 letter of authority"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -766,6 +766,9 @@ def test_firearm_made_before_1938_form(data, is_valid, errors):
         ({}, False, {"year_of_manufacture": ["Enter the year it was made"]}),
         ({"year_of_manufacture": 2022}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
         ({"year_of_manufacture": 1938}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
+        ({"year_of_manufacture": 999}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
+        ({"year_of_manufacture": 1}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
+        ({"year_of_manufacture": "-1"}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
         ({"year_of_manufacture": 1937}, True, {}),
     ),
 )
