@@ -26,7 +26,10 @@ class TAUMixin:
 
     @cached_property
     def case(self):
-        return get_case(self.request, self.case_id)
+        case = get_case(self.request, self.case_id)
+        for (i, good) in enumerate(case.goods):
+            good["line_number"] = i + 1
+        return case
 
     @cached_property
     def goods(self):
