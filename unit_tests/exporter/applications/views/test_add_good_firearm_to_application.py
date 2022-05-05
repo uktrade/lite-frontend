@@ -15,7 +15,6 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
-    FirearmSummaryForm,
     FirearmYearOfManufactureForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
@@ -146,36 +145,20 @@ def test_add_firearm_to_application_is_deactivated_true(requests_mock, expected_
     assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
 
 
-def test_add_firearm_to_application_serial_numbers_later(post_to_step, goto_step):
+def test_add_firearm_to_application_has_serial_numbers(requests_mock, expected_good_data, goto_step, post_to_step):
+    goto_step(AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE)
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
+        {"number_of_items": "1", "value": "12.34"},
+    )
     goto_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
-        {"serial_numbers_available": "LATER"},
+        {"serial_numbers_available": "AVAILABLE"},
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmSummaryForm)
-
-
-def test_add_firearm_to_application_serial_numbers_not_available(post_to_step, goto_step):
-    goto_step(AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING)
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
-        {"serial_numbers_available": "NOT_AVAILABLE"},
-    )
-
-    assert response.status_code == 200
-    assert response.context["form"].errors == {
-        "no_identification_markings_details": ["Enter why products will not have serial numbers"]
-    }
-
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
-        {"serial_numbers_available": "NOT_AVAILABLE", "no_identification_markings_details": "lost"},
-    )
-
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmSummaryForm)
+    assert isinstance(response.context["form"], FirearmSerialNumbersForm)
 
 
 def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
@@ -276,14 +259,6 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
             "serial_numbers_0": "s111",
             "serial_numbers_1": "s222",
         },
-    )
-    assert response.status_code == 200
-    assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmSummaryForm)
-
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.SUMMARY,
-        {},
     )
 
     assert response.status_code == 302
@@ -476,14 +451,6 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
             "serial_numbers_0": "s111",
             "serial_numbers_1": "s222",
         },
-    )
-    assert response.status_code == 200
-    assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmSummaryForm)
-
-    response = post_to_step(
-        AddGoodFirearmToApplicationSteps.SUMMARY,
-        {},
     )
 
     assert response.status_code == 302

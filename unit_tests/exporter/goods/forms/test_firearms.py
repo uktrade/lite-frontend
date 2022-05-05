@@ -29,6 +29,7 @@ from exporter.goods.forms.firearms import (
     FirearmReplicaForm,
     FirearmRFDValidityForm,
     FirearmSection5Form,
+    FirearmSerialIdentificationMarkingsForm,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
 )
@@ -856,5 +857,50 @@ def test_firearm_is_deactivated_form(data, is_valid, errors):
 )
 def test_firearm_deactivation_details_form(data, is_valid, errors):
     form = FirearmDeactivationDetailsForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {"serial_numbers_available": ["Select if each product will have a serial number"]},
+        ),
+        (
+            {
+                "serial_numbers_available": "NOT_AVAILABLE",
+            },
+            False,
+            {"no_identification_markings_details": ["Enter why products will not have serial numbers"]},
+        ),
+        (
+            {
+                "serial_numbers_available": "AVAILABLE",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_available": "LATER",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_available": "NOT_AVAILABLE",
+                "no_identification_markings_details": "no markings",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_identificateion_markings_form(data, is_valid, errors):
+    form = FirearmSerialIdentificationMarkingsForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
