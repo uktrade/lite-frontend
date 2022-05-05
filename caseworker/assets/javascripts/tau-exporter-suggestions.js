@@ -36,27 +36,21 @@ const createNoCleEntry = () => {
   );
   const newLi = document.createElement("li");
   newLi.classList.add("tokenfield-set-item");
-
   const newSpan = document.createElement("span");
   newSpan.classList.add("item-label");
   newSpan.innerText = NO_CLE_STRING;
-
   const newHref = document.createElement("a");
   newHref.classList.add("item-remove");
   newHref.tabIndex = -1;
   newHref.innerText = "×";
-  newHref.href = "#";
   newHref.addEventListener("click", () => {
     const doesNotHaveCleSentenceChecked = document.querySelector(
       "#div_id_does_not_have_control_list_entries input"
     );
-
     doesNotHaveCleSentenceChecked.checked = false;
   });
   newLi.append(newSpan, newHref);
-
   clearCleList();
-
   tokenFieldInput.style.display = "none";
   notListedSuggestionField.appendChild(newLi);
 };
@@ -70,8 +64,8 @@ const removeNoCleEntry = () => {
 };
 
 const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
-  checked = product.checked;
-  id = product.value;
+  const checked = product.checked;
+  const id = product.value;
 
   cleList.forEach((cle) => {
     // Hide items.
@@ -135,10 +129,12 @@ const initTauControlListEntry = () => {
   // Add Select All and Expand All
   addSelectAllExpandAll(checkboxProducts, cleList);
 
+  // Create CLE in the input field after click
   cleList.forEach((cle) =>
     cle.addEventListener("click", (event) => {
-      !doesNotHaveCleSentence.checked &&
+      if (!doesNotHaveCleSentence.checked) {
         createTokenFieldSetItem(event.target.innerText);
+      }
     })
   );
 
