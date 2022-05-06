@@ -1,6 +1,6 @@
 from exporter.core.constants import DocumentType, FirearmsActSections
 from exporter.core.helpers import (
-    has_firearm_act_document as _has_firearm_act_document,
+    has_organisation_firearm_act_document as _has_organisation_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 from exporter.goods.forms.firearms import FirearmSection5Form, FirearmSerialIdentificationMarkingsForm
@@ -39,11 +39,11 @@ def has_application_rfd_certificate(wizard):
     return False
 
 
-def has_firearm_act_document(document_type):
-    def check_has_firearm_act_document(wizard):
-        return _has_firearm_act_document(wizard.application, document_type)
+def has_organisation_firearm_act_document(document_type):
+    def check_has_organisation_firearm_act_document(wizard):
+        return _has_organisation_firearm_act_document(wizard.application, document_type)
 
-    return check_has_firearm_act_document
+    return check_has_organisation_firearm_act_document
 
 
 def is_rfd_certificate_invalid(wizard):

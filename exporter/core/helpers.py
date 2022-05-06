@@ -279,12 +279,12 @@ def get_document_data(file):
     }
 
 
-def has_firearm_act_document(application, document_type):
+def has_organisation_firearm_act_document(application, document_type):
     documents = get_organisation_documents(application)
     return document_type in documents
 
 
-def get_firearm_act_document(application, document_type):
+def get_organisation_firearm_act_document(application, document_type):
     documents = get_organisation_documents(application)
     return documents[document_type]
 

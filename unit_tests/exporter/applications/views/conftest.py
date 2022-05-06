@@ -36,8 +36,19 @@ def mock_good_put(requests_mock, data_standard_case):
 
 
 @pytest.fixture
-def good_on_application():
-    return {"good": {"id": str(uuid.uuid4())}}
+def good_on_application(data_standard_case):
+    good = data_standard_case["case"]["data"]["goods"][0]
+
+    return {
+        "id": str(uuid.uuid4()),
+        "good": good["good"],
+        "firearm_details": {
+            "section_certificate_date_of_expiry": "2030-12-12",
+            "section_certificate_number": "12345",
+            "section_certificate_missing": False,
+            "section_certificate_missing_reason": "",
+        },
+    }
 
 
 @pytest.fixture
@@ -45,6 +56,12 @@ def mock_good_on_application_post(requests_mock, data_standard_case, good_on_app
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
     return requests_mock.post(url=url, json=good_on_application, status_code=201)
+
+
+@pytest.fixture
+def mock_good_on_application_get(requests_mock, good_on_application):
+    url = client._build_absolute_uri(f'/applications/good-on-application/{good_on_application["id"]}')
+    return requests_mock.get(url=url, json=good_on_application, status_code=200)
 
 
 @pytest.fixture

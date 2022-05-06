@@ -1,7 +1,12 @@
 from http import HTTPStatus
 
+from django.utils.functional import cached_property
+
 from exporter.applications.services import (
     delete_additional_document,
+    delete_application_document,
+    get_additional_documents,
+    get_good_on_application_documents,
     post_additional_document,
     post_application_document,
 )
@@ -9,9 +14,9 @@ from exporter.core.constants import DocumentType, FirearmsActDocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     get_document_data,
-    get_firearm_act_document,
+    get_organisation_firearm_act_document,
     get_rfd_certificate,
-    has_firearm_act_document,
+    has_organisation_firearm_act_document,
     has_valid_rfd_certificate,
 )
 from exporter.organisation.services import (
@@ -39,7 +44,7 @@ class OrganisationFirearmActCertificateAction:
         return bool(attach_firearm_certificate.get("file"))
 
     def has_existing_firearm_act_certificate(self):
-        return has_firearm_act_document(self.application, self.document_type)
+        return has_organisation_firearm_act_document(self.application, self.document_type)
 
     def has_replacement_file(self):
         file = self.cleaned_data["file"]
@@ -63,7 +68,7 @@ class OrganisationFirearmActCertificateAction:
         "Unexpected error updating firearm certificate",
     )
     def update_firearm_act_certificate(self):
-        document = get_firearm_act_document(self.application, self.document_type)
+        document = get_organisation_firearm_act_document(self.application, self.document_type)
         document_payload = self.get_organisation_document_payload()
         return update_document_on_organisation(
             request=self.request,
@@ -78,7 +83,7 @@ class OrganisationFirearmActCertificateAction:
         "Unexpected error editing firearm",
     )
     def delete_existing_organisation_firearm_act_certificate(self):
-        certificate_data = get_firearm_act_document(self.application, self.document_type)
+        certificate_data = get_organisation_firearm_act_document(self.application, self.document_type)
         status_code = delete_document_on_organisation(
             self.request,
             organisation_id=certificate_data["organisation"],
@@ -147,7 +152,11 @@ class GoodOnApplicationFirearmActCertificateAction:
         self.description = self.DESCRIPTION_MAP[document_type].format(self.good["name"])
 
     def has_certificate_file(self):
-        return self.cleaned_data.get("file") is not None
+        file = self.cleaned_data.get("file")
+        if not file:
+            return False
+
+        return not isinstance(file, CurrentFile)
 
     def get_firearm_act_certificate_payload(self):
         certificate = self.cleaned_data["file"]
@@ -193,9 +202,68 @@ class GoodOnApplicationFirearmActCertificateAction:
             json=supporting_document_payload,
         )
 
+    @cached_property
+    def good_on_application_documents(self):
+        good_on_application_documents, _ = get_good_on_application_documents(
+            self.request,
+            self.application["id"],
+            self.good["id"],
+            self.good_on_application["id"],
+        )
+
+        return {document["document_type"]: document for document in good_on_application_documents}
+
+    def has_existing_certificate(self):
+        return self.document_type in self.good_on_application_documents
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error deleting good on application document when editing good on application",
+        "Unexpected error updating firearm",
+    )
+    def delete_existing_good_on_application_document(self):
+        good_on_application_document = self.good_on_application_documents[self.document_type]
+        return delete_application_document(
+            self.request,
+            self.application["id"],
+            self.good["id"],
+            good_on_application_document["id"],
+        )
+
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error deleting supporting document when editing good on application",
+        "Unexpected error updating firearm",
+    )
+    def delete_additional_document(self, document):
+        status_code = delete_additional_document(
+            self.request,
+            self.application["id"],
+            document["id"],
+        )
+
+        return {}, status_code
+
+    def delete_existing_supporting_document(self):
+        document_key = self.good_on_application_documents[self.document_type]["s3_key"]
+        additional_documents, _ = get_additional_documents(
+            self.request,
+            self.application["id"],
+        )
+        additional_documents = additional_documents["documents"]
+
+        for document in additional_documents:
+            if document["s3_key"] == document_key:
+                self.delete_additional_document(document)
+                break
+
     def run(self):
         if not self.has_certificate_file():
             return
+
+        if self.has_existing_certificate():
+            self.delete_existing_good_on_application_document()
+            self.delete_existing_supporting_document()
 
         self.post_good_on_application_document()
         self.post_supporting_document()

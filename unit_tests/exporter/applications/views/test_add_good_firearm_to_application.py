@@ -26,7 +26,7 @@ def setup(mock_application_get, mock_good_get, no_op_storage):
     pass
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def application(data_standard_case):
     return data_standard_case["case"]["data"]
 
@@ -335,6 +335,11 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"]["firearm_details"]["firearms_act_section"] = firearms_act_section
     requests_mock.get(f'/goods/{good["good"]["id"]}/', json=good)
+
+    requests_mock.get(
+        f"/applications/{application['id']}/goods/{expected_good_data['id']}/documents/",
+        json={"documents": []},
+    )
 
     requests_mock.get(
         f"/goods/{expected_good_data['id']}/documents/",
