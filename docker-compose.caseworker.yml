@@ -32,6 +32,7 @@ services:
       AUTH_USER_PASSWORD: ${AUTH_USER_PASSWORD}
       BASIC_AUTH_ENABLED: ${BASIC_AUTH_ENABLED}
       BROWSER_HOSTS: ${BROWSER_HOSTS}
+      ENDPOINT: ${ENDPOINT}
     env_file:
       - ./caseworker.env
     ports:
