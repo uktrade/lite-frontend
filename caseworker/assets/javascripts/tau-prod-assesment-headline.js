@@ -4,13 +4,15 @@ const addSelectAllExpandAll = (
   checkboxProducts,
   cleList,
   productsNumberChecks,
-  tauHeadline
+  tauHeadline,
+  tauSecondColumn
 ) => {
   const goods = document.querySelector(".tau__first-column #div_id_goods");
 
   const createDivOptions = document.createElement("div");
   createDivOptions.classList.add("tau__first-column--options");
 
+  // Adds DIV element for Select All and Expand All
   goods.insertBefore(
     createDivOptions,
     goods.firstElementChild.nextElementSibling
@@ -25,6 +27,7 @@ const addSelectAllExpandAll = (
 
   createDivOptions.append(selectAllButton, expandAllButton);
 
+  // Select all on click event.
   selectAllButton.addEventListener("click", (event) => {
     event.preventDefault();
     const selectAll = true;
@@ -34,8 +37,10 @@ const addSelectAllExpandAll = (
     });
     productsNumberChecks.number = productsNumberChecks.max;
     tauHeadline.innerText = `Assessing ${productsNumberChecks.number} products`;
+    tauSecondColumn.classList.remove("tau__second-column--hide");
   });
 
+  // Expand all on click event.
   expandAllButton.addEventListener("click", (event) => {
     event.preventDefault();
     document
@@ -50,10 +55,11 @@ const initTauAssesmentHeadline = () => {
   const arrayProducts = Array.from(checkboxProducts);
   const cleList = document.querySelectorAll(".control-list__list");
   const tauHeadline = document.querySelector(".tau__headline");
+  const tauSecondColumn = document.querySelector(".tau__second-column");
+
   let productsNumberChecks = {
     number: 0,
     max: checkboxProducts.length,
-    names: [],
   };
 
   // Add Select All and Expand All
@@ -61,20 +67,18 @@ const initTauAssesmentHeadline = () => {
     checkboxProducts,
     cleList,
     productsNumberChecks,
-    tauHeadline
+    tauHeadline,
+    tauSecondColumn
   );
 
   checkboxProducts.forEach((product) =>
     product.addEventListener("click", (event) => {
-      productName = product.dataset["productName"];
-      checkbox = product.checked;
+      const checkbox = product.checked;
 
       if (checkbox) {
         productsNumberChecks.number += 1;
-        productsNumberChecks.names.push(productName);
       } else {
         productsNumberChecks.number -= 1;
-        productsNumberChecks.names.pop();
       }
 
       headlineString =
@@ -86,8 +90,9 @@ const initTauAssesmentHeadline = () => {
               ]
             }`;
       if (productsNumberChecks.number === 0) {
-        tauHeadline.innerText = "";
+        tauSecondColumn.classList.add("tau__second-column--hide");
       } else {
+        tauSecondColumn.classList.remove("tau__second-column--hide");
         tauHeadline.innerText = headlineString;
       }
     })
