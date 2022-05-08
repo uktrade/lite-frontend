@@ -20,6 +20,7 @@ import initFlagListExpanders from "./flag-expanders.js";
 import initReviewGood from "./review-good.js";
 import initDestinationsList from "./show-hide-destinations.js";
 import initTauControlListEntry from "./tau-exporter-suggestions.js";
+import initTauAssesmentHeadline from "./tau-prod-assesment-headline";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -38,4 +39,5 @@ $(document).ready(function () {
   initCookierBanner("app-cookie-banner", "js-accept-cookie");
   initDestinationsList();
   initTauControlListEntry();
+  initTauAssesmentHeadline();
 });

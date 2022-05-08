@@ -63,7 +63,7 @@ const removeNoCleEntry = () => {
   clearCleList();
 };
 
-const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
+export const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
   const checked = product.checked;
   const id = product.value;
 
@@ -81,53 +81,12 @@ const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
   });
 };
 
-const addSelectAllExpandAll = (checkboxProducts, cleList) => {
-  const goods = document.querySelector(".tau__first-column #div_id_goods");
-
-  const createDivOptions = document.createElement("div");
-  createDivOptions.classList.add("tau__first-column--options");
-
-  goods.insertBefore(
-    createDivOptions,
-    goods.firstElementChild.nextElementSibling
-  );
-
-  const selectAllButton = document.createElement("button");
-  selectAllButton.innerText = "Select all";
-  selectAllButton.classList.add("lite-button--link");
-  const expandAllButton = document.createElement("button");
-  expandAllButton.innerText = "Expand all";
-  expandAllButton.classList.add("lite-button--link");
-
-  createDivOptions.append(selectAllButton, expandAllButton);
-
-  selectAllButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    const selectAll = true;
-    checkboxProducts.forEach((product) => {
-      product.checked = true;
-      hideUnhideExporterCle(product, cleList, selectAll);
-    });
-  });
-
-  expandAllButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    document
-      .querySelector(".tau__list")
-      .querySelectorAll(".govuk-details")
-      .forEach((product) => product.setAttribute("open", ""));
-  });
-};
-
 const initTauControlListEntry = () => {
   const cleList = document.querySelectorAll(".control-list__list");
   const checkboxProducts = document.querySelectorAll("[id^='id_goods_']");
   const doesNotHaveCleSentence = document.querySelector(
     "#div_id_does_not_have_control_list_entries input"
   );
-
-  // Add Select All and Expand All
-  addSelectAllExpandAll(checkboxProducts, cleList);
 
   // Create CLE in the input field after click
   cleList.forEach((cle) =>
