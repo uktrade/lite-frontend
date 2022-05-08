@@ -1,3 +1,5 @@
+import Tokenfield from "./lite-tokenfield.js";
+
 const SLICED_WORDS = 3; // Select exporter suggestion "ML1"
 const NO_CLE_STRING = "None";
 
@@ -22,6 +24,11 @@ const clearCleList = () => {
   const notListedSuggestionItem = document
     .querySelector("#control_list_entries .tokenfield-set")
     .querySelectorAll("li");
+  debugger;
+  // const tf = new Tokenfield({
+  //   el: document.querySelector("#div_id_control_list_entries"),
+  // });
+  // tf.emptyItems()
   notListedSuggestionItem.forEach((child) => {
     child.remove();
   });

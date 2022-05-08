@@ -3,7 +3,8 @@ import { hideUnhideExporterCle } from "./tau-exporter-suggestions.js";
 const addSelectAllExpandAll = (
   checkboxProducts,
   cleList,
-  productsNumberChecks
+  productsNumberChecks,
+  tauHeadline
 ) => {
   const goods = document.querySelector(".tau__first-column #div_id_goods");
 
@@ -32,7 +33,7 @@ const addSelectAllExpandAll = (
       hideUnhideExporterCle(product, cleList, selectAll);
     });
     productsNumberChecks.number = productsNumberChecks.max;
-    console.log(productsNumberChecks);
+    tauHeadline.innerText = `Assessing ${productsNumberChecks.number} products`;
   });
 
   expandAllButton.addEventListener("click", (event) => {
@@ -56,7 +57,12 @@ const initTauAssesmentHeadline = () => {
   };
 
   // Add Select All and Expand All
-  addSelectAllExpandAll(checkboxProducts, cleList, productsNumberChecks);
+  addSelectAllExpandAll(
+    checkboxProducts,
+    cleList,
+    productsNumberChecks,
+    tauHeadline
+  );
 
   checkboxProducts.forEach((product) =>
     product.addEventListener("click", (event) => {
@@ -79,7 +85,6 @@ const initTauAssesmentHeadline = () => {
                 "productName"
               ]
             }`;
-      console.log(productsNumberChecks);
       if (productsNumberChecks.number === 0) {
         tauHeadline.innerText = "";
       } else {
