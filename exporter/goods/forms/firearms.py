@@ -1204,12 +1204,10 @@ class FirearmSerialIdentificationMarkingsForm(BaseFirearmForm):
         serial_numbers_available = cleaned_data.get("serial_numbers_available")
         no_identification_markings_details = cleaned_data.get("no_identification_markings_details")
 
-        if (
-            serial_numbers_available == self.SerialChoices.NOT_AVAILABLE.value
-        ) and not no_identification_markings_details:
+        if (serial_numbers_available == self.SerialChoices.NOT_AVAILABLE) and not no_identification_markings_details:
             self.add_error("no_identification_markings_details", "Enter why products will not have serial numbers")
 
-        if serial_numbers_available != self.SerialChoices.NOT_AVAILABLE.value:
+        if serial_numbers_available != self.SerialChoices.NOT_AVAILABLE:
             cleaned_data["no_identification_markings_details"] = ""
 
         return cleaned_data
@@ -1247,10 +1245,3 @@ class FirearmSerialNumbersForm(BaseFirearmForm):
             cleaned_data[f"serial_number_input_{i}"] = serial_number
 
         return cleaned_data
-
-
-class FirearmSummaryForm(forms.Form):
-    # This doesn't need to provide any data, it's just a blank form so that we
-    # can have a summary page at the end of the product summary wizard
-    class Layout:
-        TITLE = "Product summary"
