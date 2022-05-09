@@ -834,6 +834,11 @@ def specify_serial_numbers_available(driver):  # noqa
     specify_serial_number_of_other_identification_details(driver, has_markings="AVAILABLE", details=None)
 
 
+@when("I choose to add serial numbers later")
+def specify_serial_numbers_later(driver):  # noqa
+    specify_serial_number_of_other_identification_details(driver, has_markings="LATER", details=None)
+
+
 @when(parsers.parse('I enter "{number_of_items}" for number of items'))
 def specify_number_of_items(driver, number_of_items):  # noqa
     good_details_page = AddGoodDetails(driver)
