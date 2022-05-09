@@ -5,8 +5,13 @@ import uuid
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
+from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import decompose_date
+from exporter.goods.forms.firearms import (
+    FirearmMadeBefore1938Form,
+    FirearmYearOfManufactureForm,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -406,4 +411,79 @@ def test_edit_shotgun_certificate_retaining_upload_new_file(
         "name": "shotgun_certificate.pdf",
         "s3_key": "shotgun_certificate.pdf",
         "size": 0,
+    }
+
+
+@pytest.fixture
+def edit_made_before_1938_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_made_before_1938",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+def test_edit_made_before_1938_initial(authorized_client, edit_made_before_1938_url):
+    response = authorized_client.get(edit_made_before_1938_url)
+    assert response.status_code == 200
+
+    form = response.context["form"]
+    assert isinstance(form, FirearmMadeBefore1938Form)
+
+    assert form.initial == {
+        "is_made_before_1938": True,
+    }
+
+
+@pytest.fixture
+def post_to_step_made_before_1938(post_to_step_factory, edit_made_before_1938_url):
+    return post_to_step_factory(edit_made_before_1938_url)
+
+
+def test_edit_made_before_1938_true(
+    post_to_step_made_before_1938,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = post_to_step_made_before_1938(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, data={"is_made_before_1938": True}
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+
+    response = post_to_step_made_before_1938(
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, data={"year_of_manufacture": "1930"}
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "is_made_before_1938": True,
+            "year_of_manufacture": 1930,
+        },
+    }
+
+
+def test_edit_made_before_1938_false(
+    post_to_step_made_before_1938,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = post_to_step_made_before_1938(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, data={"is_made_before_1938": False}
+    )
+
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "is_made_before_1938": False,
+        },
     }

@@ -47,6 +47,7 @@ def good_on_application(data_standard_case):
             "section_certificate_number": "12345",
             "section_certificate_missing": False,
             "section_certificate_missing_reason": "",
+            "is_made_before_1938": True,
         },
     }
 

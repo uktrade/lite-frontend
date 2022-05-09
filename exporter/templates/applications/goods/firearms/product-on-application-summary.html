@@ -125,6 +125,7 @@
                     {{ firearm_details.is_made_before_1938|yesno|capfirst }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-made-before-1938" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_made_before_1938' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_made_before_1938 %}

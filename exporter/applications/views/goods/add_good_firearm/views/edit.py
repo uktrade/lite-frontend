@@ -48,6 +48,7 @@ from exporter.goods.forms.firearms import (
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
+    FirearmMadeBefore1938Form,
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
@@ -55,6 +56,7 @@ from exporter.goods.forms.firearms import (
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmSection5Form,
+    FirearmYearOfManufactureForm,
 )
 
 from .actions import (
@@ -68,10 +70,11 @@ from .conditionals import (
     is_document_sensitive,
     is_product_covered_by_firearm_act_section,
     is_product_document_available,
+    is_product_made_before_1938,
     is_pv_graded,
     is_registered_firearms_dealer,
 )
-from .constants import AddGoodFirearmSteps
+from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
 from .exceptions import ServiceError
 from .helpers import get_organisation_document_url
@@ -95,6 +98,7 @@ from .payloads import (
     FirearmEditPvGradingPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     FirearmEditSection5FirearmsAct1968PayloadBuilder,
+    FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder,
     get_attach_firearm_act_certificate_payload,
     get_cleaned_data,
     get_firearm_details_cleaned_data,
@@ -884,3 +888,54 @@ class FirearmProductOnApplicationSummaryEditFirearmCertificate(BaseFirearmActCer
 class FirearmProductOnApplicationSummaryEditShotgunCertificate(BaseFirearmActCertificateGoodOnApplicationEditView):
     form_class = FirearmAttachFirearmCertificateForm
     document_type = FirearmsActDocumentType.SECTION_2
+
+
+class FirearmProductOnApplicationSummaryEditMadeBefore1938(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    BaseSessionWizardView,
+):
+    form_list = [
+        (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
+        (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
+    ]
+    condition_dict = {
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: is_product_made_before_1938,
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        if step == AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938:
+            initial["is_made_before_1938"] = self.good_on_application["firearm_details"]["is_made_before_1938"]
+
+        return initial
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating firearm",
+        "Unexpected error updating firearm",
+    )
+    def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
+        return edit_firearm_good_on_application(
+            request,
+            good_on_application_id,
+            payload,
+        )
+
+    def get_success_url(self):
+        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_firearm_good_on_application(
+                self.request,
+                self.good_on_application["id"],
+                FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder().build(form_dict),
+            )
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
