@@ -838,10 +838,7 @@ class BaseGoodOnApplicationEditView(
         return ctx
 
 
-class FirearmProductOnApplicationSummaryEditFirearmCertificate(BaseGoodOnApplicationEditView):
-    form_class = FirearmAttachFirearmCertificateForm
-    document_type = FirearmsActDocumentType.SECTION_1
-
+class BaseFirearmActCertificateGoodOnApplicationEditView(BaseGoodOnApplicationEditView):
     def get_initial(self):
         application_documents, _ = get_application_documents(
             self.request,
@@ -871,9 +868,19 @@ class FirearmProductOnApplicationSummaryEditFirearmCertificate(BaseGoodOnApplica
 
         GoodOnApplicationFirearmActCertificateAction(
             self.request,
-            FirearmsActDocumentType.SECTION_1,
+            self.document_type,
             self.application,
             self.good,
             self.good_on_application,
             form.cleaned_data,
         ).run()
+
+
+class FirearmProductOnApplicationSummaryEditFirearmCertificate(BaseFirearmActCertificateGoodOnApplicationEditView):
+    form_class = FirearmAttachFirearmCertificateForm
+    document_type = FirearmsActDocumentType.SECTION_1
+
+
+class FirearmProductOnApplicationSummaryEditShotgunCertificate(BaseFirearmActCertificateGoodOnApplicationEditView):
+    form_class = FirearmAttachFirearmCertificateForm
+    document_type = FirearmsActDocumentType.SECTION_2

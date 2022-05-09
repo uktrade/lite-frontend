@@ -89,6 +89,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-section-two-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_shotgun_certificate' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
                 {% if not firearm_details.section_certificate_missing %}
@@ -100,6 +101,7 @@
                             {{ firearm_details.section_certificate_number }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-two-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_shotgun_certificate' application.id good_on_application.id %}">Change</a>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -110,6 +112,7 @@
                             {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-two-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_shotgun_certificate' application.id good_on_application.id %}">Change</a>
                         </dd>
                     </div>
                 {% endif %}
