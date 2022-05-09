@@ -56,6 +56,7 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmProductOnApplicationSummaryEditFirearmCertificate,
     FirearmProductOnApplicationSummaryEditMadeBefore1938,
     FirearmProductOnApplicationSummaryEditShotgunCertificate,
+    FirearmProductOnApplicationSummaryEditYearOfManufacture,
 )
 from exporter.applications.views.goods.add_good_firearm.views.summary import (
     FirearmProductSummary,
@@ -251,6 +252,11 @@ urlpatterns = [
         "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/made-before-1982/",
         FirearmProductOnApplicationSummaryEditMadeBefore1938.as_view(),
         name="product_on_application_summary_edit_made_before_1938",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/year-of-manufacture/",
+        FirearmProductOnApplicationSummaryEditYearOfManufacture.as_view(),
+        name="product_on_application_summary_edit_year_of_manufacture",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),

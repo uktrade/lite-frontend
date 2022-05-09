@@ -453,6 +453,9 @@ def test_edit_made_before_1938_true(
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+    assert response.context["form"].initial == {
+        "year_of_manufacture": 1930,
+    }
 
     response = post_to_step_made_before_1938(
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, data={"year_of_manufacture": "1930"}
@@ -486,4 +489,49 @@ def test_edit_made_before_1938_false(
         "firearm_details": {
             "is_made_before_1938": False,
         },
+    }
+
+
+@pytest.fixture
+def edit_year_of_manufacture_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_year_of_manufacture",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+def test_edit_year_of_manufacture_initial(authorized_client, edit_year_of_manufacture_url):
+    response = authorized_client.get(edit_year_of_manufacture_url)
+    assert response.status_code == 200
+
+    form = response.context["form"]
+    assert isinstance(form, FirearmYearOfManufactureForm)
+
+    assert form.initial == {
+        "year_of_manufacture": 1930,
+    }
+
+
+def test_edit_year_of_manufacture_post(
+    authorized_client,
+    edit_year_of_manufacture_url,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.post(
+        edit_year_of_manufacture_url,
+        data={
+            "year_of_manufacture": 1931,
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {"year_of_manufacture": 1931},
     }

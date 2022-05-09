@@ -104,3 +104,13 @@ def get_firearm_act_1968_initial_data(firearm_details):
     return {
         "firearms_act_section": firearm_details["firearms_act_section"],
     }
+
+
+def get_year_of_manufacture_initial(firearm_details):
+    year_of_manufacture = firearm_details.get("year_of_manufacture")
+    if not year_of_manufacture:
+        return {}
+
+    return {
+        "year_of_manufacture": year_of_manufacture,
+    }

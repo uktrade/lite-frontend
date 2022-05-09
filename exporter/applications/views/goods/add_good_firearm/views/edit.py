@@ -83,6 +83,7 @@ from .initial import (
     get_attach_organisation_certificate_initial_data,
     get_firearm_act_1968_initial_data,
     get_is_covered_by_section_5_initial_data,
+    get_year_of_manufacture_initial,
 )
 from .mixins import (
     ApplicationMixin,
@@ -793,9 +794,6 @@ class BaseGoodOnApplicationEditView(
     def get_success_url(self):
         return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
 
-    def get_edit_payload(self, form):
-        raise NotImplementedError(f"Implement `get_edit_payload` for {self.__class__.__name__}")
-
     @expect_status(
         HTTPStatus.OK,
         "Error updating firearm",
@@ -840,6 +838,9 @@ class BaseGoodOnApplicationEditView(
         ctx["back_link_url"] = reverse("applications:product_on_application_summary", kwargs=self.kwargs)
 
         return ctx
+
+    def get_edit_payload(self, form):
+        return get_firearm_details_cleaned_data(form)
 
 
 class BaseFirearmActCertificateGoodOnApplicationEditView(BaseGoodOnApplicationEditView):
@@ -911,6 +912,9 @@ class FirearmProductOnApplicationSummaryEditMadeBefore1938(
         if step == AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938:
             initial["is_made_before_1938"] = self.good_on_application["firearm_details"]["is_made_before_1938"]
 
+        if step == AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE:
+            initial.update(get_year_of_manufacture_initial(self.good_on_application["firearm_details"]))
+
         return initial
 
     @expect_status(
@@ -939,3 +943,10 @@ class FirearmProductOnApplicationSummaryEditMadeBefore1938(
             return self.handle_service_error(e)
 
         return redirect(self.get_success_url())
+
+
+class FirearmProductOnApplicationSummaryEditYearOfManufacture(BaseGoodOnApplicationEditView):
+    form_class = FirearmYearOfManufactureForm
+
+    def get_initial(self):
+        return get_year_of_manufacture_initial(self.good_on_application["firearm_details"])

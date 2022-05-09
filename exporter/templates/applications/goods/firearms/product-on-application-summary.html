@@ -137,6 +137,7 @@
                         {{ firearm_details.year_of_manufacture }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-year_of_manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_year_of_manufacture' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}
