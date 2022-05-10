@@ -6,9 +6,6 @@ from caseworker.tau.widgets import GoodsMultipleSelect
 
 from core.forms.layouts import (
     ConditionalCheckbox,
-    ConditionalQuestion,
-    ConditionalRadios,
-    Prefixed,
 )
 
 
@@ -37,7 +34,6 @@ class TAUEditForm(forms.Form):
         label="This product falls under the WASSENAAR regime",
         required=False,
     )
-
     report_summary = forms.CharField(
         label="Select an annual report summary",
         help_text="Type to get suggestions. For example, components for body armour.",
@@ -56,11 +52,14 @@ class TAUEditForm(forms.Form):
         label="upload evidence(for example, screenshots or documents)",
         required=False,
     )
-    file_evidence = forms.FileField(
+    evidence_file = forms.FileField(
         label="Upload a file",
-        error_messages={
-            "required": "Select a document that shows what your product is designed to do",
-        },
+        required=False,
+    )
+
+    file_title = forms.CharField(
+        label="Give the file a descriptive title (for example , 'AX50 technical specification' or 'gundealer.com AX50 website screenshot'",
+        required=False,
     )
 
     def __init__(self, control_list_entries_choices, *args, **kwargs):
@@ -73,12 +72,13 @@ class TAUEditForm(forms.Form):
             "is_wassenaar",
             "report_summary",
             "comment",
-            ConditionalCheckbox(
-                "upload_evidence",
-                "file_evidence",
-            ),
+            ConditionalCheckbox("upload_evidence", "evidence_file"),
             Submit("submit", "Submit"),
         )
+        for field in self.fields.values():
+            if isinstance(field, forms.FileField):
+                self.helper.attrs = {"enctype": "multipart/form-data"}
+                break
 
     def clean(self):
         cleaned_data = super().clean()

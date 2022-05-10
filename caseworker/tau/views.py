@@ -14,6 +14,15 @@ from caseworker.cases.services import post_review_good
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 
 
+def get_tau_document_data(file):
+    return {
+        "name": getattr(file, "original_name", file.name),
+        "s3_key": file.name,
+        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
+        "document_type": "tau-evidence",
+    }
+
+
 class TAUMixin:
     """Mixin containing some useful functions used in TAU views."""
 
@@ -122,13 +131,20 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
+
+        is_upload_evidence = data.pop("upload_evidence")
+        if is_upload_evidence:
+            file = data.pop("evidence_file")
+            doc_data = get_tau_document_data(file)
         good_ids = data.pop("goods")
+
         for good in self.get_goods(good_ids):
             payload = {
                 **form.cleaned_data,
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
                 "is_good_controlled": is_good_controlled,
+                "document_data": doc_data,
             }
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
         return super().form_valid(form)
