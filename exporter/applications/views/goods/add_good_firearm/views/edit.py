@@ -935,6 +935,13 @@ class BaseProductOnApplicationSummaryEditWizardView(
     def get_success_url(self):
         return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
 
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx["back_link_url"] = reverse("applications:product_on_application_summary", kwargs=self.kwargs)
+
+        return ctx
+
     def done(self, form_list, form_dict, **kwargs):
         try:
             self.edit_firearm_good_on_application(
