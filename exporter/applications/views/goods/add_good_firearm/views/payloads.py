@@ -286,3 +286,10 @@ class FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(Merging
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
     }
+
+
+class FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_deactivation_details_payload,
+    }

@@ -128,3 +128,15 @@ def get_onward_incorporated_initial_data(firearm_details):
         "is_onward_incorporated": firearm_details["is_onward_incorporated"],
         "is_onward_incorporated_comments": firearm_details["is_onward_incorporated_comments"],
     }
+
+
+def get_is_deactivated_to_standard_initial_data(firearm_details):
+    date_of_deactivation = firearm_details["date_of_deactivation"]
+    if date_of_deactivation:
+        date_of_deactivation = datetime.fromisoformat(firearm_details["date_of_deactivation"]).date()
+
+    return {
+        "date_of_deactivation": date_of_deactivation,
+        "is_deactivated_to_standard": firearm_details["is_deactivated_to_standard"],
+        "not_deactivated_to_standard_comments": firearm_details["not_deactivated_to_standard_comments"],
+    }

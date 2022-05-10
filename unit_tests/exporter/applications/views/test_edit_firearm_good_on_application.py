@@ -9,6 +9,8 @@ from exporter.applications.views.goods.add_good_firearm.views.constants import A
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
+    FirearmDeactivationDetailsForm,
+    FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardExportedForm,
@@ -735,4 +737,143 @@ def test_edit_onward_incorporated(
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {"is_onward_incorporated": True, "is_onward_incorporated_comments": "Incorporated"},
         "is_good_incorporated": True,
+    }
+
+
+@pytest.fixture
+def edit_is_deactivated_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_is_deactivated",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+@pytest.fixture
+def post_to_step_is_deactivated(post_to_step_factory, edit_is_deactivated_url):
+    return post_to_step_factory(edit_is_deactivated_url)
+
+
+def test_edit_is_deactivated_initial(
+    authorized_client,
+    edit_is_deactivated_url,
+):
+    response = authorized_client.get(edit_is_deactivated_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
+    assert response.context["form"].initial == {
+        "is_deactivated": True,
+    }
+
+
+def test_edit_is_deactivated_true(
+    post_to_step_is_deactivated,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = post_to_step_is_deactivated(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
+        data={
+            "is_deactivated": True,
+        },
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
+    assert response.context["form"].initial == {
+        "date_of_deactivation": datetime.date(2007, 12, 12),
+        "is_deactivated_to_standard": False,
+        "not_deactivated_to_standard_comments": "Not deactivated",
+    }
+
+    response = post_to_step_is_deactivated(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
+        data={
+            **decompose_date("date_of_deactivation", datetime.date(2008, 1, 1)),
+            "is_deactivated_to_standard": False,
+            "not_deactivated_to_standard_comments": "Comments",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "date_of_deactivation": "2008-01-01",
+            "is_deactivated": True,
+            "is_deactivated_to_standard": False,
+            "not_deactivated_to_standard_comments": "Comments",
+        },
+    }
+
+
+def test_edit_is_deactivated_false(
+    post_to_step_is_deactivated,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = post_to_step_is_deactivated(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
+        data={
+            "is_deactivated": False,
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "is_deactivated": False,
+        },
+    }
+
+
+@pytest.fixture
+def edit_is_deactivated_to_standard_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_is_deactivated_to_standard",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+def test_edit_is_deactivated_to_standard(
+    authorized_client,
+    edit_is_deactivated_to_standard_url,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.get(edit_is_deactivated_to_standard_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
+    assert response.context["form"].initial == {
+        "date_of_deactivation": datetime.date(2007, 12, 12),
+        "is_deactivated_to_standard": False,
+        "not_deactivated_to_standard_comments": "Not deactivated",
+    }
+
+    response = authorized_client.post(
+        edit_is_deactivated_to_standard_url,
+        data={
+            **decompose_date("date_of_deactivation", datetime.date(2008, 1, 1)),
+            "is_deactivated_to_standard": False,
+            "not_deactivated_to_standard_comments": "Comments",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "date_of_deactivation": "2008-01-01",
+            "is_deactivated_to_standard": False,
+            "not_deactivated_to_standard_comments": "Comments",
+        },
     }

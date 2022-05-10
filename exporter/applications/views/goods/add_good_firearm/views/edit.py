@@ -44,10 +44,12 @@ from exporter.goods.forms.firearms import (
     FirearmAttachSection5LetterOfAuthorityForm,
     FirearmCalibreForm,
     FirearmCategoryForm,
+    FirearmDeactivationDetailsForm,
     FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
+    FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
     FirearmNameForm,
     FirearmOnwardAlteredProcessedForm,
@@ -70,6 +72,7 @@ from .actions import (
 )
 from .conditionals import (
     has_organisation_firearm_act_document,
+    is_deactivated,
     is_document_sensitive,
     is_onward_exported,
     is_product_covered_by_firearm_act_section,
@@ -87,6 +90,7 @@ from .initial import (
     get_attach_organisation_certificate_initial_data,
     get_firearm_act_1968_initial_data,
     get_is_covered_by_section_5_initial_data,
+    get_is_deactivated_to_standard_initial_data,
     get_onward_altered_processed_initial_data,
     get_onward_incorporated_initial_data,
     get_year_of_manufacture_initial_data,
@@ -105,10 +109,12 @@ from .payloads import (
     FirearmEditPvGradingPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     FirearmEditSection5FirearmsAct1968PayloadBuilder,
+    FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder,
     FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder,
     FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
     get_attach_firearm_act_certificate_payload,
     get_cleaned_data,
+    get_deactivation_details_payload,
     get_firearm_details_cleaned_data,
     get_onward_incorporated_payload,
     get_pv_grading_good_payload,
@@ -1034,3 +1040,69 @@ class FirearmProductOnApplicationSummaryEditOnwardIncorporated(BaseGoodOnApplica
 
     def get_edit_payload(self, form):
         return get_onward_incorporated_payload(form)
+
+
+class FirearmProductOnApplicationSummaryEditIsDeactivated(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    BaseSessionWizardView,
+):
+    form_list = [
+        (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED, FirearmIsDeactivatedForm),
+        (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD, FirearmDeactivationDetailsForm),
+    ]
+    condition_dict = {
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: is_deactivated,
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        firearm_details = self.good_on_application["firearm_details"]
+
+        if step == AddGoodFirearmToApplicationSteps.IS_DEACTIVATED:
+            initial["is_deactivated"] = firearm_details["is_deactivated"]
+
+        if step == AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD:
+            initial.update(get_is_deactivated_to_standard_initial_data(firearm_details))
+
+        return initial
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating firearm",
+        "Unexpected error updating firearm",
+    )
+    def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
+        return edit_firearm_good_on_application(
+            request,
+            good_on_application_id,
+            payload,
+        )
+
+    def get_success_url(self):
+        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_firearm_good_on_application(
+                self.request,
+                self.good_on_application["id"],
+                FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder().build(form_dict),
+            )
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
+
+
+class FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard(BaseGoodOnApplicationEditView):
+    form_class = FirearmDeactivationDetailsForm
+
+    def get_initial(self):
+        return get_is_deactivated_to_standard_initial_data(self.good_on_application["firearm_details"])
+
+    def get_edit_payload(self, form):
+        return get_deactivation_details_payload(form)

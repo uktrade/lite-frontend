@@ -194,6 +194,7 @@
                     {{ firearm_details.is_deactivated|yesno|capfirst }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-is-deactivated" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_is_deactivated' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_deactivated %}
@@ -205,6 +206,7 @@
                         {{ firearm_details.date_of_deactivation|to_date|date:"j F Y" }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-is-deactivated-to-standard-date" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_is_deactivated_to_standard' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -220,6 +222,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-is-deactivated-to-standard-comments" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_is_deactivated_to_standard' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}

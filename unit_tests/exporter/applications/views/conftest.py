@@ -54,6 +54,10 @@ def good_on_application(data_standard_case):
             "is_onward_altered_processed_comments": "I will alter it real good",
             "is_onward_incorporated": True,
             "is_onward_incorporated_comments": "I will onward incorporate",
+            "is_deactivated": True,
+            "date_of_deactivation": datetime.date(2007, 12, 12).isoformat(),
+            "is_deactivated_to_standard": False,
+            "not_deactivated_to_standard_comments": "Not deactivated",
         },
     }
 
