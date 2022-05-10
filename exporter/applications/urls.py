@@ -60,6 +60,7 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmProductOnApplicationSummaryEditOnwardAltered,
     FirearmProductOnApplicationSummaryEditOnwardExported,
     FirearmProductOnApplicationSummaryEditOnwardIncorporated,
+    FirearmProductOnApplicationSummaryEditQuantityValue,
     FirearmProductOnApplicationSummaryEditShotgunCertificate,
     FirearmProductOnApplicationSummaryEditYearOfManufacture,
 )
@@ -287,6 +288,11 @@ urlpatterns = [
         "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/is-deactivated-to-standard/",
         FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard.as_view(),
         name="product_on_application_summary_edit_is_deactivated_to_standard",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/quantity-value/",
+        FirearmProductOnApplicationSummaryEditQuantityValue.as_view(),
+        name="product_on_application_summary_edit_quantity_value",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),

@@ -58,6 +58,7 @@ from exporter.goods.forms.firearms import (
     FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
     FirearmPvGradingForm,
+    FirearmQuantityAndValueForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmSection5Form,
@@ -118,6 +119,7 @@ from .payloads import (
     get_firearm_details_cleaned_data,
     get_onward_incorporated_payload,
     get_pv_grading_good_payload,
+    get_quantity_and_value_payload,
 )
 
 
@@ -1106,3 +1108,16 @@ class FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard(BaseGoodOnAp
 
     def get_edit_payload(self, form):
         return get_deactivation_details_payload(form)
+
+
+class FirearmProductOnApplicationSummaryEditQuantityValue(BaseGoodOnApplicationEditView):
+    form_class = FirearmQuantityAndValueForm
+
+    def get_initial(self):
+        return {
+            "number_of_items": int(self.good_on_application["quantity"]),
+            "value": self.good_on_application["value"],
+        }
+
+    def get_edit_payload(self, form):
+        return get_quantity_and_value_payload(form)

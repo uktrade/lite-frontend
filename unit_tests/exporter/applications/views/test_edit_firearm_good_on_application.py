@@ -15,6 +15,7 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardExportedForm,
     FirearmOnwardIncorporatedForm,
+    FirearmQuantityAndValueForm,
     FirearmYearOfManufactureForm,
 )
 
@@ -876,4 +877,48 @@ def test_edit_is_deactivated_to_standard(
             "is_deactivated_to_standard": False,
             "not_deactivated_to_standard_comments": "Comments",
         },
+    }
+
+
+@pytest.fixture
+def edit_quantity_value_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_quantity_value",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+def test_edit_quantity_value(
+    authorized_client,
+    edit_quantity_value_url,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.get(edit_quantity_value_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert response.context["form"].initial == {
+        "number_of_items": 16,
+        "value": "16.32",
+    }
+
+    response = authorized_client.post(
+        edit_quantity_value_url,
+        data={
+            "number_of_items": 20,
+            "value": "20.22",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {"number_of_items": 20},
+        "quantity": 20,
+        "unit": "NAR",
+        "value": "20.22",
     }

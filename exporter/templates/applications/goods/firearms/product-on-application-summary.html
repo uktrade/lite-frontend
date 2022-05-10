@@ -234,6 +234,7 @@
                     {{ firearm_details.number_of_items }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-number-of-items" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_quantity_value' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -244,6 +245,7 @@
                     £{{ good_on_application.value|floatformat:2 }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-total-value" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_quantity_value' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">

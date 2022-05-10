@@ -42,6 +42,8 @@ def good_on_application(data_standard_case):
     return {
         "id": str(uuid.uuid4()),
         "good": good["good"],
+        "quantity": 16,
+        "value": "16.32",
         "firearm_details": {
             "section_certificate_date_of_expiry": "2030-12-12",
             "section_certificate_number": "12345",
