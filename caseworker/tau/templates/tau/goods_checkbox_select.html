@@ -1,13 +1,12 @@
-<ul class="tau__list">
+<div class="govuk-!-margin-top-4 tau__list">
     {% for group, options, index in widget.optgroups %}
-    <li>
-      <fieldset id="unassessed-products" class="govuk-fieldset">
-        <div class="govuk-checkboxes govuk-checkboxes--inline govuk-checkboxes--small" data-module="govuk-checkboxes">
-          {% for option in options %}
-          {% include option.template_name with widget=option %}
-          {% endfor %}
-        </div>
-      </fieldset>
-    </li>
+     <fieldset id="unassessed-products" class="govuk-fieldset">
+      <div class="govuk-checkboxes govuk-checkboxes--inline govuk-checkboxes--small" data-module="govuk-checkboxes">
+        {% for option in options %}
+        {% include option.template_name with widget=option %}
+        {% endfor %}
+      </div>
+    </fieldset>
+    <hr>
     {% endfor %}
-  </ul>
+</div>
