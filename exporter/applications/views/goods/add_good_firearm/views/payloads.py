@@ -293,3 +293,10 @@ class FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder(MergingP
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_deactivation_details_payload,
     }
+
+
+class FirearmProductOnApplicationSummaryEditSerialIdentificationMarkingsPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: get_serial_numbers_payload,
+    }

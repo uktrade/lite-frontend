@@ -62,6 +62,8 @@ from exporter.goods.forms.firearms import (
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmSection5Form,
+    FirearmSerialIdentificationMarkingsForm,
+    FirearmSerialNumbersForm,
     FirearmYearOfManufactureForm,
 )
 
@@ -81,6 +83,7 @@ from .conditionals import (
     is_product_made_before_1938,
     is_pv_graded,
     is_registered_firearms_dealer,
+    is_serial_numbers_available,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .decorators import expect_status
@@ -94,6 +97,7 @@ from .initial import (
     get_is_deactivated_to_standard_initial_data,
     get_onward_altered_processed_initial_data,
     get_onward_incorporated_initial_data,
+    get_serial_numbers_initial_data,
     get_year_of_manufacture_initial_data,
 )
 from .mixins import (
@@ -113,6 +117,7 @@ from .payloads import (
     FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder,
     FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder,
     FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
+    FirearmProductOnApplicationSummaryEditSerialIdentificationMarkingsPayloadBuilder,
     get_attach_firearm_act_certificate_payload,
     get_cleaned_data,
     get_deactivation_details_payload,
@@ -120,6 +125,7 @@ from .payloads import (
     get_onward_incorporated_payload,
     get_pv_grading_good_payload,
     get_quantity_and_value_payload,
+    get_serial_numbers_payload,
 )
 
 
@@ -1121,3 +1127,87 @@ class FirearmProductOnApplicationSummaryEditQuantityValue(BaseGoodOnApplicationE
 
     def get_edit_payload(self, form):
         return get_quantity_and_value_payload(form)
+
+
+class FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    BaseSessionWizardView,
+):
+    form_list = [
+        (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, FirearmSerialIdentificationMarkingsForm),
+        (AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS, FirearmSerialNumbersForm),
+    ]
+    condition_dict = {
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: is_serial_numbers_available,
+    }
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+        if step == AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS:
+            kwargs["number_of_items"] = int(self.good_on_application["quantity"])
+        return kwargs
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        firearm_details = self.good_on_application["firearm_details"]
+
+        if step == AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING:
+            initial.update(
+                {
+                    "serial_numbers_available": firearm_details["serial_numbers_available"],
+                    "no_identification_markings_details": firearm_details["no_identification_markings_details"],
+                }
+            )
+
+        if step == AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS:
+            initial.update(get_serial_numbers_initial_data(firearm_details))
+
+        return initial
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating firearm",
+        "Unexpected error updating firearm",
+    )
+    def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
+        return edit_firearm_good_on_application(
+            request,
+            good_on_application_id,
+            payload,
+        )
+
+    def get_success_url(self):
+        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_firearm_good_on_application(
+                self.request,
+                self.good_on_application["id"],
+                FirearmProductOnApplicationSummaryEditSerialIdentificationMarkingsPayloadBuilder().build(form_dict),
+            )
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
+
+
+class FirearmProductOnApplicationSummaryEditSerialNumbers(BaseGoodOnApplicationEditView):
+    form_class = FirearmSerialNumbersForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        kwargs["number_of_items"] = int(self.good_on_application["quantity"])
+
+        return kwargs
+
+    def get_initial(self):
+        return get_serial_numbers_initial_data(self.good_on_application["firearm_details"])
+
+    def get_edit_payload(self, form):
+        return get_serial_numbers_payload(form)

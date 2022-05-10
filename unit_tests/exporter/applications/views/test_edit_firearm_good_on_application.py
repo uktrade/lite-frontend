@@ -16,6 +16,8 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardExportedForm,
     FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
+    FirearmSerialIdentificationMarkingsForm,
+    FirearmSerialNumbersForm,
     FirearmYearOfManufactureForm,
 )
 
@@ -902,7 +904,7 @@ def test_edit_quantity_value(
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
     assert response.context["form"].initial == {
-        "number_of_items": 16,
+        "number_of_items": 3,
         "value": "16.32",
     }
 
@@ -921,4 +923,165 @@ def test_edit_quantity_value(
         "quantity": 20,
         "unit": "NAR",
         "value": "20.22",
+    }
+
+
+@pytest.fixture
+def edit_serial_identification_markings_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_serial_identification_markings",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+@pytest.fixture
+def post_to_step_serial_identification_markings(post_to_step_factory, edit_serial_identification_markings_url):
+    return post_to_step_factory(edit_serial_identification_markings_url)
+
+
+def test_edit_serial_identification_markings_initial(
+    authorized_client,
+    edit_serial_identification_markings_url,
+):
+    response = authorized_client.get(edit_serial_identification_markings_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmSerialIdentificationMarkingsForm)
+    assert response.context["form"].initial == {
+        "serial_numbers_available": "NOT_AVAILABLE",
+        "no_identification_markings_details": "No markings",
+    }
+
+
+def test_edit_serial_identification_markings_available(
+    post_to_step_serial_identification_markings,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = post_to_step_serial_identification_markings(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        data={
+            "serial_numbers_available": "AVAILABLE",
+        },
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmSerialNumbersForm)
+
+    response = post_to_step_serial_identification_markings(
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS,
+        data={
+            "serial_numbers_0": "1111",
+            "serial_numbers_1": "2222",
+            "serial_numbers_2": "3333",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "no_identification_markings_details": "",
+            "serial_numbers": [
+                "1111",
+                "2222",
+                "3333",
+            ],
+            "serial_numbers_available": "AVAILABLE",
+        },
+    }
+
+
+def test_edit_serial_identification_markings_later(
+    post_to_step_serial_identification_markings,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = post_to_step_serial_identification_markings(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        data={
+            "serial_numbers_available": "LATER",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "no_identification_markings_details": "",
+            "serial_numbers_available": "LATER",
+        },
+    }
+
+
+def test_edit_serial_identification_markings_not_available(
+    post_to_step_serial_identification_markings,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = post_to_step_serial_identification_markings(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        data={
+            "serial_numbers_available": "NOT_AVAILABLE",
+            "no_identification_markings_details": "No serial numbers",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "no_identification_markings_details": "No serial numbers",
+            "serial_numbers_available": "NOT_AVAILABLE",
+        },
+    }
+
+
+@pytest.fixture
+def edit_serial_numbers_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_serial_numbers",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+def test_edit_serial_numbers(
+    authorized_client,
+    edit_serial_numbers_url,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.get(edit_serial_numbers_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmSerialNumbersForm)
+
+    response = authorized_client.post(
+        edit_serial_numbers_url,
+        data={
+            "serial_numbers_0": "1111",
+            "serial_numbers_1": "2222",
+            "serial_numbers_2": "3333",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "serial_numbers": [
+                "1111",
+                "2222",
+                "3333",
+            ],
+        },
     }

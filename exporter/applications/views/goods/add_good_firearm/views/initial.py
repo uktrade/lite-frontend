@@ -140,3 +140,9 @@ def get_is_deactivated_to_standard_initial_data(firearm_details):
         "is_deactivated_to_standard": firearm_details["is_deactivated_to_standard"],
         "not_deactivated_to_standard_comments": firearm_details["not_deactivated_to_standard_comments"],
     }
+
+
+def get_serial_numbers_initial_data(firearm_details):
+    return {
+        "serial_numbers": firearm_details["serial_numbers"],
+    }

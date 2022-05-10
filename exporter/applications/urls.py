@@ -61,6 +61,8 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmProductOnApplicationSummaryEditOnwardExported,
     FirearmProductOnApplicationSummaryEditOnwardIncorporated,
     FirearmProductOnApplicationSummaryEditQuantityValue,
+    FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings,
+    FirearmProductOnApplicationSummaryEditSerialNumbers,
     FirearmProductOnApplicationSummaryEditShotgunCertificate,
     FirearmProductOnApplicationSummaryEditYearOfManufacture,
 )
@@ -293,6 +295,16 @@ urlpatterns = [
         "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/quantity-value/",
         FirearmProductOnApplicationSummaryEditQuantityValue.as_view(),
         name="product_on_application_summary_edit_quantity_value",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/serial-identification-markings/",
+        FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings.as_view(),
+        name="product_on_application_summary_edit_serial_identification_markings",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/serial-numbers/",
+        FirearmProductOnApplicationSummaryEditSerialNumbers.as_view(),
+        name="product_on_application_summary_edit_serial_numbers",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),

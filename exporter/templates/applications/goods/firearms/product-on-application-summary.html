@@ -267,6 +267,7 @@
                     {% endif %}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_serial_identification_markings' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if good.firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
@@ -278,6 +279,7 @@
                         {% include "goods/includes/serial_numbers.html" %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-serial-numbers" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_serial_numbers' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}

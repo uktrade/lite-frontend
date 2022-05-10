@@ -5,6 +5,7 @@ import uuid
 from django.urls import reverse
 
 from core import client
+from exporter.goods.forms.firearms import FirearmSerialIdentificationMarkingsForm
 
 
 @pytest.fixture
@@ -42,7 +43,7 @@ def good_on_application(data_standard_case):
     return {
         "id": str(uuid.uuid4()),
         "good": good["good"],
-        "quantity": 16,
+        "quantity": 3,
         "value": "16.32",
         "firearm_details": {
             "section_certificate_date_of_expiry": "2030-12-12",
@@ -60,6 +61,9 @@ def good_on_application(data_standard_case):
             "date_of_deactivation": datetime.date(2007, 12, 12).isoformat(),
             "is_deactivated_to_standard": False,
             "not_deactivated_to_standard_comments": "Not deactivated",
+            "serial_numbers_available": FirearmSerialIdentificationMarkingsForm.SerialChoices.NOT_AVAILABLE,
+            "no_identification_markings_details": "No markings",
+            "serial_numbers": ["111", "222", "333"],
         },
     }
 
