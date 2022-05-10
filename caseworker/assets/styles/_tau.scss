@@ -1,0 +1,68 @@
+.tau {
+  .govuk-checkboxes__label {
+    text-align: left;
+  }
+
+  &__details {
+    border: none;
+  }
+
+  &__first-column--options {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+  }
+
+  &__second-column--hide {
+    display: none;
+  }
+
+  &__list {
+    padding: 0 0 0 0;
+    list-style-type: decimal;
+    counter-reset: my-counter;
+    list-style: none;
+
+    li:first-child {
+      border-top: 3px solid $base-grey;
+      border-bottom: 3px solid $base-grey;
+    }
+
+    li {
+      padding-top: 20px;
+      counter-increment: my-counter;
+      position: relative;
+      display:flex;
+      border-bottom: 2px solid $base-grey;
+    }
+
+    li::before {
+      content: counter(my-counter) ".";
+      padding: 12px 20px 0 0;
+    }
+  }
+
+  #div_id_does_not_have_control_list_entries {
+
+    .govuk-checkboxes__label {
+      padding: 0;
+      text-decoration: underline;
+      cursor: pointer;
+      color: $base-blue;
+    }
+
+    .govuk-checkboxes__label::before, ::after {
+      position: absolute;
+      left: 10000px;
+    }
+    .govuk-checkboxes__item {
+      padding-left: 0;
+    }
+  }
+} 
+
+#tau-form {
+  .tokenfield-copy-helper {
+    display: none;
+  }
+}
