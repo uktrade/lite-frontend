@@ -913,32 +913,13 @@ class FirearmProductOnApplicationSummaryEditShotgunCertificate(BaseFirearmActCer
     document_type = FirearmsActDocumentType.SECTION_2
 
 
-class FirearmProductOnApplicationSummaryEditMadeBefore1938(
+class BaseProductOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
     Product2FlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     BaseSessionWizardView,
 ):
-    form_list = [
-        (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
-        (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
-    ]
-    condition_dict = {
-        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: is_product_made_before_1938,
-    }
-
-    def get_form_initial(self, step):
-        initial = super().get_form_initial(step)
-
-        if step == AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938:
-            initial["is_made_before_1938"] = self.good_on_application["firearm_details"]["is_made_before_1938"]
-
-        if step == AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE:
-            initial.update(get_year_of_manufacture_initial_data(self.good_on_application["firearm_details"]))
-
-        return initial
-
     @expect_status(
         HTTPStatus.OK,
         "Error updating firearm",
@@ -959,12 +940,36 @@ class FirearmProductOnApplicationSummaryEditMadeBefore1938(
             self.edit_firearm_good_on_application(
                 self.request,
                 self.good_on_application["id"],
-                FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder().build(form_dict),
+                self.get_edit_firearm_good_on_application_payload(form_dict),
             )
         except ServiceError as e:
             return self.handle_service_error(e)
 
         return redirect(self.get_success_url())
+
+
+class FirearmProductOnApplicationSummaryEditMadeBefore1938(BaseProductOnApplicationSummaryEditWizardView):
+    form_list = [
+        (AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
+        (AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
+    ]
+    condition_dict = {
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: is_product_made_before_1938,
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        if step == AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938:
+            initial["is_made_before_1938"] = self.good_on_application["firearm_details"]["is_made_before_1938"]
+
+        if step == AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE:
+            initial.update(get_year_of_manufacture_initial_data(self.good_on_application["firearm_details"]))
+
+        return initial
+
+    def get_edit_firearm_good_on_application_payload(self, form_dict):
+        return FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder().build(form_dict)
 
 
 class FirearmProductOnApplicationSummaryEditYearOfManufacture(BaseGoodOnApplicationEditView):
@@ -974,13 +979,7 @@ class FirearmProductOnApplicationSummaryEditYearOfManufacture(BaseGoodOnApplicat
         return get_year_of_manufacture_initial_data(self.good_on_application["firearm_details"])
 
 
-class FirearmProductOnApplicationSummaryEditOnwardExported(
-    LoginRequiredMixin,
-    Product2FlagMixin,
-    ApplicationMixin,
-    GoodOnApplicationMixin,
-    BaseSessionWizardView,
-):
+class FirearmProductOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
     form_list = [
         (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
         (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
@@ -1005,32 +1004,8 @@ class FirearmProductOnApplicationSummaryEditOnwardExported(
 
         return initial
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating firearm",
-        "Unexpected error updating firearm",
-    )
-    def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
-        return edit_firearm_good_on_application(
-            request,
-            good_on_application_id,
-            payload,
-        )
-
-    def get_success_url(self):
-        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
-
-    def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.edit_firearm_good_on_application(
-                self.request,
-                self.good_on_application["id"],
-                FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict),
-            )
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
-        return redirect(self.get_success_url())
+    def get_edit_firearm_good_on_application_payload(self, form_dict):
+        return FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
 class FirearmProductOnApplicationSummaryEditOnwardAltered(BaseGoodOnApplicationEditView):
@@ -1050,13 +1025,7 @@ class FirearmProductOnApplicationSummaryEditOnwardIncorporated(BaseGoodOnApplica
         return get_onward_incorporated_payload(form)
 
 
-class FirearmProductOnApplicationSummaryEditIsDeactivated(
-    LoginRequiredMixin,
-    Product2FlagMixin,
-    ApplicationMixin,
-    GoodOnApplicationMixin,
-    BaseSessionWizardView,
-):
+class FirearmProductOnApplicationSummaryEditIsDeactivated(BaseProductOnApplicationSummaryEditWizardView):
     form_list = [
         (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED, FirearmIsDeactivatedForm),
         (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD, FirearmDeactivationDetailsForm),
@@ -1078,32 +1047,8 @@ class FirearmProductOnApplicationSummaryEditIsDeactivated(
 
         return initial
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating firearm",
-        "Unexpected error updating firearm",
-    )
-    def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
-        return edit_firearm_good_on_application(
-            request,
-            good_on_application_id,
-            payload,
-        )
-
-    def get_success_url(self):
-        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
-
-    def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.edit_firearm_good_on_application(
-                self.request,
-                self.good_on_application["id"],
-                FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder().build(form_dict),
-            )
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
-        return redirect(self.get_success_url())
+    def get_edit_firearm_good_on_application_payload(self, form_dict):
+        return FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder().build(form_dict)
 
 
 class FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard(BaseGoodOnApplicationEditView):
@@ -1129,13 +1074,7 @@ class FirearmProductOnApplicationSummaryEditQuantityValue(BaseGoodOnApplicationE
         return get_quantity_and_value_payload(form)
 
 
-class FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings(
-    LoginRequiredMixin,
-    Product2FlagMixin,
-    ApplicationMixin,
-    GoodOnApplicationMixin,
-    BaseSessionWizardView,
-):
+class FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings(BaseProductOnApplicationSummaryEditWizardView):
     form_list = [
         (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, FirearmSerialIdentificationMarkingsForm),
         (AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS, FirearmSerialNumbersForm),
@@ -1168,32 +1107,8 @@ class FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings(
 
         return initial
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating firearm",
-        "Unexpected error updating firearm",
-    )
-    def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
-        return edit_firearm_good_on_application(
-            request,
-            good_on_application_id,
-            payload,
-        )
-
-    def get_success_url(self):
-        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
-
-    def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.edit_firearm_good_on_application(
-                self.request,
-                self.good_on_application["id"],
-                FirearmProductOnApplicationSummaryEditSerialIdentificationMarkingsPayloadBuilder().build(form_dict),
-            )
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
-        return redirect(self.get_success_url())
+    def get_edit_firearm_good_on_application_payload(self, form_dict):
+        return FirearmProductOnApplicationSummaryEditSerialIdentificationMarkingsPayloadBuilder().build(form_dict)
 
 
 class FirearmProductOnApplicationSummaryEditSerialNumbers(BaseGoodOnApplicationEditView):
