@@ -5,7 +5,11 @@ from exporter.core.helpers import (
 )
 from exporter.goods.forms.firearms import FirearmSection5Form, FirearmSerialIdentificationMarkingsForm
 
-from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
+from .constants import (
+    AddGoodFirearmSteps,
+    AddGoodFirearmToApplicationSteps,
+    AttachFirearmToApplicationSteps,
+)
 
 
 def is_pv_graded(wizard):
@@ -131,3 +135,15 @@ def is_certificate_required(document_type):
         return wizard.good["firearm_details"].get("firearms_act_section") == document_type
 
     return _is_certificate_required
+
+
+def has_firearm_category(wizard):
+    return wizard.good["firearm_details"].get("category") is None
+
+
+def is_firearm_certificate_invalid(wizard):
+    is_rfd_valid_data = wizard.get_cleaned_data_for_step(
+        AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID,
+    )
+
+    return is_rfd_valid_data.get("is_rfd_certificate_valid") is False

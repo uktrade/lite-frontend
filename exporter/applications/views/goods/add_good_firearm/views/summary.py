@@ -45,15 +45,13 @@ class FirearmProductSummary(
         }
 
 
-class FirearmProductOnApplicationSummary(
+class BaseProductOnApplicationSummary(
     LoginRequiredMixin,
     Product2FlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
 ):
-    template_name = "applications/goods/firearms/product-on-application-summary.html"
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -87,3 +85,11 @@ class FirearmProductOnApplicationSummary(
             "is_user_rfd": is_user_rfd,
             "organisation_documents": organisation_documents,
         }
+
+
+class FirearmProductOnApplicationSummary(BaseProductOnApplicationSummary):
+    template_name = "applications/goods/firearms/product-on-application-summary.html"
+
+
+class FirearmAttachProductOnApplicationSummary(BaseProductOnApplicationSummary):
+    template_name = "applications/goods/firearms/attach-product-on-application-summary.html"

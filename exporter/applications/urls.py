@@ -38,6 +38,7 @@ from exporter.goods.views import (
     UpdateSerialNumbersView,
 )
 from exporter.applications.views.goods.add_good_firearm.views.add import AddGoodFirearm, AddGoodFirearmToApplication
+from exporter.applications.views.goods.add_good_firearm.views.attach import AttachFirearmToApplication
 from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditCalibre,
     FirearmEditCategory,
@@ -67,6 +68,7 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmProductOnApplicationSummaryEditYearOfManufacture,
 )
 from exporter.applications.views.goods.add_good_firearm.views.summary import (
+    FirearmAttachProductOnApplicationSummary,
     FirearmProductSummary,
     FirearmProductOnApplicationSummary,
 )
@@ -306,6 +308,11 @@ urlpatterns = [
         FirearmProductOnApplicationSummaryEditSerialNumbers.as_view(),
         name="product_on_application_summary_edit_serial_numbers",
     ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/attach-product-on-application-summary/",
+        FirearmAttachProductOnApplicationSummary.as_view(),
+        name="attach_product_on_application_summary",
+    ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),
     path(
@@ -321,6 +328,11 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/attach/", goods.AttachDocument.as_view(), name="attach_documents"),
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
     path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add/firearm/",
+        AttachFirearmToApplication.as_view(),
+        name="attach_firearm_to_application",
+    ),
     path(
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),
