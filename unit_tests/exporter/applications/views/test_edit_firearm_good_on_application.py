@@ -10,6 +10,9 @@ from exporter.core.forms import CurrentFile
 from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
     FirearmMadeBefore1938Form,
+    FirearmOnwardAlteredProcessedForm,
+    FirearmOnwardExportedForm,
+    FirearmOnwardIncorporatedForm,
     FirearmYearOfManufactureForm,
 )
 
@@ -534,4 +537,202 @@ def test_edit_year_of_manufacture_post(
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {"year_of_manufacture": 1931},
+    }
+
+
+@pytest.fixture
+def edit_onward_exported_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_onward_exported",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+@pytest.fixture
+def post_to_step_onward_exported(post_to_step_factory, edit_onward_exported_url):
+    return post_to_step_factory(edit_onward_exported_url)
+
+
+def test_edit_onward_exported_true(
+    authorized_client,
+    edit_onward_exported_url,
+    post_to_step_onward_exported,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.get(edit_onward_exported_url)
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, FirearmOnwardExportedForm)
+    assert form.initial == {
+        "is_onward_exported": True,
+    }
+
+    response = post_to_step_onward_exported(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        data={"is_onward_exported": True},
+    )
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, FirearmOnwardAlteredProcessedForm)
+    assert form.initial == {
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "I will alter it real good",
+    }
+
+    response = post_to_step_onward_exported(
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        data={
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "Altering",
+        },
+    )
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, FirearmOnwardIncorporatedForm)
+    assert form.initial == {
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "I will onward incorporate",
+    }
+
+    response = post_to_step_onward_exported(
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        data={
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "Incorporated",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "Altering",
+            "is_onward_exported": True,
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "Incorporated",
+        },
+        "is_good_incorporated": True,
+    }
+
+
+def test_edit_onward_exported_false(
+    authorized_client,
+    edit_onward_exported_url,
+    post_to_step_onward_exported,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.get(edit_onward_exported_url)
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, FirearmOnwardExportedForm)
+    assert form.initial == {
+        "is_onward_exported": True,
+    }
+
+    response = post_to_step_onward_exported(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        data={"is_onward_exported": False},
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "is_onward_exported": False,
+        },
+    }
+
+
+@pytest.fixture
+def edit_onward_altered_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_onward_altered",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+def test_edit_onward_altered_processed(
+    authorized_client,
+    edit_onward_altered_url,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.get(edit_onward_altered_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert response.context["form"].initial == {
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "I will alter it real good",
+    }
+
+    response = authorized_client.post(
+        edit_onward_altered_url,
+        data={
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "Altered",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "Altered",
+        },
+    }
+
+
+@pytest.fixture
+def edit_onward_incorporated_url(application, good_on_application):
+    url = reverse(
+        "applications:product_on_application_summary_edit_onward_incorporated",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+        },
+    )
+    return url
+
+
+def test_edit_onward_incorporated(
+    authorized_client,
+    edit_onward_incorporated_url,
+    product_on_application_summary_url,
+    mock_good_on_application_put,
+):
+    response = authorized_client.get(edit_onward_incorporated_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert response.context["form"].initial == {
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "I will onward incorporate",
+    }
+
+    response = authorized_client.post(
+        edit_onward_incorporated_url,
+        data={
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "Incorporated",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "firearm_details": {"is_onward_incorporated": True, "is_onward_incorporated_comments": "Incorporated"},
+        "is_good_incorporated": True,
     }

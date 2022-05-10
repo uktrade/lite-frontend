@@ -55,6 +55,9 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditRegisteredFirearmsDealer,
     FirearmProductOnApplicationSummaryEditFirearmCertificate,
     FirearmProductOnApplicationSummaryEditMadeBefore1938,
+    FirearmProductOnApplicationSummaryEditOnwardAltered,
+    FirearmProductOnApplicationSummaryEditOnwardExported,
+    FirearmProductOnApplicationSummaryEditOnwardIncorporated,
     FirearmProductOnApplicationSummaryEditShotgunCertificate,
     FirearmProductOnApplicationSummaryEditYearOfManufacture,
 )
@@ -257,6 +260,21 @@ urlpatterns = [
         "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/year-of-manufacture/",
         FirearmProductOnApplicationSummaryEditYearOfManufacture.as_view(),
         name="product_on_application_summary_edit_year_of_manufacture",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/onward-exported/",
+        FirearmProductOnApplicationSummaryEditOnwardExported.as_view(),
+        name="product_on_application_summary_edit_onward_exported",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/onward-altered/",
+        FirearmProductOnApplicationSummaryEditOnwardAltered.as_view(),
+        name="product_on_application_summary_edit_onward_altered",
+    ),
+    path(
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/edit/onward-incorporated/",
+        FirearmProductOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        name="product_on_application_summary_edit_onward_incorporated",
     ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),

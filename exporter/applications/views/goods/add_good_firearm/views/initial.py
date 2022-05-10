@@ -106,11 +106,25 @@ def get_firearm_act_1968_initial_data(firearm_details):
     }
 
 
-def get_year_of_manufacture_initial(firearm_details):
+def get_year_of_manufacture_initial_data(firearm_details):
     year_of_manufacture = firearm_details.get("year_of_manufacture")
     if not year_of_manufacture:
         return {}
 
     return {
         "year_of_manufacture": year_of_manufacture,
+    }
+
+
+def get_onward_altered_processed_initial_data(firearm_details):
+    return {
+        "is_onward_altered_processed": firearm_details["is_onward_altered_processed"],
+        "is_onward_altered_processed_comments": firearm_details["is_onward_altered_processed_comments"],
+    }
+
+
+def get_onward_incorporated_initial_data(firearm_details):
+    return {
+        "is_onward_incorporated": firearm_details["is_onward_incorporated"],
+        "is_onward_incorporated_comments": firearm_details["is_onward_incorporated_comments"],
     }

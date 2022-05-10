@@ -149,6 +149,7 @@
                     {{ firearm_details.is_onward_exported|yesno|capfirst }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-onward-exported" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_onward_exported' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_onward_exported %}
@@ -165,6 +166,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-onward-altered" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_onward_altered' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -180,6 +182,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-onward-incorporated" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_onward_incorporated' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}

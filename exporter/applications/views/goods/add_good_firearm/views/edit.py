@@ -50,6 +50,9 @@ from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
     FirearmMadeBefore1938Form,
     FirearmNameForm,
+    FirearmOnwardAlteredProcessedForm,
+    FirearmOnwardExportedForm,
+    FirearmOnwardIncorporatedForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
     FirearmPvGradingForm,
@@ -68,6 +71,7 @@ from .actions import (
 from .conditionals import (
     has_organisation_firearm_act_document,
     is_document_sensitive,
+    is_onward_exported,
     is_product_covered_by_firearm_act_section,
     is_product_document_available,
     is_product_made_before_1938,
@@ -83,7 +87,9 @@ from .initial import (
     get_attach_organisation_certificate_initial_data,
     get_firearm_act_1968_initial_data,
     get_is_covered_by_section_5_initial_data,
-    get_year_of_manufacture_initial,
+    get_onward_altered_processed_initial_data,
+    get_onward_incorporated_initial_data,
+    get_year_of_manufacture_initial_data,
 )
 from .mixins import (
     ApplicationMixin,
@@ -100,9 +106,11 @@ from .payloads import (
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     FirearmEditSection5FirearmsAct1968PayloadBuilder,
     FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder,
+    FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
     get_attach_firearm_act_certificate_payload,
     get_cleaned_data,
     get_firearm_details_cleaned_data,
+    get_onward_incorporated_payload,
     get_pv_grading_good_payload,
 )
 
@@ -913,7 +921,7 @@ class FirearmProductOnApplicationSummaryEditMadeBefore1938(
             initial["is_made_before_1938"] = self.good_on_application["firearm_details"]["is_made_before_1938"]
 
         if step == AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE:
-            initial.update(get_year_of_manufacture_initial(self.good_on_application["firearm_details"]))
+            initial.update(get_year_of_manufacture_initial_data(self.good_on_application["firearm_details"]))
 
         return initial
 
@@ -949,4 +957,80 @@ class FirearmProductOnApplicationSummaryEditYearOfManufacture(BaseGoodOnApplicat
     form_class = FirearmYearOfManufactureForm
 
     def get_initial(self):
-        return get_year_of_manufacture_initial(self.good_on_application["firearm_details"])
+        return get_year_of_manufacture_initial_data(self.good_on_application["firearm_details"])
+
+
+class FirearmProductOnApplicationSummaryEditOnwardExported(
+    LoginRequiredMixin,
+    Product2FlagMixin,
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    BaseSessionWizardView,
+):
+    form_list = [
+        (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
+    ]
+    condition_dict = {
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        if step == AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED:
+            initial["is_onward_exported"] = self.good_on_application["firearm_details"]["is_onward_exported"]
+
+        if step == AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED:
+            initial.update(get_onward_altered_processed_initial_data(self.good_on_application["firearm_details"]))
+
+        if step == AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED:
+            initial.update(get_onward_incorporated_initial_data(self.good_on_application["firearm_details"]))
+
+        return initial
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating firearm",
+        "Unexpected error updating firearm",
+    )
+    def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
+        return edit_firearm_good_on_application(
+            request,
+            good_on_application_id,
+            payload,
+        )
+
+    def get_success_url(self):
+        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_firearm_good_on_application(
+                self.request,
+                self.good_on_application["id"],
+                FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict),
+            )
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
+
+
+class FirearmProductOnApplicationSummaryEditOnwardAltered(BaseGoodOnApplicationEditView):
+    form_class = FirearmOnwardAlteredProcessedForm
+
+    def get_initial(self):
+        return get_onward_altered_processed_initial_data(self.good_on_application["firearm_details"])
+
+
+class FirearmProductOnApplicationSummaryEditOnwardIncorporated(BaseGoodOnApplicationEditView):
+    form_class = FirearmOnwardIncorporatedForm
+
+    def get_initial(self):
+        return get_onward_incorporated_initial_data(self.good_on_application["firearm_details"])
+
+    def get_edit_payload(self, form):
+        return get_onward_incorporated_payload(form)
