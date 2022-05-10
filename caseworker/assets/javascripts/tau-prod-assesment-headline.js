@@ -51,7 +51,9 @@ const addSelectAllExpandAll = (
 };
 
 const initTauAssesmentHeadline = () => {
-  const checkboxProducts = document.querySelectorAll("[id^='id_goods_']");
+  const checkboxProducts = document.querySelectorAll(
+    ".tau__list [id^='id_goods_']"
+  );
   const arrayProducts = Array.from(checkboxProducts);
   const cleList = document.querySelectorAll(".control-list__list");
   const tauHeadline = document.querySelector(".tau__headline");
@@ -72,7 +74,7 @@ const initTauAssesmentHeadline = () => {
   );
 
   checkboxProducts.forEach((product) =>
-    product.addEventListener("click", (event) => {
+    product.addEventListener("click", () => {
       const checkbox = product.checked;
 
       if (checkbox) {

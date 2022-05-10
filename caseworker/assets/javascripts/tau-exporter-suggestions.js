@@ -84,7 +84,9 @@ export const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
 
 const initTauControlListEntry = () => {
   const cleList = document.querySelectorAll(".control-list__list");
-  const checkboxProducts = document.querySelectorAll("[id^='id_goods_']");
+  const checkboxProducts = document.querySelectorAll(
+    ".tau__list [id^='id_goods_']"
+  );
   const doesNotHaveCleSentence = document.querySelector(
     "#div_id_does_not_have_control_list_entries input"
   );
