@@ -4,8 +4,7 @@ Feature: I want to check sactions matches
   I want to check that the sanction match is highlighted
   For a case is created with a name on it that has a sanction
 
-  @check_sanctions
-  Scenario: view a case note added by caseworker
+  Scenario: check a sanction match is highlighted
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     When I go to application previously created
