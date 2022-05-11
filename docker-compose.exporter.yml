@@ -2,9 +2,6 @@ version: '3.2'
 
 services:
   exporter:
-    depends_on:
-      - redis
-      - api
     build:
       context: .
       dockerfile: Dockerfile.e2e
@@ -18,14 +15,14 @@ services:
       PW_EXPORT_SSO_USER: ${PW_EXPORT_SSO_USER}
       PW_SSO_PASSWORD: ${PW_SSO_PASSWORD}
       PW_SSO_URL: ${PW_SSO_URL}
-      AWS_ACCESS_KEY_ID: ${PW_AWS_ACCESS_KEY_ID}
-      AWS_REGION: ${PW_AWS_REGION}
-      AWS_SECRET_ACCESS_KEY: ${PW_AWS_SECRET_ACCESS_KEY}
-      AWS_STORAGE_BUCKET_NAME: ${PW_AWS_STORAGE_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_REGION: ${AWS_REGION}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
       AUTH_USER_NAME: ${AUTH_USER_NAME}
       AUTH_USER_PASSWORD: ${AUTH_USER_PASSWORD}
       BASIC_AUTH_ENABLED: ${BASIC_AUTH_ENABLED}
-      BROWSER_HOSTS: ${BROWSER_HOSTS_CASEWORKER}
+      BROWSER_HOSTS: ${BROWSER_HOSTS_EXPORTER}
       ENDPOINT: ${ENDPOINT}
     env_file:
       - ./exporter.env
@@ -36,7 +33,7 @@ services:
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
-       dockerize -wait tcp://api:8100 -timeout 5m
+       dockerize -wait tcp://api:8100 -timeout 10m
        npm run build_exporter
        ./manage.py runserver 0.0.0.0:${PORT:-8300}
     stdin_open: true
