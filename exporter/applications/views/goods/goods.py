@@ -971,20 +971,26 @@ class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
 
 
 class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
+    template_name = (
+        "applications/goods/goods-detail-summary-product2-0.html"
+        if settings.FEATURE_FLAG_PRODUCT_2_0
+        else "applications/goods/goods-detail-summary.html"
+    )
+
+    def get_context_data(self, **kwargs):
         application_id = str(kwargs["pk"])
-        application = get_application(request, application_id)
+        application = get_application(self.request, application_id)
         documents = {
             item["document_type"].replace("-", "_"): item for item in application["organisation"].get("documents", [])
         }
 
-        context = {
+        return {
             "application_id": application_id,
             "goods": application["goods"],
+            "is_user_rfd": has_valid_rfd_certificate(application),
             "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
         }
-        return render(request, "applications/goods/goods-detail-summary.html", context)
 
 
 class AddGoodsSummary(LoginRequiredMixin, SectionDocumentMixin, TemplateView):
