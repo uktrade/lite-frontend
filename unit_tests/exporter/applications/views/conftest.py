@@ -5,6 +5,7 @@ import uuid
 from django.urls import reverse
 
 from core import client
+from exporter.goods.forms.firearms import FirearmSerialIdentificationMarkingsForm
 
 
 @pytest.fixture
@@ -36,8 +37,35 @@ def mock_good_put(requests_mock, data_standard_case):
 
 
 @pytest.fixture
-def good_on_application():
-    return {"good": {"id": str(uuid.uuid4())}}
+def good_on_application(data_standard_case):
+    good = data_standard_case["case"]["data"]["goods"][0]
+
+    return {
+        "id": str(uuid.uuid4()),
+        "good": good["good"],
+        "quantity": 3,
+        "value": "16.32",
+        "firearm_details": {
+            "section_certificate_date_of_expiry": "2030-12-12",
+            "section_certificate_number": "12345",
+            "section_certificate_missing": False,
+            "section_certificate_missing_reason": "",
+            "is_made_before_1938": True,
+            "year_of_manufacture": 1930,
+            "is_onward_exported": True,
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "I will alter it real good",
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "I will onward incorporate",
+            "is_deactivated": True,
+            "date_of_deactivation": datetime.date(2007, 12, 12).isoformat(),
+            "is_deactivated_to_standard": False,
+            "not_deactivated_to_standard_comments": "Not deactivated",
+            "serial_numbers_available": FirearmSerialIdentificationMarkingsForm.SerialChoices.NOT_AVAILABLE,
+            "no_identification_markings_details": "No markings",
+            "serial_numbers": ["111", "222", "333"],
+        },
+    }
 
 
 @pytest.fixture
@@ -45,6 +73,12 @@ def mock_good_on_application_post(requests_mock, data_standard_case, good_on_app
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
     return requests_mock.post(url=url, json=good_on_application, status_code=201)
+
+
+@pytest.fixture
+def mock_good_on_application_get(requests_mock, good_on_application):
+    url = client._build_absolute_uri(f'/applications/good-on-application/{good_on_application["id"]}')
+    return requests_mock.get(url=url, json=good_on_application, status_code=200)
 
 
 @pytest.fixture

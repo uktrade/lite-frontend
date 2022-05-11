@@ -40,6 +40,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-section-one-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_firearm_certificate' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
                 {% if not firearm_details.section_certificate_missing %}
@@ -51,6 +52,7 @@
                             {{ firearm_details.section_certificate_number }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-one-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_firearm_certificate' application.id good_on_application.id %}">Change</a>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -61,6 +63,7 @@
                             {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-one-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_firearm_certificate' application.id good_on_application.id %}">Change</a>
                         </dd>
                     </div>
                 {% endif %}
@@ -86,6 +89,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-section-two-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_shotgun_certificate' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
                 {% if not firearm_details.section_certificate_missing %}
@@ -97,6 +101,7 @@
                             {{ firearm_details.section_certificate_number }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-two-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_shotgun_certificate' application.id good_on_application.id %}">Change</a>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -107,6 +112,7 @@
                             {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a id="change-section-two-certificate" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_shotgun_certificate' application.id good_on_application.id %}">Change</a>
                         </dd>
                     </div>
                 {% endif %}
@@ -119,6 +125,7 @@
                     {{ firearm_details.is_made_before_1938|yesno|capfirst }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-made-before-1938" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_made_before_1938' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_made_before_1938 %}
@@ -130,6 +137,7 @@
                         {{ firearm_details.year_of_manufacture }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-year_of_manufacture" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_year_of_manufacture' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}
@@ -141,6 +149,7 @@
                     {{ firearm_details.is_onward_exported|yesno|capfirst }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-onward-exported" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_onward_exported' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_onward_exported %}
@@ -157,6 +166,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-onward-altered" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_onward_altered' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -172,6 +182,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-onward-incorporated" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_onward_incorporated' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}
@@ -183,6 +194,7 @@
                     {{ firearm_details.is_deactivated|yesno|capfirst }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-is-deactivated" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_is_deactivated' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if firearm_details.is_deactivated %}
@@ -194,6 +206,7 @@
                         {{ firearm_details.date_of_deactivation|to_date|date:"j F Y" }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-is-deactivated-to-standard-date" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_is_deactivated_to_standard' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -209,6 +222,7 @@
                         {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-is-deactivated-to-standard-comments" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_is_deactivated_to_standard' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}
@@ -220,6 +234,7 @@
                     {{ firearm_details.number_of_items }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-number-of-items" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_quantity_value' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -230,6 +245,7 @@
                     £{{ good_on_application.value|floatformat:2 }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-total-value" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_quantity_value' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -251,6 +267,7 @@
                     {% endif %}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    <a id="change-identification-markings" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_serial_identification_markings' application.id good_on_application.id %}">Change</a>
                 </dd>
             </div>
             {% if good.firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
@@ -262,6 +279,7 @@
                         {% include "goods/includes/serial_numbers.html" %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                        <a id="change-serial-numbers" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_serial_numbers' application.id good_on_application.id %}">Change</a>
                     </dd>
                 </div>
             {% endif %}
