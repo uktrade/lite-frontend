@@ -90,7 +90,7 @@ Make sure to follow `lite-api` instructions in [the instructions for running it
   - `AWS_SECRET_ACCESS_KEY=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
   - `AWS_STORAGE_BUCKET_NAME=lite-document-store-test`
   - `AWS_REGION=eu-west-2`
-  - `S3_LOCAL_ENDPOINT_URLhttp://lite-minio-s3:9000`
+  - `S3_LOCAL_ENDPOINT_URL=http://lite-minio-s3:9000`
 
 And run it as you would do with or without docker.
 
