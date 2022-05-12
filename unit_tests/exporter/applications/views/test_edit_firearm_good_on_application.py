@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
+from exporter.applications.views.goods.add_good_firearm.views.edit import SummaryTypeMixin
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
@@ -57,21 +58,22 @@ def mock_section_one_document_get(requests_mock, section_one_document, applicati
 
 
 @pytest.fixture
-def edit_firearm_certificate_url(application, good_on_application):
+def edit_firearm_certificate_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_firearm_certificate",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
 @pytest.fixture
-def product_on_application_summary_url(application, good_on_application):
+def product_on_application_summary_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:product_on_application_summary",
+        f"applications:{summary_type.replace('-', '_')}",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -86,6 +88,10 @@ def mock_good_on_application_put(requests_mock, good_on_application):
     return requests_mock.put(url, json={})
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_firearm_certificate_initial(
     authorized_client,
     application,
@@ -121,6 +127,10 @@ def test_edit_firearm_certificate_initial(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_firearm_certificate_retaining_current_file(
     authorized_client,
     edit_firearm_certificate_url,
@@ -150,6 +160,10 @@ def test_edit_firearm_certificate_retaining_current_file(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_firearm_certificate_retaining_upload_new_file(
     authorized_client,
     edit_firearm_certificate_url,
@@ -258,17 +272,22 @@ def mock_section_two_document_get(requests_mock, section_two_document, applicati
 
 
 @pytest.fixture
-def edit_shotgun_certificate_url(application, good_on_application):
+def edit_shotgun_certificate_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_shotgun_certificate",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_shotgun_certificate_initial(
     authorized_client,
     application,
@@ -304,6 +323,10 @@ def test_edit_shotgun_certificate_initial(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_shotgun_certificate_retaining_current_file(
     authorized_client,
     edit_shotgun_certificate_url,
@@ -333,6 +356,10 @@ def test_edit_shotgun_certificate_retaining_current_file(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_shotgun_certificate_retaining_upload_new_file(
     authorized_client,
     edit_shotgun_certificate_url,
@@ -423,18 +450,26 @@ def test_edit_shotgun_certificate_retaining_upload_new_file(
 
 
 @pytest.fixture
-def edit_made_before_1938_url(application, good_on_application):
+def edit_made_before_1938_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_made_before_1938",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
-def test_edit_made_before_1938_initial(authorized_client, edit_made_before_1938_url):
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
+def test_edit_made_before_1938_initial(
+    authorized_client,
+    edit_made_before_1938_url,
+):
     response = authorized_client.get(edit_made_before_1938_url)
     assert response.status_code == 200
 
@@ -451,6 +486,10 @@ def post_to_step_made_before_1938(post_to_step_factory, edit_made_before_1938_ur
     return post_to_step_factory(edit_made_before_1938_url)
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_made_before_1938_true(
     post_to_step_made_before_1938,
     product_on_application_summary_url,
@@ -480,6 +519,10 @@ def test_edit_made_before_1938_true(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_made_before_1938_false(
     post_to_step_made_before_1938,
     product_on_application_summary_url,
@@ -501,17 +544,22 @@ def test_edit_made_before_1938_false(
 
 
 @pytest.fixture
-def edit_year_of_manufacture_url(application, good_on_application):
+def edit_year_of_manufacture_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_year_of_manufacture",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_year_of_manufacture_initial(authorized_client, edit_year_of_manufacture_url):
     response = authorized_client.get(edit_year_of_manufacture_url)
     assert response.status_code == 200
@@ -524,6 +572,10 @@ def test_edit_year_of_manufacture_initial(authorized_client, edit_year_of_manufa
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_year_of_manufacture_post(
     authorized_client,
     edit_year_of_manufacture_url,
@@ -546,12 +598,13 @@ def test_edit_year_of_manufacture_post(
 
 
 @pytest.fixture
-def edit_onward_exported_url(application, good_on_application):
+def edit_onward_exported_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_onward_exported",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
@@ -562,6 +615,10 @@ def post_to_step_onward_exported(post_to_step_factory, edit_onward_exported_url)
     return post_to_step_factory(edit_onward_exported_url)
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_onward_exported_true(
     authorized_client,
     edit_onward_exported_url,
@@ -627,6 +684,10 @@ def test_edit_onward_exported_true(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_onward_exported_false(
     authorized_client,
     edit_onward_exported_url,
@@ -658,17 +719,22 @@ def test_edit_onward_exported_false(
 
 
 @pytest.fixture
-def edit_onward_altered_url(application, good_on_application):
+def edit_onward_altered_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_onward_altered",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_onward_altered_processed(
     authorized_client,
     edit_onward_altered_url,
@@ -702,17 +768,22 @@ def test_edit_onward_altered_processed(
 
 
 @pytest.fixture
-def edit_onward_incorporated_url(application, good_on_application):
+def edit_onward_incorporated_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_onward_incorporated",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_onward_incorporated(
     authorized_client,
     edit_onward_incorporated_url,
@@ -744,12 +815,13 @@ def test_edit_onward_incorporated(
 
 
 @pytest.fixture
-def edit_is_deactivated_url(application, good_on_application):
+def edit_is_deactivated_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_is_deactivated",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
@@ -760,6 +832,10 @@ def post_to_step_is_deactivated(post_to_step_factory, edit_is_deactivated_url):
     return post_to_step_factory(edit_is_deactivated_url)
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_is_deactivated_initial(
     authorized_client,
     edit_is_deactivated_url,
@@ -772,6 +848,10 @@ def test_edit_is_deactivated_initial(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_is_deactivated_true(
     post_to_step_is_deactivated,
     product_on_application_summary_url,
@@ -813,6 +893,10 @@ def test_edit_is_deactivated_true(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_is_deactivated_false(
     post_to_step_is_deactivated,
     product_on_application_summary_url,
@@ -836,17 +920,22 @@ def test_edit_is_deactivated_false(
 
 
 @pytest.fixture
-def edit_is_deactivated_to_standard_url(application, good_on_application):
+def edit_is_deactivated_to_standard_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_is_deactivated_to_standard",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_is_deactivated_to_standard(
     authorized_client,
     edit_is_deactivated_to_standard_url,
@@ -883,17 +972,22 @@ def test_edit_is_deactivated_to_standard(
 
 
 @pytest.fixture
-def edit_quantity_value_url(application, good_on_application):
+def edit_quantity_value_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_quantity_value",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_quantity_value(
     authorized_client,
     edit_quantity_value_url,
@@ -927,12 +1021,13 @@ def test_edit_quantity_value(
 
 
 @pytest.fixture
-def edit_serial_identification_markings_url(application, good_on_application):
+def edit_serial_identification_markings_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_serial_identification_markings",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
@@ -943,6 +1038,10 @@ def post_to_step_serial_identification_markings(post_to_step_factory, edit_seria
     return post_to_step_factory(edit_serial_identification_markings_url)
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_serial_identification_markings_initial(
     authorized_client,
     edit_serial_identification_markings_url,
@@ -956,6 +1055,10 @@ def test_edit_serial_identification_markings_initial(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_serial_identification_markings_available(
     post_to_step_serial_identification_markings,
     product_on_application_summary_url,
@@ -995,6 +1098,10 @@ def test_edit_serial_identification_markings_available(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_serial_identification_markings_later(
     post_to_step_serial_identification_markings,
     product_on_application_summary_url,
@@ -1018,6 +1125,10 @@ def test_edit_serial_identification_markings_later(
     }
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_serial_identification_markings_not_available(
     post_to_step_serial_identification_markings,
     product_on_application_summary_url,
@@ -1043,17 +1154,22 @@ def test_edit_serial_identification_markings_not_available(
 
 
 @pytest.fixture
-def edit_serial_numbers_url(application, good_on_application):
+def edit_serial_numbers_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:product_on_application_summary_edit_serial_numbers",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
         },
     )
     return url
 
 
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
 def test_edit_serial_numbers(
     authorized_client,
     edit_serial_numbers_url,

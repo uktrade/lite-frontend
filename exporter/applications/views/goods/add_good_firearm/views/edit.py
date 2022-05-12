@@ -6,6 +6,7 @@ from deepmerge import always_merger
 from http import HTTPStatus
 
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -804,17 +805,49 @@ class FirearmEditFirearmsAct1968(BaseEditWizardView):
         return redirect(self.get_success_url())
 
 
+class SummaryTypeMixin:
+    SUMMARY_TYPES = [
+        "product-on-application-summary",
+        "attach-product-on-application-summary",
+    ]
+
+    def dispatch(self, request, *args, **kwargs):
+        if kwargs["summary_type"] not in self.SUMMARY_TYPES:
+            raise Http404("Not a valid summary type")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_summary_url(self):
+        summary_url_name = self.kwargs["summary_type"].replace("-", "_")
+
+        return reverse(
+            f"applications:{summary_url_name}",
+            kwargs={
+                "pk": self.application["id"],
+                "good_on_application_pk": self.good_on_application["id"],
+            },
+        )
+
+    def get_success_url(self):
+        return self.get_summary_url()
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx["back_link_url"] = self.get_summary_url()
+
+        return ctx
+
+
 class BaseGoodOnApplicationEditView(
     LoginRequiredMixin,
     Product2FlagMixin,
+    SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     FormView,
 ):
     template_name = "core/form.html"
-
-    def get_success_url(self):
-        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
 
     @expect_status(
         HTTPStatus.OK,
@@ -853,13 +886,6 @@ class BaseGoodOnApplicationEditView(
             return self.handle_service_error(e)
 
         return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        ctx["back_link_url"] = reverse("applications:product_on_application_summary", kwargs=self.kwargs)
-
-        return ctx
 
     def get_edit_payload(self, form):
         return get_firearm_details_cleaned_data(form)
@@ -916,6 +942,7 @@ class FirearmProductOnApplicationSummaryEditShotgunCertificate(BaseFirearmActCer
 class BaseProductOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
     Product2FlagMixin,
+    SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     BaseSessionWizardView,
@@ -931,16 +958,6 @@ class BaseProductOnApplicationSummaryEditWizardView(
             good_on_application_id,
             payload,
         )
-
-    def get_success_url(self):
-        return reverse("applications:product_on_application_summary", kwargs=self.kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        ctx = super().get_context_data(*args, **kwargs)
-
-        ctx["back_link_url"] = reverse("applications:product_on_application_summary", kwargs=self.kwargs)
-
-        return ctx
 
     def done(self, form_list, form_dict, **kwargs):
         try:
