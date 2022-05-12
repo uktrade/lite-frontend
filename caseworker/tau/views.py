@@ -11,6 +11,7 @@ from caseworker.tau.services import get_recent_precedent
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
 
 
 class TAUMixin:
@@ -37,11 +38,7 @@ class TAUMixin:
         precedents = get_recent_precedent(self.request, self.case)
         for item in self.case.goods:
             if precedents[item["id"]]:
-                precedents[item["id"]]["queue"] = (
-                    "00000000-0000-0000-0000-000000000001"
-                    if precedents[item["id"]]["queue"] is None
-                    else precedents[item["id"]]["queue"]
-                )
+                precedents[item["id"]]["queue"] = precedents[item["id"]]["queue"] or ALL_CASES_QUEUE_ID
             item["precedent"] = precedents[item["id"]]
             goods.append(item)
         return goods
