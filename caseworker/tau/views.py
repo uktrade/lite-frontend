@@ -50,9 +50,15 @@ class TAUMixin:
         goods = []
         precedents = get_recent_precedent(self.request, self.case)
         for item in self.case.goods:
+            # Populate precedents
             if precedents[item["id"]]:
                 precedents[item["id"]]["queue"] = precedents[item["id"]]["queue"] or ALL_CASES_QUEUE_ID
             item["precedent"] = precedents[item["id"]]
+            # Populate docuement urls
+            for document in item["good"]["documents"]:
+                document["url"] = reverse(
+                    "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": document["id"]}
+                )
             goods.append(item)
         return goods
 
