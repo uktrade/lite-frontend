@@ -36,7 +36,14 @@ class TAUMixin:
     def organisation_documents(self):
         """This property will collect the org documents that we need to access
         in the template e.g. section 5 certificate etc."""
-        return {item["document_type"].replace("-", "_"): item for item in self.case.organisation["documents"]}
+        documents = {}
+        for item in self.case.organisation["documents"]:
+            key = item["document_type"].replace("-", "_")
+            documents[key] = item
+            documents[key]["url"] = reverse(
+                "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["id"]}
+            )
+        return documents
 
     @cached_property
     def goods(self):
