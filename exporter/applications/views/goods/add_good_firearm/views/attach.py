@@ -2,6 +2,7 @@ import logging
 
 from deepmerge import always_merger
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.shortcuts import redirect
@@ -228,6 +229,17 @@ class AttachFirearmToApplication(
 
         return ctx
 
+    def get_query_params(self, form_dict):
+        params = {}
+
+        if AttachFirearmToApplicationSteps.CATEGORY in form_dict:
+            params["added_firearm_category"] = True
+
+        if AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID in form_dict:
+            params["confirmed_rfd_validity"] = True
+
+        return params
+
     def done(self, form_list, form_dict, **kwargs):
         if self.is_rfd_invalid(form_dict):
             # This is an error state, we shouldn't have been able to submit if
@@ -262,4 +274,10 @@ class AttachFirearmToApplication(
 
         self.good_on_application = good_on_application
 
-        return redirect(self.get_success_url())
+        success_url = self.get_success_url()
+        qs = ""
+        params = self.get_query_params(form_dict)
+        if params:
+            qs = f"?{urlencode(params)}"
+
+        return redirect(f"{success_url}{qs}")

@@ -18,6 +18,32 @@
 
     {% with firearm_details=good_on_application.firearm_details %}
         <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+            {% if added_firearm_category %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Firearm category
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% for category in firearm_details.category %}
+                            {{ category.value }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
+            {% if confirmed_rfd_validity %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Is your registered firearms dealer certificate still valid?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        Yes
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            {% endif %}
             {% if good.firearm_details.firearms_act_section == "firearms_act_section1" %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -301,16 +327,18 @@
                     {{ good.firearm_details.type.value|default_na }}
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Firearm category
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {% for category in firearm_details.category %}
-                        {{ category.value }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </dd>
-            </div>
+            {% if not added_firearm_category %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Firearm category
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% for category in firearm_details.category %}
+                            {{ category.value }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </dd>
+                </div>
+            {% endif %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Give the product a descriptive name
