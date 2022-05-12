@@ -1,5 +1,5 @@
-@all @internal @sactions
-Feature: I want to check sactions matches
+@all @internal @sanctions
+Feature: I want to check sanctions matches
   As a logged in government user
   I want to check that the sanction match is highlighted
   For a case is created with a name on it that has a sanction

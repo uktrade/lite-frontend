@@ -11,12 +11,12 @@ def check_sanction(driver, sso_sign_in):  # noqa
 
 
 @given("For a case is created with a name on it that has a sanction")  # noqa
-def sactioned_case(driver, sso_sign_in):  # noqa
+def sanctioned_case(driver, sso_sign_in):  # noqa
     pass
 
 
-@then(parsers.parse('I should see that the sanction match is highlighted as "{end_user_name}"'))
-def check_saction_highlighted(driver, end_user_name):  # noqa
+@then(parsers.parse('I should see that the sanction match is highlighted as "{end_user_name}", "{end_user_address}"'))
+def check_sanction_highlighted(driver, end_user_name, end_user_address):  # noqa
     sanctions_table = driver.find_element(by=By.ID, value="table-sanction-matches")
     name_element = sanctions_table.find_element(by=By.XPATH, value="//tbody/tr/td[4]")
     assert name_element.text == end_user_name
