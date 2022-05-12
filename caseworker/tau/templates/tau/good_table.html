@@ -1,33 +1,18 @@
 {% load advice_tags tau_tags %}
-<table id="table-products-{{ forloop.counter }}" class="govuk-table">
-    <tbody class="govuk-table__body">
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Select the type of firearm product</td>
-        <td class="govuk-table__cell">{{good.good.firearm_details.type.value}}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Part number (optional)</td>
-        <td class="govuk-table__cell">{{ good.good.part_number }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Does the product have a government security grading or classification?</td>
-        <td class="govuk-table__cell">{{ good.good.is_pv_graded|title }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Is the product for military use?</td>
-        <td class="govuk-table__cell">{{ good.good.is_military_use.value }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Will the product be onward exported to any additional countries?</td>
-        <td class="govuk-table__cell">{{ case.destinations|is_ultimate_end_user|yesno|capfirst }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Quantity</td>
-        <td class="govuk-table__cell">{{ good.quantity|floatformat:"0" }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Total value</td>
-        <td class="govuk-table__cell">£{{ case.goods | get_case_value }}</td>
-      </tr>
-    </tbody>
-  </table>
+{% if good.good.firearm_details.type.key == "firearms" %}
+{% include "tau/firearms_table.html" %}
+{% elif good.good.firearm_details.type.key == "ammunition" %}
+{% include "tau/ammunition_table.html" %}
+{% elif good.good.firearm_details.type.key == "components_for_firearms" %}
+{% include "tau/components_for_firearms_table.html" %}
+{% elif good.good.firearm_details.type.key == "components_for_ammunition" %}
+{% include "tau/components_for_ammunition_table.html" %}
+{% elif good.good.firearm_details.type.key == "firearms_accessory" %}
+{% include "tau/firearms_accessory_table.html" %}
+{% elif good.good.firearm_details.type.key == "software_related_to_firearms" %}
+{% include "tau/software_related_to_firearms_table.html" %}
+{% elif good.good.firearm_details.type.key == "technology_related_to_firearms" %}
+{% include "tau/technology_related_to_firearms_table.html" %}
+{% else %}
+Unknown good type
+{% endif %}

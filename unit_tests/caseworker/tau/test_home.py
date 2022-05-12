@@ -19,7 +19,7 @@ def url(data_queue, data_standard_case):
 
 
 def get_cells(soup, table_id):
-    return [td.text for td in soup.find(id=table_id).find_all("td")]
+    return [td.text.strip() for td in soup.find(id=table_id).find_all("td")]
 
 
 def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_precedents_api):
@@ -127,20 +127,38 @@ def test_home_content(
 
     # Test if the unassessed products table is sane
     assert get_cells(soup, "table-products-1") == [
-        "Select the type of firearm product",
-        "Firearms",
-        "Part number (optional)",
-        "44",
+        "Product document",
+        "data_sheet.pdf",
+        "Firearm category",
+        "",
+        "Give the product a descriptive name",
+        "",
         "Does the product have a government security grading or classification?",
-        "Yes",
-        "Is the product for military use?",
+        "",
+        "What is the calibre of the product?",
+        "",
+        "Is the product a replica firearm?",
+        "No",
+        "Are you a registered firearms dealer?",
+        "No",
+        "Was the product made before 1938?",
         "No",
         "Will the product be onward exported to any additional countries?",
         "No",
+        "Will the product be incorporated into another item before it is onward exported?",
+        "No",
+        "Has the product been deactivated?",
+        "No",
+        "Part number (optional)",
+        "",
         "Quantity",
         "444",
         "Total value",
         "£0.00",
+        "Will each product have a serial number or other identification marking?",
+        "Yes",
+        "Enter serial numbers or other identification markings",
+        "",
     ]
 
     # The precedent for the unassessed product

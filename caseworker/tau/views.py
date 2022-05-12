@@ -33,6 +33,12 @@ class TAUMixin:
         return case
 
     @cached_property
+    def organisation_documents(self):
+        """This property will collect the org documents that we need to access
+        in the template e.g. section 5 certificate etc."""
+        return {item["document_type"].replace("-", "_"): item for item in self.case.organisation["documents"]}
+
+    @cached_property
     def goods(self):
         goods = []
         precedents = get_recent_precedent(self.request, self.case)
@@ -88,6 +94,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
+            "organisation_documents": self.organisation_documents,
         }
 
     def get_goods(self, good_ids):
@@ -144,7 +151,13 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return {**context, "case": self.case, "queue_id": self.queue_id, "good": self.get_good()}
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "good": self.get_good(),
+            "organisation_documents": self.organisation_documents,
+        }
 
     def form_valid(self, form):
         data = form.cleaned_data
