@@ -20,9 +20,9 @@ from exporter.core.constants import (
     FirearmsActSections,
 )
 from exporter.core.helpers import (
-    has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     get_document_data,
     get_rfd_certificate,
+    has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView

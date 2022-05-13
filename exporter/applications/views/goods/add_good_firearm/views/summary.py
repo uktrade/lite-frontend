@@ -45,15 +45,13 @@ class FirearmProductSummary(
         }
 
 
-class FirearmProductOnApplicationSummary(
+class BaseProductOnApplicationSummary(
     LoginRequiredMixin,
     Product2FlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
 ):
-    template_name = "applications/goods/firearms/product-on-application-summary.html"
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -87,3 +85,25 @@ class FirearmProductOnApplicationSummary(
             "is_user_rfd": is_user_rfd,
             "organisation_documents": organisation_documents,
         }
+
+
+class FirearmProductOnApplicationSummary(BaseProductOnApplicationSummary):
+    template_name = "applications/goods/firearms/product-on-application-summary.html"
+
+
+class FirearmAttachProductOnApplicationSummary(BaseProductOnApplicationSummary):
+    template_name = "applications/goods/firearms/attach-product-on-application-summary.html"
+
+    def has_added_firearm_category(self):
+        return bool(self.request.GET.get("added_firearm_category"))
+
+    def has_confirmed_rfd_validity(self):
+        return bool(self.request.GET.get("confirmed_rfd_validity"))
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["added_firearm_category"] = self.has_added_firearm_category()
+        ctx["confirmed_rfd_validity"] = self.has_confirmed_rfd_validity()
+
+        return ctx

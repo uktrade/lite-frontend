@@ -176,6 +176,7 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
             "feature_flag_firearms_enabled": settings.FEATURE_FLAG_FIREARMS_ENABLED,
+            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
         return render(request, "applications/goods/preexisting.html", context)
 

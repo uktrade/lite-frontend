@@ -85,14 +85,15 @@ class BaseFirearmForm(forms.Form):
                 self.helper.attrs = {"enctype": "multipart/form-data"}
                 break
 
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
-            *self.get_layout_fields(),
-            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
-        )
+        self.helper.layout = Layout(HTML.h1(self.Layout.TITLE), *self.get_layout_fields(), *self.get_layout_actions())
 
     def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
+
+    def get_layout_actions(self):
+        return [
+            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
+        ]
 
 
 class FirearmCategoryForm(BaseFirearmForm):
@@ -1245,3 +1246,16 @@ class FirearmSerialNumbersForm(BaseFirearmForm):
             cleaned_data[f"serial_number_input_{i}"] = serial_number
 
         return cleaned_data
+
+
+class FirearmRFDInvalidForm(BaseFirearmForm):
+    class Layout:
+        TITLE = "You must be registered as a firearms dealer"
+
+    def get_layout_fields(self):
+        return (HTML(render_to_string("goods/forms/firearms/rfd_invalid.html")),)
+
+    def get_layout_actions(self):
+        return [
+            HTML.p(f'<a class="govuk-button" href="{reverse("core:home")}">Exit application</a>'),
+        ]
