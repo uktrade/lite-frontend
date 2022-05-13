@@ -12,9 +12,19 @@ from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 
-from exporter.applications.services import post_firearm_good_on_application
-from exporter.core.constants import FirearmsActDocumentType, FirearmsActSections
-from exporter.core.helpers import get_rfd_certificate
+from exporter.applications.services import (
+    post_additional_document,
+    post_firearm_good_on_application,
+)
+from exporter.core.constants import (
+    DocumentType,
+    FirearmsActDocumentType,
+    FirearmsActSections,
+)
+from exporter.core.helpers import (
+    get_rfd_certificate,
+    has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
+)
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.firearms import (
@@ -240,6 +250,36 @@ class AttachFirearmToApplication(
 
         return params
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error attaching existing rfd certificate to application",
+        "Unexpected error adding firearm",
+    )
+    def attach_rfd_certificate_to_application(self, application):
+        organisation_rfd_certificate_data = get_rfd_certificate(application)
+        document = organisation_rfd_certificate_data["document"]
+        return post_additional_document(
+            self.request,
+            pk=application["id"],
+            json={
+                "name": document["name"],
+                "s3_key": document["s3_key"],
+                "safe": document["safe"],
+                "size": document["size"],
+                "document_type": DocumentType.RFD_CERTIFICATE,
+                "description": "Registered firearm dealer certificate",
+            },
+        )
+
+    def has_existing_valid_organisation_rfd_certificate(self, application):
+        if not has_valid_organisation_rfd_certificate(application):
+            return False
+
+        is_rfd_certificate_valid_cleaned_data = self.get_cleaned_data_for_step(
+            AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID,
+        )
+        return is_rfd_certificate_valid_cleaned_data.get("is_rfd_certificate_valid", False)
+
     def done(self, form_list, form_dict, **kwargs):
         if self.is_rfd_invalid(form_dict):
             # This is an error state, we shouldn't have been able to submit if
@@ -248,6 +288,9 @@ class AttachFirearmToApplication(
 
         try:
             self.edit_firearm(self.good["id"], form_dict)
+
+            if self.has_existing_valid_organisation_rfd_certificate(self.application):
+                self.attach_rfd_certificate_to_application(self.application)
 
             good_on_application, _ = self.post_firearm_to_application(form_dict)
             good_on_application = good_on_application["good"]

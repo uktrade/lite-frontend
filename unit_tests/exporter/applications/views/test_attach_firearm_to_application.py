@@ -299,7 +299,14 @@ def test_attach_firearm_to_application_end_to_end_rfd_valid(
     good_on_application,
     application_with_organisation_rfd_document,
     attach_product_on_application_summary_url,
+    requests_mock,
 ):
+    post_application_document_matcher = requests_mock.post(
+        f"/applications/{application['id']}/documents/",
+        status_code=201,
+        json={},
+    )
+
     response = post_to_step(
         AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID,
         data={
@@ -428,6 +435,16 @@ def test_attach_firearm_to_application_end_to_end_rfd_valid(
         "quantity": 2,
         "unit": "NAR",
         "value": "16.32",
+    }
+
+    assert post_application_document_matcher.called_once
+    assert post_application_document_matcher.last_request.json() == {
+        "description": "Registered firearm dealer certificate",
+        "document_type": "rfd-certificate",
+        "name": "rfd_certificate.txt",
+        "s3_key": "rfd_certificate.txt.s3_key",
+        "safe": True,
+        "size": 3,
     }
 
 
