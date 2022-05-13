@@ -430,7 +430,7 @@ class AddPreexistingGoodToApplicationForm:
 
 
 class ViewGoodOnApplicationPage:
-    TITLE = "Products"
+    TITLE = "Tell us about the products"
     ADD_NEW_BUTTON = "Add a new product"
     NO_CONTENT = "You haven't added any products to this application"
     NO_CONTENT_DESCRIPTION = (
