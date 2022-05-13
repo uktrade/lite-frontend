@@ -36,6 +36,7 @@ class TAUEditForm(forms.Form):
         help_text="Type to get suggestions. For example, components for body armour.",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": "report_summary"}),
+        required=False,
     )
 
     comment = forms.CharField(
@@ -65,6 +66,10 @@ class TAUEditForm(forms.Form):
             raise forms.ValidationError({"does_not_have_control_list_entries": self.MESSAGE_NO_CLC_MUTEX})
         elif not has_none and not has_some:
             raise forms.ValidationError({"does_not_have_control_list_entries": self.MESSAGE_NO_CLC_REQUIRED})
+        # report summary is required when there are CLEs
+        no_report_summary = cleaned_data.get("report_summary", "") == ""
+        if has_some and no_report_summary:
+            raise forms.ValidationError({"report_summary": "This field is required."})
         return cleaned_data
 
 
