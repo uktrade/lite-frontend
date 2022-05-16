@@ -4,12 +4,12 @@
     <tbody class="govuk-table__body">
       {% if good.good.is_document_available %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Product document</td>
         <td class="govuk-table__cell">
           {% for document in good.good.documents %}
-          <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+          <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">Product document({{ document.type }}, opens in new tab)</a>
           {% endfor %}
         </td>
+        <td class="govuk-table__cell"></td>
       </tr>
       {% else %}
       <tr class="govuk-table__row">

@@ -12,11 +12,11 @@
         <div class="govuk-grid-row">
             <!-- Heading -->
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Product Assessment</h1>
+                <h1 class="govuk-heading-m">Product assessment</h1>
                 {% if unassessed_goods %}
-                <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} product(s) going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+                    <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} {% if unassessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
                 {% else %}
-                <p id="subtitle" class="govuk-body-l">{{ assessed_goods|length }} product(s) going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+                    <p id="subtitle" class="govuk-body-l">{{ assessed_goods|length }} {% if assessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
                 {% endif %}
             </div>
             <!-- Move case forward form -->
@@ -55,14 +55,17 @@
                             {% endif %}
                         {% endfor %}
                         </ol>
-                    <div class="govuk-label"><span>or type for suggestions.</span></div>
+                    <div class="govuk-hint">or type for suggestions.</div>
                     {% for field in form %}
                     {% if field.name != "goods" %}
+                        {% if field.name == "does_not_have_control_list_entries" %}
+                            <p class="govuk-body-m">Or</p>
+                        {% endif %}
                     {{ field | as_crispy_field }}
                     {% endif %}
                     {% endfor %}
                     <div class="form-actions">
-                        <input type="submit" name="submit" value="Submit recommendation" class="govuk-button" id="submit-id-submit">
+                        <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
                     </div>
                 </div>
             </form>
@@ -73,15 +76,15 @@
         {% if assessed_goods %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <table id="assessed-products" class="govuk-table">
+                <table id="assessed-products" class="govuk-table">   
                     <caption class="govuk-table__caption govuk-table__caption--m">Assessed Products</caption>
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header"></th>
                             <th scope="col" class="govuk-table__header"></th>
-                            <th scope="col" class="govuk-table__header">Quantities</th>
                             <th scope="col" class="govuk-table__header">Control Entry</th>
                             <th scope="col" class="govuk-table__header">License</th>
+                            <th scope="col" class="govuk-table__header">Regime</th>
                             <th scope="col" class="govuk-table__header">Report Summary</th>
                             <th scope="col" class="govuk-table__header">Assessment notes</th>
                         </tr>
@@ -89,13 +92,13 @@
                     <tbody class="govuk-table__body">
                         {% for good in assessed_goods %}
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">{{ good.line_number }}</td>
+                            <td class="govuk-table__cell">{{ good.line_number }}.</td>
                             <td class="govuk-table__cell">{{ good.good.name }}</td>
-                            <td class="govuk-table__cell">{{ good.quantity|floatformat }}</td>
                             <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
                             <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
+                            <td class="govuk-table__cell">{% if good.precedent.wassenaar %}Wassenaar{% endif %}</td>
                             <td class="govuk-table__cell">{{ good.report_summary }}</td>
-                            <td class="govuk-table__cell"><a href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit assessment</a></td>
+                            <td class="govuk-table__cell"><a href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>
