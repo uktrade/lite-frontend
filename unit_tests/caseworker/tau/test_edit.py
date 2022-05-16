@@ -74,7 +74,6 @@ def test_form(
     mock_control_list_entries,
     mock_precedents_api,
 ):
-
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
     """
@@ -207,7 +206,6 @@ def test_form_new_edit_file(
     )
 
     assert response.status_code == 302
-
     assert mock_internal_docs_matcher["DELETE"].called_once
     assert mock_internal_docs_matcher["POST"].last_request.json() == {
         "name": "test_new.pdf",

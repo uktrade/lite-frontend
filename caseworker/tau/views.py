@@ -11,6 +11,8 @@ from caseworker.tau.services import get_recent_precedent
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
+from core.file_handler import download_document_from_s3
+from .actions import GoodOnApplicationInternalDocumentAction
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from core.file_handler import download_document_from_s3
 from .actions import GoodOnApplicationInternalDocumentAction
