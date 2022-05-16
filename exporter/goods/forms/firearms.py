@@ -7,7 +7,6 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, HTML, Layout, Submit
 
 from django import forms
-from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
@@ -34,13 +33,37 @@ class CustomErrorDateInputField(DateInputField):
     def __init__(self, error_messages, **kwargs):
         super().__init__(**kwargs)
 
+        self.custom_messages = {}
+
         for key, field in zip(["day", "month", "year"], self.fields):
             field_error_messages = error_messages.pop(key)
             field.error_messages["incomplete"] = field_error_messages["incomplete"]
+
             regex_validator = field.validators[0]
             regex_validator.message = field_error_messages["invalid"]
 
+            self.custom_messages[key] = field_error_messages
+
         self.error_messages = error_messages
+
+    def compress(self, data_list):
+        try:
+            return super().compress(data_list)
+        except ValidationError as e:
+            # These are the error strings that come back from the datetime
+            # library that then get bundled into a ValidationError from the
+            # parent.
+            # In this case the best we can do is to match on these strings
+            # and then give back the error message that makes the most sense.
+            # If we fail to find a matching message we will still give back a
+            # user friendly message.
+            if e.message == "day is out of range for month":
+                raise ValidationError(self.custom_messages["day"]["invalid"])
+            if e.message == "month must be in 1..12":
+                raise ValidationError(self.custom_messages["month"]["invalid"])
+            if e.message == f"year {data_list[2]} is out of range":
+                raise ValidationError(self.custom_messages["year"]["invalid"])
+            raise ValidationError(self.error_messages["invalid"])
 
 
 def coerce_str_to_bool(val):
@@ -62,14 +85,15 @@ class BaseFirearmForm(forms.Form):
                 self.helper.attrs = {"enctype": "multipart/form-data"}
                 break
 
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
-            *self.get_layout_fields(),
-            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
-        )
+        self.helper.layout = Layout(HTML.h1(self.Layout.TITLE), *self.get_layout_fields(), *self.get_layout_actions())
 
     def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
+
+    def get_layout_actions(self):
+        return [
+            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
+        ]
 
 
 class FirearmCategoryForm(BaseFirearmForm):
@@ -163,7 +187,7 @@ class FirearmProductControlListEntryForm(BaseFirearmForm):
         coerce=coerce_str_to_bool,
         label="",
         error_messages={
-            "required": "Select yes if you know the products control list entry",
+            "required": "Select yes if you know the product's control list entry",
         },
     )
 
@@ -284,6 +308,7 @@ class FirearmPvGradingDetailsForm(BaseFirearmForm):
         error_messages={
             "required": "Enter the date of issue",
             "incomplete": "Enter the date of issue",
+            "invalid": "Date of issue must be a real date",
             "day": {
                 "incomplete": "Date of issue must include a day",
                 "invalid": "Date of issue must be a real date",
@@ -476,6 +501,7 @@ class FirearmAttachRFDCertificate(BaseFirearmForm):
         error_messages={
             "required": "Enter the expiry date",
             "incomplete": "Enter the expiry date",
+            "invalid": "Expiry date must be a real date",
             "day": {
                 "incomplete": "Expiry date must include a day",
                 "invalid": "Expiry date must be a real date",
@@ -712,6 +738,9 @@ class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
         help_text="For example, 30 9 2024",
         required=False,
         error_messages={
+            "required": "Enter the expiry date",
+            "incomplete": "Enter the expiry date",
+            "invalid": "Expiry date must be a real date",
             "day": {
                 "incomplete": "Expiry date must include a day",
                 "invalid": "Expiry date must be a real date",
@@ -727,7 +756,7 @@ class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
         },
         validators=[
             FutureDateValidator("Expiry date must be in the future"),
-            RelativeDeltaDateValidator("Expiry date must be with 5 years", years=5),
+            RelativeDeltaDateValidator("Expiry date must be within 5 years", years=5),
         ],
     )
 
@@ -855,18 +884,15 @@ class FirearmYearOfManufactureForm(BaseFirearmForm):
         widget=forms.TextInput,
         error_messages={
             "required": "Enter the year it was made",
+            "min_value": "The year it was made must be a real year",
+            "max_value": "The year must be before 1938",
         },
+        min_value=1000,
+        max_value=1937,
     )
 
     def get_layout_fields(self):
         return ("year_of_manufacture",)
-
-    def clean(self):
-        year_of_manufacture = self.cleaned_data.get("year_of_manufacture")
-        if year_of_manufacture and year_of_manufacture >= 1938:
-            self.add_error("year_of_manufacture", "The year must be before 1938")
-
-        return self.cleaned_data
 
 
 class FirearmOnwardExportedForm(BaseFirearmForm):
@@ -983,6 +1009,7 @@ class FirearmDeactivationDetailsForm(BaseFirearmForm):
         error_messages={
             "required": "Enter the deactivation date",
             "incomplete": "Enter the deactivation date",
+            "invalid": "Deactivation date must be a real date",
             "day": {
                 "incomplete": "Deactivation date must include a day",
                 "invalid": "Deactivation date must be a real date",
@@ -1104,29 +1131,23 @@ class FirearmQuantityAndValueForm(BaseFirearmForm):
         error_messages={
             "invalid": "Number of items must be a number, like 16",
             "required": "Enter the number of items",
+            "min_value": "Number of items must be 1 or more",
         },
-        validators=[
-            validators.MinValueValidator(1, "Number of items must be 1 or more"),
-        ],
+        min_value=1,
         widget=forms.TextInput,
     )
     value = forms.DecimalField(
+        decimal_places=2,
         error_messages={
             "invalid": "Total value must be a number, like 16.32",
             "required": "Enter the total value",
+            "max_decimal_places": "Total value must not be more than 2 decimals",
+            "min_value": "Total value must be 0.01 or more",
         },
         label="Total value",
-        validators=[
-            validators.MinValueValidator(Decimal("0.01"), "Total value must be 0.01 or more"),
-        ],
+        min_value=Decimal("0.01"),
         widget=forms.TextInput,
     )
-
-    def clean_value(self):
-        value = self.cleaned_data["value"]
-        if "." not in str(value):
-            raise ValidationError("Total value must include pence, like 123.45 or 156.00")
-        return value
 
     def get_layout_fields(self):
         return (
@@ -1184,12 +1205,10 @@ class FirearmSerialIdentificationMarkingsForm(BaseFirearmForm):
         serial_numbers_available = cleaned_data.get("serial_numbers_available")
         no_identification_markings_details = cleaned_data.get("no_identification_markings_details")
 
-        if (
-            serial_numbers_available == self.SerialChoices.NOT_AVAILABLE.value
-        ) and not no_identification_markings_details:
+        if (serial_numbers_available == self.SerialChoices.NOT_AVAILABLE) and not no_identification_markings_details:
             self.add_error("no_identification_markings_details", "Enter why products will not have serial numbers")
 
-        if serial_numbers_available != self.SerialChoices.NOT_AVAILABLE.value:
+        if serial_numbers_available != self.SerialChoices.NOT_AVAILABLE:
             cleaned_data["no_identification_markings_details"] = ""
 
         return cleaned_data
@@ -1229,8 +1248,14 @@ class FirearmSerialNumbersForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmSummaryForm(forms.Form):
-    # This doesn't need to provide any data, it's just a blank form so that we
-    # can have a summary page at the end of the product summary wizard
+class FirearmRFDInvalidForm(BaseFirearmForm):
     class Layout:
-        TITLE = "Product summary"
+        TITLE = "You must be registered as a firearms dealer"
+
+    def get_layout_fields(self):
+        return (HTML(render_to_string("goods/forms/firearms/rfd_invalid.html")),)
+
+    def get_layout_actions(self):
+        return [
+            HTML.p(f'<a class="govuk-button" href="{reverse("core:home")}">Exit application</a>'),
+        ]

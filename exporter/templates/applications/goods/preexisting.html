@@ -53,9 +53,15 @@
 							</td>
 							{% endif %}
 							<td class="govuk-table__cell lite-!-text-align-right">
-								<a href="{% url 'applications:add_good_to_application' draft_id good.id %}?preexisting=True" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
-									Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
-								</a>
+								{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
+									<a href="{% url 'applications:attach_firearm_to_application' draft_id good.id %}" id="add-firearm-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+								{% else %}
+									<a href="{% url 'applications:add_good_to_application' draft_id good.id %}?preexisting=True" id="add-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+								{% endif %}
 							</td>
 						</tr>
 					{% endfor %}

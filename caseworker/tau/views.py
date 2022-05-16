@@ -13,6 +13,7 @@ from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from core.file_handler import download_document_from_s3
 from .actions import GoodOnApplicationInternalDocumentAction
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
 
 
 class TAUMixin:
@@ -28,7 +29,40 @@ class TAUMixin:
 
     @cached_property
     def case(self):
-        return get_case(self.request, self.case_id)
+        case = get_case(self.request, self.case_id)
+        for (i, good) in enumerate(case.goods):
+            good["line_number"] = i + 1
+        return case
+
+    @cached_property
+    def organisation_documents(self):
+        """This property will collect the org documents that we need to access
+        in the template e.g. section 5 certificate etc."""
+        documents = {}
+        for item in self.case.organisation["documents"]:
+            key = item["document_type"].replace("-", "_")
+            documents[key] = item
+            documents[key]["url"] = reverse(
+                "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["id"]}
+            )
+        return documents
+
+    @cached_property
+    def goods(self):
+        goods = []
+        precedents = get_recent_precedent(self.request, self.case)
+        for item in self.case.goods:
+            # Populate precedents
+            if precedents[item["id"]]:
+                precedents[item["id"]]["queue"] = precedents[item["id"]]["queue"] or ALL_CASES_QUEUE_ID
+            item["precedent"] = precedents[item["id"]]
+            # Populate docuement urls
+            for document in item["good"]["documents"]:
+                document["url"] = reverse(
+                    "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": document["id"]}
+                )
+            goods.append(item)
+        return goods
 
     @cached_property
     def control_list_entries(self):
@@ -41,17 +75,11 @@ class TAUMixin:
 
     @property
     def assessed_goods(self):
-        return [item for item in self.case.goods if self.is_assessed(item)]
+        return [item for item in self.goods if self.is_assessed(item)]
 
     @property
     def unassessed_goods(self):
-        precedents = get_recent_precedent(self.request, self.case)
-        goods = []
-        for item in self.case.goods:
-            if not self.is_assessed(item):
-                item["precedent"] = precedents[item["id"]]
-                goods.append(item)
-        return goods
+        return [item for item in self.goods if not self.is_assessed(item)]
 
     @property
     def good_id(self):
@@ -89,11 +117,12 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
+            "organisation_documents": self.organisation_documents,
         }
 
     def get_goods(self, good_ids):
         good_ids_set = set(good_ids)
-        for good in self.case.goods:
+        for good in self.goods:
             if good["id"] in good_ids_set:
                 yield good
 
@@ -153,14 +182,20 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         return form_kwargs
 
     def get_good(self):
-        for good in self.case.goods:
+        for good in self.goods:
             if good["id"] == self.good_id:
                 return good
         raise Http404
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return {**context, "case": self.case, "queue_id": self.queue_id, "good": self.get_good()}
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "good": self.get_good(),
+            "organisation_documents": self.organisation_documents,
+        }
 
     def form_valid(self, form):
         data = form.cleaned_data

@@ -1,11 +1,15 @@
 from exporter.core.constants import DocumentType, FirearmsActSections
 from exporter.core.helpers import (
-    has_firearm_act_document as _has_firearm_act_document,
+    has_organisation_firearm_act_document as _has_organisation_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 from exporter.goods.forms.firearms import FirearmSection5Form, FirearmSerialIdentificationMarkingsForm
 
-from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
+from .constants import (
+    AddGoodFirearmSteps,
+    AddGoodFirearmToApplicationSteps,
+    AttachFirearmToApplicationSteps,
+)
 
 
 def is_pv_graded(wizard):
@@ -39,11 +43,11 @@ def has_application_rfd_certificate(wizard):
     return False
 
 
-def has_firearm_act_document(document_type):
-    def check_has_firearm_act_document(wizard):
-        return _has_firearm_act_document(wizard.application, document_type)
+def has_organisation_firearm_act_document(document_type):
+    def check_has_organisation_firearm_act_document(wizard):
+        return _has_organisation_firearm_act_document(wizard.application, document_type)
 
-    return check_has_firearm_act_document
+    return check_has_organisation_firearm_act_document
 
 
 def is_rfd_certificate_invalid(wizard):
@@ -131,3 +135,15 @@ def is_certificate_required(document_type):
         return wizard.good["firearm_details"].get("firearms_act_section") == document_type
 
     return _is_certificate_required
+
+
+def has_firearm_category(wizard):
+    return wizard.good["firearm_details"].get("category") is None
+
+
+def is_firearm_certificate_invalid(wizard):
+    is_rfd_valid_data = wizard.get_cleaned_data_for_step(
+        AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID,
+    )
+
+    return is_rfd_valid_data.get("is_rfd_certificate_valid") is False

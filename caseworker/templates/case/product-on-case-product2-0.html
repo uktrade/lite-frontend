@@ -1,0 +1,455 @@
+{% extends 'layouts/case.html' %}
+
+{% load static %}
+
+{% block details %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
+            <div class="govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+                <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Product details</h2>
+                <div class="govuk-caption-l">
+                    {% if good_on_application.good.name %}
+                        {{ good_on_application.good.name }}
+                    {% else %}
+                        {{ good_on_application.good.description }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="govuk-tabs" data-module="govuk-tabs">
+                <ul class="govuk-tabs__list">
+                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                        <a class="govuk-tabs__tab" href="#full-details-tab">
+                            Full details
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#history-tab">
+                            History
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#related-cases-tab">
+                            Cases
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="govuk-tabs__panel" id="full-details-tab">
+                    <h2 class="govuk-heading-l">Exporter application - 'Tell us about the products'</h2>
+                    <table class="govuk-table app-table">
+                        <tbody class="govuk-table__body" id="tbody-placeholder">
+                            {% with firearm_details=good_on_application.firearm_details good=good_on_application.good %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Select the type of firearm product</th>
+                                    <td class="govuk-table__cell">{{ good_on_application.firearm_details.type.value }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Give the product a descriptive name</th>
+                                    <td class="govuk-table__cell">{{ good.name }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Do you know the product's control list entry?</th>
+                                    <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
+                                </tr>
+                                {% if good.is_good_controlled.key == "True" %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">Enter the control list entry</th>
+                                        <td class="govuk-table__cell">
+                                            {% for clc in good.control_list_entries %}
+                                                {{ clc.rating }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Does the product have a government security grading or classification?</th>
+                                    <td class="govuk-table__cell">{{ good.is_pv_graded|title }}</td>
+                                </tr>
+                                {% if good.is_pv_graded == "yes" %}
+                                    {% if good.pv_grading_details.prefix %}
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">Enter a prefix (optional)</th>
+                                            <td class="govuk-table__cell">{{ good.pv_grading_details.prefix }}</td>
+                                        </tr>
+                                    {% endif %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">What is the security grading or classification?</th>
+                                        <td class="govuk-table__cell">{{ good.pv_grading_details.grading.value }}</td>
+                                    </tr>
+                                    {% if good.pv_grading_details.suffix %}
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">Enter a suffix (optional)</th>
+                                            <td class="govuk-table__cell">{{ good.pv_grading_details.suffix }}</td>
+                                        </tr>
+                                    {% endif %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">Name and address of the issuing authority</th>
+                                        <td class="govuk-table__cell">{{ good.pv_grading_details.issuing_authority|linebreaksbr }}</td>
+                                    </tr>
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">Reference</th>
+                                        <td class="govuk-table__cell">{{ good.pv_grading_details.reference }}</td>
+                                    </tr>
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">Date of issue</th>
+                                        <td class="govuk-table__cell">{{ good.pv_grading_details.date_of_issue|to_date|date:"j F Y" }}</td>
+                                    </tr>
+                                {% endif %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">What is the calibre of the product?</th>
+                                    <td class="govuk-table__cell">{{ firearm_details.calibre }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Is the product a replica firearm?</th>
+                                    <td class="govuk-table__cell">
+                                        {{ firearm_details.is_replica|yesno|title }}
+                                        {% if firearm_details.is_replica %}
+                                            <div class="govuk-hint">
+                                                {{ firearm_details.replica_description }}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Are you a registered firearms dealer?</th>
+                                    <td class="govuk-table__cell">{{ is_user_rfd|yesno|title }}</td>
+                                </tr>
+                                {% if is_user_rfd %}
+                                    {% with rfd_certificate=organisation_documents.rfd_certificate %}
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">Upload a registered firearms dealer certificate</th>
+                                            <td class="govuk-table__cell">
+                                                {% if rfd_certificate.document.safe %}
+                                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=rfd_certificate.document.id %}" target="_blank">{{ rfd_certificate.document.name }}</a>
+                                                {% else %}
+                                                    {{ rfd_certificate.document.name }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">Certificate number</th>
+                                            <td class="govuk-table__cell">{{ rfd_certificate.reference_code }}</td>
+                                        </tr>
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">Expiry date</th>
+                                            <td class="govuk-table__cell">{{ rfd_certificate.expiry_date }}</td>
+                                        </tr>
+                                    {% endwith %}
+                                {% endif %}
+                                {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Is the product covered by section 5 of the Firearm Act 1968?
+                                        </th>
+                                        <td class="govuk-table__cell">{{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}</td>
+                                    </tr>
+                                    {% if firearm_details.firearms_act_section == "firearms_act_section5" %}
+                                        {% with section5_document=organisation_documents.section_five_certificate %}
+                                            <tr class="govuk-table__row app-table__row">
+                                                <th scope="row" class="govuk-table__header">Upload your section 5 letter of authority</th>
+                                                <td class="govuk-table__cell">
+                                                    {% if firearm_details.section_certificate_missing %}
+                                                        I do not have a section 5 letter of authority
+                                                        <div class="govuk-hint">
+                                                            {{ firearm_details.section_certificate_missing_reason }}
+                                                        </div>
+                                                    {% else %}
+                                                        {% if section5_document.document.safe %}
+                                                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=section5_document.document.id %}" target="_blank">{{ section5_document.document.name }}</a>
+                                                        {% else %}
+                                                            {{ section5_document.document.name }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% if not firearm_details.section_certificate_missing %}
+                                                <tr class="govuk-table__row app-table__row">
+                                                    <th scope="row" class="govuk-table__header">Certificate reference number</th>
+                                                    <td class="govuk-table__cell">{{ section5_document.reference_code }}</td>
+                                                </tr>
+                                                <tr class="govuk-table__row app-table__row">
+                                                    <th scope="row" class="govuk-table__header">Certificate date of expiry</th>
+                                                    <td class="govuk-table__cell">{{ section5_document.expiry_date }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">Which section of the Firearms Act 1968 is the product covered by?</th>
+                                        <td class="govuk-table__cell">
+                                            {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
+                                                Don't know
+                                            {%  else  %}
+                                                {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}
+                                            {%  endif %}
+                                            {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation %}
+                                                <div class="govuk-hint">
+                                                    {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation }}
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">
+                                        Do you have a document that shows what your product is and what it’s designed to do?
+                                    </th>
+                                    <td class="govuk-table__cell">{{ good.is_document_available|yesno|title }}</td>
+                                </tr>
+                                {% if good.is_document_available %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Is the document rated above Official-sensitive?
+                                        </th>
+                                        <td class="govuk-table__cell">{{ good.is_document_sensitive|yesno|title }}</td>
+                                    </tr>
+                                    {% if not good.is_document_sensitive %}
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">
+                                                Upload a document that shows what your product is designed to do
+                                            </th>
+                                            <td class="govuk-table__cell">
+                                                {% for document in good.documents %}
+                                                    {% if document.safe %}
+                                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" target="_blank">{{ document.name }}</a>
+                                                    {% else %}
+                                                        {{ document.name }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">Description (optional)</th>
+                                            <td class="govuk-table__cell">
+                                                {% for document in good.documents %}
+                                                    {{ document.description }}
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% else %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Explain why you are not able to upload a product document
+                                        </th>
+                                        <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
+                                    </tr>
+                                {% endif %}
+                                {% if good.firearm_details.firearms_act_section == "firearms_act_section1" %}
+                                    <th scope="row" class="govuk-table__header">
+                                        Upload your firearm certificate
+                                    </th>
+                                    <td class="govuk-table__cell">
+                                        {% if firearm_details.section_certificate_missing %}
+                                            I do not have a firearm certificate
+                                            <div class="govuk-hint">
+                                                {{ firearm_details.section_certificate_missing_reason }}
+                                            </div>
+                                        {% else %}
+                                            {% with document=good_on_application_documents.section_one_certificate %}
+                                                {% if document.safe %}
+                                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" target="_blank">{{ document.name }}</a>
+                                                {% else %}
+                                                    {{ document.name }}
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </td>
+                                    {% if not firearm_details.section_certificate_missing %}
+                                        <th scope="row" class="govuk-table__header">
+                                            Certificate reference number
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.section_certificate_number }}
+                                        </td>
+                                        <th scope="row" class="govuk-table__header">
+                                            Certificate date of expiry
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
+                                        </td>
+                                    {% endif %}
+                                {% elif good.firearm_details.firearms_act_section == "firearms_act_section2" %}
+                                    <th scope="row" class="govuk-table__header">
+                                        Upload your shotgun certificate
+                                    </th>
+                                    <td class="govuk-table__cell">
+                                        {% if firearm_details.section_certificate_missing %}
+                                            I do not have a shotgun certificate
+                                            <div class="govuk-hint">
+                                                {{ firearm_details.section_certificate_missing_reason }}
+                                            </div>
+                                        {% else %}
+                                            {% with document=good_on_application_documents.section_two_certificate %}
+                                                {% if document.safe %}
+                                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" target="_blank">{{ document.name }}</a>
+                                                {% else %}
+                                                    {{ document.name }}
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </td>
+                                    {% if not firearm_details.section_certificate_missing %}
+                                        <th scope="row" class="govuk-table__header">
+                                            Certificate reference number
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.section_certificate_number }}
+                                        </td>
+                                        <th scope="row" class="govuk-table__header">
+                                            Certificate date of expiry
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">
+                                        Was the product made before 1938?
+                                    </th>
+                                    <td class="govuk-table__cell">
+                                        {% if firearm_details.is_made_before_1938 is not None %}
+                                            {{ firearm_details.is_made_before_1938|yesno|capfirst }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if firearm_details.is_made_before_1938 or firearm_details.is_made_before_1938 is None %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">What year was it made?</th>
+                                        <td class="govuk-table__cell">{{ firearm_details.year_of_manufacture }}</td>
+                                    </tr>
+                                {% endif %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">
+                                        Will the product be onward exported to any additional countries?
+                                    </th>
+                                    <td class="govuk-table__cell">
+                                        {% if firearm_details.is_onward_exported is not None %}
+                                            {{ firearm_details.is_onward_exported|yesno|capfirst }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if firearm_details.is_onward_exported %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Will the item be altered or processed before it is exported again?
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.is_onward_altered_processed|yesno|capfirst }}
+                                            {% if firearm_details.is_onward_altered_processed %}
+                                                <div class="govuk-hint">
+                                                    {{ firearm_details.is_onward_altered_processed_comments }}
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Will the product be incorporated into another item before it is onward exported?
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.is_onward_incorporated|yesno|capfirst }}
+                                            {% if firearm_details.is_onward_incorporated %}
+                                                <div class="govuk-hint">
+                                                    {{ firearm_details.is_onward_incorporated_comments }}
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Has the product been deactivated?</th>
+                                    <td class="govuk-table__cell">{{ firearm_details.is_deactivated|yesno|capfirst }}</td>
+                                </tr>
+                                {% if firearm_details.is_deactivated %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            When was the item deactivated?
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.date_of_deactivation|to_date|date:"j F Y" }}
+                                        </td>
+                                    </tr>
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Has the item been deactivated to UK proof house standards?
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {{ firearm_details.is_deactivated_to_standard|yesno|capfirst }}
+                                            {% if not firearm_details.is_deactivated_to_standard %}
+                                                <div class="govuk-hint">
+                                                    {{ firearm_details.not_deactivated_to_standard_comments }}
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Number of items</th>
+                                    <td class="govuk-table__cell">{{ firearm_details.number_of_items }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Total value</th>
+                                    <td class="govuk-table__cell">£{{ good_on_application.value|floatformat:2 }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">
+                                        Will each product have a serial number or other identification marking?
+                                    </th>
+                                    <td class="govuk-table__cell">
+                                        {% if firearm_details.serial_numbers_available == "AVAILABLE" %}
+                                            Yes, I can add serial numbers now
+                                        {% elif firearm_details.serial_numbers_available == "LATER" %}
+                                            Yes, I can add serial numbers later
+                                        {% else %}
+                                            No
+                                            {% if firearm_details.no_identification_markings_details %}
+                                                <div class="govuk-hint">
+                                                    {{ firearm_details.no_identification_markings_details }}
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if good.firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Enter serial numbers or other identification markings
+                                        </th>
+                                        <td class="govuk-table__cell">
+                                            {% include "goods/includes/serial_numbers.html" %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endwith %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="govuk-tabs__panel" id="history-tab" >
+                    <h2 class="govuk-heading-l">History</h2>
+                        {% include "includes/audit-trail.html" with activity=good_on_application.audit_trail %}
+                </div>
+
+                <div class="govuk-tabs__panel" id="related-cases-tab">
+                    <h2 class="govuk-heading-l">Cases</h2>
+                    <p class="govuk-body">Other cases this product's part number and control list entries appear in</p>
+                    {% include "search/results_cases.html" with results=other_cases %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'search-cases.js' %}"></script>
+{% endblock %}

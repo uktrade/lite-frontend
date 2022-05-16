@@ -1,6 +1,5 @@
 import logging
 
-from collections import OrderedDict
 from deepmerge import always_merger
 from http import HTTPStatus
 
@@ -21,10 +20,9 @@ from exporter.core.constants import (
     FirearmsActSections,
 )
 from exporter.core.helpers import (
-    has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     get_document_data,
-    get_organisation_documents,
     get_rfd_certificate,
+    has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
@@ -57,10 +55,8 @@ from exporter.goods.forms.firearms import (
     FirearmQuantityAndValueForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
-    FirearmSummaryForm,
 )
 from exporter.goods.services import (
-    get_good_documents,
     post_firearm,
     post_good_documents,
 )
@@ -69,7 +65,7 @@ from exporter.organisation.services import delete_document_on_organisation
 from .actions import GoodOnApplicationFirearmActCertificateAction, OrganisationFirearmActCertificateAction
 from .conditionals import (
     has_application_rfd_certificate,
-    has_firearm_act_document,
+    has_organisation_firearm_act_document,
     has_organisation_rfd_certificate,
     is_certificate_required,
     is_deactivated,
@@ -150,7 +146,7 @@ class AddGoodFirearm(
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: C(
             is_product_covered_by_firearm_act_section(FirearmsActSections.SECTION_5)
         )
-        & ~C(has_firearm_act_document(FirearmsActDocumentType.SECTION_5)),
+        & ~C(has_organisation_firearm_act_document(FirearmsActDocumentType.SECTION_5)),
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE: is_registered_firearms_dealer,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
@@ -384,7 +380,6 @@ class AddGoodFirearmToApplication(
         (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
         (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, FirearmSerialIdentificationMarkingsForm),
         (AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS, FirearmSerialNumbersForm),
-        (AddGoodFirearmToApplicationSteps.SUMMARY, FirearmSummaryForm),
     ]
 
     condition_dict = {
@@ -411,9 +406,10 @@ class AddGoodFirearmToApplication(
 
     def get_success_url(self):
         return reverse(
-            "applications:goods",
+            "applications:product_on_application_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
+                "good_on_application_pk": self.good_on_application["id"],
             },
         )
 
@@ -435,77 +431,17 @@ class AddGoodFirearmToApplication(
             payload,
         )
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
-    def get_template_names(self):
-        if self.steps.current == AddGoodFirearmToApplicationSteps.SUMMARY:
-            return ["applications/goods/firearms/product-on-application-summary.html"]
-        return super().get_template_names()
-
-    def get_firearm_document(self, form_dict):
-        form = None
-        if AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE in form_dict:
-            form = form_dict[AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE]
-        elif AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE in form_dict:
-            form = form_dict[AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE]
-
-        if not form:
-            return None
-
-        return form.cleaned_data["file"]
-
-    def get_form_dict(self):
-        form_dict = OrderedDict()
-        for form_key in self.get_form_list():
-            form_obj = self.get_form(
-                step=form_key,
-                data=self.storage.get_step_data(form_key),
-                files=self.storage.get_step_files(form_key),
-            )
-            if form_obj.is_valid():
-                form_dict[form_key] = form_obj
-        return form_dict
-
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:new_good",
+            "applications:product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
+                "good_pk": self.good["id"],
             },
         )
         ctx["title"] = form.Layout.TITLE
-        ctx["AddGoodFirearmToApplicationSteps"] = AddGoodFirearmToApplicationSteps
-
-        if self.steps.current == AddGoodFirearmToApplicationSteps.SUMMARY:
-            form_dict = self.get_form_dict()
-            documents = get_good_documents(self.request, self.good["id"])
-            is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
-            organisation_documents = {
-                k.replace("-", "_"): v for k, v in get_organisation_documents(self.application).items()
-            }
-            firearm_certificate_document = self.get_firearm_document(form_dict)
-
-            return {
-                **ctx,
-                "is_user_rfd": is_user_rfd,
-                "application_id": self.application["id"],
-                "good": self.good,
-                "good_on_application": self.get_payload(form_dict),
-                "documents": documents,
-                "organisation_documents": organisation_documents,
-                "firearm_certificate_document": firearm_certificate_document,
-            }
 
         return ctx
 

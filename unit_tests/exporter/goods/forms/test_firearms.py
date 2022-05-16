@@ -29,6 +29,7 @@ from exporter.goods.forms.firearms import (
     FirearmReplicaForm,
     FirearmRFDValidityForm,
     FirearmSection5Form,
+    FirearmSerialIdentificationMarkingsForm,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
 )
@@ -98,7 +99,7 @@ def test_firearm_product_control_list_entry_form_init_control_list_entries(reque
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
-        ({}, False, {"is_good_controlled": ["Select yes if you know the products control list entry"]}),
+        ({}, False, {"is_good_controlled": ["Select yes if you know the product's control list entry"]}),
         ({"is_good_controlled": True}, False, {"control_list_entries": ["Enter the control list entry"]}),
         ({"is_good_controlled": True, "control_list_entries": ["ML1", "ML1a"]}, True, {}),
         ({"is_good_controlled": False}, True, {}),
@@ -195,7 +196,7 @@ def test_firearm_pv_security_gradings_form(data, is_valid, errors):
             },
             False,
             {
-                "date_of_issue": ["day is out of range for month"],
+                "date_of_issue": ["Date of issue must be a real date"],
             },
         ),
         (
@@ -209,7 +210,21 @@ def test_firearm_pv_security_gradings_form(data, is_valid, errors):
             },
             False,
             {
-                "date_of_issue": ["month must be in 1..12"],
+                "date_of_issue": ["Date of issue must be a real date"],
+            },
+        ),
+        (
+            {
+                "grading": "official",
+                "reference": "ABC123",
+                "issuing_authority": "Government entity",
+                "date_of_issue_0": "20",
+                "date_of_issue_1": "12",
+                "date_of_issue_2": "10000",
+            },
+            False,
+            {
+                "date_of_issue": ["Date of issue must be a real date"],
             },
         ),
         (
@@ -519,7 +534,7 @@ def test_firearm_firearm_act_1968_form(data, is_valid, errors):
             {
                 "file": ["Select a firearm certificate"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -584,7 +599,7 @@ def test_firearm_attach_firearm_certificate_form(data, files, is_valid, errors):
             {
                 "file": ["Select a shotgun certificate"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -649,7 +664,7 @@ def test_firearm_attach_shotgun_certificate_form(data, files, is_valid, errors):
             {
                 "file": ["Select a section 5 letter of authority"],
                 "section_certificate_number": ["Enter the certificate number"],
-                "section_certificate_date_of_expiry": ["Expiry date must be with 5 years"],
+                "section_certificate_date_of_expiry": ["Expiry date must be within 5 years"],
             },
         ),
         (
@@ -752,6 +767,9 @@ def test_firearm_made_before_1938_form(data, is_valid, errors):
         ({}, False, {"year_of_manufacture": ["Enter the year it was made"]}),
         ({"year_of_manufacture": 2022}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
         ({"year_of_manufacture": 1938}, False, {"year_of_manufacture": ["The year must be before 1938"]}),
+        ({"year_of_manufacture": 999}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
+        ({"year_of_manufacture": 1}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
+        ({"year_of_manufacture": "-1"}, False, {"year_of_manufacture": ["The year it was made must be a real year"]}),
         ({"year_of_manufacture": 1937}, True, {}),
     ),
 )
@@ -787,9 +805,14 @@ def test_firearm_year_of_manufacture_form(data, is_valid, errors):
         ),
         ({"number_of_items": "1", "value": "0"}, False, {"value": ["Total value must be 0.01 or more"]}),
         (
-            {"number_of_items": "1", "value": "16"},
+            {"number_of_items": "1", "value": "16.12345"},
             False,
-            {"value": ["Total value must include pence, like 123.45 or 156.00"]},
+            {"value": ["Total value must not be more than 2 decimals"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "16"},
+            True,
+            {},
         ),
         (
             {"number_of_items": "1", "value": "16.32"},
@@ -834,5 +857,50 @@ def test_firearm_is_deactivated_form(data, is_valid, errors):
 )
 def test_firearm_deactivation_details_form(data, is_valid, errors):
     form = FirearmDeactivationDetailsForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {"serial_numbers_available": ["Select if each product will have a serial number"]},
+        ),
+        (
+            {
+                "serial_numbers_available": "NOT_AVAILABLE",
+            },
+            False,
+            {"no_identification_markings_details": ["Enter why products will not have serial numbers"]},
+        ),
+        (
+            {
+                "serial_numbers_available": "AVAILABLE",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_available": "LATER",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_available": "NOT_AVAILABLE",
+                "no_identification_markings_details": "no markings",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_identificateion_markings_form(data, is_valid, errors):
+    form = FirearmSerialIdentificationMarkingsForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

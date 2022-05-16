@@ -932,3 +932,10 @@ def verbose_goods_starting_point(value):
 def document_extension(filename):
     _, ext = os.path.splitext(filename)
     return ext[1:]
+
+
+@register.filter(name="to_date")
+def to_date(val):
+    if not val:
+        return ""
+    return datetime.date.fromisoformat(val)

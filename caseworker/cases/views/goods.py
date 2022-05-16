@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.conf import settings
 from formtools.wizard.views import SessionWizardView
 
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
@@ -191,7 +192,9 @@ class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
 
 
 class GoodDetails(LoginRequiredMixin, FormView):
-    template_name = "case/product-on-case.html"
+    template_name = (
+        "case/product-on-case-product2-0.html" if settings.FEATURE_FLAG_PRODUCT_2_0 else "case/product-on-case.html"
+    )
     form_class = SearchForm
 
     @cached_property
@@ -225,6 +228,9 @@ class GoodDetails(LoginRequiredMixin, FormView):
         organisation_documents = {
             item["document_type"].replace("-", "_"): item for item in case.organisation["documents"]
         }
+        rfd_certificate = organisation_documents.get("rfd_certificate")
+        is_user_rfd = rfd_certificate and not rfd_certificate["is_expired"]
+
         return super().get_context_data(
             good_on_application=self.object,
             good_on_application_documents=goa_documents,
@@ -233,5 +239,6 @@ class GoodDetails(LoginRequiredMixin, FormView):
             # for pagination
             data={"total_pages": self.other_cases["count"] // form.page_size} if self.other_cases else {},
             organisation_documents=organisation_documents,
+            is_user_rfd=is_user_rfd,
             **kwargs,
         )

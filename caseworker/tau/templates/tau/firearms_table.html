@@ -1,0 +1,156 @@
+{% load advice_tags tau_tags %}
+
+<table id="table-products-{{ forloop.counter }}" class="govuk-table">
+    <tbody class="govuk-table__body">
+      {% if good.good.is_document_available %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Product document</td>
+        <td class="govuk-table__cell">
+          {% for document in good.good.documents %}
+          <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">{{ document.name }}</a>
+          {% endfor %}
+        </td>
+      </tr>
+      {% else %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Explain why you are not able to upload a product document</td>
+        <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
+      </tr>
+      {% endif %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Firearm category</td>
+        <td class="govuk-table__cell">{{good.firearm_details.type.value}}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Give the product a descriptive name</td>
+        <td class="govuk-table__cell">{{good.firearm_details.type.value}}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Does the product have a government security grading or classification?</td>
+        <td class="govuk-table__cell">{{ good.is_pv_graded|title }}</td>
+      </tr>
+      {% if good.is_pv_graded == "yes" %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Name and address of issuing authority</td>
+        <td class="govuk-table__cell">{{ good.pv_grading_details.issuing_authority }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Reference</td>
+        <td class="govuk-table__cell">{{ good.pv_grading_details.reference }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Date of issue</td>
+        <td class="govuk-table__cell">{{ good.pv_grading_details.date_of_issue }}</td>
+      </tr>
+      {% endif %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">What is the calibre of the product?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.calibre }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Is the product a replica firearm?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.replica|yesno|title }}</td>
+      </tr>
+      {% if good.firearm_details.replica %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Describe the firearm that the product is a replica of</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.replica_description }}</td>
+      </tr>
+      {% endif %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Are you a registered firearms dealer?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.firearms_act_section|yesno|title }}</td>
+      </tr>
+      {% if good.firearm_details.firearms_act_section == "yes" %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Certificate number</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.section_certificate_number }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Expiry date</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.section_certificate_date_of_expiry }}</td>
+      </tr>
+      {% endif %}
+      {% if organisation_documents.section_5_certificate %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Is the product covered by section 5 of the Firearm Act 1968?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.is_covered_by_firearm_act_section_one_two_or_five|yesno|title }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Upload your section 5 letter of authority</td>
+        <td class="govuk-table__cell"><a target="_blank" href="{{ organisation_documents.section_5_certificate.url }}" class="govuk-link--no-visited-state">{{ organisation_documents.section_5_certificate.document.name }}</a></td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Certificate number</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.section_certificate_number }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Expiry date</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.section_certificate_date_of_expiry }}</td>
+      </tr>
+      {% endif %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Was the product made before 1938?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.is_made_before_1938|yesno|title }}</td>
+      </tr>
+      {% if good.firearm_details.is_made_before_1938 %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">What year was it made?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.year_of_manufacture }}</td>
+      </tr>
+      {% endif %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Will the product be onward exported to any additional countries?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.is_onward_exported|yesno|title }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Will the product be incorporated into another item before it is onward exported?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.is_onwards_incorporated|yesno|title }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Has the product been deactivated?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.is_deactivated|yesno|title }}</td>
+      </tr>
+      {% if good.firearm_details.is_deactivated %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">When was the item deactivated?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.date_of_deactivation }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Has the item been deactivated to UK proof house standards?</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.deactivation_standard }}</td>
+      </tr>
+      {% endif %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Part number (optional)</td>
+        <td class="govuk-table__cell">{{ good.part_number }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Quantity</td>
+        <td class="govuk-table__cell">{{ good.quantity|floatformat:"0" }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Total value</td>
+        <td class="govuk-table__cell">£{{ case.goods | get_case_value }}</td>
+      </tr>
+      {% if good.firearm_details.serial_numbers_available == "AVAILABLE" %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Will each product have a serial number or other identification marking?</td>
+        <td class="govuk-table__cell">No</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Explain why the product doesn't have serial numbers</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.no_identification_markings_details }}</td>
+      </tr>
+      {% else %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Will each product have a serial number or other identification marking?</td>
+        <td class="govuk-table__cell">Yes</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Enter serial numbers or other identification markings</td>
+        <td class="govuk-table__cell">{{ good.firearm_details.serial_numbers|join:" ," }}</td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>

@@ -73,6 +73,9 @@
                             {{ clc.rating }}{% if not forloop.last %}, {% endif %}
                         {% endfor %}
                     </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_control_list_entries' application_id good.id %}">Change</a>
+                    </dd>
                 </div>
             {% endif %}
             <div class="govuk-summary-list__row">
@@ -175,6 +178,11 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ firearm_details.is_replica|yesno|title }}
+                    {% if firearm_details.is_replica %}
+                        <div class="govuk-hint">
+                            {{ firearm_details.replica_description }}
+                        </div>
+                    {% endif %}
                 </dd>
                 <dd class="govuk-summary-list__actions">
                     <a id="change-good-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_replica' application_id good.id %}">Change</a>
@@ -225,7 +233,7 @@
                             {% else %}
                                 {% with document=organisation_documents.section_five_certificate %}
                                     {% if document.document.safe %}
-                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}">{{ document.document.name }}</a>
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}" target="_blank">{{ document.document.name }}</a>
                                     {% else %}
                                         {{ document.document.name }}
                                     {% endif %}
@@ -318,7 +326,7 @@
                         <dd class="govuk-summary-list__value">
                             {% for document in good.documents %}
                                 {% if document.safe %}
-                                    <a href="{% url 'goods:document' pk=good.id file_pk=document.id %}" class="govuk-link govuk-link--no-visited-state">
+                                    <a href="{% url 'goods:document' pk=good.id file_pk=document.id %}" class="govuk-link govuk-link--no-visited-state" target="_blank">
                                         {{ document.name }}
                                     </a>
                                 {% else %}

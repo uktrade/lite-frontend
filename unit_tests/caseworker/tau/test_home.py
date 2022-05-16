@@ -20,50 +20,8 @@ def url(data_queue, data_standard_case):
     )
 
 
-@pytest.fixture
-def mock_precedents_api(requests_mock, data_standard_case, data_queue):
-    case_id = data_standard_case["case"]["id"]
-    url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
-    requests_mock.get(
-        url,
-        json={
-            "results": [
-                {
-                    "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
-                    "application": case_id,
-                    "queue": data_queue["id"],
-                    "reference": data_standard_case["case"]["reference_code"],
-                    "destinations": ["GB"],
-                    "control_list_entries": ["ML1a"],
-                    "wassenaar": False,
-                    "quantity": 10.0,
-                    "value": "test-value",
-                    "report_summary": "test-report-summary",
-                    "submitted_at": "2021-06-21T11:27:36.145000Z",
-                },
-                {
-                    "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
-                    "application": case_id,
-                    "queue": data_queue["id"],
-                    "reference": data_standard_case["case"]["reference_code"],
-                    "destinations": ["GB"],
-                    "control_list_entries": ["ML1a"],
-                    "wassenaar": False,
-                    "quantity": 10.0,
-                    "value": "test-value",
-                    "report_summary": "test-report-summary",
-                    "submitted_at": "2021-06-20T11:27:36.145000Z",
-                },
-            ]
-        },
-    )
-    return requests_mock
-
-
 def get_cells(soup, table_id):
-    return [td.text for td in soup.find(id=table_id).find_all("td")]
+    return [td.text.strip() for td in soup.find(id=table_id).find_all("td")]
 
 
 def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_precedents_api):
@@ -148,7 +106,7 @@ def test_home_content(
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="subtitle").text == "Assess 1 product(s) going from Great Britain to Abu Dhabi, United Kingdom"
     assert get_cells(soup, "assessed-products") == [
-        "1",
+        "2",
         "p2",
         "444",
         "",
@@ -171,20 +129,38 @@ def test_home_content(
 
     # Test if the unassessed products table is sane
     assert get_cells(soup, "table-products-1") == [
-        "Select the type of firearm product",
-        "Firearms",
-        "Part number (optional)",
-        "44",
+        "Product document",
+        "data_sheet.pdf",
+        "Firearm category",
+        "",
+        "Give the product a descriptive name",
+        "",
         "Does the product have a government security grading or classification?",
-        "Yes",
-        "Is the product for military use?",
+        "",
+        "What is the calibre of the product?",
+        "",
+        "Is the product a replica firearm?",
+        "No",
+        "Are you a registered firearms dealer?",
+        "No",
+        "Was the product made before 1938?",
         "No",
         "Will the product be onward exported to any additional countries?",
         "No",
+        "Will the product be incorporated into another item before it is onward exported?",
+        "No",
+        "Has the product been deactivated?",
+        "No",
+        "Part number (optional)",
+        "",
         "Quantity",
         "444",
         "Total value",
         "£0.00",
+        "Will each product have a serial number or other identification marking?",
+        "Yes",
+        "Enter serial numbers or other identification markings",
+        "",
     ]
 
     # The precedent for the unassessed product

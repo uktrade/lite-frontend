@@ -1,0 +1,29 @@
+<table id="table-precedents-{{ forloop.counter }}" class="govuk-table" style="background-color: #f3f2f1">
+    <tbody class="govuk-table__body">
+      <h3>Precedents (most recent)</h3>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Reference</td>
+        <td class="govuk-table__cell"><a href="{% url 'cases:case' precedent.queue precedent.application %}">{{ precedent.reference }}</a></td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Control list entry</td>
+        <td class="govuk-table__cell">{{ precedent.control_list_entries | join:", " }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Regime</td>
+        <td class="govuk-table__cell">{% if precedent.wassenaar %}WASSENAAR{% endif %}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Report summary</td>
+        <td class="govuk-table__cell">{{ precedent.report_summary }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Quantity</td>
+        <td class="govuk-table__cell">{{ precedent.quantity|floatformat:"0" }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Destinations</td>
+        <td class="govuk-table__cell">{{ precedent.destinations | join:", " }}</td>
+      </tr>
+    </tbody>
+  </table>

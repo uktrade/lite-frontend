@@ -44,7 +44,7 @@ def get_cells(soup, table_id):
     return [td.text for td in soup.find(id=table_id).find_all("td")]
 
 
-def test_tau_edit_auth(authorized_client, url, mock_control_list_entries):
+def test_tau_edit_auth(authorized_client, url, mock_control_list_entries, mock_precedents_api):
     """GET edit should return 200 with an authorised client"""
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -56,7 +56,7 @@ def test_tau_home_noauth(client, url):
     assert response.status_code == 302
 
 
-def test_form(authorized_client, url, data_standard_case, requests_mock, mock_cle_post, mock_control_list_entries):
+def test_form(authorized_client, url, data_standard_case, requests_mock, mock_cle_post, mock_control_list_entries, mock_precedents_api):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
     """

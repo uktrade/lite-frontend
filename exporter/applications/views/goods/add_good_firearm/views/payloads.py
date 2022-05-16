@@ -14,7 +14,11 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
 )
 
-from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
+from .constants import (
+    AddGoodFirearmSteps,
+    AddGoodFirearmToApplicationSteps,
+    AttachFirearmToApplicationSteps,
+)
 
 
 def firearm_details_payload(f):
@@ -270,4 +274,57 @@ class FirearmEditFirearmsAct1968PayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.FIREARM_ACT_1968: get_firearm_act_1968_payload,
         AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY: get_attach_firearm_act_certificate_payload,
+    }
+
+
+class FirearmProductOnApplicationSummaryEditMadeBefore1938PayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
+    }
+
+
+class FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
+    }
+
+
+class FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_deactivation_details_payload,
+    }
+
+
+class FirearmProductOnApplicationSummaryEditSerialIdentificationMarkingsPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING: get_firearm_details_cleaned_data,
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: get_serial_numbers_payload,
+    }
+
+
+class AttachFirearmToApplicationGoodPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AttachFirearmToApplicationSteps.CATEGORY: get_firearm_details_cleaned_data,
+        AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID: get_firearm_details_cleaned_data,
+    }
+
+
+class AttachFirearmToApplicationGoodOnApplicationPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AttachFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AttachFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE: get_attach_firearm_act_certificate_payload,
+        AttachFirearmToApplicationSteps.MADE_BEFORE_1938: get_firearm_details_cleaned_data,
+        AttachFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
+        AttachFirearmToApplicationSteps.ONWARD_EXPORTED: get_firearm_details_cleaned_data,
+        AttachFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_firearm_details_cleaned_data,
+        AttachFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
+        AttachFirearmToApplicationSteps.IS_DEACTIVATED: get_firearm_details_cleaned_data,
+        AttachFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_deactivation_details_payload,
+        AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
+        AttachFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING: get_firearm_details_cleaned_data,
+        AttachFirearmToApplicationSteps.SERIAL_NUMBERS: get_serial_numbers_payload,
     }

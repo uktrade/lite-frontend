@@ -270,7 +270,7 @@ class Goods:
     NOTICE = "There are no products on the application."
 
     class AddFromOrganisation:
-        BUTTON = "Add a product from your product list"
+        BUTTON = "Add a product from your saved products list"
         TITLE = "Add a product from your product list"
 
     class AddGoodSummary:

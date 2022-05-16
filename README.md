@@ -190,10 +190,16 @@ All javascripts and scss files are stored under caseworker/assets and exporter/a
 
 ```
   npm i
+```
 
-  // Building and live building for local development.
+Hot reload for local development.
+
+```
   npm run watch
+```
 
-  // Building before PR.
+Building before PR. Also remove a folder named .parcel-cache before running the command below.
+
+```
   npm run build
 ```

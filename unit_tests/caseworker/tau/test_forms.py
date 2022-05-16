@@ -88,7 +88,7 @@ def test_tau_assessment_form(data, valid, errors):
     "data, valid, errors",
     (
         # Empty form
-        ({}, False, ["report_summary", "does_not_have_control_list_entries"]),
+        ({}, False, ["does_not_have_control_list_entries"]),
         # Valid form
         ({"report_summary": "test", "does_not_have_control_list_entries": True}, True, []),
         # Valid form - with comments
@@ -101,9 +101,15 @@ def test_tau_assessment_form(data, valid, errors):
             True,
             [],
         ),
-        # Missing report-summart
+        # Missing report-summary is ok when no CLEs
         (
             {"report_summary": None, "does_not_have_control_list_entries": True},
+            True,
+            [],
+        ),
+        # Missing report-summary is not ok when there are CLEs
+        (
+            {"report_summary": None, "control_list_entries": ["test-rating"]},
             False,
             ["report_summary"],
         ),
