@@ -633,6 +633,7 @@ def data_standard_case():
                         "comment": "hmmmhhh",
                         "report_summary": "scale compelling technologies",
                         "audit_trail": [],
+                        "good_application_internal_documents": [],
                     },
                     {
                         "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
@@ -682,6 +683,7 @@ def data_standard_case():
                         "comment": "hmmmhhh",
                         "report_summary": "scale compelling technologies",
                         "audit_trail": [],
+                        "good_application_internal_documents": [],
                     },
                 ],
                 "have_you_been_informed": "no",

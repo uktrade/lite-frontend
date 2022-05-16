@@ -23,6 +23,7 @@ urlpatterns = [
     path("", include("caseworker.external_data.urls")),
     path("feedback/", include("core.feedback.urls")),
     path("cookies/", include("core.cookies.urls")),
+    path("tau/", include("caseworker.tau.urls")),
 ]
 
 if settings.LITE_API_SEARCH_ENABLED:
