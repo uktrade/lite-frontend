@@ -1,25 +1,18 @@
 from django.http import Http404
 from django.shortcuts import redirect
-from django.views.generic import FormView, View
+from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
 from django.urls import reverse
 
 from caseworker.advice.services import move_case_forward
-from caseworker.cases.services import get_case
+from caseworker.cases.services import get_case, get_document
 from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
 from caseworker.tau.services import get_recent_precedent
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
-
-
-def get_tau_document_data(file):
-    return {
-        "name": getattr(file, "original_name", file.name),
-        "s3_key": file.name,
-        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-        "document_type": "tau-evidence",
-    }
+from core.file_handler import download_document_from_s3
+from .actions import GoodOnApplicationInternalDocumentAction
 
 
 class TAUMixin:
@@ -64,6 +57,14 @@ class TAUMixin:
     def good_id(self):
         return str(self.kwargs["good_id"])
 
+    @property
+    def evidence_doc(self):
+        good = self.get_good()
+        # we are making an assumption here that we only storing one evidence document
+        if good["good_application_internal_documents"]:
+            return good["good_application_internal_documents"][0]
+        return {}
+
 
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
@@ -102,22 +103,25 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
-
-        is_upload_evidence = data.pop("upload_evidence")
-        if is_upload_evidence:
-            file = data.pop("evidence_file")
-            doc_data = get_tau_document_data(file)
         good_ids = data.pop("goods")
+        file = data.pop("evidence_file")
+        file_title = data.pop("evidence_file_title")
 
         for good in self.get_goods(good_ids):
+            good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
+                request=self.request, good=good, file=file, file_title=file_title
+            )
+
             payload = {
                 **form.cleaned_data,
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
                 "is_good_controlled": is_good_controlled,
-                "document_data": doc_data,
             }
+
+            good_evidence_document_action.run()
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
+
         return super().form_valid(form)
 
 
@@ -133,13 +137,18 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
+        evidence_doc = self.evidence_doc
+
+        form_kwargs["document"] = evidence_doc
         good = self.get_good()
+
         form_kwargs["data"] = self.request.POST or {
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
             "is_wassenaar": "WASSENAAR" in {flag["name"] for flag in good["flags"]},
             "report_summary": good["report_summary"],
             "comment": good["comment"],
+            "evidence_file_title": evidence_doc.get("document_title", ""),
         }
         return form_kwargs
 
@@ -159,12 +168,22 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
+        good = self.get_good()
+
+        file = data.pop("evidence_file")
+        file_title = data.pop("evidence_file_title")
+        good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
+            request=self.request, good=good, file=file, file_title=file_title
+        )
+        good_evidence_document_action.run()
+
         payload = {
             **form.cleaned_data,
             "current_object": self.good_id,
-            "objects": [self.get_good()["good"]["id"]],
+            "objects": [good["good"]["id"]],
             "is_good_controlled": is_good_controlled,
         }
+
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
         return super().form_valid(form)
 
@@ -179,3 +198,10 @@ class TAUMoveCaseForward(LoginRequiredMixin, TAUMixin, View):
         move_case_forward(request, case_pk, queue_pk)
         queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
         return redirect(queue_url)
+
+
+class Document(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        file_pk = str(kwargs["file_pk"])
+        internal_docs, _ = get_document(request, file_pk)
+        return download_document_from_s3(internal_docs["document"]["s3_key"], internal_docs["document"]["name"])
