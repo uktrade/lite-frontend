@@ -22,7 +22,15 @@ class TAUEditForm(forms.Form):
     )
 
     does_not_have_control_list_entries = forms.BooleanField(
-        label="Choose not to add a control list entry or end-use control",
+        label="Select that this product is not on the control list",
+        required=False,
+    )
+
+    report_summary = forms.CharField(
+        label="Add a report summary",
+        help_text="Type for suggestions.",
+        # setting id for javascript to use
+        widget=forms.TextInput(attrs={"id": "report_summary"}),
         required=False,
     )
 
@@ -31,16 +39,8 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary = forms.CharField(
-        label="Select an annual report summary",
-        help_text="Type to get suggestions. For example, components for body armour.",
-        # setting id for javascript to use
-        widget=forms.TextInput(attrs={"id": "report_summary"}),
-        required=False,
-    )
-
     comment = forms.CharField(
-        label="Comment (optional)",
+        label="Add an assessment note (optional)",
         required=False,
         widget=forms.Textarea,
     )

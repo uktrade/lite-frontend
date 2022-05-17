@@ -1,3 +1,5 @@
+import os
+
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View
@@ -54,8 +56,10 @@ class TAUMixin:
             if precedents[item["id"]]:
                 precedents[item["id"]]["queue"] = precedents[item["id"]]["queue"] or ALL_CASES_QUEUE_ID
             item["precedent"] = precedents[item["id"]]
-            # Populate docuement urls
+            # Populate document urls
             for document in item["good"]["documents"]:
+                _, fext = os.path.splitext(document["name"])
+                document["type"] = fext[1:].upper()
                 document["url"] = reverse(
                     "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": document["id"]}
                 )
