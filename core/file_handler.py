@@ -1,5 +1,4 @@
 import logging
-from django.http import StreamingHttpResponse
 import boto3
 import magic
 from django.conf import settings
