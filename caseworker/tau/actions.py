@@ -18,12 +18,12 @@ class GoodOnApplicationInternalDocumentAction:
     def run(self):
         if self.file:
             # We have uploaded a file
-            if self.has_exiting_evidence_document():
+            if self.has_existing_evidence_document():
                 # Lets delete old document
                 self.delete_good_on_application_document()
             # Recreate with new document details
             self.post_good_on_application_document()
-        elif self.file_title and self.has_exiting_evidence_document():
+        elif self.file_title and self.has_existing_evidence_document():
             # This is an edit
             self.edit_good_on_application_document()
 
@@ -37,7 +37,7 @@ class GoodOnApplicationInternalDocumentAction:
     def get_evidence_doc(self):
         return self.good["good_application_internal_documents"][0]
 
-    def has_exiting_evidence_document(self):
+    def has_existing_evidence_document(self):
         return len(self.good["good_application_internal_documents"]) > 0
 
     @expect_status(

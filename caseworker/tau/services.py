@@ -37,14 +37,17 @@ def get_document(request, pk):
 
 def post_document_internal_good_on_application(request, goods_on_application_pk, data):
     response = client.post(request, f"/goods/document_internal_good_on_application/{goods_on_application_pk}/", data)
+    response.raise_for_status()
     return response.json(), response.status_code
 
 
 def delete_good_on_application_document(request, doc_pk):
     response = client.delete(request, f"/goods/document_internal_good_on_application_detail/{doc_pk}/")
+    response.raise_for_status()
     return response.json(), response.status_code
 
 
 def edit_good_on_application_document(request, doc_pk, data):
     response = client.put(request, f"/goods/document_internal_good_on_application_detail/{doc_pk}/", data)
+    response.raise_for_status()
     return response.json(), response.status_code

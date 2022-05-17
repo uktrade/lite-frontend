@@ -16,15 +16,6 @@ from core.file_handler import download_document_from_s3
 from .actions import GoodOnApplicationInternalDocumentAction
 
 
-def get_tau_document_data(file):
-    return {
-        "name": getattr(file, "original_name", file.name),
-        "s3_key": file.name,
-        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-        "document_type": "tau-evidence",
-    }
-
-
 class TAUMixin:
     """Mixin containing some useful functions used in TAU views."""
 
@@ -99,6 +90,14 @@ class TAUMixin:
         good = self.get_good()
         # we are making an assumption here that we only storing one evidence document
         if good["good_application_internal_documents"]:
+            good["good_application_internal_documents"][0]["url"] = reverse(
+                "cases:document",
+                kwargs={
+                    "queue_pk": self.queue_id,
+                    "pk": self.case.id,
+                    "file_pk": good["good_application_internal_documents"][0]["id"],
+                },
+            )
             return good["good_application_internal_documents"][0]
         return {}
 
@@ -179,7 +178,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
         form_kwargs["document"] = evidence_doc
         good = self.get_good()
-
         form_kwargs["data"] = self.request.POST or {
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
@@ -242,10 +240,3 @@ class TAUMoveCaseForward(LoginRequiredMixin, TAUMixin, View):
         move_case_forward(request, case_pk, queue_pk)
         queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
         return redirect(queue_url)
-
-
-class Document(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        file_pk = str(kwargs["file_pk"])
-        internal_docs, _ = get_document(request, file_pk)
-        return download_document_from_s3(internal_docs["document"]["s3_key"], internal_docs["document"]["name"])

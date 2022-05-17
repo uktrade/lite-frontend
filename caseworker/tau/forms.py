@@ -3,7 +3,6 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from caseworker.tau.widgets import GoodsMultipleSelect
 from django.template.loader import render_to_string
-from django.urls import reverse
 
 
 class TAUEditForm(forms.Form):
@@ -51,21 +50,13 @@ class TAUEditForm(forms.Form):
     )
 
     evidence_file_title = forms.CharField(
-        label="Give the file a descriptive title (for example , 'AX50 technical specification' or 'gundealer.com AX50 website screenshot'",
+        label="Give the file a descriptive title (for example , 'AX50 technical specification' or 'gundealer.com AX50 website screenshot')",
         required=False,
     )
 
     def __init__(self, control_list_entries_choices, document=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.document = document
-        if self.document:
-            self.document_download_url = reverse(
-                "tau:document",
-                kwargs={
-                    "file_pk": self.document["id"],
-                },
-            )
-
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.helper = FormHelper()
         self.helper.layout = Layout(*self.get_layout_fields())
@@ -76,14 +67,14 @@ class TAUEditForm(forms.Form):
                 break
 
     def get_layout_fields(self):
-        down_load_link = (
+        download_link = (
             (
                 HTML.p(
                     render_to_string(
                         "tau/product_document_download_link.html",
                         {
                             "safe": self.document.get("safe", False),
-                            "url": self.document_download_url,
+                            "url": self.document["url"],
                             "name": self.document["name"],
                         },
                     ),
@@ -102,7 +93,7 @@ class TAUEditForm(forms.Form):
         )
         lower_fields = ("evidence_file", "evidence_file_title", Submit("submit", "Submit"))
 
-        return main_fields + down_load_link + lower_fields
+        return main_fields + download_link + lower_fields
 
     def clean(self):
         cleaned_data = super().clean()
