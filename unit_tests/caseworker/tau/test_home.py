@@ -119,7 +119,7 @@ def test_home_content(
 
     # Test if the unassessed products table is sane
     assert get_cells(soup, "table-products-1") == [
-        "Product document(pdf, opens in new tab)",
+        "Product document(PDF, opens in new tab)",
         "",
         "Firearm category",
         "",
