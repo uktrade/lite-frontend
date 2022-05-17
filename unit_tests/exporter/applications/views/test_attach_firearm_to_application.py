@@ -52,6 +52,12 @@ def good(application):
 
 
 @pytest.fixture
+def mock_good_attaching_put(requests_mock, good):
+    url = client._build_absolute_uri(f'/goods/{good["id"]}/attaching/')
+    return requests_mock.put(url=url, json={})
+
+
+@pytest.fixture
 def good_no_category(data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"]["firearm_details"]["category"] = None
@@ -131,7 +137,7 @@ def test_rfd_validity_invalid_should_not_be_able_to_post(
     post_to_step,
     application,
     application_with_organisation_rfd_document,
-    mock_good_put,
+    mock_good_attaching_put,
 ):
     response = post_to_step(
         AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID,
@@ -148,7 +154,7 @@ def test_rfd_validity_invalid_should_not_be_able_to_post(
     )
     assert response.status_code == 200
     assertContains(response, "RFD invalid. Cannot submit.")
-    assert not mock_good_put.called
+    assert not mock_good_attaching_put.called
 
 
 def test_attach_firearm_to_application_end_to_end_no_category_no_firearm_certificate(
@@ -156,7 +162,7 @@ def test_attach_firearm_to_application_end_to_end_no_category_no_firearm_certifi
     post_to_step,
     mock_good_no_category_get,
     good_no_category,
-    mock_good_put,
+    mock_good_attaching_put,
     mock_good_on_application_post,
     good_on_application,
     attach_product_on_application_summary_url,
@@ -257,8 +263,8 @@ def test_attach_firearm_to_application_end_to_end_no_category_no_firearm_certifi
     assert response.status_code == 302
     assert response.url == f"{attach_product_on_application_summary_url}?added_firearm_category=True"
 
-    assert mock_good_put.called_once
-    assert mock_good_put.last_request.json() == {
+    assert mock_good_attaching_put.called_once
+    assert mock_good_attaching_put.last_request.json() == {
         "firearm_details": {
             "category": ["NON_AUTOMATIC_SHOTGUN"],
         },
@@ -294,7 +300,7 @@ def test_attach_firearm_to_application_end_to_end_rfd_valid(
     application,
     post_to_step,
     good,
-    mock_good_put,
+    mock_good_attaching_put,
     mock_good_on_application_post,
     good_on_application,
     application_with_organisation_rfd_document,
@@ -405,8 +411,8 @@ def test_attach_firearm_to_application_end_to_end_rfd_valid(
     assert response.status_code == 302
     assert response.url == f"{attach_product_on_application_summary_url}?confirmed_rfd_validity=True"
 
-    assert mock_good_put.called_once
-    assert mock_good_put.last_request.json() == {
+    assert mock_good_attaching_put.called_once
+    assert mock_good_attaching_put.last_request.json() == {
         "firearm_details": {
             "is_rfd_certificate_valid": True,
         },
@@ -472,7 +478,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     post_to_step,
     mock_good_no_category_get,
     good_no_category,
-    mock_good_put,
+    mock_good_attaching_put,
     mock_good_on_application_post,
     good_on_application,
     firearms_act_section,
@@ -614,8 +620,8 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     assert response.status_code == 302
     assert response.url == f"{attach_product_on_application_summary_url}?added_firearm_category=True"
 
-    assert mock_good_put.called_once
-    assert mock_good_put.last_request.json() == {
+    assert mock_good_attaching_put.called_once
+    assert mock_good_attaching_put.last_request.json() == {
         "firearm_details": {
             "category": ["NON_AUTOMATIC_SHOTGUN"],
         },

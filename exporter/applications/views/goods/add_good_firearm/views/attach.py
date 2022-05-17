@@ -44,7 +44,7 @@ from exporter.goods.forms.firearms import (
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
 )
-from exporter.goods.services import edit_firearm
+from exporter.goods.services import edit_firearm_for_attaching
 
 from .actions import GoodOnApplicationFirearmActCertificateAction
 from .conditionals import (
@@ -190,7 +190,7 @@ class AttachFirearmToApplication(
     )
     def edit_firearm(self, good_pk, form_dict):
         payload = self.get_edit_firearm_payload(form_dict)
-        return edit_firearm(self.request, good_pk, payload)
+        return edit_firearm_for_attaching(self.request, good_pk, payload)
 
     def is_rfd_invalid(self, form_dict):
         if AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID not in form_dict:
