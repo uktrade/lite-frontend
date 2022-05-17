@@ -1,5 +1,7 @@
+from http import HTTPStatus
 from bs4 import BeautifulSoup
 from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 import pytest
 
 from core import client
@@ -182,6 +184,7 @@ def test_form(
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
     """
+
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
@@ -195,10 +198,33 @@ def test_form(
     unassessed_products = soup.find(id="unassessed-products").find_all("input")
     assert len(unassessed_products) == 1
     assert unassessed_products[0].attrs["value"] == good["id"]
-    response = authorized_client.post(
-        url, data={"report_summary": "test", "goods": [good["id"]], "does_not_have_control_list_entries": True}
+
+    # upload a evidence file
+    mock_internal_docs_post = requests_mock.post(
+        f"/goods/document_internal_good_on_application/0bedd1c3-cf97-4aad-b711-d5c9a9f4586e/",
+        json={},
+        status_code=HTTPStatus.CREATED,
     )
+
+    evidence_file = SimpleUploadedFile("test.pdf", b"file_content", content_type="application/pdf")
+
+    data = {
+        "report_summary": "test",
+        "goods": [good["id"]],
+        "does_not_have_control_list_entries": True,
+        "evidence_file": evidence_file,
+        "evidence_file_title": "new home evidence",
+    }
+
+    response = authorized_client.post(url, data=data)
     assert response.status_code == 302
+
+    assert mock_internal_docs_post.last_request.json() == {
+        "name": "test.pdf",
+        "s3_key": mock_internal_docs_post.last_request.json()["s3_key"],
+        "size": 0,
+        "document_title": "new home evidence",
+    }
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
         "report_summary": "test",

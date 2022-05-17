@@ -1,5 +1,4 @@
 import logging
-
 import boto3
 import magic
 from django.conf import settings

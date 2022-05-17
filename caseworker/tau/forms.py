@@ -1,8 +1,8 @@
 from django import forms
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit
-
+from crispy_forms_gds.layout import Layout, Submit, HTML
 from caseworker.tau.widgets import GoodsMultipleSelect
+from django.template.loader import render_to_string
 
 
 class TAUEditForm(forms.Form):
@@ -25,7 +25,6 @@ class TAUEditForm(forms.Form):
         label="Select that this product is not on the control list",
         required=False,
     )
-
     report_summary = forms.CharField(
         label="Add a report summary",
         help_text="Type for suggestions.",
@@ -45,18 +44,56 @@ class TAUEditForm(forms.Form):
         widget=forms.Textarea,
     )
 
-    def __init__(self, control_list_entries_choices, *args, **kwargs):
+    evidence_file = forms.FileField(
+        label="Upload a file",
+        required=False,
+    )
+
+    evidence_file_title = forms.CharField(
+        label="Give the file a descriptive title (for example , 'AX50 technical specification' or 'gundealer.com AX50 website screenshot')",
+        required=False,
+    )
+
+    def __init__(self, control_list_entries_choices, document=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.document = document
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.helper = FormHelper()
-        self.helper.layout = Layout(
+        self.helper.layout = Layout(*self.get_layout_fields())
+
+        for field in self.fields.values():
+            if isinstance(field, forms.FileField):
+                self.helper.attrs = {"enctype": "multipart/form-data"}
+                break
+
+    def get_layout_fields(self):
+        download_link = (
+            (
+                HTML.p(
+                    render_to_string(
+                        "tau/product_document_download_link.html",
+                        {
+                            "safe": self.document.get("safe", False),
+                            "url": self.document["url"],
+                            "name": self.document["name"],
+                        },
+                    ),
+                ),
+            )
+            if self.document
+            else ()
+        )
+
+        main_fields = (
             "control_list_entries",
             "does_not_have_control_list_entries",
             "is_wassenaar",
             "report_summary",
             "comment",
-            Submit("submit", "Submit"),
         )
+        lower_fields = ("evidence_file", "evidence_file_title", Submit("submit", "Submit"))
+
+        return main_fields + download_link + lower_fields
 
     def clean(self):
         cleaned_data = super().clean()

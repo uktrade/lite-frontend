@@ -28,3 +28,26 @@ def get_recent_precedent(request, case):
     results = get_good_precedents(request, case.id)["results"]
     good_precedents = group_gonas_by_good(results)
     return {gona["id"]: get_last_precedent(gona, good_precedents) for gona in case.goods}
+
+
+def get_document(request, pk):
+    data = client.get(request, f"/documents/{pk}")
+    return data.json(), data.status_code
+
+
+def post_document_internal_good_on_application(request, goods_on_application_pk, data):
+    response = client.post(request, f"/goods/document_internal_good_on_application/{goods_on_application_pk}/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def delete_good_on_application_document(request, doc_pk):
+    response = client.delete(request, f"/goods/document_internal_good_on_application_detail/{doc_pk}/")
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def edit_good_on_application_document(request, doc_pk, data):
+    response = client.put(request, f"/goods/document_internal_good_on_application_detail/{doc_pk}/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code

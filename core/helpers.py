@@ -19,3 +19,11 @@ def convert_value_to_query_param(key: str, value):
     if value is None:
         return ""
     return urlencode({key: value}, doseq=True, quote_via=dummy_quote)
+
+
+def get_document_data(file):
+    return {
+        "name": getattr(file, "original_name", file.name),
+        "s3_key": file.name,
+        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
+    }
