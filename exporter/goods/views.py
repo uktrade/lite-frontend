@@ -283,6 +283,11 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
         ),
     }
 
+    def dispatch(self, *args, **kwargs):
+        if settings.FEATURE_FLAG_PRODUCT_2_0:
+            raise Http404()
+        return super().dispatch(*args, **kwargs)
+
     def get_product_type(self):
         group_two_product_type_cleaned_data = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
 
