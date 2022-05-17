@@ -1,3 +1,4 @@
+from datetime import datetime
 from django import template
 
 
@@ -15,3 +16,11 @@ def get_destinations(case):
     """Get unique destinations for the case in a nice comma-separated string"""
     unique_destinations = {(dest.get("country") or {}).get("name") or "" for dest in case.destinations}
     return sorted(list(unique_destinations - {""}))
+
+
+@register.filter
+def format_date(val):
+    if not val:
+        return ""
+    date_obj = datetime.strptime(val, "%Y-%m-%d")
+    return date_obj.strftime("%d %B %Y")

@@ -1,33 +1,117 @@
 {% load advice_tags tau_tags %}
 <table id="table-products-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Select the type of firearm product</td>
-        <td class="govuk-table__cell">{{good.good.firearm_details.type.value}}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Part number (optional)</td>
-        <td class="govuk-table__cell">{{ good.good.part_number }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Does the product have a government security grading or classification?</td>
-        <td class="govuk-table__cell">{{ good.good.is_pv_graded|title }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Is the product for military use?</td>
-        <td class="govuk-table__cell">{{ good.good.is_military_use.value }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Will the product be onward exported to any additional countries?</td>
-        <td class="govuk-table__cell">{{ case.destinations|is_ultimate_end_user|yesno|capfirst }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Quantity</td>
-        <td class="govuk-table__cell">{{ good.quantity|floatformat:"0" }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Total value</td>
-        <td class="govuk-table__cell">£{{ case.goods | get_case_value }}</td>
-      </tr>
+      {% with good_on_application=good good=good.good %}
+        {% if good.is_document_available %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            {% for document in good.documents %}
+              <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">
+                Product document ({{ document.type }}, opens in new tab)
+              </a>
+            {% endfor %}
+          </td>
+          <td class="govuk-table__header"></td>
+        </tr>
+        {% else %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Explain why you are not able to upload a product document</td>
+          <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
+        </tr>
+        {% endif %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Select the type of firearm product</td>
+          <td class="govuk-table__cell">{{ good.firearm_details.type.value }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Part number (optional)</td>
+          <td class="govuk-table__cell">{{ good.part_number }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Enter the control list entry</td>
+          <td class="govuk-table__cell">
+            {% for clc in good.control_list_entries %}
+              {{ clc.rating }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Does the product have a government security grading or classification?</td>
+          <td class="govuk-table__cell">{{ good.is_pv_graded|title }}</td>
+        </tr>
+        {% if good.is_pv_graded == "yes" %}
+          {% if good.pv_grading_details.prefix %}
+            <tr class="govuk-table__row">
+              <td class="govuk-table__header">Enter a prefix (optional)</td>
+              <td class="govuk-table__cell">{{ good.pv_grading_details.prefix }}</td>
+            </tr>
+          {% endif %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">What is the security grading or classification?</td>
+            <td class="govuk-table__cell">{{ good.pv_grading_details.grading.value }}</td>
+          </tr>
+          {% if good.pv_grading_details.suffix %}
+            <tr class="govuk-table__row">
+              <td class="govuk-table__header">Enter a suffix (optional)</td>
+              <td class="govuk-table__cell">{{ good.pv_grading_details.suffix }}</td>
+            </tr>
+          {% endif %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">Name and address of the issuing authority</td>
+            <td class="govuk-table__cell">{{ good.pv_grading_details.issuing_authority|linebreaksbr }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">Reference</td>
+            <td class="govuk-table__cell">{{ good.pv_grading_details.reference }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">Date of issue</td>
+            <td class="govuk-table__cell">
+              {{ good.pv_grading_details.date_of_issue|format_date }}
+            </td>
+          </tr>
+        {% endif %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Is the product for military use?</td>
+          <td class="govuk-table__cell">
+            {{ good.is_military_use.value }}
+            {% if good.is_military_use.key != "no" %}
+              <div class="govuk-hint">{{ good.modified_military_use_details }}</div>
+            {% endif %}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Component</td>
+          <td class="govuk-table__cell">
+            {{ good.is_component.value }}
+            {% if good.is_component.key != "no" %}
+              <div class="govuk-hint">{{ good.component_details }}</div>
+            {% endif %}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Information security features</td>
+          <td class="govuk-table__cell">
+            {{ good.uses_information_security|yesno|capfirst }}
+            {% if good.uses_information_security %}
+              <div class="govuk-hint">{{ good.information_security_details }}</div>
+            {% endif %}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Will the product be onward exported to any additional countries?</td>
+          <td class="govuk-table__cell">{{ case.destinations|is_ultimate_end_user|yesno|capfirst }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Quantity</td>
+          <td class="govuk-table__cell">
+            {{ good_on_application.quantity|floatformat:"0" }} {{ good_on_application.unit.value }}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__header">Total value</td>
+          <td class="govuk-table__cell">£{{ good_on_application.value }}</td>
+        </tr>
+      {% endwith %}
     </tbody>
   </table>
