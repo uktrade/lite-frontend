@@ -164,6 +164,7 @@ class Goods(LoginRequiredMixin, TemplateView):
             "part_number": part_number,
             "control_list_entry": control_list_entry,
             "filters": filters,
+            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
         return render(request, "goods/goods.html", context)
 
