@@ -192,10 +192,22 @@ class ReviewOpenApplicationGoodWizardView(AbstractReviewGoodWizardView):
 
 
 class GoodDetails(LoginRequiredMixin, FormView):
-    template_name = (
-        "case/product-on-case-product2-0.html" if settings.FEATURE_FLAG_PRODUCT_2_0 else "case/product-on-case.html"
-    )
     form_class = SearchForm
+
+    def get_template_names(self):
+        product_1_template = "case/product-on-case.html"
+
+        if not settings.FEATURE_FLAG_PRODUCT_2_0:
+            return product_1_template
+
+        firearm_details = self.object.get("firearm_details")
+        if not firearm_details:
+            return product_1_template
+
+        if firearm_details["type"]["key"] != "firearms":
+            return product_1_template
+
+        return "case/product-on-case-product2-0.html"
 
     @cached_property
     def object(self):
