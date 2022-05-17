@@ -1,18 +1,17 @@
 from django.http import Http404
 from django.shortcuts import redirect
-from django.views.generic import FormView, View, TemplateView
+from django.views.generic import FormView, View
 from django.utils.functional import cached_property
 from django.urls import reverse
 
 from caseworker.advice.services import move_case_forward
-from caseworker.cases.services import get_case, get_document
+from caseworker.cases.services import get_case
 from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
 from caseworker.tau.services import get_recent_precedent
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from core.file_handler import download_document_from_s3
 from .actions import GoodOnApplicationInternalDocumentAction
 
 
