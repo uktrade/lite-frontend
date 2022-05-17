@@ -6,7 +6,7 @@
         <tr class="govuk-table__row">
           <td class="govuk-table__cell">
             {% for document in good.documents %}
-              <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">
+              <a target="_blank" href="{{ document.url }}" class="govuk-link govuk-link--no-visited-state">
                 Product document ({{ document.type }}, opens in new tab)
               </a>
             {% endfor %}

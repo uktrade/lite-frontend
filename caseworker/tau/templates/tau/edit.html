@@ -13,7 +13,9 @@
                     <div>
                       {% include "tau/good_table.html" with good=good %}
                       {% if good.precedent %}
-                      {% include "tau/precedent_table.html" with precedent=good.precedent %}
+                      <div style="background-color: #f3f2f1" class="govuk-!-padding-5">
+                          {% include "tau/precedent_table.html" with precedent=good.precedent %}
+                      </div>
                       {% endif %}
                     </div>
                 </div>
