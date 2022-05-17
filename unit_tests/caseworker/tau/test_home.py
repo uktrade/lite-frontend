@@ -102,16 +102,8 @@ def test_home_content(
 
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find(id="subtitle").text == "Assess 1 product(s) going from Great Britain to Abu Dhabi, United Kingdom"
-    assert get_cells(soup, "assessed-products") == [
-        "2",
-        "p2",
-        "444",
-        "",
-        "No",
-        "scale compelling technologies",
-        "Edit assessment",
-    ]
+    assert soup.find(id="subtitle").text == "Assess 1 product going from Great Britain to Abu Dhabi, United Kingdom"
+    assert get_cells(soup, "assessed-products") == ["2.", "p2", "", "No", "", "scale compelling technologies", "Edit"]
 
     # Test if the link to edit assessed-products is sane
     assessed_good_id = data_standard_case["case"]["data"]["goods"][1]["id"]
@@ -127,8 +119,8 @@ def test_home_content(
 
     # Test if the unassessed products table is sane
     assert get_cells(soup, "table-products-1") == [
-        "Product document",
-        "data_sheet.pdf",
+        "Product document(PDF, opens in new tab)",
+        "",
         "Firearm category",
         "",
         "Give the product a descriptive name",

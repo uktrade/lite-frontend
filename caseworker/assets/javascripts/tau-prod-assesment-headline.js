@@ -86,7 +86,7 @@ const initTauAssesmentHeadline = () => {
       headlineString =
         productsNumberChecks.number > 1
           ? `Assessing ${productsNumberChecks.number} products`
-          : `Assesing ${
+          : `Assessing ${
               arrayProducts.find((product) => product.checked)?.dataset[
                 "productName"
               ]

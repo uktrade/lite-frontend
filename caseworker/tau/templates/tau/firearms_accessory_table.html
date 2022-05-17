@@ -7,7 +7,7 @@
           <td class="govuk-table__cell">
             {% for document in good.documents %}
               <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">
-                Product document ({{ document.file_type }}, opens in new tab)
+                Product document ({{ document.type }}, opens in new tab)
               </a>
             {% endfor %}
           </td>

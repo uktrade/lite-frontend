@@ -56,10 +56,10 @@ class TAUMixin:
             if precedents[item["id"]]:
                 precedents[item["id"]]["queue"] = precedents[item["id"]]["queue"] or ALL_CASES_QUEUE_ID
             item["precedent"] = precedents[item["id"]]
-            # Populate docuement urls
+            # Populate document urls
             for document in item["good"]["documents"]:
-                _, ext = os.path.splitext(document["name"])
-                document["file_type"] = ext[1:].upper()
+                _, fext = os.path.splitext(document["name"])
+                document["type"] = fext[1:].upper()
                 document["url"] = reverse(
                     "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": document["id"]}
                 )
