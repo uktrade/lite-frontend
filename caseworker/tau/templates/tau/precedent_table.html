@@ -3,7 +3,7 @@
       <h3>Precedents (most recent)</h3>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Reference</td>
-        <td class="govuk-table__cell"><a href="{% url 'cases:case' precedent.queue precedent.application %}">{{ precedent.reference }}</a></td>
+        <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' precedent.queue precedent.application %}">{{ precedent.reference }}</a></td>
       </tr>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Control list entry</td>
