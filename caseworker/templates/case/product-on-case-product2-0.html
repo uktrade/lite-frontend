@@ -1,6 +1,6 @@
 {% extends 'layouts/case.html' %}
 
-{% load static %}
+{% load static firearm_details_summary %}
 
 {% block details %}
     <div class="govuk-grid-row">
@@ -44,6 +44,18 @@
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Select the type of firearm product</th>
                                     <td class="govuk-table__cell">{{ good_on_application.firearm_details.type.value }}</td>
+                                </tr>
+                                <tr class="govuk-table__row app-table__row">
+                                    <th scope="row" class="govuk-table__header">Firearm category</th>
+                                    <td class="govuk-table__cell">
+                                        {% if firearm_details.category %}
+                                            {% for category in firearm_details.category %}
+                                                {{ category.value }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 <tr class="govuk-table__row app-table__row">
                                     <th scope="row" class="govuk-table__header">Give the product a descriptive name</th>
@@ -141,9 +153,15 @@
                                 {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
                                     <tr class="govuk-table__row app-table__row">
                                         <th scope="row" class="govuk-table__header">
-                                            Is the product covered by section 5 of the Firearm Act 1968?
+                                            Which section of the Firearms Act 1968 is the product covered by?
                                         </th>
-                                        <td class="govuk-table__cell">{{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}</td>
+                                        <td class="govuk-table__cell">
+                                            {% if firearm_details.firearms_act_section == "Unsure" %}
+                                                Don't know
+                                            {%  else  %}
+                                                {{ firearm_details.firearms_act_section|firearm_act_section_label }}
+                                            {%  endif %}
+                                        </td>
                                     </tr>
                                     {% if firearm_details.firearms_act_section == "firearms_act_section5" %}
                                         {% with section5_document=organisation_documents.section_five_certificate %}

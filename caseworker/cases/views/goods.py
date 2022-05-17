@@ -241,7 +241,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
             item["document_type"].replace("-", "_"): item for item in case.organisation["documents"]
         }
         rfd_certificate = organisation_documents.get("rfd_certificate")
-        is_user_rfd = rfd_certificate and not rfd_certificate["is_expired"]
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
         return super().get_context_data(
             good_on_application=self.object,
