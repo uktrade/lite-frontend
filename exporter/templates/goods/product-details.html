@@ -289,7 +289,6 @@
                         {{ good.is_document_sensitive|yesno|title }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_product_document_sensitivity' application_id good.id %}">Change</a>
                     </dd>
                 </div>
                 {% if not good.is_document_sensitive %}
@@ -309,7 +308,6 @@
                             {% endfor %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_product_document' application_id good.id %}">Change</a>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -322,7 +320,6 @@
                             {% endfor %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_product_document' application_id good.id %}">Change</a>
                         </dd>
                     </div>
                 {% endif %}
