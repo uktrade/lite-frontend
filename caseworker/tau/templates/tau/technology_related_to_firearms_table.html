@@ -9,8 +9,8 @@
             <td class="govuk-table__header">Describe the purpose of the product</td>
             <td class="govuk-table__cell">{{ good.part_number }}</td>
         </tr>
+        {{ good }}
 
-        {% include "tau/includes/product_items_value.html" %}
 
       {% endwith %}
     </tbody>
