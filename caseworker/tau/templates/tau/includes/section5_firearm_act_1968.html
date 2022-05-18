@@ -1,0 +1,43 @@
+{% if firearm_details.firearms_act_section == "firearms_act_section5" %}
+    {% with section5_document=organisation_documents.section_five_certificate %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">
+          Is the product covered by section 5 of the Firearm Act 1968?
+        </td>
+        <td class="govuk-table__cell">
+          {% if firearm_details.firearms_act_section == "Unsure" %}
+            Don't know
+          {%  else  %}
+            Section 5
+          {%  endif %}
+        </td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__header">Upload your section 5 letter of authority</td>
+        <td class="govuk-table__cell">
+          {% if firearm_details.section_certificate_missing %}
+            I do not have a section 5 letter of authority
+            <div class="govuk-hint">
+              {{ firearm_details.section_certificate_missing_reason }}
+            </div>
+          {% else %}
+            {% if section5_document.document.safe %}
+              {{ section5_document.document.name }}
+            {% else %}
+              {{ section5_document.document.name }}
+            {% endif %}
+          {% endif %}
+        </td>
+        {% if not firearm_details.section_certificate_missing %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">Certificate number</td>
+            <td class="govuk-table__cell">{{ section5_document.reference_code }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">Expiry date</td>
+            <td class="govuk-table__cell">{{ section5_document.expiry_date }}</td>
+          </tr>
+        {% endif %}
+      </tr>
+    {% endwith %}
+  {% endif %}
