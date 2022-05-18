@@ -44,28 +44,7 @@
                 </div>
 
                 <div class="govuk-grid-column-one-third tau__second-column tau__second-column--hide">
-                    <h1 class="govuk-heading-m tau__headline"></h1>
-                    <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
-                        <ol class="govuk-list">
-                        {% for item in case.goods %}
-                            {% if item.good.control_list_entries %}
-                                {% for cle in item.good.control_list_entries %}
-                                    <li class="lite-button--link control-list__list app-hidden--force" name={{item.id}}>
-                                        Select exporter suggestion {{cle.rating}}
-                                    </li>
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                        </ol>
-                    <div class="govuk-hint">or type for suggestions.</div>
-                    {% for field in form %}
-                    {% if field.name != "goods" %}
-                        {% if field.name == "does_not_have_control_list_entries" %}
-                            <p class="govuk-body-m">Or</p>
-                        {% endif %}
-                    {{ field | as_crispy_field }}
-                    {% endif %}
-                    {% endfor %}
+                    {% include "tau/assesment_form.html" with goods=case.goods %}
                     <div class="form-actions">
                         <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
                     </div>

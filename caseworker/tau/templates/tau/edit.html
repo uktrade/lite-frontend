@@ -1,27 +1,34 @@
 {% extends 'layouts/case.html' %}
 {% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
 {% block body %}
-<div class="govuk-width-container">
+<div class="govuk-width-container tau">
     <a href="../" class="govuk-back-link">Back</a>
-    <h1 class="govuk-heading-l">Product assessment</h1>
-    <p id="subtitle" class="govuk-body-l">Editing assessment for <strong>{{ good.good.name }}</strong> going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+    <h1 class="govuk-heading-m">Product assessment</h1>
+    <p id="subtitle" class="govuk-body-l">Editing assessment for <strong>{{ good.0.good.name }}</strong> going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div>
-                    <h3 class="govuk-heading-m">{{ good.line_number }}.  {{ good.good.name }}</h3>
+                    <h3 class="govuk-heading-m">{{ good.0.line_number }}.  {{ good.0.good.name }}</h3>
                     <div>
-                      {% include "tau/good_table.html" with good=good %}
-                      {% if good.precedent %}
+                      {% include "tau/good_table.html" with good=good.0 %}
+                      {% if good.0.precedent %}
                       <div style="background-color: #f3f2f1" class="govuk-!-padding-5">
-                          {% include "tau/precedent_table.html" with precedent=good.precedent %}
+                        {% include "tau/precedent_table.html" with precedent=good.0.precedent %}
                       </div>
                       {% endif %}
                     </div>
                 </div>
             </div>
+            
             <div class="govuk-grid-column-one-third">
-                {% crispy form %}
+                <form method="POST">
+                    {% csrf_token %}
+                    {% include "tau/assesment_form.html" with goods=good edit=True %}
+                <div class="form-actions">
+                        <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
+                </div>
+            </form>
             </div>
         </div>
     </main>

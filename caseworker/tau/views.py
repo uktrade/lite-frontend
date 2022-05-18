@@ -210,7 +210,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
-            "good": self.get_good(),
+            "good": [self.get_good()],
             "organisation_documents": self.organisation_documents,
         }
 
