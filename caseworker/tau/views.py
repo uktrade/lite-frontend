@@ -64,7 +64,14 @@ class TAUMixin:
                 document["url"] = reverse(
                     "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": document["id"]}
                 )
+
+            # It duplicates these documents in each good but this is unavoidable now
+            # because of the way we are rendering each good.
+            # Once that is updated then we can remove this.
+            item["organisation_documents"] = self.organisation_documents
+
             goods.append(item)
+
         return goods
 
     @cached_property
