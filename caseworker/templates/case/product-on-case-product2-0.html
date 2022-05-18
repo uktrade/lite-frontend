@@ -163,8 +163,40 @@
                                             {%  endif %}
                                         </td>
                                     </tr>
-                                    {% if firearm_details.firearms_act_section == "firearms_act_section5" %}
-                                        {% with section5_document=organisation_documents.section_five_certificate %}
+                                    {% if firearm_details.firearms_act_section == "firearms_act_section1" %}
+                                        <tr class="govuk-table__row app-table__row">
+                                            <th scope="row" class="govuk-table__header">
+                                                Upload your firearm certificate
+                                            </th>
+                                            <td class="govuk-table__cell">
+                                                {% if firearm_details.section_certificate_missing %}
+                                                    I do not have a firearm certificate
+                                                    <div class="govuk-hint">
+                                                        {{ firearm_details.section_certificate_missing_reason }}
+                                                    </div>
+                                                {% else %}
+                                                    {% with document=good_on_application_documents.section_one_certificate %}
+                                                        {% if document.safe %}
+                                                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" target="_blank">{{ document.name }}</a>
+                                                        {% else %}
+                                                            {{ document.name }}
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% if not firearm_details.section_certificate_missing %}
+                                            <tr class="govuk-table__row app-table__row">
+                                                <th scope="row" class="govuk-table__header">Certificate reference number</th>
+                                                <td class="govuk-table__cell">{{ firearm_details.section_certificate_number }}</td>
+                                            </tr>
+                                            <tr class="govuk-table__row app-table__row">
+                                                <th scope="row" class="govuk-table__header">Certificate date of expiry</th>
+                                                <td class="govuk-table__cell">{{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% elif firearm_details.firearms_act_section == "firearms_act_section5" %}
+                                        {% with document=organisation_documents.section_five_certificate %}
                                             <tr class="govuk-table__row app-table__row">
                                                 <th scope="row" class="govuk-table__header">Upload your section 5 letter of authority</th>
                                                 <td class="govuk-table__cell">
@@ -174,10 +206,10 @@
                                                             {{ firearm_details.section_certificate_missing_reason }}
                                                         </div>
                                                     {% else %}
-                                                        {% if section5_document.document.safe %}
-                                                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=section5_document.document.id %}" target="_blank">{{ section5_document.document.name }}</a>
+                                                        {% if document.document.safe %}
+                                                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.document.id %}" target="_blank">{{ document.document.name }}</a>
                                                         {% else %}
-                                                            {{ section5_document.document.name }}
+                                                            {{ document.document.name }}
                                                         {% endif %}
                                                     {% endif %}
                                                 </td>

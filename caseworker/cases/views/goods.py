@@ -233,19 +233,28 @@ class GoodDetails(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         form = self.get_form()
-        goa_documents = get_good_on_application_documents(
-            self.request, self.object["application"], self.object["good"]["id"]
-        )
+
         case = get_case(self.request, self.kwargs["pk"])
+
+        good_on_application_documents = get_good_on_application_documents(
+            self.request,
+            self.object["application"],
+            self.object["good"]["id"],
+        )
+        good_on_application_documents = {
+            item["document_type"].replace("-", "_"): item for item in good_on_application_documents["documents"]
+        }
+
         organisation_documents = {
             item["document_type"].replace("-", "_"): item for item in case.organisation["documents"]
         }
+
         rfd_certificate = organisation_documents.get("rfd_certificate")
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
         return super().get_context_data(
             good_on_application=self.object,
-            good_on_application_documents=goa_documents,
+            good_on_application_documents=good_on_application_documents,
             case=case,
             other_cases=self.other_cases,
             # for pagination
