@@ -18,7 +18,7 @@
 
     {% with firearm_details=good.firearm_details %}
         <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="firearm-product">
                 <dt class="govuk-summary-list__key">
                     Select the type of firearm product
                 </dt>
@@ -28,7 +28,7 @@
                 <dd class="govuk-summary-list__actions">
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="firearm-category">
                 <dt class="govuk-summary-list__key">
                     Firearm category
                 </dt>
@@ -41,7 +41,7 @@
                     <a class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_category' application_id good.id %}">Change</a>
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="descriptive-name">
                 <dt class="govuk-summary-list__key">
                     Give the product a descriptive name
                 </dt>
@@ -52,7 +52,7 @@
                     <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_name' application_id good.id %}">Change</a>
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="knows-product-control-list-entry">
                 <dt class="govuk-summary-list__key">
                     Do you know the product's control list entry?
                 </dt>
@@ -64,7 +64,7 @@
                 </dd>
             </div>
             {% if good.is_good_controlled.key == "True" %}
-                <div class="govuk-summary-list__row">
+                <div class="govuk-summary-list__row" id="control-list-entry">
                     <dt class="govuk-summary-list__key">
                         Enter the control list entry
                     </dt>
@@ -78,7 +78,7 @@
                     </dd>
                 </div>
             {% endif %}
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="security-grading">
                 <dt class="govuk-summary-list__key">
                     Does the product have a government security grading or classification?
                 </dt>
@@ -161,7 +161,7 @@
                     </dd>
                 </div>
             {% endif %}
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="calibre">
                 <dt class="govuk-summary-list__key">
                     What is the calibre of the product?
                 </dt>
@@ -172,7 +172,7 @@
                     <a id="change-good-calibre" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_calibre' application_id good.id %}">Change</a>
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="is-replica-firearm">
                 <dt class="govuk-summary-list__key">
                     Is the product a replica firearm?
                 </dt>
@@ -188,7 +188,7 @@
                     <a id="change-good-replica" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_replica' application_id good.id %}">Change</a>
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="is-rfd">
                 <dt class="govuk-summary-list__key">
                     Are you a registered firearms dealer?
                 </dt>
@@ -200,7 +200,7 @@
                 </dd>
             </div>
             {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
-                <div class="govuk-summary-list__row">
+                <div class="govuk-summary-list__row" id="firearms-act">
                     <dt class="govuk-summary-list__key">
                         Which section of the Firearms Act 1968 is the product covered by?
                     </dt>
@@ -270,7 +270,7 @@
                     {% endif %}
                 {% endif %}
             {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
-                <div class="govuk-summary-list__row">
+                <div class="govuk-summary-list__row" id="firearms-act">
                     <dt class="govuk-summary-list__key">
                         Which section of the Firearms Act 1968 is the product covered by?
                     </dt>
@@ -295,7 +295,7 @@
                     </dd>
                 </div>
             {% endif %}
-            <div class="govuk-summary-list__row">
+            <div class="govuk-summary-list__row" id="has-product-document">
                 <dt class="govuk-summary-list__key">
                     Do you have a document that shows what your product is and what it’s designed to do?
                 </dt>
@@ -353,7 +353,7 @@
                     </div>
                 {% endif %}
             {% else %}
-                <div class="govuk-summary-list__row">
+                <div class="govuk-summary-list__row" id="no-product-document-explanation">
                     <dt class="govuk-summary-list__key">
                         Explain why you are not able to upload a product document
                     </dt>

@@ -818,6 +818,57 @@ def select_product_type(driver, product_type):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select "{firearm_category}" for firearm category'))  # noqa
+def select_firearm_category(driver, firearm_category):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_firearm_category(firearm_category)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{descriptive_name}" as descriptive name'))  # noqa
+def enter_descriptive_name(driver, descriptive_name):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_descriptive_name(descriptive_name)
+    functions.click_submit(driver)
+
+
+@when(
+    parsers.parse(
+        'I select "{knows_control_list_entry}" for knows control list and "{control_list_entry}" for control list entry'
+    )
+)  # noqa
+def entry_control_list(driver, knows_control_list_entry, control_list_entry):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_knows_control_list_entry(knows_control_list_entry)
+    good_details_page.enter_control_list_entry(control_list_entry)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{has_security_grading}" for security grading'))
+def select_security_grading(driver, has_security_grading):
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_security_grading(has_security_grading)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{firearms_act_section}" to firearms act 1968 section and enter "{explanation}"'))
+def select_firearms_act_section(driver, firearms_act_section, explanation):
+    good_details_page = AddGoodDetails(driver)
+    has_selected_section = good_details_page.select_firearms_act_section(firearms_act_section)
+    if not has_selected_section:
+        good_details_page.enter_firearms_act_section_explanation(explanation)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{has_product_documentation}" to product document and enter "{explanation}"'))
+def select_has_product_documentation(driver, has_product_documentation, explanation):
+    good_details_page = AddGoodDetails(driver)
+    has_selected_product_documentation = good_details_page.select_has_product_documentation(has_product_documentation)
+    if not has_selected_product_documentation:
+        good_details_page.enter_has_product_documentation_explanation(explanation)
+    functions.click_submit(driver)
+
+
 @when(
     parsers.parse(
         'I select "{has_markings}" for serial number or other identification markings with details as "{details}"'

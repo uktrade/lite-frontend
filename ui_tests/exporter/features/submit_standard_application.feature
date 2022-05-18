@@ -4,7 +4,6 @@ Feature: I want to indicate the standard licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
-  @skip_feature_flag_product_2_0
   Scenario: Submit standard application
     Given I signin and go to exporter homepage and choose Test Org
     When I click apply
@@ -15,78 +14,29 @@ Feature: I want to indicate the standard licence I want
     And I click on "Tell us about the products"
     And I click on "Add a new product"
     And I select product type "Firearm"
-    And I enter "1" for number of items
-    And I choose to enter serial numbers now
-    And I enter "12345" for the serial numbers
-    And I enter "name" as name, "ML1a" for control list, and "no it doesn’t need one" for security grading
-    And I enter "2015" as the year of manufacture
-    And I select "no" to a replica firearm
+    And I select "Non automatic shotgun" for firearm category
+    And I enter "name" as descriptive name
+    And I select "Yes" for knows control list and "ML1a" for control list entry
+    And I select "no" for security grading
     And I enter ".22" as the calibre
+    And I select "no" to a replica firearm
     And I select "no" to registered firearms dealer
-    And I select "I don't know" to section 1 of the firearms act
-    And I click on "Continue"
-    And I select no to product document and enter "reason"
-    And I enter "20" as value, "no" for incorporation, "no" for deactivation, and "yes" for proof marks
-    And I click on "Back to application overview"
-    And I click on "End use details"
-    And I enter "end use details" for the intended end use
-    And I select "no" to informed by ECJU to apply
-    And I select "no" to informed by ECJU about WMD use
-    And I select "no" to suspected WMD use
-    And I select "no" to products received under transfer licence from the EU
-    And I click save and continue
-    And I click on "Provide product location and journey"
-    And I select "Great Britain" to where products begin export journey
-    And I select "yes" to permanently exported
-    And I select "yes" to shipping air waybill or lading
-    And I select "directly to the end-user" to who products are going
-    And I click on "Submit"
-    And I click on "End user"
-    And I select "no" to reusing an existing party
-    And I select "commercial organisation" as the type of end user
-    And I enter the "Joe Bloggs" as end user name
-    And I click continue
-    And I enter "123 Main Street" and "France" for end user address
-    And I enter "Joe Bloggs" for signatory name
-    And I select no and enter "reason" for end user document
-    And I click on "Submit"
-    And I submit the application
+    And I select "Don't know" to firearms act 1968 section and enter "Explanation"
+    And I select "no" to product document and enter "reason"
     Then my answers are played back to me
-    And I see "Standard Individual Export Licence" as the Licence
-    And I see "Standard Licence" as the type
-    And I see "application1" as reference name
-    And I see "No" as informed to apply
-    And I see "Great Britain" as product journey origin
-    And I see "Yes" as product permanently exported
-    And I see "Yes" as way bill
-    And I see "Direct to end user" as who are the products going to
-    And I see "name" as name
-    And I see "N/A" as part number
-    And I see "Yes" as controlled
-    And I see "ML1a" as control list entry
-    And I see "No" as incorporated
-    And I see "1 item" as quantity
-    And I see "£20.00" as value
-    And I see "end use details" as intended end use
-    And I see "No" for informed to apply
-    And I see "No" for informed WMD
-    And I see "No" for suspect WMD
-    And I see "No" for EU transfer
-    And I see "Joe Bloggs" for end user name
-    And I see "Commercial Organisation" for type
-    And I see "123 Main Street, France" as address
-    And I see "N/A" as website
-    And I see "Joe Bloggs" as signatory
-    And I see "No, I do not have an end-user undertaking or stockist undertaking" for end user document
-    And I see "reason" for the explanation
-    And I see "No information added to this section." for "Consignee"
-    And I see "No information added to this section." for "Third parties"
-    And I see "No information added to this section." for "Supporting documents"
-    And I see "No information added to this section." for Notes
-    When I click continue
-    And I agree to the declaration
-    Then application is submitted
-    When I go to exporter homepage
+    And I see "Firearm" as the type of firearm product
+    And I see "Non automatic shotgun" as the firearm category
+    And I see "name" as the descriptive name
+    And I see "Yes" as whether they know the control list entry
+    And I see "ML1a" as the control list entry
+    And I see "No" as the security grading
+    And I see ".22" as the calibre of the product
+    And I see "No" as the replica firearm
+    And I see "No" as RFD
+    And I see "Don't know" as firearms act
+    And I see "Explanation" as firearms act explanation
+    And I see "No" as product document
+    And I see "reason" as product document reason
 
 
   @serial_numbers_later @skip_feature_flag_product_2_0

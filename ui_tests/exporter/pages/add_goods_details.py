@@ -1,6 +1,9 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 from faker import Faker
 
+from tests_common import functions
 from ui_tests.exporter.pages.BasePage import BasePage
 
 fake = Faker()
@@ -56,6 +59,7 @@ class AddGoodDetails(BasePage):
     # Firearms - Firearms and ammunition details
     FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID = "year_of_manufacture"
     FIREARM_CALIBRE_TEXTFIELD_ID = "calibre"
+    FIREARM_NAME_INPUT_ID = "name"
 
     # Firearms - Firearms act sections 1,2,5 applicable
     FIREARMS_ACT_PREFIX = "is_covered_by_firearm_act_section_one_two_or_five-"
@@ -78,6 +82,10 @@ class AddGoodDetails(BasePage):
     FIREARMS_NUMBER_OF_ITEMS = "number_of_items"
     FIREARMS_SERIAL_NUMBERS = "serial_numbers"
 
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = (
+        "#div_id_PRODUCT_CONTROL_LIST_ENTRY-control_list_entries input.tokenfield-input"
+    )
+
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
 
@@ -91,6 +99,31 @@ class AddGoodDetails(BasePage):
             self.driver.find_element_by_id(self.GROUP3_TECHNOLOGY_ID).click()
         if category == "one":
             self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
+
+    def select_firearm_category(self, firearm_category):
+        value = firearm_category.replace(" ", "_").upper()
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='checkbox' and @value='{value}']").click()
+
+    def enter_descriptive_name(self, descriptive_name):
+        element = self.driver.find_element(
+            by=By.XPATH, value=f"//input[@type='text' and contains(@id, '{self.FIREARM_NAME_INPUT_ID}')]"
+        )
+        element.send_keys(descriptive_name)
+
+    def select_knows_control_list_entry(self, knows_control_list_entry):
+        value = self.true_or_false(knows_control_list_entry)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+
+    def enter_control_list_entry(self, control_list_entry):
+        functions.send_tokens_to_token_bar(
+            self.driver,
+            self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR,
+            [control_list_entry],
+        )
+
+    def select_security_grading(self, has_security_grading):
+        value = self.true_or_false(has_security_grading)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
 
     def set_identification_details(self, has_markings, details):
         self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{has_markings}']").click()
@@ -218,8 +251,22 @@ class AddGoodDetails(BasePage):
         if choice == "Unsure":
             self.driver.find_element_by_id(self.FIREARMS_ACT_DONTKNOW_ID).click()
 
-    def select_firearms_act_section(self, num):
-        self.driver.find_element_by_id(f"firearms_act_section-firearms_act_section{num}").click()
+    def select_firearms_act_section(self, section):
+        sections = ["Section 1", "Section 2", "Section 5", "Don't know"]
+        num = sections.index(section)
+        self.driver.find_element_by_id(f"id_FIREARM_ACT_1968-firearms_act_section_{num}").click()
+        return section != "Don't know"
+
+    def enter_firearms_act_section_explanation(self, explanation):
+        self.driver.find_element_by_id(f"id_FIREARM_ACT_1968-not_covered_explanation").send_keys(explanation)
+
+    def select_has_product_documentation(self, has_product_documentation):
+        value = self.true_or_false(has_product_documentation)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+        return value == "True"
+
+    def enter_has_product_documentation_explanation(self, explanation):
+        self.driver.find_element_by_id(f"id_PRODUCT_DOCUMENT_AVAILABILITY-no_document_comments").send_keys(explanation)
 
     def choose_firearms_certificate_file(self, path):
         self.driver.find_element_by_id("file").send_keys(path)
