@@ -69,7 +69,18 @@ def post_firearm(request, json):
 
 def edit_firearm(request, pk, json):
     response = client.put(request, f"/goods/{pk}", json)
-    response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def edit_firearm_for_attaching(request, pk, json):
+    """Edit the permanent attributes of a good for attaching.
+
+    This is distinct from a normal edit as the normal edit has additional checks
+    to ensure we can't edit a good that is already on a submitted application,
+    however, this is an explicit case where there may be some fields we do want
+    to edit regardless of its status.
+    """
+    response = client.put(request, f"/goods/{pk}/attaching/", json)
     return response.json(), response.status_code
 
 
