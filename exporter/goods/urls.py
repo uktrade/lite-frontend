@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import path
 
 from exporter.goods import views
+from exporter.goods.firearms.views import FirearmProductDetails
 
 app_name = "goods"
 urlpatterns = [
@@ -48,6 +49,7 @@ urlpatterns = [
     path("<uuid:pk>/documents/<uuid:file_pk>/delete/", views.DeleteDocument.as_view(), name="delete_document"),
     path("<uuid:pk>/attach/", views.AttachDocuments.as_view(), name="attach_documents"),
     path("<uuid:pk>/raise-good-query/", views.RaiseGoodsQuery.as_view(), name="raise_goods_query"),
+    path("firearm/<uuid:pk>/", FirearmProductDetails.as_view(), name="firearm_detail"),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
 ]

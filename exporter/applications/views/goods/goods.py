@@ -972,11 +972,7 @@ class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
 
 
 class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
-    template_name = (
-        "applications/goods/goods-detail-summary-product2-0.html"
-        if settings.FEATURE_FLAG_PRODUCT_2_0
-        else "applications/goods/goods-detail-summary.html"
-    )
+    template_name = "applications/goods/goods-detail-summary.html"
 
     def get_context_data(self, **kwargs):
         application_id = str(kwargs["pk"])
@@ -991,6 +987,7 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
             "is_user_rfd": has_valid_rfd_certificate(application),
             "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
+            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
 
 

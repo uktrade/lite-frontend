@@ -4,7 +4,7 @@ from core import client
 def post_document_on_organisation(request, organisation_id, data):
     response = client.post(request, f"/organisations/{organisation_id}/documents/", data)
     response.raise_for_status()
-    return response
+    return response.json(), response.status_code
 
 
 def get_document_on_organisation(request, organisation_id, document_id):

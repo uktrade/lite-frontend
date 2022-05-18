@@ -16,7 +16,9 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			{% govuk_link_button text='goods.GoodsList.CREATE_GOOD' url='goods:add' id='add-a-good' %}
+			{% if not feature_flag_product_2_0 %}
+				{% govuk_link_button text='goods.GoodsList.CREATE_GOOD' url='goods:add' id='add-a-good' %}
+			{% endif %}
 		</div>
 	</div>
 
@@ -83,7 +85,11 @@
 							{{ good.status.value }}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
-							<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
+							{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">View</a>
+							{% else %}
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
+							{% endif %}
 						</td>
 					</tr>
 				{% endfor %}
