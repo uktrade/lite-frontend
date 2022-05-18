@@ -2,12 +2,12 @@
 <table id="table-products-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
       {% with good_on_application=good good=good.good firearm_details=good.firearm_details organisation_documents=good.organisation_documents %}
-        {% include "tau/includes/product_document.html" %}
-        {% include "tau/includes/security_grading.html" %}
+        {% include "tau/includes/product_document.html" %}% include "tau/includes/product_document.html" %}
+        {% include "tau/includes/product_details.html" %}
         {% include "tau/includes/section5_firearm_act_1968.html" %}
         <tr class="govuk-table__row">
             <td class="govuk-table__header">Describe the purpose of the product</td>
-            <td class="govuk-table__cell">{{ good.part_number }}</td>
+            <td class="govuk-table__cell">TODO</td>
         </tr>
         {{ good }}
 
