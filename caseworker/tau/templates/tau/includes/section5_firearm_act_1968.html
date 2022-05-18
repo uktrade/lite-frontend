@@ -1,6 +1,6 @@
 {% load tau_tags %}
 {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
-  {% if firearm_details.firearms_act_section == "firearms_act_section5" %}
+{% if firearm_details.firearms_act_section == "firearms_act_section5" %}
     {% with section5_document=organisation_documents.section_five_certificate %}
       <tr class="govuk-table__row">
         <td class="govuk-table__header">
@@ -44,5 +44,5 @@
         {% endif %}
       </tr>
     {% endwith %}
-  {% endif %}
+{% endif %}
 {% endif %}

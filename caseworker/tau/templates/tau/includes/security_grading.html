@@ -4,9 +4,8 @@
   <td class="govuk-table__header">Does the product have a government security grading or classification?</td>
   <td class="govuk-table__cell">{{ good.is_pv_graded|title }}</td>
 </tr>
-
 {% if good.is_pv_graded == "yes" %}
-  {% if good.pv_grading_details.prefix %}
+{% if good.pv_grading_details.prefix %}
     <tr class="govuk-table__row">
       <td class="govuk-table__header">Enter a prefix (optional)</td>
       <td class="govuk-table__cell">{{ good.pv_grading_details.prefix }}</td>
