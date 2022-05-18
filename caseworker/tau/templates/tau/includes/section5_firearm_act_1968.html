@@ -22,7 +22,9 @@
             </div>
           {% else %}
             {% if section5_document.document.safe %}
-              {{ section5_document.document.name }}
+                  <a target="_blank" href="{{ section5_document.document.url }}" class="govuk-link--no-visited-state">
+                    section5_document.document.name
+                  </a>
             {% else %}
               {{ section5_document.document.name }}
             {% endif %}
