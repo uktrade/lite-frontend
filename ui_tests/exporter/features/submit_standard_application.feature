@@ -4,6 +4,7 @@ Feature: I want to indicate the standard licence I want
   I want to indicate the kind of licence I want
   So that I am more likely to get the correct kind of licence or the kind of licence I would like
 
+  @skip_feature_flag_product_2_0
   Scenario: Submit standard application
     Given I signin and go to exporter homepage and choose Test Org
     When I click apply
@@ -88,7 +89,7 @@ Feature: I want to indicate the standard licence I want
     When I go to exporter homepage
 
 
-  @serial_numbers_later
+  @serial_numbers_later @skip_feature_flag_product_2_0
   Scenario: Submit standard application when serial numbers are not available
     Given I signin and go to exporter homepage and choose Test Org
     When I click apply
