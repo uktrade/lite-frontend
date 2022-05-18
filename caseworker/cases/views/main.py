@@ -158,6 +158,7 @@ class CaseDetail(CaseView):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
         self.tabs.append(self.get_advice_tab())
+        self.tabs.append(self.get_assessment_tab())
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
