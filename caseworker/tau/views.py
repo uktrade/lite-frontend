@@ -47,7 +47,6 @@ class TAUMixin:
                 "cases:document",
                 kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["document"]["id"]},
             )
-        print(documents)
         return documents
 
     @cached_property
