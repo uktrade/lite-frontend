@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from faker import Faker
 
+from tests_common import functions
 from ui_tests.exporter.pages.BasePage import BasePage
 
 fake = Faker()
@@ -56,6 +57,7 @@ class AddGoodDetails(BasePage):
     # Firearms - Firearms and ammunition details
     FIREARM_YEAR_OF_MANUFACTURE_TEXTFIELD_ID = "year_of_manufacture"
     FIREARM_CALIBRE_TEXTFIELD_ID = "calibre"
+    FIREARM_NAME_INPUT_ID = "name"
 
     # Firearms - Firearms act sections 1,2,5 applicable
     FIREARMS_ACT_PREFIX = "is_covered_by_firearm_act_section_one_two_or_five-"
@@ -78,6 +80,10 @@ class AddGoodDetails(BasePage):
     FIREARMS_NUMBER_OF_ITEMS = "number_of_items"
     FIREARMS_SERIAL_NUMBERS = "serial_numbers"
 
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = (
+        "#div_id_PRODUCT_CONTROL_LIST_ENTRY-control_list_entries input.tokenfield-input"
+    )
+
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
 
@@ -91,6 +97,31 @@ class AddGoodDetails(BasePage):
             self.driver.find_element_by_id(self.GROUP3_TECHNOLOGY_ID).click()
         if category == "one":
             self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
+
+    def select_firearm_category(self, firearm_category):
+        value = firearm_category.replace(" ", "_").upper()
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='checkbox' and @value='{value}']").click()
+
+    def enter_descriptive_name(self, descriptive_name):
+        element = self.driver.find_element(
+            by=By.XPATH, value=f"//input[@type='text' and contains(@id, '{self.FIREARM_NAME_INPUT_ID}')]"
+        )
+        element.send_keys(descriptive_name)
+
+    def select_knows_control_list_entry(self, knows_control_list_entry):
+        value = self.true_or_false(knows_control_list_entry)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+
+    def enter_control_list_entry(self, control_list_entry):
+        functions.send_tokens_to_token_bar(
+            self.driver,
+            self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR,
+            [control_list_entry],
+        )
+
+    def select_security_grading(self, has_security_grading):
+        value = self.true_or_false(has_security_grading)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
 
     def set_identification_details(self, has_markings, details):
         self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{has_markings}']").click()
@@ -218,8 +249,22 @@ class AddGoodDetails(BasePage):
         if choice == "Unsure":
             self.driver.find_element_by_id(self.FIREARMS_ACT_DONTKNOW_ID).click()
 
-    def select_firearms_act_section(self, num):
-        self.driver.find_element_by_id(f"firearms_act_section-firearms_act_section{num}").click()
+    def select_firearms_act_section(self, section):
+        sections = ["Section 1", "Section 2", "Section 5", "Don't know"]
+        num = sections.index(section)
+        self.driver.find_element_by_id(f"id_FIREARM_ACT_1968-firearms_act_section_{num}").click()
+        return section != "Don't know"
+
+    def enter_firearms_act_section_explanation(self, explanation):
+        self.driver.find_element_by_id(f"id_FIREARM_ACT_1968-not_covered_explanation").send_keys(explanation)
+
+    def select_has_product_documentation(self, has_product_documentation):
+        value = self.true_or_false(has_product_documentation)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+        return value == "True"
+
+    def enter_has_product_documentation_explanation(self, explanation):
+        self.driver.find_element_by_id(f"id_PRODUCT_DOCUMENT_AVAILABILITY-no_document_comments").send_keys(explanation)
 
     def choose_firearms_certificate_file(self, path):
         self.driver.find_element_by_id("file").send_keys(path)
@@ -239,3 +284,74 @@ class AddGoodDetails(BasePage):
         if has_markings == "No":
             self.driver.find_element_by_id(self.FIREARMS_IDENTIFICATION_MARKINGS_NO_ID).click()
             self.enter_related_field_details(self.FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID, text=details)
+
+    def select_made_before_1938(self, made_before_1938):
+        value = self.true_or_false(made_before_1938)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+
+    def enter_year_it_was_made(self, year):
+        element = self.driver.find_element(
+            by=By.XPATH, value=f"//input[@type='text' and contains(@id, 'year_of_manufacture')]"
+        )
+        element.send_keys(year)
+
+    def select_onward_exported(self, is_onward_exported):
+        value = self.true_or_false(is_onward_exported)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+
+    def select_altered(self, is_altered):
+        value = self.true_or_false(is_altered)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+        return value == "True"
+
+    def enter_altered_reason(self, reason):
+        element = self.driver.find_element(
+            by=By.XPATH, value=f"//textarea[contains(@id, 'is_onward_altered_processed_comments')]"
+        )
+        element.send_keys(reason)
+
+    def select_incorporated(self, is_incorporated):
+        value = self.true_or_false(is_incorporated)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+        return value == "True"
+
+    def enter_incorporated_reason(self, reason):
+        element = self.driver.find_element(
+            by=By.XPATH, value=f"//textarea[contains(@id, 'is_onward_incorporated_comments')]"
+        )
+        element.send_keys(reason)
+
+    def select_deactivated(self, is_deactivated):
+        value = self.true_or_false(is_deactivated)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+        return value == "True"
+
+    def enter_deactivated_date(self, deactivated_date):
+        date = reversed(deactivated_date.split("-"))
+        date_elements = self.driver.find_elements(
+            by=By.XPATH, value=f"//input[@type='text' and contains(@id, 'date_of_deactivation')]"
+        )
+        for input, el in zip(date, date_elements):
+            el.send_keys(input)
+
+    def selected_proof_standards(self, is_proof_standards):
+        value = self.true_or_false(is_proof_standards)
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
+        return value == "True"
+
+    def enter_total_value(self, total_value):
+        element = self.driver.find_element(by=By.XPATH, value=f"//input[@type='text' and contains(@id, 'value')]")
+        element.send_keys(total_value)
+
+    def select_has_serial_numbers(self, has_serial_numbers):
+        options = [
+            "Yes, I can add serial numbers now",
+            "Yes, I can add serial numbers later",
+            "No",
+        ]
+        index = options.index(has_serial_numbers)
+        element = self.driver.find_element(
+            by=By.XPATH,
+            value=f"//input[@type='radio' and contains(@id, 'serial_numbers_available_{index}')]",
+        )
+        element.click()
