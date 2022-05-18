@@ -43,8 +43,9 @@ class TAUMixin:
         for item in self.case.organisation["documents"]:
             key = item["document_type"].replace("-", "_")
             documents[key] = item
-            documents[key]["url"] = reverse(
-                "cases:document", kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["id"]}
+            item["document"]["url"] = reverse(
+                "cases:document",
+                kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["document"]["id"]},
             )
         return documents
 

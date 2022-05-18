@@ -1,0 +1,17 @@
+{% if good.is_document_available %}
+ <tr class="govuk-table__row">
+  <td class="govuk-table__cell">
+   {% for document in good.documents %}
+    <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">
+     Product document ({{ document.type }}, opens in new tab)
+    </a>
+   {% endfor %}
+  </td>
+   <td class="govuk-table__header"></td>
+ </tr>
+{% else %}
+ <tr class="govuk-table__row">
+  <td class="govuk-table__header">Explain why you are not able to upload a product document</td>
+  <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
+</tr>
+{% endif %}
