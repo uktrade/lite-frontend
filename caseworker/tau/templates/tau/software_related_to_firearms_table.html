@@ -1,33 +1,36 @@
 {% load advice_tags tau_tags %}
 <table id="table-products-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
+    {% with good_on_application=good good=good.good firearm_details=good.good.firearm_details organisation_documents=good.organisation_documents %}
+      {% include "tau/includes/product_document.html" %}
+      {% include "tau/includes/product_details.html" %}
+      {% include "tau/includes/security_grading.html" %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Select the type of firearm product</td>
-        <td class="govuk-table__cell">{{good.good.firearm_details.type.value}}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Part number (optional)</td>
-        <td class="govuk-table__cell">{{ good.good.part_number }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Does the product have a government security grading or classification?</td>
-        <td class="govuk-table__cell">{{ good.good.is_pv_graded|title }}</td>
+        <td class="govuk-table__header">Describe the purpose of the product</td>
+        <td class="govuk-table__cell">{{ good.software_or_technology_details }}</td>
       </tr>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Is the product for military use?</td>
-        <td class="govuk-table__cell">{{ good.good.is_military_use.value }}</td>
+        <td class="govuk-table__cell">{{ good.is_military_use.value }}</td>
       </tr>
+      {% if good.is_military_use.key == "yes_modified" %}
+        <tr class="govuk-table__row">
+         <td class="govuk-table__header">Provide details of the modifications?</td>
+         <td class="govuk-table__cell">{{ good.modified_military_use_details }}</td>
+        </tr>
+      {% endif %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Will the product be onward exported to any additional countries?</td>
-        <td class="govuk-table__cell">{{ case.destinations|is_ultimate_end_user|yesno|capfirst }}</td>
+        <td class="govuk-table__header">Does the product include security features to protect information?</td>
+        <td class="govuk-table__cell">{{ good.uses_information_security|yesno|capfirst }}</td>
       </tr>
+      {% if good.information_security_details %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Quantity</td>
-        <td class="govuk-table__cell">{{ good.quantity|floatformat:"0" }}</td>
+        <td class="govuk-table__header">Provide details of the information security features</td>
+        <td class="govuk-table__cell">{{ good.information_security_details }}</td>
       </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Total value</td>
-        <td class="govuk-table__cell">£{{ case.goods | get_case_value }}</td>
-      </tr>
+      {% endif %}
+     {% include "tau/includes/product_items_value.html" %}
+     {% include "tau/includes/onward_exported.html" %}
+    {% endwith %}
     </tbody>
-  </table>
+</table>
