@@ -249,11 +249,11 @@
                                             {% if not firearm_details.section_certificate_missing %}
                                                 <tr class="govuk-table__row app-table__row">
                                                     <th scope="row" class="govuk-table__header">Certificate reference number</th>
-                                                    <td class="govuk-table__cell">{{ section5_document.reference_code }}</td>
+                                                    <td class="govuk-table__cell">{{ firearm_details.section_certificate_number }}</td>
                                                 </tr>
                                                 <tr class="govuk-table__row app-table__row">
                                                     <th scope="row" class="govuk-table__header">Certificate date of expiry</th>
-                                                    <td class="govuk-table__cell">{{ section5_document.expiry_date }}</td>
+                                                    <td class="govuk-table__cell">{{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}</td>
                                                 </tr>
                                             {% endif %}
                                         {% endwith %}
