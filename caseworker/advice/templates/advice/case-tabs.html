@@ -22,6 +22,9 @@
 			<a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab lite-tabs__tab--selected">
 				Recommendations and decision
 			</a>
+			<a id="tab-assessment" href="{% url 'cases:tau:home' queue.id case.id %}" class="lite-tabs__tab">
+				Product Assessment
+			</a>
 		</div>
 	</div>
 </div>
