@@ -305,8 +305,12 @@ def delete_additional_document(request, pk, doc_pk):
     return data.status_code
 
 
-def get_application_documents(request, pk, good_pk):
-    response = client.get(request, f"/applications/{pk}/goods/{good_pk}/documents/")
+def get_application_documents(request, pk, good_pk, include_unsafe=False):
+    params = ""
+    if include_unsafe:
+        params = "?include_unsafe=1"
+    url = f"/applications/{pk}/goods/{good_pk}/documents/{params}"
+    response = client.get(request, url)
     response.raise_for_status()
     return response.json(), response.status_code
 

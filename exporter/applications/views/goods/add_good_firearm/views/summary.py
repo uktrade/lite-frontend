@@ -66,6 +66,7 @@ class BaseProductOnApplicationSummary(
             self.request,
             self.application["id"],
             self.good["id"],
+            include_unsafe=True,
         )
         application_documents = application_documents["documents"]
 
