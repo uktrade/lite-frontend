@@ -1,4 +1,6 @@
-{% if firearm_details.firearms_act_section == "firearms_act_section5" %}
+{% load tau_tags %}
+{% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+  {% if firearm_details.firearms_act_section == "firearms_act_section5" %}
     {% with section5_document=organisation_documents.section_five_certificate %}
       <tr class="govuk-table__row">
         <td class="govuk-table__header">
@@ -33,13 +35,14 @@
         {% if not firearm_details.section_certificate_missing %}
           <tr class="govuk-table__row">
             <td class="govuk-table__header">Certificate number</td>
-            <td class="govuk-table__cell">{{ section5_document.reference_code }}</td>
+            <td class="govuk-table__cell">{{ firearm_details.section_certificate_number }}</td>
           </tr>
           <tr class="govuk-table__row">
             <td class="govuk-table__header">Expiry date</td>
-            <td class="govuk-table__cell">{{ section5_document.expiry_date }}</td>
+            <td class="govuk-table__cell">{{ firearm_details.section_certificate_date_of_expiry|format_date }}</td>
           </tr>
         {% endif %}
       </tr>
     {% endwith %}
   {% endif %}
+{% endif %}

@@ -1,0 +1,40 @@
+<tr class="govuk-table__row">
+    <td class="govuk-table__header">
+      Will the product be incorporated into another item before it is onward exported?
+    </td>
+    <td class="govuk-table__cell">
+      {% if firearm_details.is_onward_exported is not None %}
+        {{ firearm_details.is_onward_exported|yesno|capfirst }}
+      {% else %}
+        N/A
+      {% endif %}
+    </td>
+</tr>
+{% if firearm_details.is_onward_exported %}
+    <tr class="govuk-table__row">
+        <td class="govuk-table__header">
+        Will the item be altered or processed before it is exported again?
+        </td>
+        <td class="govuk-table__cell">
+        {{ firearm_details.is_onward_altered_processed|yesno|capfirst }}
+        {% if firearm_details.is_onward_altered_processed %}
+            <div class="govuk-hint">
+                {{ firearm_details.is_onward_altered_processed_comments }}
+            </div>
+        {% endif %}
+        </td>
+    </tr>
+    <tr class="govuk-table__row">
+        <td class="govuk-table__header">
+        Will the product be incorporated into another item before it is onward exported?
+        </td>
+        <td class="govuk-table__cell">
+        {{ firearm_details.is_onward_incorporated|yesno|capfirst }}
+        {% if firearm_details.is_onward_incorporated %}
+            <div class="govuk-hint">
+                {{ firearm_details.is_onward_incorporated_comments }}
+            </div>
+        {% endif %}
+        </td>
+    </tr>
+{% endif %}

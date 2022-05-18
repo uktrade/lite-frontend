@@ -1,0 +1,27 @@
+<tr class="govuk-table__row">
+    <td class="govuk-table__header">
+      Will each product have a serial number or other identification marking?
+    </td>
+    <td class="govuk-table__cell">
+      {% if firearm_details.serial_numbers_available == "AVAILABLE" %}
+          Yes, I can add serial numbers now
+      {% elif firearm_details.serial_numbers_available == "LATER" %}
+          Yes, I can add serial numbers later
+      {% else %}
+          No
+          {% if firearm_details.no_identification_markings_details %}
+              <div class="govuk-hint">
+                  {{ firearm_details.no_identification_markings_details }}
+              </div>
+          {% endif %}
+      {% endif %}
+    </td>
+  </tr>
+  {% if good.firearm_details.serial_numbers_available != "NOT_AVAILABLE" %}
+    <tr class="govuk-table__row">
+      <td class="govuk-table__header">Enter serial numbers or other identification markings</td>
+      <td class="govuk-table__cell">
+        {% include "tau/includes/serial_numbers.html" %}
+      </td>
+    </tr>
+  {% endif %}
