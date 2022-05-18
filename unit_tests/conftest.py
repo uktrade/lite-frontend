@@ -631,10 +631,26 @@ def data_standard_case():
                             {"rating": "ML8a", "text": '"Explosives" and mixtures of explosive substances'},
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
-                        "comment": "hmmmhhh",
-                        "report_summary": "scale compelling technologies",
+                        "comment": "test comment",
+                        "report_summary": "firearms (2)",
                         "audit_trail": [],
                         "good_application_internal_documents": [],
+                        "firearm_details": {
+                            "type": {"key": "firearms", "value": "Firearms"},
+                            "calibre": "0.25",
+                            "is_replica": False,
+                            "replica_description": None,
+                            "category": [
+                                {"key": "NON_AUTOMATIC_SHOTGUN", "value": "Non automatic shotgun"},
+                                {
+                                    "key": "NON_AUTOMATIC_RIM_FIRED_HANDGUN",
+                                    "value": "Non automatic rim-fired handgun",
+                                },
+                            ],
+                            "number_of_items": 2,
+                            "serial_numbers_available": "AVAILABLE",
+                            "serial_numbers": ["12345", "ABC-123"],
+                        },
                     },
                     {
                         "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
