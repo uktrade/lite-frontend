@@ -8,6 +8,12 @@ Feature: I want to check sanctions matches
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     When I go to application previously created
+    Then I see the section of the case page entitled ‘Sanction matches’
+    And I see <end_user_name> listed there
+    When I select <end_user_name> and press ‘remove sanction match’
+    Then I am asked to provide a reason
+    And the sanction is removed from the case page
+
     Then I should see that the sanction match is highlighted as <end_user_name>
 
     Examples:
