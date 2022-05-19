@@ -460,6 +460,7 @@ def data_standard_case():
                 "case": "8fb76bed-fd45-4293-95b8-eda9468aa254",
                 "reference_code": "GBSIEL/2020/0002687/T",
                 "is_major_editable": False,
+                "goods_starting_point": "GB",
                 "goods_locations": {
                     "type": "external_locations",
                     "data": [
@@ -697,7 +698,7 @@ def data_standard_case():
                             {"rating": "ML8a", "text": '"Explosives" and mixtures of explosive substances'},
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
-                        "comment": "hmmmhhh",
+                        "comment": "test assesment note",
                         "report_summary": "scale compelling technologies",
                         "audit_trail": [],
                         "good_application_internal_documents": [],

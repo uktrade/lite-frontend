@@ -12,7 +12,7 @@
         <div class="govuk-grid-row">
             <!-- Heading -->
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-m">Product assessment</h1>
+                <h1 class="govuk-heading-l">Product assessment</h1>
                 {% if unassessed_goods %}
                     <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} {% if unassessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
                 {% else %}
@@ -57,7 +57,7 @@
                             {% endif %}
                         {% endfor %}
                         </ol>
-                    <div class="govuk-hint">or type for suggestions.</div>
+                    <div class="govuk-hint">Or type for suggestions</div>
                     {% for field in form %}
                     {% if field.name != "goods" %}
                         {% if field.name == "does_not_have_control_list_entries" %}
@@ -84,11 +84,12 @@
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header"></th>
                             <th scope="col" class="govuk-table__header"></th>
-                            <th scope="col" class="govuk-table__header">Control Entry</th>
-                            <th scope="col" class="govuk-table__header">License</th>
+                            <th scope="col" class="govuk-table__header">Control entry</th>
+                            <th scope="col" class="govuk-table__header">Licence</th>
                             <th scope="col" class="govuk-table__header">Regime</th>
-                            <th scope="col" class="govuk-table__header">Report Summary</th>
-                            <th scope="col" class="govuk-table__header">Assessment notes</th>
+                            <th scope="col" class="govuk-table__header">Report summary</th>
+                            <th scope="col" class="govuk-table__header">Assessment notes and evidence</th>
+                            <th scope="col" class="govuk-table__header"></th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -100,6 +101,7 @@
                             <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
                             <td class="govuk-table__cell">{% if good.precedent.wassenaar %}Wassenaar{% endif %}</td>
                             <td class="govuk-table__cell">{{ good.report_summary }}</td>
+                            <td class="govuk-table__cell">{{ good.comment }}</td>
                             <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a></td>
                         </tr>
                         {% endfor %}
