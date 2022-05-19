@@ -1,12 +1,21 @@
 {% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
 
-<h1 class="govuk-heading-m tau__headline">{% if edit %}Assessing {{goods.0.good.name}}{% endif %}</h1>
+<h1 class="govuk-heading-m tau__headline">{% if good %}Assessing {{good.good.name}}{% endif %}</h1>
   <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
       <ol class="govuk-list">
+      {# for a Single good from edit template #}
+      {% if good %}
+        {% for cle in good.good.control_list_entries %} 
+            <li class="lite-button--link control-list__list {% if good %}{% else %}app-hidden--force{% endif %}">
+                Select exporter suggestion {{cle.rating}}
+            </li>
+        {% endfor %}
+      {% endif %}
+      {# for Multiple goods from home template if goods exist #}
       {% for item in goods %}
           {% if item.good.control_list_entries %}
               {% for cle in item.good.control_list_entries %}
-                  <li class="lite-button--link control-list__list {% if edit %}{% else %}app-hidden--force{% endif %}" name={{item.id}}>
+                  <li class="lite-button--link control-list__list {% if good %}{% else %}app-hidden--force{% endif %}" name={{item.id}}>
                       Select exporter suggestion {{cle.rating}}
                   </li>
               {% endfor %}

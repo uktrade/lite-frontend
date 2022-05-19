@@ -4,17 +4,17 @@
 <div class="govuk-width-container tau">
     <a href="../" class="govuk-back-link">Back</a>
     <h1 class="govuk-heading-m">Product assessment</h1>
-    <p id="subtitle" class="govuk-body-l">Editing assessment for <strong>{{ good.0.good.name }}</strong> going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+    <p id="subtitle" class="govuk-body-l">Editing assessment for <strong>{{ good.good.name }}</strong> going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div>
-                    <h3 class="govuk-heading-m">{{ good.0.line_number }}.  {{ good.0.good.name }}</h3>
+                    <h3 class="govuk-heading-m">{{ good.line_number }}.  {{ good.good.name }}</h3>
                     <div>
-                      {% include "tau/good_table.html" with good=good.0 %}
-                      {% if good.0.precedent %}
+                      {% include "tau/good_table.html" with good=good %}
+                      {% if good.precedent %}
                       <div style="background-color: #f3f2f1" class="govuk-!-padding-5">
-                        {% include "tau/precedent_table.html" with precedent=good.0.precedent %}
+                        {% include "tau/precedent_table.html" with precedent=good.precedent %}
                       </div>
                       {% endif %}
                     </div>
@@ -24,7 +24,7 @@
             <div class="govuk-grid-column-one-third">
                 <form method="POST">
                     {% csrf_token %}
-                    {% include "tau/assesment_form.html" with goods=good edit=True %}
+                    {% include "tau/assesment_form.html" %}
                 <div class="form-actions">
                         <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
                 </div>
