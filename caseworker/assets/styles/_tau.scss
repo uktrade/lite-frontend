@@ -33,7 +33,7 @@
       padding-top: 20px;
       counter-increment: my-counter;
       position: relative;
-      display:flex;
+      display: flex;
       border-bottom: 2px solid $base-grey;
     }
 
@@ -44,7 +44,6 @@
   }
 
   #div_id_does_not_have_control_list_entries {
-
     .govuk-checkboxes__label {
       padding: 0;
       text-decoration: underline;
@@ -52,7 +51,8 @@
       color: $base-blue;
     }
 
-    .govuk-checkboxes__label::before, ::after {
+    .govuk-checkboxes__label::before,
+    ::after {
       position: absolute;
       left: 10000px;
     }
@@ -64,4 +64,7 @@
   .tokenfield-copy-helper {
     display: none;
   }
-} 
+  .govuk-table__cell {
+    padding-right: 10px;
+  }
+}
