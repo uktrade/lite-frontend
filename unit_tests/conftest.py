@@ -697,7 +697,7 @@ def data_standard_case():
                             {"rating": "ML8a", "text": '"Explosives" and mixtures of explosive substances'},
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
-                        "comment": "hmmmhhh",
+                        "comment": "test assesment note",
                         "report_summary": "scale compelling technologies",
                         "audit_trail": [],
                         "good_application_internal_documents": [],

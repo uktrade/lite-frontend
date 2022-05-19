@@ -27,7 +27,7 @@ class TAUEditForm(forms.Form):
     )
     report_summary = forms.CharField(
         label="Add a report summary",
-        help_text="Type for suggestions.",
+        help_text="Type for suggestions",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": "report_summary"}),
         required=False,
