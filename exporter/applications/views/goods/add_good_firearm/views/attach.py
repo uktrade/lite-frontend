@@ -230,7 +230,7 @@ class AttachFirearmToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:new_good",
+            "applications:preexisting_good",
             kwargs={
                 "pk": self.kwargs["pk"],
             },
