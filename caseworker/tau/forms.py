@@ -45,7 +45,7 @@ class TAUEditForm(forms.Form):
     )
 
     evidence_file = forms.FileField(
-        label="Upload a file",
+        label="Upload evidence (for example, screenshots or documents)",
         required=False,
     )
 
