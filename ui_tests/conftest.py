@@ -1,7 +1,17 @@
 import os
+import pytest
 
 import tests_common.tools.helpers as utils
 
+from environ import Env
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+ENV_FILE = os.path.join(BASE_DIR, ".env")
+if os.path.exists(ENV_FILE):
+    Env.read_env(ENV_FILE)
+
+environ = Env()
 
 STEP_THROUGH = False  # Gives a prompt for every step in the terminal
 STEP_VERBOSE = STEP_THROUGH  # Shows info as a banner for every step
@@ -20,6 +30,16 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
         import IPython
 
         IPython.embed(using=False)
+
+
+def pytest_bdd_apply_tag(tag, function):
+    if tag == "skip_feature_flag_product_2_0":
+        feature_flag_product_2_0 = environ.bool("FEATURE_FLAG_PRODUCT_2_0", False)
+        if feature_flag_product_2_0:
+            marker = pytest.mark.skip(reason="Feature flag for product 2.0 disabled")
+            marker(function)
+            return True
+    return None
 
 
 def pytest_configure(config):
