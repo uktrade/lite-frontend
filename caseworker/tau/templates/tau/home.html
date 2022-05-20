@@ -14,9 +14,9 @@
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-l">Product assessment</h1>
                 {% if unassessed_goods %}
-                    <p id="subtitle" class="govuk-body">Assess {{ unassessed_goods|length }} {% if unassessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+                    <p id="subtitle" class="govuk-body-l">Assess {{ unassessed_goods|length }} {% if unassessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
                 {% else %}
-                    <p id="subtitle" class="govuk-body">{{ assessed_goods|length }} {% if assessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+                    <p id="subtitle" class="govuk-body-l">{{ assessed_goods|length }} {% if assessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
                 {% endif %}
             </div>
             <!-- Move case forward form -->
