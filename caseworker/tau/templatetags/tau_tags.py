@@ -24,3 +24,8 @@ def format_date(val):
         return ""
     date_obj = datetime.strptime(val, "%Y-%m-%d")
     return date_obj.strftime("%d %B %Y")
+
+
+@register.filter
+def uniq(arr, key):
+    return set([item[key] for item in arr if key in item])
