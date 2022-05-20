@@ -94,6 +94,7 @@ const initTauControlListEntry = () => {
   // Create CLE in the input field after click
   cleList.forEach((cle) =>
     cle.addEventListener("click", (event) => {
+      event.preventDefault();
       if (!doesNotHaveCleSentence.checked) {
         createTokenFieldSetItem(event.target.innerText);
       }

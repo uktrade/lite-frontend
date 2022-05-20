@@ -1,10 +1,10 @@
 {% extends 'layouts/case.html' %}
 {% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
 {% block body %}
-<div class="govuk-width-container">
+<div class="govuk-width-container tau">
     <a href="../" class="govuk-back-link">Back</a>
     <h1 class="govuk-heading-l">Product assessment</h1>
-    <p id="subtitle" class="govuk-body-l">Editing assessment for <strong>{{ good.good.name }}</strong> going from <strong>Great Britain</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+    <p id="subtitle" class="govuk-body">Editing assessment for <strong>{{ good.good.name }}</strong> going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -21,7 +21,26 @@
                 </div>
             </div>
             <div class="govuk-grid-column-one-third">
-                {% crispy form %}
+                <form id="tau-form" method="POST">
+                    {% csrf_token %}
+                    <h1 class="govuk-heading-m tau__headline">Assessing {{good.good.name}}</h1>
+                    <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
+                    {% for cle in good.good.control_list_entries %}
+                        <button class="lite-button--link control-list__list control-list__edit">
+                            Select exporter suggestion {{cle.rating}}
+                        </button>
+                    {% endfor %}
+                    <div class="govuk-hint">Or type for suggestions</div>
+                    {% for field in form %}
+                        {% if field.name == "does_not_have_control_list_entries" %}
+                            <p class="govuk-body-m">Or</p>
+                        {% endif %}
+                        {{ field | as_crispy_field }}
+                    {% endfor %}
+                    <div class="form-actions">
+                        <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
+                    </div>
+                </form>
             </div>
         </div>
     </main>
