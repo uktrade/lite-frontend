@@ -136,7 +136,7 @@ Feature: I want to indicate the standard licence I want
     When I go to exporter homepage
 
 
-  @serial_numbers_later @skip_feature_flag_product_2_0
+  @serial_numbers_later
   Scenario: Submit standard application when serial numbers are not available
     Given I signin and go to exporter homepage and choose Test Org
     When I click apply
@@ -147,18 +147,65 @@ Feature: I want to indicate the standard licence I want
     And I click on "Tell us about the products"
     And I click on "Add a new product"
     And I select product type "Firearm"
-    And I enter "4" for number of items
-    And I choose to add serial numbers later
-    And I enter "name" as name, "ML1a" for control list, and "no it doesn’t need one" for security grading
-    And I enter "2015" as the year of manufacture
-    And I select "no" to a replica firearm
+    And I select "Non automatic shotgun" for firearm category
+    And I enter "name" as descriptive name
+    And I select "Yes" for knows control list and "ML1a" for control list entry
+    And I select "no" for security grading
     And I enter ".22" as the calibre
+    And I select "no" to a replica firearm
     And I select "no" to registered firearms dealer
-    And I select "I don't know" to section 1 of the firearms act
-    And I click on "Continue"
-    And I select no to product document and enter "reason"
-    And I enter "20" as value, "no" for incorporation, "no" for deactivation, and "yes" for proof marks
-    And I click on "Back to application overview"
+    And I select "Don't know" to firearms act 1968 section and enter "Explanation"
+    And I select "no" to product document and enter "reason"
+    Then I see the product saved summary
+    And I see "Firearm" as the type of firearm product
+    And I see "Non automatic shotgun" as the firearm category
+    And I see "name" as the descriptive name
+    And I see "Yes" as whether they know the control list entry
+    And I see "ML1a" as the control list entry
+    And I see "No" as the security grading
+    And I see ".22" as the calibre of the product
+    And I see "No" as the replica firearm
+    And I see "No" as RFD
+    And I see "Don't know" as firearms act
+    And I see "Explanation" as firearms act explanation
+    And I see "No" as product document
+    And I see "reason" as product document reason
+    When I click continue on application
+    And I select "Yes" for the product being made before 1938
+    And I enter "1930" for the year it was made
+    And I enter "Yes" for it being onward exported
+    And I enter "Yes" for it being altered and "Altering it" as reason
+    And I enter "No" for it being incorporated
+    And I enter "Yes" for it being deactivated
+    And I enter "2007-11-12" as the date of deactivation and "Yes" for UK proof house standards
+    And I enter "4" for number of items and "12.12" for total value
+    And I enter "Yes, I can add serial numbers later" for product having serial numbers
+    Then I see the product added to application summary
+    And I see "Yes" as product being made before 1938
+    And I see "1930" for the year it was made
+    And I see "Yes" for it being onward exported
+    And I see "Yes" for it being altered and "Altering it" as reason
+    And I see "No" for it being incorporated
+    And I see "Yes" for it being deactivated
+    And I see "12 November 2007" as the date of deactivation and "Yes" for UK proof house standards
+    And I see "4" for number of items and "£12.12" for total value
+    And I see "Yes, I can add serial numbers later" for product having serial numbers
+    And I see "Firearm" as the type of firearm product
+    And I see "Non automatic shotgun" as the firearm category
+    And I see "name" as the descriptive name
+    And I see "Yes" as whether they know the control list entry
+    And I see "ML1a" as the control list entry
+    And I see "No" as the security grading
+    And I see ".22" as the calibre of the product
+    And I see "No" as the replica firearm
+    And I see "No" as RFD
+    And I see "Don't know" as firearms act
+    And I see "Explanation" as firearms act explanation
+    And I see "No" as product document
+    And I see "reason" as product document reason
+    When I click continue on application
+    Then I see the application product list
+    When I click continue on application
     And I click on "End use details"
     And I enter "end use details" for the intended end use
     And I select "no" to informed by ECJU to apply
@@ -197,7 +244,7 @@ Feature: I want to indicate the standard licence I want
     And I see "ML1a" as control list entry
     And I see "No" as incorporated
     And I see "4 items" as quantity
-    And I see "£20.00" as value
+    And I see "£12.12" as value
     And I see "end use details" as intended end use
     And I see "No" for informed to apply
     And I see "No" for informed WMD
