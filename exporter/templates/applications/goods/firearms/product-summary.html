@@ -199,24 +199,20 @@
                     <a id="change-rfd-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_registered_firearms_dealer' application_id good.id %}">Change</a>
                 </dd>
             </div>
-            {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+            {% if is_user_rfd %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Which section of the Firearms Act 1968 is the product covered by?
+                        Is the product covered by section 5 of the Firearms Act 1968?
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        {% if firearm_details.firearms_act_section == "Unsure" %}
+                        {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
                             Don't know
                         {%  else  %}
-                            {{ firearm_details.firearms_act_section|firearm_act_section_label }}
+                            {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}
                         {%  endif %}
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        {% if is_user_rfd %}
-                            <a id="change-section-5-firearms-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_firearms_act_1968' application_id good.id %}">Change</a>
-                        {% else %}
-                            <a id="change-fireams-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_firearms_act_1968' application_id good.id %}">Change</a>
-                        {% endif %}
+                        <a id="change-section-5-firearms-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_firearms_act_1968' application_id good.id %}">Change</a>
                     </dd>
                 </div>
                 {% if firearm_details.firearms_act_section == "firearms_act_section5" %}
@@ -269,31 +265,95 @@
                         </div>
                     {% endif %}
                 {% endif %}
-            {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Which section of the Firearms Act 1968 is the product covered by?
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
-                            Don't know
-                        {%  else  %}
-                            {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}
-                        {%  endif %}
-                        {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation %}
-                            <div class="govuk-hint">
-                                {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation }}
+            {% else %}
+                {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Which section of the Firearms Act 1968 is the product covered by?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if firearm_details.firearms_act_section == "Unsure" %}
+                                Don't know
+                            {%  else  %}
+                                {{ firearm_details.firearms_act_section|firearm_act_section_label }}
+                            {%  endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a id="change-fireams-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_firearms_act_1968' application_id good.id %}">Change</a>
+                        </dd>
+                    </div>
+                    {% if firearm_details.firearms_act_section == "firearms_act_section5" %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Upload your section 5 letter of authority
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if firearm_details.section_certificate_missing %}
+                                    I do not have a section 5 letter of authority
+                                    <div class="govuk-hint">
+                                        {{ firearm_details.section_certificate_missing_reason }}
+                                    </div>
+                                {% else %}
+                                    {% with document=organisation_documents.section_five_certificate %}
+                                        {% if document.document.safe %}
+                                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'organisation:document' pk=document.id %}" target="_blank">{{ document.document.name }}</a>
+                                        {% else %}
+                                            {{ document.document.name }}
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a id="change-section-5-letter-of-authority-file" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_letter_of_authority' application_id good.id %}">Change</a>
+                            </dd>
+                        </div>
+                        {% if not firearm_details.section_certificate_missing %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Certificate reference number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ firearm_details.section_certificate_number }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_letter_of_authority' application_id good.id %}">Change</a>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Certificate date of expiry
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ firearm_details.section_certificate_date_of_expiry|to_date|date:"j F Y" }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a id="change-section-5-letter-of-authority-reference-number" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_letter_of_authority' application_id good.id %}">Change</a>
+                                </dd>
                             </div>
                         {% endif %}
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        {% if is_user_rfd %}
-                            <a id="change-section-5-firearms-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_section_5_firearms_act_1968' application_id good.id %}">Change</a>
-                        {% else %}
+                    {% endif %}
+                {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Which section of the Firearms Act 1968 is the product covered by?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "Unsure" %}
+                                Don't know
+                            {%  else  %}
+                                {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five }}
+                            {%  endif %}
+                            {% if firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation %}
+                                <div class="govuk-hint">
+                                    {{ firearm_details.is_covered_by_firearm_act_section_one_two_or_five_explanation }}
+                                </div>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
                             <a id="change-fireams-act-1968" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:firearm_edit_firearms_act_1968' application_id good.id %}">Change</a>
-                        {% endif %}
-                    </dd>
-                </div>
+                        </dd>
+                    </div>
+                {% endif %}
             {% endif %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
