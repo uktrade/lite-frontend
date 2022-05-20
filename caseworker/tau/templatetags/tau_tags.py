@@ -28,4 +28,5 @@ def format_date(val):
 
 @register.filter
 def uniq(arr, key):
+    arr = arr or []
     return set([item[key] for item in arr if key in item])
