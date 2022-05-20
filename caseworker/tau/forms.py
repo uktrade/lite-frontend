@@ -1,9 +1,7 @@
 from django import forms
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit, HTML
+from crispy_forms_gds.layout import Layout, Submit
 from caseworker.tau.widgets import GoodsMultipleSelect
-from django.template.loader import render_to_string
-from django.conf import settings
 
 
 class TAUEditForm(forms.Form):
@@ -45,64 +43,19 @@ class TAUEditForm(forms.Form):
         widget=forms.Textarea,
     )
 
-    evidence_file = forms.FileField(
-        label="Upload evidence (for example, screenshots or documents)",
-        required=False,
-    )
-
-    evidence_file_title = forms.CharField(
-        label="Give the file a descriptive title (for example , 'AX50 technical specification' or 'gundealer.com AX50 website screenshot')",
-        required=False,
-    )
-
     def __init__(self, control_list_entries_choices, document=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.document = document
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.helper = FormHelper()
-        self.helper.layout = Layout(*self.get_layout_fields())
-
-        if not settings.FEATURE_TAU_2_0_FILE_UPLOAD:
-            del self.fields["evidence_file"]
-            del self.fields["evidence_file_title"]
-
-        for field in self.fields.values():
-            if isinstance(field, forms.FileField):
-                self.helper.attrs = {"enctype": "multipart/form-data"}
-                break
-
-    def get_layout_fields(self):
-        download_link = (
-            (
-                HTML.p(
-                    render_to_string(
-                        "tau/product_document_download_link.html",
-                        {
-                            "safe": self.document.get("safe", False),
-                            "url": self.document["url"],
-                            "name": self.document["name"],
-                        },
-                    ),
-                ),
-            )
-            if self.document
-            else ()
-        )
-
-        main_fields = (
+        self.helper.layout = Layout(
             "control_list_entries",
             "does_not_have_control_list_entries",
             "is_wassenaar",
             "report_summary",
             "comment",
+            Submit("submit", "Submit"),
         )
-
-        if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
-            lower_fields = ("evidence_file", "evidence_file_title", Submit("submit", "Submit"))
-        else:
-            lower_fields = (Submit("submit", "Submit"),)
-
-        return main_fields + download_link + lower_fields
 
     def clean(self):
         cleaned_data = super().clean()

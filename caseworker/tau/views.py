@@ -14,8 +14,6 @@ from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from .actions import GoodOnApplicationInternalDocumentAction
-from django.conf import settings
 
 
 class TAUMixin:
@@ -97,22 +95,6 @@ class TAUMixin:
     def good_id(self):
         return str(self.kwargs["good_id"])
 
-    @property
-    def evidence_doc(self):
-        good = self.get_good()
-        # we are making an assumption here that we only storing one evidence document
-        if good["good_application_internal_documents"]:
-            good["good_application_internal_documents"][0]["url"] = reverse(
-                "cases:document",
-                kwargs={
-                    "queue_pk": self.queue_id,
-                    "pk": self.case.id,
-                    "file_pk": good["good_application_internal_documents"][0]["id"],
-                },
-            )
-            return good["good_application_internal_documents"][0]
-        return {}
-
 
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
@@ -154,17 +136,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good_ids = data.pop("goods")
 
-        if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
-            file = data.pop("evidence_file")
-            file_title = data.pop("evidence_file_title")
-
         for good in self.get_goods(good_ids):
-            if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
-                good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
-                    request=self.request, good=good, file=file, file_title=file_title
-                )
-                good_evidence_document_action.run()
-
             payload = {
                 **form.cleaned_data,
                 "current_object": good["id"],
@@ -189,9 +161,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
-        evidence_doc = self.evidence_doc
 
-        form_kwargs["document"] = evidence_doc
         good = self.get_good()
         form_kwargs["data"] = self.request.POST or {
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
@@ -199,7 +169,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             "is_wassenaar": "WASSENAAR" in {flag["name"] for flag in good["flags"]},
             "report_summary": good["report_summary"],
             "comment": good["comment"],
-            "evidence_file_title": evidence_doc.get("document_title", ""),
         }
         return form_kwargs
 
@@ -226,14 +195,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good = self.get_good()
-
-        if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
-            file = data.pop("evidence_file")
-            file_title = data.pop("evidence_file_title")
-            good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
-                request=self.request, good=good, file=file, file_title=file_title
-            )
-            good_evidence_document_action.run()
 
         payload = {
             **form.cleaned_data,
