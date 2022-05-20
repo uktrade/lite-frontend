@@ -845,14 +845,14 @@ def entry_control_list(driver, knows_control_list_entry, control_list_entry):  #
 
 
 @when(parsers.parse('I select "{has_security_grading}" for security grading'))
-def select_security_grading(driver, has_security_grading):
+def select_security_grading(driver, has_security_grading):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_security_grading(has_security_grading)
     functions.click_submit(driver)
 
 
 @when(parsers.parse('I select "{firearms_act_section}" to firearms act 1968 section and enter "{explanation}"'))
-def select_firearms_act_section(driver, firearms_act_section, explanation):
+def select_firearms_act_section(driver, firearms_act_section, explanation):  # noqa
     good_details_page = AddGoodDetails(driver)
     has_selected_section = good_details_page.select_firearms_act_section(firearms_act_section)
     if not has_selected_section:
@@ -861,7 +861,7 @@ def select_firearms_act_section(driver, firearms_act_section, explanation):
 
 
 @when(parsers.parse('I select "{has_product_documentation}" to product document and enter "{explanation}"'))
-def select_has_product_documentation(driver, has_product_documentation, explanation):
+def select_has_product_documentation(driver, has_product_documentation, explanation):  # noqa
     good_details_page = AddGoodDetails(driver)
     has_selected_product_documentation = good_details_page.select_has_product_documentation(has_product_documentation)
     if not has_selected_product_documentation:
@@ -870,28 +870,28 @@ def select_has_product_documentation(driver, has_product_documentation, explanat
 
 
 @when(parsers.parse('I select "{made_before_1938}" for the product being made before 1938'))
-def select_product_being_made_before_1938(driver, made_before_1938):
+def select_product_being_made_before_1938(driver, made_before_1938):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_made_before_1938(made_before_1938)
     functions.click_submit(driver)
 
 
 @when(parsers.parse('I enter "{year}" for the year it was made'))
-def enter_year_it_was_made(driver, year):
+def enter_year_it_was_made(driver, year):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_year_it_was_made(year)
     functions.click_submit(driver)
 
 
 @when(parsers.parse('I enter "{is_onward_exported}" for it being onward exported'))
-def select_onward_exported(driver, is_onward_exported):
+def select_onward_exported(driver, is_onward_exported):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_onward_exported(is_onward_exported)
     functions.click_submit(driver)
 
 
 @when(parsers.parse('I enter "{is_altered}" for it being altered and "{reason}" as reason'))
-def select_is_altered(driver, is_altered, reason):
+def select_is_altered(driver, is_altered, reason):  # noqa
     good_details_page = AddGoodDetails(driver)
     has_selected_altered = good_details_page.select_altered(is_altered)
     if has_selected_altered:
@@ -901,7 +901,7 @@ def select_is_altered(driver, is_altered, reason):
 
 @when(parsers.parse('I enter "{is_incorporated}" for it being incorporated and "{reason}" as a reason'))
 @when(parsers.parse('I enter "{is_incorporated}" for it being incorporated'))
-def select_is_incorporated(driver, is_incorporated, reason=None):
+def select_is_incorporated(driver, is_incorporated, reason=None):  # noqa
     good_details_page = AddGoodDetails(driver)
     has_selected_altered = good_details_page.select_incorporated(is_incorporated)
     if has_selected_altered:
@@ -910,7 +910,7 @@ def select_is_incorporated(driver, is_incorporated, reason=None):
 
 
 @when(parsers.parse('I enter "{is_deactivated}" for it being deactivated'))
-def select_is_deactivated(driver, is_deactivated):
+def select_is_deactivated(driver, is_deactivated):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_deactivated(is_deactivated)
     functions.click_submit(driver)
@@ -921,7 +921,7 @@ def select_is_deactivated(driver, is_deactivated):
         'I enter "{deactivated_date}" as the date of deactivation and "{is_proof_standards}" for UK proof house standards'
     )
 )
-def select_deactivated(driver, deactivated_date, is_proof_standards):
+def select_deactivated(driver, deactivated_date, is_proof_standards):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_deactivated_date(deactivated_date)
     good_details_page.selected_proof_standards(is_proof_standards)
@@ -929,7 +929,7 @@ def select_deactivated(driver, deactivated_date, is_proof_standards):
 
 
 @when(parsers.parse('I enter "{number_of_items}" for number of items and "{total_value}" for total value'))
-def enter_quantity_and_value(driver, number_of_items, total_value):
+def enter_quantity_and_value(driver, number_of_items, total_value):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.enter_number_of_items(number_of_items)
     good_details_page.enter_total_value(total_value)
@@ -937,7 +937,7 @@ def enter_quantity_and_value(driver, number_of_items, total_value):
 
 
 @when(parsers.parse('I enter "{has_serial_numbers}" for product having serial numbers'))
-def select_has_serial_numbers(driver, has_serial_numbers):
+def select_has_serial_numbers(driver, has_serial_numbers):  # noqa
     good_details_page = AddGoodDetails(driver)
     good_details_page.select_has_serial_numbers(has_serial_numbers)
     functions.click_submit(driver)
