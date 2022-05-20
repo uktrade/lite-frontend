@@ -49,9 +49,9 @@
                         <ol class="govuk-list">
                         {% for item in case.goods %}
                             {% if item.good.control_list_entries %}
-                                {% for cle in item.good.control_list_entries %}
+                                {% for rating in item.good.control_list_entries|uniq:"rating" %}
                                     <li class="lite-button--link control-list__list app-hidden--force" name={{item.id}}>
-                                        Select exporter suggestion {{cle.rating}}
+                                        Select exporter suggestion {{rating}}
                                     </li>
                                 {% endfor %}
                             {% endif %}

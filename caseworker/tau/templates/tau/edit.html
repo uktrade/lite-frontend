@@ -25,9 +25,9 @@
                     {% csrf_token %}
                     <h1 class="govuk-heading-m tau__headline">Assessing {{good.good.name}}</h1>
                     <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
-                    {% for cle in good.good.control_list_entries %}
+                    {% for rating in item.good.control_list_entries|uniq:"rating" %}
                         <button class="lite-button--link control-list__list control-list__edit">
-                            Select exporter suggestion {{cle.rating}}
+                            Select exporter suggestion {{rating}}
                         </button>
                     {% endfor %}
                     <div class="govuk-hint">Or type for suggestions</div>
