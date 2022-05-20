@@ -15,6 +15,7 @@ from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from .actions import GoodOnApplicationInternalDocumentAction
+from django.conf import settings
 
 
 class TAUMixin:
@@ -152,13 +153,17 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good_ids = data.pop("goods")
-        file = data.pop("evidence_file")
-        file_title = data.pop("evidence_file_title")
+
+        if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
+            file = data.pop("evidence_file")
+            file_title = data.pop("evidence_file_title")
 
         for good in self.get_goods(good_ids):
-            good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
-                request=self.request, good=good, file=file, file_title=file_title
-            )
+            if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
+                good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
+                    request=self.request, good=good, file=file, file_title=file_title
+                )
+                good_evidence_document_action.run()
 
             payload = {
                 **form.cleaned_data,
@@ -167,7 +172,6 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
                 "is_good_controlled": is_good_controlled,
             }
 
-            good_evidence_document_action.run()
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
 
         return super().form_valid(form)
@@ -223,12 +227,13 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good = self.get_good()
 
-        file = data.pop("evidence_file")
-        file_title = data.pop("evidence_file_title")
-        good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
-            request=self.request, good=good, file=file, file_title=file_title
-        )
-        good_evidence_document_action.run()
+        if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
+            file = data.pop("evidence_file")
+            file_title = data.pop("evidence_file_title")
+            good_evidence_document_action = GoodOnApplicationInternalDocumentAction(
+                request=self.request, good=good, file=file, file_title=file_title
+            )
+            good_evidence_document_action.run()
 
         payload = {
             **form.cleaned_data,

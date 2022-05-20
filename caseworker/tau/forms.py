@@ -3,6 +3,7 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from caseworker.tau.widgets import GoodsMultipleSelect
 from django.template.loader import render_to_string
+from django.conf import settings
 
 
 class TAUEditForm(forms.Form):
@@ -61,6 +62,10 @@ class TAUEditForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(*self.get_layout_fields())
 
+        if not settings.FEATURE_TAU_2_0_FILE_UPLOAD:
+            del self.fields["evidence_file"]
+            del self.fields["evidence_file_title"]
+
         for field in self.fields.values():
             if isinstance(field, forms.FileField):
                 self.helper.attrs = {"enctype": "multipart/form-data"}
@@ -91,7 +96,11 @@ class TAUEditForm(forms.Form):
             "report_summary",
             "comment",
         )
-        lower_fields = ("evidence_file", "evidence_file_title", Submit("submit", "Submit"))
+
+        if settings.FEATURE_TAU_2_0_FILE_UPLOAD:
+            lower_fields = ("evidence_file", "evidence_file_title", Submit("submit", "Submit"))
+        else:
+            lower_fields = (Submit("submit", "Submit"),)
 
         return main_fields + download_link + lower_fields
 

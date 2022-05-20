@@ -4,11 +4,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 import pytest
 from http import HTTPStatus
 from core import client
+from django.conf import settings
 
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case):
-    yield
+    settings.FEATURE_TAU_2_0_FILE_UPLOAD = True
 
 
 @pytest.fixture
@@ -125,7 +126,6 @@ def test_form_new_file(
     mock_internal_docs_matcher,
     mock_precedents_api,
 ):
-
     evidence_file = SimpleUploadedFile("test.pdf", b"file_content", content_type="application/pdf")
     response = authorized_client.post(
         url,
