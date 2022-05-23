@@ -11,9 +11,7 @@ Feature: I want to add an internal note to a case and view notes
     When I go to application previously created
     And I click on the notes and timeline tab
     And I enter "case note" as the case note
-    And I click make visible to exporter
     And I click post note
-    And I click confirm on confirmation box
     Then I see "case note" as a case note
 
   @skip @legacy

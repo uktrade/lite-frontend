@@ -83,6 +83,10 @@ caseworker-e2e-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
 	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest playwright_tests/specs/caseworker/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8200/'
 
+caseworker-e2e-selenium-test:
+	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
+	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest --headless ./ui_tests/caseworker'
+
 exporter-e2e-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
 	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest playwright_tests/specs/exporter/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8300/'
