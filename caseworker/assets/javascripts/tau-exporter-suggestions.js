@@ -81,6 +81,10 @@ export const hideUnhideExporterCle = (product, cleList) => {
 };
 
 const initTauControlListEntry = () => {
+  if (!document.querySelector(".tau")) {
+    return;
+  }
+
   const cleList = document.querySelectorAll(".control-list__list");
   const checkboxProducts = document.querySelectorAll(
     ".tau__list [id^='id_goods_']"
@@ -90,6 +94,7 @@ const initTauControlListEntry = () => {
   );
 
   // Create CLE in the input field after click
+
   cleList.forEach((cle) =>
     cle.addEventListener("click", (event) => {
       event.preventDefault();
