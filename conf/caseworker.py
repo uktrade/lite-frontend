@@ -70,7 +70,6 @@ LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID = env.int("LITE_SPIRE_ARCHIVE_EXAMPLE
 LITE_API_SEARCH_ENABLED = env.bool("LITE_API_SEARCH_ENABLED", False)
 FEATURE_FLAG_PRODUCT_2_0 = env.bool("FEATURE_FLAG_PRODUCT_2_0", False)
 
-
 # static files
 SVG_DIRS = [
     os.path.join(BASE_DIR, "caseworker/assets/built/"),

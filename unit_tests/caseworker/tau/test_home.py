@@ -213,32 +213,15 @@ def test_form(
     assert len(unassessed_products) == 1
     assert unassessed_products[0].attrs["value"] == good["id"]
 
-    # upload a evidence file
-    mock_internal_docs_post = requests_mock.post(
-        f"/goods/document_internal_good_on_application/0bedd1c3-cf97-4aad-b711-d5c9a9f4586e/",
-        json={},
-        status_code=HTTPStatus.CREATED,
-    )
-
-    evidence_file = SimpleUploadedFile("test.pdf", b"file_content", content_type="application/pdf")
-
     data = {
         "report_summary": "test",
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
-        "evidence_file": evidence_file,
-        "evidence_file_title": "new home evidence",
     }
 
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
 
-    assert mock_internal_docs_post.last_request.json() == {
-        "name": "test.pdf",
-        "s3_key": mock_internal_docs_post.last_request.json()["s3_key"],
-        "size": 0,
-        "document_title": "new home evidence",
-    }
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
         "report_summary": "test",
