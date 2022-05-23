@@ -66,6 +66,7 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
         if start == 0:
             mime = magic.from_buffer(raw_data, mime=True)
             if mime not in self.ACCEPTED_FILE_UPLOAD_MIME_TYPES:
+                self.abort()
                 raise UnacceptableMimeTypeError(f"Unsupported file type: {mime}")
         super().receive_data_chunk(raw_data, start)
 
