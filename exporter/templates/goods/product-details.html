@@ -31,6 +31,11 @@
                 {% endblock %}
             </h1>
         </div>
+		{% if good.status.key == 'draft' %}
+			<div class="lite-app-bar__controls">
+				{% govuk_link_button id='delete-good' text='goods.GoodPage.DELETE_GOOD' url='goods:delete' url_param=good.id classes='govuk-button--secondary' %}
+			</div>
+		{% endif %}
     </div>
 
     {% with firearm_details=good.firearm_details %}

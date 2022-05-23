@@ -4,6 +4,7 @@ from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
 from django import forms
+from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -255,6 +256,14 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
 
 
 def delete_good_form(good):
+    back_link = reverse("goods:good", kwargs={"pk": good["id"]})
+    if settings.FEATURE_FLAG_PRODUCT_2_0:
+        try:
+            if good["firearm_details"]["type"]["key"] == "firearms":
+                back_link = reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
+        except KeyError:
+            pass
+
     return Form(
         title=EditGoodForm.DeleteConfirmationForm.TITLE,
         questions=[good_summary(good)],
@@ -264,7 +273,7 @@ def delete_good_form(good):
                 value=EditGoodForm.DeleteConfirmationForm.NO,
                 action="",
                 style=ButtonStyle.SECONDARY,
-                link=reverse_lazy("goods:good", kwargs={"pk": good["id"]}),
+                link=back_link,
             ),
         ],
     )
