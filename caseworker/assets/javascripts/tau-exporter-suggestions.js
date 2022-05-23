@@ -64,7 +64,7 @@ const removeNoCleEntry = () => {
   clearCleList();
 };
 
-export const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
+export const hideUnhideExporterCle = (product, cleList) => {
   const checked = product.checked;
   const id = product.value;
 
@@ -76,9 +76,7 @@ export const hideUnhideExporterCle = (product, cleList, selectAll = false) => {
       return;
     }
     // Unhide items.
-    !selectAll &&
-      id === cle.getAttribute("name") &&
-      cle.classList.add("app-hidden--force");
+    id === cle.getAttribute("name") && cle.classList.add("app-hidden--force");
   });
 };
 
