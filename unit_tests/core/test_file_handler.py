@@ -1,8 +1,11 @@
+import pytest
+
 from unittest import mock
 from os import path
 
-import pytest
-from core.file_handler import SafeS3FileUploadHandler, UploadFailed
+from django.core.files.uploadhandler import UploadFileException
+
+from core.file_handler import SafeS3FileUploadHandler, UnacceptableMimeTypeError
 
 
 TEST_FILES_PATH = path.join(path.dirname(__file__), "test_file_handler_files")
@@ -36,12 +39,18 @@ def test_valid_file_upload(mock_handler):
 def test_invalid_file_type_upload(mock_handler):
     with open(f"{TEST_FILES_PATH}/invalid_type.zip", "rb") as f:
         content = f.read()
-        with pytest.raises(UploadFailed, match="Unsupported file type: application/zip"):
+        mock_handler.abort = mock.Mock()
+        with pytest.raises(UnacceptableMimeTypeError, match="Unsupported file type: application/zip") as e:
             mock_handler.receive_data_chunk(content, 0)
+        assert isinstance(e.value, UploadFileException)
+        mock_handler.abort.assert_called_once()
 
 
 def test_invalid_file_mime_type_upload(mock_handler):
     with open(f"{TEST_FILES_PATH}/invalid_mime.txt", "rb") as f:
         content = f.read()
-        with pytest.raises(UploadFailed, match="Unsupported file type: application/zip"):
+        mock_handler.abort = mock.Mock()
+        with pytest.raises(UnacceptableMimeTypeError, match="Unsupported file type: application/zip") as e:
             mock_handler.receive_data_chunk(content, 0)
+        assert isinstance(e.value, UploadFileException)
+        mock_handler.abort.assert_called_once()
