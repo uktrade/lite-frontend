@@ -1,8 +1,10 @@
-import logging
 import boto3
+import logging
 import magic
+
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
+from django.core.files.uploadhandler import UploadFileException
+
 from django_chunk_upload_handlers.s3 import (
     AWS_ACCESS_KEY_ID,
     AWS_REGION,
@@ -10,6 +12,7 @@ from django_chunk_upload_handlers.s3 import (
     AWS_SECRET_ACCESS_KEY,
     S3FileUploadHandler,
 )
+
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +66,7 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
         if start == 0:
             mime = magic.from_buffer(raw_data, mime=True)
             if mime not in self.ACCEPTED_FILE_UPLOAD_MIME_TYPES:
-                raise UploadFailed(PermissionDenied(f"Unsupported file type: {mime}"))
+                raise UnacceptableMimeTypeError(f"Unsupported file type: {mime}")
         super().receive_data_chunk(raw_data, start)
 
     def file_complete(self, *args, **kwargs):
@@ -79,5 +82,9 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
         return file
 
 
-class UploadFailed(Exception):
+class UploadFailed(UploadFileException):
+    pass
+
+
+class UnacceptableMimeTypeError(UploadFailed):
     pass
