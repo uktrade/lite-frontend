@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "health_check",
     "health_check.cache",
     "health_check.storage",
+    "health_check.contrib.s3boto3_storage",
     "core.api",
     "core.forms",
     "crispy_forms",
