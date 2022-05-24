@@ -247,24 +247,6 @@ jobs:
             ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
-  caseworker_ui_test:
-    machine:
-      image: ubuntu-2004:202008-01
-      docker_layer_caching: true
-    environment:
-      <<: *common_env_vars
-      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
-      DJANGO_SETTINGS_MODULE: conf.caseworker
-      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations -n3
-    steps:
-      - run: sudo apt-get update
-      - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: pyenv install 3.7.0
-      - run: pyenv global 3.7.0
-      - run: pip install pipenv
-      - setup_code
-      - ui_tests
-
   exporter_ui_test:
     machine:
       image: ubuntu-2004:202008-01
@@ -324,5 +306,4 @@ workflows:
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
-      - caseworker_ui_test
       - exporter_ui_test
