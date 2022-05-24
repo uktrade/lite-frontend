@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "health_check",
     "health_check.cache",
     "health_check.storage",
+    "health_check.contrib.s3boto3_storage",
     "core.api",
     "core.forms",
     "crispy_forms",
@@ -178,6 +179,8 @@ ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
 CLAM_AV_USERNAME = env.str("CLAM_AV_USERNAME", "")
 CLAM_AV_PASSWORD = env.str("CLAM_AV_PASSWORD", "")
 CLAM_AV_DOMAIN = env.str("CLAM_AV_DOMAIN", "")
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 # AWS
 VCAP_SERVICES = env.json("VCAP_SERVICES", {})
