@@ -1,3 +1,4 @@
+import logging
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -9,10 +10,17 @@ from lite_forms.generators import error_page
 from exporter.organisation.members.services import get_user
 from authlib.oauth2.rfc7523 import PrivateKeyJWT
 
+log = logging.getLogger(__name__)
+
 
 class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
     def authenticate_user(self):
         profile = self.user_profile
+        log.info(
+            "Authentication:Service: %s : authenticate user in lite profile: %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            profile,
+        )
         if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
             profile["no_profile_login"] = True
         return authenticate_exporter_user(self.request, profile)
@@ -31,7 +39,11 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
                 return redirect("core:register_an_organisation_triage")
 
     def handle_success(self, data, status_code):
-
+        log.info(
+            "Authentication:Service: %s : user login successful  %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            self.user_profile,
+        )
         self.request.session["user_token"] = data["token"]
         self.request.session["lite_api_user_id"] = data["lite_api_user_id"]
         self.request.session["email"] = self.user_profile["email"]
@@ -59,6 +71,12 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
         return settings.LOGIN_REDIRECT_URL
 
     def fetch_token(self, request, auth_code):
+        log.info(
+            "Authentication:Service: %s : fetching token for login auth_code %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            auth_code,
+        )
+
         if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
             request.authbroker_client.token_endpoint_auth_method = PrivateKeyJWT(
                 token_endpoint=settings.AUTHBROKER_TOKEN_URL
