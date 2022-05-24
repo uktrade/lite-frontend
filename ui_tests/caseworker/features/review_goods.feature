@@ -5,7 +5,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
   So that I can confirm the goods are correctly described
 
 
-  @review_good
+  @skip @review_good
   Scenario: Gov user can review product in an application
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
