@@ -1,3 +1,4 @@
+import logging
 import abc
 import uuid
 from urllib.parse import urlparse, urlunparse
@@ -13,9 +14,14 @@ from django.utils.http import urlencode
 
 from core.auth.utils import get_profile
 
+log = logging.getLogger(__name__)
+
 
 class AuthView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
+        log.info(
+            f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: Get login redirect url from authorisation site"
+        )
         url, state = self.request.authbroker_client.create_authorization_url(
             settings.AUTHBROKER_AUTHORIZATION_URL, nonce=uuid.uuid4().hex
         )
@@ -25,6 +31,7 @@ class AuthView(RedirectView):
 
 class AuthLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
+        log.info(f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: logout user {settings.LOGOUT_URL}")
         redirect_url = settings.LOGOUT_URL + self.request.build_absolute_uri("/")
         if self.request.authbroker_client.token:
             if self.request.authbroker_client.token.get("id_token"):
@@ -62,11 +69,15 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
     @cached_property
     def user_profile(self):
+        log.info(
+            f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: get profile {settings.AUTHBROKER_PROFILE_URL}"
+        )
         return get_profile(self.request.authbroker_client)
 
     def get(self, request, *args, **kwargs):
-        auth_code = request.GET.get("code", None)
+        log.info(f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: callback for login called")
 
+        auth_code = request.GET.get("code", None)
         if not auth_code:
             return redirect(reverse("auth:login"))
         state = self.request.session.get(f"{settings.TOKEN_SESSION_KEY}_oauth_state", None)
