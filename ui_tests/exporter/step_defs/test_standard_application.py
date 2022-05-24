@@ -502,6 +502,16 @@ def answers_played_back_to_me():
     pass
 
 
+@then("I see the product saved summary")
+def product_saved_summary():
+    pass
+
+
+@then("I see the product added to application summary")
+def product_added_to_application_summary():
+    pass
+
+
 @then(parsers.parse('I see "{licence}" as the Licence'))
 def check_licence_type_full(driver, licence):
     answers_page = CheckYourAnswers(driver)
@@ -720,3 +730,185 @@ def verify_serial_numbers(driver, serial_number, items):
         index = int(item) - 1
         input_element = driver.find_element(by=By.ID, value=f"id_serial_numbers_{index}")
         assert input_element.get_property("value") == serial_number
+
+
+def get_summary_value(driver, id):
+    element = driver.find_element(by=By.CSS_SELECTOR, value=f"#{id} .govuk-summary-list__value")
+    return element.text
+
+
+@then(parsers.parse('I see "{firearm_product}" as the type of firearm product'))
+def verify_firearm_product(driver, firearm_product):
+    value = get_summary_value(driver, "firearm-product")
+    assert value == firearm_product
+
+
+@then(parsers.parse('I see "{firearm_category}" as the firearm category'))
+def verify_firearm_product(driver, firearm_product):
+    value = get_summary_value(driver, "firearm-product")
+    assert value == firearm_product
+
+
+@then(parsers.parse('I see "{name}" as the descriptive name'))
+def verify_descriptive_name(driver, name):
+    value = get_summary_value(driver, "descriptive-name")
+    assert value == name
+
+
+@then(parsers.parse('I see "{knows_product_control_list_entry}" as whether they know the control list entry'))
+def verify_knows_product_control_list_entry(driver, knows_product_control_list_entry):
+    value = get_summary_value(driver, "knows-product-control-list-entry")
+    assert value == knows_product_control_list_entry
+
+
+@then(parsers.parse('I see "{control_list_entry}" as the control list entry'))
+def verify_control_list_entry(driver, control_list_entry):
+    value = get_summary_value(driver, "control-list-entry")
+    assert value == control_list_entry
+
+
+@then(parsers.parse('I see "{security_grading}" as the security grading'))
+def verify_security_grading(driver, security_grading):
+    value = get_summary_value(driver, "security-grading")
+    assert value == security_grading
+
+
+@then(parsers.parse('I see "{calibre}" as the calibre of the product'))
+def verify_calibre(driver, calibre):
+    value = get_summary_value(driver, "calibre")
+    assert value == calibre
+
+
+@then(parsers.parse('I see "{is_replica_firearm}" as the replica firearm'))
+def verify_is_replica_firearm(driver, is_replica_firearm):
+    value = get_summary_value(driver, "is-replica-firearm")
+    assert value == is_replica_firearm
+
+
+@then(parsers.parse('I see "{is_rfd}" as RFD'))
+def verify_is_rfd(driver, is_rfd):
+    value = get_summary_value(driver, "is-rfd")
+    assert value == is_rfd
+
+
+@then(parsers.parse('I see "{firearms_act}" as firearms act'))
+def verify_firearms_act(driver, firearms_act):
+    value, _ = get_summary_value(driver, "firearms-act").split("\n")
+    assert value == firearms_act
+
+
+@then(parsers.parse('I see "{firearms_act_explanation}" as firearms act explanation'))
+def verify_firearms_act_explanation(driver, firearms_act_explanation):
+    _, value = get_summary_value(driver, "firearms-act").split("\n")
+    assert value == firearms_act_explanation
+
+
+@then(parsers.parse('I see "{has_product_document}" as product document'))
+def verify_has_product_document(driver, has_product_document):
+    value = get_summary_value(driver, "has-product-document")
+    assert value == has_product_document
+
+
+@then(parsers.parse('I see "{no_product_document_explanation}" as product document reason'))
+def verify_no_product_document_explanation(driver, no_product_document_explanation):
+    value = get_summary_value(driver, "no-product-document-explanation")
+    assert value == no_product_document_explanation
+
+
+@when("I click continue on application")
+def i_click_continue(driver):
+    driver.find_element(by=By.LINK_TEXT, value="Continue").click()
+
+
+@then(parsers.parse('I see "{made_before_1938}" as product being made before 1938'))
+def verify_product_being_made_before_1938(driver, made_before_1938):
+    value = get_summary_value(driver, "made-before-1938")
+    assert value == made_before_1938
+
+
+@then(parsers.parse('I see "{made_before_1938}" as product being made before 1938'))
+def verify_product_being_made_before_1938(driver, made_before_1938):
+    value = get_summary_value(driver, "made-before-1938")
+    assert value == made_before_1938
+
+
+@then(parsers.parse('I see "{year}" for the year it was made'))
+def verify_year_it_was_made(driver, year):
+    value = get_summary_value(driver, "manufacture-year")
+    assert value == year
+
+
+@then(parsers.parse('I see "{is_onward_exported}" for it being onward exported'))
+def verify_is_onward_exported(driver, is_onward_exported):
+    value = get_summary_value(driver, "is-onward-exported")
+    assert value == is_onward_exported
+
+
+@then(parsers.parse('I see "{is_altered}" for it being altered and "{reason}" as reason'))
+def verify_is_altered(driver, is_altered, reason):
+    is_altered_value, reason_value = get_summary_value(driver, "is-altered").split("\n")
+    assert is_altered_value == is_altered
+    assert reason_value == reason
+
+
+@then(parsers.parse('I see "{is_incorporated}" for it being incorporated and "{reason}" as a reason'))
+def verify_is_incorporated_with_reason(driver, is_incorporated, reason):
+    is_incorporated_value, reason_value = get_summary_value(driver, "is-incorporated").split("\n")
+    assert is_incorporated_value == is_incorporated
+    assert reason_value == reason
+
+
+@then(parsers.parse('I see "{is_incorporated}" for it being incorporated'))
+def verify_is_incorporated(driver, is_incorporated):
+    value = get_summary_value(driver, "is-incorporated")
+    assert value == is_incorporated
+
+
+@then(parsers.parse('I see "{is_deactivated}" for it being deactivated'))
+def verify_is_deactivated(driver, is_deactivated):
+    value = get_summary_value(driver, "is-deactivated")
+    assert value == is_deactivated
+
+
+@then(
+    parsers.parse(
+        'I see "{deactivated_date}" as the date of deactivation and "{is_proof_standards}" for UK proof house standards'
+    )
+)
+def verify_deactivated_details(driver, deactivated_date, is_proof_standards):
+    deactivated_date_value = get_summary_value(driver, "deactivated-date")
+    assert deactivated_date_value == deactivated_date
+
+    is_proof_standards_value = get_summary_value(driver, "is-proof-standards")
+    assert is_proof_standards_value == is_proof_standards
+
+
+@then(parsers.parse('I see "{number_of_items}" for number of items and "{total_value}" for total value'))
+def verify_quantity_and_value(driver, number_of_items, total_value):
+    number_of_items_value = get_summary_value(driver, "number-of-items")
+    assert number_of_items_value == number_of_items
+
+    total_value_value = get_summary_value(driver, "total-value")
+    assert total_value_value == total_value
+
+
+@then(parsers.parse('I see "{has_serial_numbers}" for product having serial numbers'))
+def verify_has_serial_numbers(driver, has_serial_numbers):
+    value = get_summary_value(driver, "has-serial-numbers")
+    assert value == has_serial_numbers
+
+
+@then(parsers.parse('I click "View serial numbers" and see "{serial_numbers}" for the serial numbers'))
+def verify_has_serial_numbers(driver, serial_numbers):
+    data_row = driver.find_element(by=By.CSS_SELECTOR, value="#serial-numbers")
+    data_row.find_element(by=By.CSS_SELECTOR, value=".govuk-details__summary").click()
+
+    serial_numbers_value = data_row.find_element(by=By.CSS_SELECTOR, value=".govuk-details__text").text.split("\n")
+    assert serial_numbers_value == [
+        f"{index}. {serial_number}" for index, serial_number in enumerate(serial_numbers.split(","), 1)
+    ]
+
+
+@then(parsers.parse("I see the application product list"))
+def see_the_application_product_list():
+    pass

@@ -818,6 +818,131 @@ def select_product_type(driver, product_type):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select "{firearm_category}" for firearm category'))  # noqa
+def select_firearm_category(driver, firearm_category):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_firearm_category(firearm_category)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{descriptive_name}" as descriptive name'))  # noqa
+def enter_descriptive_name(driver, descriptive_name):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_descriptive_name(descriptive_name)
+    functions.click_submit(driver)
+
+
+@when(
+    parsers.parse(
+        'I select "{knows_control_list_entry}" for knows control list and "{control_list_entry}" for control list entry'
+    )
+)  # noqa
+def entry_control_list(driver, knows_control_list_entry, control_list_entry):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_knows_control_list_entry(knows_control_list_entry)
+    good_details_page.enter_control_list_entry(control_list_entry)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{has_security_grading}" for security grading'))
+def select_security_grading(driver, has_security_grading):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_security_grading(has_security_grading)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{firearms_act_section}" to firearms act 1968 section and enter "{explanation}"'))
+def select_firearms_act_section(driver, firearms_act_section, explanation):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    has_selected_section = good_details_page.select_firearms_act_section(firearms_act_section)
+    if not has_selected_section:
+        good_details_page.enter_firearms_act_section_explanation(explanation)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{has_product_documentation}" to product document and enter "{explanation}"'))
+def select_has_product_documentation(driver, has_product_documentation, explanation):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    has_selected_product_documentation = good_details_page.select_has_product_documentation(has_product_documentation)
+    if not has_selected_product_documentation:
+        good_details_page.enter_has_product_documentation_explanation(explanation)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{made_before_1938}" for the product being made before 1938'))
+def select_product_being_made_before_1938(driver, made_before_1938):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_made_before_1938(made_before_1938)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{year}" for the year it was made'))
+def enter_year_it_was_made(driver, year):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_year_it_was_made(year)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{is_onward_exported}" for it being onward exported'))
+def select_onward_exported(driver, is_onward_exported):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_onward_exported(is_onward_exported)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{is_altered}" for it being altered and "{reason}" as reason'))
+def select_is_altered(driver, is_altered, reason):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    has_selected_altered = good_details_page.select_altered(is_altered)
+    if has_selected_altered:
+        good_details_page.enter_altered_reason(reason)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{is_incorporated}" for it being incorporated and "{reason}" as a reason'))
+@when(parsers.parse('I enter "{is_incorporated}" for it being incorporated'))
+def select_is_incorporated(driver, is_incorporated, reason=None):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    has_selected_altered = good_details_page.select_incorporated(is_incorporated)
+    if has_selected_altered:
+        good_details_page.enter_incorporated_reason(reason)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{is_deactivated}" for it being deactivated'))
+def select_is_deactivated(driver, is_deactivated):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_deactivated(is_deactivated)
+    functions.click_submit(driver)
+
+
+@when(
+    parsers.parse(
+        'I enter "{deactivated_date}" as the date of deactivation and "{is_proof_standards}" for UK proof house standards'
+    )
+)
+def select_deactivated(driver, deactivated_date, is_proof_standards):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_deactivated_date(deactivated_date)
+    good_details_page.selected_proof_standards(is_proof_standards)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{number_of_items}" for number of items and "{total_value}" for total value'))
+def enter_quantity_and_value(driver, number_of_items, total_value):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_number_of_items(number_of_items)
+    good_details_page.enter_total_value(total_value)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{has_serial_numbers}" for product having serial numbers'))
+def select_has_serial_numbers(driver, has_serial_numbers):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_has_serial_numbers(has_serial_numbers)
+    functions.click_submit(driver)
+
+
 @when(
     parsers.parse(
         'I select "{has_markings}" for serial number or other identification markings with details as "{details}"'
