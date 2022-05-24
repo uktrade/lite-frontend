@@ -1,11 +1,11 @@
 {% load parse_date pprint_dict from spire_tags %}
 
 <form method="get" autocomplete="off">
-    <div class="lite-filter-bar govuk-!-margin-top-0">
-        <div class="lite-filter-bar__components">
+    <div class="lite-search-bar govuk-!-margin-top-0">
+        <div class="lite-search-bar__components">
             {{ form.as_p }}
         </div>
-        <div class="lite-filter-bar__buttons">
+        <div class="lite-search-bar__buttons">
             <button type="submit" class="govuk-button" id="search-button">Search</button>
             <a href="?" class="govuk-button govuk-button--secondary govuk-button--secondary-white"
                 id="button-clear-filters">
@@ -13,10 +13,11 @@
             </a>
         </div>
     </div>
-    <div class="results-area">
-        <p id="text-case-count" class="lite-filters__hint-text">{{ results.count }} items found</p>
-        {% if results.count %}
+</form>
 
+<div class="results-area">
+    <p id="text-case-count" class="lite-filters__hint-text">{{ results.count }} items found</p>
+    {% if results.count %}
         <table class="govuk-table" id="results-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
@@ -145,6 +146,5 @@
             </tbody>
         </table>
         {% pagination %}
-    </div>
     {% endif %}
-</form>
+</div>

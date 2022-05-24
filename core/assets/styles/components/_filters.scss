@@ -33,7 +33,7 @@
 	}
 }
 
-.lite-filter-bar {
+.lite-filter-bar, .lite-search-bar {
 	@include govuk-responsive-margin(6, "bottom");
 	@include govuk-font($size: 19);
 	position: relative;
@@ -70,11 +70,18 @@
 		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 		grid-gap: govuk-spacing(3);
 		margin-bottom: govuk-spacing(3);
+		margin-top: govuk-spacing(3);
 
 		.govuk-checkboxes__label {
 			&::before {
 				background: govuk-colour("white");
 			}
+		}
+
+		& > div {
+			display: flex;
+			justify-content: flex-end;
+			flex-direction: column;
 		}
 	}
 
@@ -118,16 +125,6 @@
 
 	.govuk-details {
 		margin-bottom: govuk-spacing(2);
-	}
-
-	.lite-filter-bar__components {
-		margin-top: govuk-spacing(3);
-
-		& > div {
-			display: flex;
-			justify-content: flex-end;
-			flex-direction: column;
-		}
 	}
 
 	.govuk-date-input {
