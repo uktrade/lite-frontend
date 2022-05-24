@@ -17,7 +17,10 @@ def group_gonas_by_good(gonas):
 
 
 def get_last_precedent(gona, good_precedents):
-    precedents = good_precedents[gona["good"]["id"]]
+    # TODO: This is for a weird corner case that broke during
+    # user testing - for some reason, submitted_at for a
+    # case that has been submitted was None!
+    precedents = [p for p in good_precedents[gona["good"]["id"]] if p["submitted_at"]]
     if precedents:
         precedents.sort(key=lambda p: p["submitted_at"])
         return precedents[0]
