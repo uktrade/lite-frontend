@@ -1,3 +1,6 @@
+import re
+import uuid
+
 from bs4 import BeautifulSoup
 from copy import deepcopy
 from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
@@ -427,3 +430,41 @@ def test_good_on_application_detail_security_graded_check(
         security_grading = soup.find(id="security-graded-value").text
         security_grading = "".join(line.strip() for line in security_grading.split("\n"))
         assert security_grading == expected_value.capitalize()
+
+
+def test_good_on_application_good_on_application_without_document_type(
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+    good_on_application_pk,
+    data_good_on_application,
+    requests_mock,
+):
+    pk = data_good_on_application["application"]
+    good_pk = data_good_on_application["good"]["id"]
+    url = client._build_absolute_uri(f"/applications/{pk}/goods/{good_pk}/documents/")
+    requests_mock.get(
+        url=re.compile(f"{url}.*"),
+        json={
+            "documents": [
+                {
+                    "id": str(uuid.uuid4()),
+                    "created_at": "2022-04-27T11:58:20.318970+01:00",
+                    "name": "test-document.pdf",
+                    "s3_key": "test-document.pdf",
+                    "safe": True,
+                    "document_type": None,
+                    "good_on_application": None,
+                },
+            ]
+        },
+    )
+
+    # given I access good on application details for a good with control list entries and a part number
+    url = reverse(
+        "cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good_on_application_pk}
+    )
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    assert response.context["good_on_application_documents"] == {}
