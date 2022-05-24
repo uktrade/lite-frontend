@@ -17,7 +17,9 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
     def authenticate_user(self):
         profile = self.user_profile
         log.info(
-            f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: authenticate user in lite profile:{profile}"
+            "Authentication:Service: %s : authenticate user in lite profile: %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            profile,
         )
         if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
             profile["no_profile_login"] = True
@@ -38,7 +40,9 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
 
     def handle_success(self, data, status_code):
         log.info(
-            f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: user login successful  {self.user_profile}"
+            "Authentication:Service: %s : user login successful  %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            self.user_profile,
         )
         self.request.session["user_token"] = data["token"]
         self.request.session["lite_api_user_id"] = data["lite_api_user_id"]
@@ -67,7 +71,11 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
         return settings.LOGIN_REDIRECT_URL
 
     def fetch_token(self, request, auth_code):
-        log.info(f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: fetching token for login ")
+        log.info(
+            "Authentication:Service: %s : fetching token for login auth_code %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            auth_code,
+        )
 
         if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
             request.authbroker_client.token_endpoint_auth_method = PrivateKeyJWT(

@@ -20,7 +20,8 @@ log = logging.getLogger(__name__)
 class AuthView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         log.info(
-            f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: Get login redirect url from authorisation site"
+            "Authentication:Service: %s: Get login redirect url from authorisation site",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
         )
         url, state = self.request.authbroker_client.create_authorization_url(
             settings.AUTHBROKER_AUTHORIZATION_URL, nonce=uuid.uuid4().hex
@@ -31,7 +32,9 @@ class AuthView(RedirectView):
 
 class AuthLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        log.info(f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: logout user {settings.LOGOUT_URL}")
+        log.info(
+            "Authentication:Service: %s: logout user %s", settings.AUTHBROKER_AUTHORIZATION_URL, settings.LOGOUT_URL
+        )
         redirect_url = settings.LOGOUT_URL + self.request.build_absolute_uri("/")
         if self.request.authbroker_client.token:
             if self.request.authbroker_client.token.get("id_token"):
@@ -70,12 +73,17 @@ class AbstractAuthCallbackView(abc.ABC, View):
     @cached_property
     def user_profile(self):
         log.info(
-            f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: get profile {settings.AUTHBROKER_PROFILE_URL}"
+            "Authentication:Service: %s: get profile %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            settings.AUTHBROKER_PROFILE_URL,
         )
         return get_profile(self.request.authbroker_client)
 
     def get(self, request, *args, **kwargs):
-        log.info(f"Authentication:Service:{settings.AUTHBROKER_AUTHORIZATION_URL}: callback for login called")
+        log.info(
+            "Authentication:Service: %s: callback for login called",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+        )
 
         auth_code = request.GET.get("code", None)
         if not auth_code:
