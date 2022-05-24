@@ -242,7 +242,9 @@ class GoodDetails(LoginRequiredMixin, FormView):
             self.object["good"]["id"],
         )
         good_on_application_documents = {
-            item["document_type"].replace("-", "_"): item for item in good_on_application_documents["documents"]
+            item["document_type"].replace("-", "_"): item
+            for item in good_on_application_documents["documents"]
+            if item.get("document_type")
         }
 
         organisation_documents = {
