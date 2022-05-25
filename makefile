@@ -5,6 +5,12 @@ docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docke
 wait-for-caseworker = dockerize -wait http://localhost:8200/healthcheck -timeout 5m -wait-retry-interval 5s
 wait-for-exporter = dockerize -wait http://localhost:8300/healthcheck -timeout 5m -wait-retry-interval 5s
 
+ifdef CI
+	start-command = up --build --force-recreate -d
+else
+	start-command = up --build --force-recreate
+endif
+
 manage_caseworker:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run ./manage.py $(ARGUMENTS)
 
@@ -68,13 +74,13 @@ secrets:
 .PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
 
 start-caseworker:
-	$(docker-e2e-caseworker) up --build --force-recreate -d
+	$(docker-e2e-caseworker) $(start-command)
 
 stop-caseworker:
 	$(docker-e2e-caseworker) down --remove-orphans
 
 start-exporter:
-	$(docker-e2e-exporter) up --build --force-recreate -d
+	$(docker-e2e-exporter) $(start-command)
 
 stop-exporter:
 	$(docker-e2e-exporter) down --remove-orphans

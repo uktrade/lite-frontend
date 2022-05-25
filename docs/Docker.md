@@ -28,3 +28,24 @@ docker push gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
 ```
 
 Your image should be now listed at [Google Container Registry](http://gcr.io/sre-docker-registry/github.com/uktrade).
+
+## Starting lite stack via docker
+
+The docker lite stack consists of:
+
+- Latest pushed API image from `lite-api` repo
+- Elasticsearch
+- Redis
+- Postgres DB using a UAT DB snapshot
+- Caseworker/Exporter
+
+### Running the stack
+
+- Copy environment variables (make sure to save your current .env files before running the below):
+```
+cp ci.caseworker.env caseworker.env
+cp ci.exporter.env exporter.env
+cp ci.api.env api.env
+```
+- Populate all the export values found inside the .env and copy and paste it into your terminal where you will run the make/docker command. You can find the values for the exports in playwright_cricleci folder inside vault.
+- Run `make start-caseworker`
