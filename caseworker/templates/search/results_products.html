@@ -3,7 +3,7 @@
 
 <form method="get" autocomplete="off">
     <input type="hidden" name="page" id="id_page">
-    <div class="lite-filter-bar govuk-!-margin-top-0">
+    <div class="lite-search-bar govuk-!-margin-top-0">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-half">
                 <div id="div_id_term" class="govuk-form-group">
@@ -12,7 +12,7 @@
                 </div>
             </div>
         </div>
-        <div class="lite-filter-bar__buttons">
+        <div class="lite-search-bar__buttons">
             <button type="submit" class="govuk-button" id="search-button">Run search</button>
             <a href="?" class="govuk-button govuk-button--secondary govuk-button--secondary-white"
                 id="button-clear-filters">
@@ -22,11 +22,12 @@
         {% if filter_form.fields %}
             Add specificity {% crispy filter_form %}
         {% endif %}
-
     </div>
-    <div class="results-area">
-        <p class="govuk-body govuk-!-margin-bottom-0">{{ results.count }} results found</p>
-        {% if results.count %}
+</form>
+
+<div class="results-area">
+    <p class="govuk-body govuk-!-margin-bottom-0">{{ results.count }} results found</p>
+    {% if results.count %}
         <table class="govuk-table productpedia-results-table" id="results-table">
             {% for item in results.results %}
                 <thead class="govuk-table__head">
@@ -82,6 +83,5 @@
             </tbody>
         </table>
         {% pagination %}
-    </div>
     {% endif %}
-</form>
+</div>
