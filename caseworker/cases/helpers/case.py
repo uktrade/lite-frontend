@@ -163,3 +163,11 @@ class CaseView(TemplateView):
             get_advice_tab_context(self.case, data["user"], str(self.kwargs["queue_pk"]))["url"],
             has_template=False,
         )
+
+    def get_assessment_tab(self):
+        return Tab(
+            "assessment",
+            "Product Assessment",
+            "cases:tau:home",
+            has_template=False,
+        )
