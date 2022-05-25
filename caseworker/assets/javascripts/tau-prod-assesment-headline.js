@@ -74,7 +74,19 @@ const addSelectAllExpandAll = (
   });
 };
 
+const headlineString = (arrayProducts, productsNumberChecks) => {
+  return productsNumberChecks.number > 1
+    ? `Assessing ${productsNumberChecks.number} products`
+    : `Assessing ${
+        arrayProducts.find((product) => product.checked)?.dataset["productName"]
+      }`;
+};
+
 const initTauAssesmentHeadline = () => {
+  if (!document.querySelector(".tau")) {
+    return;
+  }
+
   const checkboxProducts = document.querySelectorAll(
     ".tau__list [id^='id_goods_']"
   );
@@ -82,6 +94,7 @@ const initTauAssesmentHeadline = () => {
   const cleList = document.querySelectorAll(".control-list__list");
   const tauHeadline = document.querySelector(".tau__headline");
   const tauSecondColumn = document.querySelector(".tau__second-column");
+  const errorMessage = document.querySelector("#tau-form .govuk-error-message");
 
   let productsNumberChecks = {
     number: 0,
@@ -97,6 +110,15 @@ const initTauAssesmentHeadline = () => {
     tauSecondColumn
   );
 
+  // Check for validation error report summary.
+  if (errorMessage) {
+    tauSecondColumn.classList.remove("tau__second-column--hide");
+    productsNumberChecks.number = arrayProducts.filter(
+      (product) => product.checked
+    ).length;
+    tauHeadline.innerText = headlineString(arrayProducts, productsNumberChecks);
+  }
+
   const selectAllInnerText = document.querySelector(".tau__select-all");
 
   checkboxProducts.forEach((product) =>
@@ -109,20 +131,15 @@ const initTauAssesmentHeadline = () => {
         productsNumberChecks.number -= 1;
       }
 
-      headlineString =
-        productsNumberChecks.number > 1
-          ? `Assessing ${productsNumberChecks.number} products`
-          : `Assessing ${
-              arrayProducts.find((product) => product.checked)?.dataset[
-                "productName"
-              ]
-            }`;
       if (productsNumberChecks.number === 0) {
         tauSecondColumn.classList.add("tau__second-column--hide");
         selectAllInnerText.innerText = SELECT_ALL;
       } else {
         tauSecondColumn.classList.remove("tau__second-column--hide");
-        tauHeadline.innerText = headlineString;
+        tauHeadline.innerText = headlineString(
+          arrayProducts,
+          productsNumberChecks
+        );
         productsNumberChecks.number === productsNumberChecks.max &&
           (selectAllInnerText.innerText = DESELECT_ALL);
       }
