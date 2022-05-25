@@ -1,4 +1,4 @@
-{% load date firearm_details_summary %}
+{% load date firearm_details firearm_details_summary %}
 
 {% with firearm_details=good_on_application.firearm_details good=good_on_application.good %}
     <dl class="govuk-summary-list" id="good-detail-summary{{ forloop.counter }}">
@@ -345,19 +345,17 @@
                 </dd>
             </div>
         {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Was the product made before 1938?
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {% if firearm_details.is_made_before_1938 is not None %}
+        {% if firearm_details.is_made_before_1938 is not None %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Was the product made before 1938?
+                </dt>
+                <dd class="govuk-summary-list__value">
                     {{ firearm_details.is_made_before_1938|yesno|capfirst }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </dd>
-        </div>
-        {% if firearm_details.is_made_before_1938 or firearm_details.is_made_before_1938 is None %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if firearm_details.is_made_before_1938 or firearm_details.is_made_before_1938 is None or firearm_details|is_made_before_1938_category %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     What year was it made?

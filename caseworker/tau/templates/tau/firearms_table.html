@@ -1,4 +1,4 @@
-{% load advice_tags tau_tags %}
+{% load advice_tags firearm_details tau_tags %}
 
 <table id="table-products-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
@@ -23,23 +23,21 @@
 
         {% include "tau/includes/section5_firearm_act_1968.html" %}
 
-        <tr class="govuk-table__row">
-          <td class="govuk-table__header">
-            Was the product made before 1938?
-          </td>
-          <td class="govuk-table__cell">
-            {% if firearm_details.is_made_before_1938 is not None %}
+        {% if firearm_details.is_made_before_1938 is not None %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">
+              Was the product made before 1938?
+            </td>
+            <td class="govuk-table__cell">
               {{ firearm_details.is_made_before_1938|yesno|capfirst }}
-            {% else %}
-              N/A
-            {% endif %}
-          </td>
-        </tr>
-        {% if good.firearm_details.is_made_before_1938 %}
-        <tr class="govuk-table__row">
-          <td class="govuk-table__header">What year was it made?</td>
-          <td class="govuk-table__cell">{{ good.firearm_details.year_of_manufacture }}</td>
-        </tr>
+            </td>
+          </tr>
+        {% endif %}
+        {% if firearm_details.is_made_before_1938 or firearm_details.is_made_before_1938 is None or firearm_details|is_made_before_1938_category %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__header">What year was it made?</td>
+            <td class="govuk-table__cell">{{ firearm_details.year_of_manufacture }}</td>
+          </tr>
         {% endif %}
 
         {% include "tau/includes/onward_exported.html" %}

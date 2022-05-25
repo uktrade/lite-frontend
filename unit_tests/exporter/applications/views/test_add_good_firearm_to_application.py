@@ -9,6 +9,7 @@ from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachShotgunCertificateForm,
+    FirearmCategoryForm,
     FirearmDeactivationDetailsForm,
     FirearmIsDeactivatedForm,
     FirearmOnwardExportedForm,
@@ -380,14 +381,6 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
-        {"is_made_before_1938": True},
-    )
-    assert response.status_code == 200
-    assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
-
-    response = post_to_step(
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
         {"year_of_manufacture": 1937},
     )
@@ -517,4 +510,147 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
         "name": "certificate.pdf",
         "s3_key": "certificate.pdf",
         "size": 0,
+    }
+
+
+@pytest.mark.parametrize(
+    "category_choice",
+    (
+        FirearmCategoryForm.CategoryChoices.RIFLE_MADE_BEFORE_1938,
+        FirearmCategoryForm.CategoryChoices.COMBINATION_GUN_MADE_BEFORE_1938,
+    ),
+)
+def test_firearm_category_made_before_1938_end_to_end(
+    category_choice,
+    authorized_client,
+    requests_mock,
+    mock_good_on_application_post,
+    expected_good_data,
+    application,
+    data_standard_case,
+    goto_step,
+    post_to_step,
+    new_firearm_to_application_url,
+    good_on_application,
+):
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["good"]["firearm_details"]["category"] = [
+        {
+            "key": category_choice.value,
+            "value": category_choice.label,
+        },
+    ]
+    requests_mock.get(f'/goods/{good["good"]["id"]}/', json=good)
+
+    response = authorized_client.get(new_firearm_to_application_url)
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
+        {"year_of_manufacture": 1937},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        {"is_onward_exported": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
+        {"is_deactivated": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
+        {
+            "date_of_deactivation_0": "12",
+            "date_of_deactivation_1": "11",
+            "date_of_deactivation_2": "2007",
+            "is_deactivated_to_standard": True,
+        },
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
+        {"number_of_items": "2", "value": "16.32"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmSerialIdentificationMarkingsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        {"serial_numbers_available": "AVAILABLE"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmSerialNumbersForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS,
+        {
+            "serial_numbers_0": "s111",
+            "serial_numbers_1": "s222",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:product_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
+
+    assert mock_good_on_application_post.last_request.json() == {
+        "firearm_details": {
+            "year_of_manufacture": 1937,
+            "is_onward_exported": True,
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "processed comments",
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "incorporated comments",
+            "is_deactivated": True,
+            "date_of_deactivation": "2007-11-12",
+            "is_deactivated_to_standard": True,
+            "not_deactivated_to_standard_comments": "",
+            "number_of_items": 2,
+            "serial_numbers_available": "AVAILABLE",
+            "no_identification_markings_details": "",
+            "serial_numbers": ["s111", "s222"],
+        },
+        "good_id": expected_good_data["id"],
+        "is_good_incorporated": True,
+        "quantity": 2,
+        "unit": "NAR",
+        "value": "16.32",
     }

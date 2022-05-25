@@ -1,4 +1,9 @@
-from exporter.core.constants import DocumentType, FirearmsActSections
+from core.goods.helpers import is_product_category_made_before_1938 as _is_product_category_made_before_1938
+
+from exporter.core.constants import (
+    DocumentType,
+    FirearmsActSections,
+)
 from exporter.core.helpers import (
     has_organisation_firearm_act_document as _has_organisation_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
@@ -101,6 +106,10 @@ def is_product_covered_by_firearm_act_section(section):
         return False
 
     return _is_product_covered_by_section
+
+
+def is_product_category_made_before_1938(wizard):
+    return _is_product_category_made_before_1938(wizard.good["firearm_details"])
 
 
 def is_product_made_before_1938(wizard):

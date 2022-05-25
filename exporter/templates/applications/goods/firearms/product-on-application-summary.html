@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% load date firearm_details_summary %}
+{% load date firearm_details firearm_details_summary %}
 
 {% block back_link %}
 {% endblock %}
@@ -117,18 +117,20 @@
                     </div>
                 {% endif %}
             {% endif %}
-            <div class="govuk-summary-list__row" id="made-before-1938">
-                <dt class="govuk-summary-list__key">
-                    Was the product made before 1938?
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ firearm_details.is_made_before_1938|yesno|capfirst }}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a id="change-made-before-1938" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_made_before_1938' application.id good_on_application.id 'product-on-application-summary' %}">Change</a>
-                </dd>
-            </div>
-            {% if firearm_details.is_made_before_1938 %}
+            {% if firearm_details.is_made_before_1938 is not None %}
+                <div class="govuk-summary-list__row" id="made-before-1938">
+                    <dt class="govuk-summary-list__key">
+                        Was the product made before 1938?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ firearm_details.is_made_before_1938|yesno|capfirst }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a id="change-made-before-1938" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:product_on_application_summary_edit_made_before_1938' application.id good_on_application.id 'product-on-application-summary' %}">Change</a>
+                    </dd>
+                </div>
+            {% endif %}
+            {% if firearm_details.is_made_before_1938 or firearm_details.is_made_before_1938 is None or firearm_details|is_made_before_1938_category %}
                 <div class="govuk-summary-list__row" id="manufacture-year">
                     <dt class="govuk-summary-list__key">
                         What year was it made?
