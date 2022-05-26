@@ -20,24 +20,24 @@
             </p>
         </div>
 
+        <section aria-label="banner">
+            {% if wizard.steps.prev %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</button>
+                </form>
+            {% elif back_link_url %}
+                <a href="{{ back_link_url }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
+            {% endif %}
+        </section>
+
         <form action="" method="post"{% if form.helper.attrs.enctype %} enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
             {% csrf_token %}
-
-            <section aria-label="banner">
-                {% if wizard.steps.prev %}
-                    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</button>
-                {% elif back_link_url %}
-                    <a href="{{ back_link_url }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
-                {% endif %}
-            </section>
-
+            {{ wizard.management_form }}
             <div class="govuk-main-wrapper " id="main-content" role="main">
                 {% include "gds/layout/error_summary.html" %}
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
-
-                        {{ wizard.management_form }}
-
                         {% if wizard.form.forms %}
                             {{ wizard.form.management_form }}
                             {% for form in wizard.form.forms %}
