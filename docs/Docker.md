@@ -47,5 +47,36 @@ cp ci.caseworker.env caseworker.env
 cp ci.exporter.env exporter.env
 cp ci.api.env api.env
 ```
-- Populate all the export values found inside the .env and copy and paste it into your terminal where you will run the make/docker command. You can find the values for the exports in playwright_cricleci folder inside vault.
+- Export the following environment variables in the terminal session that you will start docker (you can find the values of the below in vault):
+
+```
+# Common
+export DIRECTORY_SSO_API_CLIENT_BASE_URL=
+export DIRECTORY_SSO_API_CLIENT_API_KEY=
+export AUTHBROKER_CLIENT_ID=
+export AUTHBROKER_CLIENT_SECRET=
+export AWS_ACCESS_KEY_ID=
+export AWS_REGION=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_STORAGE_BUCKET_NAME=
+export AUTH_USER_NAME=
+export AUTH_USER_PASSWORD=
+export BASIC_AUTH_ENABLED=
+export ENDPOINT=
+# Exporter specific
+export PW_SSO_USER=
+export PW_EXPORT_SSO_USER=
+export PW_SSO_PASSWORD=
+export PW_SSO_URL=
+export BROWSER_HOSTS_EXPORTER=
+# Caseworker specific
+export TEST_SSO_EMAIL=
+export TEST_SSO_PASSWORD=
+export BROWSER_HOSTS_CASEWORKER=
+# API specific
+export AV_SERVICE_PASSWORD=
+export AV_SERVICE_URL=
+export AV_SERVICE_USERNAME=
+```
+
 - Run `make start-caseworker`

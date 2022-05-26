@@ -5,13 +5,13 @@ services:
     image: gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
     environment:
       # Below values can be found in vault
-      AV_SERVICE_PASSWORD: ${PW_AV_SERVICE_PASSWORD}
-      AV_SERVICE_URL: ${PW_AV_SERVICE_URL}
-      AV_SERVICE_USERNAME: ${PW_AV_SERVICE_USERNAME}
-      AWS_ACCESS_KEY_ID: ${PW_AWS_ACCESS_KEY_ID}
-      AWS_REGION: ${PW_AWS_REGION}
-      AWS_SECRET_ACCESS_KEY: ${PW_AWS_SECRET_ACCESS_KEY}
-      AWS_STORAGE_BUCKET_NAME: ${PW_AWS_STORAGE_BUCKET_NAME}
+      AV_SERVICE_PASSWORD: ${AV_SERVICE_PASSWORD}
+      AV_SERVICE_URL: ${AV_SERVICE_URL}
+      AV_SERVICE_USERNAME: ${AV_SERVICE_USERNAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_REGION: ${AWS_REGION}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
     env_file:
       - api.env
     depends_on:
