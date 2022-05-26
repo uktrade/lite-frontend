@@ -1,3 +1,4 @@
+from django.conf import settings
 from exporter.core.helpers import str_date_only
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import generic
@@ -44,21 +45,27 @@ def select_your_organisation_form(organisations):
 def register_triage():
     from exporter.core.views import RegisterAnOrganisationTriage
 
+    landing_form = (
+        Form(
+            title=RegisterAnOrganisation.Landing.TITLE,
+            questions=[
+                Label(RegisterAnOrganisation.Landing.DESCRIPTION),
+                Label(RegisterAnOrganisation.Landing.DESCRIPTION_2),
+                Label(RegisterAnOrganisation.Landing.SUMMARY_LIST_HEADER),
+                List(StartPage.BULLET_POINTS, type=List.ListType.BULLETED),
+                Label(StartPage.NOTICE, classes=["govuk-inset-text"]),
+            ],
+            default_button_name=RegisterAnOrganisation.Landing.BUTTON,
+            default_button_style=ButtonStyle.START,
+            back_link=Breadcrumbs([*[BackLink(x[0], x[1]) for x in StartPage.BREADCRUMBS], BackLink("LITE", None)]),
+        )
+        if not settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED
+        else None
+    )
+
     return FormGroup(
         [
-            Form(
-                title=RegisterAnOrganisation.Landing.TITLE,
-                questions=[
-                    Label(RegisterAnOrganisation.Landing.DESCRIPTION),
-                    Label(RegisterAnOrganisation.Landing.DESCRIPTION_2),
-                    Label(RegisterAnOrganisation.Landing.SUMMARY_LIST_HEADER),
-                    List(StartPage.BULLET_POINTS, type=List.ListType.BULLETED),
-                    Label(StartPage.NOTICE, classes=["govuk-inset-text"]),
-                ],
-                default_button_name=RegisterAnOrganisation.Landing.BUTTON,
-                default_button_style=ButtonStyle.START,
-                back_link=Breadcrumbs([*[BackLink(x[0], x[1]) for x in StartPage.BREADCRUMBS], BackLink("LITE", None)]),
-            ),
+            landing_form,
             Form(
                 title=RegisterAnOrganisation.CommercialOrIndividual.TITLE,
                 description=RegisterAnOrganisation.CommercialOrIndividual.DESCRIPTION,

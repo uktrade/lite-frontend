@@ -49,10 +49,10 @@ class Home(TemplateView):
 
     def get(self, request, **kwargs):
         if not request.authbroker_client.token:
-            context = {
-                "FEATURE_FLAG_GOVUK_SIGNIN_ENABLED": settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED,
-            }
-            return render(request, "core/start.html", context)
+            template_name = (
+                "core/start-gov-uk.html" if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED else "core/start.html"
+            )
+            return render(request, template_name)
         try:
             user = get_user(request)
             user_permissions = user["role"]["permissions"]

@@ -9,6 +9,7 @@ class ECJUDocumentsTab:
 
 
 class StartPage:
+    # Once we have GOV.UK sign-in integrated this can be removed or merged with  StartPageGovUK
     TITLE = "Export control account: sign in or set up"
     DESCRIPTION = "You can use your export control account to:"
     BULLET_POINTS = [
@@ -19,6 +20,31 @@ class StartPage:
         "add products to your database",
     ]
     SIGN_IN_BUTTON = "Sign in with GOV.UK"
+    SIGN_IN_BUTTON_SUFFIX = "GOV.UK"
+    OR = "or"
+    REGISTER_ACCOUNT_LINK = "set up an account"
+    NOTICE = (
+        "There are different services if you want to "
+        "[export drugs and medicines](https://www.gov.uk/guidance/export-drugs-and-medicines-special-rules), "
+        "[export fine art](https://www.artscouncil.org.uk/export-controls/export-licensing) "
+        "or [export livestock](https://www.gov.uk/guidance/export-livestock-and-poultry)"
+    )
+    BREADCRUMBS = [
+        ["Home", "https://gov.uk"],
+        ["Business and enterprise", "https://www.gov.uk/topic/business-enterprise"],
+        ["Trade restrictions on exports", "https://www.gov.uk/topic/business-enterprise/importing-exporting"],
+    ]
+
+
+class StartPageGovUK:
+    TITLE = "Apply for an export license using LITE"
+    BULLET_POINTS = [
+        "apply for a SIEL firearms license",
+        "edit or check an application",
+        "view existing licenses issued in LITE ",
+    ]
+    DESCRIPTION = "You this service to:"
+    SIGN_IN_BUTTON = "Start now >"
     SIGN_IN_BUTTON_SUFFIX = "GOV.UK"
     OR = "or"
     REGISTER_ACCOUNT_LINK = "set up an account"
