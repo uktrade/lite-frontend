@@ -62,3 +62,15 @@ class CaseStatusEnum:
     def all(cls):
         is_all_upper = re.compile(r"^[A-Z_]+$")
         return [getattr(cls, param) for param in dir(cls) if is_all_upper.match(param)]
+
+
+class FirearmsActDocumentType:
+    SECTION_1 = "section-one-certificate"
+    SECTION_2 = "section-two-certificate"
+    SECTION_5 = "section-five-certificate"
+
+
+class FirearmsActSections:
+    SECTION_1 = "firearms_act_section1"
+    SECTION_2 = "firearms_act_section2"
+    SECTION_5 = "firearms_act_section5"

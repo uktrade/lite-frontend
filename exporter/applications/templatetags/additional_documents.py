@@ -1,6 +1,7 @@
 from django import template
 
-from exporter.core.constants import DocumentType, FirearmsActDocumentType
+from core.constants import FirearmsActDocumentType
+from exporter.core.constants import DocumentType
 
 
 register = template.Library()

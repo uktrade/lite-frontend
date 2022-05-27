@@ -2,10 +2,8 @@ from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 
-from exporter.applications.services import (
-    get_application,
-    get_application_documents,
-)
+from exporter.applications.services import get_application_documents
+from exporter.applications.summaries import firearm_product_summary
 from exporter.core.helpers import (
     get_organisation_documents,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
@@ -30,19 +28,19 @@ class FirearmProductSummary(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        documents = get_good_documents(self.request, self.good["id"])
-        application = get_application(self.request, self.application["id"])
-        is_user_rfd = has_valid_organisation_rfd_certificate(application)
-        organisation_documents = {k.replace("-", "_"): v for k, v in get_organisation_documents(application).items()}
 
-        return {
-            **context,
-            "is_user_rfd": is_user_rfd,
-            "application_id": self.application["id"],
-            "good": self.good,
-            "documents": documents,
-            "organisation_documents": organisation_documents,
-        }
+        context["application_id"] = self.application["id"]
+        context["good"] = self.good
+
+        is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
+        organisation_documents = get_organisation_documents(self.application)
+        context["summary"] = firearm_product_summary(
+            self.good,
+            is_user_rfd,
+            organisation_documents,
+        )
+
+        return context
 
 
 class BaseProductOnApplicationSummary(

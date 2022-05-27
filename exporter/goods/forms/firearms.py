@@ -12,13 +12,14 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
+from core.constants import FirearmsActSections
 from core.forms.layouts import (
     ConditionalCheckbox,
     ConditionalQuestion,
     ConditionalRadios,
     Prefixed,
 )
-from exporter.core.constants import FirearmsActSections
+
 from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import (

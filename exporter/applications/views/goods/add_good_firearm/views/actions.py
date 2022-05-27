@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from django.utils.functional import cached_property
 
+from core.constants import FirearmsActDocumentType
 from exporter.applications.services import (
     delete_additional_document,
     delete_application_document,
@@ -10,7 +11,7 @@ from exporter.applications.services import (
     post_additional_document,
     post_application_document,
 )
-from exporter.core.constants import DocumentType, FirearmsActDocumentType
+from exporter.core.constants import DocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     get_document_data,
