@@ -17,7 +17,7 @@
     </div>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
-        {% for id, value in summary %}
+        {% for id, value, edit_link in summary %}
             <div class="govuk-summary-list__row" id="{{ id }}">
                 <dt class="govuk-summary-list__key">
                     {{ id }}
@@ -26,6 +26,9 @@
                     {{ value }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
+                    {% if edit_link %}
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ edit_link }}">Change</a>
+                    {% endif %}
                 </dd>
             </div>
         {% endfor %}

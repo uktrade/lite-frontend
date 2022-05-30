@@ -89,14 +89,14 @@ def firearms_act_section5_reducer(firearm_details, organisation_documents):
                     True,
                 ),
                 (
-                    "section-5-missing-reason",
+                    "section-5-certificate-missing-reason",
                     firearm_details["section_certificate_missing_reason"],
                 ),
             )
         else:
             summary += (
                 (
-                    "section-5-document",
+                    "section-5-certificate-document",
                     organisation_documents[FirearmsActDocumentType.SECTION_5],
                 ),
                 (

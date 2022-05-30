@@ -35,6 +35,7 @@ class FirearmProductSummary(
         is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
         organisation_documents = get_organisation_documents(self.application)
         context["summary"] = firearm_product_summary(
+            self.application,
             self.good,
             is_user_rfd,
             organisation_documents,
