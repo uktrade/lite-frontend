@@ -139,16 +139,6 @@ commands:
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
 
-  setup_code_climate:
-    steps:
-      - run:
-          name:  Download cc-test-reporter
-          command: |
-            mkdir -p tmp/
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-            chmod +x ./tmp/cc-test-reporter
-            ./tmp/cc-test-reporter before-build
-
   unit_tests:
     parameters:
       alias:
@@ -158,12 +148,12 @@ commands:
           name: Run unit tests
           command: |
             pipenv run pytest --cov=.  --cov-report xml --cov-config=.coveragerc
-            ./tmp/cc-test-reporter format-coverage -t coverage.py -o tmp/codeclimate.<< parameters.alias >>.json coverage/<< parameters.alias >>/.resultset.json
-
-      - persist_to_workspace:
-          root: tmp
-          paths:
-            - codeclimate.<< parameters.alias >>.json
+      - run:
+          name: Code coverage report
+          command: |
+            curl -Os https://uploader.codecov.io/latest/linux/codecov
+            chmod +x codecov
+            ./codecov
   ui_tests:
     steps:
       - run: mkdir -p test-results
@@ -213,7 +203,6 @@ jobs:
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - setup_code
-      - setup_code_climate
       - unit_tests:
           alias: caseworker
 
@@ -229,23 +218,8 @@ jobs:
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - setup_code
-      - setup_code_climate
       - unit_tests:
           alias: exporter
-
-  upload_coverage:
-    working_directory: ~/repo
-    docker:
-      - <<: *image_python
-    steps:
-      - attach_workspace:
-          at: ~/repo/tmp
-      - setup_code_climate
-      - run:
-          name: Upload coverage results to Code Climate
-          command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
-            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
   exporter_ui_test:
     machine:
@@ -299,10 +273,6 @@ workflows:
       - exporter_unit_test
       - caseworker_e2e_test
       - exporter_e2e_test
-      - upload_coverage:
-          requires:
-           - caseworker_unit_test
-           - exporter_unit_test
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
