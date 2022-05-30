@@ -20,14 +20,15 @@ def sanctioned_case(driver, sso_sign_in):  # noqa
 
 @then(parsers.parse("I see the section of the case page entitled Sanction matches"))
 def check_sanction_matches(driver, end_user_name, end_user_address):  # noqa
-    sanctions_h2 = driver.findElement(By.xpath("//*[contains(text(),'Sanction matches')]"))
+    sanctions_h2 = driver.find_element(by=By.XPATH, value="//*[contains(text(),'Sanction matches')]")
     assert sanctions_h2 is not None
 
 
-@then(parsers.parse('I see "{end_user_name}" listed there'))
+@then(parsers.parse("I see <end_user_name> listed there"))
 def check_sanction_highlighted(driver, end_user_name):  # noqa
-    sanctions_table = driver.find_element(by=By.ID, value="table-sanction-matches")
-    name_element = sanctions_table.find_element(by=By.XPATH, value="//tbody/tr/td[4]")
+    name_element = driver.find_element(
+        by=By.CSS_SELECTOR, value="#table-sanction-matches > tbody > tr > td:nth-child(4)"
+    )
     assert name_element.text == end_user_name
 
 

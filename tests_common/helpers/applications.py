@@ -52,7 +52,7 @@ def create_standard_application(api_test_client, context, app_data, submit=True)
             "sub_type": "government",
             "website": fake.uri(),
             "type": "end_user",
-            "signatory_name_euu": fake.name(),
+            "signatory_name_euu": app_data["end_user_name"],
         },
         ultimate_end_user={
             "name": fake.name(),
