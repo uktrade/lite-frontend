@@ -1,10 +1,11 @@
-const SLICED_WORDS = 3; // Select exporter suggestion "ML1"
 const NO_CLE_STRING = "None";
 
-const createTokenFieldSetItem = (suggestionSentence) => {
-  const sentenceSplit = suggestionSentence.split(" ");
-  const cleName = sentenceSplit.slice(SLICED_WORDS).join(" ");
+// Global control list entries object pulled from back-end
+export let globalCleMatchToItems = {};
+// Global Control list entries active
+export let globalCheckedProductsWithCle = [];
 
+const createTokenFieldSetItem = (cleName) => {
   const tokenFieldInput = document.querySelector(
     "#control_list_entries .tokenfield-input"
   );
@@ -64,20 +65,48 @@ const removeNoCleEntry = () => {
   clearCleList();
 };
 
-export const hideUnhideExporterCle = (product, cleList) => {
+const createButtonsForCle = (globalCheckedProductsWithCle) => {
+  const suggestionsDiv = document.querySelector(".tau__cle-suggestions");
+  while (suggestionsDiv.firstChild) {
+    suggestionsDiv.removeChild(suggestionsDiv.lastChild);
+  }
+  globalCheckedProductsWithCle.forEach((checked) => {
+    const cleName = Object.values(checked)[0];
+    const createButton = document.createElement("button");
+    createButton.classList.add("lite-button--link", "control-list__list");
+    createButton.innerText = `Select exporter suggestion ${cleName}`;
+    createButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      createTokenFieldSetItem(cleName);
+    });
+
+    suggestionsDiv.append(createButton);
+  });
+};
+
+export const addDeleteExporterCleSuggestions = (
+  product,
+  globalCleMatchToItems,
+  globalCheckedProductsWithCle
+) => {
   const checked = product.checked;
   const id = product.value;
-
-  cleList.forEach((cle) => {
-    // Hide items.
-    if (checked) {
-      id === cle.getAttribute("name") &&
-        cle.classList.remove("app-hidden--force");
-      return;
+  if (checked) {
+    globalCleMatchToItems[id].forEach((cle) => {
+      const newProduct = new Object();
+      newProduct[id] = cle;
+      globalCheckedProductsWithCle.push(newProduct);
+    });
+    createButtonsForCle(globalCheckedProductsWithCle);
+    return;
+  }
+  for (let i = 0; i < globalCheckedProductsWithCle.length; i++) {
+    if (Object.keys(globalCheckedProductsWithCle[i])[0] === id) {
+      globalCheckedProductsWithCle.splice(i, 1);
+      i--;
     }
-    // Unhide items.
-    id === cle.getAttribute("name") && cle.classList.add("app-hidden--force");
-  });
+  }
+  createButtonsForCle(globalCheckedProductsWithCle);
 };
 
 const initTauControlListEntry = () => {
@@ -85,28 +114,38 @@ const initTauControlListEntry = () => {
     return;
   }
 
-  const cleList = document.querySelectorAll(".control-list__list");
   const checkboxProducts = document.querySelectorAll(
     ".tau__list [id^='id_goods_']"
   );
   const doesNotHaveCleSentence = document.querySelector(
     "#div_id_does_not_have_control_list_entries input"
   );
-
-  // Create CLE in the input field after click
-
-  cleList.forEach((cle) =>
-    cle.addEventListener("click", (event) => {
-      event.preventDefault();
-      if (!doesNotHaveCleSentence.checked) {
-        createTokenFieldSetItem(event.target.innerText);
-      }
-    })
+  const pulledItemsList = document.querySelectorAll(
+    ".govuk-list .tau__cle-object"
   );
+
+  pulledItemsList.forEach((product) => {
+    const cleRating = JSON.parse(
+      product.querySelector("#tau-cle-rating").textContent
+    );
+    const itemId = JSON.parse(
+      product.querySelector("#tau-cle-item-id").textContent
+    );
+
+    if (globalCleMatchToItems[itemId]) {
+      globalCleMatchToItems[itemId].push(cleRating);
+      return;
+    }
+    globalCleMatchToItems[itemId] = [cleRating];
+  });
 
   checkboxProducts.forEach((product) => {
     product.addEventListener("click", () => {
-      hideUnhideExporterCle(product, cleList);
+      addDeleteExporterCleSuggestions(
+        product,
+        globalCleMatchToItems,
+        globalCheckedProductsWithCle
+      );
     });
   });
 

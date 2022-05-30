@@ -1,4 +1,8 @@
-import { hideUnhideExporterCle } from "./tau-exporter-suggestions.js";
+import {
+  addDeleteExporterCleSuggestions,
+  globalCleMatchToItems,
+  globalCheckedProductsWithCle,
+} from "./tau-exporter-suggestions.js";
 
 const SELECT_ALL = "Select all";
 const DESELECT_ALL = "Deselect all";
@@ -39,7 +43,11 @@ const addSelectAllExpandAll = (
     if (targetText === SELECT_ALL) {
       checkboxProducts.forEach((product) => {
         product.checked = true;
-        hideUnhideExporterCle(product, cleList);
+        addDeleteExporterCleSuggestions(
+          product,
+          globalCleMatchToItems,
+          globalCheckedProductsWithCle
+        );
       });
       productsNumberChecks.number = productsNumberChecks.max;
       tauHeadline.innerText = `Assessing ${productsNumberChecks.number} products`;
@@ -49,7 +57,11 @@ const addSelectAllExpandAll = (
     if (targetText === DESELECT_ALL) {
       checkboxProducts.forEach((product) => {
         product.checked = false;
-        hideUnhideExporterCle(product, cleList);
+        addDeleteExporterCleSuggestions(
+          product,
+          globalCleMatchToItems,
+          globalCheckedProductsWithCle
+        );
       });
       productsNumberChecks.number = 0;
       tauSecondColumn.classList.add("tau__second-column--hide");
