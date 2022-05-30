@@ -61,6 +61,11 @@
     }
   }
 
+  .govuk-list {
+    display: flex;
+    flex-direction: column;
+  }
+
   .tokenfield-copy-helper {
     display: none;
   }

@@ -66,11 +66,16 @@ const removeNoCleEntry = () => {
 };
 
 const createButtonsForCle = (globalCheckedProductsWithCle) => {
+  const filteredArray = globalCheckedProductsWithCle.filter(
+    (cle, index, array) =>
+      array.findIndex((t) => Object.values(t)[0] == Object.values(cle)[0]) ==
+      index
+  );
   const suggestionsDiv = document.querySelector(".tau__cle-suggestions");
   while (suggestionsDiv.firstChild) {
     suggestionsDiv.removeChild(suggestionsDiv.lastChild);
   }
-  globalCheckedProductsWithCle.forEach((checked) => {
+  filteredArray.forEach((checked) => {
     const cleName = Object.values(checked)[0];
     const createButton = document.createElement("button");
     createButton.classList.add("lite-button--link", "control-list__list");
@@ -124,6 +129,7 @@ const initTauControlListEntry = () => {
     ".govuk-list .tau__cle-object"
   );
 
+  // Create a global array with cle suggestion objects
   pulledItemsList.forEach((product) => {
     const cleRating = JSON.parse(
       product.querySelector("#tau-cle-rating").textContent
@@ -139,7 +145,17 @@ const initTauControlListEntry = () => {
     globalCleMatchToItems[itemId] = [cleRating];
   });
 
+  // Going through every checkbox and adding event listener or see if its checked.
   checkboxProducts.forEach((product) => {
+    // Generate suggestions if checkbox already checked
+    if (product.checked) {
+      addDeleteExporterCleSuggestions(
+        product,
+        globalCleMatchToItems,
+        globalCheckedProductsWithCle
+      );
+    }
+    // Generate suggestions on click
     product.addEventListener("click", () => {
       addDeleteExporterCleSuggestions(
         product,
@@ -149,6 +165,7 @@ const initTauControlListEntry = () => {
     });
   });
 
+  // The button event for "Select that this product is not on the control list"
   doesNotHaveCleSentence.addEventListener("click", (event) => {
     const checked = event.currentTarget.checked;
     if (checked) {
