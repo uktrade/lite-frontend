@@ -1,6 +1,6 @@
 {% extends 'layouts/case.html' %}
 
-{% load static firearm_details_summary %}
+{% load static firearm_details firearm_details_summary %}
 
 {% block details %}
     <div class="govuk-grid-row">
@@ -356,19 +356,17 @@
                                         <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
                                     </tr>
                                 {% endif %}
-                                <tr class="govuk-table__row app-table__row">
-                                    <th scope="row" class="govuk-table__header">
-                                        Was the product made before 1938?
-                                    </th>
-                                    <td class="govuk-table__cell">
-                                        {% if firearm_details.is_made_before_1938 is not None %}
+                                {% if good.firearm_details.is_made_before_1938 is not None %}
+                                    <tr class="govuk-table__row app-table__row">
+                                        <th scope="row" class="govuk-table__header">
+                                            Was the product made before 1938?
+                                        </th>
+                                        <td class="govuk-table__cell">
                                             {{ firearm_details.is_made_before_1938|yesno|capfirst }}
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% if firearm_details.is_made_before_1938 or firearm_details.is_made_before_1938 is None %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                {% if good.firearm_details.is_made_before_1938 or good.firearm_details.is_made_before_1938 is None or good.firearm_details|is_made_before_1938_category %}
                                     <tr class="govuk-table__row app-table__row">
                                         <th scope="row" class="govuk-table__header">What year was it made?</th>
                                         <td class="govuk-table__cell">{{ firearm_details.year_of_manufacture }}</td>

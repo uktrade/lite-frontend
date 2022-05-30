@@ -71,6 +71,7 @@ from .conditionals import (
     is_deactivated,
     is_document_sensitive,
     is_onward_exported,
+    is_product_category_made_before_1938,
     is_product_covered_by_firearm_act_section,
     is_product_document_available,
     is_product_made_before_1938,
@@ -389,7 +390,9 @@ class AddGoodFirearmToApplication(
         AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE: is_certificate_required(
             FirearmsActSections.SECTION_2,
         ),
-        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: is_product_made_before_1938,
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938: ~C(is_product_category_made_before_1938),
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: C(is_product_category_made_before_1938)
+        | C(is_product_made_before_1938),
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: is_deactivated,

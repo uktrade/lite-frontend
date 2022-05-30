@@ -98,6 +98,7 @@ def test_home_content(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
 
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -152,8 +153,8 @@ def test_home_content(
         "0.25",
         "Is the product a replica firearm?",
         "No",
-        "Was the product made before 1938?",
-        "N/A",
+        "What year was it made?",
+        "1930",
         "Will the product be incorporated into another item before it is onward exported?",
         "N/A",
         "Has the product been deactivated?",

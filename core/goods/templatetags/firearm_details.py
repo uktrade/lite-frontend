@@ -1,5 +1,8 @@
 from django import template
 
+from core.goods.helpers import is_product_category_made_before_1938
+
+
 register = template.Library()
 
 
@@ -21,3 +24,8 @@ def has_added_serial_numbers(firearm_details):
     added_serial_numbers = [sn for sn in serial_numbers if sn]
 
     return len(added_serial_numbers) > 0
+
+
+@register.filter(name="is_made_before_1938_category")
+def is_made_before_1938_category(firearm_details):
+    return is_product_category_made_before_1938(firearm_details)
