@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import TemplateView
 
+
 from core.constants import CaseStatusEnum
 
 from caseworker.advice.services import get_advice_tab_context
@@ -25,6 +26,7 @@ from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import CasePage, ApplicationPage
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
+from caseworker.tau.views import TAUMixin
 
 
 class Tabs:
@@ -74,7 +76,7 @@ class Slices:
     FREEDOM_OF_INFORMATION = Slice("case/slices/freedom-of-information.html", "Freedom of Information")
 
 
-class CaseView(TemplateView):
+class CaseView(TemplateView, TAUMixin):
     case_id = None
     case: Case = None
     queue_id = None
@@ -124,6 +126,8 @@ class CaseView(TemplateView):
             "is_terminal": status_props["is_terminal"],
             "is_read_only": status_props["is_read_only"],
             "has_future_next_review_date": future_next_review_date,
+            "unassessed_goods": self.unassessed_goods,
+            "tau_queue": self.caseworker["default_queue"],
             **self.additional_context,
         }
 
