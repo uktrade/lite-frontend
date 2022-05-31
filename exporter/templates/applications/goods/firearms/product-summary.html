@@ -17,10 +17,10 @@
     </div>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
-        {% for id, value, edit_link in summary %}
-            <div class="govuk-summary-list__row" id="{{ id }}">
+        {% for key, value, label, edit_link in summary %}
+            <div class="govuk-summary-list__row" id="{{ key }}">
                 <dt class="govuk-summary-list__key">
-                    {{ id }}
+                    {{ label }}
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ value }}

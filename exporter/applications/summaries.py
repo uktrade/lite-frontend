@@ -1,5 +1,6 @@
 from django.urls import reverse
 
+from core.summaries.formatters import FIREARM_LABELS, add_labels
 from core.summaries.reducers import firearm_reducer
 
 
@@ -16,7 +17,7 @@ def get_edit_link_factory(application, good):
     return get_edit_link
 
 
-def firearm_product_summary_add_edit_links(application, good, summary):
+def add_edit_links(application, good, summary):
     edit_links = {
         "firearm-category": "category",
         "name": "name",
@@ -50,19 +51,20 @@ def firearm_product_summary_add_edit_links(application, good, summary):
     get_edit_link = get_edit_link_factory(application, good)
 
     summary_with_edit_links = ()
-    for key, value in summary:
+    for key, value, *rest in summary:
         try:
             edit_link = get_edit_link(edit_links[key])
         except KeyError:
             edit_link = None
 
-        summary_with_edit_links += ((key, value, edit_link),)
+        summary_with_edit_links += ((key, value, *rest, edit_link),)
 
     return summary_with_edit_links
 
 
 def firearm_product_summary(application, good, is_user_rfd, organisation_documents):
     summary = firearm_reducer(good, is_user_rfd, organisation_documents)
-    summary = firearm_product_summary_add_edit_links(application, good, summary)
+    summary = add_labels(summary, FIREARM_LABELS)
+    summary = add_edit_links(application, good, summary)
 
     return summary
