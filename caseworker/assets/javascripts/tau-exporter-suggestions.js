@@ -2,8 +2,11 @@ const NO_CLE_STRING = "None";
 
 // Global control list entries object pulled from back-end
 export let globalCleMatchToItems = {};
-// Global Control list entries active
+// Checked object with product id and global control list entries in an array
 export let globalCheckedProductsWithCle = [];
+
+// Helper functions below this comment
+// ------------
 
 const createTokenFieldSetItem = (cleName) => {
   const tokenFieldInput = document.querySelector(
@@ -29,7 +32,7 @@ const clearCleList = () => {
   });
 };
 
-const createNoCleEntry = () => {
+const createNoneCleEntry = () => {
   const tokenFieldInput = document.querySelector(
     "#control_list_entries .tokenfield-input"
   );
@@ -57,7 +60,7 @@ const createNoCleEntry = () => {
   notListedSuggestionField.appendChild(newLi);
 };
 
-const removeNoCleEntry = () => {
+const removeNoneCleEntry = () => {
   const tokenFieldInput = document.querySelector(
     "#control_list_entries .tokenfield-input"
   );
@@ -66,20 +69,32 @@ const removeNoCleEntry = () => {
 };
 
 const createButtonsForCle = (globalCheckedProductsWithCle) => {
+  // We filter the duplicate cle-s at this point using filter prototype
   const filteredArray = globalCheckedProductsWithCle.filter(
-    (cle, index, array) =>
-      array.findIndex((t) => Object.values(t)[0] == Object.values(cle)[0]) ==
-      index
+    (cle_outer, index, innerArrayLoop) => {
+      // if the value matches it will return the index so it gets compared and put into the new array
+      const matchedIndex = innerArrayLoop.findIndex(
+        (cle_inner) =>
+          Object.values(cle_inner)[0] == Object.values(cle_outer)[0]
+      );
+
+      return matchedIndex == index;
+    }
   );
+
+  // Start making a div for buttons to live within
   const suggestionsDiv = document.querySelector(".tau__cle-suggestions");
   while (suggestionsDiv.firstChild) {
     suggestionsDiv.removeChild(suggestionsDiv.lastChild);
   }
+
+  // Going through a clean array without duplicates and make the buttons
   filteredArray.forEach((checked) => {
     const cleName = Object.values(checked)[0];
     const createButton = document.createElement("button");
     createButton.classList.add("lite-button--link", "control-list__list");
     createButton.innerText = `Select exporter suggestion ${cleName}`;
+
     createButton.addEventListener("click", (event) => {
       event.preventDefault();
       createTokenFieldSetItem(cleName);
@@ -96,6 +111,8 @@ export const addDeleteExporterCleSuggestions = (
 ) => {
   const checked = product.checked;
   const id = product.value;
+
+  // See if product is checked if YES then create buttons.
   if (checked) {
     globalCleMatchToItems[id].forEach((cle) => {
       const newProduct = new Object();
@@ -105,6 +122,8 @@ export const addDeleteExporterCleSuggestions = (
     createButtonsForCle(globalCheckedProductsWithCle);
     return;
   }
+
+  // If it is not checked we remove the product from the array
   for (let i = 0; i < globalCheckedProductsWithCle.length; i++) {
     if (Object.keys(globalCheckedProductsWithCle[i])[0] === id) {
       globalCheckedProductsWithCle.splice(i, 1);
@@ -113,6 +132,9 @@ export const addDeleteExporterCleSuggestions = (
   }
   createButtonsForCle(globalCheckedProductsWithCle);
 };
+
+// Start of the main function
+// ------------
 
 const initTauControlListEntry = () => {
   if (!document.querySelector(".tau")) {
@@ -126,7 +148,7 @@ const initTauControlListEntry = () => {
     "#div_id_does_not_have_control_list_entries input"
   );
   const pulledItemsList = document.querySelectorAll(
-    ".govuk-list .tau__cle-object"
+    ".tau__cle-suggestion-buttons .tau__cle-object"
   );
 
   // Create a global array with cle suggestion objects
@@ -155,7 +177,7 @@ const initTauControlListEntry = () => {
         globalCheckedProductsWithCle
       );
     }
-    // Generate suggestions on click
+    // Generate suggestion on click
     product.addEventListener("click", () => {
       addDeleteExporterCleSuggestions(
         product,
@@ -169,10 +191,10 @@ const initTauControlListEntry = () => {
   doesNotHaveCleSentence.addEventListener("click", (event) => {
     const checked = event.currentTarget.checked;
     if (checked) {
-      createNoCleEntry();
+      createNoneCleEntry();
       return;
     }
-    removeNoCleEntry();
+    removeNoneCleEntry();
   });
 };
 
