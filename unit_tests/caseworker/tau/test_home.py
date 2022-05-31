@@ -1,10 +1,9 @@
-from http import HTTPStatus
 from bs4 import BeautifulSoup
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
 import pytest
 
 from core import client
+from caseworker.tau import views
 
 
 @pytest.fixture(autouse=True)
@@ -18,6 +17,20 @@ def url(data_queue, data_standard_case):
         "cases:tau:home",
         kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
     )
+
+
+@pytest.fixture()
+def gov_user():
+    return {
+        "user": {
+            "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+            "team": {
+                "id": "211111b-c111-11e1-1111-1111111111a",
+                "name": "Test",
+                "alias": "TEST_1",
+            },
+        }
+    }
 
 
 def get_cells(soup, table_id):
@@ -234,19 +247,46 @@ def test_form(
     }
 
 
+@pytest.mark.parametrize(
+    "team_alias, team_name",
+    (
+        (views.TAU_ALIAS, "TAU"),
+        ("Not TAU", "Some other team"),
+    ),
+)
 def test_move_case_forward(
-    authorized_client, url, data_queue, data_standard_case, mock_control_list_entries, mock_precedents_api
+    requests_mock,
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    gov_user,
+    team_alias,
+    team_name,
 ):
     """
     When all products has been assessed, we will get a move-case-forward form.
     """
+    gov_user["user"]["team"]["name"] = team_name
+    gov_user["user"]["team"]["alias"] = team_alias
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+
     response = authorized_client.get(url)
     assert response.context["unassessed_goods"] == []
 
     soup = BeautifulSoup(response.content, "html.parser")
     forms = soup.find_all("form")
-    assert len(forms) == 1
-    assert forms[0].attrs["action"] == reverse(
-        "cases:tau:move_case_forward",
-        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
-    )
+    if team_alias == views.TAU_ALIAS:
+        assert len(forms) == 1
+        assert forms[0].attrs["action"] == reverse(
+            "cases:tau:move_case_forward",
+            kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
+        )
+    else:
+        assert len(forms) == 0

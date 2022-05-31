@@ -25,7 +25,7 @@
             </div>
             <!-- Move case forward form -->
             <div class="govuk-grid-column-one-third">
-                {% if not unassessed_goods %}
+                {% if not unassessed_goods and is_tau %}
                 <div class="govuk-grid-column-full" style="text-align: right;">
                     <form action="{% url 'cases:tau:move_case_forward' queue_id case.id %}" method="POST">
                         {% csrf_token %}
