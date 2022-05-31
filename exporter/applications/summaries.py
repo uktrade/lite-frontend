@@ -1,6 +1,12 @@
 from django.urls import reverse
 
-from core.summaries.formatters import FIREARM_LABELS, add_labels
+from core.summaries.formatters import (
+    add_labels,
+    document_formatter,
+    format_values,
+    FIREARM_LABELS,
+    FIREARM_VALUE_FORMATTERS,
+)
 from core.summaries.reducers import firearm_reducer
 
 
@@ -64,6 +70,25 @@ def add_edit_links(application, good, summary):
 
 def firearm_product_summary(application, good, is_user_rfd, organisation_documents):
     summary = firearm_reducer(good, is_user_rfd, organisation_documents)
+
+    def goods_document_formatter(document):
+        url = reverse(
+            "goods:document",
+            kwargs={
+                "pk": good["id"],
+                "file_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document, url)
+
+    formatters = {
+        **FIREARM_VALUE_FORMATTERS,
+        **{
+            "product-document": goods_document_formatter,
+        },
+    }
+    summary = format_values(summary, formatters)
     summary = add_labels(summary, FIREARM_LABELS)
     summary = add_edit_links(application, good, summary)
 
