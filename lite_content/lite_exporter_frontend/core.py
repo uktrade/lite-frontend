@@ -37,11 +37,11 @@ class StartPage:
 
 
 class StartPageGovUK:
-    TITLE = "Apply for an export license using LITE"
+    TITLE = "Apply for an export licence using LITE"
     BULLET_POINTS = [
-        "apply for a SIEL firearms license",
+        "apply for a SIEL firearms licence",
         "edit or check an application",
-        "view existing licenses issued in LITE ",
+        "view existing licences issued in LITE ",
     ]
     DESCRIPTION = "You this service to:"
     SIGN_IN_BUTTON = "Start now >"
