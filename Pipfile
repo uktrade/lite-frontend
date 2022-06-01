@@ -70,6 +70,7 @@ importlib-metadata = "==4.6.3"  # Dependency for some packages. Might not be nee
 Authlib = "==0.15.5"
 regex = "==2022.3.2"
 deepmerge = "*"
+phonenumbers = "~=8.12"
 
 [requires]
 python_version = "3.7"
