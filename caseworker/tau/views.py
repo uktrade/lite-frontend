@@ -14,6 +14,10 @@ from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
+from caseworker.users.services import get_gov_user
+
+
+TAU_ALIAS = "TAU"
 
 
 class TAUMixin:
@@ -95,6 +99,15 @@ class TAUMixin:
     def good_id(self):
         return str(self.kwargs["good_id"])
 
+    @property
+    def caseworker_id(self):
+        return str(self.request.session["lite_api_user_id"])
+
+    @property
+    def caseworker(self):
+        data, _ = get_gov_user(self.request, self.caseworker_id)
+        return data["user"]
+
 
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
@@ -120,6 +133,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
             "organisation_documents": self.organisation_documents,
+            "is_tau": self.caseworker["team"]["alias"] == TAU_ALIAS,
         }
 
     def get_goods(self, good_ids):
