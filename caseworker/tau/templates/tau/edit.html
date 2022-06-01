@@ -2,7 +2,6 @@
 {% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
 {% block body %}
 <div class="govuk-width-container tau">
-    <a href="../" class="govuk-back-link">Back</a>
     <h1 class="govuk-heading-l">Product assessment</h1>
     <p id="subtitle" class="govuk-body">Editing assessment for <strong>{{ good.good.name }}</strong> going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
     <main class="govuk-main-wrapper">
