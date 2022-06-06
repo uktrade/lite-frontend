@@ -2,26 +2,24 @@
 
 The aim of this test suite is perform end to end tests, simulating a user flow.
 
-### Setup
+### Caseworker Setup
 
-Pre-requisites:
+To run the tests against the local docker stack ensure you follow the steps in [Running the stack](./Docker.md) before moving to the next steps.
 
-Ensure you have [node](https://nodejs.org/en/download/) v14 installed then install dependencies:
+After starting docker stack, make sure to update the below `caseworker.env` values from vault:
 
-`$ npm install`
+```
+LITE_API_URL=http://localhost:8100
+AUTHBROKER_CLIENT_ID=ValueInVault
+AUTHBROKER_CLIENT_SECRET=ValueInVault
+DIRECTORY_SSO_API_CLIENT_BASE_URL=ValueInVault
+DIRECTORY_SSO_API_CLIENT_API_KEY=ValueInVault
+BROWSER_HOSTS=<BROWSER_HOSTS_CASEWORKER>
+```
 
-Ensure `caseworker.env` is present and has the required `CYPRESS` environment variables present.
+### Running caseworker tests
 
-### Running the tests
+You can run the tests by running the following make command after the docker stack is started:
 
-The e2e test suite is triggered by running the following command:
 
-`$ npm run test:e2e`
-
-### Running the tests manually in cypress interface
-
-`$ npm run test:e2e:watch`
-
-### Running a specific spec
-
-`$ npm run test:e2e:dit -- --spec test/integration/caseworker/organisation.spec.js`
+`make caseworker-e2e-selenium-test`
