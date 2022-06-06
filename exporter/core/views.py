@@ -172,16 +172,17 @@ class RegisterAnOrganisation(SummaryListFormView):
 
     def get_success_url(self):
         # Update the signed in user's details so they can make validated API calls
-        response, _ = authenticate_exporter_user(
-            self.request,
+        profile = get_profile(self.request.authbroker_client)
+        profile.update(
             {
-                "email": self.request.session["email"],
                 "user_profile": {
                     "first_name": self.request.session["first_name"],
                     "last_name": self.request.session["last_name"],
-                },
+                }
             },
         )
+        # attempt to update user
+        response, _ = authenticate_exporter_user(self.request, profile)
         self.request.session["user_token"] = response["token"]
         self.request.session["lite_api_user_id"] = response["lite_api_user_id"]
         return reverse("core:register_an_organisation_confirm") + "?animate=True"
@@ -228,17 +229,16 @@ class RegisterName(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         profile = get_profile(self.request.authbroker_client)
-        # attempt to update user
-        authenticate_exporter_user(
-            self.request,
+        profile.update(
             {
-                "email": profile["email"],
                 "user_profile": {
                     "first_name": form.cleaned_data["first_name"],
                     "last_name": form.cleaned_data["last_name"],
-                },
+                }
             },
         )
+        # attempt to update user
+        authenticate_exporter_user(self.request, profile)
         # Hold in session
         self.request.session["first_name"] = form.cleaned_data["first_name"]
         self.request.session["last_name"] = form.cleaned_data["last_name"]
