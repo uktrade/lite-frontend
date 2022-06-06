@@ -244,20 +244,27 @@ def test_format_values():
                 "safe": True,
                 "name": "document name",
             },
-            '<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">{name}</a>',
+            '<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">document name</a>',
+        ),
+        (
+            {
+                "safe": True,
+                "name": "<escape>evil html</escape>",
+            },
+            '<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">&lt;escape&gt;evil html&lt;/escape&gt;</a>',
         ),
         (
             {
                 "safe": False,
                 "name": "document name",
             },
-            "{name}",
+            "document name",
         ),
     ),
 )
 def test_document_formatter(document, output):
     url = "http://example.com/test"
-    assert document_formatter(document, url) == output.format(url=url, name=document["name"])
+    assert document_formatter(document, url) == output.format(url=url)
 
 
 def test_just():

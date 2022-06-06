@@ -4,6 +4,7 @@ from operator import itemgetter
 
 from django.urls import reverse
 from django.utils.formats import date_format
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 
@@ -138,6 +139,8 @@ def document_formatter(document, url):
     if not document["safe"]:
         return document["name"]
 
+    name = escape(document["name"])
+
     return mark_safe(  # nosec
-        f'<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">{document["name"]}</a>'
+        f'<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">{name}</a>'
     )
