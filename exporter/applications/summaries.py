@@ -8,6 +8,7 @@ from core.summaries.formatters import (
     FIREARM_VALUE_FORMATTERS,
 )
 from core.summaries.reducers import firearm_reducer
+from core.summaries.utils import pick_fields
 
 
 def get_edit_link_factory(application, good):
@@ -68,6 +69,36 @@ def add_edit_links(application, good, summary):
     return summary_with_edit_links
 
 
+FIREARM_FIELDS = (
+    "firearm-type",
+    "firearm-category",
+    "name",
+    "is-good-controlled",
+    "control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "calibre",
+    "is-replica",
+    "is-replica-description",
+    "is-registered-firearms-dealer",
+    "is-covered-by-firearm-act-section-five",
+    "firearms-act-1968-section",
+    "is-covered-by-firearm-act-section-one-two-or-five-explanation",
+    "section-5-certificate-document",
+    "section-5-certificate-reference-number",
+    "section-5-certificate-date-of-expiry",
+    "has-product-document",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+)
+
+
 def firearm_product_summary(application, good, is_user_rfd, organisation_documents):
     summary = firearm_reducer(good, is_user_rfd, organisation_documents)
 
@@ -88,6 +119,7 @@ def firearm_product_summary(application, good, is_user_rfd, organisation_documen
             "product-document": goods_document_formatter,
         },
     }
+    summary = pick_fields(summary, FIREARM_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, FIREARM_LABELS)
     summary = add_edit_links(application, good, summary)
