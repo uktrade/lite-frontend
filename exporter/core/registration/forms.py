@@ -1,10 +1,9 @@
-import re
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Layout, Submit
 from django.core.validators import URLValidator, ValidationError
-import phonenumbers
+
 from django import forms
-from .constants import Validation
+from .validators import validate_vat, validate_eori, validate_phone
 
 
 class BaseForm(forms.Form):
@@ -32,7 +31,7 @@ class RegistrationTypeForm(BaseForm):
     class Layout:
         TITLE = "Commercial organisation or private individual"
 
-    type = forms.TypedChoiceField(
+    type = forms.ChoiceField(
         choices=(
             ("commercial", "Commercial organisation"),
             ("individual", "Private individual"),
@@ -52,7 +51,7 @@ class RegistrationUKBasedForm(BaseForm):
     class Layout:
         TITLE = "Where is your organisation based?"
 
-    location = forms.TypedChoiceField(
+    location = forms.ChoiceField(
         choices=(
             ("united_kingdom", "In the United Kingdom"),
             ("abroad", "Outside of the United Kingdom"),
@@ -90,25 +89,12 @@ class RegisterIndividualDetailsForm(BaseForm):
 
     def clean_eori_number(self):
         value = self.cleaned_data["eori_number"]
-        if value:
-            eori = re.sub(r"[^A-Z0-9]", "", value)
-            if len(eori) > Validation.UK_EORI_MAX_LENGTH:
-                self.add_error("eori_number", "EORI numbers are 17 characters or less")
-            elif not re.match(Validation.UK_EORI_VALIDATION_REGEX, eori):
-                self.add_error("eori_number", "Invalid UK EORI number")
-            return eori
+        validate_eori(value)
+        return value
 
     def clean_vat_number(self):
         value = self.cleaned_data["vat_number"]
-        if value:
-            stripped_vat = re.sub(r"[^A-Z0-9]", "", value)
-            if len(stripped_vat) < Validation.UK_VAT_MIN_LENGTH:
-                self.add_error("vat_number", "Standard UK VAT numbers are 9 digits long")
-            elif len(stripped_vat) > Validation.UK_VAT_MAX_LENGTH:
-                self.add_error("vat_number", "Standard UK VAT numbers are 9 digits long")
-            elif not re.match(Validation.UK_VAT_VALIDATION_REGEX, stripped_vat):
-                self.add_error("vat_number", "Invalid UK VAT number")
-            return stripped_vat
+        validate_vat(value)
         return value
 
     def get_layout_fields(self):
@@ -190,25 +176,20 @@ class RegisterAddressDetailsForm(BaseForm):
     )
 
     def clean(self):
-        if self.is_uk_based:
-            errors_to_remove = {"address", "country"}.intersection(set(self.errors.keys()))
-        else:
-            errors_to_remove = {"address_line_1", "address_line_2", "city", "region", "postcode"}.intersection(
-                set(self.errors.keys())
-            )
+        errors_to_remove = (
+            {"address", "country"}
+            if self.is_uk_based
+            else {"address_line_1", "address_line_2", "city", "region", "postcode"}
+        )
 
         for field in errors_to_remove:
-            del self.errors[field]
+            if self.errors.get(field):
+                del self.errors[field]
         return
 
     def clean_phone_number(self):
         value = self.cleaned_data["phone_number"]
-        try:
-            phone_number = phonenumbers.parse(value)
-            if not phonenumbers.is_valid_number(phone_number):
-                self.add_error("phone_number", "Invalid phone number")
-        except phonenumbers.phonenumberutil.NumberParseException:
-            self.add_error("phone_number", "Invalid phone number")
+        validate_phone(value)
         return value
 
     def clean_website(self):

@@ -36,7 +36,6 @@ class Registration(
         (RegistrationSteps.INDIVIDUAL_DETAILS, RegisterIndividualDetailsForm),
         (RegistrationSteps.ADDRESS_DETAILS, RegisterAddressDetailsForm),
     ]
-    condition_dict = {}
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
@@ -95,4 +94,4 @@ class Registration(
 
     @property
     def is_uk_based(self):
-        return bool(self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"] == "united_kingdom")
+        return self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"] == "united_kingdom"

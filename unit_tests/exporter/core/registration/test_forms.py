@@ -129,7 +129,7 @@ def test_register_uk_address_details_form(data, valid, error):
 
 def test_register_non_uk_address_details_form():
     form = forms.RegisterAddressDetailsForm(is_uk_based=False, data={})
-    assert form.is_valid() is False
+    assert not form.is_valid()
     assert form.errors == {
         "name": ["Enter a name for your site"],
         "address": ["Enter an address"],
