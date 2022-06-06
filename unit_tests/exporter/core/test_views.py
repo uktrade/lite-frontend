@@ -28,6 +28,7 @@ def test_register_name_save(authorized_client, requests_mock, mock_get_profile):
     assert mock_save_user.last_request.json() == {
         "email": "foo@example.com",
         "user_profile": {"first_name": "Joe", "last_name": "Blogs"},
+        "sub": "123456789xyzqpr",
     }
 
     assert response.status_code == 302
