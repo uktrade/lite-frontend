@@ -10,6 +10,7 @@ from core.summaries.formatters import (
     document_formatter,
     format_values,
     identity,
+    just,
     key_value_formatter,
     mapping_formatter,
     organisation_document_formatter,
@@ -257,3 +258,8 @@ def test_format_values():
 def test_document_formatter(document, output):
     url = "http://example.com/test"
     assert document_formatter(document, url) == output.format(url=url, name=document["name"])
+
+
+def test_just():
+    formatter = just("This value")
+    assert formatter("something else") == "This value"

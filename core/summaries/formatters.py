@@ -34,6 +34,8 @@ FIREARM_LABELS = {
     "section-5-certificate-document": "Upload your section 5 letter of authority",
     "section-5-certificate-reference-number": "Certificate reference number",
     "section-5-certificate-date-of-expiry": "Certificate date of expiry",
+    "section-5-certificate-missing": "Upload your section 5 letter of authority",
+    "section-5-certificate-missing-reason": "Explain why you do not have a section 5 letter of authority",
 }
 
 
@@ -82,6 +84,13 @@ def mapping_formatter(map):
     return _mapping_formatter
 
 
+def just(val):
+    def _just(_):
+        return val
+
+    return _just
+
+
 def organisation_document_formatter(document):
     url = reverse(
         "organisation:document",
@@ -112,7 +121,7 @@ FIREARM_VALUE_FORMATTERS = {
     ),
     "section-5-certificate-document": organisation_document_formatter,
     "section-5-certificate-date-of-expiry": date_formatter("j F Y"),
-    "section-5-certificate-missing": yesno,
+    "section-5-certificate-missing": just("I do not have a section 5 letter of authority"),
 }
 
 

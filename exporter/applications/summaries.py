@@ -92,6 +92,8 @@ FIREARM_FIELDS = (
     "section-5-certificate-document",
     "section-5-certificate-reference-number",
     "section-5-certificate-date-of-expiry",
+    "section-5-certificate-missing",
+    "section-5-certificate-missing-reason",
     "has-product-document",
     "is-document-sensitive",
     "product-document",
