@@ -10,7 +10,6 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.applications.views.goods.add_good_firearm.views.decorators import expect_status
-from exporter.applications.views.goods.add_good_firearm.views.exceptions import ServiceError
 from exporter.auth.services import authenticate_exporter_user
 
 from .constants import RegistrationSteps
