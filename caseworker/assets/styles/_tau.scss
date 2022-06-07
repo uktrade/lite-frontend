@@ -61,6 +61,11 @@
     }
   }
 
+  .tau__cle-suggestion-buttons {
+    display: flex;
+    flex-direction: column;
+  }
+
   .tokenfield-copy-helper {
     display: none;
   }

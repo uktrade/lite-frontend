@@ -1,13 +1,19 @@
-import { hideUnhideExporterCle } from "./tau-exporter-suggestions.js";
+import {
+  addDeleteExporterCleSuggestions,
+  globalCleMatchToItems,
+  globalCheckedProductsWithCle,
+} from "./tau-exporter-suggestions.js";
 
 const SELECT_ALL = "Select all";
 const DESELECT_ALL = "Deselect all";
 const SHOW_ALL = "Show all";
 const HIDE_ALL = "Hide all";
 
+// Helper functions below this comment
+// ------------
+
 const addSelectAllExpandAll = (
   checkboxProducts,
-  cleList,
   productsNumberChecks,
   tauHeadline,
   tauSecondColumn
@@ -39,7 +45,11 @@ const addSelectAllExpandAll = (
     if (targetText === SELECT_ALL) {
       checkboxProducts.forEach((product) => {
         product.checked = true;
-        hideUnhideExporterCle(product, cleList);
+        addDeleteExporterCleSuggestions(
+          product,
+          globalCleMatchToItems,
+          globalCheckedProductsWithCle
+        );
       });
       productsNumberChecks.number = productsNumberChecks.max;
       tauHeadline.innerText = `Assessing ${productsNumberChecks.number} products`;
@@ -49,7 +59,11 @@ const addSelectAllExpandAll = (
     if (targetText === DESELECT_ALL) {
       checkboxProducts.forEach((product) => {
         product.checked = false;
-        hideUnhideExporterCle(product, cleList);
+        addDeleteExporterCleSuggestions(
+          product,
+          globalCleMatchToItems,
+          globalCheckedProductsWithCle
+        );
       });
       productsNumberChecks.number = 0;
       tauSecondColumn.classList.add("tau__second-column--hide");
@@ -82,6 +96,9 @@ const headlineString = (arrayProducts, productsNumberChecks) => {
       }`;
 };
 
+// Start of the main function
+// ------------
+
 const initTauAssesmentHeadline = () => {
   if (!document.querySelector(".tau")) {
     return;
@@ -91,7 +108,6 @@ const initTauAssesmentHeadline = () => {
     ".tau__list [id^='id_goods_']"
   );
   const arrayProducts = Array.from(checkboxProducts);
-  const cleList = document.querySelectorAll(".control-list__list");
   const tauHeadline = document.querySelector(".tau__headline");
   const tauSecondColumn = document.querySelector(".tau__second-column");
   const errorMessage = document.querySelector("#tau-form .govuk-error-message");
@@ -104,7 +120,6 @@ const initTauAssesmentHeadline = () => {
   // Add Select All and Expand All
   addSelectAllExpandAll(
     checkboxProducts,
-    cleList,
     productsNumberChecks,
     tauHeadline,
     tauSecondColumn

@@ -1,10 +1,14 @@
-const SLICED_WORDS = 3; // Select exporter suggestion "ML1"
 const NO_CLE_STRING = "None";
 
-const createTokenFieldSetItem = (suggestionSentence) => {
-  const sentenceSplit = suggestionSentence.split(" ");
-  const cleName = sentenceSplit.slice(SLICED_WORDS).join(" ");
+// Global control list entries object pulled from back-end
+export let globalCleMatchToItems = {};
+// Checked object with product id and global control list entries in an array
+export let globalCheckedProductsWithCle = [];
 
+// Helper functions below this comment
+// ------------
+
+const createTokenFieldSetItem = (cleName) => {
   const tokenFieldInput = document.querySelector(
     "#control_list_entries .tokenfield-input"
   );
@@ -28,7 +32,7 @@ const clearCleList = () => {
   });
 };
 
-const createNoCleEntry = () => {
+const createNoneCleEntry = () => {
   const tokenFieldInput = document.querySelector(
     "#control_list_entries .tokenfield-input"
   );
@@ -56,7 +60,7 @@ const createNoCleEntry = () => {
   notListedSuggestionField.appendChild(newLi);
 };
 
-const removeNoCleEntry = () => {
+const removeNoneCleEntry = () => {
   const tokenFieldInput = document.querySelector(
     "#control_list_entries .tokenfield-input"
   );
@@ -64,59 +68,133 @@ const removeNoCleEntry = () => {
   clearCleList();
 };
 
-export const hideUnhideExporterCle = (product, cleList) => {
+const createButtonsForCle = (globalCheckedProductsWithCle) => {
+  // We filter the duplicate cle-s at this point using filter prototype
+  const filteredArray = globalCheckedProductsWithCle.filter(
+    (cle_outer, index, innerArrayLoop) => {
+      // if the value matches it will return the index so it gets compared and put into the new array
+      const matchedIndex = innerArrayLoop.findIndex(
+        (cle_inner) =>
+          Object.values(cle_inner)[0] == Object.values(cle_outer)[0]
+      );
+
+      return matchedIndex == index;
+    }
+  );
+
+  // Start making a div for buttons to live within
+  const suggestionsDiv = document.querySelector(".tau__cle-suggestions");
+  while (suggestionsDiv.firstChild) {
+    suggestionsDiv.removeChild(suggestionsDiv.lastChild);
+  }
+
+  // Going through a clean array without duplicates and make the buttons
+  filteredArray.forEach((checked) => {
+    const cleName = Object.values(checked)[0];
+    const createButton = document.createElement("button");
+    createButton.classList.add("lite-button--link", "control-list__list");
+    createButton.innerText = `Select exporter suggestion ${cleName}`;
+
+    createButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      createTokenFieldSetItem(cleName);
+    });
+
+    suggestionsDiv.append(createButton);
+  });
+};
+
+export const addDeleteExporterCleSuggestions = (
+  product,
+  globalCleMatchToItems,
+  globalCheckedProductsWithCle
+) => {
   const checked = product.checked;
   const id = product.value;
 
-  cleList.forEach((cle) => {
-    // Hide items.
-    if (checked) {
-      id === cle.getAttribute("name") &&
-        cle.classList.remove("app-hidden--force");
-      return;
+  // See if product is checked if YES then create buttons.
+  if (checked) {
+    globalCleMatchToItems[id].forEach((cle) => {
+      const newProduct = new Object();
+      newProduct[id] = cle;
+      globalCheckedProductsWithCle.push(newProduct);
+    });
+    createButtonsForCle(globalCheckedProductsWithCle);
+    return;
+  }
+
+  // If it is not checked we remove the product from the array
+  for (let i = 0; i < globalCheckedProductsWithCle.length; i++) {
+    if (Object.keys(globalCheckedProductsWithCle[i])[0] === id) {
+      globalCheckedProductsWithCle.splice(i, 1);
+      i--;
     }
-    // Unhide items.
-    id === cle.getAttribute("name") && cle.classList.add("app-hidden--force");
-  });
+  }
+  createButtonsForCle(globalCheckedProductsWithCle);
 };
+
+// Start of the main function
+// ------------
 
 const initTauControlListEntry = () => {
   if (!document.querySelector(".tau")) {
     return;
   }
 
-  const cleList = document.querySelectorAll(".control-list__list");
   const checkboxProducts = document.querySelectorAll(
     ".tau__list [id^='id_goods_']"
   );
   const doesNotHaveCleSentence = document.querySelector(
     "#div_id_does_not_have_control_list_entries input"
   );
-
-  // Create CLE in the input field after click
-
-  cleList.forEach((cle) =>
-    cle.addEventListener("click", (event) => {
-      event.preventDefault();
-      if (!doesNotHaveCleSentence.checked) {
-        createTokenFieldSetItem(event.target.innerText);
-      }
-    })
+  const pulledItemsList = document.querySelectorAll(
+    ".tau__cle-suggestion-buttons .tau__cle-object"
   );
 
+  // Create a global array with cle suggestion objects
+  pulledItemsList.forEach((product) => {
+    const cleRating = JSON.parse(
+      product.querySelector("#tau-cle-rating").textContent
+    );
+    const itemId = JSON.parse(
+      product.querySelector("#tau-cle-item-id").textContent
+    );
+
+    if (globalCleMatchToItems[itemId]) {
+      globalCleMatchToItems[itemId].push(cleRating);
+      return;
+    }
+    globalCleMatchToItems[itemId] = [cleRating];
+  });
+
+  // Going through every checkbox and adding event listener or see if its checked.
   checkboxProducts.forEach((product) => {
+    // Generate suggestions if checkbox already checked
+    if (product.checked) {
+      addDeleteExporterCleSuggestions(
+        product,
+        globalCleMatchToItems,
+        globalCheckedProductsWithCle
+      );
+    }
+    // Generate suggestion on click
     product.addEventListener("click", () => {
-      hideUnhideExporterCle(product, cleList);
+      addDeleteExporterCleSuggestions(
+        product,
+        globalCleMatchToItems,
+        globalCheckedProductsWithCle
+      );
     });
   });
 
+  // The button event for "Select that this product is not on the control list"
   doesNotHaveCleSentence.addEventListener("click", (event) => {
     const checked = event.currentTarget.checked;
     if (checked) {
-      createNoCleEntry();
+      createNoneCleEntry();
       return;
     }
-    removeNoCleEntry();
+    removeNoneCleEntry();
   });
 };
 
