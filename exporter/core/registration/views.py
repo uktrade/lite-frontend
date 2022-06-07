@@ -56,16 +56,18 @@ class Registration(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.post_registration(form_dict)
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        self.post_registration(form_dict)
         self.update_authenticate_exporter_user()
         return redirect(self.get_success_url())
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating registered user",
+        "Unexpected updating registered user",
+    )
     def update_authenticate_exporter_user(self):
         # Update the signed in user's details so they can make validated API calls
-        response, _ = authenticate_exporter_user(
+        response, status_code = authenticate_exporter_user(
             self.request,
             {
                 "email": self.request.session["email"],
@@ -75,8 +77,10 @@ class Registration(
                 },
             },
         )
+
         self.request.session["user_token"] = response["token"]
         self.request.session["lite_api_user_id"] = response["lite_api_user_id"]
+        return response, status_code
 
     def get_success_url(self):
         return reverse("core:register_an_organisation_confirm") + "?animate=True"

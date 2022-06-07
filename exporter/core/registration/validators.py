@@ -2,6 +2,7 @@ import re
 import phonenumbers
 
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 from .constants import Validation
 
@@ -34,3 +35,13 @@ def validate_phone(value):
             raise ValidationError("Invalid phone number")
     except phonenumbers.phonenumberutil.NumberParseException:
         raise ValidationError("Invalid phone number")
+
+
+def validate_website(value):
+    if value:
+        try:
+            validator = URLValidator()
+            validator(value)
+        except ValidationError:
+            raise ValidationError("Enter a valid URL")
+    return value

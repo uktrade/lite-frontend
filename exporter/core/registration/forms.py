@@ -1,9 +1,9 @@
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Layout, Submit
-from django.core.validators import URLValidator, ValidationError
+
 
 from django import forms
-from .validators import validate_vat, validate_eori, validate_phone
+from .validators import validate_vat, validate_eori, validate_phone, validate_website
 
 
 class BaseForm(forms.Form):
@@ -83,19 +83,12 @@ class RegisterIndividualDetailsForm(BaseForm):
         error_messages={
             "required": "Enter a EORI number",
         },
+        validators=[validate_eori],
     )
 
-    vat_number = forms.CharField(required=False, label="UK VAT number This field is (optional)")
-
-    def clean_eori_number(self):
-        value = self.cleaned_data["eori_number"]
-        validate_eori(value)
-        return value
-
-    def clean_vat_number(self):
-        value = self.cleaned_data["vat_number"]
-        validate_vat(value)
-        return value
+    vat_number = forms.CharField(
+        required=False, label="UK VAT number This field is (optional)", validators=[validate_vat]
+    )
 
     def get_layout_fields(self):
         return ("name", "eori_number", "vat_number")
@@ -161,12 +154,10 @@ class RegisterAddressDetailsForm(BaseForm):
         error_messages={
             "required": "Enter a phone number",
         },
+        validators=[validate_phone],
     )
 
-    website = forms.CharField(
-        label="Website",
-        required=False,
-    )
+    website = forms.CharField(label="Website", required=False, validators=[validate_website])
 
     country = forms.CharField(
         label="Country",
@@ -186,21 +177,6 @@ class RegisterAddressDetailsForm(BaseForm):
             if self.errors.get(field):
                 del self.errors[field]
         return
-
-    def clean_phone_number(self):
-        value = self.cleaned_data["phone_number"]
-        validate_phone(value)
-        return value
-
-    def clean_website(self):
-        value = self.cleaned_data["website"]
-        if value:
-            try:
-                validator = URLValidator()
-                validator(value)
-            except ValidationError:
-                self.add_error("website", "Enter a valid URL")
-        return value
 
     def get_layout_fields(self):
         if self.is_uk_based:
