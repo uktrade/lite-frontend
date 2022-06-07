@@ -27,6 +27,9 @@ from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
 
 
+TAU_ALIAS = "TAU"
+
+
 class Tabs:
     DETAILS = Tab("details", CasePage.Tabs.DETAILS, "details")
     DOCUMENTS = Tab("documents", CasePage.Tabs.DOCUMENTS, "documents")
@@ -84,6 +87,10 @@ class CaseView(TemplateView):
     slices = None
     additional_context = {}
 
+    def is_tau_user(self):
+        user, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+        return user["user"]["team"]["alias"] == TAU_ALIAS
+
     def get_context(self):
         if not self.tabs:
             self.tabs = []
@@ -93,7 +100,9 @@ class CaseView(TemplateView):
         user_assigned_queues = get_user_case_queues(self.request, self.case_id)[0]
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         can_set_done = (
-            not status_props["is_terminal"] and self.case.data["status"]["key"] != CaseStatusEnum.APPLICANT_EDITING
+            status_props["is_terminal"]
+            and self.case.data["status"]["key"] != CaseStatusEnum.APPLICANT_EDITING
+            and not self.is_tau_user()
         )
         future_next_review_date = (
             True
