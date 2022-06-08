@@ -10,19 +10,6 @@ Feature: I want to check sanctions matches
     When I go to application previously created
     Then I see the section of the case page entitled Sanction matches
     And I see <end_user_name> listed there
-
-    Examples:
-    | name    | product         | part_number | clc_rating  | end_user_name | end_user_address                                                               | country | consignee_name | consignee_address                               | end_use                  |
-    | Test    | Rifle1, Rifle2  | PN-ABC-123  | PL9002      | ABDUL AZIZ    | Sheykhan Village, Pirkowti Area, Orgun District, Paktika Province, Afghanistan | BE      | ABDUL AHAD     | Shega District, Kandahar Province, Afghanistan  | Research and development |
-
-
-  @skip
-  Scenario: check a sanction match can be removed
-    Given I sign in to SSO or am signed into SSO
-    And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
-    When I go to application previously created
-    Then I see the section of the case page entitled Sanction matches
-    And I see <end_user_name> listed there
     When I select <end_user_name> and press remove sanction match
     Then I am asked to provide a reason
     And the sanction is removed from the case page
