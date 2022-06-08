@@ -64,10 +64,8 @@ export AUTH_USER_PASSWORD=
 export BASIC_AUTH_ENABLED=
 export ENDPOINT=
 # Exporter specific
-export PW_SSO_USER=
-export PW_EXPORT_SSO_USER=
-export PW_SSO_PASSWORD=
-export PW_SSO_URL=
+export EXPORTER_AUTHBROKER_CLIENT_ID=
+export EXPORTER_AUTHBROKER_CLIENT_SECRET=
 export BROWSER_HOSTS_EXPORTER=
 # Caseworker specific
 export TEST_SSO_EMAIL=

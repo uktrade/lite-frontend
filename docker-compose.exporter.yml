@@ -7,14 +7,12 @@ services:
       dockerfile: Dockerfile.e2e
     environment:
       # Below values can be found in vault
-      PW_SSO_USER: ${PW_SSO_USER}
-      PW_EXPORT_SSO_USER: ${PW_EXPORT_SSO_USER}
-      PW_SSO_PASSWORD: ${PW_SSO_PASSWORD}
-      PW_SSO_URL: ${PW_SSO_URL}
       DIRECTORY_SSO_API_CLIENT_BASE_URL: ${DIRECTORY_SSO_API_CLIENT_BASE_URL}
       DIRECTORY_SSO_API_CLIENT_API_KEY: ${DIRECTORY_SSO_API_CLIENT_API_KEY}
-      AUTHBROKER_CLIENT_ID: ${AUTHBROKER_CLIENT_ID}
-      AUTHBROKER_CLIENT_SECRET: ${AUTHBROKER_CLIENT_SECRET}
+      AUTHBROKER_CLIENT_ID: ${EXPORTER_AUTHBROKER_CLIENT_ID}
+      AUTHBROKER_CLIENT_SECRET: ${EXPORTER_AUTHBROKER_CLIENT_SECRET}
+      TEST_SSO_EMAIL: ${TEST_SSO_EMAIL}
+      TEST_SSO_PASSWORD: ${TEST_SSO_PASSWORD}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_REGION: ${AWS_REGION}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -34,6 +32,7 @@ services:
     command:
     - |
        dockerize -wait tcp://api:8100 -timeout 10m
+       npm install
        npm run build_exporter
        ./manage.py runserver 0.0.0.0:${PORT:-8300}
     stdin_open: true

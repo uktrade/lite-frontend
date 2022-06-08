@@ -23,3 +23,26 @@ You can run the tests by running the following make command after the docker sta
 
 
 `make caseworker-e2e-selenium-test`
+
+
+### Exporter Setup
+
+To run the tests against the local docker stack ensure you follow the steps in [Running the stack](./Docker.md) before moving to the next steps.
+
+After starting docker stack, make sure to update the below `exporter.env` values from vault:
+
+```
+LITE_API_URL=http://localhost:8100
+AUTHBROKER_CLIENT_ID=<EXPORTER_AUTHBROKER_CLIENT_ID>
+AUTHBROKER_CLIENT_SECRET=<EXPORTER_AUTHBROKER_CLIENT_SECRET>
+DIRECTORY_SSO_API_CLIENT_BASE_URL=ValueInVault
+DIRECTORY_SSO_API_CLIENT_API_KEY=ValueInVault
+BROWSER_HOSTS=<BROWSER_HOSTS_EXPORTER>
+```
+
+### Running exporter tests
+
+You can run the tests by running the following make command after the docker stack is started:
+
+
+`make exporter-e2e-selenium-test`

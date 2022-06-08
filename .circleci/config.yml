@@ -60,79 +60,11 @@ commands:
           name: << parameters.label >>
           command: make << parameters.target >>
 
-  store_playwright_artifacts:
-    description: Store Playwright artifacts
+  store_selenium_artifacts:
+    description: Store Selenium artifacts
     steps:
       - store_artifacts:
-          path: playwright_videos/
-
-  vpn_install:
-    description: "Install OpenVPN client"
-    steps:
-      - run:
-          name: Install OpenVPN
-          command: |
-            sudo apt update && sudo apt install apt-transport-https
-            sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
-            sudo apt-key add openvpn-repo-pkg-key.pub
-
-            ### The repository URL will depend on your Ubuntu release name (here we chose "focal" since Ubuntu 20.04 is used
-            sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-focal.list
-            sudo apt update && sudo apt install openvpn3
-
-  vpn_connect:
-    parameters:
-      config:
-        description: "ENV var name containing OpenVPN client .ovpn config file content base64 encoded"
-        type: env_var_name
-        default: VPN_CONFIG
-    steps:
-      - run:
-          name: VPN Setup
-          background: true
-          command: |
-            echo ${<<parameters.config>>:?} | base64 --decode > /tmp/config.ovpn
-
-            ### IMPORTANT: Include the following line to exclude the connection from CircleCI and the link-local range
-            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
-
-            if [ -n "$phone_home" ]; then
-              echo -e "\nroute $phone_home 255.255.255.255 net_gateway" >> /tmp/config.ovpn
-            fi
-
-            echo "\nroute 169.254.0.0 255.255.0.0 net_gateway" >> /tmp/config.ovpn
-
-            # This will start the connection
-            sudo openvpn3 session-start \
-              --config /tmp/config.ovpn \
-              > /tmp/openvpn.log
-
-            dig great.dev.uktrade.digital +short
-            curl -I https://great.dev.uktrade.digital/
-
-      - run:
-          name: VPN logs
-          background: true
-          command: tail -f /var/log/syslog
-
-      - run:
-          name: Wait for the connection to be established and check
-          command: |
-            until sudo openvpn3 sessions-list|grep "Client connected"; do
-              echo "Attempting to connect to VPN server..."
-              sleep 1;
-            done
-            printf "\nPublic IP is now $(curl checkip.amazonaws.com)\n"
-
-  vpn_disconnect:
-    steps:
-      - run:
-          name: Disconnect from OpenVPN
-          command: |
-            SESSION_PATH=$(sudo openvpn3 sessions-list | grep Path | awk -F': ' '{print $2}')
-            echo $SESSION_PATH
-            sudo openvpn3 session-manage --session-path $SESSION_PATH --disconnect
-          when: always
+          path: ui_tests/screenshots
 
   setup_code:
     steps:
