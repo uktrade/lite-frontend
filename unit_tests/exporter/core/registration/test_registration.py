@@ -3,7 +3,7 @@ from django.urls import reverse
 from exporter.core.registration.constants import RegistrationSteps
 from exporter.core.registration.forms import (
     RegistrationUKBasedForm,
-    RegisterIndividualDetailsForm,
+    RegisterDetailsForm,
     RegisterAddressDetailsForm,
 )
 from unit_tests.helpers import reload_urlconf
@@ -67,6 +67,11 @@ def test_registration_type_step(goto_step, post_to_step):
 
 
 def test_registration_uk_based_step(goto_step, post_to_step):
+    goto_step(RegistrationSteps.REGISTRATION_TYPE)
+    post_to_step(
+        RegistrationSteps.REGISTRATION_TYPE,
+        {"type": "commercial"},
+    )
     goto_step(RegistrationSteps.UK_BASED)
     response = post_to_step(
         RegistrationSteps.UK_BASED,
@@ -74,18 +79,23 @@ def test_registration_uk_based_step(goto_step, post_to_step):
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], RegisterIndividualDetailsForm)
+    assert isinstance(response.context["form"], RegisterDetailsForm)
 
 
 def test_registration_individual_details_step(goto_step, post_to_step):
+    goto_step(RegistrationSteps.REGISTRATION_TYPE)
+    post_to_step(
+        RegistrationSteps.REGISTRATION_TYPE,
+        {"type": "individual"},
+    )
     goto_step(RegistrationSteps.UK_BASED)
     post_to_step(
         RegistrationSteps.UK_BASED,
         {"location": "united_kingdom"},
     )
-    goto_step(RegistrationSteps.INDIVIDUAL_DETAILS)
+    goto_step(RegistrationSteps.REGISTRATION_DETAILS)
     response = post_to_step(
-        RegistrationSteps.INDIVIDUAL_DETAILS,
+        RegistrationSteps.REGISTRATION_DETAILS,
         {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
     )
 
@@ -93,13 +103,13 @@ def test_registration_individual_details_step(goto_step, post_to_step):
     assert isinstance(response.context["form"], RegisterAddressDetailsForm)
 
 
-def test_registration_end_to_end_uk_based(
+def test_registration_individual_end_to_end_uk_based(
     goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
 ):
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     response = post_to_step(
         RegistrationSteps.REGISTRATION_TYPE,
-        {"type": "commercial"},
+        {"type": "individual"},
     )
 
     assert response.status_code == 200
@@ -114,11 +124,11 @@ def test_registration_end_to_end_uk_based(
 
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], RegisterIndividualDetailsForm)
+    assert isinstance(response.context["form"], RegisterDetailsForm)
 
-    goto_step(RegistrationSteps.INDIVIDUAL_DETAILS)
+    goto_step(RegistrationSteps.REGISTRATION_DETAILS)
     response = post_to_step(
-        RegistrationSteps.INDIVIDUAL_DETAILS,
+        RegistrationSteps.REGISTRATION_DETAILS,
         {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
     )
 
@@ -141,7 +151,7 @@ def test_registration_end_to_end_uk_based(
     )
 
     assert mock_organisations_post.last_request.json() == {
-        "type": "commercial",
+        "type": "individual",
         "location": "united_kingdom",
         "name": "joe",
         "eori_number": "GB205672212000",
@@ -163,7 +173,57 @@ def test_registration_end_to_end_uk_based(
     assert response.url == "/register-an-organisation/confirm/?animate=True"
 
 
-def test_registration_end_to_end_non_uk_based(
+def test_registration_individual_end_to_end_non_uk_based(
+    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
+):
+    goto_step(RegistrationSteps.REGISTRATION_TYPE)
+    post_to_step(
+        RegistrationSteps.REGISTRATION_TYPE,
+        {"type": "individual"},
+    )
+    goto_step(RegistrationSteps.UK_BASED)
+    post_to_step(
+        RegistrationSteps.UK_BASED,
+        {"location": "abroad"},
+    )
+    goto_step(RegistrationSteps.REGISTRATION_DETAILS)
+    post_to_step(
+        RegistrationSteps.REGISTRATION_DETAILS,
+        {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
+    )
+    goto_step(RegistrationSteps.ADDRESS_DETAILS)
+    response = post_to_step(
+        RegistrationSteps.ADDRESS_DETAILS,
+        {
+            "name": "joe",
+            "address": "xyz",
+            "country": "usa",
+            "phone_number": "+441234567890",
+            "website": "http://www.notreal.com",
+        },
+    )
+
+    assert mock_organisations_post.last_request.json() == {
+        "type": "individual",
+        "location": "abroad",
+        "name": "joe",
+        "eori_number": "GB205672212000",
+        "vat_number": "GB123456789",
+        "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
+        "phone_number": "+441234567890",
+        "website": "http://www.notreal.com",
+        "user": {"email": "foo@example.com"},
+    }
+    assert mock_authenticate_user_post.last_request.json() == {
+        "email": "foo@example.com",
+        "user_profile": {"first_name": "Foo", "last_name": "Bar"},
+    }
+
+    assert response.status_code == 302
+    assert response.url == "/register-an-organisation/confirm/?animate=True"
+
+
+def test_registration_commercial_end_to_end(
     goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
 ):
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
@@ -176,11 +236,22 @@ def test_registration_end_to_end_non_uk_based(
         RegistrationSteps.UK_BASED,
         {"location": "abroad"},
     )
-    goto_step(RegistrationSteps.INDIVIDUAL_DETAILS)
-    post_to_step(
-        RegistrationSteps.INDIVIDUAL_DETAILS,
-        {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
+    goto_step(RegistrationSteps.REGISTRATION_DETAILS)
+    response = post_to_step(
+        RegistrationSteps.REGISTRATION_DETAILS,
+        {
+            "name": "joe",
+            "eori_number": "GB205672212000",
+            "sic_number": "12345",
+            "registration_number": "12345678",
+            "vat_number": "GB123456789",
+        },
     )
+
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], RegisterAddressDetailsForm)
+
     goto_step(RegistrationSteps.ADDRESS_DETAILS)
     response = post_to_step(
         RegistrationSteps.ADDRESS_DETAILS,
@@ -198,6 +269,8 @@ def test_registration_end_to_end_non_uk_based(
         "location": "abroad",
         "name": "joe",
         "eori_number": "GB205672212000",
+        "sic_number": "12345",
+        "registration_number": "12345678",
         "vat_number": "GB123456789",
         "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
         "phone_number": "+441234567890",

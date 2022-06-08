@@ -66,10 +66,73 @@ def test_registration_uk_based_form(data, valid):
     ),
 )
 def test_register_individual_details_form(data, valid, error):
-    form = forms.RegisterIndividualDetailsForm(data=data)
+    form = forms.RegisterDetailsForm(data=data, is_individual=True)
 
     assert form.is_valid() == valid
 
+    if not valid:
+        assert form.errors == error
+
+
+@pytest.mark.parametrize(
+    "data, valid, error",
+    (
+        (
+            {},
+            False,
+            {
+                "name": ["Enter a name"],
+                "eori_number": ["Enter a EORI number"],
+                "sic_number": ["Enter a SIC code"],
+                "vat_number": ["This field is required."],
+                "registration_number": ["Enter a registration number"],
+            },
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789",
+                "sic_number": "xyz",
+                "registration_number": "21313ewfwe",
+            },
+            False,
+            {
+                "sic_number": ["Only enter numbers"],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789",
+                "sic_number": "123",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": ["Enter a valid SIC code"],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789",
+                "sic_number": "12345",
+                "registration_number": "12345678",
+            },
+            True,
+            None,
+        ),
+    ),
+)
+def test_register_commercial_details_form(data, valid, error):
+    form = forms.RegisterDetailsForm(data=data, is_individual=False)
+
+    assert form.is_valid() == valid
     if not valid:
         assert form.errors == error
 
