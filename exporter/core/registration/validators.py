@@ -45,3 +45,24 @@ def validate_website(value):
         except ValidationError:
             raise ValidationError("Enter a valid URL")
     return value
+
+
+def validate_sic_number(value):
+    if value:
+        if not value.isdigit():
+            raise ValidationError(Validation.ONLY_ENTER_NUMBERS)
+        int_value = int(value)
+        if int_value < 1110 or int_value > 99999:
+            raise ValidationError(Validation.INVALID_SIC)
+        if len(value) != 5:
+            raise ValidationError(Validation.LENGTH_SIC)
+    return value
+
+
+def validate_registration(value):
+    if value:
+        if not value.isdigit():
+            raise ValidationError(Validation.LENGTH_REGISTRATION_NUMBER)
+        if len(value) != 8:
+            raise ValidationError(Validation.LENGTH_REGISTRATION_NUMBER)
+    return value

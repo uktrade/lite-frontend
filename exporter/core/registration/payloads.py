@@ -31,6 +31,6 @@ class RegistrationPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         RegistrationSteps.REGISTRATION_TYPE: get_cleaned_data,
         RegistrationSteps.UK_BASED: get_cleaned_data,
-        RegistrationSteps.INDIVIDUAL_DETAILS: get_cleaned_data,
+        RegistrationSteps.REGISTRATION_DETAILS: get_cleaned_data,
         RegistrationSteps.ADDRESS_DETAILS: get_address_details_payload,
     }

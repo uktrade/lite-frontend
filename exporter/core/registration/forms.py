@@ -3,7 +3,14 @@ from crispy_forms_gds.layout import HTML, Layout, Submit
 
 
 from django import forms
-from .validators import validate_vat, validate_eori, validate_phone, validate_website
+from .validators import (
+    validate_vat,
+    validate_eori,
+    validate_phone,
+    validate_website,
+    validate_registration,
+    validate_sic_number,
+)
 
 
 class BaseForm(forms.Form):
@@ -67,9 +74,25 @@ class RegistrationUKBasedForm(BaseForm):
         return ("location",)
 
 
-class RegisterIndividualDetailsForm(BaseForm):
+class RegisterDetailsForm(BaseForm):
     class Layout:
         TITLE = "Register a private individual"
+
+    def __init__(self, is_individual, *args, **kwargs):
+        self.is_individual = is_individual
+        if self.is_individual:
+            self.declared_fields["name"].label = "First and last name"
+            self.Layout.TITLE = "Register a private individual"
+            self.declared_fields["vat_number"].label = "UK VAT number (optional)"
+            self.declared_fields["vat_number"].required = False
+
+        else:
+            self.declared_fields["name"].label = "Name of organisation"
+            self.Layout.TITLE = "Register a commercial organisation"
+            self.declared_fields["vat_number"].label = "UK VAT number"
+            self.declared_fields["vat_number"].required = True
+
+        super().__init__(*args, **kwargs)
 
     name = forms.CharField(
         label="First and last name",
@@ -86,12 +109,35 @@ class RegisterIndividualDetailsForm(BaseForm):
         validators=[validate_eori],
     )
 
-    vat_number = forms.CharField(
-        required=False, label="UK VAT number This field is (optional)", validators=[validate_vat]
+    sic_number = forms.CharField(
+        label="SIC Code",
+        error_messages={
+            "required": "Enter a SIC code",
+        },
+        validators=[validate_sic_number],
     )
 
+    vat_number = forms.CharField(required=False, label="UK VAT number (optional)", validators=[validate_vat])
+    registration_number = forms.CharField(
+        label="Company registration number (CRN)",
+        error_messages={
+            "required": "Enter a registration number",
+        },
+        validators=[validate_registration],
+    )
+
+    def clean(self):
+        if self.is_individual:
+            for field in ["sic_number", "registration_number"]:
+                if self.errors.get(field):
+                    del self.errors[field]
+        return
+
     def get_layout_fields(self):
-        return ("name", "eori_number", "vat_number")
+        if self.is_individual:
+            return ("name", "eori_number", "vat_number")
+        else:
+            return ("name", "eori_number", "sic_number", "vat_number", "registration_number")
 
 
 class RegisterAddressDetailsForm(BaseForm):

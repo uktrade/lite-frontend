@@ -16,7 +16,7 @@ from .constants import RegistrationSteps
 from .forms import (
     RegistrationTypeForm,
     RegistrationUKBasedForm,
-    RegisterIndividualDetailsForm,
+    RegisterDetailsForm,
     RegisterAddressDetailsForm,
 )
 from .services import register_organisation
@@ -32,7 +32,7 @@ class Registration(
     form_list = [
         (RegistrationSteps.REGISTRATION_TYPE, RegistrationTypeForm),
         (RegistrationSteps.UK_BASED, RegistrationUKBasedForm),
-        (RegistrationSteps.INDIVIDUAL_DETAILS, RegisterIndividualDetailsForm),
+        (RegistrationSteps.REGISTRATION_DETAILS, RegisterDetailsForm),
         (RegistrationSteps.ADDRESS_DETAILS, RegisterAddressDetailsForm),
     ]
 
@@ -40,6 +40,8 @@ class Registration(
         kwargs = super().get_form_kwargs(step)
         if step == RegistrationSteps.ADDRESS_DETAILS:
             kwargs["is_uk_based"] = self.is_uk_based
+        if step == RegistrationSteps.REGISTRATION_DETAILS:
+            kwargs["is_individual"] = self.is_individual
         return kwargs
 
     @expect_status(
@@ -98,3 +100,7 @@ class Registration(
     @property
     def is_uk_based(self):
         return self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"] == "united_kingdom"
+
+    @property
+    def is_individual(self):
+        return self.get_cleaned_data_for_step(RegistrationSteps.REGISTRATION_TYPE)["type"] == "individual"
