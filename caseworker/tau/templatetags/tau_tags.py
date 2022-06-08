@@ -24,3 +24,11 @@ def format_date(val):
         return ""
     date_obj = datetime.strptime(val, "%Y-%m-%d")
     return date_obj.strftime("%d %B %Y")
+
+
+@register.filter
+def humanise_list(_list):
+    if len(_list) < 2:
+        return "".join(_list)
+    last = _list.pop()
+    return f"{', '.join(_list)} and {last}"
