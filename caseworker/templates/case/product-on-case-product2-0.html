@@ -356,7 +356,7 @@
                                         <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
                                     </tr>
                                 {% endif %}
-                                {% if good.firearm_details.is_made_before_1938 is not None %}
+                                {% if firearm_details.is_made_before_1938 is not None %}
                                     <tr class="govuk-table__row app-table__row">
                                         <th scope="row" class="govuk-table__header">
                                             Was the product made before 1938?
@@ -366,7 +366,7 @@
                                         </td>
                                     </tr>
                                 {% endif %}
-                                {% if good.firearm_details.is_made_before_1938 or good.firearm_details.is_made_before_1938 is None or good.firearm_details|is_made_before_1938_category %}
+                                {% if firearm_details.is_made_before_1938 or firearm_details.is_made_before_1938 is None or firearm_details|is_made_before_1938_category %}
                                     <tr class="govuk-table__row app-table__row">
                                         <th scope="row" class="govuk-table__header">What year was it made?</th>
                                         <td class="govuk-table__cell">{{ firearm_details.year_of_manufacture }}</td>
