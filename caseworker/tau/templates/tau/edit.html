@@ -3,7 +3,7 @@
 {% block body %}
 <div class="govuk-width-container tau">
     <h1 class="govuk-heading-l">Product assessment</h1>
-    <p id="subtitle" class="govuk-body">Editing assessment for <strong>{{ good.good.name }}</strong> going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|join:", " }}</strong></p>
+    <p id="subtitle" class="govuk-body">Editing assessment for <strong>{{ good.good.name }}</strong> going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|humanise_list }}</strong></p>
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
