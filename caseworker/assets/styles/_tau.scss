@@ -3,6 +3,10 @@
     text-align: left;
   }
 
+  &__display--flex {
+    display: flex;
+  }
+
   &__details {
     border: none;
     cursor: default;
