@@ -81,7 +81,8 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <table id="assessed-products" class="govuk-table">
-                    <caption class="govuk-table__caption govuk-table__caption--m">Assessed products</caption>
+                    <h2 class="govuk-heading-m">Assessed products</h2>
+                    <a href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header"></th>
