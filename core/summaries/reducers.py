@@ -173,7 +173,7 @@ def has_product_document_reducer(good):
         summary += (
             (
                 "no-product-document-explanation",
-                good["no_documents_comments"],
+                good["no_document_comments"],
             ),
         )
 

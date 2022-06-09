@@ -297,7 +297,7 @@ def test_firearms_act_reducer(
         (
             {
                 "is_document_available": False,
-                "no_documents_comments": "No document comments",
+                "no_document_comments": "No document comments",
             },
             (
                 ("has-product-document", False),
