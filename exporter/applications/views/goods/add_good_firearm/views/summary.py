@@ -3,7 +3,11 @@ from django.views.generic import TemplateView
 from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application_documents
-from exporter.applications.summaries import firearm_product_summary
+from exporter.applications.summaries import (
+    add_edit_links,
+    firearm_product_summary,
+    PRODUCT_SUMMARY_EDIT_LINKS,
+)
 from exporter.core.helpers import (
     get_organisation_documents,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
@@ -34,12 +38,18 @@ class FirearmProductSummary(
 
         is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
         organisation_documents = get_organisation_documents(self.application)
-        context["summary"] = firearm_product_summary(
-            self.application,
+        summary = firearm_product_summary(
             self.good,
             is_user_rfd,
             organisation_documents,
         )
+        summary = add_edit_links(
+            summary,
+            PRODUCT_SUMMARY_EDIT_LINKS,
+            self.application,
+            self.good,
+        )
+        context["summary"] = summary
 
         return context
 

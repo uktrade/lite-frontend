@@ -269,3 +269,9 @@ def post_to_step_factory(authorized_client):
         return step_poster
 
     return post_to_step
+
+
+@pytest.fixture
+def good_id(data_standard_case):
+    good = data_standard_case["case"]["data"]["goods"][0]["good"]
+    return good["id"]

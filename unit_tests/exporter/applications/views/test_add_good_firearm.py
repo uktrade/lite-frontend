@@ -59,11 +59,6 @@ def control_list_entries(requests_mock):
 
 
 @pytest.fixture
-def good_id():
-    return str(uuid.uuid4())
-
-
-@pytest.fixture
 def post_goods_matcher(requests_mock, good_id):
     return requests_mock.post(
         f"/goods/",
