@@ -7,18 +7,19 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
+
+from core.auth.views import LoginRequiredMixin
+from core.constants import (
+    FirearmsActDocumentType,
+    FirearmsActSections,
+)
 
 from exporter.applications.services import (
     post_additional_document,
     post_firearm_good_on_application,
 )
-from exporter.core.constants import (
-    DocumentType,
-    FirearmsActDocumentType,
-    FirearmsActSections,
-)
+from exporter.core.constants import DocumentType
 from exporter.core.helpers import (
     get_document_data,
     get_rfd_certificate,

@@ -10,7 +10,12 @@ from django.utils.functional import cached_property
 from django.views.generic import FormView, TemplateView
 
 from core.auth.views import LoginRequiredMixin
-from core.constants import CaseStatusEnum
+from core.constants import (
+    CaseStatusEnum,
+    FirearmsActDocumentType,
+    FirearmsActSections,
+)
+
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
@@ -27,7 +32,7 @@ from exporter.applications.services import (
     post_case_notes,
 )
 from exporter.applications.views.goods import is_firearm_certificate_needed
-from exporter.core.constants import AddGoodFormSteps, FirearmsActDocumentType, FirearmsActSections
+from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
     is_category_firearms,

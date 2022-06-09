@@ -12,16 +12,17 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
-from core.auth.views import LoginRequiredMixin
 from lite_forms.generators import error_page
+
+from core.auth.views import LoginRequiredMixin
+from core.constants import (
+    FirearmsActDocumentType,
+    FirearmsActSections,
+)
 
 from exporter.applications.services import (
     edit_firearm_good_on_application,
     get_application_documents,
-)
-from exporter.core.constants import (
-    FirearmsActDocumentType,
-    FirearmsActSections,
 )
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (

@@ -1,9 +1,7 @@
 from functools import wraps
 
-from exporter.core.constants import (
-    FirearmsActDocumentType,
-    FirearmsActSections,
-)
+from core.constants import FirearmsActDocumentType, FirearmsActSections
+
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
     get_organisation_documents,

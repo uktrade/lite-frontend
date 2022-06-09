@@ -242,15 +242,3 @@ class PartyDocumentType:
 
 class DocumentType:
     RFD_CERTIFICATE = "rfd-certificate"
-
-
-class FirearmsActDocumentType:
-    SECTION_1 = "section-one-certificate"
-    SECTION_2 = "section-two-certificate"
-    SECTION_5 = "section-five-certificate"
-
-
-class FirearmsActSections:
-    SECTION_1 = "firearms_act_section1"
-    SECTION_2 = "firearms_act_section2"
-    SECTION_5 = "firearms_act_section5"
