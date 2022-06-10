@@ -26,7 +26,7 @@ services:
     tty: true
 
   db:
-    image: gcr.io/sre-docker-registry/lite-db:latest
+    image: eu.gcr.io/sre-docker-registry/lite-db:latest
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=lite-api
