@@ -259,6 +259,7 @@ jobs:
     steps:
       - checkout
       - run: git submodule update --init
+      - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
       - run_make:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-test
