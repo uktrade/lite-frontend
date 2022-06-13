@@ -217,6 +217,21 @@ def product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
+def product_on_application_summary_url_factory(application, good_on_application):
+    def product_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return product_on_application_summary_url
+
+
+@pytest.fixture
 def application_with_rfd_and_section_5_document(data_standard_case, requests_mock, rfd_certificate, section_5_document):
     app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     case = data_standard_case["case"]
