@@ -221,3 +221,85 @@ def test_firearm_product_on_application_summary_context(
     assert context["good_on_application_documents"] == {}
     assert not context["is_user_rfd"]
     assert context["organisation_documents"] == {}
+
+
+def test_firearm_attach_product_on_application_summary_response_status_code(
+    authorized_client,
+    attach_product_on_application_summary_url,
+    mock_application_get,
+    mock_good_get,
+    mock_good_on_application_get,
+    application,
+    good_id,
+    requests_mock,
+):
+    requests_mock.get(
+        f"/applications/{application['id']}/goods/{good_id}/documents/",
+        json={"documents": []},
+    )
+    requests_mock.get(
+        f"/goods/{good_id}/documents/",
+        json={},
+    )
+    response = authorized_client.get(attach_product_on_application_summary_url)
+    assert response.status_code == 200
+
+
+def test_firearm_attach_product_on_application_summary_context(
+    authorized_client,
+    attach_product_on_application_summary_url,
+    mock_application_get,
+    mock_good_get,
+    mock_good_on_application_get,
+    application,
+    good,
+    good_on_application,
+    requests_mock,
+):
+    requests_mock.get(
+        f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
+        json={"documents": []},
+    )
+    requests_mock.get(
+        f"/goods/{good['good']['id']}/documents/",
+        json={"documents": []},
+    )
+    response = authorized_client.get(attach_product_on_application_summary_url)
+    context = response.context
+
+    assert context["application"] == application
+    assert context["documents"] == []
+    assert context["good"] == good["good"]
+    assert context["good_on_application"] == good_on_application
+    assert context["good_on_application_documents"] == {}
+    assert not context["is_user_rfd"]
+    assert context["organisation_documents"] == {}
+    assert not context["added_firearm_category"]
+    assert not context["confirmed_rfd_validity"]
+
+
+def test_firearm_attach_product_on_application_summary_context_get_requests(
+    authorized_client,
+    attach_product_on_application_summary_url,
+    mock_application_get,
+    mock_good_get,
+    mock_good_on_application_get,
+    application,
+    good,
+    good_on_application,
+    requests_mock,
+):
+    requests_mock.get(
+        f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
+        json={"documents": []},
+    )
+    requests_mock.get(
+        f"/goods/{good['good']['id']}/documents/",
+        json={"documents": []},
+    )
+    response = authorized_client.get(
+        f"{attach_product_on_application_summary_url}?added_firearm_category=1&confirmed_rfd_validity=1",
+    )
+    context = response.context
+    assert context["added_firearm_category"]
+    assert context["confirmed_rfd_validity"]
