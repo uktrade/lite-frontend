@@ -140,7 +140,7 @@ def test_home_content(
             "good_id": assessed_good_id,
         },
     )
-    assert edit_url == soup.find(id="assessed-products").find("a").attrs["href"]
+    assert edit_url == soup.find(id="assessed-products").find("tbody").find("a").attrs["href"]
 
     # Test if the unassessed products table is sane
     assert get_cells(soup, "table-products-1") == [

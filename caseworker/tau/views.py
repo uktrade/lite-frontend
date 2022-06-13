@@ -2,7 +2,7 @@ import os
 
 from django.http import Http404
 from django.shortcuts import redirect
-from django.views.generic import FormView, View
+from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
 from django.urls import reverse
 
@@ -231,3 +231,32 @@ class TAUMoveCaseForward(LoginRequiredMixin, TAUMixin, View):
         move_case_forward(request, case_pk, queue_pk)
         queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
         return redirect(queue_url)
+
+
+class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
+    """Clears the assessments for all the goods on the current case."""
+
+    template_name = "tau/clear_assessments.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "assessed_goods": self.assessed_goods,
+        }
+
+    def post(self, request, queue_pk, pk):
+        for good in self.assessed_goods:
+            payload = {
+                "control_list_entries": [],
+                "is_good_controlled": None,
+                "is_wassenaar": False,
+                "report_summary": None,
+                "comment": None,
+                "current_object": good["id"],
+                "objects": [good["good"]["id"]],
+            }
+            post_review_good(self.request, case_id=pk, data=payload)
+        return redirect(reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))
