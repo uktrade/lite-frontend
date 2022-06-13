@@ -1,5 +1,4 @@
 from django.conf import settings
-from exporter.core.helpers import str_date_only
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.core import StartPage, RegisterAnOrganisation
