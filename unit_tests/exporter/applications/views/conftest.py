@@ -9,10 +9,15 @@ from exporter.goods.forms.firearms import FirearmSerialIdentificationMarkingsFor
 
 
 @pytest.fixture
+def application(data_standard_case):
+    return data_standard_case["case"]["data"]
+
+
+@pytest.fixture
 def mock_application_get(requests_mock, data_standard_case):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/')
-    yield requests_mock.get(url=url, json=application)
+    return requests_mock.get(url=url, json=application)
 
 
 @pytest.fixture
@@ -164,13 +169,6 @@ def section_5_document(organisation_id):
         "reference_code": "section 5 ref",
         "expiry_date": "30 September 2024",
     }
-
-
-@pytest.fixture
-def application(data_standard_case, requests_mock):
-    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
-    matcher = requests_mock.get(url=app_url, json=data_standard_case["case"])
-    return matcher
 
 
 @pytest.fixture

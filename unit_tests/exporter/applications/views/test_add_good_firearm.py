@@ -76,7 +76,7 @@ def test_firearm_category_redirects_to_new_wizard(
     authorized_client,
     new_good_firearm_url,
     new_good_url,
-    application,
+    mock_application_get,
     control_list_entries,
 ):
     response = authorized_client.post(new_good_url, data={"wizard_goto_step": AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE})
@@ -111,7 +111,12 @@ def test_add_good_firearm_invalid_application(
     assert response.status_code == 404
 
 
-def test_add_good_firearm_start(authorized_client, new_good_firearm_url, new_good_url, application):
+def test_add_good_firearm_start(
+    authorized_client,
+    new_good_firearm_url,
+    new_good_url,
+    mock_application_get,
+):
     response = authorized_client.get(new_good_firearm_url)
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmCategoryForm)
@@ -147,7 +152,10 @@ def test_add_good_firearm_displays_rfd_validity_step(
 
 
 def test_add_good_firearm_skips_rfd_validity_step_if_application_already_has_rfd_document(
-    application_with_organisation_and_application_rfd_document, rfd_certificate, goto_step, post_to_step
+    application_with_organisation_and_application_rfd_document,
+    rfd_certificate,
+    goto_step,
+    post_to_step,
 ):
     goto_step(AddGoodFirearmSteps.IS_REPLICA)
     response = post_to_step(
@@ -159,7 +167,12 @@ def test_add_good_firearm_skips_rfd_validity_step_if_application_already_has_rfd
     assert isinstance(response.context["form"], FirearmSection5Form)
 
 
-def test_add_good_firearm_skips_rfd_validity_step(application_without_rfd_document, goto_step, post_to_step):
+def test_add_good_firearm_skips_rfd_validity_step(
+    application_without_rfd_document,
+    goto_step,
+    post_to_step,
+    mock_application_get,
+):
     goto_step(AddGoodFirearmSteps.IS_REPLICA)
     response = post_to_step(
         AddGoodFirearmSteps.IS_REPLICA,
@@ -191,7 +204,10 @@ def test_add_good_firearm_shows_registered_firearms_step_after_confirming_certif
 
 
 def test_add_good_firearm_shows_upload_rfd_step_after_confirmed_as_registered_firearms_dealer(
-    application_without_rfd_document, goto_step, post_to_step
+    application_without_rfd_document,
+    goto_step,
+    post_to_step,
+    mock_application_get,
 ):
     goto_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER)
     response = post_to_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, {"is_registered_firearm_dealer": True})
@@ -262,6 +278,7 @@ def test_add_good_firearm_not_registered_firearm_dealer(
     application_without_rfd_document,
     goto_step,
     post_to_step,
+    mock_application_get,
 ):
     goto_step(AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER)
     response = post_to_step(
@@ -299,6 +316,7 @@ def test_add_good_firearm_act_selection(
     post_to_step,
     form_data,
     expected_next_form,
+    mock_application_get,
 ):
     goto_step(AddGoodFirearmSteps.FIREARM_ACT_1968)
     response = post_to_step(
@@ -639,7 +657,7 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     data_standard_case,
     control_list_entries,
     application_without_rfd_document,
-    application,
+    mock_application_get,
     product_summary_url,
     good_id,
     post_goods_matcher,
@@ -754,7 +772,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     data_standard_case,
     control_list_entries,
     application_without_rfd_document,
-    application,
+    mock_application_get,
     good_id,
     product_summary_url,
     post_goods_matcher,
@@ -841,7 +859,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     data_standard_case,
     control_list_entries,
     application_without_rfd_document,
-    application,
+    mock_application_get,
     good_id,
     product_summary_url,
     post_goods_matcher,
@@ -924,7 +942,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     data_standard_case,
     control_list_entries,
     application_without_rfd_document,
-    application,
+    mock_application_get,
     good_id,
     product_summary_url,
     post_goods_matcher,
@@ -1007,7 +1025,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     data_standard_case,
     control_list_entries,
     application_without_rfd_document,
-    application,
+    mock_application_get,
     good_id,
     product_summary_url,
     post_goods_matcher,

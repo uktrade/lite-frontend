@@ -41,11 +41,6 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def application(data_standard_case):
-    return data_standard_case["case"]["data"]
-
-
-@pytest.fixture
 def good(application):
     good = application["goods"][0]["good"]
     return good

@@ -24,11 +24,6 @@ def setup(
 
 
 @pytest.fixture(autouse=True)
-def application(data_standard_case):
-    return data_standard_case["case"]["data"]
-
-
-@pytest.fixture(autouse=True)
 def good_on_application(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]["good"]
 

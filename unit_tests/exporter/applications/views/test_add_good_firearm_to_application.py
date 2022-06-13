@@ -28,11 +28,6 @@ def setup(mock_application_get, mock_good_get, no_op_storage):
 
 
 @pytest.fixture
-def application(data_standard_case):
-    return data_standard_case["case"]["data"]
-
-
-@pytest.fixture
 def new_firearm_to_application_url(application):
     good = application["goods"][0]["good"]
     return reverse(

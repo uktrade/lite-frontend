@@ -5,11 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from exporter.core.helpers import decompose_date
-from exporter.goods.forms.firearms import (
-    FirearmAttachFirearmCertificateForm,
-    FirearmAttachSection5LetterOfAuthorityForm,
-    FirearmAttachShotgunCertificateForm,
-)
+from exporter.goods.forms.firearms import FirearmAttachSection5LetterOfAuthorityForm
 
 
 @pytest.fixture(autouse=True)
@@ -24,6 +20,7 @@ def setup(settings, no_op_storage):
 def test_edit_certificate_view_exists(
     data_standard_case,
     application_without_rfd_document,
+    mock_application_get,
     mock_good_get,
     authorized_client,
     url_name,
@@ -47,6 +44,7 @@ def test_edit_certificate_view_exists(
 def test_edit_certificate_submission_success(
     data_standard_case,
     application_without_rfd_document,
+    mock_application_get,
     mock_good_get,
     mock_good_put,
     authorized_client,

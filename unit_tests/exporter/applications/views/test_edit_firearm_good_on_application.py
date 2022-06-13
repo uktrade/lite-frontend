@@ -35,11 +35,6 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def application(data_standard_case):
-    return data_standard_case["case"]["data"]
-
-
-@pytest.fixture
 def section_one_document(good_on_application):
     return {
         "id": str(uuid.uuid4()),
