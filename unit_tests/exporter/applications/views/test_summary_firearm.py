@@ -8,7 +8,7 @@ def default_feature_flags(settings):
     settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
 
-def test_firearm_product_summary_template_used(
+def test_firearm_product_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -16,6 +16,15 @@ def test_firearm_product_summary_template_used(
 ):
     response = authorized_client.get(product_summary_url)
     assert response.status_code == 200
+
+
+def test_firearm_product_summary_template_used(
+    authorized_client,
+    mock_application_get,
+    mock_good_get,
+    product_summary_url,
+):
+    response = authorized_client.get(product_summary_url)
     assertTemplateUsed(response, "applications/goods/firearms/product-summary.html")
 
 
@@ -28,7 +37,6 @@ def test_firearm_product_summary_context(
     good_id,
 ):
     response = authorized_client.get(product_summary_url)
-    assert response.status_code == 200
 
     def _get_test_url(name):
         return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/firearm/edit/{name}/'
