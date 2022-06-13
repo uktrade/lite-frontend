@@ -28,6 +28,7 @@ FIREARM_LABELS = {
     "firearms-act-1968-section": "Which section of the Firearms Act 1968 is the product covered by?",
     "is-covered-by-firearm-act-section-one-two-or-five-explanation": "Explain",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
     "is-document-sensitive": "Is the document rated above Official-sensitive?",
     "product-document": "Upload a document that shows what your product is designed to do",
     "product-document-description": "Description (optional)",
