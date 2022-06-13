@@ -278,4 +278,6 @@ workflows:
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
-      - exporter_ui_test
+      - caseworker_e2e_test
+      - exporter_e2e_test
+
