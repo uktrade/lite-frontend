@@ -2,7 +2,8 @@ from django.urls import path
 from django.conf import settings
 
 from exporter.core import views
-from exporter.core.registration.views import Registration
+from exporter.core.organisation.views import Registration, SelectOrganisation
+
 
 app_name = "core"
 
@@ -42,7 +43,7 @@ else:
 urlpatterns = (
     [
         path("", views.Home.as_view(), name="home"),
-        path("pick-organisation/", views.PickOrganisation.as_view(), name="pick_organisation"),
+        path("select-organisation/", SelectOrganisation.as_view(), name="select_organisation"),
     ]
     + registration_patterns
     + [

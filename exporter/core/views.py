@@ -14,7 +14,6 @@ from exporter.applications.services import (
 from exporter.auth.services import authenticate_exporter_user
 
 from exporter.core.forms import (
-    select_your_organisation_form,
     register_a_commercial_organisation_group,
     register_triage,
     register_an_individual_group,
@@ -76,37 +75,6 @@ class Home(TemplateView):
         }
 
         return render(request, "core/hub.html", context)
-
-
-class PickOrganisation(LoginRequiredMixin, TemplateView):
-    form = None
-    organisations = None
-
-    def dispatch(self, request, *args, **kwargs):
-        user = get_user(request)
-        self.organisations = user["organisations"]
-        self.form = select_your_organisation_form(self.organisations)
-
-        return super(PickOrganisation, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request, **kwargs):
-        data = {"organisation": str(request.session.get("organisation"))}
-        return form_page(request, self.form, data=data, extra_data={"user_in_limbo": data["organisation"] == "None"})
-
-    def post(self, request, **kwargs):
-        # If no data is given, error
-        if not request.POST.get("organisation"):
-            return form_page(request, self.form, errors={"organisation": ["Select an organisation to use"]})
-
-        request.session["organisation"] = request.POST["organisation"]
-        organisation = get_organisation(request, request.POST["organisation"])
-
-        if "errors" in organisation:
-            return redirect(reverse_lazy("core:register_an_organisation_confirm") + "?show_back_link=True")
-
-        request.session["organisation_name"] = organisation["name"]
-
-        return redirect("/")
 
 
 class RegisterAnOrganisationTriage(MultiFormView):
@@ -208,7 +176,8 @@ class RegisterAnOrganisationConfirmation(TemplateView):
             ],
             links={},
             back_link=conditional(
-                request.GET.get("show_back_link", False), BackLink(generic.BACK, reverse_lazy("core:pick_organisation"))
+                request.GET.get("show_back_link", False),
+                BackLink(generic.BACK, reverse_lazy("core:select_organisation")),
             ),
             animated=True,
             additional_context={"user_in_limbo": True},

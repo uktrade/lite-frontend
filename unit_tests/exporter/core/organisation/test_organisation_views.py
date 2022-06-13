@@ -1,7 +1,9 @@
 import pytest
+
+from django.test import Client
 from django.urls import reverse
-from exporter.core.registration.constants import RegistrationSteps
-from exporter.core.registration.forms import (
+from exporter.core.organisation.constants import RegistrationSteps
+from exporter.core.organisation.forms import (
     RegistrationUKBasedForm,
     RegisterDetailsForm,
     RegisterAddressDetailsForm,
@@ -284,3 +286,43 @@ def test_registration_commercial_end_to_end(
 
     assert response.status_code == 302
     assert response.url == "/register-an-organisation/confirm/?animate=True"
+
+
+def test_select_organisation_load(authorized_client, mock_exporter_user_me):
+
+    mock_exporter_user_me["organisations"] = mock_exporter_user_me["user"]["organisations"] + [
+        {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2"}
+    ]
+    url = reverse("core:select_organisation")
+    response = authorized_client.get(url)
+
+    assert len(response.context["form"].fields["organisation"].choices) == 2
+    assert response.context["form"].fields["organisation"].choices[1] == ("9bc26604-35ee-4383-9f58-1111111", "Org 2")
+    assert response.context["back_link_url"] == "/"
+
+    response = authorized_client.get(url + "?back_link=applications")
+    assert response.context["back_link_url"] == "/applications/"
+    assert response.context["back_link_text"] == "Back to applications"
+
+
+def test_select_organisation(authorized_client, mock_get_organisation, mock_exporter_user_me):
+    session = authorized_client.session
+    session["organisation_name"] = None
+    session.save()
+
+    mock_exporter_user_me["organisations"] = mock_exporter_user_me["user"]["organisations"] + [
+        {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2"}
+    ]
+    url = reverse("core:select_organisation")
+    response = authorized_client.post(url, data={"organisation": mock_exporter_user_me["organisations"][0]["id"]})
+
+    assert response.status_code == 302
+    assert response.url == "/"
+
+    response = authorized_client.post(
+        url + "?back_link=applications", data={"organisation": mock_exporter_user_me["organisations"][0]["id"]}
+    )
+    assert response.status_code == 302
+    assert response.url == "/applications/"
+
+    assert authorized_client.session["organisation_name"] == mock_exporter_user_me["organisations"][0]["name"]

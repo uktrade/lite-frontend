@@ -2,8 +2,9 @@ import logging
 from http import HTTPStatus
 
 from django.conf import settings
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect
+from django.views.generic import FormView
 
 from lite_forms.generators import error_page
 from core.auth.views import LoginRequiredMixin
@@ -11,6 +12,8 @@ from core.auth.views import LoginRequiredMixin
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.applications.views.goods.add_good_firearm.views.decorators import expect_status
 from exporter.auth.services import authenticate_exporter_user
+from exporter.organisation.members.services import get_user
+from exporter.core.services import get_organisation
 
 from .constants import RegistrationSteps
 from .forms import (
@@ -18,6 +21,7 @@ from .forms import (
     RegistrationUKBasedForm,
     RegisterDetailsForm,
     RegisterAddressDetailsForm,
+    SelectOrganisationForm,
 )
 from .services import register_organisation
 from .payloads import RegistrationPayloadBuilder
@@ -104,3 +108,39 @@ class Registration(
     @property
     def is_individual(self):
         return self.get_cleaned_data_for_step(RegistrationSteps.REGISTRATION_TYPE)["type"] == "individual"
+
+
+class SelectOrganisation(LoginRequiredMixin, FormView):
+    form_class = SelectOrganisationForm
+    template_name = "core/form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        user = get_user(self.request)
+        kwargs["organisations"] = user["organisations"]
+        return kwargs
+
+    def form_valid(self, form):
+        organisation_id = form.cleaned_data["organisation"]
+        organisation = get_organisation(self.request, organisation_id)
+
+        if "errors" in organisation:
+            return redirect(reverse_lazy("core:register_an_organisation_confirm") + "?show_back_link=True")
+
+        self.request.session["organisation_name"] = organisation["name"]
+
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        if self.request.GET.get("back_link") == "applications":
+            success_url = reverse_lazy("applications:applications")
+        else:
+            success_url = reverse_lazy("core:home")
+        return success_url
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if self.request.GET.get("back_link") == "applications":
+            ctx["back_link_text"] = "Back to applications"
+        ctx["back_link_url"] = self.get_success_url()
+        return ctx

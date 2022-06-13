@@ -42,6 +42,8 @@ from exporter.applications.services import (
     copy_application,
     post_exhibition,
 )
+from exporter.organisation.members.services import get_user
+
 from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
 from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
@@ -59,13 +61,14 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
         params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
         organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
-
+        is_user_multiple_organisations = True if len(get_user(self.request)["organisations"]) > 1 else False
         context = {
             "applications": applications,
             "organisation": organisation,
             "params": params,
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
+            "is_user_multiple_organisations": is_user_multiple_organisations,
         }
         return render(
             request, "applications/applications.html" if params["submitted"] else "applications/drafts.html", context

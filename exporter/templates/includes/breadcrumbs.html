@@ -2,7 +2,11 @@
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="{% url 'core:home' %}">
-				{% lcs 'hub.ACCOUNT_HOME' %}
+                {% if organisation.name%}
+				    {{ organisation.name }} Dashbord
+                {% else %}
+                    {% lcs 'hub.ACCOUNT_HOME' %}
+                {% endif %}
 			</a>
 		</li>
 		<li class="govuk-breadcrumbs__list-item">

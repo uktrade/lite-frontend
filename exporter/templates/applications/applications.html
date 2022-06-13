@@ -7,8 +7,14 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">{% block title %}{% lcs "applications.ApplicationsList.TITLE" %}{% endblock %}</h1>
-		</div>
+
+			<h1 class="govuk-heading-l">{% block title %}{% lcs "applications.ApplicationsList.TITLE" %} for {{ organisation.name }}{% endblock %}
+               {% if is_user_multiple_organisations  %}
+                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:select_organisation' %}?back_link=applications" id="switch-link">{% lcs 'hub.SWITCH_ORG' %}</a>
+               {% endif %}
+            </h1>
+
+     	</div>
 		<div class="lite-app-bar__controls">
 			{% if organisation.type.key == 'hmrc' %}
 				<a href="{% url 'hmrc:raise_a_query' %}" class="govuk-button" draggable="false" role="button">

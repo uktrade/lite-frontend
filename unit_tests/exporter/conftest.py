@@ -201,6 +201,16 @@ def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
     yield data
 
 
+@pytest.fixture(autouse=False)
+def mock_get_organisation(requests_mock, mock_exporter_user_me):
+    organisation_id = mock_exporter_user_me["user"]["organisations"][0]["id"]
+    organisation_name = mock_exporter_user_me["user"]["organisations"][0]["name"]
+    url = client._build_absolute_uri(f"/organisations/{organisation_id}")
+    data = {"applications": True}
+    requests_mock.get(url=url, json={"id": organisation_id, "name": organisation_name})
+    yield data
+
+
 @pytest.fixture
 def no_op_storage(mocker):
     class NoOpStorage(Storage):
