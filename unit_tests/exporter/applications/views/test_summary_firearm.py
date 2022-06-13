@@ -163,3 +163,61 @@ def test_firearm_product_summary_context(
             _get_test_url("product-document"),
         ),
     )
+
+
+def test_firearm_product_on_application_summary_response_status_code(
+    authorized_client,
+    product_on_application_summary_url,
+    mock_application_get,
+    mock_good_get,
+    mock_good_on_application_get,
+    application,
+    good_id,
+    requests_mock,
+):
+    requests_mock.get(
+        f"/applications/{application['id']}/goods/{good_id}/documents/",
+        json={"documents": []},
+    )
+    requests_mock.get(
+        f"/goods/{good_id}/documents/",
+        json={},
+    )
+    response = authorized_client.get(product_on_application_summary_url)
+    assert response.status_code == 200
+
+
+@pytest.fixture
+def good(data_standard_case):
+    return data_standard_case["case"]["data"]["goods"][0]
+
+
+def test_firearm_product_on_application_summary_context(
+    authorized_client,
+    product_on_application_summary_url,
+    mock_application_get,
+    mock_good_get,
+    mock_good_on_application_get,
+    application,
+    good,
+    good_on_application,
+    requests_mock,
+):
+    requests_mock.get(
+        f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
+        json={"documents": []},
+    )
+    requests_mock.get(
+        f"/goods/{good['good']['id']}/documents/",
+        json={"documents": []},
+    )
+    response = authorized_client.get(product_on_application_summary_url)
+    context = response.context
+
+    assert context["application"] == application
+    assert context["documents"] == []
+    assert context["good"] == good["good"]
+    assert context["good_on_application"] == good_on_application
+    assert context["good_on_application_documents"] == {}
+    assert not context["is_user_rfd"]
+    assert context["organisation_documents"] == {}

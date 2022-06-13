@@ -230,6 +230,11 @@ def product_on_application_summary_url_factory(application, good_on_application)
 
 
 @pytest.fixture
+def product_on_application_summary_url(product_on_application_summary_url_factory):
+    return product_on_application_summary_url_factory("product-on-application-summary")
+
+
+@pytest.fixture
 def application_with_rfd_and_section_5_document(data_standard_case, requests_mock, rfd_certificate, section_5_document):
     app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     case = data_standard_case["case"]
