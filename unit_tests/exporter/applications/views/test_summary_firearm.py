@@ -28,6 +28,112 @@ def test_firearm_product_summary_template_used(
     assertTemplateUsed(response, "applications/goods/firearms/product-summary.html")
 
 
+@pytest.fixture
+def product_summary(good_id):
+    return (
+        (
+            "firearm-type",
+            "Firearms",
+            "Select the type of firearm product",
+        ),
+        (
+            "firearm-category",
+            "Non automatic shotgun, Non automatic rim-fired handgun",
+            "Firearm category",
+        ),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "calibre",
+            "0.25",
+            "What is the calibre of the product?",
+        ),
+        (
+            "is-replica",
+            "No",
+            "Is the product a replica firearm?",
+        ),
+        (
+            "is-registered-firearms-dealer",
+            "No",
+            "Are you a registered firearms dealer?",
+        ),
+        (
+            "is-covered-by-firearm-act-section-one-two-or-five-explanation",
+            "No firearm act section",
+            "Explain",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+    )
+
+
 def test_firearm_product_summary_context(
     authorized_client,
     mock_application_get,
@@ -35,134 +141,41 @@ def test_firearm_product_summary_context(
     product_summary_url,
     data_standard_case,
     good_id,
+    product_summary,
 ):
     response = authorized_client.get(product_summary_url)
 
     def _get_test_url(name):
+        if not name:
+            return None
         return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/firearm/edit/{name}/'
 
-    assert response.context["summary"] == (
-        (
-            "firearm-type",
-            "Firearms",
-            "Select the type of firearm product",
-            None,
-        ),
-        (
-            "firearm-category",
-            "Non automatic shotgun, Non automatic rim-fired handgun",
-            "Firearm category",
-            _get_test_url("category"),
-        ),
-        (
-            "name",
-            "p1",
-            "Give the product a descriptive name",
-            _get_test_url("name"),
-        ),
-        (
-            "is-good-controlled",
-            "Yes",
-            "Do you know the product's control list entry?",
-            _get_test_url("control-list-entries"),
-        ),
-        (
-            "control-list-entries",
-            "ML1a, ML22b",
-            "Enter the control list entry",
-            _get_test_url("control-list-entries"),
-        ),
-        (
-            "is-pv-graded",
-            "Yes",
-            "Does the product have a government security grading or classification?",
-            _get_test_url("pv-grading"),
-        ),
-        (
-            "pv-grading-prefix",
-            "NATO",
-            "Enter a prefix (optional)",
-            _get_test_url("pv-grading"),
-        ),
-        (
-            "pv-grading-grading",
-            "Official",
-            "What is the security grading or classification?",
-            _get_test_url("pv-grading"),
-        ),
-        (
-            "pv-grading-suffix",
-            "SUFFIX",
-            "Enter a suffix (optional)",
-            _get_test_url("pv-grading"),
-        ),
-        (
-            "pv-grading-issuing-authority",
-            "Government entity",
-            "Name and address of the issuing authority",
-            _get_test_url("pv-grading"),
-        ),
-        (
-            "pv-grading-details-reference",
-            "GR123",
-            "Reference",
-            _get_test_url("pv-grading"),
-        ),
-        (
-            "pv-grading-details-date-of-issue",
-            "20 February 2020",
-            "Date of issue",
-            _get_test_url("pv-grading"),
-        ),
-        (
-            "calibre",
-            "0.25",
-            "What is the calibre of the product?",
-            _get_test_url("calibre"),
-        ),
-        (
-            "is-replica",
-            "No",
-            "Is the product a replica firearm?",
-            _get_test_url("replica"),
-        ),
-        (
-            "is-registered-firearms-dealer",
-            "No",
-            "Are you a registered firearms dealer?",
-            _get_test_url("registered-firearms-dealer"),
-        ),
-        (
-            "is-covered-by-firearm-act-section-one-two-or-five-explanation",
-            "No firearm act section",
-            "Explain",
-            _get_test_url("firearms-act-1968"),
-        ),
-        (
-            "has-product-document",
-            "Yes",
-            "Do you have a document that shows what your product is and what it’s designed to do?",
-            _get_test_url("product-document-availability"),
-        ),
-        (
-            "is-document-sensitive",
-            "No",
-            "Is the document rated above Official-sensitive?",
-            _get_test_url("product-document-sensitivity"),
-        ),
-        (
-            "product-document",
-            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
-            "Upload a document that shows what your product is designed to do",
-            _get_test_url("product-document"),
-        ),
-        (
-            "product-document-description",
-            "product data sheet",
-            "Description (optional)",
-            _get_test_url("product-document"),
-        ),
+    url_map = {
+        "firearm-category": "category",
+        "name": "name",
+        "is-good-controlled": "control-list-entries",
+        "control-list-entries": "control-list-entries",
+        "is-pv-graded": "pv-grading",
+        "pv-grading-prefix": "pv-grading",
+        "pv-grading-grading": "pv-grading",
+        "pv-grading-suffix": "pv-grading",
+        "pv-grading-issuing-authority": "pv-grading",
+        "pv-grading-details-reference": "pv-grading",
+        "pv-grading-details-date-of-issue": "pv-grading",
+        "calibre": "calibre",
+        "is-replica": "replica",
+        "is-registered-firearms-dealer": "registered-firearms-dealer",
+        "is-covered-by-firearm-act-section-one-two-or-five-explanation": "firearms-act-1968",
+        "has-product-document": "product-document-availability",
+        "is-document-sensitive": "product-document-sensitivity",
+        "product-document": "product-document",
+        "product-document-description": "product-document",
+    }
+
+    summary_with_links = tuple(
+        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in product_summary
     )
+    assert response.context["summary"] == summary_with_links
 
 
 def test_firearm_product_on_application_summary_response_status_code(
@@ -202,6 +215,7 @@ def test_firearm_product_on_application_summary_context(
     good,
     good_on_application,
     requests_mock,
+    product_summary,
 ):
     requests_mock.get(
         f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
@@ -219,8 +233,7 @@ def test_firearm_product_on_application_summary_context(
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
     assert context["good_on_application_documents"] == {}
-    assert not context["is_user_rfd"]
-    assert context["organisation_documents"] == {}
+    assert context["product_summary"] == product_summary
 
 
 def test_firearm_attach_product_on_application_summary_response_status_code(
@@ -255,6 +268,7 @@ def test_firearm_attach_product_on_application_summary_context(
     good,
     good_on_application,
     requests_mock,
+    product_summary,
 ):
     requests_mock.get(
         f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
@@ -272,8 +286,7 @@ def test_firearm_attach_product_on_application_summary_context(
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
     assert context["good_on_application_documents"] == {}
-    assert not context["is_user_rfd"]
-    assert context["organisation_documents"] == {}
+    assert context["product_summary"] == product_summary
     assert not context["added_firearm_category"]
     assert not context["confirmed_rfd_validity"]
 

@@ -1,4 +1,9 @@
-from core.constants import FirearmsActDocumentType
+from decimal import Decimal
+
+from core.constants import (
+    FirearmsActDocumentType,
+    FirearmsActSections,
+)
 
 
 def is_good_controlled_reducer(good):
@@ -81,7 +86,7 @@ def is_replica_reducer(firearm_details):
 
 def firearms_act_section5_reducer(firearm_details, organisation_documents):
     summary = ()
-    if firearm_details["firearms_act_section"] == "firearms_act_section5":
+    if firearm_details["firearms_act_section"] == FirearmsActSections.SECTION_5:
         if firearm_details["section_certificate_missing"]:
             summary += (
                 (
@@ -213,3 +218,23 @@ def firearm_reducer(good, is_user_rfd, organisation_documents):
     summary += has_product_document_reducer(good)
 
     return summary
+
+
+def firearm_on_application_reducer(good_on_application):
+    firearm_details = good_on_application["firearm_details"]
+
+    summary = (
+        ("number-of-items", firearm_details["number_of_items"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+
+    return summary
+
+
+def firearms_act_section1_reducer(firearm_details):
+    firearms_act_section = firearm_details.get("firearms_act_section")
+    if not firearms_act_section:
+        return ()
+
+    if not firearms_act_section == FirearmsActSections.SECTION_1:
+        return ()

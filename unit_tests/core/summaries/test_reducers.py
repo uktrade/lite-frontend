@@ -1,8 +1,13 @@
 import pytest
 
+from decimal import Decimal
+
+from core.constants import FirearmsActSections
 from core.summaries.reducers import (
+    firearm_on_application_reducer,
     firearm_reducer,
     firearms_act_reducer,
+    firearms_act_section1_reducer,
     firearms_act_section5_reducer,
     has_product_document_reducer,
     is_good_controlled_reducer,
@@ -40,14 +45,13 @@ def test_firearm_reducer(is_user_rfd, mocker):
         "firearm_details": firearm_details,
     }
     organisation_documents = []
-    output = (
+    assert firearm_reducer(good, is_user_rfd, organisation_documents) == (
         ("firearm-type", "firearm-details-type"),
         ("firearm-category", "firearm-details-category"),
         ("name", "good-name"),
         ("calibre", "firearm-details-calibre"),
         ("is-registered-firearms-dealer", is_user_rfd),
     )
-    assert firearm_reducer(good, is_user_rfd, organisation_documents) == output
 
     mock_is_good_controlled_reducer.assert_called_with(good)
     mock_is_pv_graded_reducer.assert_called_with(good)
@@ -308,3 +312,42 @@ def test_firearms_act_reducer(
 )
 def test_has_product_document_reducer(good, output):
     assert has_product_document_reducer(good) == output
+
+
+def test_firearm_on_application_reducer():
+    good_on_application = {
+        "firearm_details": {
+            "number_of_items": 2,
+        },
+        "value": "14.44",
+    }
+
+    assert firearm_on_application_reducer(good_on_application) == (
+        ("number-of-items", 2),
+        ("total-value", Decimal("14.44")),
+    )
+
+
+@pytest.mark.parametrize(
+    "firearm_details,output",
+    (
+        (
+            {},
+            (),
+        ),
+        (
+            {
+                "firearms_act_section": "not-section-1",
+            },
+            (),
+        ),
+        (
+            {
+                "firearms_act_section": FirearmsActSections.SECTION_1,
+            },
+            (),
+        ),
+    ),
+)
+def test_firearms_act_section1_reducer(firearm_details, output):
+    assert firearms_act_section1_reducer(firearm_details) == output

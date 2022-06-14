@@ -1,3 +1,4 @@
+from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
@@ -61,15 +62,18 @@ class BaseProductOnApplicationSummary(
     GoodOnApplicationMixin,
     TemplateView,
 ):
+    @cached_property
+    def is_user_rfd(self):
+        return has_valid_organisation_rfd_certificate(self.application)
+
+    @cached_property
+    def organisation_documents(self):
+        return get_organisation_documents(self.application)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
-
         documents = get_good_documents(self.request, self.good["id"])
-        organisation_documents = {
-            k.replace("-", "_"): v for k, v in get_organisation_documents(self.application).items()
-        }
 
         application_documents, _ = get_application_documents(
             self.request,
@@ -85,6 +89,12 @@ class BaseProductOnApplicationSummary(
             if document["good_on_application"] == self.good_on_application["id"]
         }
 
+        product_summary = firearm_product_summary(
+            self.good,
+            self.is_user_rfd,
+            self.organisation_documents,
+        )
+
         return {
             **context,
             "application": self.application,
@@ -92,8 +102,7 @@ class BaseProductOnApplicationSummary(
             "good": self.good,
             "good_on_application": self.good_on_application,
             "good_on_application_documents": good_on_application_documents,
-            "is_user_rfd": is_user_rfd,
-            "organisation_documents": organisation_documents,
+            "product_summary": product_summary,
         }
 
 
@@ -111,9 +120,9 @@ class FirearmAttachProductOnApplicationSummary(BaseProductOnApplicationSummary):
         return bool(self.request.GET.get("confirmed_rfd_validity"))
 
     def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
-        ctx["added_firearm_category"] = self.has_added_firearm_category()
-        ctx["confirmed_rfd_validity"] = self.has_confirmed_rfd_validity()
+        context["added_firearm_category"] = self.has_added_firearm_category()
+        context["confirmed_rfd_validity"] = self.has_confirmed_rfd_validity()
 
-        return ctx
+        return context

@@ -124,6 +124,7 @@ FIREARM_VALUE_FORMATTERS = {
     "section-5-certificate-document": organisation_document_formatter,
     "section-5-certificate-date-of-expiry": date_formatter("j F Y"),
     "section-5-certificate-missing": just("I do not have a section 5 letter of authority"),
+    "firearms-act-1968-section": mapping_formatter({}),
 }
 
 
