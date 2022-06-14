@@ -290,7 +290,7 @@ def test_registration_commercial_end_to_end(
 
 def test_select_organisation_load(authorized_client, mock_exporter_user_me):
 
-    mock_exporter_user_me["organisations"] = mock_exporter_user_me["user"]["organisations"] + [
+    mock_exporter_user_me["organisations"] = mock_exporter_user_me["organisations"] + [
         {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2"}
     ]
     url = reverse("core:select_organisation")
@@ -305,12 +305,12 @@ def test_select_organisation_load(authorized_client, mock_exporter_user_me):
     assert response.context["back_link_text"] == "Back to applications"
 
 
-def test_select_organisation(authorized_client, mock_get_organisation, mock_exporter_user_me):
+def test_select_organisation_licenses(authorized_client, mock_get_organisation, mock_exporter_user_me):
     session = authorized_client.session
     session["organisation_name"] = None
     session.save()
 
-    mock_exporter_user_me["organisations"] = mock_exporter_user_me["user"]["organisations"] + [
+    mock_exporter_user_me["organisations"] = mock_exporter_user_me["organisations"] + [
         {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2"}
     ]
     url = reverse("core:select_organisation")
@@ -324,5 +324,13 @@ def test_select_organisation(authorized_client, mock_get_organisation, mock_expo
     )
     assert response.status_code == 302
     assert response.url == "/applications/"
+
+    assert authorized_client.session["organisation_name"] == mock_exporter_user_me["organisations"][0]["name"]
+
+    response = authorized_client.post(
+        url + "?back_link=licences", data={"organisation": mock_exporter_user_me["organisations"][0]["id"]}
+    )
+    assert response.status_code == 302
+    assert response.url == "/licences/"
 
     assert authorized_client.session["organisation_name"] == mock_exporter_user_me["organisations"][0]["name"]

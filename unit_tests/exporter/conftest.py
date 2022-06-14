@@ -74,14 +74,6 @@ def mock_exporter_user_me(requests_mock, lite_api_user_id):
             "status": "Active",
             "token": "foo",
             "lite_api_user_id": lite_api_user_id,
-            "organisations": [
-                {
-                    "id": "9bc26604-35ee-4383-9f58-74f8cab67443",
-                    "name": "Archway Communications",
-                    "joined_at": "2020-06-29T09:30:58.425994Z",
-                    "status": {"key": "active", "value": "Active"},
-                }
-            ],
         },
         "role": {
             "id": "00000000-0000-0000-0000-000000000001",
@@ -93,6 +85,14 @@ def mock_exporter_user_me(requests_mock, lite_api_user_id):
                 "SUBMIT_CLEARANCE_APPLICATION",
             ],
         },
+        "organisations": [
+            {
+                "id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",
+                "name": "Archway Communications",
+                "joined_at": "2020-06-29T09:30:58.425994Z",
+                "status": {"key": "active", "value": "Active"},
+            }
+        ],
     }
 
     requests_mock.get(url=url, json=data)
@@ -203,12 +203,12 @@ def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
 
 @pytest.fixture(autouse=False)
 def mock_get_organisation(requests_mock, mock_exporter_user_me):
-    organisation_id = mock_exporter_user_me["user"]["organisations"][0]["id"]
-    organisation_name = mock_exporter_user_me["user"]["organisations"][0]["name"]
+    organisation_id = mock_exporter_user_me["organisations"][0]["id"]
+    organisation_name = mock_exporter_user_me["organisations"][0]["name"]
     url = client._build_absolute_uri(f"/organisations/{organisation_id}")
-    data = {"applications": True}
-    requests_mock.get(url=url, json={"id": organisation_id, "name": organisation_name})
-    return data
+    data = {"id": organisation_id, "name": organisation_name}
+    requests_mock.get(url=url, json=data)
+    yield data
 
 
 @pytest.fixture

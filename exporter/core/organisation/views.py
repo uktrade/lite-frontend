@@ -134,6 +134,8 @@ class SelectOrganisation(LoginRequiredMixin, FormView):
     def get_success_url(self):
         if self.request.GET.get("back_link") == "applications":
             success_url = reverse("applications:applications")
+        elif self.request.GET.get("back_link") == "licences":
+            success_url = reverse("licences:list-open-and-standard-licences")
         else:
             success_url = reverse("core:home")
         return success_url
@@ -142,5 +144,7 @@ class SelectOrganisation(LoginRequiredMixin, FormView):
         ctx = super().get_context_data(**kwargs)
         if self.request.GET.get("back_link") == "applications":
             ctx["back_link_text"] = "Back to applications"
+        elif self.request.GET.get("back_link") == "licences":
+            ctx["back_link_text"] = "Back to licences"
         ctx["back_link_url"] = self.get_success_url()
         return ctx
