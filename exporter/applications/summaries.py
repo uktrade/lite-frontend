@@ -55,15 +55,17 @@ PRODUCT_SUMMARY_EDIT_LINKS = {
 }
 
 
-def add_edit_links(application, good, summary, edit_links):
+def add_edit_links(summary, edit_links, application, good):
     get_edit_link = get_edit_link_factory(application, good)
 
     summary_with_edit_links = ()
     for key, value, *rest in summary:
         try:
-            edit_link = get_edit_link(edit_links[key])
+            edit_link_key = edit_links[key]
         except KeyError:
             edit_link = None
+        else:
+            edit_link = get_edit_link(edit_link_key)
 
         summary_with_edit_links += ((key, value, *rest, edit_link),)
 
@@ -102,7 +104,7 @@ FIREARM_FIELDS = (
 )
 
 
-def firearm_product_summary(application, good, is_user_rfd, organisation_documents):
+def firearm_product_summary(good, is_user_rfd, organisation_documents):
     summary = firearm_reducer(good, is_user_rfd, organisation_documents)
 
     def goods_document_formatter(document):
@@ -125,6 +127,5 @@ def firearm_product_summary(application, good, is_user_rfd, organisation_documen
     summary = pick_fields(summary, FIREARM_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, FIREARM_LABELS)
-    summary = add_edit_links(application, good, summary, PRODUCT_SUMMARY_EDIT_LINKS)
 
     return summary

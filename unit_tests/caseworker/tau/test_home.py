@@ -156,6 +156,8 @@ def test_home_content(
         "NATO",
         "What is the security grading or classification?",
         "Official",
+        "Enter a suffix (optional)",
+        "SUFFIX",
         "Name and address of the issuing authority",
         "Government entity",
         "Reference",

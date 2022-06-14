@@ -575,11 +575,13 @@ def data_standard_case():
                                     "id": "6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335",
                                     "name": "data_sheet.pdf",
                                     "description": "product data sheet",
+                                    "safe": True,
                                 }
                             ],
                             "grading_comment": None,
                             "pv_grading_details": {
                                 "prefix": "NATO",
+                                "suffix": "SUFFIX",
                                 "grading": {"key": "official", "value": "Official"},
                                 "issuing_authority": "Government entity",
                                 "reference": "GR123",
@@ -906,6 +908,7 @@ def firearm_good():
                 "id": "6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335",
                 "name": "data_sheet.pdf",
                 "description": "product data sheet",
+                "safe": True,
             }
         ],
         "grading_comment": None,
