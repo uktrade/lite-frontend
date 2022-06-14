@@ -24,10 +24,13 @@ const addSelectAllExpandAll = (
   createDivOptions.classList.add("tau__first-column--options");
 
   // Adds DIV element for Select All and Expand All
-  goods.insertBefore(
-    createDivOptions,
-    goods.firstElementChild.nextElementSibling
-  );
+
+  if (goods) {
+    goods.insertBefore(
+      createDivOptions,
+      goods.firstElementChild.nextElementSibling
+    );
+  }
 
   const selectAllButton = document.createElement("button");
   selectAllButton.innerText = SELECT_ALL;
