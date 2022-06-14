@@ -7,6 +7,8 @@ from django.utils.formats import date_format
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from core.constants import FirearmsActSections
+
 
 FIREARM_LABELS = {
     "firearm-type": "Select the type of firearm product",
@@ -124,7 +126,13 @@ FIREARM_VALUE_FORMATTERS = {
     "section-5-certificate-document": organisation_document_formatter,
     "section-5-certificate-date-of-expiry": date_formatter("j F Y"),
     "section-5-certificate-missing": just("I do not have a section 5 letter of authority"),
-    "firearms-act-1968-section": mapping_formatter({}),
+    "firearms-act-1968-section": mapping_formatter(
+        {
+            FirearmsActSections.SECTION_1: "Section 1",
+            FirearmsActSections.SECTION_2: "Section 2",
+            FirearmsActSections.SECTION_5: "Section 5",
+        }
+    ),
 }
 
 
