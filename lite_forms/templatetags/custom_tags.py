@@ -221,7 +221,7 @@ def item_with_rating_exists(items, rating):
 
 @register.simple_tag
 @mark_safe
-def govuk_link_button(text, url, url_param=None, id="", classes="", query_params="", show_chevron=False):
+def govuk_link_button(text, url, url_param=None, id="", classes="", query_params="", show_chevron=False, hidden=False):
     text = get_const_string(text)
     if isinstance(url_param, str):
         url_param = [url_param]
@@ -234,9 +234,10 @@ def govuk_link_button(text, url, url_param=None, id="", classes="", query_params
             'viewBox="0 0 33 43" aria-hidden="true" focusable="false">'
             '<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" /></svg>'
         )
+    hidden = 'style="display: none;"' if hidden else ""
 
     return (
-        f'<a {id} href="{url}{query_params}" role="button" draggable="false" class="govuk-button {classes}" '
+        f'<a {id} href="{url}{query_params}" role="button" draggable="false" class="govuk-button {classes}" {hidden} '
         f'data-module="govuk-button">{text}{chevron}</a>'
     )
 
