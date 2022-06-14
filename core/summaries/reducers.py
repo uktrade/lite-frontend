@@ -220,7 +220,7 @@ def firearm_reducer(good, is_user_rfd, organisation_documents):
     return summary
 
 
-def firearm_on_application_reducer(good_on_application):
+def firearm_on_application_reducer(good_on_application, good_on_application_documents):
     firearm_details = good_on_application["firearm_details"]
 
     summary = (
@@ -231,10 +231,22 @@ def firearm_on_application_reducer(good_on_application):
     return summary
 
 
-def firearms_act_section1_reducer(firearm_details):
+def firearms_act_section1_reducer(firearm_details, good_on_application_documents):
     firearms_act_section = firearm_details.get("firearms_act_section")
     if not firearms_act_section:
         return ()
 
     if not firearms_act_section == FirearmsActSections.SECTION_1:
         return ()
+
+    if firearm_details["section_certificate_missing"]:
+        return (
+            ("firearm-certificate", None),
+            ("firearm-certificate-missing-reason", firearm_details["section_certificate_missing_reason"]),
+        )
+
+    return (
+        ("firearm-certificate", good_on_application_documents[FirearmsActDocumentType.SECTION_1]),
+        ("firearm-certificate-expiry-date", firearm_details["section_certificate_date_of_expiry"]),
+        ("firearm-certificate-number", firearm_details["section_certificate_number"]),
+    )

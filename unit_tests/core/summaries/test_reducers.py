@@ -2,7 +2,10 @@ import pytest
 
 from decimal import Decimal
 
-from core.constants import FirearmsActSections
+from core.constants import (
+    FirearmsActDocumentType,
+    FirearmsActSections,
+)
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
@@ -314,24 +317,36 @@ def test_has_product_document_reducer(good, output):
     assert has_product_document_reducer(good) == output
 
 
-def test_firearm_on_application_reducer():
+def test_firearm_on_application_reducer(mocker):
+    mock_firearms_act_section1_reducer = mocker.patch("core.summaries.reducers.firearms_act_section1_reducer")
+
     good_on_application = {
         "firearm_details": {
             "number_of_items": 2,
         },
         "value": "14.44",
     }
+    good_on_application_documents = {
+        FirearmsActDocumentType.SECTION_1: {
+            "id": "firearm-certificate-id",
+        },
+    }
 
-    assert firearm_on_application_reducer(good_on_application) == (
+    assert firearm_on_application_reducer(good_on_application, good_on_application_documents) == (
         ("number-of-items", 2),
         ("total-value", Decimal("14.44")),
+    )
+    assert mock_firearms_act_section1_reducer.called_with(
+        good_on_application["firearm_details"],
+        good_on_application_documents,
     )
 
 
 @pytest.mark.parametrize(
-    "firearm_details,output",
+    "firearm_details,good_on_application_documents,output",
     (
         (
+            {},
             {},
             (),
         ),
@@ -339,15 +354,40 @@ def test_firearm_on_application_reducer():
             {
                 "firearms_act_section": "not-section-1",
             },
+            {},
             (),
         ),
         (
             {
                 "firearms_act_section": FirearmsActSections.SECTION_1,
+                "section_certificate_missing": True,
+                "section_certificate_missing_reason": "I do not have a firearm certificate",
             },
-            (),
+            {},
+            (
+                ("firearm-certificate", None),
+                ("firearm-certificate-missing-reason", "I do not have a firearm certificate"),
+            ),
+        ),
+        (
+            {
+                "firearms_act_section": FirearmsActSections.SECTION_1,
+                "section_certificate_missing": False,
+                "section_certificate_date_of_expiry": "2024-02-01",
+                "section_certificate_number": "12345",
+            },
+            {
+                FirearmsActDocumentType.SECTION_1: {
+                    "id": "firearm-certificate-id",
+                },
+            },
+            (
+                ("firearm-certificate", {"id": "firearm-certificate-id"}),
+                ("firearm-certificate-expiry-date", "2024-02-01"),
+                ("firearm-certificate-number", "12345"),
+            ),
         ),
     ),
 )
-def test_firearms_act_section1_reducer(firearm_details, output):
-    assert firearms_act_section1_reducer(firearm_details) == output
+def test_firearms_act_section1_reducer(firearm_details, good_on_application_documents, output):
+    assert firearms_act_section1_reducer(firearm_details, good_on_application_documents) == output
