@@ -17,6 +17,7 @@ from core.summaries.reducers import (
     is_good_controlled_reducer,
     is_pv_graded_reducer,
     is_replica_reducer,
+    year_of_manufacture_reducer,
 )
 
 
@@ -327,6 +328,10 @@ def test_firearm_on_application_reducer(mocker):
         "core.summaries.reducers.firearms_act_section2_reducer",
         return_value=(),
     )
+    mock_year_of_manufacture_reducer = mocker.patch(
+        "core.summaries.reducers.year_of_manufacture_reducer",
+        return_value=(),
+    )
 
     good_on_application = {
         "firearm_details": {
@@ -351,6 +356,9 @@ def test_firearm_on_application_reducer(mocker):
     mock_firearms_act_section2_reducer.assert_called_with(
         good_on_application["firearm_details"],
         good_on_application_documents,
+    )
+    mock_year_of_manufacture_reducer.assert_called_with(
+        good_on_application["firearm_details"],
     )
 
 
@@ -454,3 +462,50 @@ def test_firearms_act_section1_reducer(firearm_details, good_on_application_docu
 )
 def test_firearms_act_section2_reducer(firearm_details, good_on_application_documents, output):
     assert firearms_act_section2_reducer(firearm_details, good_on_application_documents) == output
+
+
+@pytest.mark.parametrize(
+    "firearm_details,output",
+    (
+        (
+            {
+                "is_made_before_1938": None,
+                "year_of_manufacture": 1980,
+            },
+            (("manufacture-year", 1980),),
+        ),
+        (
+            {
+                "is_made_before_1938": False,
+            },
+            (("made-before-1938", False),),
+        ),
+        (
+            {"is_made_before_1938": True, "year_of_manufacture": 1930},
+            (
+                ("made-before-1938", True),
+                ("manufacture-year", 1930),
+            ),
+        ),
+        (
+            {
+                "category": {
+                    "key": "RIFLE_MADE_BEFORE_1938",
+                },
+                "year_of_manufacture": 1930,
+            },
+            (("manufacture-year", 1930),),
+        ),
+        (
+            {
+                "category": {
+                    "key": "COMBINATION_GUN_MADE_BEFORE_1938",
+                },
+                "year_of_manufacture": 1930,
+            },
+            (("manufacture-year", 1930),),
+        ),
+    ),
+)
+def test_year_of_manufacture_reducer(firearm_details, output):
+    assert year_of_manufacture_reducer(firearm_details) == output

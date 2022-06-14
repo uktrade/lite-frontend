@@ -4,6 +4,7 @@ from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
 )
+from core.goods.helpers import is_product_category_made_before_1938
 
 
 def is_good_controlled_reducer(good):
@@ -230,6 +231,7 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
 
     summary += firearms_act_section1_reducer(firearm_details, good_on_application_documents)
     summary += firearms_act_section2_reducer(firearm_details, good_on_application_documents)
+    summary += year_of_manufacture_reducer(firearm_details)
 
     return summary
 
@@ -274,3 +276,16 @@ def firearms_act_section2_reducer(firearm_details, good_on_application_documents
         ("shotgun-certificate-expiry-date", firearm_details["section_certificate_date_of_expiry"]),
         ("shotgun-certificate-number", firearm_details["section_certificate_number"]),
     )
+
+
+def year_of_manufacture_reducer(firearm_details):
+    summary = ()
+
+    is_made_before_1938 = firearm_details.get("is_made_before_1938")
+    if is_made_before_1938 is not None:
+        summary += (("made-before-1938", is_made_before_1938),)
+
+    if is_made_before_1938 or is_made_before_1938 is None or is_product_category_made_before_1938(firearm_details):
+        summary += (("manufacture-year", firearm_details["year_of_manufacture"]),)
+
+    return summary
