@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 
 from django.conf import settings
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.shortcuts import redirect
 from django.views.generic import FormView
 
@@ -125,7 +125,7 @@ class SelectOrganisation(LoginRequiredMixin, FormView):
         organisation = get_organisation(self.request, organisation_id)
 
         if "errors" in organisation:
-            return redirect(reverse_lazy("core:register_an_organisation_confirm") + "?show_back_link=True")
+            return redirect(reverse("core:register_an_organisation_confirm") + "?show_back_link=True")
 
         self.request.session["organisation_name"] = organisation["name"]
 
@@ -133,9 +133,9 @@ class SelectOrganisation(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         if self.request.GET.get("back_link") == "applications":
-            success_url = reverse_lazy("applications:applications")
+            success_url = reverse("applications:applications")
         else:
-            success_url = reverse_lazy("core:home")
+            success_url = reverse("core:home")
         return success_url
 
     def get_context_data(self, **kwargs):

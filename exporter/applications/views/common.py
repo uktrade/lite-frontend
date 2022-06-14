@@ -61,7 +61,7 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
         params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
         organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
-        is_user_multiple_organisations = True if len(get_user(self.request)["organisations"]) > 1 else False
+        is_user_multiple_organisations = len(get_user(self.request)["organisations"]) > 1
         context = {
             "applications": applications,
             "organisation": organisation,

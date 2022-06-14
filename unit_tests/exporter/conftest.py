@@ -208,7 +208,7 @@ def mock_get_organisation(requests_mock, mock_exporter_user_me):
     url = client._build_absolute_uri(f"/organisations/{organisation_id}")
     data = {"applications": True}
     requests_mock.get(url=url, json={"id": organisation_id, "name": organisation_name})
-    yield data
+    return data
 
 
 @pytest.fixture
