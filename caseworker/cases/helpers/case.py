@@ -124,6 +124,7 @@ class CaseView(TemplateView):
             "additional_contacts": get_case_additional_contacts(self.request, self.case_id),
             "activity": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
             "permissions": self.permissions,
+            "is_tau_user": self.is_tau_user(),
             "can_set_done": can_set_done
             and (self.queue["is_system_queue"] and user_assigned_queues)
             or not self.queue["is_system_queue"],
