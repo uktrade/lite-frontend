@@ -32,6 +32,14 @@ const clearCleList = () => {
   });
 };
 
+const removeNoneCleEntry = () => {
+  const tokenFieldInput = document.querySelector(
+    "#control_list_entries .tokenfield-input"
+  );
+  tokenFieldInput.style.removeProperty("display");
+  clearCleList();
+};
+
 const createNoneCleEntry = () => {
   const tokenFieldInput = document.querySelector(
     "#control_list_entries .tokenfield-input"
@@ -53,19 +61,12 @@ const createNoneCleEntry = () => {
       "#div_id_does_not_have_control_list_entries input"
     );
     doesNotHaveCleSentenceChecked.checked = false;
+    removeNoneCleEntry();
   });
   newLi.append(newSpan, newHref);
   clearCleList();
   tokenFieldInput.style.display = "none";
   notListedSuggestionField.appendChild(newLi);
-};
-
-const removeNoneCleEntry = () => {
-  const tokenFieldInput = document.querySelector(
-    "#control_list_entries .tokenfield-input"
-  );
-  tokenFieldInput.style.removeProperty("display");
-  clearCleList();
 };
 
 const createButtonsForCle = (globalCheckedProductsWithCle) => {
@@ -114,6 +115,10 @@ export const addDeleteExporterCleSuggestions = (
 
   // See if product is checked if YES then create buttons.
   if (checked) {
+    // Early return if exporter did not pick cle.
+    if (!globalCleMatchToItems[id]) {
+      return;
+    }
     globalCleMatchToItems[id].forEach((cle) => {
       const newProduct = new Object();
       newProduct[id] = cle;
@@ -187,6 +192,14 @@ const initTauControlListEntry = () => {
     });
   });
 
+  if (!doesNotHaveCleSentence) {
+    return;
+  }
+
+  // Check for TAU edit page if CLE is None
+  if (doesNotHaveCleSentence.checked) {
+    createNoneCleEntry();
+  }
   // The button event for "Select that this product is not on the control list"
   doesNotHaveCleSentence.addEventListener("click", (event) => {
     const checked = event.currentTarget.checked;

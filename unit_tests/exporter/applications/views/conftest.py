@@ -9,12 +9,6 @@ from exporter.goods.forms.firearms import FirearmSerialIdentificationMarkingsFor
 
 
 @pytest.fixture
-def good_id(data_standard_case):
-    good = data_standard_case["case"]["data"]["goods"][0]["good"]
-    return good["id"]
-
-
-@pytest.fixture
 def mock_application_get(requests_mock, data_standard_case):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/')
@@ -24,7 +18,18 @@ def mock_application_get(requests_mock, data_standard_case):
 @pytest.fixture
 def mock_good_get(requests_mock, data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]
-    good["good"]["is_pv_graded"] = {"key": "yes", "value": "Yes"}
+    good["good"].update(
+        {
+            "is_pv_graded": {"key": "yes", "value": "Yes"},
+            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+        }
+    )
+    good["good"]["firearm_details"].update(
+        {
+            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "No firearm act section",
+        }
+    )
     url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
     return requests_mock.get(url=url, json=good)
 

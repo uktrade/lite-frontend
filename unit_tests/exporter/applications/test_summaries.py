@@ -30,7 +30,7 @@ def test_get_edit_link_factory(mocker):
     )
 
 
-def test_edit_links(mocker):
+def test_add_edit_links(mocker):
     mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
     mock_reverse.side_effect = lambda name, kwargs: f"/{kwargs['pk']}/{kwargs['good_pk']}/{name}/"
 
@@ -52,7 +52,7 @@ def test_edit_links(mocker):
         "has-another-edit-link": "another-edit-link-name",
     }
 
-    summary_with_edit_links = add_edit_links(application, good, summary, edit_links)
+    summary_with_edit_links = add_edit_links(summary, edit_links, application, good)
     assert summary_with_edit_links == (
         ("no-edit-link", "value", None),
         (
@@ -69,7 +69,6 @@ def test_edit_links(mocker):
 
 
 def test_firearm_product_summary():
-    application = {"id": uuid.uuid4()}
     product_document = {
         "description": "Document description",
         "id": uuid.uuid4(),
@@ -128,110 +127,90 @@ def test_firearm_product_summary():
         "section-five-certificate": section_5_document,
     }
 
-    def _get_test_url(name):
-        return f'/applications/{application["id"]}/goods/{good["id"]}/firearm/edit/{name}/'
-
-    assert firearm_product_summary(application, good, is_user_rfd, organisation_documents,) == (
+    assert firearm_product_summary(good, is_user_rfd, organisation_documents) == (
         (
             "firearm-type",
             "Type",
             "Select the type of firearm product",
-            None,
         ),
         (
             "firearm-category",
             "Category",
             "Firearm category",
-            _get_test_url("category"),
         ),
         (
             "name",
             "name",
             "Give the product a descriptive name",
-            _get_test_url("name"),
         ),
         (
             "is-good-controlled",
             "Yes is controlled",
             "Do you know the product's control list entry?",
-            _get_test_url("control-list-entries"),
         ),
         (
             "control-list-entries",
             "ML1, ML1a",
             "Enter the control list entry",
-            _get_test_url("control-list-entries"),
         ),
         (
             "is-pv-graded",
             "Not pv graded",
             "Does the product have a government security grading or classification?",
-            _get_test_url("pv-grading"),
         ),
         (
             "calibre",
             "calibre",
             "What is the calibre of the product?",
-            _get_test_url("calibre"),
         ),
         (
             "is-replica",
             "No",
             "Is the product a replica firearm?",
-            _get_test_url("replica"),
         ),
         (
             "is-registered-firearms-dealer",
             "Yes",
             "Are you a registered firearms dealer?",
-            _get_test_url("registered-firearms-dealer"),
         ),
         (
             "is-covered-by-firearm-act-section-five",
             False,
             "Is the product covered by section 5 of the Firearms Act 1968?",
-            _get_test_url("section-5-firearms-act-1968"),
         ),
         (
             "section-5-certificate-document",
             f'<a class="govuk-link govuk-link--no-visited-state" href="/organisation/document/{section_5_document["id"]}/" target="_blank">section5.pdf</a>',
             "Upload your section 5 letter of authority",
-            _get_test_url("letter-of-authority"),
         ),
         (
             "section-5-certificate-reference-number",
             "section-certificate-number",
             "Certificate reference number",
-            _get_test_url("letter-of-authority"),
         ),
         (
             "section-5-certificate-date-of-expiry",
             "9 October 2020",
             "Certificate date of expiry",
-            _get_test_url("letter-of-authority"),
         ),
         (
             "has-product-document",
             "Yes",
             "Do you have a document that shows what your product is and what it’s designed to do?",
-            _get_test_url("product-document-availability"),
         ),
         (
             "is-document-sensitive",
             "No",
             "Is the document rated above Official-sensitive?",
-            _get_test_url("product-document-sensitivity"),
         ),
         (
             "product-document",
             f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good["id"]}/documents/{product_document["id"]}/" target="_blank">product-document.pdf</a>',
             "Upload a document that shows what your product is designed to do",
-            _get_test_url("product-document"),
         ),
         (
             "product-document-description",
             "Document description",
             "Description (optional)",
-            _get_test_url("product-document"),
         ),
     )
