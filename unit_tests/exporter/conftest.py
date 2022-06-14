@@ -201,7 +201,7 @@ def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
     yield data
 
 
-@pytest.fixture(autouse=False)
+@pytest.fixture
 def mock_get_organisation(requests_mock, mock_exporter_user_me):
     organisation_id = mock_exporter_user_me["organisations"][0]["id"]
     organisation_name = mock_exporter_user_me["organisations"][0]["name"]
