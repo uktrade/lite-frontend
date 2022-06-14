@@ -11,6 +11,7 @@ from core.summaries.reducers import (
     firearm_reducer,
     firearms_act_reducer,
     firearms_act_section1_reducer,
+    firearms_act_section2_reducer,
     firearms_act_section5_reducer,
     has_product_document_reducer,
     is_good_controlled_reducer,
@@ -318,7 +319,14 @@ def test_has_product_document_reducer(good, output):
 
 
 def test_firearm_on_application_reducer(mocker):
-    mock_firearms_act_section1_reducer = mocker.patch("core.summaries.reducers.firearms_act_section1_reducer")
+    mock_firearms_act_section1_reducer = mocker.patch(
+        "core.summaries.reducers.firearms_act_section1_reducer",
+        return_value=(),
+    )
+    mock_firearms_act_section2_reducer = mocker.patch(
+        "core.summaries.reducers.firearms_act_section2_reducer",
+        return_value=(),
+    )
 
     good_on_application = {
         "firearm_details": {
@@ -336,7 +344,11 @@ def test_firearm_on_application_reducer(mocker):
         ("number-of-items", 2),
         ("total-value", Decimal("14.44")),
     )
-    assert mock_firearms_act_section1_reducer.called_with(
+    mock_firearms_act_section1_reducer.assert_called_with(
+        good_on_application["firearm_details"],
+        good_on_application_documents,
+    )
+    mock_firearms_act_section2_reducer.assert_called_with(
         good_on_application["firearm_details"],
         good_on_application_documents,
     )
@@ -391,3 +403,54 @@ def test_firearm_on_application_reducer(mocker):
 )
 def test_firearms_act_section1_reducer(firearm_details, good_on_application_documents, output):
     assert firearms_act_section1_reducer(firearm_details, good_on_application_documents) == output
+
+
+@pytest.mark.parametrize(
+    "firearm_details,good_on_application_documents,output",
+    (
+        (
+            {},
+            {},
+            (),
+        ),
+        (
+            {
+                "firearms_act_section": "not-section-2",
+            },
+            {},
+            (),
+        ),
+        (
+            {
+                "firearms_act_section": FirearmsActSections.SECTION_2,
+                "section_certificate_missing": True,
+                "section_certificate_missing_reason": "I do not have a shotgun certificate",
+            },
+            {},
+            (
+                ("shotgun-certificate", None),
+                ("shotgun-certificate-missing-reason", "I do not have a shotgun certificate"),
+            ),
+        ),
+        (
+            {
+                "firearms_act_section": FirearmsActSections.SECTION_2,
+                "section_certificate_missing": False,
+                "section_certificate_date_of_expiry": "2024-02-01",
+                "section_certificate_number": "12345",
+            },
+            {
+                FirearmsActDocumentType.SECTION_2: {
+                    "id": "shotgun-certificate-id",
+                },
+            },
+            (
+                ("shotgun-certificate", {"id": "shotgun-certificate-id"}),
+                ("shotgun-certificate-expiry-date", "2024-02-01"),
+                ("shotgun-certificate-number", "12345"),
+            ),
+        ),
+    ),
+)
+def test_firearms_act_section2_reducer(firearm_details, good_on_application_documents, output):
+    assert firearms_act_section2_reducer(firearm_details, good_on_application_documents) == output

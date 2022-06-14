@@ -228,6 +228,9 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
         ("total-value", Decimal(good_on_application["value"])),
     )
 
+    summary += firearms_act_section1_reducer(firearm_details, good_on_application_documents)
+    summary += firearms_act_section2_reducer(firearm_details, good_on_application_documents)
+
     return summary
 
 
@@ -249,4 +252,25 @@ def firearms_act_section1_reducer(firearm_details, good_on_application_documents
         ("firearm-certificate", good_on_application_documents[FirearmsActDocumentType.SECTION_1]),
         ("firearm-certificate-expiry-date", firearm_details["section_certificate_date_of_expiry"]),
         ("firearm-certificate-number", firearm_details["section_certificate_number"]),
+    )
+
+
+def firearms_act_section2_reducer(firearm_details, good_on_application_documents):
+    firearms_act_section = firearm_details.get("firearms_act_section")
+    if not firearms_act_section:
+        return ()
+
+    if not firearms_act_section == FirearmsActSections.SECTION_2:
+        return ()
+
+    if firearm_details["section_certificate_missing"]:
+        return (
+            ("shotgun-certificate", None),
+            ("shotgun-certificate-missing-reason", firearm_details["section_certificate_missing_reason"]),
+        )
+
+    return (
+        ("shotgun-certificate", good_on_application_documents[FirearmsActDocumentType.SECTION_2]),
+        ("shotgun-certificate-expiry-date", firearm_details["section_certificate_date_of_expiry"]),
+        ("shotgun-certificate-number", firearm_details["section_certificate_number"]),
     )
