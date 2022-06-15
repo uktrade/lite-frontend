@@ -15,7 +15,7 @@ class BaseForm(forms.Form):
 
         self.helper.layout = Layout(HTML.h1(self.Layout.TITLE), *self.get_layout_fields(), *self.get_layout_actions())
 
-    def get_layout_fields(self):
+    def get_layout_fields(self):  # pragma: no cover
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
 
     def get_layout_actions(self):
