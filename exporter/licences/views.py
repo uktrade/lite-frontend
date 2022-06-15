@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
 from exporter.core.objects import Tab
-from exporter.core.services import get_open_general_licences, get_control_list_entries, get_countries, get_organisation
+from exporter.core.services import get_open_general_licences, get_control_list_entries, get_countries
 from exporter.licences import filters
 from exporter.licences.helpers import (
     get_potential_ogl_control_list_entries,
