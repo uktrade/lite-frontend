@@ -233,6 +233,7 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
     summary += firearms_act_section2_reducer(firearm_details, good_on_application_documents)
     summary += year_of_manufacture_reducer(firearm_details)
     summary += is_onward_exported_reducer(firearm_details)
+    summary += is_deactivated_reducer(firearm_details)
 
     return summary
 
@@ -301,4 +302,16 @@ def is_onward_exported_reducer(firearm_details):
         summary += (("is-incorporated", firearm_details["is_onward_incorporated"]),)
         if firearm_details["is_onward_incorporated"]:
             summary += (("is-incorporated-comments", firearm_details["is_onward_incorporated_comments"]),)
+    return summary
+
+
+def is_deactivated_reducer(firearm_details):
+    summary = (("is-deactivated", firearm_details["is_deactivated"]),)
+    if firearm_details["is_deactivated"]:
+        summary += (
+            ("deactivated-date", firearm_details["date_of_deactivation"]),
+            ("is-proof-standards", firearm_details["is_deactivated_to_standard"]),
+        )
+        if not firearm_details["is_deactivated_to_standard"]:
+            summary += (("is-proof-standards-comments", firearm_details["not_deactivated_to_standard_comments"]),)
     return summary

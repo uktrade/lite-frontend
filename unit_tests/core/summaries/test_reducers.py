@@ -14,6 +14,7 @@ from core.summaries.reducers import (
     firearms_act_section2_reducer,
     firearms_act_section5_reducer,
     has_product_document_reducer,
+    is_deactivated_reducer,
     is_good_controlled_reducer,
     is_onward_exported_reducer,
     is_pv_graded_reducer,
@@ -337,6 +338,10 @@ def test_firearm_on_application_reducer(mocker):
         "core.summaries.reducers.is_onward_exported_reducer",
         return_value=(),
     )
+    mock_is_deactivated_reducer = mocker.patch(
+        "core.summaries.reducers.is_deactivated_reducer",
+        return_value=(),
+    )
 
     good_on_application = {
         "firearm_details": {
@@ -366,6 +371,9 @@ def test_firearm_on_application_reducer(mocker):
         good_on_application["firearm_details"],
     )
     mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application["firearm_details"],
+    )
+    mock_is_deactivated_reducer.assert_called_with(
         good_on_application["firearm_details"],
     )
 
@@ -560,3 +568,44 @@ def test_year_of_manufacture_reducer(firearm_details, output):
 )
 def test_is_onward_exported_reducer(firearm_details, output):
     assert is_onward_exported_reducer(firearm_details) == output
+
+
+@pytest.mark.parametrize(
+    "firearm_details,output",
+    (
+        (
+            {
+                "is_deactivated": False,
+            },
+            (("is-deactivated", False),),
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "date_of_deactivation": "2020-10-09",
+                "is_deactivated_to_standard": True,
+            },
+            (
+                ("is-deactivated", True),
+                ("deactivated-date", "2020-10-09"),
+                ("is-proof-standards", True),
+            ),
+        ),
+        (
+            {
+                "is_deactivated": True,
+                "date_of_deactivation": "2020-10-09",
+                "is_deactivated_to_standard": False,
+                "not_deactivated_to_standard_comments": "Not deactivated to standard",
+            },
+            (
+                ("is-deactivated", True),
+                ("deactivated-date", "2020-10-09"),
+                ("is-proof-standards", False),
+                ("is-proof-standards-comments", "Not deactivated to standard"),
+            ),
+        ),
+    ),
+)
+def test_is_deactivated_reducer(firearm_details, output):
+    assert is_deactivated_reducer(firearm_details) == output
