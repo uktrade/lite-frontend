@@ -25,7 +25,7 @@ from exporter.organisation.services import (
     update_document_on_organisation,
 )
 
-from .decorators import expect_status
+from exporter.core.common.decorators import expect_status
 
 
 class OrganisationFirearmActCertificateAction:

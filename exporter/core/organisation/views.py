@@ -10,7 +10,7 @@ from lite_forms.generators import error_page
 from core.auth.views import LoginRequiredMixin
 
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.applications.views.goods.add_good_firearm.views.decorators import expect_status
+from exporter.core.common.decorators import expect_status
 from exporter.auth.services import authenticate_exporter_user
 from exporter.organisation.members.services import get_user
 from exporter.core.services import get_organisation

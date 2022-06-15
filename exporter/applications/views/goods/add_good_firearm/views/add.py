@@ -83,8 +83,8 @@ from .conditionals import (
     should_display_is_registered_firearms_dealer_step,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
-from .decorators import expect_status
-from .exceptions import ServiceError
+from exporter.core.common.decorators import expect_status
+from exporter.core.common.exceptions import ServiceError
 from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
     AddGoodFirearmPayloadBuilder,

@@ -1,6 +1,6 @@
 from functools import wraps
 
-from .exceptions import ServiceError
+from exporter.core.common.exceptions import ServiceError
 
 
 def expect_status(expected_status, logger_message, error_message):

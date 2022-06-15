@@ -3,8 +3,7 @@ from decimal import Decimal
 
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
-from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Field, HTML, Layout, Submit
+from crispy_forms_gds.layout import Field, HTML
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -12,6 +11,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
+from exporter.core.common.forms import BaseForm
 from core.constants import FirearmsActSections
 from core.forms.layouts import (
     ConditionalCheckbox,
@@ -76,28 +76,7 @@ class TextChoice(Choice):
         super().__init__(choice.value, choice.label, **kwargs)
 
 
-class BaseFirearmForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        for field in self.fields.values():
-            if isinstance(field, forms.FileField):
-                self.helper.attrs = {"enctype": "multipart/form-data"}
-                break
-
-        self.helper.layout = Layout(HTML.h1(self.Layout.TITLE), *self.get_layout_fields(), *self.get_layout_actions())
-
-    def get_layout_fields(self):
-        raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
-
-    def get_layout_actions(self):
-        return [
-            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
-        ]
-
-
-class FirearmCategoryForm(BaseFirearmForm):
+class FirearmCategoryForm(BaseForm):
     class Layout:
         TITLE = "Firearm category"
 
@@ -151,7 +130,7 @@ class FirearmCategoryForm(BaseFirearmForm):
         raise forms.ValidationError('Select a firearm category, or select "None of the above"')
 
 
-class FirearmNameForm(BaseFirearmForm):
+class FirearmNameForm(BaseForm):
     class Layout:
         TITLE = "Give the product a descriptive name"
 
@@ -176,7 +155,7 @@ class FirearmNameForm(BaseFirearmForm):
         )
 
 
-class FirearmProductControlListEntryForm(BaseFirearmForm):
+class FirearmProductControlListEntryForm(BaseForm):
     class Layout:
         TITLE = "Do you know the product's control list entry?"
 
@@ -241,7 +220,7 @@ class FirearmProductControlListEntryForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmPvGradingForm(BaseFirearmForm):
+class FirearmPvGradingForm(BaseForm):
     class Layout:
         TITLE = "Does the product have a government security grading or classification?"
 
@@ -269,7 +248,7 @@ class FirearmPvGradingForm(BaseFirearmForm):
         )
 
 
-class FirearmPvGradingDetailsForm(BaseFirearmForm):
+class FirearmPvGradingDetailsForm(BaseForm):
     class Layout:
         TITLE = "What is the security grading or classification?"
 
@@ -348,7 +327,7 @@ class FirearmPvGradingDetailsForm(BaseFirearmForm):
         )
 
 
-class FirearmCalibreForm(BaseFirearmForm):
+class FirearmCalibreForm(BaseForm):
     class Layout:
         TITLE = "What is the calibre of the product?"
 
@@ -363,7 +342,7 @@ class FirearmCalibreForm(BaseFirearmForm):
         return ("calibre",)
 
 
-class FirearmReplicaForm(BaseFirearmForm):
+class FirearmReplicaForm(BaseForm):
     class Layout:
         TITLE = "Is the product a replica firearm?"
 
@@ -412,7 +391,7 @@ class FirearmReplicaForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmRFDValidityForm(BaseFirearmForm):
+class FirearmRFDValidityForm(BaseForm):
     class Layout:
         TITLE = "Is your registered firearms dealer certificate still valid?"
 
@@ -455,7 +434,7 @@ class FirearmRFDValidityForm(BaseFirearmForm):
         )
 
 
-class FirearmRegisteredFirearmsDealerForm(BaseFirearmForm):
+class FirearmRegisteredFirearmsDealerForm(BaseForm):
     class Layout:
         TITLE = "Are you a registered firearms dealer?"
 
@@ -476,7 +455,7 @@ class FirearmRegisteredFirearmsDealerForm(BaseFirearmForm):
         return ("is_registered_firearm_dealer",)
 
 
-class FirearmAttachRFDCertificate(BaseFirearmForm):
+class FirearmAttachRFDCertificate(BaseForm):
     class Layout:
         TITLE = "Upload a registered firearms dealer certificate"
 
@@ -530,7 +509,7 @@ class FirearmAttachRFDCertificate(BaseFirearmForm):
         )
 
 
-class FirearmDocumentAvailability(BaseFirearmForm):
+class FirearmDocumentAvailability(BaseForm):
     class Layout:
         TITLE = "Do you have a document that shows what your product is and what it's designed to do?"
 
@@ -579,7 +558,7 @@ class FirearmDocumentAvailability(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmDocumentSensitivityForm(BaseFirearmForm):
+class FirearmDocumentSensitivityForm(BaseForm):
     class Layout:
         TITLE = "Is the document rated above Official-sensitive?"
 
@@ -609,7 +588,7 @@ class FirearmDocumentSensitivityForm(BaseFirearmForm):
         )
 
 
-class FirearmDocumentUploadForm(BaseFirearmForm):
+class FirearmDocumentUploadForm(BaseForm):
     class Layout:
         TITLE = "Upload a document that shows what your product is designed to do"
 
@@ -660,7 +639,7 @@ class FirearmDocumentUploadForm(BaseFirearmForm):
         return layout_fields
 
 
-class FirearmFirearmAct1968Form(BaseFirearmForm):
+class FirearmFirearmAct1968Form(BaseForm):
     class Layout:
         TITLE = "Which section of the Firearms Act 1968 is the product covered by?"
 
@@ -714,7 +693,7 @@ class FirearmFirearmAct1968Form(BaseFirearmForm):
         return cleaned_data
 
 
-class BaseAttachFirearmActCertificateForm(BaseFirearmForm):
+class BaseAttachFirearmActCertificateForm(BaseForm):
     file_type = None
 
     class Layout:
@@ -833,7 +812,7 @@ class FirearmAttachSection5LetterOfAuthorityForm(BaseAttachFirearmActCertificate
     file_type = "section 5 letter of authority"
 
 
-class FirearmSection5Form(BaseFirearmForm):
+class FirearmSection5Form(BaseForm):
     class Layout:
         TITLE = "Is the product covered by section 5 of the Firearms Act 1968?"
 
@@ -855,7 +834,7 @@ class FirearmSection5Form(BaseFirearmForm):
         return ("is_covered_by_section_5",)
 
 
-class FirearmMadeBefore1938Form(BaseFirearmForm):
+class FirearmMadeBefore1938Form(BaseForm):
     class Layout:
         TITLE = "Was the product made before 1938?"
 
@@ -876,7 +855,7 @@ class FirearmMadeBefore1938Form(BaseFirearmForm):
         return ("is_made_before_1938",)
 
 
-class FirearmYearOfManufactureForm(BaseFirearmForm):
+class FirearmYearOfManufactureForm(BaseForm):
     class Layout:
         TITLE = "What year was it made?"
 
@@ -896,7 +875,7 @@ class FirearmYearOfManufactureForm(BaseFirearmForm):
         return ("year_of_manufacture",)
 
 
-class FirearmOnwardExportedForm(BaseFirearmForm):
+class FirearmOnwardExportedForm(BaseForm):
     class Layout:
         TITLE = "Will the product be onward exported to any additional countries?"
 
@@ -927,7 +906,7 @@ class FirearmOnwardExportedForm(BaseFirearmForm):
         )
 
 
-class FirearmOnwardAlteredProcessedForm(BaseFirearmForm):
+class FirearmOnwardAlteredProcessedForm(BaseForm):
     class Layout:
         TITLE = "Will the item be altered or processed before it is exported again?"
 
@@ -978,7 +957,7 @@ class FirearmOnwardAlteredProcessedForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmIsDeactivatedForm(BaseFirearmForm):
+class FirearmIsDeactivatedForm(BaseForm):
     class Layout:
         TITLE = "Has the product been deactivated?"
 
@@ -999,7 +978,7 @@ class FirearmIsDeactivatedForm(BaseFirearmForm):
         return ("is_deactivated",)
 
 
-class FirearmDeactivationDetailsForm(BaseFirearmForm):
+class FirearmDeactivationDetailsForm(BaseForm):
     class Layout:
         TITLE = "Has the product been deactivated?"
 
@@ -1074,7 +1053,7 @@ class FirearmDeactivationDetailsForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmOnwardIncorporatedForm(BaseFirearmForm):
+class FirearmOnwardIncorporatedForm(BaseForm):
     class Layout:
         TITLE = "Will the product be incorporated into another item before it is onward exported?"
 
@@ -1124,7 +1103,7 @@ class FirearmOnwardIncorporatedForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmQuantityAndValueForm(BaseFirearmForm):
+class FirearmQuantityAndValueForm(BaseForm):
     class Layout:
         TITLE = "Quantity and value"
 
@@ -1157,7 +1136,7 @@ class FirearmQuantityAndValueForm(BaseFirearmForm):
         )
 
 
-class FirearmSerialIdentificationMarkingsForm(BaseFirearmForm):
+class FirearmSerialIdentificationMarkingsForm(BaseForm):
     class Layout:
         TITLE = "Will each product have a serial number or other identification marking?"
 
@@ -1215,7 +1194,7 @@ class FirearmSerialIdentificationMarkingsForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmSerialNumbersForm(BaseFirearmForm):
+class FirearmSerialNumbersForm(BaseForm):
     class Layout:
         TITLE = "Enter serial numbers or other identification markings"
 
@@ -1249,7 +1228,7 @@ class FirearmSerialNumbersForm(BaseFirearmForm):
         return cleaned_data
 
 
-class FirearmRFDInvalidForm(BaseFirearmForm):
+class FirearmRFDInvalidForm(BaseForm):
     class Layout:
         TITLE = "You must be registered as a firearms dealer"
 
