@@ -1,5 +1,13 @@
 import pytest
-from exporter.core.registration import forms
+from exporter.core.organisation import forms
+
+
+@pytest.fixture()
+def data_organisations():
+    return [
+        {"id": "9c2222db-98e5-47e8-9e01-653354e95311", "name": "org1"},
+        {"id": "9c2222db-98e5-47e8-9e01-653354e95222", "name": "org2"},
+    ]
 
 
 @pytest.mark.parametrize(
@@ -199,3 +207,18 @@ def test_register_non_uk_address_details_form():
         "phone_number": ["Enter a phone number"],
         "country": ["Enter a country"],
     }
+
+
+def test_select_organisation_form_invalid(data_organisations):
+
+    form = forms.SelectOrganisationForm(organisations=data_organisations, data={})
+    assert not form.is_valid()
+    assert form.errors == {"organisation": ["Select an organisation"]}
+
+
+def test_select_organisation_form_valid(data_organisations):
+
+    form = forms.SelectOrganisationForm(
+        organisations=data_organisations, data={"organisation": data_organisations[0]["id"]}
+    )
+    assert form.is_valid()

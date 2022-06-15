@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
 from exporter.core.objects import Tab
-from exporter.core.services import get_open_general_licences, get_control_list_entries, get_countries
+from exporter.core.services import get_open_general_licences, get_control_list_entries, get_countries, get_organisation
 from exporter.licences import filters
 from exporter.licences.helpers import (
     get_potential_ogl_control_list_entries,
@@ -15,8 +15,9 @@ from exporter.licences.helpers import (
     get_potential_ogl_sites,
 )
 from exporter.licences.services import get_licences, get_licence, get_nlr_letters
-from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage
+from exporter.organisation.members.services import get_user
 
+from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage
 from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
@@ -82,7 +83,15 @@ class ListOpenAndStandardLicences(AbstractListView):
             licence_type=self.object_name, control_list_entries=self.control_list, countries=self.countries
         )
         licences = get_licences(self.request, licence_type="licence")
-        return super().get_context_data(data=licences, filters=filter_bar, **kwargs)
+
+        context = super().get_context_data(data=licences, filters=filter_bar, **kwargs)
+        context.update(
+            {
+                "is_user_multiple_organisations": len(get_user(self.request)["organisations"]) > 1,
+                "organisation": get_organisation(self.request, self.request.session["organisation"]),
+            }
+        )
+        return context
 
 
 class ListClearances(AbstractListView):

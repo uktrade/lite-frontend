@@ -58,88 +58,29 @@ def test_firearm_product_details_context(
     firearm_product_details_url,
     mock_good_get,
 ):
+
     response = authorized_client.get(firearm_product_details_url)
     assert response.status_code == 200
     assert response.context["summary"] == (
+        ("firearm-type", "Firearms", "Select the type of firearm product"),
+        ("firearm-category", "Non automatic shotgun, Non automatic rim-fired handgun", "Firearm category"),
+        ("name", "p1", "Give the product a descriptive name"),
+        ("is-good-controlled", "Yes", "Do you know the product's control list entry?"),
+        ("control-list-entries", "ML1a, ML22b", "Enter the control list entry"),
+        ("is-pv-graded", "Yes", "Does the product have a government security grading or classification?"),
+        ("pv-grading-prefix", "NATO", "Enter a prefix (optional)"),
+        ("pv-grading-grading", "Official", "What is the security grading or classification?"),
+        ("pv-grading-suffix", "SUFFIX", "Enter a suffix (optional)"),
+        ("pv-grading-issuing-authority", "Government entity", "Name and address of the issuing authority"),
+        ("pv-grading-details-reference", "GR123", "Reference"),
+        ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
+        ("calibre", "0.25", "What is the calibre of the product?"),
+        ("is-replica", "No", "Is the product a replica firearm?"),
+        ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
         (
-            "firearm-type",
-            "Firearms",
-            "Select the type of firearm product",
-        ),
-        (
-            "firearm-category",
-            "Non automatic shotgun, Non automatic rim-fired handgun",
-            "Firearm category",
-        ),
-        (
-            "name",
-            "p1",
-            "Give the product a descriptive name",
-        ),
-        (
-            "is-good-controlled",
-            "Yes",
-            "Do you know the product's control list entry?",
-        ),
-        (
-            "control-list-entries",
-            "ML1a, ML22b",
-            "Enter the control list entry",
-        ),
-        (
-            "is-pv-graded",
-            "Yes",
-            "Does the product have a government security grading or classification?",
-        ),
-        (
-            "pv-grading-prefix",
-            "NATO",
-            "Enter a prefix (optional)",
-        ),
-        (
-            "pv-grading-grading",
-            "Official",
-            "What is the security grading or classification?",
-        ),
-        (
-            "pv-grading-suffix",
-            "SUFFIX",
-            "Enter a suffix (optional)",
-        ),
-        (
-            "pv-grading-issuing-authority",
-            "Government entity",
-            "Name and address of the issuing authority",
-        ),
-        (
-            "pv-grading-details-reference",
-            "GR123",
-            "Reference",
-        ),
-        (
-            "pv-grading-details-date-of-issue",
-            "20 February 2020",
-            "Date of issue",
-        ),
-        (
-            "calibre",
-            "0.25",
-            "What is the calibre of the product?",
-        ),
-        (
-            "is-replica",
-            "No",
-            "Is the product a replica firearm?",
-        ),
-        (
-            "is-registered-firearms-dealer",
-            "Yes",
-            "Are you a registered firearms dealer?",
-        ),
-        (
-            "is-covered-by-firearm-act-section-five",
-            "Yes",
-            "Is the product covered by section 5 of the Firearms Act 1968?",
+            "firearms-act-1968-section",
+            "firearms_act_section5",
+            "Which section of the Firearms Act 1968 is the product covered by?",
         ),
         (
             "section-5-certificate-missing",
@@ -156,19 +97,11 @@ def test_firearm_product_details_context(
             "Yes",
             "Do you have a document that shows what your product is and what it’s designed to do?",
         ),
-        (
-            "is-document-sensitive",
-            "No",
-            "Is the document rated above Official-sensitive?",
-        ),
+        ("is-document-sensitive", "No", "Is the document rated above Official-sensitive?"),
         (
             "product-document",
             '<a class="govuk-link govuk-link--no-visited-state" href="/goods/8b730c06-ab4e-401c-aeb0-32b3c92e912c/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
             "Upload a document that shows what your product is designed to do",
         ),
-        (
-            "product-document-description",
-            "product data sheet",
-            "Description (optional)",
-        ),
+        ("product-document-description", "product data sheet", "Description (optional)"),
     )

@@ -67,7 +67,7 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             else:
                 return reverse("core:register_an_organisation_confirm")
         elif len(user["organisations"]) > 1:
-            return reverse("core:pick_organisation")
+            return reverse("core:select_organisation")
         return settings.LOGIN_REDIRECT_URL
 
     def fetch_token(self, request, auth_code):
