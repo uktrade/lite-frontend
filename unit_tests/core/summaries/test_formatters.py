@@ -17,6 +17,7 @@ from core.summaries.formatters import (
     model_choices_formatter,
     money_formatter,
     organisation_document_formatter,
+    template_formatter,
     to_date,
     yesno,
 )
@@ -316,3 +317,8 @@ class TextChoice(models.TextChoices):
 def test_model_choices_formatter(input, output):
     formatter = model_choices_formatter(TextChoice)
     assert formatter(input) == output
+
+
+def test_template_formatter():
+    formatter = template_formatter("tests/template-formatter.html", lambda val: {"key": val})
+    assert formatter("value") == "<p>value</p>\n"

@@ -3,6 +3,7 @@ import datetime
 from decimal import Decimal
 from operator import itemgetter
 
+from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.html import escape
@@ -106,6 +107,15 @@ def model_choices_formatter(model_choice):
         return model_choice[val].label
 
     return _model_choices_formatter
+
+
+def template_formatter(template_name, context_generator):
+    def _template_formatter(val):
+        template = get_template(template_name)
+        context = context_generator(val)
+        return template.render(context)
+
+    return _template_formatter
 
 
 def organisation_document_formatter(document):

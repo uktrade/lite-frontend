@@ -1,7 +1,14 @@
 import datetime
 import pytest
+import os
 
 from core import client
+
+
+@pytest.fixture(autouse=True)
+def add_test_template_dirs(settings):
+    template_dir = os.path.join(settings.BASE_DIR, "unit_tests", "core", "summaries", "templates")
+    settings.TEMPLATES[0]["DIRS"].append(template_dir)
 
 
 @pytest.fixture
