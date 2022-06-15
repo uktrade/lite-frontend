@@ -144,8 +144,11 @@ def client(authorized_client, mock_control_list_entries, mock_countries, mock_pv
     return authorized_client
 
 
-def test_open_and_standard_licences(client, data_list_licences, mock_exporter_user_me):
+def test_open_and_standard_licences(client, data_list_licences):
     expected_filters = ["reference", "clc", "country", "end_user", "active_only", "licence_type"]
+    session = client.session
+    session["organisation_name"] = "test company"
+    session.save()
 
     response = client.get(reverse("licences:list-open-and-standard-licences"))
     assert response.status_code == 200

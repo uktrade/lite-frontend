@@ -308,6 +308,7 @@ def test_select_organisation_load(authorized_client, mock_exporter_user_me):
 def test_select_organisation_licenses(authorized_client, mock_get_organisation, mock_exporter_user_me):
     session = authorized_client.session
     session["organisation_name"] = None
+    session["organisation"] = None
     session.save()
 
     mock_exporter_user_me["organisations"] = mock_exporter_user_me["organisations"] + [
@@ -332,5 +333,5 @@ def test_select_organisation_licenses(authorized_client, mock_get_organisation, 
     )
     assert response.status_code == 302
     assert response.url == "/licences/"
-
+    session["organisation"] = mock_exporter_user_me["organisations"][0]["id"]
     assert authorized_client.session["organisation_name"] == mock_exporter_user_me["organisations"][0]["name"]
