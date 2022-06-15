@@ -15,6 +15,7 @@ from core.summaries.reducers import (
     firearms_act_section5_reducer,
     has_product_document_reducer,
     is_good_controlled_reducer,
+    is_onward_exported_reducer,
     is_pv_graded_reducer,
     is_replica_reducer,
     year_of_manufacture_reducer,
@@ -332,6 +333,10 @@ def test_firearm_on_application_reducer(mocker):
         "core.summaries.reducers.year_of_manufacture_reducer",
         return_value=(),
     )
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(),
+    )
 
     good_on_application = {
         "firearm_details": {
@@ -358,6 +363,9 @@ def test_firearm_on_application_reducer(mocker):
         good_on_application_documents,
     )
     mock_year_of_manufacture_reducer.assert_called_with(
+        good_on_application["firearm_details"],
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
         good_on_application["firearm_details"],
     )
 
@@ -509,3 +517,46 @@ def test_firearms_act_section2_reducer(firearm_details, good_on_application_docu
 )
 def test_year_of_manufacture_reducer(firearm_details, output):
     assert year_of_manufacture_reducer(firearm_details) == output
+
+
+@pytest.mark.parametrize(
+    "firearm_details,output",
+    (
+        (
+            {
+                "is_onward_exported": False,
+            },
+            (("is-onward-exported", False),),
+        ),
+        (
+            {
+                "is_onward_exported": True,
+                "is_onward_altered_processed": False,
+                "is_onward_incorporated": False,
+            },
+            (
+                ("is-onward-exported", True),
+                ("is-altered", False),
+                ("is-incorporated", False),
+            ),
+        ),
+        (
+            {
+                "is_onward_exported": True,
+                "is_onward_altered_processed": True,
+                "is_onward_altered_processed_comments": "This is altered",
+                "is_onward_incorporated": True,
+                "is_onward_incorporated_comments": "This is incorporated",
+            },
+            (
+                ("is-onward-exported", True),
+                ("is-altered", True),
+                ("is-altered-comments", "This is altered"),
+                ("is-incorporated", True),
+                ("is-incorporated-comments", "This is incorporated"),
+            ),
+        ),
+    ),
+)
+def test_is_onward_exported_reducer(firearm_details, output):
+    assert is_onward_exported_reducer(firearm_details) == output

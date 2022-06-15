@@ -232,6 +232,7 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
     summary += firearms_act_section1_reducer(firearm_details, good_on_application_documents)
     summary += firearms_act_section2_reducer(firearm_details, good_on_application_documents)
     summary += year_of_manufacture_reducer(firearm_details)
+    summary += is_onward_exported_reducer(firearm_details)
 
     return summary
 
@@ -288,4 +289,16 @@ def year_of_manufacture_reducer(firearm_details):
     if is_made_before_1938 or is_made_before_1938 is None or is_product_category_made_before_1938(firearm_details):
         summary += (("manufacture-year", firearm_details["year_of_manufacture"]),)
 
+    return summary
+
+
+def is_onward_exported_reducer(firearm_details):
+    summary = (("is-onward-exported", firearm_details["is_onward_exported"]),)
+    if firearm_details["is_onward_exported"]:
+        summary += (("is-altered", firearm_details["is_onward_altered_processed"]),)
+        if firearm_details["is_onward_altered_processed"]:
+            summary += (("is-altered-comments", firearm_details["is_onward_altered_processed_comments"]),)
+        summary += (("is-incorporated", firearm_details["is_onward_incorporated"]),)
+        if firearm_details["is_onward_incorporated"]:
+            summary += (("is-incorporated-comments", firearm_details["is_onward_incorporated_comments"]),)
     return summary
