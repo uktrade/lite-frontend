@@ -122,6 +122,8 @@ class SelectOrganisation(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         organisation_id = form.cleaned_data["organisation"]
+
+        self.request.session["organisation"] = organisation_id
         organisation = get_organisation(self.request, organisation_id)
 
         if "errors" in organisation:
