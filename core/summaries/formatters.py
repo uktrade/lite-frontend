@@ -101,6 +101,13 @@ def money_formatter(val):
     return f"£{val:.2f}"
 
 
+def model_choices_formatter(model_choice):
+    def _model_choices_formatter(val):
+        return model_choice[val].label
+
+    return _model_choices_formatter
+
+
 def organisation_document_formatter(document):
     url = reverse(
         "organisation:document",
