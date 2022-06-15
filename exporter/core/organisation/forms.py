@@ -238,3 +238,28 @@ class RegisterAddressDetailsForm(BaseForm):
             )
         else:
             return ("name", "address", "phone_number", "website", "country")
+
+
+class SelectOrganisationForm(BaseForm):
+    class Layout:
+        TITLE = "Select your organisation"
+
+    organisation = forms.ChoiceField(
+        choices=(),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select an organisation",
+        },
+    )
+
+    def __init__(self, organisations, *args, **kwargs):
+        organisation_choices = [(x["id"], x["name"]) for x in organisations]
+        self.declared_fields["organisation"].choices = organisation_choices
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return (
+            HTML.p("You can switch between organisations from your dashboard."),
+            "organisation",
+        )

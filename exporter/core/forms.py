@@ -1,5 +1,4 @@
 from django.conf import settings
-from exporter.core.helpers import str_date_only
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.core import StartPage, RegisterAnOrganisation
@@ -23,23 +22,6 @@ from django import forms
 from django.forms.widgets import ClearableFileInput
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit, Layout, HTML
-
-
-def select_your_organisation_form(organisations):
-    return Form(
-        "Select an organisation",
-        "You can switch between organisations from your dashboard.",
-        [
-            RadioButtons(
-                name="organisation",
-                options=[
-                    Option(x["id"], x["name"], "Member since " + str_date_only(x["joined_at"])) for x in organisations
-                ],
-            )
-        ],
-        default_button_name="Save and continue",
-        back_link=None,
-    )
 
 
 def register_triage():

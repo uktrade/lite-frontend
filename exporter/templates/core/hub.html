@@ -44,7 +44,7 @@
 			<span class="govuk-!-margin-left-1 govuk-!-margin-right-1">–</span>
 		{% endif %}
 		{% if user_data.organisations|length > 1 %}
-			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:pick_organisation' %}" id="switch-link">
+			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:select_organisation' %}" id="switch-link">
 				{% lcs 'hub.SWITCH_ORG' %} <span class="govuk-visually-hidden">{{ organisation.name }}</span>
 			</a>
 		{% endif %}
