@@ -1,4 +1,7 @@
-from core.constants import FirearmsActSections
+from core.constants import (
+    FirearmsActSections,
+    SerialChoices,
+)
 from core.goods.helpers import is_product_category_made_before_1938 as _is_product_category_made_before_1938
 
 from exporter.core.constants import DocumentType
@@ -6,7 +9,7 @@ from exporter.core.helpers import (
     has_organisation_firearm_act_document as _has_organisation_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
-from exporter.goods.forms.firearms import FirearmSection5Form, FirearmSerialIdentificationMarkingsForm
+from exporter.goods.forms.firearms import FirearmSection5Form
 
 from .constants import (
     AddGoodFirearmSteps,
@@ -131,10 +134,7 @@ def is_serial_numbers_available(wizard):
     serial_numbers_available_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING
     )
-    return (
-        serial_numbers_available_data.get("serial_numbers_available")
-        == FirearmSerialIdentificationMarkingsForm.SerialChoices.AVAILABLE
-    )
+    return serial_numbers_available_data.get("serial_numbers_available") == SerialChoices.AVAILABLE
 
 
 def is_certificate_required(document_type):

@@ -5,7 +5,7 @@ import uuid
 from django.urls import reverse
 
 from core import client
-from exporter.goods.forms.firearms import FirearmSerialIdentificationMarkingsForm
+from core.constants import SerialChoices
 
 
 @pytest.fixture
@@ -71,7 +71,7 @@ def good_on_application(data_standard_case):
             "date_of_deactivation": datetime.date(2007, 12, 12).isoformat(),
             "is_deactivated_to_standard": False,
             "not_deactivated_to_standard_comments": "Not deactivated",
-            "serial_numbers_available": FirearmSerialIdentificationMarkingsForm.SerialChoices.NOT_AVAILABLE,
+            "serial_numbers_available": SerialChoices.NOT_AVAILABLE,
             "no_identification_markings_details": "No markings",
             "serial_numbers": ["111", "222", "333"],
         },

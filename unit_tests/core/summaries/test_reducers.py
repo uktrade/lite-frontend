@@ -5,6 +5,7 @@ from decimal import Decimal
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    SerialChoices,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
@@ -19,6 +20,7 @@ from core.summaries.reducers import (
     is_onward_exported_reducer,
     is_pv_graded_reducer,
     is_replica_reducer,
+    serial_numbers_reducer,
     year_of_manufacture_reducer,
 )
 
@@ -342,6 +344,10 @@ def test_firearm_on_application_reducer(mocker):
         "core.summaries.reducers.is_deactivated_reducer",
         return_value=(),
     )
+    mock_serial_numbers_reducer = mocker.patch(
+        "core.summaries.reducers.serial_numbers_reducer",
+        return_value=(),
+    )
 
     good_on_application = {
         "firearm_details": {
@@ -374,6 +380,9 @@ def test_firearm_on_application_reducer(mocker):
         good_on_application["firearm_details"],
     )
     mock_is_deactivated_reducer.assert_called_with(
+        good_on_application["firearm_details"],
+    )
+    mock_serial_numbers_reducer.assert_called_with(
         good_on_application["firearm_details"],
     )
 
@@ -609,3 +618,48 @@ def test_is_onward_exported_reducer(firearm_details, output):
 )
 def test_is_deactivated_reducer(firearm_details, output):
     assert is_deactivated_reducer(firearm_details) == output
+
+
+@pytest.mark.parametrize(
+    "firearm_details,output",
+    (
+        (
+            {
+                "serial_numbers_available": SerialChoices.AVAILABLE.value,
+                "serial_numbers": ["111", "222"],
+            },
+            (
+                ("has-serial-numbers", SerialChoices.AVAILABLE.value),
+                ("serial-numbers", ["111", "222"]),
+            ),
+        ),
+        (
+            {
+                "serial_numbers_available": SerialChoices.LATER.value,
+                "serial_numbers": ["111", "222"],
+            },
+            (
+                ("has-serial-numbers", SerialChoices.LATER.value),
+                ("serial-numbers", ["111", "222"]),
+            ),
+        ),
+        (
+            {
+                "serial_numbers_available": SerialChoices.NOT_AVAILABLE.value,
+            },
+            (("has-serial-numbers", SerialChoices.NOT_AVAILABLE.value),),
+        ),
+        (
+            {
+                "serial_numbers_available": SerialChoices.NOT_AVAILABLE.value,
+                "no_identification_markings_details": "No markings",
+            },
+            (
+                ("has-serial-numbers", SerialChoices.NOT_AVAILABLE.value),
+                ("no-identification-markings-details", "No markings"),
+            ),
+        ),
+    ),
+)
+def test_serial_numbers_reducer(firearm_details, output):
+    assert serial_numbers_reducer(firearm_details) == output

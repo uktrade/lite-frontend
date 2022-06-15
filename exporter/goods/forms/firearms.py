@@ -11,8 +11,10 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from exporter.core.common.forms import BaseForm
-from core.constants import FirearmsActSections
+from core.constants import (
+    FirearmsActSections,
+    SerialChoices,
+)
 from core.forms.layouts import (
     ConditionalCheckbox,
     ConditionalQuestion,
@@ -20,6 +22,7 @@ from core.forms.layouts import (
     Prefixed,
 )
 
+from exporter.core.common.forms import BaseForm
 from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import (
@@ -1140,11 +1143,6 @@ class FirearmSerialIdentificationMarkingsForm(BaseForm):
     class Layout:
         TITLE = "Will each product have a serial number or other identification marking?"
 
-    class SerialChoices(models.TextChoices):
-        AVAILABLE = "AVAILABLE", "Yes, I can add serial numbers now"
-        LATER = "LATER", "Yes, I can add serial numbers later"
-        NOT_AVAILABLE = "NOT_AVAILABLE", "No"
-
     serial_numbers_available = forms.ChoiceField(
         choices=SerialChoices.choices,
         label="",
@@ -1164,16 +1162,16 @@ class FirearmSerialIdentificationMarkingsForm(BaseForm):
         return (
             ConditionalRadios(
                 "serial_numbers_available",
-                self.SerialChoices.AVAILABLE.label,
+                SerialChoices.AVAILABLE.label,
                 ConditionalQuestion(
-                    self.SerialChoices.LATER.label,
+                    SerialChoices.LATER.label,
                     HTML.p(
                         "You must submit the serial numbers before you can export the products.<br/><br/>"
                         "You can check your application progress, view issued licences and add serial numbers from your dashboard."
                     ),
                 ),
                 ConditionalQuestion(
-                    self.SerialChoices.NOT_AVAILABLE.label,
+                    SerialChoices.NOT_AVAILABLE.label,
                     "no_identification_markings_details",
                 ),
             ),
@@ -1185,10 +1183,10 @@ class FirearmSerialIdentificationMarkingsForm(BaseForm):
         serial_numbers_available = cleaned_data.get("serial_numbers_available")
         no_identification_markings_details = cleaned_data.get("no_identification_markings_details")
 
-        if (serial_numbers_available == self.SerialChoices.NOT_AVAILABLE) and not no_identification_markings_details:
+        if (serial_numbers_available == SerialChoices.NOT_AVAILABLE) and not no_identification_markings_details:
             self.add_error("no_identification_markings_details", "Enter why products will not have serial numbers")
 
-        if serial_numbers_available != self.SerialChoices.NOT_AVAILABLE:
+        if serial_numbers_available != SerialChoices.NOT_AVAILABLE:
             cleaned_data["no_identification_markings_details"] = ""
 
         return cleaned_data

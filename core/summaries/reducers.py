@@ -3,6 +3,7 @@ from decimal import Decimal
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    SerialChoices,
 )
 from core.goods.helpers import is_product_category_made_before_1938
 
@@ -234,6 +235,7 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
     summary += year_of_manufacture_reducer(firearm_details)
     summary += is_onward_exported_reducer(firearm_details)
     summary += is_deactivated_reducer(firearm_details)
+    summary += serial_numbers_reducer(firearm_details)
 
     return summary
 
@@ -314,4 +316,18 @@ def is_deactivated_reducer(firearm_details):
         )
         if not firearm_details["is_deactivated_to_standard"]:
             summary += (("is-proof-standards-comments", firearm_details["not_deactivated_to_standard_comments"]),)
+    return summary
+
+
+def serial_numbers_reducer(firearm_details):
+    summary = (("has-serial-numbers", firearm_details["serial_numbers_available"]),)
+
+    if firearm_details["serial_numbers_available"] in [SerialChoices.AVAILABLE, SerialChoices.LATER]:
+        summary += (("serial-numbers", firearm_details["serial_numbers"]),)
+
+    if firearm_details["serial_numbers_available"] == SerialChoices.NOT_AVAILABLE and firearm_details.get(
+        "no_identification_markings_details"
+    ):
+        summary += (("no-identification-markings-details", firearm_details["no_identification_markings_details"]),)
+
     return summary
