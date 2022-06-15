@@ -16,6 +16,21 @@
         </div>
     </div>
 
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+        {% for key, value in product_on_application_summary %}
+            <div class="govuk-summary-list__row" id="{{ key }}">
+                <dt class="govuk-summary-list__key">
+                    {{ key }}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ value }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+
     {% with firearm_details=good_on_application.firearm_details %}
         <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
             {% if good.firearm_details.firearms_act_section == "firearms_act_section1" %}

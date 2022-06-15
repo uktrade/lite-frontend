@@ -74,6 +74,7 @@ def good_on_application(data_standard_case):
             "serial_numbers_available": SerialChoices.NOT_AVAILABLE,
             "no_identification_markings_details": "No markings",
             "serial_numbers": ["111", "222", "333"],
+            "number_of_items": 3,
         },
     }
 

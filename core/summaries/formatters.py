@@ -9,7 +9,10 @@ from django.utils.formats import date_format
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
-from core.constants import FirearmsActSections
+from core.constants import (
+    FirearmsActSections,
+    SerialChoices,
+)
 
 
 FIREARM_LABELS = {
@@ -177,3 +180,18 @@ def document_formatter(document, url):
     return mark_safe(  # nosec
         f'<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">{name}</a>'
     )
+
+
+FIREARM_ON_APPLICATION_FORMATTERS = {
+    "firearm-certificate-expiry-date": date_formatter("j F Y"),
+    "shotgun-certificate-expiry-date": date_formatter("j F Y"),
+    "made-before-1938": yesno,
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "is-deactivated": yesno,
+    "deactivated-date": date_formatter("j F Y"),
+    "is-proof-standards": yesno,
+    "total-value": money_formatter,
+    "has-serial-numbers": model_choices_formatter(SerialChoices),
+}

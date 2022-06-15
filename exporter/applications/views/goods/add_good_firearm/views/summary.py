@@ -7,6 +7,7 @@ from exporter.applications.services import get_application_documents
 from exporter.applications.summaries import (
     add_edit_links,
     firearm_product_summary,
+    firearm_product_on_application_summary,
     PRODUCT_SUMMARY_EDIT_LINKS,
 )
 from exporter.core.helpers import (
@@ -14,6 +15,7 @@ from exporter.core.helpers import (
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 from exporter.goods.services import get_good_documents
+
 from .mixins import (
     ApplicationMixin,
     GoodMixin,
@@ -89,10 +91,21 @@ class BaseProductOnApplicationSummary(
             if document["good_on_application"] == self.good_on_application["id"]
         }
 
+        summary_good_on_application_documents = {
+            document["document_type"]: document
+            for document in application_documents
+            if document["good_on_application"] == self.good_on_application["id"]
+        }
+
         product_summary = firearm_product_summary(
             self.good,
             self.is_user_rfd,
             self.organisation_documents,
+        )
+
+        product_on_application_summary = firearm_product_on_application_summary(
+            self.good_on_application,
+            summary_good_on_application_documents,
         )
 
         return {
@@ -103,6 +116,7 @@ class BaseProductOnApplicationSummary(
             "good_on_application": self.good_on_application,
             "good_on_application_documents": good_on_application_documents,
             "product_summary": product_summary,
+            "product_on_application_summary": product_on_application_summary,
         }
 
 
