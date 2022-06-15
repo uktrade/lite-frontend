@@ -70,12 +70,8 @@ commands:
       - run:
           name: Install OpenVPN
           command: |
-            sudo apt update && sudo apt install apt-transport-https
-            sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub
-            sudo apt-key add openvpn-repo-pkg-key.pub
-            ### The repository URL will depend on your Ubuntu release name (here we chose "focal" since Ubuntu 20.04 is used
-            sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-focal.list
-            sudo apt update && sudo apt install openvpn3
+            sudo apt-get update
+            sudo apt-get install openvpn openvpn-systemd-resolved
   vpn_connect:
     parameters:
       config:
@@ -87,19 +83,43 @@ commands:
           name: VPN Setup
           background: true
           command: |
+            ip a
+            echo "Public IP before VPN connection is $(curl checkip.amazonaws.com)"
+
             echo ${<<parameters.config>>:?} | base64 --decode > /tmp/config.ovpn
-            ### IMPORTANT: Include the following line to exclude the connection from CircleCI and the link-local range
-            phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
-            if [ -n "$phone_home" ]; then
-              echo -e "\nroute $phone_home 255.255.255.255 net_gateway" >> /tmp/config.ovpn
+
+            vpn_command=(sudo openvpn
+              --config /tmp/config.ovpn
+              --route 169.254.0.0 255.255.0.0 net_gateway
+              --script-security 2
+              --up /etc/openvpn/update-systemd-resolved --up-restart
+              --down /etc/openvpn/update-systemd-resolved --down-pre
+              --dhcp-option DOMAIN-ROUTE .)
+
+            ET_phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
+            echo $ET_phone_home
+
+            if [ -n "$ET_phone_home" ]; then
+              vpn_command+=(--route $ET_phone_home 255.255.255.255 net_gateway)
             fi
-            echo "\nroute 169.254.0.0 255.255.0.0 net_gateway" >> /tmp/config.ovpn
-            # This will start the connection
-            sudo openvpn3 session-start \
-              --config /tmp/config.ovpn \
-              > /tmp/openvpn.log
+
+            for IP in $(host runner.circleci.com | awk '{ print $4; }')
+              do
+                vpn_command+=(--route $IP 255.255.255.255 net_gateway)
+                echo $IP
+            done
+
+            for SYS_RES_DNS in $(systemd-resolve --status | grep 'DNS Servers'|awk '{print $3}')
+              do
+                vpn_command+=(--route $SYS_RES_DNS 255.255.255.255 net_gateway)
+                echo $SYS_RES_DNS
+            done
+
+            "${vpn_command[@]}" > /tmp/openvpn.log
+
             dig great.dev.uktrade.digital +short
             curl -I https://great.dev.uktrade.digital/
+
       - run:
           name: VPN logs
           background: true
@@ -108,19 +128,25 @@ commands:
       - run:
           name: Wait for the connection to be established and check
           command: |
-            until sudo openvpn3 sessions-list|grep "Client connected"; do
+            counter=1
+            until [ -f /tmp/openvpn.log ] && [ "$(grep -c "Initialization Sequence Completed" /tmp/openvpn.log)" != 0 ] || [ "$counter" -ge 5 ]; do
+              ((counter++))
               echo "Attempting to connect to VPN server..."
               sleep 1;
             done
-            printf "\nPublic IP is now $(curl checkip.amazonaws.com)\n"
+
+            if [ ! -f /tmp/openvpn.log ] || (! grep -iq "Initialization Sequence Completed" /tmp/openvpn.log); then
+              printf "\nUnable to establish connection within the allocated time ---> Giving up.\n"
+            else
+              printf "\nVPN connected\n"
+              printf "\nPublic IP is now %s\n" "$(curl -s http://checkip.amazonaws.com)"
+            fi
   vpn_disconnect:
     steps:
       - run:
           name: Disconnect from OpenVPN
           command: |
-            SESSION_PATH=$(sudo openvpn3 sessions-list | grep Path | awk -F': ' '{print $2}')
-            echo $SESSION_PATH
-            sudo openvpn3 session-manage --session-path $SESSION_PATH --disconnect
+            sudo killall openvpn || true
           when: always
   setup_code:
     steps:
