@@ -59,8 +59,8 @@ from .conditionals import (
     is_serial_numbers_available,
 )
 from .constants import AttachFirearmToApplicationSteps
-from .decorators import expect_status
-from .exceptions import ServiceError
+from exporter.core.common.decorators import expect_status
+from exporter.core.common.exceptions import ServiceError
 from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
     AttachFirearmToApplicationGoodPayloadBuilder,
