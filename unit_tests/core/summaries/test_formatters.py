@@ -13,6 +13,7 @@ from core.summaries.formatters import (
     just,
     key_value_formatter,
     mapping_formatter,
+    money_formatter,
     organisation_document_formatter,
     to_date,
     yesno,
@@ -270,3 +271,18 @@ def test_document_formatter(document, output):
 def test_just():
     formatter = just("This value")
     assert formatter("something else") == "This value"
+
+
+@pytest.mark.parametrize(
+    "input,output",
+    (
+        (
+            "14",
+            "£14.00",
+        ),
+        ("14.1", "£14.10"),
+        ("14.12", "£14.12"),
+    ),
+)
+def test_money_formatter(input, output):
+    assert money_formatter(input) == output

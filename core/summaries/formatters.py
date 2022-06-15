@@ -1,5 +1,6 @@
 import datetime
 
+from decimal import Decimal
 from operator import itemgetter
 
 from django.urls import reverse
@@ -93,6 +94,11 @@ def just(val):
         return val
 
     return _just
+
+
+def money_formatter(val):
+    val = Decimal(val)
+    return f"£{val:.2f}"
 
 
 def organisation_document_formatter(document):
