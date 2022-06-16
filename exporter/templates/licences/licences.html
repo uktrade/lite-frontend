@@ -10,13 +10,13 @@
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">{% block title %}{% lcs "licences.LicencesList.TITLE" %} for {{ organisation.name }} {% endblock %}
-            {% if is_user_multiple_organisations  %}
-               <span class="heading-subheader govuk-!-margin-left-4">
-                   <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:select_organisation' %}?back_link=licences" id="switch-link">
-                       {% lcs 'hub.SWITCH_ORG' %}
-                  </a>
-               </span>
-            {% endif %}
+				{% if is_user_multiple_organisations %}
+					<span class="heading-subheader govuk-!-margin-left-4">
+						<a class="govuk-link govuk-link--no-visited-state  govuk-!-font-size-19 govuk-!-font-weight-regular" href="{% url 'core:select_organisation' %}?back_link=licences" id="switch-link">
+							{% lcs 'hub.SWITCH_ORG' %}
+						</a>
+					</span>
+				{% endif %}
             </h1>
 		</div>
 	</div>
