@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 
-from exporter.core.constants import SUPER_USER_ROLE_ID, DEFAULT_USER_ROLE_ID
+from exporter.core.constants import ADMINISTRATOR_USER_ROLE_ID, EXPORTER_USER_ROLE_ID, AGENT_USER_ROLE_ID
 from lite_forms.views import SingleFormView
 from exporter.organisation.members.services import get_user
 from exporter.organisation.roles.forms import add_role
@@ -20,7 +20,7 @@ class Roles(OrganisationView):
         return {
             "roles": roles,
             "user_role_id": user_role_id,
-            "immutable_roles": [SUPER_USER_ROLE_ID, DEFAULT_USER_ROLE_ID],
+            "immutable_roles": [ADMINISTRATOR_USER_ROLE_ID, EXPORTER_USER_ROLE_ID, AGENT_USER_ROLE_ID],
             "all_permissions": all_permissions,
         }
 
