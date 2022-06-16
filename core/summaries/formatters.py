@@ -195,3 +195,28 @@ FIREARM_ON_APPLICATION_FORMATTERS = {
     "total-value": money_formatter,
     "has-serial-numbers": model_choices_formatter(SerialChoices),
 }
+
+FIREARM_ON_APPLICATION_LABELS = {
+    "firearm-certificate": "Upload your firearm certificate",
+    "firearm-certificate-number": "Certificate reference number",
+    "firearm-certificate-expiry-date": "Certificate date of expiry",
+    "shotgun-certificate": "Upload your shotgun certificate",
+    "shotgun-certificate-number": "Certificate reference number",
+    "shotgun-certificate-expiry-date": "Certificate date of expiry",
+    "made-before-1938": "Was the product made before 1938?",
+    "manufacture-year": "What year was it made?",
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "deactivated-date": "When was the item deactivated?",
+    "is-proof-standards": "Has the item been deactivated to UK proof house standards?",
+    "is-proof-standards-comments": "Describe who deactivated the product and to what standard it was done",
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+    "has-serial-numbers": "Will each product have a serial number or other identification marking?",
+    "no-identification-markings-details": "Explain why the product has not been marked",
+    "serial-numbers": "Enter serial numbers or other identification markings",
+}

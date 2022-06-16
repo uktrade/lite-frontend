@@ -6,6 +6,7 @@ from core.summaries.formatters import (
     format_values,
     FIREARM_LABELS,
     FIREARM_ON_APPLICATION_FORMATTERS,
+    FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
     template_formatter,
 )
@@ -198,5 +199,6 @@ def firearm_product_on_application_summary(good_on_application, good_on_applicat
 
     summary = pick_fields(summary, FIREARM_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARM_ON_APPLICATION_LABELS)
 
     return summary
