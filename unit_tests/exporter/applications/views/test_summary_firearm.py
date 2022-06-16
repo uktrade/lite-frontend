@@ -205,6 +205,35 @@ def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]
 
 
+@pytest.fixture
+def product_on_application_summary():
+    return (
+        ("made-before-1938", "Yes", "Was the product made before 1938?"),
+        ("manufacture-year", 1930, "What year was it made?"),
+        ("is-onward-exported", "Yes", "Will the product be onward exported to any additional countries?"),
+        ("is-altered", "Yes", "Will the item be altered or processed before it is exported again?"),
+        ("is-altered-comments", "I will alter it real good", "Explain how the product will be processed or altered"),
+        ("is-incorporated", "Yes", "Will the product be incorporated into another item before it is onward exported?"),
+        (
+            "is-incorporated-comments",
+            "I will onward incorporate",
+            "Describe what you are incorporating the product into",
+        ),
+        ("is-deactivated", "Yes", "Has the product been deactivated?"),
+        ("deactivated-date", "12 December 2007", "When was the item deactivated?"),
+        ("is-proof-standards", "No", "Has the item been deactivated to UK proof house standards?"),
+        (
+            "is-proof-standards-comments",
+            "Not deactivated",
+            "Describe who deactivated the product and to what standard it was done",
+        ),
+        ("number-of-items", 3, "Number of items"),
+        ("total-value", "£16.32", "Total value"),
+        ("has-serial-numbers", "No", "Will each product have a serial number or other identification marking?"),
+        ("no-identification-markings-details", "No markings", "Explain why the product has not been marked"),
+    )
+
+
 def test_firearm_product_on_application_summary_context(
     authorized_client,
     product_on_application_summary_url,
@@ -216,6 +245,7 @@ def test_firearm_product_on_application_summary_context(
     good_on_application,
     requests_mock,
     product_summary,
+    product_on_application_summary,
 ):
     requests_mock.get(
         f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
@@ -228,12 +258,41 @@ def test_firearm_product_on_application_summary_context(
     response = authorized_client.get(product_on_application_summary_url)
     context = response.context
 
+    def _get_test_url(name):
+        if not name:
+            return None
+        return f"/applications/{application['id']}/goods/firearm/{good_on_application['id']}/product-on-application-summary/edit/{name}/"
+
+    url_map = {
+        "made-before-1938": "made-before-1938",
+        "manufacture-year": "year-of-manufacture",
+        "is-onward-exported": "onward-exported",
+        "is-altered": "onward-altered",
+        "is-altered-comments": "onward-altered",
+        "is-incorporated": "onward-incorporated",
+        "is-incorporated-comments": "onward-incorporated",
+        "is-deactivated": "is-deactivated",
+        "deactivated-date": "is-deactivated",
+        "is-proof-standards": "is-deactivated-to-standard",
+        "is-proof-standards-comments": "is-deactivated-to-standard",
+        "number-of-items": "quantity-value",
+        "total-value": "quantity-value",
+        "has-serial-numbers": "serial-identification-markings",
+        "no-identification-markings-details": "serial-identification-markings",
+    }
+
+    product_on_application_summary_with_links = tuple(
+        (key, value, label, _get_test_url(url_map.get(key, None)))
+        for key, value, label in product_on_application_summary
+    )
+
     assert context["application"] == application
     assert context["documents"] == []
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
     assert context["good_on_application_documents"] == {}
     assert context["product_summary"] == product_summary
+    assert context["product_on_application_summary"] == product_on_application_summary_with_links
 
 
 def test_firearm_attach_product_on_application_summary_response_status_code(
@@ -269,6 +328,7 @@ def test_firearm_attach_product_on_application_summary_context(
     good_on_application,
     requests_mock,
     product_summary,
+    product_on_application_summary,
 ):
     requests_mock.get(
         f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
@@ -281,12 +341,41 @@ def test_firearm_attach_product_on_application_summary_context(
     response = authorized_client.get(attach_product_on_application_summary_url)
     context = response.context
 
+    def _get_test_url(name):
+        if not name:
+            return None
+        return f"/applications/{application['id']}/goods/firearm/{good_on_application['id']}/attach-product-on-application-summary/edit/{name}/"
+
+    url_map = {
+        "made-before-1938": "made-before-1938",
+        "manufacture-year": "year-of-manufacture",
+        "is-onward-exported": "onward-exported",
+        "is-altered": "onward-altered",
+        "is-altered-comments": "onward-altered",
+        "is-incorporated": "onward-incorporated",
+        "is-incorporated-comments": "onward-incorporated",
+        "is-deactivated": "is-deactivated",
+        "deactivated-date": "is-deactivated",
+        "is-proof-standards": "is-deactivated-to-standard",
+        "is-proof-standards-comments": "is-deactivated-to-standard",
+        "number-of-items": "quantity-value",
+        "total-value": "quantity-value",
+        "has-serial-numbers": "serial-identification-markings",
+        "no-identification-markings-details": "serial-identification-markings",
+    }
+
+    product_on_application_summary_with_links = tuple(
+        (key, value, label, _get_test_url(url_map.get(key, None)))
+        for key, value, label in product_on_application_summary
+    )
+
     assert context["application"] == application
     assert context["documents"] == []
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
     assert context["good_on_application_documents"] == {}
     assert context["product_summary"] == product_summary
+    assert context["product_on_application_summary"] == product_on_application_summary_with_links
     assert not context["added_firearm_category"]
     assert not context["confirmed_rfd_validity"]
 
