@@ -4,7 +4,7 @@ class ManageRolesPage:
 
     class Table:
         HEADER_ROLE = "Role"
-        HEADER_PERMISSIONS = "Members with this role "
+        HEADER_PERMISSIONS = "Users with this role "
         EDIT_ROLE = "Edit"
 
 

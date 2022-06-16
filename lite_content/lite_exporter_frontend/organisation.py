@@ -1,5 +1,5 @@
 class Tabs:
-    MEMBERS = "Members"
+    MEMBERS = "Users"
     SITES = "Sites"
     ROLES = "Roles"
     DETAILS = "Details"
