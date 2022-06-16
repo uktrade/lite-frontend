@@ -264,7 +264,7 @@ urlpatterns = [
         name="product_on_application_summary_edit_shotgun_certificate",
     ),
     path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/made-before-1982/",
+        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/made-before-1938/",
         FirearmProductOnApplicationSummaryEditMadeBefore1938.as_view(),
         name="product_on_application_summary_edit_made_before_1938",
     ),

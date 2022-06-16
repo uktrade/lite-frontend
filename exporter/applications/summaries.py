@@ -17,19 +17,6 @@ from core.summaries.reducers import (
 from core.summaries.utils import pick_fields
 
 
-def get_edit_link_factory(application, good):
-    def get_edit_link(name):
-        return reverse(
-            f"applications:firearm_edit_{name}",
-            kwargs={
-                "pk": application["id"],
-                "good_pk": good["id"],
-            },
-        )
-
-    return get_edit_link
-
-
 PRODUCT_SUMMARY_EDIT_LINKS = {
     "firearm-category": "category",
     "name": "name",
@@ -62,8 +49,21 @@ PRODUCT_SUMMARY_EDIT_LINKS = {
 }
 
 
-def add_edit_links(summary, edit_links, application, good):
-    get_edit_link = get_edit_link_factory(application, good)
+def get_product_summary_edit_link_factory(application, good):
+    def get_edit_link(name):
+        return reverse(
+            f"applications:firearm_edit_{name}",
+            kwargs={
+                "pk": application["id"],
+                "good_pk": good["id"],
+            },
+        )
+
+    return get_edit_link
+
+
+def add_product_summary_edit_links(summary, edit_links, application, good):
+    get_edit_link = get_product_summary_edit_link_factory(application, good)
 
     summary_with_edit_links = ()
     for key, value, *rest in summary:
@@ -202,3 +202,70 @@ def firearm_product_on_application_summary(good_on_application, good_on_applicat
     summary = add_labels(summary, FIREARM_ON_APPLICATION_LABELS)
 
     return summary
+
+
+PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
+    "firearm-certificate": "firearm_certificate",
+    "firearm-certificate-number": "firearm_certificate",
+    "firearm-certificate-expiry-date": "firearm_certificate",
+    "shotgun-certificate": "shotgun_certificate",
+    "shotgun-certificate-number": "shotgun_certificate",
+    "shotgun-certificate-expiry-date": "shotgun_certificate",
+    "made-before-1938": "made_before_1938",
+    "manufacture-year": "year_of_manufacture",
+    "is-onward-exported": "onward_exported",
+    "is-altered": "onward_altered",
+    "is-altered-comments": "onward_altered",
+    "is-incorporated": "onward_incorporated",
+    "is-incorporated-comments": "onward_incorporated",
+    "is-deactivated": "is_deactivated",
+    "deactivated-date": "is_deactivated",
+    "is-proof-standards": "is_deactivated_to_standard",
+    "is-proof-standards-comments": "is_deactivated_to_standard",
+    "number-of-items": "quantity_value",
+    "total-value": "quantity_value",
+    "has-serial-numbers": "serial_identification_markings",
+    "no-identification-markings-details": "serial_identification_markings",
+    "serial-numbers": "serial_numbers",
+}
+
+
+def get_product_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
+    def get_edit_link(name):
+        return reverse(
+            f"applications:product_on_application_summary_edit_{name}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+                "summary_type": summary_type,
+            },
+        )
+
+    return get_edit_link
+
+
+def add_product_on_application_summary_edit_links(
+    summary,
+    edit_links,
+    application,
+    good_on_application,
+    summary_type,
+):
+    get_edit_link = get_product_on_application_summary_edit_link_factory(
+        application,
+        good_on_application,
+        summary_type,
+    )
+
+    summary_with_edit_links = ()
+    for key, value, *rest in summary:
+        try:
+            edit_link_key = edit_links[key]
+        except KeyError:
+            edit_link = None
+        else:
+            edit_link = get_edit_link(edit_link_key)
+
+        summary_with_edit_links += ((key, value, *rest, edit_link),)
+
+    return summary_with_edit_links

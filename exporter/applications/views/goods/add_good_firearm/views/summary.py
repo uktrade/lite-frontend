@@ -5,10 +5,12 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.services import get_application_documents
 from exporter.applications.summaries import (
-    add_edit_links,
+    add_product_summary_edit_links,
+    add_product_on_application_summary_edit_links,
     firearm_product_summary,
     firearm_product_on_application_summary,
     PRODUCT_SUMMARY_EDIT_LINKS,
+    PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
 )
 from exporter.core.helpers import (
     get_organisation_documents,
@@ -46,7 +48,7 @@ class FirearmProductSummary(
             is_user_rfd,
             organisation_documents,
         )
-        summary = add_edit_links(
+        summary = add_product_summary_edit_links(
             summary,
             PRODUCT_SUMMARY_EDIT_LINKS,
             self.application,
@@ -107,6 +109,13 @@ class BaseProductOnApplicationSummary(
             self.good_on_application,
             summary_good_on_application_documents,
         )
+        product_on_application_summary = add_product_on_application_summary_edit_links(
+            product_on_application_summary,
+            PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            self.application,
+            self.good_on_application,
+            self.summary_type,
+        )
 
         return {
             **context,
@@ -121,10 +130,12 @@ class BaseProductOnApplicationSummary(
 
 
 class FirearmProductOnApplicationSummary(BaseProductOnApplicationSummary):
+    summary_type = "product-on-application-summary"
     template_name = "applications/goods/firearms/product-on-application-summary.html"
 
 
 class FirearmAttachProductOnApplicationSummary(BaseProductOnApplicationSummary):
+    summary_type = "attach-product-on-application-summary"
     template_name = "applications/goods/firearms/attach-product-on-application-summary.html"
 
     def has_added_firearm_category(self):
