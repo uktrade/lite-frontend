@@ -1,13 +1,15 @@
 import uuid
 
 from exporter.applications.summaries import (
-    add_edit_links,
+    add_product_on_application_summary_edit_links,
+    add_product_summary_edit_links,
     firearm_product_summary,
-    get_edit_link_factory,
+    get_product_summary_edit_link_factory,
+    get_product_on_application_summary_edit_link_factory,
 )
 
 
-def test_get_edit_link_factory(mocker):
+def test_get_product_summary_edit_link_factory(mocker):
     mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
     mock_reverse.return_value = "/reversed-url/"
 
@@ -18,7 +20,7 @@ def test_get_edit_link_factory(mocker):
         "id": uuid.uuid4(),
     }
 
-    get_edit_link = get_edit_link_factory(application, good)
+    get_edit_link = get_product_summary_edit_link_factory(application, good)
 
     assert get_edit_link("test") == "/reversed-url/"
     mock_reverse.assert_called_with(
@@ -30,7 +32,7 @@ def test_get_edit_link_factory(mocker):
     )
 
 
-def test_add_edit_links(mocker):
+def test_add_product_summary_edit_links(mocker):
     mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
     mock_reverse.side_effect = lambda name, kwargs: f"/{kwargs['pk']}/{kwargs['good_pk']}/{name}/"
 
@@ -52,7 +54,7 @@ def test_add_edit_links(mocker):
         "has-another-edit-link": "another-edit-link-name",
     }
 
-    summary_with_edit_links = add_edit_links(summary, edit_links, application, good)
+    summary_with_edit_links = add_product_summary_edit_links(summary, edit_links, application, good)
     assert summary_with_edit_links == (
         ("no-edit-link", "value", None),
         (
@@ -212,5 +214,81 @@ def test_firearm_product_summary():
             "product-document-description",
             "Document description",
             "Description (optional)",
+        ),
+    )
+
+
+def test_get_product_on_application_summary_edit_link_factory(mocker):
+    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+    mock_reverse.return_value = "/reversed-url/"
+
+    application = {
+        "id": uuid.uuid4(),
+    }
+    good_on_application = {
+        "id": uuid.uuid4(),
+    }
+    summary_type = "summary-type"
+
+    get_edit_link = get_product_on_application_summary_edit_link_factory(
+        application,
+        good_on_application,
+        summary_type,
+    )
+
+    assert get_edit_link("test") == "/reversed-url/"
+    mock_reverse.assert_called_with(
+        "applications:product_on_application_summary_edit_test",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
+        },
+    )
+
+
+def test_add_product_on_application_summary_edit_links(mocker):
+    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+    mock_reverse.side_effect = (
+        lambda name, kwargs: f"/{kwargs['pk']}/{kwargs['good_on_application_pk']}/{kwargs['summary_type']}/{name}/"
+    )
+
+    application = {
+        "id": uuid.uuid4(),
+    }
+    good_on_application = {
+        "id": uuid.uuid4(),
+    }
+    summary_type = "product-on-application-summary"
+
+    summary = (
+        ("no-edit-link", "value"),
+        ("has-edit-link", "another-value"),
+        ("has-another-edit-link", "a-different-value"),
+    )
+
+    edit_links = {
+        "has-edit-link": "edit-link-name",
+        "has-another-edit-link": "another-edit-link-name",
+    }
+
+    summary_with_edit_links = add_product_on_application_summary_edit_links(
+        summary,
+        edit_links,
+        application,
+        good_on_application,
+        summary_type,
+    )
+    assert summary_with_edit_links == (
+        ("no-edit-link", "value", None),
+        (
+            "has-edit-link",
+            "another-value",
+            f"/{application['id']}/{good_on_application['id']}/{summary_type}/applications:product_on_application_summary_edit_edit-link-name/",
+        ),
+        (
+            "has-another-edit-link",
+            "a-different-value",
+            f"/{application['id']}/{good_on_application['id']}/{summary_type}/applications:product_on_application_summary_edit_another-edit-link-name/",
         ),
     )

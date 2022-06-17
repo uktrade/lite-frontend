@@ -1,5 +1,7 @@
 import re
 
+from django.db import models
+
 
 class GoodsTypeCategory:
     MILITARY = "military"
@@ -74,3 +76,9 @@ class FirearmsActSections:
     SECTION_1 = "firearms_act_section1"
     SECTION_2 = "firearms_act_section2"
     SECTION_5 = "firearms_act_section5"
+
+
+class SerialChoices(models.TextChoices):
+    AVAILABLE = "AVAILABLE", "Yes, I can add serial numbers now"
+    LATER = "LATER", "Yes, I can add serial numbers later"
+    NOT_AVAILABLE = "NOT_AVAILABLE", "No"

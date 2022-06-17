@@ -46,6 +46,7 @@ def post_to_step(post_to_step_factory, edit_registered_firearms_dealer_url):
 def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
     data_standard_case,
     application_without_rfd_document,
+    mock_application_get,
     mock_good_get,
     mock_good_put,
     product_summary_url,

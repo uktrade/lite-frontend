@@ -35,11 +35,6 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def application(data_standard_case):
-    return data_standard_case["case"]["data"]
-
-
-@pytest.fixture
 def section_one_document(good_on_application):
     return {
         "id": str(uuid.uuid4()),
@@ -65,18 +60,6 @@ def edit_firearm_certificate_url(application, good_on_application, summary_type)
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
             "summary_type": summary_type,
-        },
-    )
-    return url
-
-
-@pytest.fixture
-def product_on_application_summary_url(application, good_on_application, summary_type):
-    url = reverse(
-        f"applications:{summary_type.replace('-', '_')}",
-        kwargs={
-            "pk": application["id"],
-            "good_on_application_pk": good_on_application["id"],
         },
     )
     return url
@@ -134,9 +117,10 @@ def test_edit_firearm_certificate_initial(
 def test_edit_firearm_certificate_retaining_current_file(
     authorized_client,
     edit_firearm_certificate_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_section_one_document_get,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.post(
         edit_firearm_certificate_url,
@@ -148,7 +132,7 @@ def test_edit_firearm_certificate_retaining_current_file(
     )
 
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -167,7 +151,7 @@ def test_edit_firearm_certificate_retaining_current_file(
 def test_edit_firearm_certificate_retaining_upload_new_file(
     authorized_client,
     edit_firearm_certificate_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_section_one_document_get,
     mock_good_on_application_put,
     requests_mock,
@@ -175,6 +159,7 @@ def test_edit_firearm_certificate_retaining_upload_new_file(
     good_id,
     section_one_document,
     good_on_application,
+    summary_type,
 ):
     delete_good_on_application_matcher = requests_mock.delete(
         f"/applications/{application['id']}/goods/{good_id}/documents/{section_one_document['id']}/",
@@ -218,7 +203,7 @@ def test_edit_firearm_certificate_retaining_upload_new_file(
     )
 
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -330,9 +315,10 @@ def test_edit_shotgun_certificate_initial(
 def test_edit_shotgun_certificate_retaining_current_file(
     authorized_client,
     edit_shotgun_certificate_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_section_two_document_get,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.post(
         edit_shotgun_certificate_url,
@@ -344,7 +330,7 @@ def test_edit_shotgun_certificate_retaining_current_file(
     )
 
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -363,7 +349,7 @@ def test_edit_shotgun_certificate_retaining_current_file(
 def test_edit_shotgun_certificate_retaining_upload_new_file(
     authorized_client,
     edit_shotgun_certificate_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_section_two_document_get,
     mock_good_on_application_put,
     requests_mock,
@@ -371,6 +357,7 @@ def test_edit_shotgun_certificate_retaining_upload_new_file(
     good_id,
     section_two_document,
     good_on_application,
+    summary_type,
 ):
     delete_good_on_application_matcher = requests_mock.delete(
         f"/applications/{application['id']}/goods/{good_id}/documents/{section_two_document['id']}/",
@@ -414,7 +401,7 @@ def test_edit_shotgun_certificate_retaining_upload_new_file(
     )
 
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -492,8 +479,9 @@ def post_to_step_made_before_1938(post_to_step_factory, edit_made_before_1938_ur
 )
 def test_edit_made_before_1938_true(
     post_to_step_made_before_1938,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = post_to_step_made_before_1938(
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, data={"is_made_before_1938": True}
@@ -508,7 +496,7 @@ def test_edit_made_before_1938_true(
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, data={"year_of_manufacture": "1930"}
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -525,15 +513,16 @@ def test_edit_made_before_1938_true(
 )
 def test_edit_made_before_1938_false(
     post_to_step_made_before_1938,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = post_to_step_made_before_1938(
         AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938, data={"is_made_before_1938": False}
     )
 
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -579,8 +568,9 @@ def test_edit_year_of_manufacture_initial(authorized_client, edit_year_of_manufa
 def test_edit_year_of_manufacture_post(
     authorized_client,
     edit_year_of_manufacture_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.post(
         edit_year_of_manufacture_url,
@@ -589,7 +579,7 @@ def test_edit_year_of_manufacture_post(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -623,8 +613,9 @@ def test_edit_onward_exported_true(
     authorized_client,
     edit_onward_exported_url,
     post_to_step_onward_exported,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.get(edit_onward_exported_url)
     assert response.status_code == 200
@@ -669,7 +660,7 @@ def test_edit_onward_exported_true(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -692,8 +683,9 @@ def test_edit_onward_exported_false(
     authorized_client,
     edit_onward_exported_url,
     post_to_step_onward_exported,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.get(edit_onward_exported_url)
     assert response.status_code == 200
@@ -708,7 +700,7 @@ def test_edit_onward_exported_false(
         data={"is_onward_exported": False},
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -738,8 +730,9 @@ def edit_onward_altered_url(application, good_on_application, summary_type):
 def test_edit_onward_altered_processed(
     authorized_client,
     edit_onward_altered_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.get(edit_onward_altered_url)
     assert response.status_code == 200
@@ -757,7 +750,7 @@ def test_edit_onward_altered_processed(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {
@@ -787,8 +780,9 @@ def edit_onward_incorporated_url(application, good_on_application, summary_type)
 def test_edit_onward_incorporated(
     authorized_client,
     edit_onward_incorporated_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.get(edit_onward_incorporated_url)
     assert response.status_code == 200
@@ -806,7 +800,7 @@ def test_edit_onward_incorporated(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {"is_onward_incorporated": True, "is_onward_incorporated_comments": "Incorporated"},
@@ -854,8 +848,9 @@ def test_edit_is_deactivated_initial(
 )
 def test_edit_is_deactivated_true(
     post_to_step_is_deactivated,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = post_to_step_is_deactivated(
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
@@ -880,7 +875,7 @@ def test_edit_is_deactivated_true(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -899,8 +894,9 @@ def test_edit_is_deactivated_true(
 )
 def test_edit_is_deactivated_false(
     post_to_step_is_deactivated,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = post_to_step_is_deactivated(
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
@@ -909,7 +905,7 @@ def test_edit_is_deactivated_false(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -939,8 +935,9 @@ def edit_is_deactivated_to_standard_url(application, good_on_application, summar
 def test_edit_is_deactivated_to_standard(
     authorized_client,
     edit_is_deactivated_to_standard_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.get(edit_is_deactivated_to_standard_url)
     assert response.status_code == 200
@@ -960,7 +957,7 @@ def test_edit_is_deactivated_to_standard(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {
@@ -991,8 +988,9 @@ def edit_quantity_value_url(application, good_on_application, summary_type):
 def test_edit_quantity_value(
     authorized_client,
     edit_quantity_value_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.get(edit_quantity_value_url)
     assert response.status_code == 200
@@ -1010,7 +1008,7 @@ def test_edit_quantity_value(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {"number_of_items": 20},
@@ -1061,8 +1059,9 @@ def test_edit_serial_identification_markings_initial(
 )
 def test_edit_serial_identification_markings_available(
     post_to_step_serial_identification_markings,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = post_to_step_serial_identification_markings(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
@@ -1082,7 +1081,7 @@ def test_edit_serial_identification_markings_available(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -1104,8 +1103,9 @@ def test_edit_serial_identification_markings_available(
 )
 def test_edit_serial_identification_markings_later(
     post_to_step_serial_identification_markings,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = post_to_step_serial_identification_markings(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
@@ -1114,7 +1114,7 @@ def test_edit_serial_identification_markings_later(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -1131,8 +1131,9 @@ def test_edit_serial_identification_markings_later(
 )
 def test_edit_serial_identification_markings_not_available(
     post_to_step_serial_identification_markings,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = post_to_step_serial_identification_markings(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
@@ -1142,7 +1143,7 @@ def test_edit_serial_identification_markings_not_available(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
@@ -1173,8 +1174,9 @@ def edit_serial_numbers_url(application, good_on_application, summary_type):
 def test_edit_serial_numbers(
     authorized_client,
     edit_serial_numbers_url,
-    product_on_application_summary_url,
+    product_on_application_summary_url_factory,
     mock_good_on_application_put,
+    summary_type,
 ):
     response = authorized_client.get(edit_serial_numbers_url)
     assert response.status_code == 200
@@ -1189,7 +1191,7 @@ def test_edit_serial_numbers(
         },
     )
     assert response.status_code == 302
-    assert response.url == product_on_application_summary_url
+    assert response.url == product_on_application_summary_url_factory(summary_type)
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {

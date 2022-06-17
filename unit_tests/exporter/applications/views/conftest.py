@@ -5,14 +5,19 @@ import uuid
 from django.urls import reverse
 
 from core import client
-from exporter.goods.forms.firearms import FirearmSerialIdentificationMarkingsForm
+from core.constants import SerialChoices
+
+
+@pytest.fixture
+def application(data_standard_case):
+    return data_standard_case["case"]["data"]
 
 
 @pytest.fixture
 def mock_application_get(requests_mock, data_standard_case):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/')
-    yield requests_mock.get(url=url, json=application)
+    return requests_mock.get(url=url, json=application)
 
 
 @pytest.fixture
@@ -66,9 +71,10 @@ def good_on_application(data_standard_case):
             "date_of_deactivation": datetime.date(2007, 12, 12).isoformat(),
             "is_deactivated_to_standard": False,
             "not_deactivated_to_standard_comments": "Not deactivated",
-            "serial_numbers_available": FirearmSerialIdentificationMarkingsForm.SerialChoices.NOT_AVAILABLE,
+            "serial_numbers_available": SerialChoices.NOT_AVAILABLE,
             "no_identification_markings_details": "No markings",
             "serial_numbers": ["111", "222", "333"],
+            "number_of_items": 3,
         },
     }
 
@@ -167,13 +173,6 @@ def section_5_document(organisation_id):
 
 
 @pytest.fixture
-def application(data_standard_case, requests_mock):
-    app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
-    matcher = requests_mock.get(url=app_url, json=data_standard_case["case"])
-    return matcher
-
-
-@pytest.fixture
 def application_with_organisation_rfd_document(data_standard_case, requests_mock, rfd_certificate):
     app_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     case = data_standard_case["case"]
@@ -214,6 +213,31 @@ def product_summary_url(data_standard_case, good_id):
             "good_pk": good_id,
         },
     )
+
+
+@pytest.fixture
+def product_on_application_summary_url_factory(application, good_on_application):
+    def product_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return product_on_application_summary_url
+
+
+@pytest.fixture
+def product_on_application_summary_url(product_on_application_summary_url_factory):
+    return product_on_application_summary_url_factory("product-on-application-summary")
+
+
+@pytest.fixture
+def attach_product_on_application_summary_url(product_on_application_summary_url_factory):
+    return product_on_application_summary_url_factory("attach-product-on-application-summary")
 
 
 @pytest.fixture

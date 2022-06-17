@@ -5,23 +5,16 @@ from core.summaries.formatters import (
     document_formatter,
     format_values,
     FIREARM_LABELS,
+    FIREARM_ON_APPLICATION_FORMATTERS,
+    FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
+    template_formatter,
 )
-from core.summaries.reducers import firearm_reducer
+from core.summaries.reducers import (
+    firearm_on_application_reducer,
+    firearm_reducer,
+)
 from core.summaries.utils import pick_fields
-
-
-def get_edit_link_factory(application, good):
-    def get_edit_link(name):
-        return reverse(
-            f"applications:firearm_edit_{name}",
-            kwargs={
-                "pk": application["id"],
-                "good_pk": good["id"],
-            },
-        )
-
-    return get_edit_link
 
 
 PRODUCT_SUMMARY_EDIT_LINKS = {
@@ -40,6 +33,7 @@ PRODUCT_SUMMARY_EDIT_LINKS = {
     "is-replica": "replica",
     "is-replica-description": "replica",
     "has-product-document": "product_document_availability",
+    "no-product-document-explanation": "product_document_availability",
     "is-document-sensitive": "product_document_sensitivity",
     "product-document": "product_document",
     "product-document-description": "product_document",
@@ -55,8 +49,21 @@ PRODUCT_SUMMARY_EDIT_LINKS = {
 }
 
 
-def add_edit_links(summary, edit_links, application, good):
-    get_edit_link = get_edit_link_factory(application, good)
+def get_product_summary_edit_link_factory(application, good):
+    def get_edit_link(name):
+        return reverse(
+            f"applications:firearm_edit_{name}",
+            kwargs={
+                "pk": application["id"],
+                "good_pk": good["id"],
+            },
+        )
+
+    return get_edit_link
+
+
+def add_product_summary_edit_links(summary, edit_links, application, good):
+    get_edit_link = get_product_summary_edit_link_factory(application, good)
 
     summary_with_edit_links = ()
     for key, value, *rest in summary:
@@ -98,6 +105,7 @@ FIREARM_FIELDS = (
     "section-5-certificate-missing",
     "section-5-certificate-missing-reason",
     "has-product-document",
+    "no-product-document-explanation",
     "is-document-sensitive",
     "product-document",
     "product-document-description",
@@ -129,3 +137,135 @@ def firearm_product_summary(good, is_user_rfd, organisation_documents):
     summary = add_labels(summary, FIREARM_LABELS)
 
     return summary
+
+
+FIREARM_ON_APPLICATION_FIELDS = (
+    "firearm-certificate",
+    "firearm-certificate-missing-reason",
+    "firearm-certificate-number",
+    "firearm-certificate-expiry-date",
+    "shotgun-certificate",
+    "shotgun-certificate-missing-reason",
+    "shotgun-certificate-number",
+    "shotgun-certificate-expiry-date",
+    "made-before-1938",
+    "manufacture-year",
+    "is-onward-exported",
+    "is-altered",
+    "is-altered-comments",
+    "is-incorporated",
+    "is-incorporated-comments",
+    "is-deactivated",
+    "deactivated-date",
+    "is-proof-standards",
+    "is-proof-standards-comments",
+    "number-of-items",
+    "total-value",
+    "has-serial-numbers",
+    "no-identification-markings-details",
+    "serial-numbers",
+)
+
+
+def firearm_product_on_application_summary(good_on_application, good_on_application_documents):
+    summary = firearm_on_application_reducer(good_on_application, good_on_application_documents)
+
+    def good_on_application_document_formatter(document):
+        url = reverse(
+            "applications:good-on-application-document",
+            kwargs={
+                "pk": good_on_application["application"],
+                "good_pk": good_on_application["good"]["id"],
+                "doc_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document, url)
+
+    def serial_numbers_formatter(serial_numbers):
+        return template_formatter(
+            "goods/includes/serial_numbers.html",
+            lambda _: good_on_application,
+        )(serial_numbers)
+
+    formatters = {
+        **FIREARM_ON_APPLICATION_FORMATTERS,
+        **{
+            "firearm-certificate": good_on_application_document_formatter,
+            "shotgun-certificate": good_on_application_document_formatter,
+            "serial-numbers": serial_numbers_formatter,
+        },
+    }
+
+    summary = pick_fields(summary, FIREARM_ON_APPLICATION_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARM_ON_APPLICATION_LABELS)
+
+    return summary
+
+
+PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
+    "firearm-certificate": "firearm_certificate",
+    "firearm-certificate-number": "firearm_certificate",
+    "firearm-certificate-expiry-date": "firearm_certificate",
+    "shotgun-certificate": "shotgun_certificate",
+    "shotgun-certificate-number": "shotgun_certificate",
+    "shotgun-certificate-expiry-date": "shotgun_certificate",
+    "made-before-1938": "made_before_1938",
+    "manufacture-year": "year_of_manufacture",
+    "is-onward-exported": "onward_exported",
+    "is-altered": "onward_altered",
+    "is-altered-comments": "onward_altered",
+    "is-incorporated": "onward_incorporated",
+    "is-incorporated-comments": "onward_incorporated",
+    "is-deactivated": "is_deactivated",
+    "deactivated-date": "is_deactivated",
+    "is-proof-standards": "is_deactivated_to_standard",
+    "is-proof-standards-comments": "is_deactivated_to_standard",
+    "number-of-items": "quantity_value",
+    "total-value": "quantity_value",
+    "has-serial-numbers": "serial_identification_markings",
+    "no-identification-markings-details": "serial_identification_markings",
+    "serial-numbers": "serial_numbers",
+}
+
+
+def get_product_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
+    def get_edit_link(name):
+        return reverse(
+            f"applications:product_on_application_summary_edit_{name}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+                "summary_type": summary_type,
+            },
+        )
+
+    return get_edit_link
+
+
+def add_product_on_application_summary_edit_links(
+    summary,
+    edit_links,
+    application,
+    good_on_application,
+    summary_type,
+):
+    get_edit_link = get_product_on_application_summary_edit_link_factory(
+        application,
+        good_on_application,
+        summary_type,
+    )
+
+    summary_with_edit_links = ()
+    for key, value, *rest in summary:
+        try:
+            edit_link_key = edit_links[key]
+        except KeyError:
+            edit_link = None
+        else:
+            edit_link = get_edit_link(edit_link_key)
+
+        summary_with_edit_links += ((key, value, *rest, edit_link),)
+
+    return summary_with_edit_links

@@ -79,7 +79,7 @@ def test_firearm_product_details_context(
         ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
         (
             "firearms-act-1968-section",
-            "firearms_act_section5",
+            "Section 5",
             "Which section of the Firearms Act 1968 is the product covered by?",
         ),
         (

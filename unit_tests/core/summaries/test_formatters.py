@@ -2,6 +2,7 @@ import datetime
 import pytest
 import uuid
 
+from django.db import models
 
 from core.summaries.formatters import (
     add_labels,
@@ -13,7 +14,10 @@ from core.summaries.formatters import (
     just,
     key_value_formatter,
     mapping_formatter,
+    model_choices_formatter,
+    money_formatter,
     organisation_document_formatter,
+    template_formatter,
     to_date,
     yesno,
 )
@@ -270,3 +274,51 @@ def test_document_formatter(document, output):
 def test_just():
     formatter = just("This value")
     assert formatter("something else") == "This value"
+
+
+@pytest.mark.parametrize(
+    "input,output",
+    (
+        (
+            "14",
+            "£14.00",
+        ),
+        ("14.1", "£14.10"),
+        ("14.12", "£14.12"),
+    ),
+)
+def test_money_formatter(input, output):
+    assert money_formatter(input) == output
+
+
+class TextChoice(models.TextChoices):
+    A = "A", "This is a"
+    B = "B", "This is b"
+    C = "C", "This is c"
+
+
+@pytest.mark.parametrize(
+    "input,output",
+    (
+        (
+            TextChoice.A,
+            TextChoice.A.label,
+        ),
+        (
+            TextChoice.B,
+            TextChoice.B.label,
+        ),
+        (
+            TextChoice.C,
+            TextChoice.C.label,
+        ),
+    ),
+)
+def test_model_choices_formatter(input, output):
+    formatter = model_choices_formatter(TextChoice)
+    assert formatter(input) == output
+
+
+def test_template_formatter():
+    formatter = template_formatter("tests/template-formatter.html", lambda val: {"key": val})
+    assert formatter("value") == "<p>value</p>\n"
