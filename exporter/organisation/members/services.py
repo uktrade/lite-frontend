@@ -1,7 +1,7 @@
 from core import client
 from core.helpers import convert_dict_to_query_params
 
-from exporter.core.constants import SUPER_USER_ROLE_ID
+from exporter.core.constants import ADMINISTRATOR_USER_ROLE_ID
 
 
 def get_user(request, pk=None, params=None):
@@ -25,4 +25,4 @@ def update_user(request, pk, json):
 
 
 def is_super_user(user):
-    return user["role"]["id"] == SUPER_USER_ROLE_ID
+    return user["role"]["id"] == ADMINISTRATOR_USER_ROLE_ID

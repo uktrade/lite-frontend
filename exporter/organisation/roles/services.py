@@ -24,18 +24,6 @@ def get_role(request, pk):
     return data.json()["role"]
 
 
-def post_role(request, json):
-    organisation_id = request.session["organisation"]
-    data = client.post(request, f"/organisations/{organisation_id}/roles/", json)
-    return data.json(), data.status_code
-
-
-def put_role(request, pk, json):
-    organisation_id = request.session["organisation"]
-    data = client.put(request, f"/organisations/{organisation_id}/roles/{pk}/", json)
-    return data.json(), data.status_code
-
-
 def get_permissions(request, convert_to_options=False):
     data = client.get(request, f"/organisations/permissions/").json().get("permissions")
 
