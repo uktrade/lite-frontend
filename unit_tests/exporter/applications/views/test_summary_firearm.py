@@ -287,10 +287,8 @@ def test_firearm_product_on_application_summary_context(
     )
 
     assert context["application"] == application
-    assert context["documents"] == []
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
-    assert context["good_on_application_documents"] == {}
     assert context["product_summary"] == product_summary
     assert context["product_on_application_summary"] == product_on_application_summary_with_links
 
@@ -370,14 +368,10 @@ def test_firearm_attach_product_on_application_summary_context(
     )
 
     assert context["application"] == application
-    assert context["documents"] == []
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
-    assert context["good_on_application_documents"] == {}
     assert context["product_summary"] == product_summary
     assert context["product_on_application_summary"] == product_on_application_summary_with_links
-    assert not context["added_firearm_category"]
-    assert not context["confirmed_rfd_validity"]
 
 
 def test_firearm_attach_product_on_application_summary_context_get_requests(
@@ -390,6 +384,8 @@ def test_firearm_attach_product_on_application_summary_context_get_requests(
     good,
     good_on_application,
     requests_mock,
+    product_summary,
+    product_on_application_summary,
 ):
     requests_mock.get(
         f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
@@ -403,5 +399,56 @@ def test_firearm_attach_product_on_application_summary_context_get_requests(
         f"{attach_product_on_application_summary_url}?added_firearm_category=1&confirmed_rfd_validity=1",
     )
     context = response.context
-    assert context["added_firearm_category"]
-    assert context["confirmed_rfd_validity"]
+
+    def _get_test_url(name):
+        if not name:
+            return None
+        return f"/applications/{application['id']}/goods/firearm/{good_on_application['id']}/attach-product-on-application-summary/edit/{name}/"
+
+    url_map = {
+        "made-before-1938": "made-before-1938",
+        "manufacture-year": "year-of-manufacture",
+        "is-onward-exported": "onward-exported",
+        "is-altered": "onward-altered",
+        "is-altered-comments": "onward-altered",
+        "is-incorporated": "onward-incorporated",
+        "is-incorporated-comments": "onward-incorporated",
+        "is-deactivated": "is-deactivated",
+        "deactivated-date": "is-deactivated",
+        "is-proof-standards": "is-deactivated-to-standard",
+        "is-proof-standards-comments": "is-deactivated-to-standard",
+        "number-of-items": "quantity-value",
+        "total-value": "quantity-value",
+        "has-serial-numbers": "serial-identification-markings",
+        "no-identification-markings-details": "serial-identification-markings",
+    }
+
+    product_on_application_summary_with_links = tuple(
+        (key, value, label, _get_test_url(url_map.get(key, None)))
+        for key, value, label in product_on_application_summary
+    )
+
+    assert (
+        context["product_on_application_summary"]
+        == (
+            (
+                "firearm-category",
+                "Non automatic shotgun, Non automatic rim-fired handgun",
+                "Firearm category",
+                None,
+            ),
+            (
+                "confirm-rfd-validity",
+                "Yes",
+                "Is your registered firearms dealer certificate still valid?",
+                None,
+            ),
+        )
+        + product_on_application_summary_with_links
+    )
+
+    assert (
+        "firearm-category",
+        "Non automatic shotgun, Non automatic rim-fired handgun",
+        "Firearm category",
+    ) not in context["product_summary"]
