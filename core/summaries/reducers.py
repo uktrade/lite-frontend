@@ -27,13 +27,16 @@ def is_good_controlled_reducer(good):
 
 
 def is_pv_graded_reducer(good):
+    is_pv_graded = good["is_pv_graded"]
+    if isinstance(is_pv_graded, dict):
+        is_pv_graded = is_pv_graded["key"]
     summary = (
         (
             "is-pv-graded",
-            good["is_pv_graded"],
+            is_pv_graded,
         ),
     )
-    if good["is_pv_graded"]["key"] == "yes":
+    if is_pv_graded == "yes":
         pv_grading_details = good["pv_grading_details"]
         if pv_grading_details["prefix"]:
             summary += (

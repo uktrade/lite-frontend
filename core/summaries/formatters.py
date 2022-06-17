@@ -138,7 +138,12 @@ FIREARM_VALUE_FORMATTERS = {
     "is-registered-firearms-dealer": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
-    "is-pv-graded": key_value_formatter,
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "Not pv graded",
+        }
+    ),
     "pv-grading-grading": key_value_formatter,
     "pv-grading-details-date-of-issue": date_formatter("j F Y"),
     "is-replica": yesno,
