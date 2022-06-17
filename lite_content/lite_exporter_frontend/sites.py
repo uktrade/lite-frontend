@@ -8,15 +8,15 @@ class SitesPage:
     class Table:
         NAME = "Name"
         ADDRESS = "Address"
-        MEMBERS = "Members"
+        USERS = "Users"
         ACTIONS = "Actions"
         RECORDS_HELD_HERE = "Site where records held"
 
 
 class SitePage:
     PRIMARY_SITE_DETAIL = "This is your organisation's primary site."
-    MEMBERS = "Members"
-    ADMIN_MEMBERS = "Admin Members"
+    USERS = "Users"
+    ADMIN_USERS = "Admin Users"
 
     class SummaryList:
         NAME = "Name"
