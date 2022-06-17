@@ -250,7 +250,7 @@ def firearms_act_section1_reducer(firearm_details, good_on_application_documents
 
     if firearm_details["section_certificate_missing"]:
         return (
-            ("firearm-certificate", None),
+            ("firearm-certificate-missing", True),
             ("firearm-certificate-missing-reason", firearm_details["section_certificate_missing_reason"]),
         )
 
@@ -271,7 +271,7 @@ def firearms_act_section2_reducer(firearm_details, good_on_application_documents
 
     if firearm_details["section_certificate_missing"]:
         return (
-            ("shotgun-certificate", None),
+            ("shotgun-certificate-missing", True),
             ("shotgun-certificate-missing-reason", firearm_details["section_certificate_missing_reason"]),
         )
 

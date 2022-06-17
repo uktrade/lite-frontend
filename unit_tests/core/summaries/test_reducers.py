@@ -410,7 +410,7 @@ def test_firearm_on_application_reducer(mocker):
             },
             {},
             (
-                ("firearm-certificate", None),
+                ("firearm-certificate-missing", True),
                 ("firearm-certificate-missing-reason", "I do not have a firearm certificate"),
             ),
         ),
@@ -461,7 +461,7 @@ def test_firearms_act_section1_reducer(firearm_details, good_on_application_docu
             },
             {},
             (
-                ("shotgun-certificate", None),
+                ("shotgun-certificate-missing", True),
                 ("shotgun-certificate-missing-reason", "I do not have a shotgun certificate"),
             ),
         ),

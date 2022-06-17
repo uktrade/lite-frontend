@@ -141,10 +141,12 @@ def firearm_product_summary(good, is_user_rfd, organisation_documents):
 
 FIREARM_ON_APPLICATION_FIELDS = (
     "firearm-certificate",
+    "firearm-certificate-missing",
     "firearm-certificate-missing-reason",
     "firearm-certificate-number",
     "firearm-certificate-expiry-date",
     "shotgun-certificate",
+    "shotgun-certificate-missing",
     "shotgun-certificate-missing-reason",
     "shotgun-certificate-number",
     "shotgun-certificate-expiry-date",
