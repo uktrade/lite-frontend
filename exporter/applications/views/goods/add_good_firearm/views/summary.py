@@ -69,6 +69,8 @@ class BaseProductOnApplicationSummary(
     GoodOnApplicationMixin,
     TemplateView,
 ):
+    template_name = "applications/goods/firearms/product-on-application-summary.html"
+
     @cached_property
     def is_user_rfd(self):
         return has_valid_organisation_rfd_certificate(self.application)
@@ -131,12 +133,10 @@ class BaseProductOnApplicationSummary(
 
 class FirearmProductOnApplicationSummary(BaseProductOnApplicationSummary):
     summary_type = "product-on-application-summary"
-    template_name = "applications/goods/firearms/product-on-application-summary.html"
 
 
 class FirearmAttachProductOnApplicationSummary(BaseProductOnApplicationSummary):
     summary_type = "attach-product-on-application-summary"
-    template_name = "applications/goods/firearms/attach-product-on-application-summary.html"
 
     def has_added_firearm_category(self):
         return bool(self.request.GET.get("added_firearm_category"))
