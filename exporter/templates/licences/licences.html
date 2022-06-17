@@ -11,8 +11,8 @@
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">{% block title %}{% lcs "licences.LicencesList.TITLE" %} for {{ organisation.name }} {% endblock %}
             {% if is_user_multiple_organisations  %}
-               <span class="heading-subheader govuk-!-margin-left-4">
-                   <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:select_organisation' %}?back_link=licences" id="switch-link">
+               <span class="govuk-!-font-size-16 govuk-!-margin-top-1 govuk-!-margin-bottom-0 govuk-!-margin-left-3">
+                   <a class="govuk-link govuk-link--no-visited-state"  href="{% url 'core:select_organisation' %}?back_link=licences" id="switch-link">
                        {% lcs 'hub.SWITCH_ORG' %}
                   </a>
                </span>

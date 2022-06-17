@@ -1,10 +1,6 @@
-from django.urls import reverse_lazy
-
 from exporter.core.constants import ADMINISTRATOR_USER_ROLE_ID, EXPORTER_USER_ROLE_ID, AGENT_USER_ROLE_ID
-from lite_forms.views import SingleFormView
 from exporter.organisation.members.services import get_user
-from exporter.organisation.roles.forms import add_role
-from exporter.organisation.roles.services import get_roles, get_permissions, post_role, put_role, get_role
+from exporter.organisation.roles.services import get_roles, get_permissions
 from exporter.organisation.views import OrganisationView
 
 
@@ -23,19 +19,3 @@ class Roles(OrganisationView):
             "immutable_roles": [ADMINISTRATOR_USER_ROLE_ID, EXPORTER_USER_ROLE_ID, AGENT_USER_ROLE_ID],
             "all_permissions": all_permissions,
         }
-
-
-class AddRole(SingleFormView):
-    def init(self, request, **kwargs):
-        self.form = add_role(request, add=True)
-        self.action = post_role
-        self.success_url = reverse_lazy("organisation:roles:roles")
-
-
-class EditRole(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.data = get_role(request, self.object_pk)
-        self.form = add_role(request, add=False)
-        self.action = put_role
-        self.success_url = reverse_lazy("organisation:roles:roles")
