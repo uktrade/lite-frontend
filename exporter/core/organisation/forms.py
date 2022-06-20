@@ -1,4 +1,3 @@
-from crispy_forms_gds.layout import HTML
 from django import forms
 
 from exporter.core.common.forms import BaseForm
@@ -221,6 +220,7 @@ class RegisterAddressDetailsForm(BaseForm):
 class SelectOrganisationForm(BaseForm):
     class Layout:
         TITLE = "Select your organisation"
+        SUBTITLE = "You can switch between organisations from your dashboard."
 
     organisation = forms.ChoiceField(
         choices=(),
@@ -237,7 +237,4 @@ class SelectOrganisationForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def get_layout_fields(self):
-        return (
-            HTML.p("You can switch between organisations from your dashboard."),
-            "organisation",
-        )
+        return ("organisation",)
