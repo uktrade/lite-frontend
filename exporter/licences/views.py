@@ -88,7 +88,7 @@ class ListOpenAndStandardLicences(AbstractListView):
         context.update(
             {
                 "is_user_multiple_organisations": len(get_user(self.request)["organisations"]) > 1,
-                "organisation": {"name": self.request.session["organisation_name"]},
+                "organisation": {"name": self.request.session.get("organisation_name")},
             }
         )
         return context

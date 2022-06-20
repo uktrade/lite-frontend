@@ -64,7 +64,7 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             organisation = user["organisations"][0]
             if organisation["status"]["key"] != "in_review":
                 self.request.session["organisation"] = user["organisations"][0]["id"]
-                self.request.session["organisation"] = user["organisations"][0]["name"]
+                self.request.session["organisation_name"] = user["organisations"][0]["name"]
             else:
                 return reverse("core:register_an_organisation_confirm")
         elif len(user["organisations"]) > 1:
