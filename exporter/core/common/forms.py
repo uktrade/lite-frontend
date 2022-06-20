@@ -13,7 +13,15 @@ class BaseForm(forms.Form):
                 self.helper.attrs = {"enctype": "multipart/form-data"}
                 break
 
-        self.helper.layout = Layout(HTML.h1(self.Layout.TITLE), *self.get_layout_fields(), *self.get_layout_actions())
+        if not hasattr(self.Layout, "SUBTITLE"):
+            headings = (HTML.h1(self.Layout.TITLE),)
+        else:
+            headings = (
+                HTML(f'<h1 class="govuk-heading-xl govuk-!-margin-bottom-0">{self.Layout.TITLE}</h1>'),
+                HTML(f'<p class="govuk-hint">{self.Layout.SUBTITLE}</p>'),
+            )
+
+        self.helper.layout = Layout(*headings, *self.get_layout_fields(), *self.get_layout_actions())
 
     def get_layout_fields(self):  # pragma: no cover
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
