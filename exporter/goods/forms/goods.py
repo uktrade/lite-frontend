@@ -526,7 +526,7 @@ class SerialNumbersField(forms.MultiValueField):
         super().__init__(error_messages=error_messages, fields=fields, require_all_fields=False, **kwargs)
 
     def clean(self, value):
-        if not any(value):
+        if not any(val.strip() for val in value if val):
             raise forms.ValidationError("Enter at least one serial number")
         return value
 

@@ -29,6 +29,7 @@ from exporter.goods.forms.firearms import (
     FirearmReplicaForm,
     FirearmRFDValidityForm,
     FirearmSection5Form,
+    FirearmSerialNumbersForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
@@ -902,5 +903,90 @@ def test_firearm_deactivation_details_form(data, is_valid, errors):
 )
 def test_firearm_identificateion_markings_form(data, is_valid, errors):
     form = FirearmSerialIdentificationMarkingsForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data,is_valid,errors",
+    (
+        (
+            {},
+            False,
+            {"serial_numbers": ["Enter at least one serial number"]},
+        ),
+        (
+            {
+                "serial_numbers_0": "",
+            },
+            False,
+            {"serial_numbers": ["Enter at least one serial number"]},
+        ),
+        (
+            {
+                "serial_numbers_0": "",
+                "serial_numbers_1": "",
+            },
+            False,
+            {"serial_numbers": ["Enter at least one serial number"]},
+        ),
+        (
+            {
+                "serial_numbers_0": "    ",
+            },
+            False,
+            {"serial_numbers": ["Enter at least one serial number"]},
+        ),
+        (
+            {
+                "serial_numbers_0": "    ",
+                "serial_numbers_1": "    ",
+            },
+            False,
+            {"serial_numbers": ["Enter at least one serial number"]},
+        ),
+        (
+            {
+                "serial_numbers_0": "12345",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_0": "11111",
+                "serial_numbers_1": "22222",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_0": "  11111",
+                "serial_numbers_1": "22222  ",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_0": "  11111  ",
+                "serial_numbers_1": "  22222  ",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "serial_numbers_0": "1111",
+                "serial_numbers_1": "    ",
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_firearm_serial_numbers_form(data, is_valid, errors):
+    form = FirearmSerialNumbersForm(data=data, number_of_items=2)
     assert form.is_valid() == is_valid
     assert form.errors == errors
