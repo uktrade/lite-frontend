@@ -23,7 +23,7 @@ class BaseForm(forms.Form):
 
         self.helper.layout = Layout(*headings, *self.get_layout_fields(), *self.get_layout_actions())
 
-    def get_layout_fields(self):  # pragma: no cover
+    def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
 
     def get_layout_actions(self):
