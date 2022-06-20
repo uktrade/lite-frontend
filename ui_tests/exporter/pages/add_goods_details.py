@@ -208,7 +208,8 @@ class AddGoodDetails(BasePage):
     def select_firearm_product_type(self, option):
         """Only applicable to firearm goods"""
         if option == "Firearm":
-            self.driver.find_element(by=By.CSS_SELECTOR, value="input[value='firearms']").click()
+            # self.driver.find_element(by=By.CSS_SELECTOR, value="input[value='firearms']").click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_ID).click()
         if option == "components_for_firearm":
             self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_COMPONENT_ID).click()
         if option == "ammunition":
