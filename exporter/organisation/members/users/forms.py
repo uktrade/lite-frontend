@@ -2,7 +2,6 @@ from django import forms
 from django.core.validators import validate_email
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.layout import HTML
@@ -81,20 +80,18 @@ class AddUserForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def format_address(self, address):
-        site_address = "<br/>".join(
-            filter(
-                None,
-                [
-                    address.get("address"),
-                    address.get("address_line_1"),
-                    address.get("address_line_2"),
-                    address.get("city"),
-                    address.get("postcode"),
-                    address.get("country").get("name"),
-                ],
-            )
+        site_address = filter(
+            None,
+            [
+                address.get("address"),
+                address.get("address_line_1"),
+                address.get("address_line_2"),
+                address.get("city"),
+                address.get("postcode"),
+                address.get("country").get("name"),
+            ],
         )
-        return mark_safe(site_address)
+        return render_to_string("organisation/members/includes/site-address.html", {"site_address": site_address})
 
     def get_layout_fields(self):
         return ("email", "sites")
