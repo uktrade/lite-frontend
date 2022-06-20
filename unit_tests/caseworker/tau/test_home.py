@@ -12,10 +12,10 @@ def setup(mock_queue, mock_case):
 
 
 @pytest.fixture
-def url(data_queue, data_standard_case):
+def url(data_standard_case):
     return reverse(
         "cases:tau:home",
-        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
+        kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
     )
 
 
@@ -135,7 +135,7 @@ def test_home_content(
     edit_url = reverse(
         "cases:tau:edit",
         kwargs={
-            "queue_pk": data_queue["id"],
+            "queue_pk": "1b926457-5c9e-4916-8497-51886e51863a",
             "pk": data_standard_case["case"]["id"],
             "good_id": assessed_good_id,
         },
@@ -260,7 +260,6 @@ def test_move_case_forward(
     requests_mock,
     authorized_client,
     url,
-    data_queue,
     data_standard_case,
     mock_control_list_entries,
     mock_precedents_api,
@@ -288,7 +287,7 @@ def test_move_case_forward(
         assert len(forms) == 1
         assert forms[0].attrs["action"] == reverse(
             "cases:tau:move_case_forward",
-            kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
+            kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
         )
     else:
         assert len(forms) == 0
