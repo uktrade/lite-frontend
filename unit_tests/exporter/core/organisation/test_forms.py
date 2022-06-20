@@ -2,14 +2,6 @@ import pytest
 from exporter.core.organisation import forms
 
 
-@pytest.fixture()
-def data_organisations():
-    return [
-        {"id": "9c2222db-98e5-47e8-9e01-653354e95311", "name": "org1"},
-        {"id": "9c2222db-98e5-47e8-9e01-653354e95222", "name": "org2"},
-    ]
-
-
 @pytest.mark.parametrize(
     "data, valid",
     (
