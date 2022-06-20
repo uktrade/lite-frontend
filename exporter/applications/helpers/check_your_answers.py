@@ -30,6 +30,8 @@ from core.builtins.custom_tags import (
     sentence_case,
 )
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
+from exporter.goods.helpers import requires_serial_numbers
+
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties
 from lite_forms.helpers import conditional
@@ -59,7 +61,9 @@ def convert_application_to_check_your_answers(application, editable=False, summa
 def _convert_exhibition_clearance(application, editable=False):
     return {
         applications.ApplicationSummaryPage.EXHIBITION_DETAILS: _get_exhibition_details(application),
-        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application["goods"], True),
+        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(
+            application, application["goods"], True
+        ),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(application["goods_locations"]),
         applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
             application["additional_documents"], application["id"]
@@ -69,7 +73,7 @@ def _convert_exhibition_clearance(application, editable=False):
 
 def _convert_f680_clearance(application, editable=False):
     return {
-        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application["goods"]),
+        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application, application["goods"]),
         applications.ApplicationSummaryPage.ADDITIONAL_INFORMATION: _get_additional_information(application),
         applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
         applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
@@ -84,7 +88,7 @@ def _convert_f680_clearance(application, editable=False):
 
 def _convert_gifting_clearance(application, editable=False):
     return {
-        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application["goods"]),
+        applications.ApplicationSummaryPage.GOODS: convert_goods_on_application(application, application["goods"]),
         applications.ApplicationSummaryPage.END_USER: convert_party(application["end_user"], application, editable),
         applications.ApplicationSummaryPage.THIRD_PARTIES: [
             convert_party(party, application, editable) for party in application["third_parties"]
@@ -101,7 +105,9 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     url = reverse(f"applications:good_detail_summary", kwargs={"pk": pk})
     old_locations = bool(application["goods_locations"])
     converted = {
-        convert_to_link(url, strings.GOODS): convert_goods_on_application(application["goods"], is_summary=is_summary),
+        convert_to_link(url, strings.GOODS): convert_goods_on_application(
+            application, application["goods"], is_summary=is_summary
+        ),
         strings.END_USE_DETAILS: _get_end_use_details(application),
         strings.END_USER: convert_party(application["end_user"], application, editable),
         strings.CONSIGNEE: convert_party(application["consignee"], application, editable),
@@ -225,13 +231,13 @@ def _convert_hmrc_query(application, editable=False):
     }
 
 
-def convert_goods_on_application(goods_on_application, is_exhibition=False, is_summary=False):
+def convert_goods_on_application(application, goods_on_application, is_exhibition=False, is_summary=False):
     converted = []
 
-    def requires_actions(good_on_application):
-        return not is_summary and requires_serial_numbers(good_on_application)
+    def requires_actions(application, good_on_application):
+        return not is_summary and requires_serial_numbers(application, good_on_application)
 
-    requires_actions_column = any(requires_actions(g) for g in goods_on_application)
+    requires_actions_column = any(requires_actions(application, g) for g in goods_on_application)
     for good_on_application in goods_on_application:
         # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
         if good_on_application["good"]["is_good_controlled"] is None:
@@ -265,7 +271,7 @@ def convert_goods_on_application(goods_on_application, is_exhibition=False, is_s
             item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
             item["Quantity"] = pluralise_quantity(good_on_application)
             item["Value"] = f"£{good_on_application['value']}"
-        if requires_actions(good_on_application):
+        if requires_actions(application, good_on_application):
             update_serial_numbers_url = reverse(
                 "applications:update_serial_numbers",
                 kwargs={
@@ -730,18 +736,3 @@ def get_application_type_string(application):
         return applications.ApplicationPage.Summary.Licence.TRADE_CONTROL
     else:
         return APPLICATION_TYPE_STRINGS[application_type]
-
-
-def requires_serial_numbers(good_on_application):
-    firearm_details = good_on_application.get("firearm_details")
-    if not firearm_details:
-        return False
-
-    if firearm_details["serial_numbers_available"] == "NOT_AVAILABLE":
-        return False
-
-    serial_numbers = firearm_details["serial_numbers"]
-    added_serial_numbers = [sn for sn in serial_numbers if sn]
-    number_of_items = firearm_details["number_of_items"]
-
-    return number_of_items != len(added_serial_numbers)

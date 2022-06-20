@@ -1,9 +1,15 @@
 from django.urls import reverse_lazy
 
 from core.builtins.custom_tags import default_na
+from core.constants import (
+    CaseStatusEnum,
+    SerialChoices,
+)
+
+from lite_forms.components import Summary
+
 from exporter.core.constants import PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.core.helpers import convert_control_list_entries
-from lite_forms.components import Summary
 
 
 def good_summary(good):
@@ -70,3 +76,24 @@ def is_firearms_act_status_changed(initial, updated):
         return True
 
     return False
+
+
+def requires_serial_numbers(application, good_on_application):
+    if application["status"]["key"] not in [
+        CaseStatusEnum.SUBMITTED,
+        CaseStatusEnum.FINALISED,
+    ]:
+        return False
+
+    firearm_details = good_on_application.get("firearm_details")
+    if not firearm_details:
+        return False
+
+    if firearm_details["serial_numbers_available"] == SerialChoices.NOT_AVAILABLE:
+        return False
+
+    serial_numbers = firearm_details["serial_numbers"]
+    added_serial_numbers = [sn for sn in serial_numbers if sn]
+    number_of_items = firearm_details["number_of_items"]
+
+    return number_of_items != len(added_serial_numbers)
