@@ -53,4 +53,5 @@ def test_select_role_form(mock_sites):
     )
     assert form.is_valid()
     assert form.fields["sites"].choices[0][0] == mock_sites["sites"][0]["id"]
+    assert form.fields["sites"].choices[0].hint.split("\n")[5] == " Islington<br />"
     assert Roles.ADMINISTRATOR_USER_ROLE[1] in form.Layout.TITLE

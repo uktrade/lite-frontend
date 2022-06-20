@@ -1,6 +1,7 @@
 from crispy_forms_gds.layout import HTML
 from django import forms
 from django.db import models
+
 from crispy_forms_gds.choices import Choice
 from exporter.core.common.forms import BaseForm
 
@@ -77,6 +78,20 @@ class AddUserForm(BaseForm):
 
         self.declared_fields["sites"].choices = site_choices
         super().__init__(*args, **kwargs)
+
+    def format_address(self, address):
+        site_address = filter(
+            None,
+            [
+                address.get("address"),
+                address.get("address_line_1"),
+                address.get("address_line_2"),
+                address.get("city"),
+                address.get("postcode"),
+                address.get("country").get("name"),
+            ],
+        )
+        return render_to_string("organisation/members/includes/site-address.html", {"site_address": site_address})
 
     def get_layout_fields(self):
         return ("email", "sites")
