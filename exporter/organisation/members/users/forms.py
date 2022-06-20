@@ -75,12 +75,26 @@ class AddUserForm(BaseForm):
         self.request = request
         role_name = [item[1] for item in Roles.IMMUTABLE_ROLES if item[0] == role_id]
         self.Layout.TITLE = f"Add an {role_name[0]}"
-        site_choices = [
-            Choice(x["id"], x["name"], hint=mark_safe("Put something here<br/>With line breaks<br/>")) for x in sites
-        ]
+        site_choices = [Choice(x["id"], x["name"], hint=self.format_address(x.get("address", {}))) for x in sites]
 
         self.declared_fields["sites"].choices = site_choices
         super().__init__(*args, **kwargs)
+
+    def format_address(self, address):
+        site_address = "<br/>".join(
+            filter(
+                None,
+                [
+                    address.get("address"),
+                    address.get("address_line_1"),
+                    address.get("address_line_2"),
+                    address.get("city"),
+                    address.get("postcode"),
+                    address.get("country").get("name"),
+                ],
+            )
+        )
+        return mark_safe(site_address)
 
     def get_layout_fields(self):
         return ("email", "sites")
