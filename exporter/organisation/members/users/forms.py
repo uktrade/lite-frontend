@@ -2,12 +2,12 @@ from crispy_forms_gds.layout import HTML
 from django import forms
 from django.db import models
 
+from django.template.loader import render_to_string
 from crispy_forms_gds.choices import Choice
 from exporter.core.common.forms import BaseForm
 
 from exporter.core.constants import Roles
 from django.core.validators import validate_email
-from django.template.loader import render_to_string
 
 
 class TextChoice(Choice):
@@ -74,8 +74,7 @@ class AddUserForm(BaseForm):
         self.request = request
         role_name = [item[1] for item in Roles.IMMUTABLE_ROLES if item[0] == role_id]
         self.Layout.TITLE = f"Add an {role_name[0]}"
-        site_choices = [(x["id"], x["name"] + "<html>") for x in sites]
-
+        site_choices = [Choice(x["id"], x["name"], hint=self.format_address(x.get("address", {}))) for x in sites]
         self.declared_fields["sites"].choices = site_choices
         super().__init__(*args, **kwargs)
 

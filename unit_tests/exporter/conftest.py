@@ -155,8 +155,44 @@ def mock_sites(requests_mock, mock_exporter_user, mock_exporter_user_me):
     )
     data = {
         "sites": [
-            {"id": "f733084d-5a11-4a41-a55b-974d2fb779a7", "name": "Site1", "address": {}},
-            {"id": "f345084d-9a22-4a41-a55b-974d2fb789a9", "name": "Site2", "address": {}},
+            {
+                "id": "f733084d-5a11-4a41-a55b-974d2fb779a7",
+                "name": "Site1",
+                "address": {
+                    "address": None,
+                    "id": "3f611bdb-ee89-41b5-a6f0-26f8b1182016",
+                    "address_line_1": "42 Question Road",
+                    "address_line_2": "",
+                    "city": "London",
+                    "region": "London",
+                    "postcode": "Islington",
+                    "country": {
+                        "id": "GB",
+                        "name": "United Kingdom",
+                        "type": "gov.uk Country",
+                        "is_eu": True,
+                    },
+                },
+            },
+            {
+                "id": "f345084d-9a22-4a41-a55b-974d2fb789a9",
+                "name": "Site2",
+                "address": {
+                    "address": None,
+                    "id": "5h611bdb-ee89-41b5-a6f0-26f8b1182019",
+                    "address_line_1": "43 Question Road",
+                    "address_line_2": "",
+                    "city": "Birmingham",
+                    "region": "Midlands",
+                    "postcode": "B7TTTT",
+                    "country": {
+                        "id": "GB",
+                        "name": "United Kingdom",
+                        "type": "gov.uk Country",
+                        "is_eu": True,
+                    },
+                },
+            },
         ]
     }
     requests_mock.get(url=url, json=data)
