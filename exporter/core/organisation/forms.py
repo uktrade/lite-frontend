@@ -237,7 +237,4 @@ class SelectOrganisationForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def get_layout_fields(self):
-        return (
-            HTML.p("You can switch between organisations from your dashboard."),
-            "organisation",
-        )
+        return ("organisation",)
