@@ -318,6 +318,14 @@ jobs:
       - checkout
       - run: git submodule update --init
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
+      - run:
+          name: Download docker images before VPN setup
+          command: |
+            docker pull gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
+            docker pull eu.gcr.io/sre-docker-registry/lite-db:latest
+            docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+            docker pull redis:5-alpine
+            docker pull gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
       - vpn_install
       - vpn_connect
       - run_make:

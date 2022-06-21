@@ -100,3 +100,6 @@ exporter-e2e-test:
 exporter-e2e-selenium-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-exporter' ***"
 	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest --headless ./ui_tests/exporter'
+
+build-exporter:
+	$(docker-e2e-exporter) build
