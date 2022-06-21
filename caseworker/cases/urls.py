@@ -113,6 +113,7 @@ urlpatterns = [
     path("knowledge-people/", compliance.KnowledgePeople.as_view(), name="knowledge_of_people"),
     path("knowledge-products/", compliance.KnowledgeProduct.as_view(), name="knowledge_of_products"),
     path("denials/", main.Denials.as_view(), name="denials"),
+    path("activities/", include("caseworker.activities.urls")),
     # tabs
     path("<str:tab>/", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
     path("<str:tab>/give-advice/", advice.GiveAdvice.as_view(), name="give_advice"),
