@@ -1,9 +1,6 @@
 from exporter.core.wizard.payloads import MergingPayloadBuilder
+from exporter.core.common.forms import get_cleaned_data
 from .constants import RegistrationSteps
-
-
-def get_cleaned_data(form):
-    return form.cleaned_data
 
 
 def get_address_details_payload(form):

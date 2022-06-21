@@ -1,16 +1,16 @@
 import pytest
 from exporter.organisation.members.users import forms
-from exporter.core.constants import Roles
+from exporter.core.enums import Roles
 
 
 @pytest.mark.parametrize(
     "data, valid",
     (
         ({"role": ""}, False),
-        ({"role": "AGENT_ROLE"}, True),
+        ({"role": "agent"}, True),
     ),
 )
-def test_select_role_form(data, valid):
+def test_select_role_form_validation(data, valid):
     form = forms.SelectRoleForm(data=data)
     assert form.is_valid() == valid
 
@@ -39,7 +39,7 @@ def test_select_role_form(data, valid):
     ),
 )
 def test_select_role_form_validation(data, valid, error, mock_sites):
-    form = forms.AddUserForm(data=data, request=None, role_id=Roles.AGENT_USER_ROLE[0], sites=mock_sites["sites"])
+    form = forms.AddUserForm(data=data, role_id=Roles.agent.id, sites=mock_sites["sites"])
     assert form.is_valid() == valid
 
     if not valid:
@@ -48,10 +48,12 @@ def test_select_role_form_validation(data, valid, error, mock_sites):
 
 def test_select_role_form(mock_sites):
     data = {"email": "joe@bloggs.com", "sites": [mock_sites["sites"][0]["id"]]}
-    form = forms.AddUserForm(
-        data=data, request=None, role_id=Roles.ADMINISTRATOR_USER_ROLE[0], sites=mock_sites["sites"]
-    )
+    form = forms.AddUserForm(data=data, role_id=Roles.administrator.id, sites=mock_sites["sites"])
     assert form.is_valid()
     assert form.fields["sites"].choices[0][0] == mock_sites["sites"][0]["id"]
-    assert form.fields["sites"].choices[0].hint.split("\n")[5] == "    Islington<br />"
-    assert Roles.ADMINISTRATOR_USER_ROLE[1] in form.Layout.TITLE
+
+    assert (
+        form.fields["sites"].choices[0].hint
+        == "\n    42 Question Road<br />\n\n    London<br />\n\n    Islington<br />\n\n    United Kingdom<br />\n\n"
+    )
+    assert Roles.administrator.name in form.Layout.TITLE

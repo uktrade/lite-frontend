@@ -2,7 +2,7 @@ import pytest
 from exporter.organisation.members.users.constants import AddUserSteps
 from exporter.organisation.members.users import forms
 from django.urls import reverse
-from exporter.core.constants import Roles
+from exporter.core.enums import Roles
 
 
 @pytest.fixture()
@@ -30,7 +30,7 @@ def test_select_role_add_non_agent(goto_step, post_to_step, mock_exporter_user_m
 
     response = post_to_step(
         AddUserSteps.SELECT_ROLE,
-        {"role": Roles.ADMINISTRATOR_USER_ROLE[0]},
+        {"role": Roles.administrator.id},
     )
 
     assert response.status_code == 200
@@ -45,7 +45,7 @@ def test_select_role_add_non_agent(goto_step, post_to_step, mock_exporter_user_m
     assert response.status_code == 302
     assert mock_post_users.last_request.json() == {
         "email": "test@test.com",
-        "role": Roles.ADMINISTRATOR_USER_ROLE[0],
+        "role": Roles.administrator.id,
         "sites": [site_id],
     }
     assert response.url == "/organisation/members/"
@@ -56,7 +56,7 @@ def test_select_role_add_agent(goto_step, post_to_step, mock_exporter_user_me, m
 
     response = post_to_step(
         AddUserSteps.SELECT_ROLE,
-        {"role": Roles.AGENT_USER_ROLE[0]},
+        {"role": Roles.agent.id},
     )
 
     assert response.status_code == 200
@@ -81,7 +81,7 @@ def test_select_role_add_agent(goto_step, post_to_step, mock_exporter_user_me, m
     assert response.status_code == 302
     assert mock_post_users.last_request.json() == {
         "email": "test@test.com",
-        "role": Roles.AGENT_USER_ROLE[0],
+        "role": Roles.agent.id,
         "sites": [site_id],
     }
 

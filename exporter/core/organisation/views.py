@@ -14,6 +14,7 @@ from exporter.core.common.decorators import expect_status
 from exporter.auth.services import authenticate_exporter_user
 from exporter.organisation.members.services import get_user
 from exporter.core.services import get_organisation
+from exporter.core.common.exceptions import ServiceError
 
 from .constants import RegistrationSteps
 from .forms import (
@@ -61,9 +62,12 @@ class Registration(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        self.post_registration(form_dict)
-        self.update_authenticate_exporter_user()
-        return redirect(self.get_success_url())
+        try:
+            self.post_registration(form_dict)
+            self.update_authenticate_exporter_user()
+            return redirect(self.get_success_url())
+        except ServiceError as e:
+            return self.handle_service_error(e)
 
     @expect_status(
         HTTPStatus.OK,

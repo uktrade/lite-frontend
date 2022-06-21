@@ -39,8 +39,7 @@ class AddUser(
         kwargs = super().get_form_kwargs(step)
         if step == AddUserSteps.ADD_MEMBER:
             kwargs["sites"] = get_sites(self.request, self.request.session["organisation"])
-            kwargs["role_id"] = self.get_role_id
-            kwargs["request"] = self.request
+            kwargs["role_id"] = self.role_id
         return kwargs
 
     @expect_status(
@@ -60,5 +59,5 @@ class AddUser(
         return reverse("organisation:members:members")
 
     @property
-    def get_role_id(self):
+    def role_id(self):
         return self.get_cleaned_data_for_step(AddUserSteps.SELECT_ROLE)["role"]

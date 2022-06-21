@@ -1,4 +1,4 @@
-from exporter.core.constants import ADMINISTRATOR_USER_ROLE_ID, EXPORTER_USER_ROLE_ID, AGENT_USER_ROLE_ID
+from exporter.core.enums import Roles
 from exporter.organisation.members.services import get_user
 from exporter.organisation.roles.services import get_roles, get_permissions
 from exporter.organisation.views import OrganisationView
@@ -16,6 +16,6 @@ class Roles(OrganisationView):
         return {
             "roles": roles,
             "user_role_id": user_role_id,
-            "immutable_roles": [ADMINISTRATOR_USER_ROLE_ID, EXPORTER_USER_ROLE_ID, AGENT_USER_ROLE_ID],
+            "immutable_roles": [role.id for role in Roles.immutable_roles],
             "all_permissions": all_permissions,
         }

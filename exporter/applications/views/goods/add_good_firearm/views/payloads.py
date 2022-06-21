@@ -7,6 +7,7 @@ from exporter.core.helpers import (
     get_organisation_documents,
 )
 from exporter.core.wizard.payloads import MergingPayloadBuilder
+from exporter.core.common.forms import get_cleaned_data
 from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
     FirearmSection5Form,
@@ -44,10 +45,6 @@ def get_attach_firearm_act_certificate_payload(form):
             "section_certificate_date_of_expiry"
         ].isoformat(),
     }
-
-
-def get_cleaned_data(form):
-    return form.cleaned_data
 
 
 @firearm_details_payload

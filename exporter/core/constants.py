@@ -1,7 +1,6 @@
 from core.constants import GoodsTypeCategory
 from lite_content.lite_exporter_frontend import applications
 
-
 DATE_FORMAT = "%Y-%m-%d"
 PAGE_DATE_FORMAT = "%d %B %Y"
 TIMEZONE = "Europe/London"
@@ -69,22 +68,11 @@ NOT_STARTED = "not_started"
 IN_PROGRESS = "in_progress"
 DONE = "done"
 
-ADMINISTRATOR_USER_ROLE_ID = "00000000-0000-0000-0000-000000000003"
-EXPORTER_USER_ROLE_ID = "00000000-0000-0000-0000-000000000004"
-AGENT_USER_ROLE_ID = "00000000-0000-0000-0000-000000000005"
-
 # CLC
 UNSURE = "unsure"
 
 SAVE_BUTTON = "Save"
 CONTINUE = "Continue"
-
-
-class Roles:
-    ADMINISTRATOR_USER_ROLE = ("00000000-0000-0000-0000-000000000003", "administrator")
-    EXPORTER_USER_ROLE = ("00000000-0000-0000-0000-000000000004", "exporter")
-    AGENT_USER_ROLE = ("00000000-0000-0000-0000-000000000005", "agent")
-    IMMUTABLE_ROLES = [ADMINISTRATOR_USER_ROLE, EXPORTER_USER_ROLE, AGENT_USER_ROLE]
 
 
 class Permissions:

@@ -1,18 +1,11 @@
 from crispy_forms_gds.layout import HTML
+from crispy_forms_gds.choices import Choice
 from django import forms
 from django.db import models
-
 from django.template.loader import render_to_string
-from crispy_forms_gds.choices import Choice
-from exporter.core.common.forms import BaseForm
 
-from exporter.core.constants import Roles
-from django.core.validators import validate_email
-
-
-class TextChoice(Choice):
-    def __init__(self, choice, **kwargs):
-        super().__init__(choice.value, choice.label, **kwargs)
+from exporter.core.common.forms import BaseForm, TextChoice
+from exporter.core.enums import Roles
 
 
 class SelectRoleForm(BaseForm):
@@ -20,9 +13,9 @@ class SelectRoleForm(BaseForm):
         TITLE = "Who do you want to add?"
 
     class RoleChoices(models.TextChoices):
-        AGENT_ROLE = Roles.AGENT_USER_ROLE[0], "An agent"
-        EXPORTER_ROLE = Roles.EXPORTER_USER_ROLE[0], "An exporter"
-        ADMIN_ROLE = Roles.ADMINISTRATOR_USER_ROLE[0], "An administrator"
+        AGENT_ROLE = Roles.agent.id, "An agent"
+        EXPORTER_ROLE = Roles.exporter.id, "An exporter"
+        ADMIN_ROLE = Roles.administrator.id, "An administrator"
 
     ROLE_CHOICES = (
         TextChoice(RoleChoices.AGENT_ROLE),
@@ -53,9 +46,8 @@ class AddUserForm(BaseForm):
     class Layout:
         TITLE = ""
 
-    email = forms.CharField(
+    email = forms.EmailField(
         label="email",
-        validators=[validate_email],
         error_messages={
             "required": "Enter an email address",
         },
@@ -70,9 +62,8 @@ class AddUserForm(BaseForm):
         widget=forms.CheckboxSelectMultiple(),
     )
 
-    def __init__(self, request, role_id, sites, *args, **kwargs):
-        self.request = request
-        role_name = [item[1] for item in Roles.IMMUTABLE_ROLES if item[0] == role_id]
+    def __init__(self, role_id, sites, *args, **kwargs):
+        role_name = [role.name for role in Roles.immutable_roles if role.id == role_id]
         self.Layout.TITLE = f"Add an {role_name[0]}"
         site_choices = [Choice(x["id"], x["name"], hint=self.format_address(x.get("address", {}))) for x in sites]
         self.declared_fields["sites"].choices = site_choices

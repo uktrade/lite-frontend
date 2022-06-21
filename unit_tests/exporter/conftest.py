@@ -196,7 +196,7 @@ def mock_sites(requests_mock, mock_exporter_user, mock_exporter_user_me):
         ]
     }
     requests_mock.get(url=url, json=data)
-    yield data
+    return data
 
 
 @pytest.fixture
