@@ -1,6 +1,16 @@
 from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.layout import HTML, Layout, Submit
 from django import forms
+
+
+def get_cleaned_data(form):
+    return form.cleaned_data
+
+
+class TextChoice(Choice):
+    def __init__(self, choice, **kwargs):
+        super().__init__(choice.value, choice.label, **kwargs)
 
 
 class BaseForm(forms.Form):

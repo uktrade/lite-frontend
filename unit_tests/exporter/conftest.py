@@ -148,6 +148,58 @@ def mock_authenticate_user_save(requests_mock, mock_exporter_user):
 
 
 @pytest.fixture
+def mock_sites(requests_mock, mock_exporter_user, mock_exporter_user_me):
+    organisation_id = mock_exporter_user_me["organisations"][0]["id"]
+    url = client._build_absolute_uri(
+        f"/organisations/{organisation_id}/sites/?exclude=&get_total_users=False&postcode="
+    )
+    data = {
+        "sites": [
+            {
+                "id": "f733084d-5a11-4a41-a55b-974d2fb779a7",
+                "name": "Site1",
+                "address": {
+                    "address": None,
+                    "id": "3f611bdb-ee89-41b5-a6f0-26f8b1182016",
+                    "address_line_1": "42 Question Road",
+                    "address_line_2": "",
+                    "city": "London",
+                    "region": "London",
+                    "postcode": "Islington",
+                    "country": {
+                        "id": "GB",
+                        "name": "United Kingdom",
+                        "type": "gov.uk Country",
+                        "is_eu": True,
+                    },
+                },
+            },
+            {
+                "id": "f345084d-9a22-4a41-a55b-974d2fb789a9",
+                "name": "Site2",
+                "address": {
+                    "address": None,
+                    "id": "5h611bdb-ee89-41b5-a6f0-26f8b1182019",
+                    "address_line_1": "43 Question Road",
+                    "address_line_2": "",
+                    "city": "Birmingham",
+                    "region": "Midlands",
+                    "postcode": "B7TTTT",
+                    "country": {
+                        "id": "GB",
+                        "name": "United Kingdom",
+                        "type": "gov.uk Country",
+                        "is_eu": True,
+                    },
+                },
+            },
+        ]
+    }
+    requests_mock.get(url=url, json=data)
+    return data
+
+
+@pytest.fixture
 def mock_countries(requests_mock):
     url = client._build_absolute_uri("/static/countries/")
     # in relity there are around 275 countries
@@ -199,6 +251,14 @@ def mock_has_existing_applications_and_licences_and_nlrs(requests_mock):
     data = {"applications": True}
     requests_mock.get(url=url, json=data)
     yield data
+
+
+@pytest.fixture()
+def data_organisations():
+    return [
+        {"id": "9c2222db-98e5-47e8-9e01-653354e95311", "name": "org1"},
+        {"id": "9c2222db-98e5-47e8-9e01-653354e95222", "name": "org2"},
+    ]
 
 
 @pytest.fixture

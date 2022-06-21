@@ -1,7 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
 
-from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.layout import Field, HTML
 
@@ -22,7 +21,7 @@ from core.forms.layouts import (
     Prefixed,
 )
 
-from exporter.core.common.forms import BaseForm
+from exporter.core.common.forms import BaseForm, TextChoice
 from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import (
@@ -72,11 +71,6 @@ class CustomErrorDateInputField(DateInputField):
 
 def coerce_str_to_bool(val):
     return val == "True"
-
-
-class TextChoice(Choice):
-    def __init__(self, choice, **kwargs):
-        super().__init__(choice.value, choice.label, **kwargs)
 
 
 class FirearmCategoryForm(BaseForm):

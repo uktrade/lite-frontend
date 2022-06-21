@@ -1,7 +1,6 @@
 from core.constants import GoodsTypeCategory
 from lite_content.lite_exporter_frontend import applications
 
-
 DATE_FORMAT = "%Y-%m-%d"
 PAGE_DATE_FORMAT = "%d %B %Y"
 TIMEZONE = "Europe/London"
@@ -68,10 +67,6 @@ APPLICANT_EDITING = "applicant_editing"
 NOT_STARTED = "not_started"
 IN_PROGRESS = "in_progress"
 DONE = "done"
-
-ADMINISTRATOR_USER_ROLE_ID = "00000000-0000-0000-0000-000000000003"
-EXPORTER_USER_ROLE_ID = "00000000-0000-0000-0000-000000000004"
-AGENT_USER_ROLE_ID = "00000000-0000-0000-0000-000000000005"
 
 # CLC
 UNSURE = "unsure"
