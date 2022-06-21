@@ -171,7 +171,7 @@ def test_home_content(
         "What year was it made?",
         "1930",
         "Will the product be incorporated into another item before it is onward exported?",
-        "N/A",
+        "No",
         "Has the product been deactivated?",
         "No",
         "Number of items",

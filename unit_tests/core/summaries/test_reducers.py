@@ -114,7 +114,27 @@ def test_is_good_controlled_reducer(good, output):
                 },
             },
             (
-                ("is-pv-graded", {"key": "yes"}),
+                ("is-pv-graded", "yes"),
+                ("pv-grading-grading", "pv-grading-grading"),
+                ("pv-grading-issuing-authority", "pv-grading-issuing-authority"),
+                ("pv-grading-details-reference", "pv-grading-reference"),
+                ("pv-grading-details-date-of-issue", "pv-grading-date-of-issue"),
+            ),
+        ),
+        (
+            {
+                "is_pv_graded": "yes",
+                "pv_grading_details": {
+                    "prefix": None,
+                    "suffix": None,
+                    "grading": "pv-grading-grading",
+                    "issuing_authority": "pv-grading-issuing-authority",
+                    "reference": "pv-grading-reference",
+                    "date_of_issue": "pv-grading-date-of-issue",
+                },
+            },
+            (
+                ("is-pv-graded", "yes"),
                 ("pv-grading-grading", "pv-grading-grading"),
                 ("pv-grading-issuing-authority", "pv-grading-issuing-authority"),
                 ("pv-grading-details-reference", "pv-grading-reference"),
@@ -134,7 +154,29 @@ def test_is_good_controlled_reducer(good, output):
                 },
             },
             (
-                ("is-pv-graded", {"key": "yes"}),
+                ("is-pv-graded", "yes"),
+                ("pv-grading-prefix", "pv-grading-prefix"),
+                ("pv-grading-grading", "pv-grading-grading"),
+                ("pv-grading-suffix", "pv-grading-suffix"),
+                ("pv-grading-issuing-authority", "pv-grading-issuing-authority"),
+                ("pv-grading-details-reference", "pv-grading-reference"),
+                ("pv-grading-details-date-of-issue", "pv-grading-date-of-issue"),
+            ),
+        ),
+        (
+            {
+                "is_pv_graded": "yes",
+                "pv_grading_details": {
+                    "prefix": "pv-grading-prefix",
+                    "suffix": "pv-grading-suffix",
+                    "grading": "pv-grading-grading",
+                    "issuing_authority": "pv-grading-issuing-authority",
+                    "reference": "pv-grading-reference",
+                    "date_of_issue": "pv-grading-date-of-issue",
+                },
+            },
+            (
+                ("is-pv-graded", "yes"),
                 ("pv-grading-prefix", "pv-grading-prefix"),
                 ("pv-grading-grading", "pv-grading-grading"),
                 ("pv-grading-suffix", "pv-grading-suffix"),
@@ -147,7 +189,13 @@ def test_is_good_controlled_reducer(good, output):
             {
                 "is_pv_graded": {"key": "no"},
             },
-            (("is-pv-graded", {"key": "no"}),),
+            (("is-pv-graded", "no"),),
+        ),
+        (
+            {
+                "is_pv_graded": "no",
+            },
+            (("is-pv-graded", "no"),),
         ),
     ),
 )
@@ -410,7 +458,7 @@ def test_firearm_on_application_reducer(mocker):
             },
             {},
             (
-                ("firearm-certificate", None),
+                ("firearm-certificate-missing", True),
                 ("firearm-certificate-missing-reason", "I do not have a firearm certificate"),
             ),
         ),
@@ -461,7 +509,7 @@ def test_firearms_act_section1_reducer(firearm_details, good_on_application_docu
             },
             {},
             (
-                ("shotgun-certificate", None),
+                ("shotgun-certificate-missing", True),
                 ("shotgun-certificate-missing-reason", "I do not have a shotgun certificate"),
             ),
         ),
