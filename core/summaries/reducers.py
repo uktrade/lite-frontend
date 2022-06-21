@@ -27,13 +27,16 @@ def is_good_controlled_reducer(good):
 
 
 def is_pv_graded_reducer(good):
+    is_pv_graded = good["is_pv_graded"]
+    if isinstance(is_pv_graded, dict):
+        is_pv_graded = is_pv_graded["key"]
     summary = (
         (
             "is-pv-graded",
-            good["is_pv_graded"],
+            is_pv_graded,
         ),
     )
-    if good["is_pv_graded"]["key"] == "yes":
+    if is_pv_graded == "yes":
         pv_grading_details = good["pv_grading_details"]
         if pv_grading_details["prefix"]:
             summary += (
@@ -250,7 +253,7 @@ def firearms_act_section1_reducer(firearm_details, good_on_application_documents
 
     if firearm_details["section_certificate_missing"]:
         return (
-            ("firearm-certificate", None),
+            ("firearm-certificate-missing", True),
             ("firearm-certificate-missing-reason", firearm_details["section_certificate_missing_reason"]),
         )
 
@@ -271,7 +274,7 @@ def firearms_act_section2_reducer(firearm_details, good_on_application_documents
 
     if firearm_details["section_certificate_missing"]:
         return (
-            ("shotgun-certificate", None),
+            ("shotgun-certificate-missing", True),
             ("shotgun-certificate-missing-reason", firearm_details["section_certificate_missing_reason"]),
         )
 

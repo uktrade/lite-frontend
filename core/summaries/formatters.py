@@ -138,7 +138,12 @@ FIREARM_VALUE_FORMATTERS = {
     "is-registered-firearms-dealer": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
-    "is-pv-graded": key_value_formatter,
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "Not pv graded",
+        }
+    ),
     "pv-grading-grading": key_value_formatter,
     "pv-grading-details-date-of-issue": date_formatter("j F Y"),
     "is-replica": yesno,
@@ -183,7 +188,9 @@ def document_formatter(document, url):
 
 
 FIREARM_ON_APPLICATION_FORMATTERS = {
+    "firearm-certificate-missing": just("I do not have a firearm certificate"),
     "firearm-certificate-expiry-date": date_formatter("j F Y"),
+    "shotgun-certificate-missing": just("I do not have a shotgun certificate"),
     "shotgun-certificate-expiry-date": date_formatter("j F Y"),
     "made-before-1938": yesno,
     "is-onward-exported": yesno,
@@ -198,9 +205,13 @@ FIREARM_ON_APPLICATION_FORMATTERS = {
 
 FIREARM_ON_APPLICATION_LABELS = {
     "firearm-certificate": "Upload your firearm certificate",
+    "firearm-certificate-missing": "Upload your firearm certificate",
+    "firearm-certificate-missing-reason": "Explain why you do not have a firearm certificate",
     "firearm-certificate-number": "Certificate reference number",
     "firearm-certificate-expiry-date": "Certificate date of expiry",
     "shotgun-certificate": "Upload your shotgun certificate",
+    "shotgun-certificate-missing": "Upload your shotgun certificate",
+    "shotgun-certificate-missing-reason": "Explain why you do not have a shotgun certificate",
     "shotgun-certificate-number": "Certificate reference number",
     "shotgun-certificate-expiry-date": "Certificate date of expiry",
     "made-before-1938": "Was the product made before 1938?",

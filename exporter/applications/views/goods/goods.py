@@ -28,8 +28,15 @@ from exporter.applications.services import (
     post_application_document,
     post_good_on_application,
 )
+from exporter.applications.summaries import (
+    firearm_product_summary,
+    firearm_product_on_application_summary,
+)
 from exporter.core import constants
-from exporter.core.constants import AddGoodFormSteps
+from exporter.core.constants import (
+    AddGoodFormSteps,
+    FirearmsProductType,
+)
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
     is_category_firearms,
@@ -975,17 +982,64 @@ class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
 class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
     template_name = "applications/goods/goods-detail-summary.html"
 
+    def get_good_on_application_documents(self, good_on_application):
+        application_documents, _ = get_application_documents(
+            self.request,
+            good_on_application["application"],
+            good_on_application["good"]["id"],
+            include_unsafe=True,
+        )
+        application_documents = application_documents["documents"]
+
+        good_on_application_documents = {
+            document["document_type"]: document
+            for document in application_documents
+            if document["good_on_application"] == good_on_application["id"]
+        }
+
+        return good_on_application_documents
+
+    def get_product_summary(self, good_on_application, is_user_rfd, organisation_documents):
+        product_summary = firearm_product_summary(
+            good_on_application["good"],
+            is_user_rfd,
+            organisation_documents,
+        )
+        product_on_application_summary = firearm_product_on_application_summary(
+            good_on_application,
+            self.get_good_on_application_documents(good_on_application),
+        )
+        return product_summary + product_on_application_summary
+
+    def is_product_type(self, good_on_application, product_type):
+        try:
+            return good_on_application["firearm_details"]["type"]["key"] == product_type
+        except KeyError:
+            return False
+
     def get_context_data(self, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(self.request, application_id)
+        organisation_documents = {
+            item["document_type"]: item for item in application["organisation"].get("documents", [])
+        }
         documents = {
             item["document_type"].replace("-", "_"): item for item in application["organisation"].get("documents", [])
         }
+        is_user_rfd = has_valid_rfd_certificate(application)
+
+        goods = []
+        for good_on_application in application["goods"]:
+            if self.is_product_type(good_on_application, FirearmsProductType.FIREARMS):
+                product_summary = self.get_product_summary(good_on_application, is_user_rfd, organisation_documents)
+            else:
+                product_summary = None
+            goods.append((good_on_application, product_summary))
 
         return {
             "application_id": application_id,
-            "goods": application["goods"],
-            "is_user_rfd": has_valid_rfd_certificate(application),
+            "goods": goods,
+            "is_user_rfd": is_user_rfd,
             "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
             "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,

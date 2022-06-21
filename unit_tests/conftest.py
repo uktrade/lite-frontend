@@ -625,6 +625,8 @@ def data_standard_case():
                                 "number_of_items": 2,
                                 "serial_numbers_available": "AVAILABLE",
                                 "serial_numbers": ["12345", "ABC-123"],
+                                "is_covered_by_firearm_act_section_one_two_or_five": "No",
+                                "is_covered_by_firearm_act_section_one_two_or_five_explanation": "Not covered by firearm act sections",
                             },
                         },
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
@@ -660,6 +662,9 @@ def data_standard_case():
                             "number_of_items": 2,
                             "serial_numbers_available": "AVAILABLE",
                             "serial_numbers": ["12345", "ABC-123"],
+                            "year_of_manufacture": "1990",
+                            "is_onward_exported": False,
+                            "is_deactivated": False,
                         },
                     },
                     {

@@ -205,7 +205,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {}
+    assert form.initial == {"is_covered_by_section_5": "no"}
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
@@ -302,7 +302,9 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {}
+    assert form.initial == {
+        "is_covered_by_section_5": "no",
+    }
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
