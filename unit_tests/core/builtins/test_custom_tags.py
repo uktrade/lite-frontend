@@ -1,4 +1,6 @@
+import datetime
 import pytest
+
 from core.builtins import custom_tags
 from core.builtins.custom_tags import highlight_text
 from exporter.core import constants
@@ -191,3 +193,18 @@ def test_highlight_text_sanitization(input, term, expected):
 )
 def test_document_extension(filename, expected):
     assert expected == custom_tags.document_extension(filename)
+
+
+@pytest.mark.parametrize(
+    "date_string,output",
+    [
+        (None, ""),
+        ("2020-08-03T12:52:38.239382", datetime.datetime(2020, 8, 3, 12, 52, 38, 239382)),
+        (
+            "2020-08-03T12:52:38.239382Z",
+            datetime.datetime(2020, 8, 3, 12, 52, 38, 239382, tzinfo=datetime.timezone.utc),
+        ),
+    ],
+)
+def test_to_datetime(date_string, output):
+    assert custom_tags.to_datetime(date_string) == output
