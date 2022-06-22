@@ -16,6 +16,7 @@ INSTALLED_APPS += [
     "caseworker.tau",
     "caseworker.teams",
     "caseworker.cases",
+    "caseworker.activities",
 ]
 
 MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")

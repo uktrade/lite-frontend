@@ -1,10 +1,19 @@
 import pytest
 
+from pytest_django.asserts import assertTemplateUsed
+
 from django.urls import reverse
+
+from caseworker.cases.objects import Case
 
 
 @pytest.fixture(autouse=True)
-def setup(settings):
+def setup(
+    settings,
+    mock_queue,
+    mock_gov_user,
+    mock_case,
+):
     settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = True
 
 
@@ -20,8 +29,6 @@ def test_notes_and_timelines_all_view_flag_off_status_code(
     settings,
     authorized_client,
     notes_and_timelines_all_url,
-    mock_queue,
-    mock_gov_user,
 ):
     settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = False
     response = authorized_client.get(notes_and_timelines_all_url)
@@ -34,3 +41,22 @@ def test_notes_and_timelines_all_view_flag_on_status_code(
 ):
     response = authorized_client.get(notes_and_timelines_all_url)
     assert response.status_code == 200
+
+
+def test_notes_and_timelines_all_view_templates(
+    authorized_client,
+    notes_and_timelines_all_url,
+):
+    response = authorized_client.get(notes_and_timelines_all_url)
+    assertTemplateUsed(response, "activities/notes-and-timeline-all.html")
+    assertTemplateUsed(response, "layouts/case.html")
+    assertTemplateUsed(response, "includes/case-tabs.html")
+
+
+def test_notes_and_timelines_context_data(
+    authorized_client,
+    notes_and_timelines_all_url,
+    data_standard_case,
+):
+    response = authorized_client.get(notes_and_timelines_all_url)
+    assert response.context["case"] == Case(data_standard_case["case"])
