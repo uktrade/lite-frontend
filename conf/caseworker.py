@@ -16,6 +16,7 @@ INSTALLED_APPS += [
     "caseworker.tau",
     "caseworker.teams",
     "caseworker.cases",
+    "caseworker.activities",
 ]
 
 MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")
@@ -39,6 +40,7 @@ TEMPLATES = [
                 "caseworker.core.context_processors.lite_menu",
                 "caseworker.core.context_processors.current_user",
                 "caseworker.core.context_processors.is_all_cases_queue",
+                "caseworker.core.context_processors.feature_flags",
             ],
             "builtins": ["core.builtins.custom_tags"],
         },
@@ -70,6 +72,7 @@ LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID = env.int("LITE_SPIRE_ARCHIVE_EXAMPLE
 
 LITE_API_SEARCH_ENABLED = env.bool("LITE_API_SEARCH_ENABLED", False)
 FEATURE_FLAG_PRODUCT_2_0 = env.bool("FEATURE_FLAG_PRODUCT_2_0", True)
+FEATURE_FLAG_NOTES_TIMELINE_2_0 = env.bool("FEATURE_FLAG_NOTES_TIMELINE_2_0", False)
 
 # static files
 SVG_DIRS = [
