@@ -1,0 +1,10 @@
+{% extends 'layouts/case.html' %}
+
+{% block header_tabs %}
+    {% include "includes/case-tabs.html" with case=case queue=queue selected_tab="activities" %}
+{% endblock %}
+
+{% block details %}
+    <h1 class="govuk-heading-s">Case history</h1>
+    <p class="govuk-body">View a timeline showing progress and case notes for this application</p>
+{% endblock %}

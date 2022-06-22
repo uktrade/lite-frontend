@@ -3,7 +3,7 @@
 {% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
 
 {% block header_tabs %}
-	{% include "tau/case_tabs.html" with case=case queue=queue %}
+	{% include "includes/case-tabs.html" with case=case queue=queue selected_tab="assessment" %}
 {% endblock %}
 
 {% block full_width %}
