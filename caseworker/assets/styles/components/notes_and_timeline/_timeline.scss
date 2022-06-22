@@ -1,0 +1,50 @@
+@import "./mixins";
+@import "./vars";
+
+.notes-and-timeline-timeline {
+    @include govuk-font($size: 19);
+    @include govuk-text-colour;
+
+    border-left: 1px solid $govuk-border-colour;
+    margin-left: $circle-box-size / 2;
+
+    &__day-group {
+        margin-bottom: govuk-spacing(4);
+    }
+
+    &__day-group-heading {
+        @include govuk-font($size: 19);
+        @include govuk-typography-weight-bold;
+
+        align-items: center;
+        display: flex;
+        margin-left: -($circle-box-size / 2);
+        margin-top: 0;
+
+        &::before {
+            @include circle($circle-box-size);
+
+            background-color: govuk-colour("white");
+            border: 1px solid $govuk-border-colour;
+            content: "";
+            margin-right: govuk-spacing(4);
+        }
+    }
+
+    &__day-group-item, &__day-group-note {
+        padding: govuk-spacing(3);
+    }
+
+    &__day-group-item {
+        margin-left: govuk-spacing(4);
+
+        &:nth-child(odd) {
+            background-color: govuk-tint(govuk-colour("blue"), 95%);
+        }
+    }
+
+    &__day-group-note {
+        background-color: govuk-colour("light-grey");
+        margin-top: govuk-spacing(2);
+    }
+}
