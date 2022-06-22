@@ -212,7 +212,7 @@ def mock_sites(requests_mock, mock_exporter_user, mock_exporter_user_me):
 @pytest.fixture
 def mock_organisation_users(requests_mock, mock_exporter_user, mock_exporter_user_me):
     organisation_id = mock_exporter_user_me["organisations"][0]["id"]
-    url = client._build_absolute_uri(f"/organisations/{organisation_id}/users/?page=1")
+    url = client._build_absolute_uri(f"/organisations/{organisation_id}/users/")
     data = {"results": []}
     requests_mock.get(url=url, json=data)
     return data
