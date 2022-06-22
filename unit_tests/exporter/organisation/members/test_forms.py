@@ -15,7 +15,7 @@ def test_select_role_form_validation(data, valid):
     assert form.is_valid() == valid
 
     if not valid:
-        assert form.errors["role"][0] == "Please select a role"
+        assert form.errors["role"][0] == "Select a role"
 
 
 @pytest.mark.parametrize(
@@ -24,7 +24,10 @@ def test_select_role_form_validation(data, valid):
         (
             {},
             False,
-            {"email": ["Enter an email address"], "sites": ["Please select at least one site"]},
+            {
+                "email": ["Enter an email address in the correct format, like name@example.com"],
+                "sites": ["Select at least one site"],
+            },
         ),
         (
             {"email": "joe@", "sites": ["f733084d-5a11-4a41-a55b-974d2fb779a7"]},
