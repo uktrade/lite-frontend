@@ -90,7 +90,7 @@ class AddUserForm(BaseForm):
         users = get_organisation_users(self.request, str(self.request.session["organisation"]), params={})
         matched_users = list(filter(lambda d: d["email"] == self.cleaned_data["email"], users["results"]))
         if matched_users:
-            raise forms.ValidationError("Please select an email address that isn't registered to this organisation")
+            raise forms.ValidationError("Enter an email address that is not registered to this organisation")
         return email
 
     def get_layout_fields(self):

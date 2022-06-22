@@ -81,4 +81,4 @@ def test_select_role_validate_email(mock_sites, request_session_with_organisatio
         data=data, request=request_session_with_organisation, role_id=Roles.administrator.id, sites=mock_sites["sites"]
     )
     assert not form.is_valid()
-    assert form.errors == {"email": ["Please select an email address that isn't registered to this organisation"]}
+    assert form.errors == {"email": ["Enter an email address that is not registered to this organisation"]}
