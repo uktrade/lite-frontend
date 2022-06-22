@@ -1,35 +1,35 @@
 <div id="tab-bar" class="app-case-tab-bar">
-	<div class="govuk-width-container lite-tabs__container">
-		<div class="lite-tabs ">
-			<a id="tab-details" href="{% url 'cases:case' queue.id case.id 'details' %}" class="lite-tabs__tab{% if selected_tab == "details" %} lite-tabs__tab--selected{% endif %}">
-				Details
-			</a>
-			<a id="tab-licences" href="{% url 'cases:case' queue.id case.id 'licences' %}" class="lite-tabs__tab{% if selected_tab == "licenses" %} lite-tabs__tab--selected{% endif %}">
-				Licences
-			</a>
-			<a id="tab-additional-contacts" href="{% url 'cases:case' queue.id case.id 'contacts' %}" class="lite-tabs__tab{% if selected_tab == "additional-contacts" %} lite-tabs__tab--selected{% endif %}">
-				Contacts
-			</a>
-			<a id="tab-ecju-queries" href="{% url 'cases:case' queue.id case.id 'ecju-queries' %}" class="lite-tabs__tab{% if selected_tab == "ecju-queries" %} lite-tabs__tab--selected{% endif %}">
-				Queries
-			</a>
-			<a id="tab-documents" href="{% url 'cases:case' queue.id case.id 'documents' %}" class="lite-tabs__tab{% if selected_tab == "documents" %} lite-tabs__tab--selected{% endif %}">
-				Documents
-			</a>
-			<a id="tab-activity" href="{% url 'cases:case' queue.id case.id 'activity' %}" class="lite-tabs__tab{% if selected_tab == "activity" %} lite-tabs__tab--selected{% endif %}">
-				Notes and timeline
-			</a>
+    <div class="govuk-width-container lite-tabs__container">
+        <div class="lite-tabs ">
+            <a id="tab-details" href="{% url 'cases:case' queue.id case.id 'details' %}" class="lite-tabs__tab{% if selected_tab == "details" %} lite-tabs__tab--selected{% endif %}">
+                Details
+            </a>
+            <a id="tab-licences" href="{% url 'cases:case' queue.id case.id 'licences' %}" class="lite-tabs__tab{% if selected_tab == "licenses" %} lite-tabs__tab--selected{% endif %}">
+                Licences
+            </a>
+            <a id="tab-additional-contacts" href="{% url 'cases:case' queue.id case.id 'contacts' %}" class="lite-tabs__tab{% if selected_tab == "additional-contacts" %} lite-tabs__tab--selected{% endif %}">
+                Contacts
+            </a>
+            <a id="tab-ecju-queries" href="{% url 'cases:case' queue.id case.id 'ecju-queries' %}" class="lite-tabs__tab{% if selected_tab == "ecju-queries" %} lite-tabs__tab--selected{% endif %}">
+                Queries
+            </a>
+            <a id="tab-documents" href="{% url 'cases:case' queue.id case.id 'documents' %}" class="lite-tabs__tab{% if selected_tab == "documents" %} lite-tabs__tab--selected{% endif %}">
+                Documents
+            </a>
+            <a id="tab-activity" href="{% url 'cases:case' queue.id case.id 'activity' %}" class="lite-tabs__tab{% if selected_tab == "activity" %} lite-tabs__tab--selected{% endif %}">
+                Notes and timeline
+            </a>
             {% if FEATURE_FLAG_NOTES_TIMELINE_2_0 %}
                 <a id="tab-activities" href="{% url 'cases:activities:notes-and-timeline-all' queue.id case.id %}" class="lite-tabs__tab{% if selected_tab == "activities" %} lite-tabs__tab--selected{% endif %}">
                     Notes and timeline (new)
                 </a>
             {% endif %}
-			<a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab{% if selected_tab == "advice" %} lite-tabs__tab--selected{% endif %}">
-				Recommendations and decision
-			</a>
-			<a id="tab-assessment" href="{% url 'cases:tau:home' queue.id case.id %}" class="lite-tabs__tab{% if selected_tab == "assessment" %} lite-tabs__tab--selected{% endif %}">
-				Product Assessment
-			</a>
-		</div>
-	</div>
+            <a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab{% if selected_tab == "advice" %} lite-tabs__tab--selected{% endif %}">
+                Recommendations and decision
+            </a>
+            <a id="tab-assessment" href="{% url 'cases:tau:home' queue.id case.id %}" class="lite-tabs__tab{% if selected_tab == "assessment" %} lite-tabs__tab--selected{% endif %}">
+                Product Assessment
+            </a>
+        </div>
+    </div>
 </div>
