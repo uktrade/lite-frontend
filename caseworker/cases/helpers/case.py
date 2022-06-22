@@ -1,9 +1,7 @@
 import datetime
 
-from django.conf import settings
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.functional import classproperty
 from django.views.generic import TemplateView
 
 from core.constants import CaseStatusEnum
@@ -38,6 +36,7 @@ class Tabs:
     LICENCES = Tab("licences", CasePage.Tabs.LICENCES, "licences")
     ADDITIONAL_CONTACTS = Tab("additional-contacts", CasePage.Tabs.ADDITIONAL_CONTACTS, "additional-contacts")
     ECJU_QUERIES = Tab("ecju-queries", CasePage.Tabs.ECJU_QUERIES, "ecju-queries")
+    ACTIVITY = Tab("activity", CasePage.Tabs.CASE_NOTES_AND_TIMELINE, "activity")
     ADVICE = TabCollection(
         "advice",
         "Recommendations and decision",
@@ -48,18 +47,6 @@ class Tabs:
         ],
     )
     COMPLIANCE_LICENCES = Tab("compliance-licences", CasePage.Tabs.LICENCES, "compliance-licences")
-
-    @classproperty
-    def ACTIVITY(cls):  # noqa
-        if settings.FEATURE_FLAG_NOTES_TIMELINE_2_0:
-            return Tab(
-                "activities",
-                CasePage.Tabs.CASE_NOTES_AND_TIMELINE,
-                "cases:activities:notes-and-timeline-all",
-                has_template=False,
-            )
-
-        return Tab("activity", CasePage.Tabs.CASE_NOTES_AND_TIMELINE, "activity")
 
 
 class Slices:
@@ -192,5 +179,13 @@ class CaseView(TemplateView):
             "assessment",
             "Product Assessment",
             "cases:tau:home",
+            has_template=False,
+        )
+
+    def get_notes_and_timelines_new_tab(self):
+        return Tab(
+            "activities",
+            f"{CasePage.Tabs.CASE_NOTES_AND_TIMELINE} (new)",
+            "cases:activities:notes-and-timeline-all",
             has_template=False,
         )

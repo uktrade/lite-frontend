@@ -16,13 +16,12 @@
 			<a id="tab-documents" href="{% url 'cases:case' queue.id case.id 'documents' %}" class="lite-tabs__tab{% if selected_tab == "documents" %} lite-tabs__tab--selected{% endif %}">
 				Documents
 			</a>
+			<a id="tab-activity" href="{% url 'cases:case' queue.id case.id 'activity' %}" class="lite-tabs__tab{% if selected_tab == "activity" %} lite-tabs__tab--selected{% endif %}">
+				Notes and timeline
+			</a>
             {% if FEATURE_FLAG_NOTES_TIMELINE_2_0 %}
-                <a id="tab-activities" href="{% url 'cases:activities:notes-and-timeline-all' queue.id case.id %}" class="lite-tabs__tab{% if selected_tab == "activity" %} lite-tabs__tab--selected{% endif %}">
-                    Notes and timeline
-                </a>
-            {% else %}
-                <a id="tab-activity" href="{% url 'cases:case' queue.id case.id 'activity' %}" class="lite-tabs__tab{% if selected_tab == "activity" %} lite-tabs__tab--selected{% endif %}">
-                    Notes and timeline
+                <a id="tab-activities" href="{% url 'cases:activities:notes-and-timeline-all' queue.id case.id %}" class="lite-tabs__tab{% if selected_tab == "activities" %} lite-tabs__tab--selected{% endif %}">
+                    Notes and timeline (new)
                 </a>
             {% endif %}
 			<a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab{% if selected_tab == "advice" %} lite-tabs__tab--selected{% endif %}">
