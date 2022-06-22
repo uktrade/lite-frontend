@@ -25,7 +25,9 @@ def mock_post_users(requests_mock):
     return requests_mock.post(url="/users/", json={}, status_code=201)
 
 
-def test_select_role_add_non_agent(goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites):
+def test_select_role_add_non_agent(
+    goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites, mock_organisation_users
+):
     goto_step(AddUserSteps.SELECT_ROLE)
 
     response = post_to_step(
@@ -51,7 +53,9 @@ def test_select_role_add_non_agent(goto_step, post_to_step, mock_exporter_user_m
     assert response.url == "/organisation/members/"
 
 
-def test_select_role_add_agent(goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites):
+def test_select_role_add_agent(
+    goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites, mock_organisation_users
+):
     goto_step(AddUserSteps.SELECT_ROLE)
 
     response = post_to_step(

@@ -38,6 +38,7 @@ class AddUser(
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
         if step == AddUserSteps.ADD_MEMBER:
+            kwargs["request"] = self.request
             kwargs["sites"] = get_sites(self.request, self.request.session["organisation"])
             kwargs["role_id"] = self.role_id
         return kwargs

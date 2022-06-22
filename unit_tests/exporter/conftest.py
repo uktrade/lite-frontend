@@ -1,5 +1,6 @@
 import os
 import pytest
+import requests
 
 from dotenv import load_dotenv
 
@@ -41,6 +42,15 @@ def upload_handler():
 @pytest.fixture
 def lite_api_user_id():
     return "d355428a-64cb-4347-853b-afcacee15d93"
+
+
+@pytest.fixture
+def request_with_session(rf, client):
+    request = rf.get("/")
+    request.session = client.session
+    request.requests_session = requests.Session()
+
+    return request
 
 
 @pytest.fixture
@@ -195,6 +205,15 @@ def mock_sites(requests_mock, mock_exporter_user, mock_exporter_user_me):
             },
         ]
     }
+    requests_mock.get(url=url, json=data)
+    return data
+
+
+@pytest.fixture
+def mock_organisation_users(requests_mock, mock_exporter_user, mock_exporter_user_me):
+    organisation_id = mock_exporter_user_me["organisations"][0]["id"]
+    url = client._build_absolute_uri(f"/organisations/{organisation_id}/users/?page=1")
+    data = {"results": []}
     requests_mock.get(url=url, json=data)
     return data
 

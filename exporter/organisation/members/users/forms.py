@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 
 from exporter.core.common.forms import BaseForm, TextChoice
 from exporter.core.enums import Roles
+from exporter.core.services import get_organisation_users
 
 
 class SelectRoleForm(BaseForm):
@@ -62,7 +63,8 @@ class AddUserForm(BaseForm):
         widget=forms.CheckboxSelectMultiple(),
     )
 
-    def __init__(self, role_id, sites, *args, **kwargs):
+    def __init__(self, request, role_id, sites, *args, **kwargs):
+        self.request = request
         role_name = [role.name for role in Roles.immutable_roles if role.id == role_id]
         self.Layout.TITLE = f"Add an {role_name[0]}"
         site_choices = [Choice(x["id"], x["name"], hint=self.format_address(x.get("address", {}))) for x in sites]
@@ -82,6 +84,15 @@ class AddUserForm(BaseForm):
             ],
         )
         return render_to_string("organisation/members/includes/site-address.html", {"site_address": site_address})
+
+    def clean_email(self):
+        params = {"page": 1}
+        email = self.cleaned_data["email"]
+        users = get_organisation_users(self.request, str(self.request.session["organisation"]), params)
+        matched_users = list(filter(lambda d: d["email"] == self.cleaned_data["email"], users["results"]))
+        if matched_users:
+            raise forms.ValidationError("Please select an email address that isn't registered to this organisation")
+        return email
 
     def get_layout_fields(self):
         return ("email", "sites")
