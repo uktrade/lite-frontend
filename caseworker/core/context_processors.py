@@ -13,6 +13,7 @@ from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.helpers import conditional
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
 
 
 def current_queue(request):
@@ -94,3 +95,12 @@ def lite_menu(request):
     else:
         pages = []
     return {"LITE_MENU": [x for x in pages if x is not None], "MENU_NOTIFICATIONS": has_notifications}
+
+
+def is_all_cases_queue(request):
+    kwargs = getattr(request.resolver_match, "kwargs", {})
+    is_all_cases_queue = False
+    if "queue_pk" in kwargs:
+        queue_pk = request.resolver_match.kwargs["queue_pk"]
+        is_all_cases_queue = str(queue_pk) == ALL_CASES_QUEUE_ID
+    return {"is_all_cases_queue": is_all_cases_queue}
