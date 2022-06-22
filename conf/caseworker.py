@@ -40,6 +40,7 @@ TEMPLATES = [
                 "caseworker.core.context_processors.lite_menu",
                 "caseworker.core.context_processors.current_user",
                 "caseworker.core.context_processors.is_all_cases_queue",
+                "caseworker.core.context_processors.feature_flags",
             ],
             "builtins": ["core.builtins.custom_tags"],
         },
