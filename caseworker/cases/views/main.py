@@ -158,6 +158,8 @@ class CaseDetail(CaseView):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
         self.tabs.append(self.get_advice_tab())
+        if settings.FEATURE_FLAG_NOTES_TIMELINE_2_0:
+            self.tabs.insert(6, self.get_notes_and_timelines_new_tab())
         self.tabs.append(self.get_assessment_tab())
         self.slices = [
             Slices.GOODS,

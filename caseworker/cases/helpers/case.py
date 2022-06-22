@@ -181,3 +181,11 @@ class CaseView(TemplateView):
             "cases:tau:home",
             has_template=False,
         )
+
+    def get_notes_and_timelines_new_tab(self):
+        return Tab(
+            "activities",
+            f"{CasePage.Tabs.CASE_NOTES_AND_TIMELINE} (new)",
+            "cases:activities:notes-and-timeline-all",
+            has_template=False,
+        )
