@@ -86,9 +86,8 @@ class AddUserForm(BaseForm):
         return render_to_string("organisation/members/includes/site-address.html", {"site_address": site_address})
 
     def clean_email(self):
-        params = {"page": 1}
         email = self.cleaned_data["email"]
-        users = get_organisation_users(self.request, str(self.request.session["organisation"]), params)
+        users = get_organisation_users(self.request, str(self.request.session["organisation"]), params={})
         matched_users = list(filter(lambda d: d["email"] == self.cleaned_data["email"], users["results"]))
         if matched_users:
             raise forms.ValidationError("Please select an email address that isn't registered to this organisation")
