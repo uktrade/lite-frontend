@@ -707,9 +707,8 @@ def mock_case_activity_system_user(requests_mock):
 
 
 @pytest.fixture
-def mock_standard_case_activity_system_user(requests_mock, standard_case_pk):
-    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/")
-    data = {
+def standard_case_activity():
+    return {
         "activity": [
             {
                 "id": "1eaa6494-1fd3-4613-8a92-39b02d889fa9",
@@ -727,8 +726,12 @@ def mock_standard_case_activity_system_user(requests_mock, standard_case_pk):
             },
         ]
     }
-    requests_mock.get(url=url, json=data)
-    yield data
+
+
+@pytest.fixture
+def mock_standard_case_activity_system_user(requests_mock, standard_case_pk, standard_case_activity):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/")
+    return requests_mock.get(url=url, json=standard_case_activity)
 
 
 @pytest.fixture(autouse=True)

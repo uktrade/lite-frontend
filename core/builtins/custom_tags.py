@@ -939,3 +939,10 @@ def to_date(val):
     if not val:
         return ""
     return datetime.date.fromisoformat(val)
+
+
+@register.filter(name="to_datetime")
+def to_datetime(val):
+    if not val:
+        return ""
+    return datetime.datetime.fromisoformat(val)
