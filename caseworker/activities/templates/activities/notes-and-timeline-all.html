@@ -40,45 +40,22 @@
         </div>
         <div class="govuk-grid-column-three-quarters">
             <div class="notes-and-timeline-timeline">
-                <div class="notes-and-timeline-timeline__day-group">
-                    <h2 class="notes-and-timeline-timeline__day-group-heading">04 November 2021</h2>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
+                {% regroup activities by created_at|to_datetime|date:"d F Y" as activity_list %}
+                {% for activities_by_date in activity_list %}
+                    <div class="notes-and-timeline-timeline__day-group">
+                        <h2 class="notes-and-timeline-timeline__day-group-heading">{{ activities_by_date.grouper }}</h2>
+                        {% for activity in activities_by_date.list %}
+                            <div class="notes-and-timeline-timeline__day-group-item">
+                                {{ activity.user.first_name }} {{ activity.user.last_name }} {{ activity.text }}
+                                {% if activity.additional_text %}
+                                    <div class="notes-and-timeline-timeline__day-group-note">
+                                        {{ activity.additional_text }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                    </div>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                    </div>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                    </div>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                    </div>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                    </div>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                        <div class="notes-and-timeline-timeline__day-group-note">
-                            {% lorem %}
-                        </div>
-                    </div>
-                </div>
-                <div class="notes-and-timeline-timeline__day-group">
-                    <h2 class="notes-and-timeline-timeline__day-group-heading">02 November 2021</h2>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                        <div class="notes-and-timeline-timeline__day-group-note">
-                            {% lorem %}
-                        </div>
-                    </div>
-                    <div class="notes-and-timeline-timeline__day-group-item">
-                        {% lorem %}
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
