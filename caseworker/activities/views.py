@@ -69,9 +69,6 @@ class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
 
         return team_filters
 
-    def get_is_filtering(self):
-        return bool(self.request.GET)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -79,7 +76,7 @@ class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
             **context,
             "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
             "case": self.case,
-            "is_filtering": self.get_is_filtering(),
+            "filtering_by": list(self.request.GET.keys()),
             "queue": self.queue,
             "team_filters": self.get_team_filters(),
         }

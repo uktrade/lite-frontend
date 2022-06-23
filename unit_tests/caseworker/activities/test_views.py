@@ -67,7 +67,7 @@ def test_notes_and_timelines_context_data(
     assert response.context["case"] == Case(data_standard_case["case"])
     assert response.context["queue"] == data_queue
     assert response.context["activities"] == standard_case_activity["activity"]
-    assert not response.context["is_filtering"]
+    assert not response.context["filtering_by"]
     assert response.context["team_filters"] == [
         (
             "e0cb73c5-6bca-447c-b2a3-688fe259f0e9",
@@ -84,7 +84,7 @@ def test_notes_and_timelines_context_data(
     ]
 
 
-def test_notes_and_timelines_searching(
+def test_notes_and_timelines_searching_by_team(
     authorized_client,
     notes_and_timelines_all_url,
     mock_standard_case_activity_system_user,
@@ -93,7 +93,7 @@ def test_notes_and_timelines_searching(
     assert mock_standard_case_activity_system_user.last_request.qs == {
         "team_id": ["e0cb73c5-6bca-447c-b2a3-688fe259f0e9"]
     }
-    assert response.context["is_filtering"]
+    assert response.context["filtering_by"] == ["team_id"]
     assert response.context["team_filters"] == [
         (
             "e0cb73c5-6bca-447c-b2a3-688fe259f0e9",
@@ -108,3 +108,13 @@ def test_notes_and_timelines_searching(
             False,
         ),
     ]
+
+
+def test_notes_and_timelines_searching_by_user_type(
+    authorized_client,
+    notes_and_timelines_all_url,
+    mock_standard_case_activity_system_user,
+):
+    response = authorized_client.get(f"{notes_and_timelines_all_url}?user_type=exporter")
+    assert mock_standard_case_activity_system_user.last_request.qs == {"user_type": ["exporter"]}
+    assert response.context["filtering_by"] == ["user_type"]
