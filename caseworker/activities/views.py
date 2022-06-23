@@ -16,8 +16,8 @@ from caseworker.cases.services import (
 from caseworker.queues.services import get_queue
 
 
-class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
-    template_name = "activities/notes-and-timeline-all.html"
+class NotesAndTimeline(LoginRequiredMixin, TemplateView):
+    template_name = "activities/notes-and-timeline.html"
 
     def dispatch(self, *args, **kwargs):
         if not settings.FEATURE_FLAG_NOTES_TIMELINE_2_0:
@@ -42,7 +42,7 @@ class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
 
     def get_team_filter_url(self, team):
         url = reverse(
-            "cases:activities:notes-and-timeline-all",
+            "cases:activities:notes-and-timeline",
             kwargs={
                 "pk": self.case_id,
                 "queue_pk": self.queue_id,

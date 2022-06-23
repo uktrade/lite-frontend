@@ -8,7 +8,7 @@ app_name = "activities"
 urlpatterns = [
     path(
         "",
-        views.NotesAndTimelineAll.as_view(),
-        name="notes-and-timeline-all",
+        views.NotesAndTimeline.as_view(),
+        name="notes-and-timeline",
     ),
 ]
