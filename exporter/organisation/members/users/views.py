@@ -9,6 +9,7 @@ from exporter.core.common.decorators import expect_status
 from exporter.organisation.sites.services import get_sites
 
 from exporter.organisation.members.services import post_users
+from exporter.core.services import get_organisation_users_list
 
 from core.auth.views import LoginRequiredMixin
 from .constants import AddUserSteps
@@ -38,7 +39,9 @@ class AddUser(
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
         if step == AddUserSteps.ADD_MEMBER:
-            kwargs["request"] = self.request
+            users = get_organisation_users_list(self.request, str(self.request.session["organisation"]))
+            organisation_users = set(user["email"] for user in users)
+            kwargs["organisation_users"] = organisation_users
             kwargs["sites"] = get_sites(self.request, self.request.session["organisation"])
             kwargs["role_id"] = self.role_id
         return kwargs

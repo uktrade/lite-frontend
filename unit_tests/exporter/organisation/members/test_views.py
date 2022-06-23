@@ -26,7 +26,7 @@ def mock_post_users(requests_mock):
 
 
 def test_select_role_add_non_agent(
-    goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites, mock_organisation_users
+    goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites, mock_organisation_users_list
 ):
     goto_step(AddUserSteps.SELECT_ROLE)
 
@@ -54,7 +54,7 @@ def test_select_role_add_non_agent(
 
 
 def test_select_role_add_agent(
-    goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites, mock_organisation_users
+    goto_step, post_to_step, mock_exporter_user_me, mock_post_users, mock_sites, mock_organisation_users_list
 ):
     goto_step(AddUserSteps.SELECT_ROLE)
 

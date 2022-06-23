@@ -3,15 +3,6 @@ from exporter.organisation.members.users import forms
 from exporter.core.enums import Roles
 
 
-@pytest.fixture
-def request_session_with_organisation(request_with_session, mock_exporter_user_me):
-    organisation_id = mock_exporter_user_me["organisations"][0]["id"]
-    session = request_with_session.session
-    session["organisation"] = organisation_id
-    session.save()
-    return request_with_session
-
-
 @pytest.mark.parametrize(
     "data, valid",
     (
@@ -50,11 +41,9 @@ def test_select_role_form_validation(data, valid):
         ),
     ),
 )
-def test_select_role_form_validation(
-    data, valid, error, mock_sites, request_session_with_organisation, mock_organisation_users
-):
+def test_select_role_form_validation(data, valid, error, mock_sites, mock_organisation_users_list):
     form = forms.AddUserForm(
-        data=data, request=request_session_with_organisation, role_id=Roles.agent.id, sites=mock_sites["sites"]
+        data=data, organisation_users=mock_organisation_users_list, role_id=Roles.agent.id, sites=mock_sites["sites"]
     )
     assert form.is_valid() == valid
 
@@ -62,10 +51,13 @@ def test_select_role_form_validation(
         assert form.errors == error
 
 
-def test_select_role_form(mock_sites, request_session_with_organisation, mock_organisation_users):
+def test_select_role_form(mock_sites, mock_organisation_users_list):
     data = {"email": "joe@bloggs.com", "sites": [mock_sites["sites"][0]["id"]]}
     form = forms.AddUserForm(
-        data=data, request=request_session_with_organisation, role_id=Roles.administrator.id, sites=mock_sites["sites"]
+        data=data,
+        organisation_users=mock_organisation_users_list,
+        role_id=Roles.administrator.id,
+        sites=mock_sites["sites"],
     )
     assert form.is_valid()
     assert form.fields["sites"].choices[0][0] == mock_sites["sites"][0]["id"]
@@ -77,11 +69,16 @@ def test_select_role_form(mock_sites, request_session_with_organisation, mock_or
     assert Roles.administrator.name in form.Layout.TITLE
 
 
-def test_select_role_validate_email(mock_sites, request_session_with_organisation, mock_organisation_users):
-    mock_organisation_users["results"] = [{"email": "joe@bloggs.com"}]
+def test_select_role_validate_email(mock_sites, mock_organisation_users_list):
+    mock_organisation_users_list = [
+        "joe@bloggs.com",
+    ]
     data = {"email": "joe@bloggs.com", "sites": [mock_sites["sites"][0]["id"]]}
     form = forms.AddUserForm(
-        data=data, request=request_session_with_organisation, role_id=Roles.administrator.id, sites=mock_sites["sites"]
+        data=data,
+        organisation_users=mock_organisation_users_list,
+        role_id=Roles.administrator.id,
+        sites=mock_sites["sites"],
     )
     assert not form.is_valid()
     assert form.errors == {"email": ["Enter an email address that is not registered to this organisation"]}

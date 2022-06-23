@@ -210,7 +210,7 @@ def mock_sites(requests_mock, mock_exporter_user, mock_exporter_user_me):
 
 
 @pytest.fixture
-def mock_organisation_users(requests_mock, mock_exporter_user, mock_exporter_user_me):
+def mock_organisation_users_list(requests_mock, mock_exporter_user, mock_exporter_user_me):
     organisation_id = mock_exporter_user_me["organisations"][0]["id"]
     url = client._build_absolute_uri(f"/organisations/{organisation_id}/users/")
     data = {"results": []}
