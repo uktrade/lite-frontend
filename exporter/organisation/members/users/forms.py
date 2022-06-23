@@ -29,7 +29,7 @@ class SelectRoleForm(BaseForm):
         label="",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Please select a role",
+            "required": "Select a role",
         },
     )
 
@@ -48,16 +48,16 @@ class AddUserForm(BaseForm):
         TITLE = ""
 
     email = forms.EmailField(
-        label="email",
+        label="Email",
         error_messages={
-            "required": "Enter an email address",
+            "required": "Enter an email address in the correct format, like name@example.com",
         },
     )
 
     sites = forms.MultipleChoiceField(
         choices=(),
         error_messages={
-            "required": "Please select at least one site",
+            "required": "Select at least one site",
         },
         label="Sites",
         widget=forms.CheckboxSelectMultiple(),
@@ -104,6 +104,6 @@ class AgentDeclarationForm(BaseForm):
     def get_layout_fields(self):
         return (
             HTML.p(
-                "I authorise this agent to make and submit export license applications on my behalf. I give permision to manage all related queries.",
+                "I authorise this agent to make and submit export licence applications on my behalf. I give permission to manage all related queries.",
             ),
         )
