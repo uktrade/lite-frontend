@@ -8,7 +8,7 @@ from collections import Counter, OrderedDict
 from importlib import import_module
 
 import bleach
-from dateutil.parser import parse
+from dateutil.parser import isoparse, parse
 from dateutil.relativedelta import relativedelta
 
 from django import template
@@ -939,3 +939,11 @@ def to_date(val):
     if not val:
         return ""
     return datetime.date.fromisoformat(val)
+
+
+@register.filter(name="to_datetime")
+def to_datetime(val):
+    if not val:
+        return ""
+
+    return isoparse(val)

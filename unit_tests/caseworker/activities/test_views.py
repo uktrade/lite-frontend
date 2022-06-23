@@ -13,6 +13,7 @@ def setup(
     mock_queue,
     mock_gov_user,
     mock_case,
+    mock_standard_case_activity_system_user,
 ):
     settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = True
 
@@ -57,6 +58,8 @@ def test_notes_and_timelines_context_data(
     authorized_client,
     notes_and_timelines_all_url,
     data_standard_case,
+    standard_case_activity,
 ):
     response = authorized_client.get(notes_and_timelines_all_url)
     assert response.context["case"] == Case(data_standard_case["case"])
+    assert response.context["activities"] == standard_case_activity["activity"]
