@@ -140,6 +140,8 @@ class SelectOrganisation(LoginRequiredMixin, FormView):
     def get_success_url(self):
         if self.request.GET.get("back_link") == "applications":
             success_url = reverse("applications:applications")
+            if self.request.GET.get("submitted"):
+                success_url = success_url + "?submitted=False"
         elif self.request.GET.get("back_link") == "licences":
             success_url = reverse("licences:list-open-and-standard-licences")
         else:
