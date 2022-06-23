@@ -5,7 +5,10 @@ from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.cases.services import get_case
+from caseworker.cases.services import (
+    get_activity,
+    get_case,
+)
 
 
 class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
@@ -29,5 +32,6 @@ class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
 
         return {
             **context,
+            "activities": get_activity(self.request, self.case_id),
             "case": self.case,
         }
