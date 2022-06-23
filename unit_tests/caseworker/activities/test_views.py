@@ -61,18 +61,50 @@ def test_notes_and_timelines_context_data(
     data_standard_case,
     standard_case_activity,
     data_queue,
+    mock_standard_case_activity_system_user,
 ):
     response = authorized_client.get(notes_and_timelines_all_url)
     assert response.context["case"] == Case(data_standard_case["case"])
     assert response.context["queue"] == data_queue
     assert response.context["activities"] == standard_case_activity["activity"]
+    assert not response.context["is_filtering"]
     assert response.context["team_filters"] == [
         (
+            "e0cb73c5-6bca-447c-b2a3-688fe259f0e9",
             "Team 1",
             "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/activities/?team_id=e0cb73c5-6bca-447c-b2a3-688fe259f0e9",
+            False,
         ),
         (
+            "4db83c63-1184-4569-a488-491a0b1b351d",
             "Team 2",
             "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/activities/?team_id=4db83c63-1184-4569-a488-491a0b1b351d",
+            False,
+        ),
+    ]
+
+
+def test_notes_and_timelines_searching(
+    authorized_client,
+    notes_and_timelines_all_url,
+    mock_standard_case_activity_system_user,
+):
+    response = authorized_client.get(f"{notes_and_timelines_all_url}?team_id=e0cb73c5-6bca-447c-b2a3-688fe259f0e9")
+    assert mock_standard_case_activity_system_user.last_request.qs == {
+        "team_id": ["e0cb73c5-6bca-447c-b2a3-688fe259f0e9"]
+    }
+    assert response.context["is_filtering"]
+    assert response.context["team_filters"] == [
+        (
+            "e0cb73c5-6bca-447c-b2a3-688fe259f0e9",
+            "Team 1",
+            "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/activities/?team_id=e0cb73c5-6bca-447c-b2a3-688fe259f0e9",
+            True,
+        ),
+        (
+            "4db83c63-1184-4569-a488-491a0b1b351d",
+            "Team 2",
+            "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/activities/?team_id=4db83c63-1184-4569-a488-491a0b1b351d",
+            False,
         ),
     ]

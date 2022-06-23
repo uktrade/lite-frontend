@@ -11,15 +11,15 @@
         <div class="govuk-grid-column-one-quarter">
             <nav class="notes-and-timeline-nav">
                 <ul class="notes-and-timeline-nav__list">
-                    <li class="notes-and-timeline-nav__list-item notes-and-timeline-nav__list-item--selected">
+                    <li class="notes-and-timeline-nav__list-item{% if not is_filtering %} notes-and-timeline-nav__list-item--selected{% endif %}">
                         <a class="notes-and-timeline-nav__list-link" href="{% url 'cases:activities:notes-and-timeline-all' pk=case.id queue_pk=queue.id %}">
                             <span class="notes-and-timeline-nav__list-link-wrapper">
                                 View all notes and timeline
                             </span>
                         </a>
                     </li>
-                    {% for team_name, team_filter_url in team_filters %}
-                        <li class="notes-and-timeline-nav__list-item">
+                    {% for team_id, team_name, team_filter_url, is_filtered_by_team in team_filters %}
+                        <li class="notes-and-timeline-nav__list-item{% if is_filtered_by_team %} notes-and-timeline-nav__list-item--selected{% endif %}">
                             <a class="notes-and-timeline-nav__list-link" href="{{ team_filter_url }}">
                                 <span class="notes-and-timeline-nav__list-link-wrapper">
                                     {{ team_name }}

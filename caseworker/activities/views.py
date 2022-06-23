@@ -50,19 +50,27 @@ class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
         )
         return f"{url}?team_id={team['key']}"
 
+    def get_is_filtered_by_team(self, team):
+        return self.request.GET.get("team_id") == team["key"]
+
     def get_team_filters(self):
         activity_filters = get_activity_filters(self.request, self.case_id)
         teams = activity_filters["teams"]
         sorted_teams = sorted(teams, key=itemgetter("value"))
         team_filters = [
             (
+                team["key"],
                 team["value"],
                 self.get_team_filter_url(team),
+                self.get_is_filtered_by_team(team),
             )
             for team in sorted_teams
         ]
 
         return team_filters
+
+    def get_is_filtering(self):
+        return bool(self.request.GET)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -71,6 +79,7 @@ class NotesAndTimelineAll(LoginRequiredMixin, TemplateView):
             **context,
             "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
             "case": self.case,
+            "is_filtering": self.get_is_filtering(),
             "queue": self.queue,
             "team_filters": self.get_team_filters(),
         }
