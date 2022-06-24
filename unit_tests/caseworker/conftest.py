@@ -769,15 +769,17 @@ def mock_case_activity_filters(requests_mock):
 
 
 @pytest.fixture
-def mock_standard_case_activity_filters(requests_mock, standard_case_pk):
-    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/filters/")
-    data = {
+def standard_case_activity_filters():
+    return {
         "filters": {
             "activity_types": [
                 {"key": "move_case", "value": "Move case"},
                 {"key": "updated_status", "value": "Updated status"},
             ],
-            "teams": [],
+            "teams": [
+                {"key": "e0cb73c5-6bca-447c-b2a3-688fe259f0e9", "value": "Team 1"},
+                {"key": "4db83c63-1184-4569-a488-491a0b1b351d", "value": "Team 2"},
+            ],
             "user_types": [{"key": "internal", "value": "Internal"}, {"key": "exporter", "value": "Exporter"}],
             "users": [
                 {"key": "73402567-751c-41d7-9aa6-8061f1663db7", "value": "Automated Test"},
@@ -785,8 +787,12 @@ def mock_standard_case_activity_filters(requests_mock, standard_case_pk):
             ],
         }
     }
-    requests_mock.get(url=url, json=data)
-    yield data
+
+
+@pytest.fixture
+def mock_standard_case_activity_filters(requests_mock, standard_case_pk, standard_case_activity_filters):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/filters/")
+    return requests_mock.get(url=url, json=standard_case_activity_filters)
 
 
 @pytest.fixture(autouse=True)
