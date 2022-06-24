@@ -277,8 +277,20 @@ class CaseNotes(TemplateView):
         if status_code != 201:
             return error_page(request, response.get("errors")["text"][0])
 
+        queue_id = kwargs["queue_pk"]
+
+        if not settings.FEATURE_FLAG_NOTES_TIMELINE_2_0:
+            return redirect(
+                "cases:case",
+                pk=case_id,
+                queue_pk=queue_id,
+                tab="activity",
+            )
+
         return redirect(
-            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": case_id, "tab": "activity"})
+            "cases:activities:notes-and-timeline",
+            pk=case_id,
+            queue_pk=queue_id,
         )
 
 
