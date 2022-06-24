@@ -39,7 +39,7 @@
         </div>
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-grid-row">
-                <form action="{% url 'cases:case_notes' queue.id case.id %}" class="notes-and-timeline-case-note" id="add-case-note-form" method="post">
+                <form action="{% url 'cases:case_notes' queue.id case.id %}" class="notes-and-timeline-case-note" data-module="case-note" method="post">
                     <div class="notes-and-timeline-case-note__wrapper">
                         {% csrf_token %}
                         <label class="govuk-label govuk-visually-hidden" for="input-case-note">
@@ -50,8 +50,8 @@
                             <div class="case-note__controls">
                                 <div class="govuk-checkboxes govuk-checkboxes--small">
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" type="checkbox" id="is_visible_to_exporter" name="is_visible_to_exporter" value="True">
-                                        <label class="govuk-label govuk-checkboxes__label" for="is_visible_to_exporter">
+                                        <input class="govuk-checkboxes__input" type="checkbox" id="is-visible-to-exporter" name="is-visible-to-exporter" value="True">
+                                        <label class="govuk-label govuk-checkboxes__label" for="is-visible-to-exporter">
                                             Make visible to exporter
                                         </label>
                                     </div>
@@ -68,28 +68,6 @@
                         </div>
                     </div>
                 </form>
-                <script nonce="{{ request.csp_nonce }}">
-                    let addCaseNoteForm = document.querySelector("#add-case-note-form");
-                    addCaseNoteForm.addEventListener("submit", function(evt) {
-                        let isVisibleForExporter = document.querySelector("#is_visible_to_exporter").checked;
-                        if (!isVisibleForExporter) {
-                            return;
-                        }
-                        let confirmed = confirm("This note will be visible to the exporter, are you sure you wish to continue?");
-                        if (!confirmed) {
-                            evt.preventDefault();
-                        }
-                    });
-
-                    let input = document.querySelector("#input-case-note");
-                    let cancelLink = document.querySelector("#link-case-note-cancel");
-                    cancelLink.addEventListener("click", function(evt) {
-                        evt.preventDefault();
-                        input.value = "";
-                        input.dispatchEvent(new Event('input'));
-                        input.focus();
-                    });
-                </script>
             </div>
             <div class="govuk-grid-row">
                 <div class="notes-and-timeline-timeline">

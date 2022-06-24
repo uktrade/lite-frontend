@@ -7,7 +7,16 @@
     &__textarea {
         margin-bottom: govuk-spacing(4);
         min-height: 140px;
+        transition: min-height .2s;
         width: 100%;
+
+        .js-enabled & {
+            min-height: 40px;
+
+            &--focused {
+                min-height: 140px;
+            }
+        }
     }
 
     &__controls {
