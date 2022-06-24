@@ -1,0 +1,13 @@
+@import "./vars";
+
+.notes-and-timeline-case-note {
+    border-left: 1px solid $govuk-border-colour;
+    margin-left: $circle-box-size / 2;
+    padding-bottom: govuk-spacing(6);
+    padding-left: govuk-spacing(6);
+
+    &__wrapper {
+        border-bottom: 1px solid $govuk-border-colour;
+        padding-bottom: govuk-spacing(4);
+    }
+}

@@ -39,29 +39,31 @@
         </div>
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-grid-row">
-                <form action="{% url 'cases:case_notes' queue.id case.id %}" id="add-case-note-form" method="post">
-                    {% csrf_token %}
-                    <label class="govuk-label govuk-visually-hidden" for="input-case-note">
-                        Add case note
-                    </label>
-                    <div class="lite-case-note__container">
-                        <textarea id="input-case-note" name="text" cols="80" class="lite-case-note__textarea"></textarea>
-                        <div class="lite-case-note__controls">
-                            <div class="govuk-checkboxes govuk-checkboxes--small">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" type="checkbox" id="is_visible_to_exporter" name="is_visible_to_exporter" value="True">
-                                    <label class="govuk-label govuk-checkboxes__label" for="is_visible_to_exporter">
-                                        Make visible to exporter
-                                    </label>
+                <form action="{% url 'cases:case_notes' queue.id case.id %}" class="notes-and-timeline-case-note" id="add-case-note-form" method="post">
+                    <div class="notes-and-timeline-case-note__wrapper">
+                        {% csrf_token %}
+                        <label class="govuk-label govuk-visually-hidden" for="input-case-note">
+                            Add case note
+                        </label>
+                        <div class="case-note__container">
+                            <textarea id="input-case-note" name="text" cols="80" class="govuk-textarea case-note__textarea"></textarea>
+                            <div class="case-note__controls">
+                                <div class="govuk-checkboxes govuk-checkboxes--small">
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" type="checkbox" id="is_visible_to_exporter" name="is_visible_to_exporter" value="True">
+                                        <label class="govuk-label govuk-checkboxes__label" for="is_visible_to_exporter">
+                                            Make visible to exporter
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="lite-case-note__controls-buttons">
-                                <a id="link-case-note-cancel" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}" class="govuk-link govuk-link--no-visited-state" type="button" draggable="false">
-                                    Cancel
-                                </a>
-                                <button id="button-case-note-post" class="govuk-button" type="submit">
-                                    Post note
-                                </button>
+                                <div class="case-note__controls-buttons">
+                                    <a id="link-case-note-cancel" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}" class="govuk-body govuk-link govuk-link--no-visited-state case-note__cancel-button" type="button" draggable="false">
+                                        Cancel
+                                    </a>
+                                    <button id="button-case-note-post" class="govuk-button" type="submit">
+                                        Add a case note
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
