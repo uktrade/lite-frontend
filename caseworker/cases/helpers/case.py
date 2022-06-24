@@ -186,6 +186,6 @@ class CaseView(TemplateView):
         return Tab(
             "activities",
             f"{CasePage.Tabs.CASE_NOTES_AND_TIMELINE} (new)",
-            "cases:activities:notes-and-timeline-all",
+            "cases:activities:notes-and-timeline",
             has_template=False,
         )
