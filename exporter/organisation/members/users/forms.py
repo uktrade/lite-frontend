@@ -62,7 +62,8 @@ class AddUserForm(BaseForm):
         widget=forms.CheckboxSelectMultiple(),
     )
 
-    def __init__(self, role_id, sites, *args, **kwargs):
+    def __init__(self, organisation_users, role_id, sites, *args, **kwargs):
+        self.organisation_users = organisation_users
         role_name = [role.name for role in Roles.immutable_roles if role.id == role_id]
         self.Layout.TITLE = f"Add an {role_name[0]}"
         site_choices = [Choice(x["id"], x["name"], hint=self.format_address(x.get("address", {}))) for x in sites]
@@ -82,6 +83,12 @@ class AddUserForm(BaseForm):
             ],
         )
         return render_to_string("organisation/members/includes/site-address.html", {"site_address": site_address})
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if email in self.organisation_users:
+            raise forms.ValidationError("Enter an email address that is not registered to this organisation")
+        return email
 
     def get_layout_fields(self):
         return ("email", "sites")

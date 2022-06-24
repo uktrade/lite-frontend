@@ -177,6 +177,12 @@ def get_organisation_users(request, pk, params, convert_to_options=False):
     return response.json()
 
 
+def get_organisation_users_list(request, pk):
+    response = client.get(request, f"/organisations/{pk}/users/")
+    response.raise_for_status()
+    return response.json()["results"]
+
+
 def get_organisation_user(request, pk, user_pk):
     data = client.get(request, f"/organisations/{pk}/users/{user_pk}")
     return data.json()

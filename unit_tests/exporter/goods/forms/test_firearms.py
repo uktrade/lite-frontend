@@ -1,6 +1,5 @@
 import datetime
 import pytest
-import requests
 import uuid
 
 from dateutil.relativedelta import relativedelta
@@ -66,15 +65,6 @@ def test_firearm_category_form(data, is_valid, errors):
     form = FirearmNameForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
-
-
-@pytest.fixture
-def request_with_session(rf, client):
-    request = rf.get("/")
-    request.session = client.session
-    request.requests_session = requests.Session()
-
-    return request
 
 
 @pytest.fixture
