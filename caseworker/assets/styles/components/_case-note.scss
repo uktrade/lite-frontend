@@ -1,0 +1,40 @@
+.case-note {
+    &__container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__textarea {
+        margin-bottom: govuk-spacing(4);
+        min-height: 140px;
+        transition: min-height .2s;
+        width: 100%;
+
+        .js-enabled & {
+            min-height: 40px;
+
+            &--focused {
+                min-height: 140px;
+            }
+        }
+    }
+
+    &__controls {
+        align-items: center;
+        display: flex;
+    }
+
+    &__controls-buttons {
+        align-items: center;
+        display: flex;
+        margin-left: auto;
+
+        a, button {
+            margin-bottom: 0;
+        }
+    }
+
+    &__cancel-button {
+        margin-right: govuk-spacing(4);
+    }
+}

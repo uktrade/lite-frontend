@@ -37,31 +37,66 @@
                 </ul>
             </nav>
         </div>
-        <div class="govuk-grid-column-three-quarters">
-            <div class="notes-and-timeline-timeline">
-                {% regroup activities by created_at|to_datetime|date:"d F Y" as activity_list %}
-                {% for activities_by_date in activity_list %}
-                    <div class="notes-and-timeline-timeline__day-group">
-                        <h2 class="notes-and-timeline-timeline__day-group-heading">{{ activities_by_date.grouper }}</h2>
-                        {% for activity in activities_by_date.list %}
-                            <div class="notes-and-timeline-timeline__day-group-item">
-                                {% if activity.user.type == 'exporter' %}
-                                    <span class="app-activity__item__user">Applicant:</span> {{ activity.user.first_name }} {{ activity.user.last_name }}
-                                {% else %}
-                                    {% if activity.user.team %}<span class="app-activity__item__user">{{activity.user.team}}:</span>{% endif %} {{ activity.user.first_name }} {{ audit.user.last_name }}
-                                {% endif %}
-
-                                {{ activity.text|linebreaksbr }}
-
-                                {% if activity.additional_text %}
-                                    <div class="notes-and-timeline-timeline__day-group-note">
-                                        {{ activity.additional_text }}
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-row">
+                <form action="{% url 'cases:case_notes' queue.id case.id %}" class="notes-and-timeline-case-note" data-module="case-note" method="post">
+                    <div class="notes-and-timeline-case-note__wrapper">
+                        {% csrf_token %}
+                        <label class="govuk-label govuk-visually-hidden" for="input-case-note">
+                            Add case note
+                        </label>
+                        <div class="case-note__container">
+                            <textarea id="input-case-note" name="text" cols="80" class="govuk-textarea case-note__textarea"></textarea>
+                            <div class="case-note__controls">
+                                <div class="govuk-checkboxes govuk-checkboxes--small">
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" type="checkbox" id="is-visible-to-exporter" name="is-visible-to-exporter" value="True">
+                                        <label class="govuk-label govuk-checkboxes__label" for="is-visible-to-exporter">
+                                            Make visible to exporter
+                                        </label>
                                     </div>
-                                {% endif %}
+                                </div>
+                                <div class="case-note__controls-buttons">
+                                    <a id="link-case-note-cancel" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}" class="govuk-body govuk-link govuk-link--no-visited-state case-note__cancel-button" type="button" draggable="false">
+                                        Cancel
+                                    </a>
+                                    <button id="button-case-note-post" class="govuk-button" type="submit">
+                                        Add a case note
+                                    </button>
+                                </div>
                             </div>
-                        {% endfor %}
+                        </div>
                     </div>
-                {% endfor %}
+                </form>
+            </div>
+            <div class="govuk-grid-row">
+                <div class="notes-and-timeline-timeline">
+                    {% regroup activities by created_at|to_datetime|date:"d F Y" as activity_list %}
+                    {% for activities_by_date in activity_list %}
+                        <div class="notes-and-timeline-timeline__day-group">
+                            <h2 class="notes-and-timeline-timeline__day-group-heading">{{ activities_by_date.grouper }}</h2>
+                            {% for activity in activities_by_date.list %}
+                                {% with user=activity.user %}
+                                    <div class="notes-and-timeline-timeline__day-group-item">
+                                        {% if user.type == 'exporter' %}
+                                            <span class="app-activity__item__user">Applicant:</span> {{ user.first_name }} {{ user.last_name }}
+                                        {% else %}
+                                            {% if user.team %}<span class="app-activity__item__user">{{ user.team }}:</span> {% endif %}{{ user.first_name }} {{ user.last_name }}
+                                        {% endif %}
+
+                                        {{ activity.text|linebreaksbr }}
+
+                                        {% if activity.additional_text %}
+                                            <div class="notes-and-timeline-timeline__day-group-note">
+                                                {{ activity.additional_text }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
