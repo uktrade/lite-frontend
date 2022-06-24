@@ -45,7 +45,14 @@
                         <h2 class="notes-and-timeline-timeline__day-group-heading">{{ activities_by_date.grouper }}</h2>
                         {% for activity in activities_by_date.list %}
                             <div class="notes-and-timeline-timeline__day-group-item">
-                                {{ activity.user.first_name }} {{ activity.user.last_name }} {{ activity.text }}
+                                {% if activity.user.type == 'exporter' %}
+                                    <span class="app-activity__item__user">Applicant:</span> {{ activity.user.first_name }} {{ activity.user.last_name }}
+                                {% else %}
+                                    {% if activity.user.team %}<span class="app-activity__item__user">{{activity.user.team}}:</span>{% endif %} {{ activity.user.first_name }} {{ audit.user.last_name }}
+                                {% endif %}
+
+                                {{ activity.text|linebreaksbr }}
+
                                 {% if activity.additional_text %}
                                     <div class="notes-and-timeline-timeline__day-group-note">
                                         {{ activity.additional_text }}
