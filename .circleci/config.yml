@@ -1,5 +1,8 @@
 version: 2.1
 parameters:
+  run_auto_ui_tests:
+    type: boolean
+    default: false
   run_ui_tests:
     type: boolean
     default: false
@@ -15,7 +18,7 @@ parameters:
 ###############################################################################
 common_env_vars: &common_env_vars
   ENVIRONMENT: << pipeline.parameters.environment >>
-  LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
+  LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.apps.internal:8080/
   PIPENV_VENV_IN_PROJECT: true
   LITE_INTERNAL_HAWK_KEY: $LITE_INTERNAL_HAWK_KEY_<< pipeline.parameters.environment >>
   LITE_EXPORTER_HAWK_KEY: $LITE_EXPORTER_HAWK_KEY_<< pipeline.parameters.environment >>
@@ -236,6 +239,24 @@ jobs:
       - unit_tests:
           alias: core
 
+  caseworker_ui_test:
+    machine:
+      image: ubuntu-2004:202008-01
+      docker_layer_caching: true
+    environment:
+      <<: *common_env_vars
+      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
+      DJANGO_SETTINGS_MODULE: conf.caseworker
+      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations -n3
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
+      - run: pyenv global 3.7.0
+      - run: pip install pipenv
+      - setup_code
+      - ui_tests
+
   exporter_ui_test:
     machine:
       image: ubuntu-2004:202008-01
@@ -296,3 +317,8 @@ workflows:
     jobs:
       - caseworker_e2e_test
       - exporter_e2e_test
+  auto_ui_tests:
+    when: << pipeline.parameters.run_auto_ui_tests >>
+    jobs:
+      - caseworker_ui_test
+      - exporter_ui_test

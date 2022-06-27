@@ -7,7 +7,7 @@ def triggerBuild(branch, environment)
 
         def body = JsonOutput.toJson([
             branch: branch,
-            parameters: [run_ui_tests: true, run_unit_tests: false, environment: environment]
+            parameters: [run_auto_ui_tests: true, run_unit_tests: false, environment: environment]
         ])
 
         def response = httpRequest (
