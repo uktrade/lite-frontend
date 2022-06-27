@@ -1,13 +1,13 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-def triggerBuild(branch, environment)
+def triggerBuild(branch, api_git_tag, environment)
 {
     withCredentials([string(credentialsId: 'lite-circle-ci', variable: 'TOKEN')]) {
 
         def body = JsonOutput.toJson([
             branch: branch,
-            parameters: [run_auto_ui_tests: true, run_unit_tests: false, environment: environment]
+            parameters: [run_auto_ui_tests: false, run_ui_tests: true, run_unit_tests: false, api_git_tag: api_git_tag, environment: environment]
         ])
 
         def response = httpRequest (
@@ -60,6 +60,7 @@ pipeline {
     parameters {
         choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nuat\ndevdata\ndemo')
         string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
+        string(name: 'API_GIT_TAG', defaultValue: 'latest', description: 'GIT Release Tag for LITE API')
     }
 
     agent any
@@ -69,7 +70,7 @@ pipeline {
             steps{
                 script{
                     println "Triggering UI tests"
-                    (status, number) = triggerBuild(params.BRANCH, params.ENVIRONMENT)
+                    (status, number) = triggerBuild(params.BRANCH, params.API_GIT_TAG, params.ENVIRONMENT)
                     println "Triggered UI tests"
 
                     status = waitForBuildStatusToChange(number, status, ['queued', 'not_running', 'pending'], "waiting for job to start")
