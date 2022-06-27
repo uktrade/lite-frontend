@@ -85,14 +85,18 @@
                     <a href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header"></th>
-                            <th scope="col" class="govuk-table__header"></th>
+                            <th scope="col" class="govuk-table__header">
+                                <span class="govuk-visually-hidden">Line number</span>
+                            </th>
+                            <th scope="col" class="govuk-table__header">Name</th>
                             <th scope="col" class="govuk-table__header">Control entry</th>
                             <th scope="col" class="govuk-table__header">Licence</th>
                             <th scope="col" class="govuk-table__header">Regime</th>
                             <th scope="col" class="govuk-table__header">Report summary</th>
                             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment notes and evidence</th>
-                            <th scope="col" class="govuk-table__header"></th>
+                            <th scope="col" class="govuk-table__header">
+                                <span class="govuk-visually-hidden">Actions</span>
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
