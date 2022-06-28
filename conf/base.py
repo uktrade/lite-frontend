@@ -72,10 +72,12 @@ MIDDLEWARE = [
     "core.middleware.NoCacheMiddleware",
     "core.middleware.ValidateReturnToMiddleware",
     "core.middleware.XRobotsTagMiddleware",
+    "core.middleware.SessionTimeoutMiddleware",
 ]
 
 if not DEBUG:
     MIDDLEWARE += ["core.middleware.AuthBrokerTokenIntrospectionMiddleware"]
+
 
 FEATURE_CSP_MIDDLEWARE_ENABLED = env.bool("FEATURE_CSP_MIDDLEWARE_ENABLED", True)
 
@@ -136,6 +138,7 @@ STATIC_URL = "/assets/"
 AUTHBROKER_URL = env.str("AUTHBROKER_URL")
 AUTHBROKER_CLIENT_ID = env.str("AUTHBROKER_CLIENT_ID")
 AUTHBROKER_CLIENT_SECRET = env.str("AUTHBROKER_CLIENT_SECRET")
+
 
 HAWK_AUTHENTICATION_ENABLED = env.bool("HAWK_AUTHENTICATION_ENABLED", False)
 HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
