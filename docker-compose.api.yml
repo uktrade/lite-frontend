@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   api:
-    image: gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
+    image: gcr.io/sre-docker-registry/github.com/uktrade/lite-api:${API_GIT_TAG}
     environment:
       # Below values can be found in vault
       AV_SERVICE_PASSWORD: ${AV_SERVICE_PASSWORD}

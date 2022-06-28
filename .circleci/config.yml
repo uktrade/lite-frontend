@@ -6,6 +6,9 @@ parameters:
   run_unit_tests:
     type: boolean
     default: true
+  api_git_tag:
+    type: string
+    default: latest
   environment:
     type: string
     default: devdata
@@ -236,6 +239,24 @@ jobs:
       - unit_tests:
           alias: core
 
+  caseworker_ui_test:
+    machine:
+      image: ubuntu-2004:202008-01
+      docker_layer_caching: true
+    environment:
+      <<: *common_env_vars
+      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
+      DJANGO_SETTINGS_MODULE: conf.caseworker
+      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations -n3
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get --only-upgrade install google-chrome-stable
+      - run: pyenv install 3.7.0
+      - run: pyenv global 3.7.0
+      - run: pip install pipenv
+      - setup_code
+      - ui_tests
+
   exporter_ui_test:
     machine:
       image: ubuntu-2004:202008-01
@@ -264,7 +285,7 @@ jobs:
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
       - run_make:
           label: Run caseworker e2e tests
-          target: start-caseworker caseworker-e2e-selenium-test
+          target: start-caseworker caseworker-e2e-selenium-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
       - store_playwright_artifacts
 
   exporter_e2e_test:
@@ -277,7 +298,7 @@ jobs:
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
       - run_make:
           label: Run exporter e2e tests
-          target: start-exporter exporter-e2e-test
+          target: start-exporter exporter-e2e-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
       - store_playwright_artifacts
 
 workflows:

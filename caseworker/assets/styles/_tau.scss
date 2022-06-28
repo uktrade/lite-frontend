@@ -65,9 +65,10 @@
     }
   }
 
-  .tau__cle-suggestion-buttons {
+  &__cle-suggestions {
     display: flex;
     flex-direction: column;
+    align-items: baseline;
   }
 
   .tokenfield-copy-helper {
