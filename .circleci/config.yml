@@ -1,8 +1,5 @@
 version: 2.1
 parameters:
-  run_auto_ui_tests:
-    type: boolean
-    default: false
   run_ui_tests:
     type: boolean
     default: false
@@ -313,8 +310,3 @@ workflows:
     jobs:
       - caseworker_e2e_test
       - exporter_e2e_test
-  auto_ui_tests:
-    when: << pipeline.parameters.run_auto_ui_tests >>
-    jobs:
-      - caseworker_ui_test
-      - exporter_ui_test
