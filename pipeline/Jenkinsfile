@@ -7,7 +7,7 @@ def triggerBuild(branch, api_git_tag, environment)
 
         def body = JsonOutput.toJson([
             branch: branch,
-            parameters: [run_auto_ui_tests: false, run_ui_tests: true, run_unit_tests: false, api_git_tag: api_git_tag, environment: environment]
+            parameters: [run_auto_ui_tests: false, run_ui_tests: true, run_unit_tests: false, api_git_tag: api_git_tag]
         ])
 
         def response = httpRequest (
@@ -58,7 +58,6 @@ def waitForBuildStatusToChange(number, status, wait_states, msg){
 pipeline {
 
     parameters {
-        choice(name: 'ENVIRONMENT', description: 'choose what environment to run in', choices: 'dev\nuat\ndevdata\ndemo')
         string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
         string(name: 'API_GIT_TAG', defaultValue: 'latest', description: 'GIT Release Tag for LITE API')
     }
@@ -70,7 +69,7 @@ pipeline {
             steps{
                 script{
                     println "Triggering UI tests"
-                    (status, number) = triggerBuild(params.BRANCH, params.API_GIT_TAG, params.ENVIRONMENT)
+                    (status, number) = triggerBuild(params.BRANCH, params.API_GIT_TAG)
                     println "Triggered UI tests"
 
                     status = waitForBuildStatusToChange(number, status, ['queued', 'not_running', 'pending'], "waiting for job to start")
