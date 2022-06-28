@@ -5,6 +5,7 @@ from formtools.wizard.views import SessionWizardView
 
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
+from caseworker.cases.helpers.summaries import firearm_product_summary, firearm_product_on_application_summary
 from caseworker.cases.services import (
     get_case,
     post_review_good,
@@ -231,6 +232,28 @@ class GoodDetails(LoginRequiredMixin, FormView):
             search_string += f' clc_rating:"{item["rating"]}"'
         return {"search_string": search_string.strip()}
 
+    def get_product_summary(
+        self, good_on_application, is_user_rfd, organisation_documents, good_on_application_documents
+    ):
+        product_summary = firearm_product_summary(
+            good_on_application,
+            is_user_rfd,
+            organisation_documents,
+            self.kwargs["queue_pk"],
+        )
+        product_on_application_summary = firearm_product_on_application_summary(
+            good_on_application,
+            good_on_application_documents,
+            self.kwargs["queue_pk"],
+        )
+        return product_summary + product_on_application_summary
+
+    def is_product_type(self, good_on_application, product_type):
+        try:
+            return good_on_application["firearm_details"]["type"]["key"] == product_type
+        except KeyError:
+            return False
+
     def get_context_data(self, **kwargs):
         form = self.get_form()
 
@@ -254,9 +277,16 @@ class GoodDetails(LoginRequiredMixin, FormView):
         rfd_certificate = organisation_documents.get("rfd_certificate")
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
+        product_summary = None
+        if self.is_product_type(self.object, "firearms"):
+            product_summary = self.get_product_summary(
+                self.object, is_user_rfd, organisation_documents, good_on_application_documents
+            )
+
         return super().get_context_data(
             good_on_application=self.object,
             good_on_application_documents=good_on_application_documents,
+            product_summary=product_summary,
             case=case,
             other_cases=self.other_cases,
             # for pagination
