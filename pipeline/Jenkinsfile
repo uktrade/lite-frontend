@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-def triggerBuild(branch, api_git_tag, environment)
+def triggerBuild(branch, api_git_tag)
 {
     withCredentials([string(credentialsId: 'lite-circle-ci', variable: 'TOKEN')]) {
 
@@ -58,8 +58,8 @@ def waitForBuildStatusToChange(number, status, wait_states, msg){
 pipeline {
 
     parameters {
-        string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch to run against')
-        string(name: 'API_GIT_TAG', defaultValue: 'latest', description: 'GIT Release Tag for LITE API')
+        string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch or release tag to run against')
+        string(name: 'API_GIT_TAG', defaultValue: 'latest', description: 'Type in API branch or release tag for LITE GCR image')
     }
 
     agent any
