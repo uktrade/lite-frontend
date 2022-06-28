@@ -9,12 +9,19 @@ parameters:
   api_git_tag:
     type: string
     default: latest
+  environment:
+    type: string
+    default: devdata
 
 ###############################################################################
 # Env vars
 ###############################################################################
 common_env_vars: &common_env_vars
+  ENVIRONMENT: << pipeline.parameters.environment >>
+  LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
   PIPENV_VENV_IN_PROJECT: true
+  LITE_INTERNAL_HAWK_KEY: $LITE_INTERNAL_HAWK_KEY_<< pipeline.parameters.environment >>
+  LITE_EXPORTER_HAWK_KEY: $LITE_EXPORTER_HAWK_KEY_<< pipeline.parameters.environment >>
 
 ###############################################################################
 # Images
