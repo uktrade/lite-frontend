@@ -6,12 +6,7 @@ const HIDE_ALL = "Hide all";
 // Helper functions below this comment
 // ------------
 
-const addSelectAllExpandAll = (
-  checkboxProducts,
-  productsNumberChecks,
-  tauHeadline,
-  tauSecondColumn
-) => {
+const addSelectAllExpandAll = (checkboxProducts) => {
   const goods = document.querySelector(".tau__first-column #div_id_goods");
 
   const createDivOptions = document.createElement("div");
@@ -36,6 +31,27 @@ const addSelectAllExpandAll = (
   createDivOptions.append(selectAllButton, expandAllButton);
 
   let isAllSelected = false;
+  const setSelectAll = () => {
+    const numChecked = [...checkboxProducts].reduce(
+      (previousValue, product) => {
+        return (previousValue += product.checked ? 1 : 0);
+      },
+      0
+    );
+    if (numChecked === checkboxProducts.length) {
+      selectAllButton.innerText = DESELECT_ALL;
+      isAllSelected = true;
+    } else {
+      selectAllButton.innerText = SELECT_ALL;
+      isAllSelected = false;
+    }
+  };
+  setSelectAll();
+
+  checkboxProducts.forEach((product) => {
+    product.addEventListener("input", () => setSelectAll());
+  });
+
   selectAllButton.addEventListener("click", (event) => {
     event.preventDefault();
     if (!isAllSelected) {
@@ -43,15 +59,11 @@ const addSelectAllExpandAll = (
         product.checked = true;
         product.dispatchEvent(new Event("input"));
       });
-      selectAllButton.innerText = DESELECT_ALL;
-      isAllSelected = true;
     } else {
       checkboxProducts.forEach((product) => {
         product.checked = false;
         product.dispatchEvent(new Event("input"));
       });
-      selectAllButton.innerText = SELECT_ALL;
-      isAllSelected = false;
     }
   });
 
@@ -102,12 +114,7 @@ const initTauAssesmentHeadline = () => {
   };
 
   // Add Select All and Expand All
-  addSelectAllExpandAll(
-    checkboxProducts,
-    productsNumberChecks,
-    tauHeadline,
-    tauSecondColumn
-  );
+  addSelectAllExpandAll(checkboxProducts);
 
   // Check for validation error report summary.
   if (errorMessage) {
@@ -117,8 +124,6 @@ const initTauAssesmentHeadline = () => {
     ).length;
     tauHeadline.innerText = headlineString(arrayProducts, productsNumberChecks);
   }
-
-  const selectAllInnerText = document.querySelector(".tau__select-all");
 
   checkboxProducts.forEach((product) =>
     product.addEventListener("input", () => {
@@ -132,15 +137,12 @@ const initTauAssesmentHeadline = () => {
 
       if (productsNumberChecks.number === 0) {
         tauSecondColumn.classList.add("tau__second-column--hide");
-        selectAllInnerText.innerText = SELECT_ALL;
       } else {
         tauSecondColumn.classList.remove("tau__second-column--hide");
         tauHeadline.innerText = headlineString(
           arrayProducts,
           productsNumberChecks
         );
-        productsNumberChecks.number === productsNumberChecks.max &&
-          (selectAllInnerText.innerText = DESELECT_ALL);
       }
     })
   );
