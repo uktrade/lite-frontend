@@ -43,22 +43,22 @@ const addSelectAllExpandAll = (
         product.checked = true;
         product.dispatchEvent(new Event("input"));
       });
+      selectAllButton.innerText = DESELECT_ALL;
       isAllSelected = true;
 
       productsNumberChecks.number = productsNumberChecks.max;
       tauHeadline.innerText = `Assessing ${productsNumberChecks.number} products`;
       tauSecondColumn.classList.remove("tau__second-column--hide");
-      event.target.innerText = DESELECT_ALL;
     } else {
       checkboxProducts.forEach((product) => {
         product.checked = false;
         product.dispatchEvent(new Event("input"));
       });
+      selectAllButton.innerText = SELECT_ALL;
       isAllSelected = false;
 
       productsNumberChecks.number = 0;
       tauSecondColumn.classList.add("tau__second-column--hide");
-      event.target.innerText = SELECT_ALL;
     }
   });
 
