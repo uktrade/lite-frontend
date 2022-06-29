@@ -21,7 +21,7 @@ import initReviewGood from "./review-good.js";
 import initDestinationsList from "./show-hide-destinations.js";
 import initTauControlListEntry from "./tau-exporter-suggestions.js";
 import initTauAssesmentHeadline from "./tau-prod-assesment-headline";
-import initCaseNotes from "./case-notes";
+import { initCaseNotes } from "./case-notes";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
