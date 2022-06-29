@@ -1,9 +1,9 @@
 const NO_CLE_STRING = "None";
 
 // Global control list entries object pulled from back-end
-export let globalCleMatchToItems = {};
+let globalCleMatchToItems = {};
 // Checked object with product id and global control list entries in an array
-export let globalCheckedProductsWithCle = [];
+let globalCheckedProductsWithCle = [];
 
 // Helper functions below this comment
 // ------------
@@ -105,7 +105,7 @@ const createButtonsForCle = (globalCheckedProductsWithCle) => {
   });
 };
 
-export const addDeleteExporterCleSuggestions = (
+const addDeleteExporterCleSuggestions = (
   product,
   globalCleMatchToItems,
   globalCheckedProductsWithCle
