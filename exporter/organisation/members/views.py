@@ -7,8 +7,8 @@ from core.helpers import convert_dict_to_query_params
 from exporter.core.services import get_organisation_user, put_organisation_user, get_organisation_users
 from lite_forms.components import Option, FiltersBar, Select
 from lite_forms.views import SingleFormView
-from exporter.organisation.members.forms import add_user_form, edit_user_form, assign_sites
-from exporter.organisation.members.services import post_users, get_user, is_super_user
+from exporter.organisation.members.forms import edit_user_form, assign_sites
+from exporter.organisation.members.services import get_user, is_super_user
 from exporter.organisation.sites.services import put_assign_sites
 from exporter.organisation.views import OrganisationView
 
@@ -39,13 +39,6 @@ class Members(OrganisationView):
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
         }
-
-
-class AddUser(SingleFormView):
-    def init(self, request, **kwargs):
-        self.form = add_user_form(request)
-        self.success_url = reverse_lazy("organisation:members:members")
-        self.action = post_users
 
 
 class ViewUser(TemplateView):
