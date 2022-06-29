@@ -45,10 +45,6 @@ const addSelectAllExpandAll = (
       });
       selectAllButton.innerText = DESELECT_ALL;
       isAllSelected = true;
-
-      productsNumberChecks.number = productsNumberChecks.max;
-      tauHeadline.innerText = `Assessing ${productsNumberChecks.number} products`;
-      tauSecondColumn.classList.remove("tau__second-column--hide");
     } else {
       checkboxProducts.forEach((product) => {
         product.checked = false;
@@ -56,9 +52,6 @@ const addSelectAllExpandAll = (
       });
       selectAllButton.innerText = SELECT_ALL;
       isAllSelected = false;
-
-      productsNumberChecks.number = 0;
-      tauSecondColumn.classList.add("tau__second-column--hide");
     }
   });
 
@@ -128,7 +121,7 @@ const initTauAssesmentHeadline = () => {
   const selectAllInnerText = document.querySelector(".tau__select-all");
 
   checkboxProducts.forEach((product) =>
-    product.addEventListener("click", () => {
+    product.addEventListener("input", () => {
       const checkbox = product.checked;
 
       if (checkbox) {
