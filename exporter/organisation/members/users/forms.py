@@ -99,8 +99,7 @@ class AgentDeclarationForm(BaseForm):
         TITLE = "Declaration"
 
     def get_layout_fields(self):
-        return (
-            HTML.p(
-                "I authorise this agent to make and submit export licence applications on my behalf. I give permission to manage all related queries.",
-            ),
+        return HTML.p(
+            "I confirm that this agent is authorised to make and submit export licence applications"
+            " on my behalf and that they have permission to manage all related queries."
         )
