@@ -157,9 +157,8 @@ class CaseDetail(CaseView):
     def get_standard_application(self):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
+        self.tabs.append(self.get_notes_and_timelines_new_tab())
         self.tabs.append(self.get_advice_tab())
-        if settings.FEATURE_FLAG_NOTES_TIMELINE_2_0:
-            self.tabs.insert(6, self.get_notes_and_timelines_new_tab())
         self.tabs.append(self.get_assessment_tab())
         self.slices = [
             Slices.GOODS,
@@ -278,14 +277,6 @@ class CaseNotes(TemplateView):
             return error_page(request, response.get("errors")["text"][0])
 
         queue_id = kwargs["queue_pk"]
-
-        if not settings.FEATURE_FLAG_NOTES_TIMELINE_2_0:
-            return redirect(
-                "cases:case",
-                pk=case_id,
-                queue_pk=queue_id,
-                tab="activity",
-            )
 
         return redirect(
             "cases:activities:notes-and-timeline",

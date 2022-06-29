@@ -1,7 +1,5 @@
 from operator import itemgetter
 
-from django.conf import settings
-from django.http import Http404
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
@@ -18,11 +16,6 @@ from caseworker.queues.services import get_queue
 
 class NotesAndTimeline(LoginRequiredMixin, TemplateView):
     template_name = "activities/notes-and-timeline.html"
-
-    def dispatch(self, *args, **kwargs):
-        if not settings.FEATURE_FLAG_NOTES_TIMELINE_2_0:
-            raise Http404("Feature flag disabled")
-        return super().dispatch(*args, **kwargs)
 
     @cached_property
     def case_id(self):

@@ -16,7 +16,7 @@ def setup(
     mock_standard_case_activity_filters,
     mock_standard_case_activity_system_user,
 ):
-    settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = True
+    pass
 
 
 @pytest.fixture
@@ -25,16 +25,6 @@ def notes_and_timelines_url(data_queue, data_standard_case):
         "cases:activities:notes-and-timeline",
         kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
     )
-
-
-def test_notes_and_timelines_view_flag_off_status_code(
-    settings,
-    authorized_client,
-    notes_and_timelines_url,
-):
-    settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = False
-    response = authorized_client.get(notes_and_timelines_url)
-    assert response.status_code == 404
 
 
 def test_notes_and_timelines_view_flag_on_status_code(

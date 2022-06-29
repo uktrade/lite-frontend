@@ -14,7 +14,6 @@ from caseworker.cases.services import (
     get_user_case_queues,
     get_case_documents,
     get_case_additional_contacts,
-    get_activity,
     get_activity_filters,
 )
 from caseworker.core.constants import GENERATED_DOCUMENT
@@ -122,7 +121,6 @@ class CaseView(TemplateView):
             "open_ecju_queries": open_ecju_queries,
             "closed_ecju_queries": closed_ecju_queries,
             "additional_contacts": get_case_additional_contacts(self.request, self.case_id),
-            "activity": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
             "permissions": self.permissions,
             "is_tau_user": self.is_tau_user(),
             "can_set_done": can_set_done
@@ -152,15 +150,11 @@ class CaseView(TemplateView):
         return render(request, "case/case.html", self.get_context())
 
     def get_tabs(self):
-        activity_tab = Tabs.ACTIVITY
-        activity_tab.count = "!" if self.case["audit_notification"] else None
-
         tabs = [
             Tabs.DETAILS,
             Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
-            activity_tab,
         ]
 
         return tabs
@@ -185,7 +179,7 @@ class CaseView(TemplateView):
     def get_notes_and_timelines_new_tab(self):
         return Tab(
             "activities",
-            f"{CasePage.Tabs.CASE_NOTES_AND_TIMELINE} (new)",
+            CasePage.Tabs.CASE_NOTES_AND_TIMELINE,
             "cases:activities:notes-and-timeline",
             has_template=False,
         )

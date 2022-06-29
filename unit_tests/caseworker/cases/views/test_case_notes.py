@@ -7,7 +7,7 @@ from django.urls import reverse
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, settings):
-    settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = True
+    pass
 
 
 @pytest.fixture
@@ -41,24 +41,6 @@ def test_post_case_note(authorized_client, case_notes_url, mock_post_case_notes)
     assert (
         response.url
         == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/activities/"
-    )
-    assert mock_post_case_notes.called
-    assert mock_post_case_notes.last_request.json() == {"text": "Note text"}
-
-
-def test_post_case_note_without_feature_switch(authorized_client, case_notes_url, mock_post_case_notes, settings):
-    settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = False
-
-    response = authorized_client.post(
-        case_notes_url,
-        data={
-            "text": "Note text",
-        },
-    )
-    assert response.status_code == 302
-    assert (
-        response.url
-        == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/activity/"
     )
     assert mock_post_case_notes.called
     assert mock_post_case_notes.last_request.json() == {"text": "Note text"}
