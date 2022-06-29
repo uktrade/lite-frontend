@@ -21,6 +21,9 @@ FIREARM_LABELS = {
     "name": "Give the product a descriptive name",
     "calibre": "What is the calibre of the product?",
     "is-registered-firearms-dealer": "Are you a registered firearms dealer?",
+    "rfd-certificate-document": "Upload a registered firearms dealer certificate",
+    "rfd-certificate-reference-number": "Certificate reference number",
+    "rfd-certificate-date-of-expiry": "Certificate date of expiry",
     "is-good-controlled": "Do you know the product's control list entry?",
     "control-list-entries": "Enter the control list entry",
     "is-pv-graded": "Does the product have a government security grading or classification?",
@@ -66,6 +69,8 @@ def identity(x):
 
 def comma_separated_list(item_formatter=identity):
     def _comma_separated_list(iterable):
+        if not iterable:
+            iterable = []
         return ", ".join(item_formatter(i) for i in iterable)
 
     return _comma_separated_list

@@ -10,7 +10,19 @@ from core.summaries.summaries import (
 
 
 def firearm_product_summary(good_on_application, is_user_rfd, organisation_documents, queue_pk):
-    def goods_document_formatter(document):
+    def organisation_document_formatter(document):
+        url = reverse(
+            "cases:document",
+            kwargs={
+                "queue_pk": queue_pk,
+                "pk": good_on_application["application"],
+                "file_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document["document"], url)
+
+    def product_document_formatter(document):
         url = reverse(
             "cases:document",
             kwargs={
@@ -27,7 +39,9 @@ def firearm_product_summary(good_on_application, is_user_rfd, organisation_docum
         is_user_rfd,
         organisation_documents,
         {
-            "product-document": goods_document_formatter,
+            "product-document": product_document_formatter,
+            "section-5-certificate-document": organisation_document_formatter,
+            "rfd-certificate-document": organisation_document_formatter,
         },
     )
 
@@ -43,7 +57,7 @@ def firearm_product_on_application_summary(good_on_application, good_on_applicat
             },
         )
 
-        return document_formatter(document, url)
+        return document_formatter(document["document"], url)
 
     return core_firearm_product_on_application_summary(
         good_on_application,

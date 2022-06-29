@@ -251,7 +251,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
     def is_product_type(self, good_on_application, product_type):
         try:
             return good_on_application["firearm_details"]["type"]["key"] == product_type
-        except KeyError:
+        except (KeyError, TypeError):
             return False
 
     def get_context_data(self, **kwargs):
@@ -270,11 +270,9 @@ class GoodDetails(LoginRequiredMixin, FormView):
             if item.get("document_type")
         }
 
-        organisation_documents = {
-            item["document_type"].replace("-", "_"): item for item in case.organisation["documents"]
-        }
+        organisation_documents = {item["document_type"]: item for item in case.organisation["documents"]}
 
-        rfd_certificate = organisation_documents.get("rfd_certificate")
+        rfd_certificate = organisation_documents.get("rfd-certificate")
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
         product_summary = None
@@ -291,7 +289,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
             other_cases=self.other_cases,
             # for pagination
             data={"total_pages": self.other_cases["count"] // form.page_size} if self.other_cases else {},
-            organisation_documents=organisation_documents,
+            organisation_documents={key.replace("-", "_"): value for key, value in organisation_documents.items()},
             is_user_rfd=is_user_rfd,
             **kwargs,
         )
