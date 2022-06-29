@@ -19,12 +19,16 @@ log = logging.getLogger(__name__)
 
 class AuthView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
+        protect_level = {"vtr": "['Cl']"} if settings.AUTHBROKER_LOW_SECURITY else {}
         log.info(
-            "Authentication:Service: %s: Get login redirect url from authorisation site",
+            "Authentication:Service: %s Protect:Level : %s : Get login redirect url from authorisation site",
             settings.AUTHBROKER_AUTHORIZATION_URL,
+            protect_level,
         )
         url, state = self.request.authbroker_client.create_authorization_url(
-            settings.AUTHBROKER_AUTHORIZATION_URL, nonce=uuid.uuid4().hex
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            nonce=uuid.uuid4().hex,
+            **protect_level,
         )
         self.request.session[f"{settings.TOKEN_SESSION_KEY}_oauth_state"] = state
         return url
