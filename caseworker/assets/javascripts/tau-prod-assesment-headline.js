@@ -1,12 +1,23 @@
-const SELECT_ALL = "Select all";
-const DESELECT_ALL = "Deselect all";
+import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
+
 const SHOW_ALL = "Show all";
 const HIDE_ALL = "Hide all";
 
 // Helper functions below this comment
 // ------------
+const initSelectAll = (goods) => {
+  const selectAllButton = document.createElement("button");
+  selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
+  selectAllButton.classList.add("lite-button--link", "tau__select-all");
 
-const addSelectAllExpandAll = (checkboxProducts) => {
+  const checkboxes = goods.querySelectorAll("[name=goods]");
+
+  new SelectAll(selectAllButton, checkboxes).init();
+
+  return selectAllButton;
+};
+
+const addSelectAllExpandAll = () => {
   const goods = document.querySelector(".tau__first-column #div_id_goods");
 
   const createDivOptions = document.createElement("div");
@@ -21,51 +32,13 @@ const addSelectAllExpandAll = (checkboxProducts) => {
     );
   }
 
-  const selectAllButton = document.createElement("button");
-  selectAllButton.innerText = SELECT_ALL;
-  selectAllButton.classList.add("lite-button--link", "tau__select-all");
+  const selectAllButton = initSelectAll(goods);
+
   const expandAllButton = document.createElement("button");
   expandAllButton.innerText = SHOW_ALL;
   expandAllButton.classList.add("lite-button--link");
 
   createDivOptions.append(selectAllButton, expandAllButton);
-
-  let isAllSelected = false;
-  const setSelectAll = () => {
-    const numChecked = [...checkboxProducts].reduce(
-      (previousValue, product) => {
-        return (previousValue += product.checked ? 1 : 0);
-      },
-      0
-    );
-    if (numChecked === checkboxProducts.length) {
-      selectAllButton.innerText = DESELECT_ALL;
-      isAllSelected = true;
-    } else {
-      selectAllButton.innerText = SELECT_ALL;
-      isAllSelected = false;
-    }
-  };
-  setSelectAll();
-
-  checkboxProducts.forEach((product) => {
-    product.addEventListener("input", () => setSelectAll());
-  });
-
-  selectAllButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    if (!isAllSelected) {
-      checkboxProducts.forEach((product) => {
-        product.checked = true;
-        product.dispatchEvent(new Event("input"));
-      });
-    } else {
-      checkboxProducts.forEach((product) => {
-        product.checked = false;
-        product.dispatchEvent(new Event("input"));
-      });
-    }
-  });
 
   // Expand all on click event.
   expandAllButton.addEventListener("click", (event) => {
@@ -114,7 +87,7 @@ const initTauAssesmentHeadline = () => {
   };
 
   // Add Select All and Expand All
-  addSelectAllExpandAll(checkboxProducts);
+  addSelectAllExpandAll();
 
   // Check for validation error report summary.
   if (errorMessage) {
