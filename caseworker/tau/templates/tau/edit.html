@@ -45,3 +45,8 @@
     </main>
 </div>
 {% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'tau.js' %}" type="text/javascript"></script>
+{% endblock %}
