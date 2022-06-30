@@ -7,7 +7,7 @@ from exporter.core.enums import Roles
 
 @pytest.fixture()
 def add_member_url():
-    return reverse("organisation:members:add_new")
+    return reverse("organisation:members:add")
 
 
 @pytest.fixture
