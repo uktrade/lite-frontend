@@ -1,5 +1,6 @@
 import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
+import CheckboxClassToggler from "core/checkbox-class-toggler";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -48,4 +49,20 @@ const addSelectAllExpandAll = () => {
   buttonContainer.append(selectAllButton, expandAllButton);
 };
 
+const initCheckboxClassToggler = () => {
+  const goods = document.querySelector("#div_id_goods");
+  if (!goods) {
+    return;
+  }
+  const checkboxes = goods.querySelectorAll("[name=goods]");
+  const assessmentColumn = document.querySelector(".tau__second-column");
+
+  new CheckboxClassToggler(
+    checkboxes,
+    assessmentColumn,
+    "tau__second-column--hide"
+  ).init();
+};
+
 addSelectAllExpandAll();
+initCheckboxClassToggler();

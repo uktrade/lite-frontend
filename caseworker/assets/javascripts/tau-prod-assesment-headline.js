@@ -19,7 +19,6 @@ const initTauAssesmentHeadline = () => {
   );
   const arrayProducts = Array.from(checkboxProducts);
   const tauHeadline = document.querySelector(".tau__headline");
-  const tauSecondColumn = document.querySelector(".tau__second-column");
   const errorMessage = document.querySelector("#tau-form .govuk-error-message");
 
   let productsNumberChecks = {
@@ -29,7 +28,6 @@ const initTauAssesmentHeadline = () => {
 
   // Check for validation error report summary.
   if (errorMessage) {
-    tauSecondColumn.classList.remove("tau__second-column--hide");
     productsNumberChecks.number = arrayProducts.filter(
       (product) => product.checked
     ).length;
@@ -46,10 +44,7 @@ const initTauAssesmentHeadline = () => {
         productsNumberChecks.number -= 1;
       }
 
-      if (productsNumberChecks.number === 0) {
-        tauSecondColumn.classList.add("tau__second-column--hide");
-      } else {
-        tauSecondColumn.classList.remove("tau__second-column--hide");
+      if (productsNumberChecks.number !== 0) {
         tauHeadline.innerText = headlineString(
           arrayProducts,
           productsNumberChecks
