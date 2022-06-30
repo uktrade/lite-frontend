@@ -5,8 +5,8 @@
     </summary>
     <div class="govuk-details__text tau__details">
       {% include "tau/good_table.html" with good=good %}
-      {% if good.precedent %}
-      {% include "tau/precedent_table.html" with precedent=good.precedent %}
-      {% endif %}
+      {% for precedent in good.precedents %}
+      {% include "tau/precedent_table.html" with precedent=precedent %}
+      {% endfor %}
     </div>
 </details>
