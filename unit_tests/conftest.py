@@ -813,6 +813,7 @@ def data_standard_case():
                         "category": "Exact",
                     },
                 ],
+                "sanction_matches": [],
                 "agreed_to_foi": "True",
                 "foi_reason": "internal details",
                 "agreed_to_declaration_text": "I AGREE",
