@@ -43,23 +43,23 @@ describe("Select all", () => {
   test("Clicking select all", async () => {
     await userEvent.click(selectAllButton);
     expect(selectAllButton).toHaveTextContent("Deselect all");
-    checkboxes.forEach((checkbox) => {
+    for (const checkbox of checkboxes) {
       expect(checkbox).toBeChecked();
-    });
+    }
   });
 
   test("Clicking select all and then deselect all", async () => {
     await userEvent.click(selectAllButton);
     expect(selectAllButton).toHaveTextContent("Deselect all");
-    checkboxes.forEach((checkbox) => {
+    for (const checkbox of checkboxes) {
       expect(checkbox).toBeChecked();
-    });
+    }
 
     await userEvent.click(selectAllButton);
     expect(selectAllButton).toHaveTextContent("Select all");
-    checkboxes.forEach((checkbox) => {
+    for (const checkbox of checkboxes) {
       expect(checkbox).not.toBeChecked();
-    });
+    }
   });
 
   test("Checking all sets button", async () => {

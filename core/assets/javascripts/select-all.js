@@ -13,9 +13,9 @@ class SelectAll {
     this.$selectAllButton.addEventListener("click", (evt) =>
       this.handleSelectAllButtonClick(evt)
     );
-    this.$checkboxes.forEach(($checkbox) => {
+    for (const $checkbox of this.$checkboxes) {
       $checkbox.addEventListener("input", () => this.setSelectAll());
-    });
+    }
     this.setSelectAll();
   }
 
@@ -25,16 +25,18 @@ class SelectAll {
   }
 
   setCheckboxesChecked(checked) {
-    this.$checkboxes.forEach(($checkbox) => {
+    for (const $checkbox of this.$checkboxes) {
       $checkbox.checked = checked;
       $checkbox.dispatchEvent(new Event("input"));
-    });
+    }
   }
 
   getNumChecked() {
-    return [...this.$checkboxes].reduce((previousValue, checkbox) => {
-      return (previousValue += checkbox.checked ? 1 : 0);
-    }, 0);
+    let numChecked = 0;
+    for (const $checkbox of this.$checkboxes) {
+      numChecked += $checkbox.checked ? 1 : 0;
+    }
+    return numChecked;
   }
 
   setSelectAll() {
