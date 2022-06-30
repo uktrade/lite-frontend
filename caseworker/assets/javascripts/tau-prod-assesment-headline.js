@@ -1,7 +1,5 @@
 import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
-
-const SHOW_ALL = "Show all";
-const HIDE_ALL = "Hide all";
+import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 
 // Helper functions below this comment
 // ------------
@@ -15,6 +13,18 @@ const initSelectAll = (goods) => {
   new SelectAll(selectAllButton, checkboxes).init();
 
   return selectAllButton;
+};
+
+const initExpandAll = (goods) => {
+  const expandAllButton = document.createElement("button");
+  expandAllButton.innerText = SHOW_ALL_BUTTON_TEXT;
+  expandAllButton.classList.add("lite-button--link");
+
+  const details = goods.querySelectorAll(".govuk-details");
+
+  new ExpandAll(expandAllButton, details).init();
+
+  return expandAllButton;
 };
 
 const addSelectAllExpandAll = () => {
@@ -33,28 +43,9 @@ const addSelectAllExpandAll = () => {
   }
 
   const selectAllButton = initSelectAll(goods);
-
-  const expandAllButton = document.createElement("button");
-  expandAllButton.innerText = SHOW_ALL;
-  expandAllButton.classList.add("lite-button--link");
+  const expandAllButton = initExpandAll(goods);
 
   createDivOptions.append(selectAllButton, expandAllButton);
-
-  // Expand all on click event.
-  expandAllButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    const targetText = event.target.innerText;
-    const products = document
-      .querySelector(".tau__list")
-      .querySelectorAll(".govuk-details");
-    if (targetText === SHOW_ALL) {
-      products.forEach((product) => product.setAttribute("open", ""));
-      event.target.innerText = HIDE_ALL;
-    } else {
-      products.forEach((product) => product.removeAttribute("open"));
-      event.target.innerText = SHOW_ALL;
-    }
-  });
 };
 
 const headlineString = (arrayProducts, productsNumberChecks) => {

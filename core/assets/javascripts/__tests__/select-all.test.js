@@ -77,7 +77,7 @@ describe("Select all", () => {
     expect(selectAllButton).toHaveTextContent("Select all");
   });
 
-  test("Input events called when selecting and selecting all", async () => {
+  test("Input events called when selecting selecting all", async () => {
     for (const checkbox of checkboxes) {
       const inputSpy = jest.fn();
       checkbox.addEventListener("input", () => inputSpy());
