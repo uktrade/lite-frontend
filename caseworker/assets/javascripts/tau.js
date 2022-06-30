@@ -1,6 +1,7 @@
 import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
+import Headline from "./tau/headline";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -64,5 +65,30 @@ const initCheckboxClassToggler = () => {
   ).init();
 };
 
+const initAssessmentHeadline = () => {
+  const goods = document.querySelector("#div_id_goods");
+  if (!goods) {
+    return;
+  }
+  const headlineEl = document.querySelector(".tau__headline");
+  const headline = new Headline(headlineEl);
+
+  const checkboxes = goods.querySelectorAll("[name=goods]");
+  const setProducts = () => {
+    let selectedProducts = [];
+    for (const checkbox of checkboxes) {
+      if (checkbox.checked) {
+        selectedProducts.push({ name: checkbox.dataset["productName"] });
+      }
+    }
+    headline.setProducts(selectedProducts);
+  };
+  for (const checkbox of checkboxes) {
+    checkbox.addEventListener("input", () => setProducts());
+  }
+  setProducts();
+};
+
 addSelectAllExpandAll();
 initCheckboxClassToggler();
+initAssessmentHeadline();
