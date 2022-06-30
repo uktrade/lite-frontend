@@ -141,7 +141,7 @@ def check_product_report_summary(driver, report_summary):  # noqa
 
 @then(parsers.parse('I should see "{timeline_text}" appear in the timeline'))
 def check_timeline(driver, timeline_text):  # noqa
-    assert timeline_text in Shared(driver).get_audit_trail_text()
+    assert timeline_text in Shared(driver).get_audit_trail_text_timeline()
 
 
 @given("I create open application or open application has been previously created")  # noqa
@@ -784,9 +784,9 @@ def case_notes_tab(driver, internal_url, context):  # noqa
 def note_is_displayed(driver, case_note):  # noqa
     application_page = ApplicationPage(driver)
     assert case_note in application_page.get_text_of_case_note(0)
-    assert utils.search_for_correct_date_regex_in_element(
+    assert utils.search_for_correct_date_heading_regex_in_element(
         application_page.get_text_of_case_note_date_time(0)
-    ), "incorrect time format of post on case note"
+    ), "incorrect date format of post on case note"
 
 
 @when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case'))

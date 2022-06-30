@@ -162,6 +162,13 @@ def search_for_correct_date_regex_in_element(element):
     )
 
 
+def search_for_correct_date_heading_regex_in_element(element):
+    return search(
+        "([0-9][0-9]) (January|February|March|April|May|June|July|August|September|October|November|December) ([0-9]{4,})",
+        element,
+    )
+
+
 def get_formatted_date_time_h_m_pm_d_m_y():
     time = timezone.localtime().strftime("%I:%M%p %d %B %Y").replace("PM", "pm").replace("AM", "am")
     if time[0] == "0":
