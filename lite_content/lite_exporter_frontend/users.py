@@ -21,14 +21,6 @@ class UsersPage:
     USER_STATUS = "Status"
 
 
-class AddUserForm:
-    USER_ROLE_QUESTION = "Role"
-    USER_ADD_TITLE = "Add a member"
-    USER_EMAIL_QUESTION = "Email"
-    USER_ADD_FORM_BACK_TO_USERS = "Back to members"
-    ASSIGN_USER_QUESTION = "Assigned sites"
-
-
 class EditUserForm:
     USER_ROLE_QUESTION = "Role"
     USER_EDIT_TITLE = "Change role"
