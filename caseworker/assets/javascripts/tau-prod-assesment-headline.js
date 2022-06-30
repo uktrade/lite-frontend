@@ -27,25 +27,27 @@ const initExpandAll = (goods) => {
   return expandAllButton;
 };
 
-const addSelectAllExpandAll = () => {
-  const goods = document.querySelector(".tau__first-column #div_id_goods");
-
+const initButtonContainer = (goods) => {
   const createDivOptions = document.createElement("div");
   createDivOptions.classList.add("tau__first-column--options");
+  goods.insertBefore(
+    createDivOptions,
+    goods.firstElementChild.nextElementSibling
+  );
+  return createDivOptions;
+};
 
-  // Adds DIV element for Select All and Expand All
-
-  if (goods) {
-    goods.insertBefore(
-      createDivOptions,
-      goods.firstElementChild.nextElementSibling
-    );
+const addSelectAllExpandAll = () => {
+  const goods = document.querySelector("#div_id_goods");
+  if (!goods) {
+    return;
   }
 
+  const buttonContainer = initButtonContainer(goods);
   const selectAllButton = initSelectAll(goods);
   const expandAllButton = initExpandAll(goods);
 
-  createDivOptions.append(selectAllButton, expandAllButton);
+  buttonContainer.append(selectAllButton, expandAllButton);
 };
 
 const headlineString = (arrayProducts, productsNumberChecks) => {
