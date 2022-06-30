@@ -1,8 +1,5 @@
-from django.urls import reverse
-
 from core.summaries.formatters import (
     add_labels,
-    document_formatter,
     format_values,
     FIREARM_LABELS,
     FIREARM_ON_APPLICATION_FORMATTERS,

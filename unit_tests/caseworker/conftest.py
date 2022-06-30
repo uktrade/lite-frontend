@@ -998,8 +998,8 @@ def mock_good_on_appplication_documents(requests_mock, mock_case, data_good_on_a
 @pytest.fixture
 def mock_firearm_good_on_application(requests_mock, mock_case, data_standard_case):
     good_data = data_standard_case["case"]["data"]["goods"][0]
-    url = client._build_absolute_uri("/applications/good-on-application")
-    yield requests_mock.get(url=re.compile(f"{url}.*"), json=good_data)
+    url = client._build_absolute_uri(f"/applications/good-on-application/{good_data['id']}")
+    return requests_mock.get(url=url, json=good_data)
 
 
 @pytest.fixture
@@ -1008,7 +1008,7 @@ def mock_firearm_good_on_application_documents(requests_mock, mock_case, data_st
     pk = data_standard_case["case"]["id"]
     good_pk = good_data["id"]
     url = client._build_absolute_uri(f"/applications/{pk}/goods/{good_pk}/documents/")
-    yield requests_mock.get(url=re.compile(f"{url}.*"), json={"documents": []})
+    return requests_mock.get(url=url, json={"documents": []})
 
 
 @pytest.fixture(autouse=True)

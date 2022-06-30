@@ -70,7 +70,7 @@ def identity(x):
 def comma_separated_list(item_formatter=identity):
     def _comma_separated_list(iterable):
         if not iterable:
-            iterable = []
+            return ""
         return ", ".join(item_formatter(i) for i in iterable)
 
     return _comma_separated_list

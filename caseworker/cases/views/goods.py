@@ -265,7 +265,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
             self.object["good"]["id"],
         )
         good_on_application_documents = {
-            item["document_type"].replace("-", "_"): item
+            item["document_type"]: item
             for item in good_on_application_documents["documents"]
             if item.get("document_type")
         }
@@ -283,7 +283,9 @@ class GoodDetails(LoginRequiredMixin, FormView):
 
         return super().get_context_data(
             good_on_application=self.object,
-            good_on_application_documents=good_on_application_documents,
+            good_on_application_documents={
+                key.replace("-", "_"): value for key, value in good_on_application_documents.items()
+            },
             product_summary=product_summary,
             case=case,
             other_cases=self.other_cases,

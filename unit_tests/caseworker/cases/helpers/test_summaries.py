@@ -26,7 +26,7 @@ def test_firearm_product_summary(data_standard_case, standard_firearm_expected_p
             ),
         ),
     )
-    assert set(product_summary) == set(expected_summary)
+    assert product_summary == expected_summary
 
 
 def test_firearm_product_on_application_summary(

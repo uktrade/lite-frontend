@@ -9,29 +9,24 @@ from core.summaries.summaries import (
 )
 
 
+def _get_document_url(queue_pk, good_on_application, document):
+    return reverse(
+        "cases:document",
+        kwargs={
+            "queue_pk": queue_pk,
+            "pk": good_on_application["application"],
+            "file_pk": document["id"],
+        },
+    )
+
+
 def firearm_product_summary(good_on_application, is_user_rfd, organisation_documents, queue_pk):
     def organisation_document_formatter(document):
-        url = reverse(
-            "cases:document",
-            kwargs={
-                "queue_pk": queue_pk,
-                "pk": good_on_application["application"],
-                "file_pk": document["id"],
-            },
-        )
-
+        url = _get_document_url(queue_pk, good_on_application, document)
         return document_formatter(document["document"], url)
 
     def product_document_formatter(document):
-        url = reverse(
-            "cases:document",
-            kwargs={
-                "queue_pk": queue_pk,
-                "pk": good_on_application["application"],
-                "file_pk": document["id"],
-            },
-        )
-
+        url = _get_document_url(queue_pk, good_on_application, document)
         return document_formatter(document, url)
 
     return core_firearm_product_summary(
@@ -48,16 +43,8 @@ def firearm_product_summary(good_on_application, is_user_rfd, organisation_docum
 
 def firearm_product_on_application_summary(good_on_application, good_on_application_documents, queue_pk):
     def good_on_application_document_formatter(document):
-        url = reverse(
-            "cases:document",
-            kwargs={
-                "queue_pk": queue_pk,
-                "pk": good_on_application["application"],
-                "file_pk": document["id"],
-            },
-        )
-
-        return document_formatter(document["document"], url)
+        url = _get_document_url(queue_pk, good_on_application, document)
+        return document_formatter(document, url)
 
     return core_firearm_product_on_application_summary(
         good_on_application,
