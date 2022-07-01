@@ -9,10 +9,11 @@ from django.urls import reverse
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
 from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
-from caseworker.tau.services import get_first_precedents
+from caseworker.tau.services import get_recent_precedent
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.users.services import get_gov_user
 
 
@@ -54,11 +55,12 @@ class TAUMixin:
     @cached_property
     def goods(self):
         goods = []
-        precedents = get_first_precedents(self.request, self.case)
+        precedents = get_recent_precedent(self.request, self.case)
         for item in self.case.goods:
-            item_id = item["id"]
             # Populate precedents
-            item["precedents"] = precedents.get(item_id, [])
+            if precedents[item["id"]]:
+                precedents[item["id"]]["queue"] = precedents[item["id"]]["queue"] or ALL_CASES_QUEUE_ID
+            item["precedent"] = precedents[item["id"]]
             # Populate document urls
             for document in item["good"]["documents"]:
                 _, fext = os.path.splitext(document["name"])
