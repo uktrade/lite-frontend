@@ -3,6 +3,7 @@ import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import Headline from "./tau/headline";
 import SelectProducts from "./tau/select-products";
+import CLESuggestions from "./tau/cle-suggestions";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -74,9 +75,16 @@ const initAssessmentForm = () => {
   const headlineEl = document.querySelector(".tau__headline");
   const headline = new Headline(headlineEl);
 
+  const suggestionsEl = document.querySelector(".tau__cle-suggestions");
+  const cleSuggestions = new CLESuggestions(
+    suggestionsEl,
+    (selectedSuggestions) => console.log(selectedSuggestions)
+  );
+
   const checkboxes = goods.querySelectorAll("[name=goods]");
   new SelectProducts(checkboxes, (selectedProducts) => {
     headline.setProducts(selectedProducts);
+    cleSuggestions.setProducts(selectedProducts);
   }).init();
 };
 

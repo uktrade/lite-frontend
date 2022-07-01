@@ -110,6 +110,7 @@ const addDeleteExporterCleSuggestions = (
   globalCleMatchToItems,
   globalCheckedProductsWithCle
 ) => {
+  return;
   const checked = product.checked;
   const id = product.value;
 
