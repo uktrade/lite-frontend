@@ -176,7 +176,7 @@ class CaseView(TemplateView):
             has_template=False,
         )
 
-    def get_notes_and_timelines_new_tab(self):
+    def get_notes_and_timelines_tab(self):
         return Tab(
             "activities",
             CasePage.Tabs.CASE_NOTES_AND_TIMELINE,
