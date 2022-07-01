@@ -5,6 +5,7 @@ import Headline from "./tau/headline";
 import SelectProducts from "./tau/select-products";
 import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
+import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -76,6 +77,14 @@ const initAssessmentForm = () => {
   const headlineEl = document.querySelector(".tau__headline");
   const headline = new Headline(headlineEl);
 
+  const noControlListCheckboxEl = document.querySelector(
+    "[name=does_not_have_control_list_entries]"
+  );
+  const noSuggestionsTokenField = new NoSuggestionsTokenField(
+    "#control_list_entries",
+    noControlListCheckboxEl
+  );
+  noSuggestionsTokenField.init();
   const suggestionsTokenField = new SuggestionsTokenField(
     "#control_list_entries"
   );
@@ -85,6 +94,7 @@ const initAssessmentForm = () => {
     suggestionsEl,
     (selectedSuggestions) => {
       suggestionsTokenField.setSuggestions(selectedSuggestions);
+      noSuggestionsTokenField.reset();
     }
   );
 

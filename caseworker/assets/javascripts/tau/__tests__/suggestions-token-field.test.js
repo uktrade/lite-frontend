@@ -26,7 +26,7 @@ const createComponent = () => {
   return component;
 };
 
-describe("Suggestions token", () => {
+describe("Suggestions token field", () => {
   beforeEach(() => {
     createComponent();
   });
