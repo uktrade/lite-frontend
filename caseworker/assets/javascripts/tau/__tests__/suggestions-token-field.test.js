@@ -2,20 +2,22 @@ import "@testing-library/jest-dom";
 
 import SuggestionsTokenField from "../suggestions-token-field";
 
-let component, tokenfieldInput, tokenfieldSuggestItem;
+let component, tokenFieldContainer, mockTokenfield;
 
 const createElements = () => {
   document.body.innerHTML = `
     <div id="token-field-container">
-      <input class="tokenfield-input">
-      <div class="tokenfield-suggest-item"></div>
     </div>
   `;
 
-  tokenfieldInput = document.querySelector(".tokenfield-input");
-  tokenfieldSuggestItem = document.querySelector(".tokenfield-suggest-item");
+  mockTokenfield = {
+    addItems: jest.fn(),
+  };
 
-  return [tokenfieldInput, tokenfieldSuggestItem];
+  tokenFieldContainer = document.querySelector("#token-field-container");
+  tokenFieldContainer.tokenfield = mockTokenfield;
+
+  return tokenFieldContainer;
 };
 
 const createComponent = () => {
@@ -30,24 +32,13 @@ describe("Suggestions token", () => {
   });
 
   test("Set suggestions", () => {
-    const inputClickSpy = jest.fn();
-    const suggestionItemClickSpy = jest.fn();
-
-    tokenfieldInput.addEventListener("click", () => {
-      inputClickSpy(tokenfieldInput.value);
-    });
-
-    tokenfieldSuggestItem.addEventListener("click", () => {
-      suggestionItemClickSpy();
-    });
-
-    expect(tokenfieldInput).toHaveValue("");
-    component.setSuggestions([{ rating: "R1" }, { rating: "R1a" }]);
-
-    expect(inputClickSpy).toHaveBeenCalledTimes(2);
-    expect(inputClickSpy).toHaveBeenNthCalledWith(1, "R1");
-    expect(inputClickSpy).toHaveBeenNthCalledWith(2, "R1a");
-
-    expect(suggestionItemClickSpy).toHaveBeenCalledTimes(2);
+    component.setSuggestions([
+      { id: "1", rating: "R1" },
+      { id: "2", rating: "R1a" },
+    ]);
+    expect(mockTokenfield.addItems).toBeCalledWith([
+      { id: "1", name: "R1" },
+      { id: "2", name: "R1a" },
+    ]);
   });
 });

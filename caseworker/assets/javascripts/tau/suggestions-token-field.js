@@ -9,16 +9,13 @@ class SuggestionsTokenField {
     const $controlListEntries = document.querySelector(
       this.controlListEntriesSelector
     );
-    const $tokenFieldInput =
-      $controlListEntries.querySelector(".tokenfield-input");
-    for (const suggestion of suggestions) {
-      $tokenFieldInput.value = suggestion.rating;
-      $tokenFieldInput.click();
-      const $tokenFieldSuggestList = $controlListEntries.querySelector(
-        ".tokenfield-suggest-item"
-      );
-      $tokenFieldSuggestList.click();
-    }
+    const tokenfield = $controlListEntries.tokenfield;
+    tokenfield.addItems(
+      suggestions.map((suggestion) => ({
+        name: suggestion.rating,
+        id: suggestion.id,
+      }))
+    );
   }
 }
 
