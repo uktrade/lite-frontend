@@ -23,9 +23,6 @@ class CaseNote {
     this.$textarea.addEventListener("input", (evt) =>
       this.handleTextareaInput(evt)
     );
-    this.$textarea.addEventListener("propertychange", (evt) =>
-      this.handleTextareaInput(evt)
-    );
     this.$textarea.addEventListener("paste", (evt) =>
       this.handleTextareaInput(evt)
     );
@@ -93,4 +90,4 @@ const initCaseNotes = () => {
     .forEach(($el) => new CaseNote($el).init());
 };
 
-export default initCaseNotes;
+export { initCaseNotes, CaseNote };
