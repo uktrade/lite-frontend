@@ -4,6 +4,7 @@ import CheckboxClassToggler from "core/checkbox-class-toggler";
 import Headline from "./tau/headline";
 import SelectProducts from "./tau/select-products";
 import CLESuggestions from "./tau/cle-suggestions";
+import SuggestionsTokenField from "./tau/suggestions-token-field";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -75,10 +76,16 @@ const initAssessmentForm = () => {
   const headlineEl = document.querySelector(".tau__headline");
   const headline = new Headline(headlineEl);
 
+  const suggestionsTokenField = new SuggestionsTokenField(
+    "#control_list_entries"
+  );
+
   const suggestionsEl = document.querySelector(".tau__cle-suggestions");
   const cleSuggestions = new CLESuggestions(
     suggestionsEl,
-    (selectedSuggestions) => console.log(selectedSuggestions)
+    (selectedSuggestions) => {
+      suggestionsTokenField.setSuggestions(selectedSuggestions);
+    }
   );
 
   const checkboxes = goods.querySelectorAll("[name=goods]");
