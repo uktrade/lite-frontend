@@ -170,4 +170,13 @@ describe("CLE suggestions", () => {
       { id: "6", rating: "R3a" },
     ]);
   });
+
+  test("Setting product with blank control list doesn't add button", () => {
+    component.setProducts([
+      {
+        controlListEntries: [],
+      },
+    ]);
+    expect(buttonContainer).toBeEmptyDOMElement();
+  });
 });

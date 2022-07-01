@@ -18,7 +18,11 @@ class CLESuggestions {
     const suggestions = [];
     const seenSuggestions = new Set();
     for (const product of products) {
-      const suggestionKey = product.controlListEntries
+      const controlListEntries = product.controlListEntries;
+      if (controlListEntries.length === 0) {
+        continue;
+      }
+      const suggestionKey = controlListEntries
         .map((entry) => entry.id)
         .sort()
         .join("|");
@@ -27,7 +31,7 @@ class CLESuggestions {
       }
       seenSuggestions.add(suggestionKey);
 
-      const suggestion = product.controlListEntries;
+      const suggestion = controlListEntries;
       suggestions.push(suggestion);
     }
     return suggestions;
