@@ -99,7 +99,10 @@ const initAssessmentForm = () => {
   );
 
   const checkboxes = goods.querySelectorAll("[name=goods]");
-  new SelectProducts(checkboxes, (selectedProducts) => {
+  const products = JSON.parse(
+    document.querySelector("#cle-suggestions-json").textContent
+  );
+  new SelectProducts(checkboxes, products, (selectedProducts) => {
     headline.setProducts(selectedProducts);
     cleSuggestions.setProducts(selectedProducts);
   }).init();

@@ -5,18 +5,30 @@ import SelectProducts from "../select-products";
 
 let checkboxes, spy;
 
+const products = [
+  {
+    id: "checkbox-1",
+    name: "Product A",
+    control_list_entries: [{ rating: "R1" }, { rating: "R1a" }],
+  },
+  {
+    id: "checkbox-2",
+    name: "Product B",
+    control_list_entries: [{ rating: "R2" }, { rating: "R2a" }],
+  },
+  {
+    id: "checkbox-3",
+    name: "Product C",
+    control_list_entries: [{ rating: "R3" }, { rating: "R3a" }],
+  },
+];
+
 const createElements = () => {
   document.body.innerHTML = `
     <div>
-      <input type="checkbox" name="checkbox-1" value="checkbox-1" data-script-id="product-1" />
-      <script id="product-1-name">"Product A"</script>
-      <script id="product-1-control-list-entries">[{"rating": "R1"}, {"rating": "R1a"}]</script>
-      <input type="checkbox" name="checkbox-2" value="checkbox-2" data-script-id="product-2" />
-      <script id="product-2-name">"Product B"</script>
-      <script id="product-2-control-list-entries">[{"rating": "R2"}, {"rating": "R2a"}]</script>
-      <input type="checkbox" name="checkbox-3" value="checkbox-3" data-script-id="product-3" />
-      <script id="product-3-name">"Product C"</script>
-      <script id="product-3-control-list-entries">[{"rating": "R3"}, {"rating": "R3a"}]</script>
+      <input type="checkbox" name="checkbox-1" value="checkbox-1" />
+      <input type="checkbox" name="checkbox-2" value="checkbox-2" />
+      <input type="checkbox" name="checkbox-3" value="checkbox-3" />
     </div>
   `;
 
@@ -26,9 +38,13 @@ const createElements = () => {
 const createComponent = () => {
   checkboxes = createElements();
   spy = jest.fn();
-  return new SelectProducts(checkboxes, (selectedProducts) =>
-    spy(selectedProducts)
-  ).init();
+  const selectProducts = new SelectProducts(
+    checkboxes,
+    products,
+    (selectedProducts) => spy(selectedProducts)
+  );
+  selectProducts.init();
+  return selectProducts;
 };
 
 test("Products set on init", async () => {
@@ -37,7 +53,7 @@ test("Products set on init", async () => {
     await userEvent.click(checkbox);
   }
   const spy = jest.fn();
-  new SelectProducts(checkboxes, (selectedProducts) =>
+  new SelectProducts(checkboxes, products, (selectedProducts) =>
     spy(selectedProducts)
   ).init();
   expect(spy).toBeCalledWith([

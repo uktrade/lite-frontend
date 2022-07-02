@@ -122,6 +122,19 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         return form_kwargs
 
+    def get_cle_suggestions_json(self):
+        cle_suggestions_json = []
+        for good_on_application in self.unassessed_goods:
+            good = good_on_application["good"]
+            cle_suggestions_json.append(
+                {
+                    "id": good_on_application["id"],
+                    "name": good["name"],
+                    "control_list_entries": good["control_list_entries"],
+                }
+            )
+        return cle_suggestions_json
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return {
@@ -130,6 +143,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
+            "cle_suggestions_json": self.get_cle_suggestions_json(),
             "organisation_documents": self.organisation_documents,
             "is_tau": self.caseworker["team"]["alias"] == TAU_ALIAS,
         }

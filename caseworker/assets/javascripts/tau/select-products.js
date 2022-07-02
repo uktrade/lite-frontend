@@ -1,7 +1,12 @@
 class SelectProducts {
-  constructor($checkboxes, onSelectProducts) {
+  constructor($checkboxes, products, onSelectProducts) {
     this.$checkboxes = $checkboxes;
     this.onSelectProducts = onSelectProducts;
+
+    this.products = {};
+    for (const product of products) {
+      this.products[product.id] = product;
+    }
   }
 
   init() {
@@ -13,24 +18,17 @@ class SelectProducts {
     this.onSelectProducts(this.getSelectedProducts());
   }
 
-  parseJSONFromElement(elementSelector) {
-    const element = document.querySelector(elementSelector);
-    return JSON.parse(element.textContent);
-  }
-
   getSelectedProducts() {
     let selectedProducts = [];
     for (const $checkbox of this.$checkboxes) {
       if (!$checkbox.checked) {
         continue;
       }
-
-      const scriptId = $checkbox.dataset["scriptId"];
-      const name = this.parseJSONFromElement(`#${scriptId}-name`);
-      const controlListEntries = this.parseJSONFromElement(
-        `#${scriptId}-control-list-entries`
-      );
-      selectedProducts.push({ name, controlListEntries });
+      const product = this.products[$checkbox.value];
+      selectedProducts.push({
+        name: product["name"],
+        controlListEntries: product["control_list_entries"],
+      });
     }
     return selectedProducts;
   }
