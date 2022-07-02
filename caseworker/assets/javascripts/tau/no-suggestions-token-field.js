@@ -2,8 +2,6 @@ class NoSuggestionsTokenField {
   constructor(controlListEntriesSelector, $noControlListCheckbox) {
     this.controlListEntriesSelector = controlListEntriesSelector;
     this.$noControlListCheckbox = $noControlListCheckbox;
-
-    this.isDisplayingNoneEntry = false;
   }
 
   init() {
