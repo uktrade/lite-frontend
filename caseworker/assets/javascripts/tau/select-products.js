@@ -1,16 +1,16 @@
 class SelectProducts {
-  constructor($checkboxes, callback) {
+  constructor($checkboxes, onSelectProducts) {
     this.$checkboxes = $checkboxes;
-    this.callback = callback;
+    this.onSelectProducts = onSelectProducts;
   }
 
   init() {
     for (const $checkbox of this.$checkboxes) {
       $checkbox.addEventListener("input", () => {
-        this.callback(this.getSelectedProducts());
+        this.onSelectProducts(this.getSelectedProducts());
       });
     }
-    this.callback(this.getSelectedProducts());
+    this.onSelectProducts(this.getSelectedProducts());
   }
 
   parseJSONFromElement(elementSelector) {

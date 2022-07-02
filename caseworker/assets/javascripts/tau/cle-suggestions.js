@@ -1,7 +1,7 @@
 class CLESuggestions {
-  constructor($suggestionsContainer, callback) {
+  constructor($suggestionsContainer, onSelectSuggestions) {
     this.$suggestionsContainer = $suggestionsContainer;
-    this.callback = callback;
+    this.onSelectSuggestions = onSelectSuggestions;
   }
 
   getSuggestionButton(suggestion) {
@@ -52,7 +52,7 @@ class CLESuggestions {
 
   handleSuggestionButtonClick(evt, suggestion) {
     evt.preventDefault();
-    this.callback(suggestion);
+    this.onSelectSuggestions(suggestion);
   }
 }
 
