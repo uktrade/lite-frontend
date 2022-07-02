@@ -17,22 +17,19 @@ class CLESuggestions {
   getSuggestions(products) {
     const suggestions = [];
     const seenSuggestions = new Set();
-    for (const product of products) {
-      const controlListEntries = product.controlListEntries;
+    for (const { controlListEntries } of products) {
       if (controlListEntries.length === 0) {
         continue;
       }
       const suggestionKey = controlListEntries
-        .map((entry) => entry.id)
+        .map(({ id }) => id)
         .sort()
         .join("|");
       if (seenSuggestions.has(suggestionKey)) {
         continue;
       }
       seenSuggestions.add(suggestionKey);
-
-      const suggestion = controlListEntries;
-      suggestions.push(suggestion);
+      suggestions.push(controlListEntries);
     }
     return suggestions;
   }

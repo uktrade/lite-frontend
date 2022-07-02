@@ -9,11 +9,11 @@ class SuggestionsTokenField {
     const $controlListEntries = document.querySelector(
       this.controlListEntriesSelector
     );
-    const tokenfield = $controlListEntries.tokenfield;
+    const { tokenfield } = $controlListEntries;
     tokenfield.addItems(
-      suggestions.map((suggestion) => ({
-        name: suggestion.rating,
-        id: suggestion.id,
+      suggestions.map(({ rating, id }) => ({
+        id,
+        name: rating,
       }))
     );
   }

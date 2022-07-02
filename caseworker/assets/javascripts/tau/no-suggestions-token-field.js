@@ -16,7 +16,7 @@ class NoSuggestionsTokenField {
     const $controlListEntries = document.querySelector(
       this.controlListEntriesSelector
     );
-    const tokenfield = $controlListEntries.tokenfield;
+    const { tokenfield } = $controlListEntries;
     tokenfield.emptyItems();
   }
 
@@ -66,9 +66,8 @@ class NoSuggestionsTokenField {
   }
 
   handleNoControlListCheckboxInput() {
-    const isChecked = this.$noControlListCheckbox.checked;
-
-    if (isChecked) {
+    const { checked } = this.$noControlListCheckbox;
+    if (checked) {
       this.emptyTokenField();
       this.displayNoCLEEntry();
     } else {

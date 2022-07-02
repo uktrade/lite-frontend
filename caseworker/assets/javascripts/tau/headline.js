@@ -5,8 +5,8 @@ class Headline {
 
   getText(products) {
     if (products.length === 1) {
-      const product = products[0];
-      return `Assessing ${product["name"]}`;
+      const { name } = products[0];
+      return `Assessing ${name}`;
     }
     return `Assessing ${products.length} products`;
   }

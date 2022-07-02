@@ -24,10 +24,10 @@ class SelectProducts {
       if (!$checkbox.checked) {
         continue;
       }
-      const product = this.products[$checkbox.value];
+      const { name, control_list_entries } = this.products[$checkbox.value];
       selectedProducts.push({
-        name: product["name"],
-        controlListEntries: product["control_list_entries"],
+        name,
+        controlListEntries: control_list_entries,
       });
     }
     return selectedProducts;
