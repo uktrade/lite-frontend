@@ -58,8 +58,8 @@ describe("No suggestions token field", () => {
 
     expect(mockTokenfield.emptyItems).toHaveBeenCalled();
     expect(tokenFieldInput).toHaveStyle("display: none");
-    expect(tokenFieldSetList.innerHTML).toEqual(
-      `<li class="tokenfield-set-item tau-none-item"><span class="item-label"></span><a class="item-remove" tabindex="-1"></a></li>`
+    expect(tokenFieldSetList).toContainHTML(
+      `<li class="tokenfield-set-item tau-none-item"><span class="item-label">None</span><a class="item-remove" tabindex="-1">×</a></li>`
     );
   });
 

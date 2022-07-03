@@ -36,12 +36,12 @@ class NoSuggestionsTokenField {
 
     const newSpan = document.createElement("span");
     newSpan.classList.add("item-label");
-    newSpan.innerText = "None";
+    newSpan.textContent = "None";
 
     const newHref = document.createElement("a");
     newHref.classList.add("item-remove");
     newHref.tabIndex = -1;
-    newHref.innerText = "×";
+    newHref.textContent = "×";
     newHref.addEventListener("click", () => {
       this.setCheckbox(false);
     });
