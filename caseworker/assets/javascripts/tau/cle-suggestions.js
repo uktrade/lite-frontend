@@ -1,50 +1,103 @@
+class UniqueSuggestionsCollector {
+  constructor() {
+    this.suggestions = [];
+    this.seenExporterSuggestions = new Set();
+    this.seenAssessedSuggestions = new Set();
+  }
+
+  getSuggestionKey(suggestion) {
+    return suggestion
+      .map(({ id }) => id)
+      .sort()
+      .join("|");
+  }
+
+  addSuggestion(suggestionSet, suggestion, suggestionText) {
+    const suggestionKey = this.getSuggestionKey(suggestion);
+    if (suggestionSet.has(suggestionKey)) {
+      return;
+    }
+    suggestionSet.add(suggestionKey);
+    this.suggestions.push([suggestion, suggestionText]);
+  }
+
+  addExporterSuggestion(exporterSuggestion, exporterSuggestionText) {
+    this.addSuggestion(
+      this.seenExporterSuggestions,
+      exporterSuggestion,
+      exporterSuggestionText
+    );
+  }
+
+  addAssessedSuggestion(assessedSuggestion, assessedSuggestionText) {
+    this.addSuggestion(
+      this.seenAssessedSuggestions,
+      assessedSuggestion,
+      assessedSuggestionText
+    );
+  }
+}
+
 class CLESuggestions {
   constructor($suggestionsContainer, onSelectSuggestions) {
     this.$suggestionsContainer = $suggestionsContainer;
     this.onSelectSuggestions = onSelectSuggestions;
   }
 
-  getSuggestionButton(suggestion) {
-    const ratings = suggestion.map((s) => s.rating);
+  getSuggestionButton(suggestionText) {
     const cleSuggestionButton = document.createElement("button");
     cleSuggestionButton.classList.add("lite-button--link");
-    cleSuggestionButton.textContent = `Select exporter suggestion ${ratings.join(
-      ", "
-    )}`;
+    cleSuggestionButton.textContent = suggestionText;
     return cleSuggestionButton;
   }
 
-  getSuggestionKey(controlListEntries) {
-    return controlListEntries
-      .map(({ id }) => id)
-      .sort()
-      .join("|");
+  getSuggestionText(suggestion) {
+    const suggestionText = suggestion.map((s) => s.rating);
+    return suggestionText.join(", ");
+  }
+
+  getExporterSuggestionText(suggestion) {
+    const suggestionText = this.getSuggestionText(suggestion);
+    return `Select exporter suggestion ${suggestionText}`;
+  }
+
+  getAssessedSuggestionText(suggestion) {
+    const suggestionText = this.getSuggestionText(suggestion);
+    return `Copy previous assessment ${suggestionText}`;
   }
 
   getSuggestions(products) {
-    const suggestions = [];
-    const seenSuggestions = new Set();
+    const uniqueSuggestionsCollector = new UniqueSuggestionsCollector();
+
     for (const { controlListEntries } of products) {
-      const exporterControlListEntries = controlListEntries.exporter;
-      if (exporterControlListEntries.length === 0) {
-        continue;
+      const { exporter: exporterSuggestion, assessed: assessedSuggestions } =
+        controlListEntries;
+
+      if (exporterSuggestion) {
+        uniqueSuggestionsCollector.addExporterSuggestion(
+          exporterSuggestion,
+          this.getExporterSuggestionText(exporterSuggestion)
+        );
       }
-      const suggestionKey = this.getSuggestionKey(exporterControlListEntries);
-      if (seenSuggestions.has(suggestionKey)) {
-        continue;
+
+      if (assessedSuggestions) {
+        for (const assessedSuggestion of assessedSuggestions) {
+          uniqueSuggestionsCollector.addAssessedSuggestion(
+            assessedSuggestion,
+            this.getAssessedSuggestionText(assessedSuggestion)
+          );
+        }
       }
-      seenSuggestions.add(suggestionKey);
-      suggestions.push(exporterControlListEntries);
     }
-    return suggestions;
+    return uniqueSuggestionsCollector.suggestions;
   }
 
   setProducts(products) {
     this.$suggestionsContainer.innerHTML = "";
 
     const suggestions = this.getSuggestions(products);
-    for (const suggestion of suggestions) {
-      const cleSuggestionButton = this.getSuggestionButton(suggestion);
+    for (const [suggestion, suggestionText] of suggestions) {
+      const cleSuggestionButton = this.getSuggestionButton(suggestionText);
       cleSuggestionButton.addEventListener("click", (evt) =>
         this.handleSuggestionButtonClick(evt, suggestion)
       );

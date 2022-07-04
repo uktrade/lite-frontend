@@ -35,7 +35,7 @@ describe("CLE suggestions", () => {
     expect(buttonContainer).toBeEmptyDOMElement();
   });
 
-  test("Set multiple products", () => {
+  test("Set multiple exporter CLE products", () => {
     component.setProducts([
       {
         controlListEntries: {
@@ -197,14 +197,106 @@ describe("CLE suggestions", () => {
     ]);
   });
 
-  test("Setting product with blank control list doesn't add button", () => {
+  test("Setting product with assessed CLE entries", () => {
     component.setProducts([
       {
         controlListEntries: {
-          exporter: [],
+          assessed: [
+            [
+              { id: "1", rating: "R1" },
+              { id: "2", rating: "R1a" },
+            ],
+          ],
+        },
+      },
+      {
+        controlListEntries: {
+          assessed: [
+            [
+              { id: "3", rating: "R2" },
+              { id: "4", rating: "R2a" },
+            ],
+            [
+              { id: "5", rating: "R3" },
+              { id: "6", rating: "R3a" },
+            ],
+          ],
         },
       },
     ]);
-    expect(buttonContainer).toBeEmptyDOMElement();
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Copy previous assessment R1, R1a</button>`
+    );
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Copy previous assessment R2, R2a</button>`
+    );
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Copy previous assessment R3, R3a</button>`
+    );
+  });
+
+  test("Setting product with mixed CLE entries", () => {
+    component.setProducts([
+      {
+        controlListEntries: {
+          exporter: [
+            { id: "1", rating: "R1" },
+            { id: "2", rating: "R1a" },
+          ],
+        },
+      },
+      {
+        controlListEntries: {
+          assessed: [
+            [
+              { id: "3", rating: "R2" },
+              { id: "4", rating: "R2a" },
+            ],
+            [
+              { id: "5", rating: "R3" },
+              { id: "6", rating: "R3a" },
+            ],
+          ],
+        },
+      },
+    ]);
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+    );
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Copy previous assessment R2, R2a</button>`
+    );
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Copy previous assessment R3, R3a</button>`
+    );
+  });
+
+  test("Setting product with mixed duplicated CLE entries", () => {
+    component.setProducts([
+      {
+        controlListEntries: {
+          exporter: [
+            { id: "1", rating: "R1" },
+            { id: "2", rating: "R1a" },
+          ],
+        },
+      },
+      {
+        controlListEntries: {
+          assessed: [
+            [
+              { id: "1", rating: "R1" },
+              { id: "2", rating: "R1a" },
+            ],
+          ],
+        },
+      },
+    ]);
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+    );
+    expect(buttonContainer).toContainHTML(
+      `<button class="lite-button--link">Copy previous assessment R1, R1a</button>`
+    );
   });
 });
