@@ -14,22 +14,27 @@ class CLESuggestions {
     return cleSuggestionButton;
   }
 
+  getSuggestionKey(controlListEntries) {
+    return controlListEntries
+      .map(({ id }) => id)
+      .sort()
+      .join("|");
+  }
+
   getSuggestions(products) {
     const suggestions = [];
     const seenSuggestions = new Set();
     for (const { controlListEntries } of products) {
-      if (controlListEntries.length === 0) {
+      const exporterControlListEntries = controlListEntries.exporter;
+      if (exporterControlListEntries.length === 0) {
         continue;
       }
-      const suggestionKey = controlListEntries
-        .map(({ id }) => id)
-        .sort()
-        .join("|");
+      const suggestionKey = this.getSuggestionKey(exporterControlListEntries);
       if (seenSuggestions.has(suggestionKey)) {
         continue;
       }
       seenSuggestions.add(suggestionKey);
-      suggestions.push(controlListEntries);
+      suggestions.push(exporterControlListEntries);
     }
     return suggestions;
   }

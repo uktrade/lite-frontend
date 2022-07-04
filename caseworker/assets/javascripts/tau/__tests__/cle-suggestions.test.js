@@ -38,22 +38,28 @@ describe("CLE suggestions", () => {
   test("Set multiple products", () => {
     component.setProducts([
       {
-        controlListEntries: [
-          { id: "1", rating: "R1" },
-          { id: "2", rating: "R1a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "1", rating: "R1" },
+            { id: "2", rating: "R1a" },
+          ],
+        },
       },
       {
-        controlListEntries: [
-          { id: "3", rating: "R2" },
-          { id: "4", rating: "R2a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "3", rating: "R2" },
+            { id: "4", rating: "R2a" },
+          ],
+        },
       },
       {
-        controlListEntries: [
-          { id: "5", rating: "R3" },
-          { id: "6", rating: "R3a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "5", rating: "R3" },
+            { id: "6", rating: "R3a" },
+          ],
+        },
       },
     ]);
     expect(buttonContainer).toContainHTML(
@@ -70,30 +76,40 @@ describe("CLE suggestions", () => {
   test("Duplicates removed", () => {
     component.setProducts([
       {
-        controlListEntries: [{ id: "1", rating: "R3" }],
+        controlListEntries: {
+          exporter: [{ id: "1", rating: "R3" }],
+        },
       },
       {
-        controlListEntries: [{ id: "1", rating: "R3" }],
+        controlListEntries: {
+          exporter: [{ id: "1", rating: "R3" }],
+        },
       },
       {
-        controlListEntries: [
-          { id: "2", rating: "R1" },
-          { id: "3", rating: "R1a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "2", rating: "R1" },
+            { id: "3", rating: "R1a" },
+          ],
+        },
       },
       {
-        controlListEntries: [
-          { id: "2", rating: "R1" },
-          { id: "3", rating: "R1a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "2", rating: "R1" },
+            { id: "3", rating: "R1a" },
+          ],
+        },
       },
       {
         // This isn't really a duplicate even though the previous entries are in other CLEs as we use the whole group to
         // test for duplication
-        controlListEntries: [
-          { id: "1", rating: "R3" },
-          { id: "3", rating: "R1a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "1", rating: "R3" },
+            { id: "3", rating: "R1a" },
+          ],
+        },
       },
     ]);
     expect(
@@ -110,16 +126,20 @@ describe("CLE suggestions", () => {
   test("Reordered ratings considered duplicate", () => {
     component.setProducts([
       {
-        controlListEntries: [
-          { id: "1", rating: "R1" },
-          { id: "2", rating: "R1a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "1", rating: "R1" },
+            { id: "2", rating: "R1a" },
+          ],
+        },
       },
       {
-        controlListEntries: [
-          { id: "2", rating: "R1a" },
-          { id: "1", rating: "R1" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "2", rating: "R1a" },
+            { id: "1", rating: "R1" },
+          ],
+        },
       },
     ]);
     expect(
@@ -130,22 +150,28 @@ describe("CLE suggestions", () => {
   test("Callback called on button click", async () => {
     component.setProducts([
       {
-        controlListEntries: [
-          { id: "1", rating: "R1" },
-          { id: "2", rating: "R1a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "1", rating: "R1" },
+            { id: "2", rating: "R1a" },
+          ],
+        },
       },
       {
-        controlListEntries: [
-          { id: "3", rating: "R2" },
-          { id: "4", rating: "R2a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "3", rating: "R2" },
+            { id: "4", rating: "R2a" },
+          ],
+        },
       },
       {
-        controlListEntries: [
-          { id: "5", rating: "R3" },
-          { id: "6", rating: "R3a" },
-        ],
+        controlListEntries: {
+          exporter: [
+            { id: "5", rating: "R3" },
+            { id: "6", rating: "R3a" },
+          ],
+        },
       },
     ]);
     await userEvent.click(
@@ -174,7 +200,9 @@ describe("CLE suggestions", () => {
   test("Setting product with blank control list doesn't add button", () => {
     component.setProducts([
       {
-        controlListEntries: [],
+        controlListEntries: {
+          exporter: [],
+        },
       },
     ]);
     expect(buttonContainer).toBeEmptyDOMElement();
