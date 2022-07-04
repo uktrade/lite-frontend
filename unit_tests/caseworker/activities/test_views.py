@@ -15,8 +15,19 @@ def setup(
     mock_case,
     mock_standard_case_activity_filters,
     mock_standard_case_activity_system_user,
+    mock_standard_case_ecju_queries,
+    mock_standard_case_assigned_queues,
+    mock_standard_case_documents,
+    mock_standard_case_additional_contacts,
 ):
-    settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = True
+    pass
+
+
+def test_notes_and_timeline_tab(authorized_client, data_queue, data_standard_case):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    assert response.context["tabs"][5].name == "Notes and timeline"
 
 
 @pytest.fixture
@@ -25,16 +36,6 @@ def notes_and_timelines_url(data_queue, data_standard_case):
         "cases:activities:notes-and-timeline",
         kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
     )
-
-
-def test_notes_and_timelines_view_flag_off_status_code(
-    settings,
-    authorized_client,
-    notes_and_timelines_url,
-):
-    settings.FEATURE_FLAG_NOTES_TIMELINE_2_0 = False
-    response = authorized_client.get(notes_and_timelines_url)
-    assert response.status_code == 404
 
 
 def test_notes_and_timelines_view_flag_on_status_code(

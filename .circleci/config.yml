@@ -142,7 +142,7 @@ commands:
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
 
-  unit_tests:
+  backend_unit_tests:
     parameters:
       alias:
         type: string
@@ -157,6 +157,7 @@ commands:
             curl -Os https://uploader.codecov.io/latest/linux/codecov
             chmod +x codecov
             ./codecov
+
   ui_tests:
     steps:
       - run: mkdir -p test-results
@@ -206,7 +207,7 @@ jobs:
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - setup_code
-      - unit_tests:
+      - backend_unit_tests:
           alias: caseworker
 
   exporter_unit_test:
@@ -221,7 +222,7 @@ jobs:
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - setup_code
-      - unit_tests:
+      - backend_unit_tests:
           alias: exporter
 
   core_unit_test:
@@ -236,8 +237,16 @@ jobs:
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - setup_code
-      - unit_tests:
+      - backend_unit_tests:
           alias: core
+
+  frontend_unit_test:
+    docker:
+      - image: cimg/node:16.15
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run test
 
   caseworker_ui_test:
     machine:
@@ -310,6 +319,7 @@ workflows:
       - caseworker_unit_test
       - exporter_unit_test
       - core_unit_test
+      - frontend_unit_test
       - caseworker_e2e_test
       - exporter_e2e_test
   ui_tests:

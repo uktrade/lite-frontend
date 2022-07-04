@@ -107,7 +107,7 @@ def test_identity(value):
 
 
 @pytest.mark.parametrize(
-    "formatter,list,output",
+    "formatter,value_list,output",
     (
         (
             None,
@@ -119,15 +119,20 @@ def test_identity(value):
             ["foo", "bar", "baz"],
             "FOO, BAR, BAZ",
         ),
+        (
+            None,
+            None,
+            "",
+        ),
     ),
 )
-def test_comma_separated_list(formatter, list, output):
+def test_comma_separated_list(formatter, value_list, output):
     args = ()
     if formatter:
         args = (formatter,)
 
     formatter = comma_separated_list(*args)
-    assert formatter(list) == output
+    assert formatter(value_list) == output
 
 
 @pytest.mark.parametrize(

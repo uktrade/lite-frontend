@@ -321,7 +321,8 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click the application previously created
     Then I click on Notes and timeline
     Then I should see "Decision has been made with reasons" appear in the timeline
-    When I click I'm done
+    When I click on "Details" tab
+    And I click I'm done
     And I click submit
     Then I don't see previously created application
     When I go to my profile page

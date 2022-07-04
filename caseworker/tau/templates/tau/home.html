@@ -108,7 +108,7 @@
                             <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
                             <td class="govuk-table__cell">{% if good.precedent.wassenaar %}Wassenaar{% endif %}</td>
                             <td class="govuk-table__cell">{{ good.report_summary }}</td>
-                            <td class="govuk-table__cell">{{ good.comment }}</td>
+                            <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
                             <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a></td>
                         </tr>
                         {% endfor %}

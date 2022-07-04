@@ -216,11 +216,36 @@ def firearm_reducer(good, is_user_rfd, organisation_documents):
         ),
     )
 
+    summary += rfd_reducer(is_user_rfd, organisation_documents)
     summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
     summary += is_replica_reducer(firearm_details)
     summary += firearms_act_reducer(firearm_details, is_user_rfd, organisation_documents)
     summary += has_product_document_reducer(good)
+
+    return summary
+
+
+def rfd_reducer(is_user_rfd, organisation_documents):
+    if not is_user_rfd or not organisation_documents.get("rfd-certificate"):
+        return ()
+
+    rfd_certificate_document = organisation_documents["rfd-certificate"]
+
+    summary = (
+        (
+            "rfd-certificate-document",
+            rfd_certificate_document,
+        ),
+        (
+            "rfd-certificate-reference-number",
+            rfd_certificate_document["reference_code"],
+        ),
+        (
+            "rfd-certificate-date-of-expiry",
+            rfd_certificate_document["expiry_date"],
+        ),
+    )
 
     return summary
 

@@ -1,6 +1,5 @@
 import os
 
-from django.conf import settings
 from django.urls import reverse_lazy
 
 from caseworker.core.constants import Permission
@@ -108,6 +107,4 @@ def is_all_cases_queue(request):
 
 
 def feature_flags(request):
-    return {
-        "FEATURE_FLAG_NOTES_TIMELINE_2_0": settings.FEATURE_FLAG_NOTES_TIMELINE_2_0,
-    }
+    return {}

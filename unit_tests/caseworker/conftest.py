@@ -734,6 +734,30 @@ def mock_standard_case_activity_system_user(requests_mock, standard_case_pk, sta
     return requests_mock.get(url=url, json=standard_case_activity)
 
 
+@pytest.fixture
+def mock_standard_case_ecju_queries(requests_mock, standard_case_pk, standard_case_activity):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/")
+    return requests_mock.get(url=url, json={"ecju_queries": []})
+
+
+@pytest.fixture
+def mock_standard_case_assigned_queues(requests_mock, standard_case_pk, standard_case_activity):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/assigned-queues/")
+    return requests_mock.get(url=url, json={"queues": []})
+
+
+@pytest.fixture
+def mock_standard_case_documents(requests_mock, standard_case_pk, standard_case_activity):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/documents/")
+    return requests_mock.get(url=url, json={"documents": []})
+
+
+@pytest.fixture
+def mock_standard_case_additional_contacts(requests_mock, standard_case_pk, standard_case_activity):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/additional-contacts/")
+    return requests_mock.get(url=url, json={})
+
+
 @pytest.fixture(autouse=True)
 def mock_teams(requests_mock):
     url = client._build_absolute_uri("/teams/")
@@ -969,6 +993,22 @@ def mock_good_on_appplication_documents(requests_mock, mock_case, data_good_on_a
     good_pk = data_good_on_application["good"]["id"]
     url = client._build_absolute_uri(f"/applications/{pk}/goods/{good_pk}/documents/")
     yield requests_mock.get(url=re.compile(f"{url}.*"), json={"documents": []})
+
+
+@pytest.fixture
+def mock_firearm_good_on_application(requests_mock, mock_case, data_standard_case):
+    good_data = data_standard_case["case"]["data"]["goods"][0]
+    url = client._build_absolute_uri(f"/applications/good-on-application/{good_data['id']}")
+    return requests_mock.get(url=url, json=good_data)
+
+
+@pytest.fixture
+def mock_firearm_good_on_application_documents(requests_mock, mock_case, data_standard_case):
+    good_data = data_standard_case["case"]["data"]["goods"][0]
+    pk = data_standard_case["case"]["id"]
+    good_pk = good_data["id"]
+    url = client._build_absolute_uri(f"/applications/{pk}/goods/{good_pk}/documents/")
+    return requests_mock.get(url=url, json={"documents": []})
 
 
 @pytest.fixture(autouse=True)

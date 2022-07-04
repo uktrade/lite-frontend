@@ -24,6 +24,7 @@ class Shared(BasePage):
     SNACKBAR_SELECTOR = ".app-snackbar"
     LITE_NOTICE_SELECTOR = ".lite-information-text__text"
     AUDIT_TRAIL_ID = "audit-trail"
+    AUDIT_TRAIL_CLASS_NAME = "notes-and-timeline-timeline"
     INPUT_NAME_FILTER_ID = "name"
     CASES_FORM_ID = "form-cases"
     FIRST_LINK_IN_ROW = ".govuk-table__row .govuk-link"
@@ -99,6 +100,9 @@ class Shared(BasePage):
 
     def get_audit_trail_text(self):
         return self.driver.find_element(by=By.ID, value=self.AUDIT_TRAIL_ID).text
+
+    def get_audit_trail_text_timeline(self):
+        return self.driver.find_element(by=By.CLASS_NAME, value=self.AUDIT_TRAIL_CLASS_NAME).text
 
     def go_to_last_page(self):
         self.driver.implicitly_wait(0)

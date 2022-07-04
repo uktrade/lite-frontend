@@ -20,6 +20,8 @@ class ApplicationPage(BasePage):
     LINK_CANCEL_NOTE_ID = "link-case-note-cancel"
     CASE_NOTES_TEXT = ".app-activity__item"  # css
     CASE_NOTE_DATE_TIME = ".app-activity__item .govuk-hint"  # css
+    CASE_NOTES_ITEM_CLASS_NAME = "notes-and-timeline-timeline__day-group-item"
+    CASE_NOTES_DATE_GROUP_HEADING_CLASS_NAME = "notes-and-timeline-timeline__day-group-heading"
     DOCUMENTS_BTN = "tab-documents"  # ID
     GENERATE_DOCUMENTS_BTN = "button-generate-document"  # id
     ECJU_QUERIES_BTN = '[href*="ecju-queries"]'  # css
@@ -55,7 +57,7 @@ class ApplicationPage(BasePage):
     BUTTON_IM_DONE_ID = "button-done"
     CASE_LINK_PARTIAL_ID = "case-"
     USER_TYPE_ID = "user_type"
-    CASE_NOTES_AND_ACTIVITY_TAB = "tab-activity"  # ID
+    CASE_NOTES_AND_ACTIVITY_TAB = "tab-activities"  # ID
     TABLE_GOODS_ID = "table-goods"
     TABLE_DESTINATIONS_ID = "table-destinations"
     NEXT_REVIEW_DATE_DAY_ID = "next_review_dateday"
@@ -104,10 +106,10 @@ class ApplicationPage(BasePage):
         ).click()
 
     def get_text_of_case_note(self, no):
-        return self.driver.find_elements(by=By.CSS_SELECTOR, value=self.CASE_NOTES_TEXT)[no].text
+        return self.driver.find_elements(by=By.CLASS_NAME, value=self.CASE_NOTES_ITEM_CLASS_NAME)[no].text
 
     def get_text_of_case_note_date_time(self, no):
-        return self.driver.find_elements(by=By.CSS_SELECTOR, value=self.CASE_NOTE_DATE_TIME)[no].text
+        return self.driver.find_elements(by=By.CLASS_NAME, value=self.CASE_NOTES_DATE_GROUP_HEADING_CLASS_NAME)[no].text
 
     def click_progress_application(self):
         scroll_to_element_by_id(self.driver, self.PROGRESS_APP_BTN)
@@ -273,7 +275,7 @@ class ApplicationPage(BasePage):
             internal_url.rstrip("/")
             + "/queues/00000000-0000-0000-0000-000000000001/cases/"
             + context.case_id
-            + "/activity/"
+            + "/activities/"
         )
 
     def go_to_cases_activity_tab_for_clc(self, internal_url, context):
