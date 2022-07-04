@@ -11,8 +11,8 @@ class SuggestionsTokenField {
     );
     const { tokenfield } = $controlListEntries;
     tokenfield.addItems(
-      suggestions.map(({ rating, id }) => ({
-        id,
+      suggestions.map(({ rating }) => ({
+        id: rating,
         name: rating,
       }))
     );

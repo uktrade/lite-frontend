@@ -37,8 +37,8 @@ describe("Suggestions token field", () => {
       { id: "2", rating: "R1a" },
     ]);
     expect(mockTokenfield.addItems).toBeCalledWith([
-      { id: "1", name: "R1" },
-      { id: "2", name: "R1a" },
+      { id: "R1", name: "R1" },
+      { id: "R1a", name: "R1a" },
     ]);
   });
 });
