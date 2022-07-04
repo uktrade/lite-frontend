@@ -12,7 +12,8 @@
     "build": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
     "test:e2e": "cypress run --browser chrome",
     "test:e2e:watch": "cypress open",
-    "test": "jest"
+    "test": "jest",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "engines": {
     "node": ">=16.10.0"
