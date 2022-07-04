@@ -3,7 +3,6 @@ import uuid
 
 from bs4 import BeautifulSoup
 from copy import deepcopy
-from unit_tests.caseworker.conftest import mock_good_on_appplication_documents
 
 from django.test import override_settings
 from django.urls import reverse
@@ -12,6 +11,8 @@ from django.conf import settings
 import pytest
 
 from core import client
+
+from unit_tests.helpers import merge_summaries
 
 
 approve = {"key": "approve", "value": "Approve"}
@@ -271,6 +272,48 @@ def test_good_on_application_detail(
     # and the view exposes the data that the template needs
     assert response.context_data["good_on_application"] == data_good_on_application
     assert response.context_data["case"] == data_standard_case["case"]
+    assert response.context_data["product_summary"] == None
+
+
+@override_settings(LITE_API_SEARCH_ENABLED=True)
+def test_good_on_application_firearm_detail(
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+    data_standard_case,
+    mock_firearm_good_on_application,
+    mock_firearm_good_on_application_documents,
+    standard_firearm_expected_product_summary,
+    standard_firearm_expected_product_on_application_summary,
+):
+    # given I access good on application details for a good with control list entries and a part number
+    good = data_standard_case["case"]["data"]["goods"][0]
+    url = reverse("cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good["id"]})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    # and the view exposes the data that the template needs
+    assert response.context_data["good_on_application"] == good
+    assert response.context_data["case"] == data_standard_case["case"]
+    expected_product_summary = merge_summaries(
+        standard_firearm_expected_product_summary,
+        standard_firearm_expected_product_on_application_summary,
+    )
+    expected_product_summary = merge_summaries(
+        expected_product_summary,
+        (
+            (
+                "product-document",
+                '<a class="govuk-link govuk-link--no-visited-state" '
+                f'href="/queues/00000000-0000-0000-0000-000000000001/cases/{data_standard_case["case"]["id"]}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" '
+                'target="_blank">data_sheet.pdf</a>',
+                "Upload a document that shows what your product is designed to do",
+            ),
+        ),
+    )
+
+    assert response.context_data["product_summary"] == expected_product_summary
 
 
 @override_settings(LITE_API_SEARCH_ENABLED=True)

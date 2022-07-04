@@ -9,7 +9,7 @@
         </summary>
         <div class="govuk-details__text">
             {% for item in firearm_details.serial_numbers %}
-                {{ forloop.counter}}. {{ item }} {%if not forloop.last %} <br> {% endif %}
+                {{ forloop.counter}}. {{ item }}{%if not forloop.last %}<br>{% endif %}
             {% endfor %}
         </div>
     </details>

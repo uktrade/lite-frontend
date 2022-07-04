@@ -20,6 +20,7 @@ from core.summaries.reducers import (
     is_onward_exported_reducer,
     is_pv_graded_reducer,
     is_replica_reducer,
+    rfd_reducer,
     serial_numbers_reducer,
     year_of_manufacture_reducer,
 )
@@ -53,13 +54,27 @@ def test_firearm_reducer(is_user_rfd, mocker):
         "name": "good-name",
         "firearm_details": firearm_details,
     }
-    organisation_documents = []
-    assert firearm_reducer(good, is_user_rfd, organisation_documents) == (
+    organisation_documents = {}
+    extra_result_values = ()
+    if is_user_rfd:
+        organisation_documents["rfd-certificate"] = {
+            "document": {},
+            "reference_code": "12345",
+            "expiry_date": "31 May 2025",
+        }
+        extra_result_values = (
+            ("rfd-certificate-document", organisation_documents["rfd-certificate"]),
+            ("rfd-certificate-reference-number", organisation_documents["rfd-certificate"]["reference_code"]),
+            ("rfd-certificate-date-of-expiry", organisation_documents["rfd-certificate"]["expiry_date"]),
+        )
+    result = firearm_reducer(good, is_user_rfd, organisation_documents)
+    assert result == (
         ("firearm-type", "firearm-details-type"),
         ("firearm-category", "firearm-details-category"),
         ("name", "good-name"),
         ("calibre", "firearm-details-calibre"),
         ("is-registered-firearms-dealer", is_user_rfd),
+        *extra_result_values,
     )
 
     mock_is_good_controlled_reducer.assert_called_with(good)
@@ -96,6 +111,47 @@ def test_firearm_reducer(is_user_rfd, mocker):
 )
 def test_is_good_controlled_reducer(good, output):
     assert is_good_controlled_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "is_user_rfd,organisation_documents,output",
+    (
+        (
+            False,
+            {},
+            (),
+        ),
+        (
+            True,
+            {},
+            (),
+        ),
+        (
+            True,
+            {
+                "rfd-certificate": {
+                    "document": {},
+                    "reference_code": "12345",
+                    "expiry_date": "31 May 2025",
+                }
+            },
+            (
+                (
+                    "rfd-certificate-document",
+                    {
+                        "document": {},
+                        "reference_code": "12345",
+                        "expiry_date": "31 May 2025",
+                    },
+                ),
+                ("rfd-certificate-reference-number", "12345"),
+                ("rfd-certificate-date-of-expiry", "31 May 2025"),
+            ),
+        ),
+    ),
+)
+def test_rfd_reducer(is_user_rfd, organisation_documents, output):
+    assert rfd_reducer(is_user_rfd, organisation_documents) == output
 
 
 @pytest.mark.parametrize(

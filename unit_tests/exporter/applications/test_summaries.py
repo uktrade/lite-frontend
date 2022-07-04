@@ -125,8 +125,19 @@ def test_firearm_product_summary():
             "name": "section5.pdf",
         },
     }
+    rfd_document = {
+        "id": uuid.uuid4(),
+        "document": {
+            "id": uuid.uuid4(),
+            "safe": True,
+            "name": "section5.pdf",
+        },
+        "reference_code": "12345",
+        "expiry_date": "31 May 2025",
+    }
     organisation_documents = {
         "section-five-certificate": section_5_document,
+        "rfd-certificate": rfd_document,
     }
 
     assert firearm_product_summary(good, is_user_rfd, organisation_documents) == (
@@ -174,6 +185,19 @@ def test_firearm_product_summary():
             "is-registered-firearms-dealer",
             "Yes",
             "Are you a registered firearms dealer?",
+        ),
+        (
+            "rfd-certificate-document",
+            '<a class="govuk-link govuk-link--no-visited-state" '
+            f'href="/goods/{good["id"]}/documents/{rfd_document["id"]}/" '
+            'target="_blank">section5.pdf</a>',
+            "Upload a registered firearms dealer certificate",
+        ),
+        ("rfd-certificate-reference-number", "12345", "Certificate reference number"),
+        (
+            "rfd-certificate-date-of-expiry",
+            "31 May 2025",
+            "Certificate date of expiry",
         ),
         (
             "is-covered-by-firearm-act-section-five",
