@@ -19,7 +19,6 @@ INSTALLED_APPS += [
     "caseworker.activities",
 ]
 
-MIDDLEWARE.append("core.middleware.SessionTimeoutMiddleware")
 
 TEMPLATES = [
     {
