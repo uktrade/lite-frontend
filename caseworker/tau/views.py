@@ -130,7 +130,9 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
                 {
                     "id": good_on_application["id"],
                     "name": good["name"],
-                    "control_list_entries": good["control_list_entries"],
+                    "control_list_entries": {
+                        "exporter": good["control_list_entries"],
+                    },
                 }
             )
         return cle_suggestions_json
