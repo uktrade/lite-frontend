@@ -9,8 +9,8 @@
 {% block body %}
 	<h1 class="govuk-heading-l">{% block title %}{% lcs 'goods.AddPreexistingGoodToApplicationForm.TITLE' %}{% endblock %}</h1>
 
-	{% if data or name or description or part_number or control_code %}
-
+	{% if data or name or control_code %}
+	
 		{% include 'filters.html' %}
 
 		{% if data %}
@@ -18,8 +18,7 @@
 				<thead class="govuk-table__head">
 					<tr class="govuk-table__row">
 						<th scope="col" class="govuk-table__header">Name</th>
-						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.DESCRIPTION' %}</th>
-						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.PART_NUMBER' %}</th>
+						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.PRODUCT_TYPE' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.CONTROL_LIST_ENTRIES' %}</th>
 						{% if feature_flag_firearms_enabled %}
 						<th scope="col" class="govuk-table__header"></th>
@@ -31,18 +30,15 @@
 					{% for good in data.results %}
 						<tr class="govuk-table__row">
 							<td class="govuk-table__cell" id="good-name">
-								{% if good.name %}
-									{{ good.name|highlight_text:name }}
+								{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">{{good.name}}</a>
 								{% else %}
-									{{ good.description|highlight_text:description }}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">{{good.name}}</a>
 								{% endif %}
 								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 							</td>
-							<td class="govuk-table__cell" id="good-description">
-								{{ good.description|highlight_text:description }}
-							</td>
 							<td class="govuk-table__cell" id="good-part-number">
-								{{ good.part_number|highlight_text:part_number|default_na }}
+								Firearms
 							</td>
 							<td class="govuk-table__cell" id="good-control_code">
 								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}

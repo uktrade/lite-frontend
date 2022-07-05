@@ -197,6 +197,15 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         documents = get_good_documents(request, str(self.good_id))
 
+        # check for /add-preexisting/ url
+        add_preexisting_url = None
+        if self.request.META.get("HTTP_REFERER"):
+            add_preexisting_url = (
+                self.request.META.get("HTTP_REFERER")
+                if "add-preexisting" in self.request.META.get("HTTP_REFERER")
+                else None
+            )
+
         context = {
             "good": self.good,
             "documents": documents,
@@ -204,6 +213,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             "error": kwargs.get("error"),
             "text": kwargs.get("text", ""),
             "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+            "add_preexisting_url": add_preexisting_url,
         }
 
         if self.good["query"]:

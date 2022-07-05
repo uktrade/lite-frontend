@@ -426,7 +426,8 @@ class AddPreexistingGoodToApplicationForm:
     class Table:
         DESCRIPTION = "Description"
         PART_NUMBER = "Part number"
-        CONTROL_LIST_ENTRIES = "Control list entries"
+        CONTROL_LIST_ENTRIES = "Previous control list entries"
+        PRODUCT_TYPE = "Product type"
 
 
 class ViewGoodOnApplicationPage:

@@ -158,9 +158,7 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
         filters = FiltersBar(
             [
                 TextInput(title="name", name="name"),
-                TextInput(title="description", name="description"),
                 TextInput(title="control list entry", name="control_list_entry"),
-                TextInput(title="part number", name="part_number"),
             ]
         )
 
