@@ -32,10 +32,7 @@ describe("Suggestions token field", () => {
   });
 
   test("Set suggestions", () => {
-    component.setSuggestions([
-      { id: "1", rating: "R1" },
-      { id: "2", rating: "R1a" },
-    ]);
+    component.setSuggestions(["R1", "R1a"]);
     expect(mockTokenfield.addItems).toBeCalledWith([
       { id: "R1", name: "R1" },
       { id: "R1a", name: "R1a" },
