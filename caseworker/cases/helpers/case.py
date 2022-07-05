@@ -27,6 +27,7 @@ from caseworker.users.services import get_gov_user
 
 
 TAU_ALIAS = "TAU"
+LU_ALIAS = "LICENSING_UNIT"
 
 
 class Tabs:
@@ -86,9 +87,20 @@ class CaseView(TemplateView):
     slices = None
     additional_context = {}
 
-    def is_tau_user(self):
+    @property
+    def caseworker(self):
         user, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
-        return user["user"]["team"]["alias"] == TAU_ALIAS
+        return user["user"]
+
+    def is_tau_user(self):
+        return self.caseworker["team"]["alias"] == TAU_ALIAS
+
+    def is_lu_user(self):
+        return self.caseworker["team"]["alias"] == LU_ALIAS
+
+    def is_only_on_post_circ_queue(self):
+        queue_alias = tuple(queue["alias"] for queue in self.case.queue_details if queue.get("alias"))
+        return self.is_lu_user() and queue_alias == ("LU_POST_CIRC_FINALISE",)
 
     def get_context(self):
         if not self.tabs:
@@ -123,6 +135,7 @@ class CaseView(TemplateView):
             "additional_contacts": get_case_additional_contacts(self.request, self.case_id),
             "permissions": self.permissions,
             "is_tau_user": self.is_tau_user(),
+            "hide_im_done": self.is_tau_user() or self.is_only_on_post_circ_queue(),
             "can_set_done": can_set_done
             and (self.queue["is_system_queue"] and user_assigned_queues)
             or not self.queue["is_system_queue"],

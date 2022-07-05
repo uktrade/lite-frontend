@@ -106,6 +106,15 @@ def mock_standard_case(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    data_standard_case["case"]["queue_details"] = [
+        {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "LU Post circulation", "alias": "LU_POST_CIRC_FINALISE"},
+    ]
+    yield requests_mock.get(url=url, json=data_standard_case)
+
+
+@pytest.fixture
 def mock_case(
     mock_case_ecju_queries,
     mock_case_assigned_queues,
@@ -227,6 +236,19 @@ def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses):
     requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=data)
 
     yield data
+
+
+@pytest.fixture
+def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+    mock_gov_user["user"]["team"] = {
+        "id": "521154de-f39e-45bf-9922-baaaaaa",
+        "name": "Licencing Unit",
+        "alias": "LICENSING_UNIT",
+    }
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
 
 
 @pytest.fixture
