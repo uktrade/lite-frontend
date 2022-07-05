@@ -33,7 +33,9 @@ def get_first_precedents(request, case):
 
 
 def get_first_cles_precedents(gona, good_precedents):
-    precedents = good_precedents[gona["good"]["id"]]
+    # The following is for a weird case that broke during testing b/c
+    # submitted_at for a case that has been submitted was None!
+    precedents = [p for p in good_precedents[gona["good"]["id"]] if p["submitted_at"]]
     cle_precedents = {}
     for precedent in precedents:
         cles = ",".join(sorted(precedent["control_list_entries"]))
