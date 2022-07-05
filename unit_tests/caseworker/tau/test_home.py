@@ -187,18 +187,13 @@ def test_home_content(
     # The precedent for the unassessed product
 
     assert get_cells(soup, "table-precedents-1") == [
-        "Reference",
-        "GBSIEL/2020/0002687/T",
-        "Control list entry",
         "ML1a",
+        "Destinations",
+        "GB",
         "Regime",
         "",
         "Report summary",
         "test-report-summary",
-        "Quantity",
-        "10",
-        "Destinations",
-        "GB",
     ]
 
 
