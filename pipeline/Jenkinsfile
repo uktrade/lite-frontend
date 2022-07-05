@@ -59,8 +59,31 @@ pipeline {
 
     parameters {
         choice(name: 'ENVIRONMENT', description: '(not used)', choices: 'dev\nuat\ndevdata\ndemo')
-        string(name: 'BRANCH', defaultValue: 'master', description: 'choose branch or release tag to run against')
-        string(name: 'API_GIT_TAG', defaultValue: 'latest', description: 'Type in API branch or release tag for LITE GCR image')
+        gitParameter(
+            branch: '',
+            branchFilter: 'origin/(.*)',
+            defaultValue: 'master',
+            description: 'choose branch or release tag to run against',
+            name: 'BRANCH',
+            quickFilterEnabled: true,
+            selectedValue: 'NONE',
+            sortMode: 'NONE',
+            tagFilter: '*',
+            type: 'PT_BRANCH_TAG'
+        )
+        gitParameter(
+            branch: '',
+            branchFilter: 'origin/(.*)',
+            defaultValue: 'latest',
+            description: 'choose API branch or release tag for LITE GCR image',
+            name: 'API_GIT_TAG',
+            quickFilterEnabled: true,
+            selectedValue: 'NONE',
+            sortMode: 'NONE',
+            tagFilter: '*',
+            type: 'PT_BRANCH_TAG',
+            useRepository: 'git@github.com:uktrade/lite-api.git'
+        )
     }
 
     agent any
