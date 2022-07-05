@@ -73,7 +73,7 @@ class CLESuggestions {
       const { exporter: exporterSuggestion, assessed: assessedSuggestions } =
         controlListEntries;
 
-      if (exporterSuggestion) {
+      if (exporterSuggestion && exporterSuggestion.length > 0) {
         uniqueSuggestionsCollector.addExporterSuggestion(
           exporterSuggestion,
           this.getExporterSuggestionText(exporterSuggestion)

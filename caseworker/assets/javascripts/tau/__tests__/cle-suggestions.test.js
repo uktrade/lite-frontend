@@ -35,6 +35,17 @@ describe("CLE suggestions", () => {
     expect(buttonContainer).toBeEmptyDOMElement();
   });
 
+  test("Set product with no exporter CLE entry", () => {
+    component.setProducts([
+      {
+        controlListEntries: {
+          exporter: [],
+        },
+      },
+    ]);
+    expect(buttonContainer).toBeEmptyDOMElement();
+  });
+
   test("Set multiple exporter CLE products", () => {
     component.setProducts([
       {
