@@ -107,6 +107,22 @@ class TAUMixin:
         return data["user"]
 
 
+def get_cle_suggestions_json(goods):
+    cle_suggestions_json = []
+    for good_on_application in goods:
+        good = good_on_application["good"]
+        cle_suggestions_json.append(
+            {
+                "id": good_on_application["id"],
+                "name": good["name"],
+                "controlListEntries": {
+                    "exporter": good["control_list_entries"],
+                },
+            }
+        )
+    return cle_suggestions_json
+
+
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
 
@@ -122,21 +138,6 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         return form_kwargs
 
-    def get_cle_suggestions_json(self):
-        cle_suggestions_json = []
-        for good_on_application in self.unassessed_goods:
-            good = good_on_application["good"]
-            cle_suggestions_json.append(
-                {
-                    "id": good_on_application["id"],
-                    "name": good["name"],
-                    "control_list_entries": {
-                        "exporter": good["control_list_entries"],
-                    },
-                }
-            )
-        return cle_suggestions_json
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return {
@@ -145,7 +146,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
-            "cle_suggestions_json": self.get_cle_suggestions_json(),
+            "cle_suggestions_json": get_cle_suggestions_json(self.unassessed_goods),
             "organisation_documents": self.organisation_documents,
             "is_tau": self.caseworker["team"]["alias"] == TAU_ALIAS,
         }
@@ -208,12 +209,14 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        good = self.get_good()
         return {
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
-            "good": self.get_good(),
+            "good": good,
             "organisation_documents": self.organisation_documents,
+            "cle_suggestions_json": get_cle_suggestions_json([good]),
         }
 
     def form_valid(self, form):

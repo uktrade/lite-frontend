@@ -70,10 +70,6 @@ const initCheckboxClassToggler = () => {
 };
 
 const initAssessmentForm = () => {
-  const goods = document.querySelector("#div_id_goods");
-  if (!goods) {
-    return;
-  }
   const headlineEl = document.querySelector(".tau__headline");
   const headline = new Headline(headlineEl);
 
@@ -85,6 +81,7 @@ const initAssessmentForm = () => {
     noControlListCheckboxEl
   );
   noSuggestionsTokenField.init();
+
   const suggestionsTokenField = new SuggestionsTokenField(
     "#control_list_entries"
   );
@@ -98,6 +95,7 @@ const initAssessmentForm = () => {
     }
   );
 
+  const goods = document.querySelector("#div_id_goods");
   const checkboxes = goods.querySelectorAll("[name=goods]");
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent

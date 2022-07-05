@@ -24,11 +24,7 @@ class SelectProducts {
       if (!$checkbox.checked) {
         continue;
       }
-      const { name, control_list_entries } = this.products[$checkbox.value];
-      selectedProducts.push({
-        name,
-        controlListEntries: control_list_entries,
-      });
+      selectedProducts.push(this.products[$checkbox.value]);
     }
     return selectedProducts;
   }

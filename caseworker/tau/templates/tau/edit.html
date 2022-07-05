@@ -20,15 +20,14 @@
                 </div>
             </div>
             <div class="govuk-grid-column-one-third">
+                {{ cle_suggestions_json|json_script:"cle-suggestions-json" }}
                 <form id="tau-form" method="POST">
                     {% csrf_token %}
                     <h1 class="govuk-heading-m tau__headline">Assessing {{good.good.name}}</h1>
                     <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
-                    {% for cle in good.good.control_list_entries %}
-                        <button class="lite-button--link control-list__list control-list__edit">
-                            Select exporter suggestion {{cle.rating}}
-                        </button>
-                    {% endfor %}
+                    <div class="tau__cle-suggestion-buttons">
+                        <div class="tau__cle-suggestions"></div>
+                    </div>
                     <div class="govuk-hint">Or type for suggestions</div>
                     {% for field in form %}
                         {% if field.name == "does_not_have_control_list_entries" %}
@@ -48,5 +47,5 @@
 
 {% block javascript %}
     {{ block.super }}
-    <script src="{% static 'tau.js' %}" type="text/javascript"></script>
+    <script src="{% static 'tau-edit.js' %}" type="text/javascript"></script>
 {% endblock %}

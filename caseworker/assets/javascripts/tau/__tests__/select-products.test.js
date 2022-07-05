@@ -9,17 +9,17 @@ const products = [
   {
     id: "checkbox-1",
     name: "Product A",
-    control_list_entries: [{ rating: "R1" }, { rating: "R1a" }],
+    controlListEntries: [{ rating: "R1" }, { rating: "R1a" }],
   },
   {
     id: "checkbox-2",
     name: "Product B",
-    control_list_entries: [{ rating: "R2" }, { rating: "R2a" }],
+    controlListEntries: [{ rating: "R2" }, { rating: "R2a" }],
   },
   {
     id: "checkbox-3",
     name: "Product C",
-    control_list_entries: [{ rating: "R3" }, { rating: "R3a" }],
+    controlListEntries: [{ rating: "R3" }, { rating: "R3a" }],
   },
 ];
 
@@ -58,14 +58,17 @@ test("Products set on init", async () => {
   ).init();
   expect(spy).toBeCalledWith([
     {
+      id: "checkbox-1",
       name: "Product A",
       controlListEntries: [{ rating: "R1" }, { rating: "R1a" }],
     },
     {
+      id: "checkbox-2",
       name: "Product B",
       controlListEntries: [{ rating: "R2" }, { rating: "R2a" }],
     },
     {
+      id: "checkbox-3",
       name: "Product C",
       controlListEntries: [{ rating: "R3" }, { rating: "R3a" }],
     },
@@ -85,6 +88,7 @@ describe("Select products", () => {
     await userEvent.click(checkboxes[0]);
     expect(spy).toBeCalledWith([
       {
+        id: "checkbox-1",
         name: "Product A",
         controlListEntries: [{ rating: "R1" }, { rating: "R1a" }],
       },
@@ -93,10 +97,12 @@ describe("Select products", () => {
     await userEvent.click(checkboxes[1]);
     expect(spy).toBeCalledWith([
       {
+        id: "checkbox-1",
         name: "Product A",
         controlListEntries: [{ rating: "R1" }, { rating: "R1a" }],
       },
       {
+        id: "checkbox-2",
         name: "Product B",
         controlListEntries: [{ rating: "R2" }, { rating: "R2a" }],
       },
@@ -105,14 +111,17 @@ describe("Select products", () => {
     await userEvent.click(checkboxes[2]);
     expect(spy).toBeCalledWith([
       {
+        id: "checkbox-1",
         name: "Product A",
         controlListEntries: [{ rating: "R1" }, { rating: "R1a" }],
       },
       {
+        id: "checkbox-2",
         name: "Product B",
         controlListEntries: [{ rating: "R2" }, { rating: "R2a" }],
       },
       {
+        id: "checkbox-3",
         name: "Product C",
         controlListEntries: [{ rating: "R3" }, { rating: "R3a" }],
       },
@@ -121,10 +130,12 @@ describe("Select products", () => {
     await userEvent.click(checkboxes[0]);
     expect(spy).toBeCalledWith([
       {
+        id: "checkbox-2",
         name: "Product B",
         controlListEntries: [{ rating: "R2" }, { rating: "R2a" }],
       },
       {
+        id: "checkbox-3",
         name: "Product C",
         controlListEntries: [{ rating: "R3" }, { rating: "R3a" }],
       },
@@ -133,6 +144,7 @@ describe("Select products", () => {
     await userEvent.click(checkboxes[1]);
     expect(spy).toBeCalledWith([
       {
+        id: "checkbox-3",
         name: "Product C",
         controlListEntries: [{ rating: "R3" }, { rating: "R3a" }],
       },
