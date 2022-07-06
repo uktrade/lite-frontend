@@ -8,12 +8,14 @@ from django.urls import reverse
 
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
-from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
-from caseworker.tau.services import get_first_precedents
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from caseworker.users.services import get_gov_user
+
+from .forms import TAUAssessmentForm, TAUEditForm
+from .services import get_first_precedents
+from .utils import get_cle_suggestions_json
 
 
 TAU_ALIAS = "TAU"
@@ -130,6 +132,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
+            "cle_suggestions_json": get_cle_suggestions_json(self.unassessed_goods),
             "organisation_documents": self.organisation_documents,
             "is_tau": self.caseworker["team"]["alias"] == TAU_ALIAS,
         }
@@ -192,12 +195,14 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        good = self.get_good()
         return {
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
-            "good": self.get_good(),
+            "good": good,
             "organisation_documents": self.organisation_documents,
+            "cle_suggestions_json": get_cle_suggestions_json([good]),
         }
 
     def form_valid(self, form):
