@@ -29,4 +29,25 @@ def test_case_details_im_done_lu_user(authorized_client, data_queue, data_standa
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
     assertTemplateUsed(response, "layouts/case.html")
-    assert response.context["hide_im_done"] == True
+    context = response.context
+    assert context["hide_im_done"] == True
+    assert context["current_user"]["team"]["alias"] == "LICENSING_UNIT"
+    assert len(context["case"]["queue_details"]) == 1
+    assert context["case"]["queue_details"][0]["alias"] == "LU_POST_CIRC_FINALISE"
+
+
+def test_case_details_im_done_fcdo_user(
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    mock_standard_case_on_fcdo_countersigning_queue,
+    mock_gov_fcdo_user,
+):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    context = response.context
+    assert context["hide_im_done"] == False
+    assert context["current_user"]["team"]["alias"] == "FCDO"
+    assert len(context["case"]["queue_details"]) == 1
+    assert context["case"]["queue_details"][0]["alias"] == "FCDO_COUNTER_SIGNING"
