@@ -208,3 +208,85 @@ def test_document_extension(filename, expected):
 )
 def test_to_datetime(date_string, output):
     assert custom_tags.to_datetime(date_string) == output
+
+
+@pytest.mark.parametrize(
+    "num1,num2,expected",
+    [
+        (0, 2, 0),
+        (-2, 2, -4),
+        (4, 2, 8),
+        (1.25, 4, 5.0),
+    ],
+)
+def test_multiply(num1, num2, expected):
+    assert expected == custom_tags.multiply(num1, num2)
+
+
+@pytest.mark.parametrize(
+    "num1,num2,expected",
+    [
+        (0, 2, -2),
+        (-2, 2, -4),
+        (4, 2, 2),
+        (1.25, 4, -2.75),
+    ],
+)
+def test_subtract(num1, num2, expected):
+    assert expected == custom_tags.subtract(num1, num2)
+
+
+@pytest.mark.parametrize(
+    "data,expected",
+    [
+        (
+            {
+                "address": {
+                    "country": {"name": "US"},
+                    "address_line_1": "42",
+                    "address_line_2": "Bakers street",
+                    "city": "San Jose",
+                    "region": "California",
+                    "postcode": "42551",
+                }
+            },
+            "42, Bakers street, San Jose, California, 42551, US",
+        ),
+        (
+            {"address": "54, Bakers street, San Diego, California, 42551", "country": {"name": "United States"}},
+            "54, Bakers street, San Diego, California, 42551, United States",
+        ),
+        (
+            {
+                "address": "54, Bakers street, San Diego, California, 42551",
+            },
+            "54, Bakers street, San Diego, California, 42551",
+        ),
+    ],
+)
+def test_get_address(data, expected):
+    assert expected == custom_tags.get_address(data)
+
+
+@pytest.mark.parametrize(
+    "data,expected",
+    [
+        ({"first_name": "Internal", "last_name": "User", "email": "user@gov.uk"}, "Internal User"),
+        ({"first_name": "", "email": "user@gov.uk"}, "user@gov.uk"),
+    ],
+)
+def test_username(data, expected):
+    assert expected == custom_tags.username(data)
+
+
+@pytest.mark.parametrize(
+    "party_type,expected",
+    [
+        ({"type": "end_user"}, "End User"),
+        ({"type": "third_party"}, "Third Party"),
+        ({"type": "ultimate_end_user"}, "Ultimate End User"),
+        ({"type": "consignee"}, "Consignee"),
+    ],
+)
+def test_get_party_type(party_type, expected):
+    assert expected == custom_tags.get_party_type(party_type)

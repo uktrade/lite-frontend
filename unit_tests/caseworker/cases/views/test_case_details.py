@@ -2,8 +2,10 @@ import pytest
 
 from pytest_django.asserts import assertTemplateUsed
 
+from copy import deepcopy
 from django.urls import reverse
 
+from core import client
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS
 
 
@@ -50,3 +52,50 @@ def test_case_details_im_done_fcdo_user(
     assert context["current_user"]["team"]["alias"] == "FCDO"
     assert len(context["case"]["queue_details"]) == 1
     assert context["case"]["queue_details"][0]["alias"] == "FCDO_COUNTER_SIGNING"
+
+
+def test_case_details_im_done_tau_user(
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    mock_gov_tau_user,
+):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    context = response.context
+    assert context["hide_im_done"] == True
+    assert context["current_user"]["team"]["alias"] == "TAU"
+    assert context["is_tau_user"] == True
+
+
+def test_case_details_has_end_user_destination(
+    authorized_client,
+    data_queue,
+    data_standard_case,
+):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    destination = response.context["case"]["data"]["destinations"]
+    assert destination["type"] == "end_user"
+    assert destination["data"]["name"] == "End User"
+
+
+def test_case_details_with_no_destinations(
+    authorized_client,
+    requests_mock,
+    data_queue,
+    data_standard_case,
+):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    case_no_destinations = deepcopy(data_standard_case)
+    del case_no_destinations["case"]["data"]["destinations"]
+    case_id = data_standard_case["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=case_no_destinations)
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    destinations = response.context["destinations"]
+    assert len(destinations) == 1
+    assert destinations[0]["type"] == "end_user"
+    assert destinations[0]["name"] == "End User"
