@@ -12,10 +12,13 @@ def get_cle_suggestions_json(goods):
         # we don't need to try to set this in any way.
         exporter_cle_entry = [cle["rating"] for cle in good["control_list_entries"]]
         precedents = []
-        precedent = good_on_application.get("precedent")
-        if precedent:
+        precedent_good_on_applications = good_on_application["precedents"]
+        if precedent_good_on_applications:
             exporter_cle_entry = []
-            precedents = [precedent["control_list_entries"]]
+            precedents = [
+                precedent_good_on_application["control_list_entries"]
+                for precedent_good_on_application in precedent_good_on_applications
+            ]
 
         cle_suggestions_json.append(
             {

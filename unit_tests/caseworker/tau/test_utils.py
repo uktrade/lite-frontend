@@ -17,6 +17,7 @@ from caseworker.tau.utils import get_cle_suggestions_json
                             {"rating": "R1a"},
                         ],
                     },
+                    "precedents": [],
                 },
                 {
                     "id": "good-id-2",
@@ -27,6 +28,7 @@ from caseworker.tau.utils import get_cle_suggestions_json
                             {"rating": "R2a"},
                         ],
                     },
+                    "precedents": [],
                 },
             ],
             [
@@ -59,9 +61,14 @@ from caseworker.tau.utils import get_cle_suggestions_json
                             {"rating": "R1a"},
                         ],
                     },
-                    "precedent": {
-                        "control_list_entries": ["S1", "S1a"],
-                    },
+                    "precedents": [
+                        {
+                            "control_list_entries": ["S1", "S1a"],
+                        },
+                        {
+                            "control_list_entries": ["T1", "T1a"],
+                        },
+                    ],
                 },
                 {
                     "id": "good-id-2",
@@ -72,6 +79,7 @@ from caseworker.tau.utils import get_cle_suggestions_json
                             {"rating": "R2a"},
                         ],
                     },
+                    "precedents": [],
                 },
             ],
             [
@@ -82,6 +90,7 @@ from caseworker.tau.utils import get_cle_suggestions_json
                         "exporter": [],
                         "precedents": [
                             ["S1", "S1a"],
+                            ["T1", "T1a"],
                         ],
                     },
                 },
