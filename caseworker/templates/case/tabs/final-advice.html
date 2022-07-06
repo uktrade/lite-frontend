@@ -19,7 +19,7 @@
 					List view
 				</a>
 			{% endif %}
-			<div class="lite-!-display-inline lite-buttons-row {% if 'final' not in current_advice_level %}app-advice__disabled-buttons{% endif %}">
+			<div class="lite-!-display-inline lite-buttons-row {% if 'final' not in current_advice_level %}app-advice__disabled-buttons{% endif %}" {% if 'final' not in current_advice_level %}aria-label="Content currently unavailable"{% endif %}>
 				{% if 'final' in current_advice_level %}
 					<div data-enable-on-checkboxes="#form-final-advice-container" class="lite-buttons-row lite-!-display-inline">
 						<button id="button-give-final-advice" name="action" value="give-advice" type="submit" class="govuk-button" data-module="govuk-button">
@@ -36,7 +36,7 @@
 			</div>
 		</div>
 
-		<div class="{% if not can_finalise %}app-advice__disabled-buttons{% endif %}">
+		<div {% if not can_finalise %}class="app-advice__disabled-buttons" aria-label="Content currently unavailable"{% endif %}>
 			{% make_list queue.id case.id as button_params %}
 			{% if case.data.case_type.sub_type.key == 'open' %}
 				{% govuk_link_button id='finalise' text='advice.FinalAdvicePage.FINALISED_GOODS_AND_COUNTRIES_BUTTON' url='cases:finalise_goods_countries' url_param=button_params show_chevron=True %}
