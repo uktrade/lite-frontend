@@ -4,8 +4,7 @@ from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
-from caseworker.advice.services import LICENSING_UNIT_TEAM
-from caseworker.cases.objects import Case
+from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS
 
 
 @pytest.fixture(autouse=True)
@@ -33,7 +32,7 @@ def test_case_details_im_done_lu_user(authorized_client, data_queue, data_standa
     assert context["hide_im_done"] == True
     assert context["current_user"]["team"]["alias"] == "LICENSING_UNIT"
     assert len(context["case"]["queue_details"]) == 1
-    assert context["case"]["queue_details"][0]["alias"] == "LU_POST_CIRC_FINALISE"
+    assert context["case"]["queue_details"][0]["alias"] == LU_POST_CIRC_FINALISE_QUEUE_ALIAS
 
 
 def test_case_details_im_done_fcdo_user(

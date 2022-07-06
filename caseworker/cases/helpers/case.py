@@ -28,6 +28,7 @@ from caseworker.users.services import get_gov_user
 
 TAU_ALIAS = "TAU"
 LU_ALIAS = "LICENSING_UNIT"
+LU_POST_CIRC_FINALISE_QUEUE_ALIAS = "LU_POST_CIRC_FINALISE"
 
 
 class Tabs:
@@ -100,7 +101,7 @@ class CaseView(TemplateView):
 
     def is_only_on_post_circ_queue(self):
         queue_alias = tuple(queue["alias"] for queue in self.case.queue_details if queue.get("alias"))
-        return self.is_lu_user() and queue_alias == ("LU_POST_CIRC_FINALISE",)
+        return self.is_lu_user() and queue_alias == (LU_POST_CIRC_FINALISE_QUEUE_ALIAS,)
 
     def get_context(self):
         if not self.tabs:
