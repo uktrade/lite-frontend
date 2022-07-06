@@ -8,12 +8,14 @@ from django.urls import reverse
 
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
-from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
-from caseworker.tau.services import get_first_precedents
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from caseworker.users.services import get_gov_user
+
+from .forms import TAUAssessmentForm, TAUEditForm
+from .services import get_first_precedents
+from .utils import get_cle_suggestions_json
 
 
 TAU_ALIAS = "TAU"
@@ -105,22 +107,6 @@ class TAUMixin:
     def caseworker(self):
         data, _ = get_gov_user(self.request, self.caseworker_id)
         return data["user"]
-
-
-def get_cle_suggestions_json(goods):
-    cle_suggestions_json = []
-    for good_on_application in goods:
-        good = good_on_application["good"]
-        cle_suggestions_json.append(
-            {
-                "id": good_on_application["id"],
-                "name": good["name"],
-                "controlListEntries": {
-                    "exporter": good["control_list_entries"],
-                },
-            }
-        )
-    return cle_suggestions_json
 
 
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
