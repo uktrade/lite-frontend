@@ -7,116 +7,110 @@
 {% endblock %}
 
 {% block full_width %}
-
-<div class="govuk-width-container">
-    <main class="govuk-main-wrapper tau">
-
-        <div class="govuk-grid-row tau__display--flex">
-            <!-- Heading -->
-            <div class="govuk-grid-column-two-thirds">
-                {% if unassessed_goods %}
-                    <h1 class="govuk-heading-l">Product assessment</h1>
-                    <p id="subtitle" class="govuk-body">Assess {{ unassessed_goods|length }} {% if unassessed_goods|length > 1 %}products{% else %}product{% endif %} going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|humanise_list }}</strong></p>
-                {% endif %}
-            </div>
-            <!-- Move case forward form -->
-            <div class="govuk-grid-column-one-third">
-                {% if not unassessed_goods and is_tau and not is_all_cases_queue %}
-                <div class="govuk-grid-column-full" style="text-align: right;">
-                    <form action="{% url 'cases:tau:move_case_forward' queue_id case.id %}" method="POST">
-                        {% csrf_token %}
-                        <input class="govuk-button" type="submit" value="Move case forward">
-                    </form>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Form -->
-        <div class="govuk-grid-row">
-            {% if unassessed_goods %}
-            <form id="tau-form" action="." method="POST"
-                    {% if form.helper.attrs.enctype %} enctype="{{ form.helper.attrs.enctype }}"{% endif %}
-            >
-                {% csrf_token %}
-                <div class="govuk-grid-column-two-thirds tau__first-column">
-                    {{ form.goods | as_crispy_field }}
-                </div>
-
-                <div class="govuk-grid-column-one-third tau__second-column tau__second-column--hide">
-                    <h1 class="govuk-heading-m tau__headline"></h1>
-                    <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
-                        <div class="tau__cle-suggestion-buttons">
-                        {% for item in case.goods %}
-                            {% if item.good.control_list_entries %}
-                                {% for cle in item.good.control_list_entries %}
-                                <div class="tau__cle-object">
-                                    {{ cle.rating|json_script:"tau-cle-rating" }}
-                                    {{ item.id|json_script:"tau-cle-item-id" }}
-                                </div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                        <div class="tau__cle-suggestions"></div>
-                        </div>
-                    <div class="govuk-hint">Or type for suggestions</div>
-                    {% for field in form %}
-                    {% if field.name != "goods" %}
-                        {% if field.name == "does_not_have_control_list_entries" %}
-                            <p class="govuk-body-m">Or</p>
-                        {% endif %}
-                    {{ field | as_crispy_field }}
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper tau">
+            <div class="govuk-grid-row tau__display--flex">
+                <!-- Heading -->
+                <div class="govuk-grid-column-two-thirds">
+                    {% if unassessed_goods %}
+                        <h1 class="govuk-heading-l">Product assessment</h1>
+                        <p id="subtitle" class="govuk-body">Assess {{ unassessed_goods|length }} product{{ unassessed_goods|pluralize }} going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|humanise_list }}</strong></p>
                     {% endif %}
-                    {% endfor %}
-                    <div class="form-actions">
-                        <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
+                </div>
+                <!-- Move case forward form -->
+                <div class="govuk-grid-column-one-third">
+                    {% if not unassessed_goods and is_tau and not is_all_cases_queue %}
+                        <div class="govuk-grid-column-full" style="text-align: right;">
+                            <form action="{% url 'cases:tau:move_case_forward' queue_id case.id %}" method="POST">
+                                {% csrf_token %}
+                                <input class="govuk-button" type="submit" value="Move case forward">
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="govuk-grid-row">
+                {% if unassessed_goods %}
+                    {{ cle_suggestions_json|json_script:"cle-suggestions-json" }}
+                    <form id="tau-form" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
+                        {% csrf_token %}
+                        <div class="govuk-grid-column-two-thirds tau__first-column">
+                            {{ form.goods | as_crispy_field }}
+                        </div>
+
+                        <div class="govuk-grid-column-one-third tau__second-column tau__second-column--hide">
+                            <h1 class="govuk-heading-m tau__headline"></h1>
+                            <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
+                            <div class="tau__cle-suggestion-buttons">
+                                <div class="tau__cle-suggestions"></div>
+                            </div>
+                            <div class="govuk-hint">Or type for suggestions</div>
+                            {% for field in form %}
+                                {% if field.name != "goods" %}
+                                    {% if field.name == "does_not_have_control_list_entries" %}
+                                        <p class="govuk-body-m">Or</p>
+                                    {% endif %}
+                                    {{ field | as_crispy_field }}
+                                {% endif %}
+                            {% endfor %}
+                            <div class="form-actions">
+                                <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+
+            <!-- Assessed products table -->
+            {% if assessed_goods %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        <table id="assessed-products" class="govuk-table">
+                            <h2 class="govuk-heading-m">Assessed products</h2>
+                            <a href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th scope="col" class="govuk-table__header">
+                                        <span class="govuk-visually-hidden">Line number</span>
+                                    </th>
+                                    <th scope="col" class="govuk-table__header">Name</th>
+                                    <th scope="col" class="govuk-table__header">Control entry</th>
+                                    <th scope="col" class="govuk-table__header">Licence</th>
+                                    <th scope="col" class="govuk-table__header">Regime</th>
+                                    <th scope="col" class="govuk-table__header">Report summary</th>
+                                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment notes and evidence</th>
+                                    <th scope="col" class="govuk-table__header">
+                                        <span class="govuk-visually-hidden">Actions</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                {% for good in assessed_goods %}
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell">{{ good.line_number }}.</td>
+                                        <td class="govuk-table__cell">{{ good.good.name }}</td>
+                                        <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
+                                        <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
+                                        <td class="govuk-table__cell">{% if good.precedent.wassenaar %}Wassenaar{% endif %}</td>
+                                        <td class="govuk-table__cell">{{ good.report_summary }}</td>
+                                        <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
+                                        <td class="govuk-table__cell">
+                                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </form>
             {% endif %}
-        </div>
+        </main>
+    </div>
+{% endblock %}
 
-        <!-- Assessed products table -->
-        {% if assessed_goods %}
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <table id="assessed-products" class="govuk-table">
-                    <h2 class="govuk-heading-m">Assessed products</h2>
-                    <a href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">
-                                <span class="govuk-visually-hidden">Line number</span>
-                            </th>
-                            <th scope="col" class="govuk-table__header">Name</th>
-                            <th scope="col" class="govuk-table__header">Control entry</th>
-                            <th scope="col" class="govuk-table__header">Licence</th>
-                            <th scope="col" class="govuk-table__header">Regime</th>
-                            <th scope="col" class="govuk-table__header">Report summary</th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment notes and evidence</th>
-                            <th scope="col" class="govuk-table__header">
-                                <span class="govuk-visually-hidden">Actions</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        {% for good in assessed_goods %}
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">{{ good.line_number }}.</td>
-                            <td class="govuk-table__cell">{{ good.good.name }}</td>
-                            <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
-                            <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
-                            <td class="govuk-table__cell">{% if good.precedent.wassenaar %}Wassenaar{% endif %}</td>
-                            <td class="govuk-table__cell">{{ good.report_summary }}</td>
-                            <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
-                            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        {% endif %}
-    </main>
-</div>
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'tau.js' %}" type="text/javascript"></script>
 {% endblock %}
