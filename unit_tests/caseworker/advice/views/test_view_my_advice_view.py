@@ -3,8 +3,9 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-from caseworker.advice.services import FCDO_CASES_TO_REVIEW_QUEUE, FCDO_TEAM
+from caseworker.advice.services import FCDO_TEAM
 from core import client
+from core.builtins.custom_tags import filter_advice_by_user
 
 
 @pytest.fixture(autouse=True)
@@ -175,3 +176,10 @@ def test_move_case_forward(
     # the following works whether advice_completed is True or not -
     response = authorized_client.post(url)
     assert response.status_code == 302
+
+
+def test_advice_by_user_filter(advice, current_user):
+    user_advice = filter_advice_by_user(advice, current_user["id"])
+    assert len(user_advice) == 2
+    for item in advice:
+        assert item["level"] == "user"

@@ -40,13 +40,19 @@ def setup(
     mock_application_search,
     mock_good_on_appplication,
     mock_good_on_appplication_documents,
+    mock_standard_case_activity_filters,
+    mock_standard_case_activity_system_user,
+    mock_standard_case_ecju_queries,
+    mock_standard_case_assigned_queues,
+    mock_standard_case_documents,
+    mock_standard_case_additional_contacts,
 ):
     yield
 
 
-def test_case_audit_trail_system_user(authorized_client, open_case_pk, queue_pk):
+def test_case_audit_trail_system_user(authorized_client, data_standard_case, queue_pk):
     # given the case has activity from system user
-    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk})
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
     # when the case is viewed
     response = authorized_client.get(url)
