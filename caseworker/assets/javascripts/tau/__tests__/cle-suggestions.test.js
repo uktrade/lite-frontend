@@ -50,26 +50,17 @@ describe("CLE suggestions", () => {
     component.setProducts([
       {
         controlListEntries: {
-          exporter: [
-            { id: "1", rating: "R1" },
-            { id: "2", rating: "R1a" },
-          ],
+          exporter: ["R1", "R1a"],
         },
       },
       {
         controlListEntries: {
-          exporter: [
-            { id: "3", rating: "R2" },
-            { id: "4", rating: "R2a" },
-          ],
+          exporter: ["R2", "R2a"],
         },
       },
       {
         controlListEntries: {
-          exporter: [
-            { id: "5", rating: "R3" },
-            { id: "6", rating: "R3a" },
-          ],
+          exporter: ["R3", "R3a"],
         },
       },
     ]);
@@ -88,38 +79,29 @@ describe("CLE suggestions", () => {
     component.setProducts([
       {
         controlListEntries: {
-          exporter: [{ id: "1", rating: "R3" }],
+          exporter: ["R3"],
         },
       },
       {
         controlListEntries: {
-          exporter: [{ id: "1", rating: "R3" }],
+          exporter: ["R3"],
         },
       },
       {
         controlListEntries: {
-          exporter: [
-            { id: "2", rating: "R1" },
-            { id: "3", rating: "R1a" },
-          ],
+          exporter: ["R1", "R1a"],
         },
       },
       {
         controlListEntries: {
-          exporter: [
-            { id: "2", rating: "R1" },
-            { id: "3", rating: "R1a" },
-          ],
+          exporter: ["R1", "R1a"],
         },
       },
       {
         // This isn't really a duplicate even though the previous entries are in other CLEs as we use the whole group to
         // test for duplication
         controlListEntries: {
-          exporter: [
-            { id: "1", rating: "R3" },
-            { id: "3", rating: "R1a" },
-          ],
+          exporter: ["R3", "R1a"],
         },
       },
     ]);
@@ -138,18 +120,12 @@ describe("CLE suggestions", () => {
     component.setProducts([
       {
         controlListEntries: {
-          exporter: [
-            { id: "1", rating: "R1" },
-            { id: "2", rating: "R1a" },
-          ],
+          exporter: ["R1", "R1a"],
         },
       },
       {
         controlListEntries: {
-          exporter: [
-            { id: "2", rating: "R1a" },
-            { id: "1", rating: "R1" },
-          ],
+          exporter: ["R1a", "R1"],
         },
       },
     ]);
@@ -162,75 +138,57 @@ describe("CLE suggestions", () => {
     component.setProducts([
       {
         controlListEntries: {
-          exporter: [
-            { id: "1", rating: "R1" },
-            { id: "2", rating: "R1a" },
-          ],
+          exporter: ["R1", "R1a"],
         },
       },
       {
         controlListEntries: {
-          exporter: [
-            { id: "3", rating: "R2" },
-            { id: "4", rating: "R2a" },
-          ],
+          exporter: ["R2", "R2a"],
         },
       },
       {
         controlListEntries: {
-          exporter: [
-            { id: "5", rating: "R3" },
-            { id: "6", rating: "R3a" },
-          ],
+          exporter: ["R3", "R3a"],
         },
       },
     ]);
     await userEvent.click(
       getByText(buttonContainer, "Select exporter suggestion R1, R1a")
     );
-    expect(callbackSpy).toHaveBeenCalledWith([
-      { id: "1", rating: "R1" },
-      { id: "2", rating: "R1a" },
-    ]);
+    expect(callbackSpy).toHaveBeenCalledWith(["R1", "R1a"]);
     await userEvent.click(
       getByText(buttonContainer, "Select exporter suggestion R2, R2a")
     );
-    expect(callbackSpy).toHaveBeenCalledWith([
-      { id: "3", rating: "R2" },
-      { id: "4", rating: "R2a" },
-    ]);
+    expect(callbackSpy).toHaveBeenCalledWith(["R2", "R2a"]);
     await userEvent.click(
       getByText(buttonContainer, "Select exporter suggestion R3, R3a")
     );
-    expect(callbackSpy).toHaveBeenCalledWith([
-      { id: "5", rating: "R3" },
-      { id: "6", rating: "R3a" },
-    ]);
+    expect(callbackSpy).toHaveBeenCalledWith(["R3", "R3a"]);
   });
 
-  test("Setting product with assessed CLE entries", () => {
+  test("Setting product with blank precedents CLE entries", () => {
     component.setProducts([
       {
         controlListEntries: {
-          assessed: [
-            [
-              { id: "1", rating: "R1" },
-              { id: "2", rating: "R1a" },
-            ],
-          ],
+          precedents: [[]],
+        },
+      },
+    ]);
+    expect(buttonContainer).toBeEmptyDOMElement();
+  });
+
+  test("Setting product with precedents CLE entries", () => {
+    component.setProducts([
+      {
+        controlListEntries: {
+          precedents: [["R1", "R1a"]],
         },
       },
       {
         controlListEntries: {
-          assessed: [
-            [
-              { id: "3", rating: "R2" },
-              { id: "4", rating: "R2a" },
-            ],
-            [
-              { id: "5", rating: "R3" },
-              { id: "6", rating: "R3a" },
-            ],
+          precedents: [
+            ["R2", "R2a"],
+            ["R3", "R3a"],
           ],
         },
       },
@@ -250,23 +208,14 @@ describe("CLE suggestions", () => {
     component.setProducts([
       {
         controlListEntries: {
-          exporter: [
-            { id: "1", rating: "R1" },
-            { id: "2", rating: "R1a" },
-          ],
+          exporter: ["R1", "R1a"],
         },
       },
       {
         controlListEntries: {
-          assessed: [
-            [
-              { id: "3", rating: "R2" },
-              { id: "4", rating: "R2a" },
-            ],
-            [
-              { id: "5", rating: "R3" },
-              { id: "6", rating: "R3a" },
-            ],
+          precedents: [
+            ["R2", "R2a"],
+            ["R3", "R3a"],
           ],
         },
       },
@@ -286,20 +235,12 @@ describe("CLE suggestions", () => {
     component.setProducts([
       {
         controlListEntries: {
-          exporter: [
-            { id: "1", rating: "R1" },
-            { id: "2", rating: "R1a" },
-          ],
+          exporter: ["R1", "R1a"],
         },
       },
       {
         controlListEntries: {
-          assessed: [
-            [
-              { id: "1", rating: "R1" },
-              { id: "2", rating: "R1a" },
-            ],
-          ],
+          precedents: [["R1", "R1a"]],
         },
       },
     ]);

@@ -6,10 +6,7 @@ class UniqueSuggestionsCollector {
   }
 
   getSuggestionKey(suggestion) {
-    return suggestion
-      .map(({ id }) => id)
-      .sort()
-      .join("|");
+    return suggestion.sort().join("|");
   }
 
   addSuggestion(suggestionSet, suggestion, suggestionText) {
@@ -52,8 +49,7 @@ class CLESuggestions {
   }
 
   getSuggestionText(suggestion) {
-    const suggestionText = suggestion.map((s) => s.rating);
-    return suggestionText.join(", ");
+    return suggestion.join(", ");
   }
 
   getExporterSuggestionText(suggestion) {
@@ -70,7 +66,7 @@ class CLESuggestions {
     const uniqueSuggestionsCollector = new UniqueSuggestionsCollector();
 
     for (const { controlListEntries } of products) {
-      const { exporter: exporterSuggestion, assessed: assessedSuggestions } =
+      const { exporter: exporterSuggestion, precedents: assessedSuggestions } =
         controlListEntries;
 
       if (exporterSuggestion && exporterSuggestion.length > 0) {
@@ -82,6 +78,9 @@ class CLESuggestions {
 
       if (assessedSuggestions) {
         for (const assessedSuggestion of assessedSuggestions) {
+          if (!assessedSuggestion.length) {
+            continue;
+          }
           uniqueSuggestionsCollector.addAssessedSuggestion(
             assessedSuggestion,
             this.getAssessedSuggestionText(assessedSuggestion)
