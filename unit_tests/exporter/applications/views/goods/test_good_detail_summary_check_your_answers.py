@@ -183,3 +183,29 @@ def test_good_detail_summary_check_your_answers_context(
     assert not context["application_status_draft"]
     assert context["organisation_documents"] == {}
     assert not context["feature_flag_product_2_0"]
+
+
+def test_good_detail_summary_check_your_answers_non_firearm_product_type(
+    authorized_client,
+    requests_mock,
+    mock_application_get,
+    good_detail_summary_check_your_answers_url,
+    application,
+    good,
+):
+    requests_mock.get(
+        f"/applications/{application['id']}/goods/{good['good']['id']}/documents/",
+        json={"documents": []},
+    )
+    application["goods"][0]["firearm_details"] = None
+
+    response = authorized_client.get(good_detail_summary_check_your_answers_url)
+    context = response.context
+
+    assert context["application_id"] == application["id"]
+    assert [good for good, _ in context["goods"]] == application["goods"]
+    assert [summary for _, summary in context["goods"]] == [None, None]
+    assert not context["is_user_rfd"]
+    assert not context["application_status_draft"]
+    assert context["organisation_documents"] == {}
+    assert not context["feature_flag_product_2_0"]

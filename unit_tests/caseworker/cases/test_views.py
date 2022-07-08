@@ -323,6 +323,31 @@ def test_good_on_application_firearm_detail(
 
 
 @override_settings(LITE_API_SEARCH_ENABLED=True)
+def test_good_on_application_firearm_detail_non_firearm_type(
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+    data_standard_case,
+    mock_firearm_good_on_application,
+    mock_firearm_good_on_application_documents,
+    standard_firearm_expected_product_summary,
+    standard_firearm_expected_product_on_application_summary,
+):
+    # given I access good on application details for a good with control list entries and a part number
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["firearm_details"] = None
+    url = reverse("cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good["id"]})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    # and the view exposes the data that the template needs
+    assert response.context_data["good_on_application"] == good
+    assert response.context_data["case"] == data_standard_case["case"]
+    assert response.context_data["product_summary"] is None
+
+
+@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_no_part_number(
     authorized_client,
     mock_application_search,
