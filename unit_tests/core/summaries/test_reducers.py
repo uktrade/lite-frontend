@@ -1,4 +1,5 @@
 import pytest
+import uuid
 
 from decimal import Decimal
 
@@ -91,12 +92,64 @@ def test_firearm_reducer(is_user_rfd, mocker):
             {
                 "is_good_controlled": {"key": "True"},
                 "control_list_entries": ["ML1", "ML1a"],
+                "precedents": [],
             },
             (
                 ("is-good-controlled", {"key": "True"}),
                 (
                     "control-list-entries",
                     ["ML1", "ML1a"],
+                ),
+            ),
+        ),
+        (
+            {
+                "is_good_controlled": {"key": "True"},
+                "control_list_entries": ["ML1", "ML1a"],
+                "precedents": [
+                    {
+                        "control_list_entries": ["R1"],
+                        "destinations": ["Destination 1"],
+                        "goods_starting_point": "GB",
+                    },
+                    {
+                        "control_list_entries": ["R1", "R1a"],
+                        "destinations": ["Destination 2", "Destination 3"],
+                        "goods_starting_point": "NI",
+                    },
+                ],
+            },
+            (
+                (
+                    "assessed-control-list-entries",
+                    (
+                        (["R1"], ["Destination 1"], "GB"),
+                        (["R1", "R1a"], ["Destination 2", "Destination 3"], "NI"),
+                    ),
+                ),
+            ),
+        ),
+        (
+            {
+                "is_good_controlled": {"key": "True"},
+                "control_list_entries": ["ML1", "ML1a"],
+                "precedents": [
+                    {
+                        "control_list_entries": ["R1", "R1a"],
+                        "destinations": ["Destination 1", "Destination 2"],
+                        "goods_starting_point": "GB",
+                    },
+                    {
+                        "control_list_entries": ["R1a", "R1"],
+                        "destinations": ["Destination 2", "Destination 1"],
+                        "goods_starting_point": "GB",
+                    },
+                ],
+            },
+            (
+                (
+                    "assessed-control-list-entries",
+                    ((["R1", "R1a"], ["Destination 1", "Destination 2"], "GB"),),
                 ),
             ),
         ),

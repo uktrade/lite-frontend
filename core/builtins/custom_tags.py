@@ -943,3 +943,11 @@ def to_datetime(val):
         return ""
 
     return isoparse(val)
+
+
+@register.filter
+def humanise_list(_list):
+    if len(_list) < 2:
+        return "".join(_list)
+    last = _list.pop()
+    return f"{', '.join(_list)} and {last}"
