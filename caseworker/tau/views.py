@@ -85,7 +85,8 @@ class TAUMixin:
 
     def is_assessed(self, good):
         """Returns True if a good has been assessed"""
-        return (good["is_good_controlled"] is not None) or (good["control_list_entries"] != [])
+        gona = good["good"]
+        return (gona["is_good_controlled"] is not None) or (gona["control_list_entries"] != [])
 
     @property
     def assessed_goods(self):
