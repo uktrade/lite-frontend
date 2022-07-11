@@ -100,7 +100,7 @@ class CaseView(TemplateView):
         return self.caseworker["team"]["alias"] == LU_ALIAS
 
     def is_only_on_post_circ_queue(self):
-        queue_alias = tuple(queue["alias"] for queue in self.case.queue_details if queue.get("alias"))
+        queue_alias = tuple(queue.get("alias") for queue in self.case.queue_details)
         return self.is_lu_user() and queue_alias == (LU_POST_CIRC_FINALISE_QUEUE_ALIAS,)
 
     def get_context(self):
