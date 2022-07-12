@@ -20,6 +20,7 @@ FIREARM_FIELDS = (
     "name",
     "is-good-controlled",
     "control-list-entries",
+    "assessed-control-list-entries",
     "is-pv-graded",
     "pv-grading-prefix",
     "pv-grading-grading",

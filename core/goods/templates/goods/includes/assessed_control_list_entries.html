@@ -1,0 +1,25 @@
+{% if assessed_control_list_entries|length == 1 %}
+    {{ assessed_control_list_entries.0.0|join:", " }}
+    to
+    {{ assessed_control_list_entries.0.1|humanise_list }}
+    from
+    {{ assessed_control_list_entries.0.2|verbose_goods_starting_point }}
+{% else %}
+    <details class="govuk-details govuk-!-margin-bottom-0" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                View all control list entries
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            {% for cles, destinations, goods_starting_point in assessed_control_list_entries %}
+                {{ cles|join:", " }}
+                to
+                {{ destinations|humanise_list }}
+                from
+                {{ goods_starting_point|verbose_goods_starting_point }}
+                <br>
+            {% endfor %}
+        </div>
+    </details>
+{% endif %}

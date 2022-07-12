@@ -8,22 +8,56 @@ from core.constants import (
 from core.goods.helpers import is_product_category_made_before_1938
 
 
+def _get_assessed_control_list_item(precedent):
+    return (
+        precedent["control_list_entries"],
+        precedent["destinations"],
+        precedent["goods_starting_point"],
+    )
+
+
+def _filter_duplicate_assessed_items(assessed_items):
+    seen = set()
+    for assessed_item in assessed_items:
+        cles, destinations, origin = assessed_item
+        current = frozenset((frozenset(cles), frozenset(destinations), origin))
+        if current in seen:
+            continue
+        seen.add(current)
+        yield assessed_item
+
+
 def is_good_controlled_reducer(good):
-    summary = (
+    is_good_controlled = good["is_good_controlled"]["key"] == "True"
+    if not is_good_controlled:
+        return (
+            (
+                "is-good-controlled",
+                good["is_good_controlled"],
+            ),
+        )
+
+    precedents = good.get("precedents")
+    if precedents:
+        assessed_items = (_get_assessed_control_list_item(precedent) for precedent in precedents)
+        assessed_items = _filter_duplicate_assessed_items(assessed_items)
+        return (
+            (
+                "assessed-control-list-entries",
+                tuple([i for i in assessed_items]),
+            ),
+        )
+
+    return (
         (
             "is-good-controlled",
             good["is_good_controlled"],
         ),
+        (
+            "control-list-entries",
+            good["control_list_entries"],
+        ),
     )
-    if good["is_good_controlled"]["key"] == "True":
-        summary += (
-            (
-                "control-list-entries",
-                good["control_list_entries"],
-            ),
-        )
-
-    return summary
 
 
 def is_pv_graded_reducer(good):
