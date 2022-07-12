@@ -30,3 +30,25 @@ def test_has_added_serial_numbers(rf, firearm_details, output):
     rendered = t.render(c)
 
     assert rendered == output
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    (
+        ([], ""),
+        (["test"], "test"),
+        (["test1", "test2"], "test1 and test2"),
+        (["test1", "test2", "test3"], "test1, test2 and test3"),
+    ),
+)
+def test_humanise_list(rf, input, expected):
+    request = rf.get("/")
+    request.session = {}
+
+    t = Template("{{ a_list|humanise_list }}")
+    c = RequestContext(
+        request,
+        {"a_list": input},
+    )
+    rendered = t.render(c)
+    assert rendered == expected
