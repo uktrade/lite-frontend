@@ -273,7 +273,7 @@ def _register_organisation(request, json, _type):
     log.info(
         "Register_organisation: user:%s  client_ip: %s",
         request.session["email"],
-        get_client_ip(self.request),
+        get_client_ip(request),
     )
     data = {
         "type": _type,
