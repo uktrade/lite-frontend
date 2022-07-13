@@ -1,4 +1,5 @@
 from core.ip_filter import get_client_ip
+from django.http import HttpRequest
 
 
 def test_get_client_ip():
