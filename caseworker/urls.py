@@ -24,10 +24,8 @@ urlpatterns = [
     path("feedback/", include("core.feedback.urls")),
     path("cookies/", include("core.cookies.urls")),
     path("tau/", include("caseworker.tau.urls")),
+    path("search/", include("caseworker.search.urls")),
 ]
-
-if settings.LITE_API_SEARCH_ENABLED:
-    urlpatterns.append(path("search/", include("caseworker.search.urls")))
 
 
 if settings.FEATURE_SPIRE_SEARCH_ON:

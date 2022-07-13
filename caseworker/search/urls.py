@@ -11,7 +11,6 @@ urlpatterns = [
 ]
 
 if settings.FEATURE_PRODUCTPEDIA_ON:
-
     urlpatterns += [
         path("products/", views.ProductSearchView.as_view(), name="products"),
         path("products/suggest/", views.ProductAutocompleteView.as_view(), name="api-search-suggest-product"),
