@@ -1,6 +1,5 @@
 import logging
 from ipware import get_client_ip as ipware_get_client_ip
-from django.conf import settings
 
 logger = logging.getLogger(__file__)
 

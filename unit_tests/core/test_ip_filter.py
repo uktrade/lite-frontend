@@ -9,6 +9,6 @@ def test_get_client_ip():
     assert ip_address == "192.168.93.2"
 
 
-def test_get_client_ip_ip():
+def test_get_client_ip():
     request = HttpRequest()
     assert get_client_ip(request) is None
