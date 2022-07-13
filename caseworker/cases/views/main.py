@@ -412,13 +412,15 @@ class CaseOfficer(SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         case = get_case(request, self.object_pk)
-        self.data = {"gov_user_pk": case.case_officer.get("id")}
+        self.data = {}
+        if case.case_officer:
+            self.data = {"gov_user_pk": case.case_officer["id"]}
         self.form = assign_case_officer_form(
             request,
             case.case_officer,
             self.kwargs["queue_pk"],
             self.object_pk,
-            is_compliance=True if case.case_type["type"]["key"] == CaseType.COMPLIANCE.value else False,
+            is_compliance=case.case_type["type"]["key"] == CaseType.COMPLIANCE.value,
         )
         self.context = {"case": case}
         self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
