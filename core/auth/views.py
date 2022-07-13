@@ -2,6 +2,7 @@ import logging
 import abc
 import uuid
 from urllib.parse import urlparse, urlunparse
+from core.ip_filter import get_client_ip
 
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseServerError, QueryDict
@@ -21,9 +22,10 @@ class AuthView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         protect_level = {"vtr": "['Cl']"} if settings.AUTHBROKER_LOW_SECURITY else {}
         log.info(
-            "Authentication:Service: %s Protect:Level : %s : Get login redirect url from authorisation site",
+            "Authentication:Service: %s Protect:Level : %s : Get login redirect url from authorisation site: client_ip: %s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             protect_level,
+            get_client_ip(self.request),
         )
         url, state = self.request.authbroker_client.create_authorization_url(
             settings.AUTHBROKER_AUTHORIZATION_URL,
@@ -37,7 +39,10 @@ class AuthView(RedirectView):
 class AuthLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         log.info(
-            "Authentication:Service: %s: logout user %s", settings.AUTHBROKER_AUTHORIZATION_URL, settings.LOGOUT_URL
+            "Authentication:Service: %s: logout user %s: client_ip: %s",
+            settings.AUTHBROKER_AUTHORIZATION_URL,
+            settings.LOGOUT_URL,
+            get_client_ip(self.request),
         )
         redirect_url = settings.LOGOUT_URL + self.request.build_absolute_uri("/")
         if self.request.authbroker_client.token:
@@ -77,16 +82,18 @@ class AbstractAuthCallbackView(abc.ABC, View):
     @cached_property
     def user_profile(self):
         log.info(
-            "Authentication:Service: %s: get profile %s",
+            "Authentication:Service: %s: get profile %s :client_ip %s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             settings.AUTHBROKER_PROFILE_URL,
+            get_client_ip(self.request),
         )
         return get_profile(self.request.authbroker_client)
 
     def get(self, request, *args, **kwargs):
         log.info(
-            "Authentication:Service: %s: callback for login called",
+            "Authentication:Service: %s: callback for login called :client_ip %s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
+            get_client_ip(self.request),
         )
 
         auth_code = request.GET.get("code", None)

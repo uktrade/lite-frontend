@@ -7,6 +7,7 @@ from authlib.oauth2 import OAuth2Error
 from authlib.integrations.base_client.errors import OAuthError
 from authlib.oauth2.rfc7523 import PrivateKeyJWT
 from requests.exceptions import RequestException
+from .ip_filter import get_client_ip
 
 from django.conf import settings
 from django.contrib.auth import logout
@@ -141,7 +142,11 @@ class AuthBrokerTokenIntrospectionMiddleware:
         return token, is_new_token
 
     def client_introspect_call(self, request):
-        logger.info("Introspecting with SSO: %s", request.session.get("lite_api_user_id"))
+        logger.info(
+            "Introspecting with SSO: %s client_ip: %s",
+            request.session.get("lite_api_user_id"),
+            get_client_ip(request),
+        )
         response = request.authbroker_client.get(settings.AUTHBROKER_PROFILE_URL)
         response.raise_for_status()
 
@@ -169,8 +174,9 @@ class AuthBrokerTokenIntrospectionMiddleware:
             self.introspect(request)
         except (OAuth2Error, OAuthError, RequestException) as e:
             logger.warning(
-                "Introspecting with SSO failed for user %s: %s",
+                "Introspecting with SSO failed for user %s: :%s : %s",
                 request.session.get("lite_api_user_id"),
+                get_client_ip(request),
                 str(e),
             )
 

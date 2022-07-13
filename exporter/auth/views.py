@@ -9,6 +9,7 @@ from exporter.auth.services import authenticate_exporter_user
 from lite_forms.generators import error_page
 from exporter.organisation.members.services import get_user
 from authlib.oauth2.rfc7523 import PrivateKeyJWT
+from core.ip_filter import get_client_ip
 
 log = logging.getLogger(__name__)
 
@@ -17,9 +18,10 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
     def authenticate_user(self):
         profile = self.user_profile
         log.info(
-            "Authentication:Service: %s : authenticate user in lite profile: %s",
+            "Authentication:Service: %s : authenticate user in lite with profile: %s: client_ip:%s ",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             profile,
+            get_client_ip(self.request),
         )
         if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
             profile["no_profile_login"] = True
@@ -73,9 +75,10 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
 
     def fetch_token(self, request, auth_code):
         log.info(
-            "Authentication:Service: %s : fetching token for login auth_code %s",
+            "Authentication:Service: %s : fetching token for login auth_code %s: client_ip:%s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             auth_code,
+            get_client_ip(self.request),
         )
 
         if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:

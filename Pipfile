@@ -71,6 +71,7 @@ Authlib = "==0.15.5"
 regex = "==2022.3.2"
 deepmerge = "*"
 phonenumbers = "~=8.12"
+django-ipware = "~=3.0.7"
 
 [requires]
 python_version = "3.7"
