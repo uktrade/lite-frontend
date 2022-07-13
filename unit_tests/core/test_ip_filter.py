@@ -11,4 +11,4 @@ def test_get_client_ip():
 
 def test_get_client_ip_ip():
     request = HttpRequest()
-    assert get_client_ipget_sender_ip_address(request) is None
+    assert get_client_ip(request) is None
