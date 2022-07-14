@@ -5,10 +5,6 @@
     </summary>
     <div class="govuk-details__text tau__details">
       {% include "tau/good_table.html" with good=good %}
-      <div style="background-color: #f3f2f1" class="govuk-!-padding-5">
-        {% for precedent in good.precedents %}
-        {% include "tau/precedent_table.html" with precedent=precedent %}
-        {% endfor %}
-      </div>
+      {% include "tau/precedent_table.html" with precedents=good.precedents %}
     </div>
 </details>

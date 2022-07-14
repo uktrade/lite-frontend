@@ -187,7 +187,7 @@ def test_home_content(
     # The precedent for the unassessed product
 
     assert get_cells(soup, "table-precedents-1") == [
-        "ML1a",
+        "ML1a (opens in new tab)",
         "Destinations",
         "France from Northern Ireland",
         "Regime",
@@ -363,7 +363,7 @@ def test_precedents_starting_point(
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert get_cells(soup, "table-precedents-1") == [
-        "ML1a",
+        "ML1a (opens in new tab)",
         "Destinations",
         expected_destination,
         "Regime",
