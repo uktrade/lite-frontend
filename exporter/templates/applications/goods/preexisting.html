@@ -33,7 +33,8 @@
 								{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">{{good.name}}</a>
 								{% else %}
-									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">{{good.name}}</a>
+									{% url "goods:good" good.id as good_url %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{{good_url}}?is_preexisting=true">{{good.name}}</a>
 								{% endif %}
 								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 							</td>

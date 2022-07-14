@@ -176,7 +176,13 @@ class Goods(LoginRequiredMixin, TemplateView):
 
 class GoodsDetailEmpty(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
-        return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}))
+        is_preexisting = ""
+        if request.GET.get("is_preexisting"):
+            is_preexisting = "?is_preexisting=true"
+
+        return redirect(
+            reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}) + is_preexisting
+        )
 
 
 class GoodsDetail(LoginRequiredMixin, TemplateView):
@@ -197,14 +203,10 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         documents = get_good_documents(request, str(self.good_id))
 
-        # check for /add-preexisting/ url
-        add_preexisting_url = None
-        if self.request.META.get("HTTP_REFERER"):
-            add_preexisting_url = (
-                self.request.META.get("HTTP_REFERER")
-                if "add-preexisting" in self.request.META.get("HTTP_REFERER")
-                else None
-            )
+        # check for query params is_preexisting
+        from_preexisting_url = None
+        if request.GET.get("is_preexisting") == "true":
+            from_preexisting_url = True
 
         context = {
             "good": self.good,
@@ -213,7 +215,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             "error": kwargs.get("error"),
             "text": kwargs.get("text", ""),
             "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
-            "add_preexisting_url": add_preexisting_url,
+            "from_preexisting_url": from_preexisting_url,
         }
 
         if self.good["query"]:
