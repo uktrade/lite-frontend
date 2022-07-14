@@ -47,6 +47,11 @@
     }
   }
 
+  .precedents {
+    background-color: $base-grey;
+  }
+
+
   #div_id_does_not_have_control_list_entries {
     .govuk-checkboxes__label {
       padding: 0;
