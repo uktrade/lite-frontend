@@ -6,7 +6,7 @@
       </tr>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Destinations</td>
-        <td class="govuk-table__cell">{{ precedent.destinations | join:", " }}</td>
+        <td class="govuk-table__cell">{{ precedent.destinations | join:", " }} {% if precedent.goods_starting_point == "NI" %}from Northern Ireland{% elif precedent.goods_starting_point == "GB" %}from Great Britain{% endif %}</td>
       </tr>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Regime</td>
