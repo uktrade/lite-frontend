@@ -72,3 +72,32 @@ def test_get_good_detail_doesnot_contain_application_specific_details(authorized
     assert ("Controlled" in response_html) == True
     assert ("Year of manufacture" in response_html) == False
     assert ("Identification markings" in response_html) == False
+
+
+def test_from_preexisting_url(authorized_client, requests_mock, good):
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/"), json={"good": good})
+    requests_mock.get(client._build_absolute_uri("/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/documents/"), json={})
+
+    url = (
+        reverse("goods:good_detail", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e", "type": "case-notes"})
+        + "?is_preexisting=true"
+    )
+
+    response = authorized_client.get(url)
+    assert response.context["from_preexisting_url"] == True
+
+
+def test_good_redirect_with_params(authorized_client):
+    url = reverse("goods:good", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"}) + "?is_preexisting=true"
+    response = authorized_client.get(url)
+
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/?is_preexisting=true"
+
+
+def test_good_redirect(authorized_client):
+    url = reverse("goods:good", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 302
+    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/"
