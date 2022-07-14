@@ -151,7 +151,7 @@ FIREARM_VALUE_FORMATTERS = {
     "is-pv-graded": mapping_formatter(
         {
             "yes": "Yes",
-            "no": "Not pv graded",
+            "no": "No",
         }
     ),
     "pv-grading-grading": key_value_formatter,
