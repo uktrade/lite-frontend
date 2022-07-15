@@ -11,11 +11,7 @@
                     <h3 class="govuk-heading-m">{{ good.line_number }}.  {{ good.good.name }}</h3>
                     <div>
                       {% include "tau/good_table.html" with good=good %}
-                      {% if good.precedent %}
-                      <div style="background-color: #f3f2f1" class="govuk-!-padding-5">
-                          {% include "tau/precedent_table.html" with precedent=good.precedent %}
-                      </div>
-                      {% endif %}
+                      {% include "tau/precedent_table.html" with precedents=good.precedents %}
                     </div>
                 </div>
             </div>
