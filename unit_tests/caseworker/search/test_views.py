@@ -1,5 +1,7 @@
 import pytest
 
+from pytest_django.asserts import assertTemplateUsed
+
 from django.urls import reverse
 
 
@@ -26,3 +28,9 @@ def test_product_search_disabled_feature_flag(
 def test_product_search_enabled_feature_flag(authorized_client, product_search_url):
     response = authorized_client.get(product_search_url)
     assert response.status_code == 200
+
+
+def test_product_search_renders_template(authorized_client, product_search_url):
+    response = authorized_client.get(product_search_url)
+    assertTemplateUsed(response, "search/products.html")
+    assertTemplateUsed(response, "layouts/base.html")
