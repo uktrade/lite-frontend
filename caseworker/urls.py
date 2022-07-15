@@ -25,6 +25,7 @@ urlpatterns = [
     path("cookies/", include("core.cookies.urls")),
     path("tau/", include("caseworker.tau.urls")),
     path("search/", include("caseworker.search.urls")),
+    path("search/proof-of-concept/", include("caseworker.search.proof_of_concept_urls")),
 ]
 
 
