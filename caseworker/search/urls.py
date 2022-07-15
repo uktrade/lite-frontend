@@ -1,8 +1,9 @@
-from django.conf import settings
 from django.urls import path
 
-from caseworker.search import views
+from . import views
 
 app_name = "search"
 
-urlpatterns = []
+urlpatterns = [
+    path("products/", views.ProductSearchView.as_view(), name="products"),
+]
