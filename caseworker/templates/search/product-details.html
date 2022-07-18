@@ -9,7 +9,7 @@
 
 {% block body %}
   <div class="lite-gutter">
-    <a href="{% url 'search:products' %}?{{ request.GET.urlencode }}" id="back-link" class="govuk-back-link">Back</a>
+    <a href="{% url 'search_proof_of_concept:products' %}?{{ request.GET.urlencode }}" id="back-link" class="govuk-back-link">Back</a>
     <table class="govuk-table govuk-!-margin-top-4">
       <caption class="govuk-table__caption govuk-!-margin-bottom-2">{{ product.description }}</caption>
       <tbody class="govuk-table__body">

@@ -178,7 +178,6 @@ good_review_parametrize_data = (
 
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_standard_review_goods(
     authorized_client,
     requests_mock,
@@ -214,7 +213,6 @@ def test_standard_review_goods(
 
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_open_review_goods(
     authorized_client,
     requests_mock,
@@ -248,7 +246,6 @@ def build_wizard_step_data(view_name, step_name, data):
     return step_data
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail(
     authorized_client,
     mock_application_search,
@@ -278,7 +275,6 @@ def test_good_on_application_detail(
     assert response.context_data["product_summary"] == None
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_firearm_detail(
     authorized_client,
     queue_pk,
@@ -319,7 +315,6 @@ def test_good_on_application_firearm_detail(
     assert response.context_data["product_summary"] == expected_product_summary
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_firearm_detail_non_firearm_type(
     authorized_client,
     queue_pk,
@@ -344,7 +339,6 @@ def test_good_on_application_firearm_detail_non_firearm_type(
     assert response.context_data["product_summary"] is None
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_no_part_number(
     authorized_client,
     mock_application_search,
@@ -367,7 +361,6 @@ def test_good_on_application_detail_no_part_number(
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1" clc_rating:"ML2"'
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_no_part_number_no_control_list_entries(
     authorized_client,
     mock_application_search,
@@ -392,7 +385,6 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
     assert response.context_data["form"]["search_string"].initial == ""
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_not_rated_at_application_level(
     authorized_client,
     mock_application_search,

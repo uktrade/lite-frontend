@@ -13,3 +13,4 @@ omit =
   tests_common/*
   pipeline/*
   lite_content/*
+  caseworker/search/proof_of_concept/*

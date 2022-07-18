@@ -33,7 +33,8 @@ import Lightpick from "./lightpick.js";
         currentSearch = inputElement.value.replace(lastSearch, "").trim();
         var query = currentSearch.toLowerCase();
         return fetch(
-          "/search/products/suggest/?format=json&q=" + escape(query)
+          "/search/proof-of-concept/products/suggest/?format=json&q=" +
+            escape(query)
         ).then(function (response) {
           return response.json().then(function (parsed) {
             // cheap prefix match "incor" for "spire"
@@ -123,7 +124,10 @@ import Lightpick from "./lightpick.js";
       inputElement.focus();
     });
     fetch(
-      "/search/products/?search_string=" + escape(query) + "&page=" + pageNumber
+      "/search/proof-of-concept/products/?search_string=" +
+        escape(query) +
+        "&page=" +
+        pageNumber
     ).then(function (response) {
       var html = response.text().then(function (html) {
         var div = document.createElement("div");
