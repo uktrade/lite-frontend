@@ -13,151 +13,51 @@
         </div>
     </div>
     <section class="search-results govuk-!-margin-top-4">
-        <h1 class="govuk-body">3 products found</h1>
-        <article class="search-result">
-            <header class="search-result__header">
-                <div class="search-result__header-wrapper">
-                    <h1 class="search-result__product-name govuk-heading-m">Over under shotgun</h1>
-                    <div class="search-result__company-name">ABC Company</div>
-                </div>
-                <div class="search-result__part-number">09374-ABC-12</div>
-            </header>
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">
-                            Case reference
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Product assessed
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Destination
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Control entry
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Report summary
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Assessment notes
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell govuk-body">
-                            <a class="govuk-link" href="#">GBSIEL/2022/000078/P</a>
-                        </th>
-                        <td class="govuk-table__cell">14 March 2022</td>
-                        <td class="govuk-table__cell">India</td>
-                        <td class="govuk-table__cell">FR AI</td>
-                        <td class="govuk-table__cell">Sporting shotgun</td>
-                        <td class="govuk-table__cell"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </article>
-        <article class="search-result">
-            <header class="search-result__header">
-                <div class="search-result__header-wrapper">
-                    <h1 class="search-result__product-name govuk-heading-m">Over under shotgun</h1>
-                    <div class="search-result__company-name">Smith, Wright and Jones</div>
-                </div>
-            </header>
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">
-                            Case reference
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Product assessed
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Destination
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Control entry
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Report summary
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Assessment notes
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell govuk-body">
-                            <a class="govuk-link" href="#">GBSIEL/2022/000012/P</a>
-                        </th>
-                        <td class="govuk-table__cell">10 January 2022</td>
-                        <td class="govuk-table__cell">France</td>
-                        <td class="govuk-table__cell">PL9010a</td>
-                        <td class="govuk-table__cell">Sporting shotgun</td>
-                        <td class="govuk-table__cell">
-                            Assessment note example, this has been assessed as PL9010a because of ABC reasons
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell govuk-body">
-                            <a class="govuk-link" href="#">GBSIEL/2021/000092/P</a>
-                        </th>
-                        <td class="govuk-table__cell">17 November 2021</td>
-                        <td class="govuk-table__cell">United States</td>
-                        <td class="govuk-table__cell">FR AI</td>
-                        <td class="govuk-table__cell">Sporting shotgun</td>
-                        <td class="govuk-table__cell"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </article>
-        <article class="search-result">
-            <header class="search-result__header">
-                <div class="search-result__header-wrapper">
-                    <h1 class="search-result__product-name govuk-heading-m">Over under shotgun</h1>
-                    <div class="search-result__company-name">Archway Communications</div>
-                </div>
-            </header>
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">
-                            Case reference
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Product assessed
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Destination
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Control entry
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Report summary
-                        </th>
-                        <th scope="col" class="govuk-table__header">
-                            Assessment notes
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell govuk-body">
-                            <a class="govuk-link" href="#">GBSIEL/2022/000011/P</a>
-                        </th>
-                        <td class="govuk-table__cell">8 January 2022</td>
-                        <td class="govuk-table__cell">Poland, Germany</td>
-                        <td class="govuk-table__cell">FR AI</td>
-                        <td class="govuk-table__cell">Sporting shotgun</td>
-                        <td class="govuk-table__cell"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </article>
+        <h1 class="govuk-body">{{ search_results.count }} products found</h1>
+        {% for good in search_results.results %}
+            <article class="search-result">
+                <header class="search-result__header">
+                    <div class="search-result__header-wrapper">
+                        <h1 class="search-result__product-name govuk-heading-m">{{ good.name }}</h1>
+                        <div class="search-result__company-name">{{ good.organisation }}</div>
+                    </div>
+                    {% if good.part_number %}
+                        <div class="search-result__part-number">{{ good.part_number }}</div>
+                    {% endif %}
+                </header>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">
+                                Case reference
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                Destination
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                Control entry
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                Report summary
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                Assessment notes
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for good_on_application in good.inner_hits.hits %}
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__cell govuk-body">{{ good_on_application.application.reference_code }}</th>
+                                <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
+                                <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                                <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
+                                <td class="govuk-table__cell">{{ good_on_application.rating_comment|default:"" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </article>
+        {% endfor %}
     </section>
 {% endblock %}
