@@ -80,19 +80,26 @@ def test_from_preexisting_url(authorized_client, requests_mock, good):
 
     url = (
         reverse("goods:good_detail", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e", "type": "case-notes"})
-        + "?is_preexisting=true"
+        + "?is_preexisting=true&application_id=e0a485d0-156e-4152-bec9-4798c9f2871e"
     )
 
     response = authorized_client.get(url)
     assert response.context["from_preexisting_url"] == True
+    assert response.context["application_id"] == "e0a485d0-156e-4152-bec9-4798c9f2871e"
 
 
 def test_good_redirect_with_params(authorized_client):
-    url = reverse("goods:good", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"}) + "?is_preexisting=true"
+    url = (
+        reverse("goods:good", kwargs={"pk": "e0a485d0-156e-4152-bec9-4798c9f2871e"})
+        + "?is_preexisting=true&application_id=e0a485d0-156e-4152-bec9-4798c9f2871e"
+    )
     response = authorized_client.get(url)
 
     assert response.status_code == 302
-    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/?is_preexisting=true"
+    assert (
+        response.url
+        == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/?is_preexisting=true&application_id=e0a485d0-156e-4152-bec9-4798c9f2871e"
+    )
 
 
 def test_good_redirect(authorized_client):
