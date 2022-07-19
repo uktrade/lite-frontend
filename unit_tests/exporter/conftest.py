@@ -163,7 +163,7 @@ def authorized_client(authorized_client_factory, mock_exporter_user):
     return authorized_client_factory(mock_exporter_user["user"])
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def mock_get_profile(requests_mock, mock_exporter_user):
     url = exporter.AUTHBROKER_PROFILE_URL
     yield requests_mock.get(url=url, json={"sub": "123456789xyzqpr", "email": mock_exporter_user["user"]["email"]})
