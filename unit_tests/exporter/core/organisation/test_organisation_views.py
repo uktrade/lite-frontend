@@ -1,7 +1,9 @@
 import pytest
+from urllib.parse import urljoin
 
 from django.test import Client
 from django.urls import reverse
+
 from exporter.core.organisation.constants import RegistrationSteps
 from exporter.core.organisation.forms import (
     RegistrationUKBasedForm,
@@ -14,7 +16,14 @@ from unit_tests.helpers import reload_urlconf
 @pytest.fixture(autouse=True)
 def setup(no_op_storage, settings):
     settings.FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = True
-    reload_urlconf(["exporter.core.urls", settings.ROOT_URLCONF])
+    settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED = True
+    reload_urlconf(["exporter.core.urls", settings.ROOT_URLCONF, "conf.exporter", "conf.base"])
+    # Need to add this since reloading conf doesn't appear to work. Can remove once FF is being destroyed
+    settings.LOGOUT_URL = f"{settings.AUTHBROKER_URL}/logout"
+    settings.AUTHBROKER_SCOPE = "openid,email,offline_access"
+    settings.AUTHBROKER_AUTHORIZATION_URL = urljoin(settings.AUTHBROKER_URL, "authorize")
+    settings.AUTHBROKER_TOKEN_URL = urljoin(settings.AUTHBROKER_URL, "token")
+    settings.AUTHBROKER_PROFILE_URL = urljoin(settings.AUTHBROKER_URL, "userinfo")
 
 
 @pytest.fixture()
@@ -125,6 +134,7 @@ def test_registration_individual_details_step(goto_step, post_to_step):
 def test_registration_individual_end_to_end_uk_based(
     goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
 ):
+
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     response = post_to_step(
         RegistrationSteps.REGISTRATION_TYPE,

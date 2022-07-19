@@ -51,6 +51,7 @@ if FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED:
         "exporter.core.middleware.OrganisationRedirectMiddleWare",
     ]
 
+
 if FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
     LOGOUT_URL = f"{AUTHBROKER_URL}/logout"
     AUTHBROKER_SCOPE = "openid,email,offline_access"
