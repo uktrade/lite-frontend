@@ -619,6 +619,7 @@ def standard_case_with_advice(current_user):
                                 "text": "clc entry description",
                             }
                         ],
+                        "status": {"key": "draft", "value": "Draft"},
                         "description": "Pair of shotgun barrels",
                         "is_good_controlled": {"key": "True", "value": "Yes"},
                         "name": "Pair of shotgun barrels",
@@ -638,6 +639,7 @@ def standard_case_with_advice(current_user):
                     "good": {
                         "comment": None,
                         "control_list_entries": [],
+                        "status": {"key": "draft", "value": "Draft"},
                         "description": "Pair of shotgun barrels",
                         "is_good_controlled": {"key": "True", "value": "Yes"},
                         "name": "Pair of shotgun barrels 12 bore",
