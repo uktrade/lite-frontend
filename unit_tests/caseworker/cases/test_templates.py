@@ -75,7 +75,7 @@ def test_advice_section_no_user_advice_checkboxes_visible_no_combine_button(data
     context["current_advice_level"] = ["user"]
     html = render_to_string("case/tabs/user-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent["class"]
+    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent.get("class", "")
     assert soup.find(id="link-select-all-goods")
     assert soup.find(id="link-select-all-destinations")
 
@@ -98,7 +98,7 @@ def test_advice_section_no_user_advice_checkboxes_visible_no_combine_button_grou
 
     html = render_to_string("case/tabs/user-advice.html", context=context, request=request)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent["class"]
+    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent.get("class", "")
     assert soup.find(id="button-select-all-no_advice")
 
 
@@ -113,7 +113,7 @@ def test_advice_section_user_can_combine_advice_from_own_team(data_standard_case
 
     html = render_to_string("case/tabs/user-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" not in soup.find(id="button-combine-user-advice").parent["class"]
+    assert "app-advice__disabled-buttons" not in soup.find(id="button-combine-user-advice").parent.get("class", "")
 
 
 def test_advice_section_user_cannot_combine_advice_from_other_team(data_standard_case, rf, client):
@@ -128,7 +128,7 @@ def test_advice_section_user_cannot_combine_advice_from_other_team(data_standard
 
     html = render_to_string("case/tabs/user-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent["class"]
+    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent.get("class", "")
 
 
 def test_advice_section_user_can_clear_advice_from_own_team(data_standard_case, rf, client):
@@ -144,7 +144,7 @@ def test_advice_section_user_can_clear_advice_from_own_team(data_standard_case, 
 
     html = render_to_string("case/tabs/team-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" not in soup.find(id="button-clear-team-advice").parent["class"]
+    assert "app-advice__disabled-buttons" not in soup.find(id="button-clear-team-advice").parent.get("class", "")
 
 
 def test_advice_section_user_cannot_clear_advice_from_other_team(data_standard_case, rf, client):
@@ -160,7 +160,7 @@ def test_advice_section_user_cannot_clear_advice_from_other_team(data_standard_c
 
     html = render_to_string("case/tabs/team-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" in soup.find(id="button-clear-team-advice").parent["class"]
+    assert "app-advice__disabled-buttons" in soup.find(id="button-clear-team-advice").parent.get("class", "")
 
 
 def test_advice_section_user_cannot_clear_if_no_team_advice(data_standard_case, rf, client):
@@ -192,7 +192,7 @@ def test_advice_section_user_can_combine_team_advice_from_own_team(data_standard
 
     html = render_to_string("case/tabs/team-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" not in soup.find(id="button-combine-team-advice").parent["class"]
+    assert "app-advice__disabled-buttons" not in soup.find(id="button-combine-team-advice").parent.get("class", "")
 
 
 def test_advice_section_user_cannot_combine_team_advice_if_no_advice_from_own_team(data_standard_case, rf, client):
@@ -208,7 +208,7 @@ def test_advice_section_user_cannot_combine_team_advice_if_no_advice_from_own_te
 
     html = render_to_string("case/tabs/team-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-team-advice").parent["class"]
+    assert "app-advice__disabled-buttons" in soup.find(id="button-combine-team-advice").parent.get("class", "")
 
 
 def test_advice_section_user_can_clear_final_advice_from_own_team(data_standard_case, rf, client):
@@ -273,7 +273,7 @@ def test_advice_section_user_cannot_finalise(data_standard_case, rf, client):
 
     html = render_to_string("case/tabs/final-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" in soup.find(id="button-finalise").parent["class"]
+    assert "app-advice__disabled-buttons" in soup.find(id="button-finalise").parent.get("class", "")
 
 
 def test_advice_section_user_can_finalise(data_standard_case, rf, client):
@@ -290,7 +290,7 @@ def test_advice_section_user_can_finalise(data_standard_case, rf, client):
 
     html = render_to_string("case/tabs/final-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    assert "app-advice__disabled-buttons" not in soup.find(id="button-finalise").parent["class"]
+    assert "app-advice__disabled-buttons" not in soup.find(id="button-finalise").get("class", "")
 
 
 def test_good_on_application_detail_unverified_product(

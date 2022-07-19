@@ -11,24 +11,19 @@
                     <h3 class="govuk-heading-m">{{ good.line_number }}.  {{ good.good.name }}</h3>
                     <div>
                       {% include "tau/good_table.html" with good=good %}
-                      {% if good.precedent %}
-                      <div style="background-color: #f3f2f1" class="govuk-!-padding-5">
-                          {% include "tau/precedent_table.html" with precedent=good.precedent %}
-                      </div>
-                      {% endif %}
+                      {% include "tau/precedent_table.html" with precedents=good.precedents %}
                     </div>
                 </div>
             </div>
             <div class="govuk-grid-column-one-third">
+                {{ cle_suggestions_json|json_script:"cle-suggestions-json" }}
                 <form id="tau-form" method="POST">
                     {% csrf_token %}
                     <h1 class="govuk-heading-m tau__headline">Assessing {{good.good.name}}</h1>
                     <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
-                    {% for cle in good.good.control_list_entries %}
-                        <button class="lite-button--link control-list__list control-list__edit">
-                            Select exporter suggestion {{cle.rating}}
-                        </button>
-                    {% endfor %}
+                    <div class="tau__cle-suggestion-buttons">
+                        <div class="tau__cle-suggestions"></div>
+                    </div>
                     <div class="govuk-hint">Or type for suggestions</div>
                     {% for field in form %}
                         {% if field.name == "does_not_have_control_list_entries" %}
@@ -44,4 +39,9 @@
         </div>
     </main>
 </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'tau-edit.js' %}" type="text/javascript"></script>
 {% endblock %}

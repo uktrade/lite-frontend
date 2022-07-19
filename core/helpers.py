@@ -27,3 +27,10 @@ def get_document_data(file):
         "s3_key": file.name,
         "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
     }
+
+
+def is_good_on_application_product_type(good_on_application, product_type):
+    try:
+        return good_on_application["firearm_details"]["type"]["key"] == product_type
+    except (KeyError, TypeError):
+        return False

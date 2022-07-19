@@ -11,7 +11,10 @@ from formtools.wizard.storage.session import SessionStorage
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import FirearmsActDocumentType, FirearmsActSections
-from core.helpers import convert_dict_to_query_params
+from core.helpers import (
+    convert_dict_to_query_params,
+    is_good_on_application_product_type,
+)
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
@@ -155,9 +158,7 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
         filters = FiltersBar(
             [
                 TextInput(title="name", name="name"),
-                TextInput(title="description", name="description"),
                 TextInput(title="control list entry", name="control_list_entry"),
-                TextInput(title="part number", name="part_number"),
             ]
         )
 
@@ -1011,12 +1012,6 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
         )
         return product_summary + product_on_application_summary
 
-    def is_product_type(self, good_on_application, product_type):
-        try:
-            return good_on_application["firearm_details"]["type"]["key"] == product_type
-        except KeyError:
-            return False
-
     def get_context_data(self, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(self.request, application_id)
@@ -1030,7 +1025,7 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
 
         goods = []
         for good_on_application in application["goods"]:
-            if self.is_product_type(good_on_application, FirearmsProductType.FIREARMS):
+            if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
                 product_summary = self.get_product_summary(good_on_application, is_user_rfd, organisation_documents)
             else:
                 product_summary = None

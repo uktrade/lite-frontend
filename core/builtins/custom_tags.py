@@ -416,10 +416,6 @@ def multiply(num1, num2):
 
 @register.filter()
 def subtract(num1, num2):
-    if not num1:
-        return 0
-    if not num2:
-        return num1
     return num1 - num2
 
 
@@ -947,3 +943,11 @@ def to_datetime(val):
         return ""
 
     return isoparse(val)
+
+
+@register.filter
+def humanise_list(_list):
+    if len(_list) < 2:
+        return "".join(_list)
+    last = _list.pop()
+    return f"{', '.join(_list)} and {last}"

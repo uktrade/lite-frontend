@@ -1,13 +1,14 @@
-<table id="table-precedents-{{ forloop.counter }}" class="govuk-table">
+<div class="precedents govuk-!-padding-5">
+  <h3 class="govuk-heading-m">Previous assessments</h3>
+  {% for precedent in precedents %}
+  <table id="table-precedents-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
-      <h3 class="govuk-heading-m">Previous assessment</h3>
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Reference</td>
-        <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' precedent.queue precedent.application %}">{{ precedent.reference }}</a></td>
+        <td class="govuk-table__header"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' precedent.queue precedent.application %}" target="_blank">{{ precedent.control_list_entries | join:", " }} (opens in new tab)</a></td>
       </tr>
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Control list entry</td>
-        <td class="govuk-table__cell">{{ precedent.control_list_entries | join:", " }}</td>
+        <td class="govuk-table__header">Destinations</td>
+        <td class="govuk-table__cell">{{ precedent.destinations | join:", " }} {% if precedent.goods_starting_point == "NI" %}from Northern Ireland{% elif precedent.goods_starting_point == "GB" %}from Great Britain{% endif %}</td>
       </tr>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Regime</td>
@@ -17,13 +18,7 @@
         <td class="govuk-table__header">Report summary</td>
         <td class="govuk-table__cell">{{ precedent.report_summary }}</td>
       </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Quantity</td>
-        <td class="govuk-table__cell">{{ precedent.quantity|floatformat:"0" }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <td class="govuk-table__header">Destinations</td>
-        <td class="govuk-table__cell">{{ precedent.destinations | join:", " }}</td>
-      </tr>
     </tbody>
   </table>
+  {% endfor %}
+</div>

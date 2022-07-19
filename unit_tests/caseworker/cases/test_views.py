@@ -1,14 +1,11 @@
+import pytest
 import re
 import uuid
 
 from bs4 import BeautifulSoup
-from copy import deepcopy
 
 from django.test import override_settings
 from django.urls import reverse
-from django.conf import settings
-
-import pytest
 
 from core import client
 
@@ -40,13 +37,19 @@ def setup(
     mock_application_search,
     mock_good_on_appplication,
     mock_good_on_appplication_documents,
+    mock_standard_case_activity_filters,
+    mock_standard_case_activity_system_user,
+    mock_standard_case_ecju_queries,
+    mock_standard_case_assigned_queues,
+    mock_standard_case_documents,
+    mock_standard_case_additional_contacts,
 ):
     yield
 
 
-def test_case_audit_trail_system_user(authorized_client, open_case_pk, queue_pk):
+def test_case_audit_trail_system_user(authorized_client, data_standard_case, queue_pk):
     # given the case has activity from system user
-    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk})
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
     # when the case is viewed
     response = authorized_client.get(url)
@@ -175,7 +178,6 @@ good_review_parametrize_data = (
 
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_standard_review_goods(
     authorized_client,
     requests_mock,
@@ -211,7 +213,6 @@ def test_standard_review_goods(
 
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_open_review_goods(
     authorized_client,
     requests_mock,
@@ -245,7 +246,6 @@ def build_wizard_step_data(view_name, step_name, data):
     return step_data
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail(
     authorized_client,
     mock_application_search,
@@ -275,7 +275,6 @@ def test_good_on_application_detail(
     assert response.context_data["product_summary"] == None
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_firearm_detail(
     authorized_client,
     queue_pk,
@@ -316,7 +315,30 @@ def test_good_on_application_firearm_detail(
     assert response.context_data["product_summary"] == expected_product_summary
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
+def test_good_on_application_firearm_detail_non_firearm_type(
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+    data_standard_case,
+    mock_firearm_good_on_application,
+    mock_firearm_good_on_application_documents,
+    standard_firearm_expected_product_summary,
+    standard_firearm_expected_product_on_application_summary,
+):
+    # given I access good on application details for a good with control list entries and a part number
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["firearm_details"] = None
+    url = reverse("cases:good", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "good_pk": good["id"]})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    # and the view exposes the data that the template needs
+    assert response.context_data["good_on_application"] == good
+    assert response.context_data["case"] == data_standard_case["case"]
+    assert response.context_data["product_summary"] is None
+
+
 def test_good_on_application_detail_no_part_number(
     authorized_client,
     mock_application_search,
@@ -339,7 +361,6 @@ def test_good_on_application_detail_no_part_number(
     assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1" clc_rating:"ML2"'
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_no_part_number_no_control_list_entries(
     authorized_client,
     mock_application_search,
@@ -364,7 +385,6 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
     assert response.context_data["form"]["search_string"].initial == ""
 
 
-@override_settings(LITE_API_SEARCH_ENABLED=True)
 def test_good_on_application_detail_not_rated_at_application_level(
     authorized_client,
     mock_application_search,
@@ -511,3 +531,66 @@ def test_good_on_application_good_on_application_without_document_type(
 
     assert response.status_code == 200
     assert response.context["good_on_application_documents"] == {}
+
+
+def test_case_worker_view_with_null_caseworker(
+    authorized_client,
+    requests_mock,
+    queue_pk,
+    standard_case_pk,
+    data_standard_case,
+):
+    data_standard_case["case"]["case_officer"] = None
+
+    gov_users_url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(
+        url=gov_users_url,
+        json={
+            "results": [],
+        },
+    )
+
+    url = reverse(
+        "cases:case_officer",
+        kwargs={
+            "queue_pk": queue_pk,
+            "pk": standard_case_pk,
+        },
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["data"] == {}
+
+
+def test_case_worker_view_with_caseworker(
+    authorized_client,
+    requests_mock,
+    queue_pk,
+    standard_case_pk,
+    data_standard_case,
+):
+    case_officer_id = str(uuid.uuid4())
+    data_standard_case["case"]["case_officer"] = {
+        "id": case_officer_id,
+    }
+
+    gov_users_url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(
+        url=gov_users_url,
+        json={
+            "results": [],
+        },
+    )
+
+    url = reverse(
+        "cases:case_officer",
+        kwargs={
+            "queue_pk": queue_pk,
+            "pk": standard_case_pk,
+        },
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["data"] == {
+        "gov_user_pk": case_officer_id,
+    }

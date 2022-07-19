@@ -1,6 +1,8 @@
 from collections import defaultdict
 from core import client
 
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
+
 
 def get_good_precedents(request, case_id):
     """For all the goods in the the given case, return the precedents."""
@@ -16,21 +18,32 @@ def group_gonas_by_good(gonas):
     return goods
 
 
-def get_last_precedent(gona, good_precedents):
-    # TODO: This is for a weird corner case that broke during
-    # user testing - for some reason, submitted_at for a
-    # case that has been submitted was None!
-    precedents = [p for p in good_precedents[gona["good"]["id"]] if p["submitted_at"]]
-    if precedents:
-        precedents.sort(key=lambda p: p["submitted_at"])
-        return precedents[0]
-
-
-def get_recent_precedent(request, case):
-    """For all the goods in the given case, return the most recent precedents."""
+def get_first_precedents(request, case):
+    """For all the goods in the given case, return the first
+    precedent per CLEs"""
     results = get_good_precedents(request, case.id)["results"]
+    # assign default queues if precedents do not have any
+    for precedent in results:
+        precedent["queue"] = precedent.get("queue") or ALL_CASES_QUEUE_ID
     good_precedents = group_gonas_by_good(results)
-    return {gona["id"]: get_last_precedent(gona, good_precedents) for gona in case.goods}
+    results = {}
+    for gona in case.goods:
+        results[gona["id"]] = get_first_cles_precedents(gona, good_precedents)
+    return results
+
+
+def get_first_cles_precedents(gona, good_precedents):
+    # The following is for a weird case that broke during testing b/c
+    # submitted_at for a case that has been submitted was None!
+    precedents = [p for p in good_precedents[gona["good"]["id"]] if p["submitted_at"]]
+    cle_precedents = {}
+    for precedent in precedents:
+        cles = ",".join(sorted(precedent["control_list_entries"]))
+        # Add the precedent for this CLE if its not there yet or it is older
+        # than the one that is currently there
+        if cles not in cle_precedents or precedent["submitted_at"] < cle_precedents[cles]["submitted_at"]:
+            cle_precedents[cles] = precedent
+    return cle_precedents.values()
 
 
 def get_document(request, pk):

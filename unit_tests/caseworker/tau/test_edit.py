@@ -93,3 +93,23 @@ def test_form(
         "is_good_controlled": False,
         "is_wassenaar": False,
     }
+
+
+def test_control_list_suggestions_json(
+    authorized_client,
+    url,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mocker,
+    data_standard_case,
+):
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    mock_get_cle_suggestions_json = mocker.patch("caseworker.tau.views.get_cle_suggestions_json")
+    mock_get_cle_suggestions_json.return_value = {"mock": "suggestion"}
+
+    response = authorized_client.get(url)
+    assert response.context["cle_suggestions_json"] == {"mock": "suggestion"}

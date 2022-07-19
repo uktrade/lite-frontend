@@ -75,7 +75,7 @@
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">{{ inner.date }}</td>
                             <td class="govuk-table__cell govuk-table__cell rating-comment {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}" title="{{ inner.rating_comment }}">{{ inner.rating_comment }}</td>
                             <td class="govuk-table__cell govuk-table__cell {{ forloop.last|yesno:'govuk-!-padding-bottom-6,'}}">
-                                <a href="{% url 'search:product-details' pk=inner.id %}?{{ request.GET.urlencode }}">View</a>
+                                <a href="{% url 'search_proof_of_concept:product-details' pk=inner.id %}?{{ request.GET.urlencode }}">View</a>
                             </td>
                         </tr>
                     {% endfor %}

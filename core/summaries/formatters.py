@@ -25,6 +25,7 @@ FIREARM_LABELS = {
     "rfd-certificate-reference-number": "Certificate reference number",
     "rfd-certificate-date-of-expiry": "Certificate date of expiry",
     "is-good-controlled": "Do you know the product's control list entry?",
+    "assessed-control-list-entries": "Assessed control list entries",
     "control-list-entries": "Enter the control list entry",
     "is-pv-graded": "Does the product have a government security grading or classification?",
     "pv-grading-prefix": "Enter a prefix (optional)",
@@ -143,10 +144,14 @@ FIREARM_VALUE_FORMATTERS = {
     "is-registered-firearms-dealer": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "assessed-control-list-entries": template_formatter(
+        "goods/includes/assessed_control_list_entries.html",
+        lambda val: {"assessed_control_list_entries": val},
+    ),
     "is-pv-graded": mapping_formatter(
         {
             "yes": "Yes",
-            "no": "Not pv graded",
+            "no": "No",
         }
     ),
     "pv-grading-grading": key_value_formatter,

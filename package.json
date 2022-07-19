@@ -5,14 +5,15 @@
   "private": true,
   "scripts": {
     "build_exporter": "parcel build ./exporter/assets/javascripts/main.js ./exporter/assets/javascripts/cookie-policy-form.js --dist-dir exporter/assets/built --public-url /assets/",
-    "build_caseworker": "parcel build ./caseworker/assets/javascripts/{main,head}.js ./caseworker/assets/javascripts/cookie-policy-form.js ./caseworker/assets/javascripts/search-cases.js ./caseworker/assets/javascripts/review-good.js ./caseworker/assets/javascripts/search-products.js --dist-dir caseworker/assets/built --public-url /assets/",
+    "build_caseworker": "parcel build ./caseworker/assets/javascripts/{main,head,cookie-policy-form,search-cases,review-good,search-products,tau,tau-edit}.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch_exporter": "parcel watch ./exporter/assets/javascripts/{main,head}.js ./exporter/assets/javascripts/cookie-policy-form.js --dist-dir exporter/assets/built --public-url /assets/",
-    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head}.js ./caseworker/assets/javascripts/cookie-policy-form.js ./caseworker/assets/javascripts/search-cases.js ./caseworker/assets/javascripts/review-good.js ./caseworker/assets/javascripts/search-products.js --dist-dir caseworker/assets/built --public-url /assets/",
+    "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head,cookie-policy-form,search-cases,review-good,search-products,tau,tau-edit}.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch": "npm-run-all --parallel watch_exporter watch_caseworker",
-    "build": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
+    "build": "export NODE_ENV=production && npm install --no-save && npm-run-all --serial build_exporter build_caseworker",
     "test:e2e": "cypress run --browser chrome",
     "test:e2e:watch": "cypress open",
-    "test": "jest"
+    "test": "jest",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "engines": {
     "node": ">=16.10.0"
@@ -56,7 +57,7 @@
     "jquery": "^3.6.0",
     "lightpick": "^1.6.2",
     "mark.js": "^8.11.1",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "npm-run-all": "^4.1.5",
     "parcel": "^2.4.1",
     "sass": "^1.38.0",
@@ -65,5 +66,8 @@
     "tokenfield": "^1.5.0",
     "tributejs": "^5.1.3",
     "url-search-params-polyfill": "^8.1.0"
+  },
+  "alias": {
+    "core": "./core/assets/javascripts"
   }
 }

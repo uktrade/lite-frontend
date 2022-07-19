@@ -165,7 +165,7 @@
 			</div>
 		{% endif %}
 
-		<section class="app-tiles">
+		<section class="app-tiles" {% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}aria-label="Content currently unavailable"{% endif %}>
 			{# Compliance licence tile #}
 			<div class="app-tile{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %} app-tile__disabled{% endif %}">
 				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}

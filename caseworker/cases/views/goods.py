@@ -20,6 +20,7 @@ from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
 from caseworker.search.services import get_product_like_this
 from core.auth.views import LoginRequiredMixin
+from core.helpers import is_good_on_application_product_type
 from lite_forms.views import SingleFormView
 
 from django.shortcuts import redirect
@@ -248,12 +249,6 @@ class GoodDetails(LoginRequiredMixin, FormView):
         )
         return product_summary + product_on_application_summary
 
-    def is_product_type(self, good_on_application, product_type):
-        try:
-            return good_on_application["firearm_details"]["type"]["key"] == product_type
-        except (KeyError, TypeError):
-            return False
-
     def get_context_data(self, **kwargs):
         form = self.get_form()
 
@@ -276,7 +271,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
         product_summary = None
-        if self.is_product_type(self.object, "firearms"):
+        if is_good_on_application_product_type(self.object, "firearms"):
             product_summary = self.get_product_summary(
                 self.object, is_user_rfd, organisation_documents, good_on_application_documents
             )

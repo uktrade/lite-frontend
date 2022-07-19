@@ -3,23 +3,27 @@
 {% load svg %}
 
 {% block back_link %}
-	<div class="govuk-breadcrumbs">
-		<ol class="govuk-breadcrumbs__list">
-			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="{% url 'core:home' %}">
-					{% lcs 'hub.ACCOUNT_HOME' %}
-				</a>
-			</li>
-			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="{% url 'goods:goods' %}">
-					{% lcs 'goods.GoodsList.TITLE' %}
-				</a>
-			</li>
-			<li class="govuk-breadcrumbs__list-item">
-				{% lcs 'goods.GoodPage.TITLE' %}
-			</li>
-		</ol>
-	</div>
+	{% if from_preexisting_url %}
+		<a href={{ from_preexisting_url }} class="govuk-back-link">Back</a>
+	{% else %}
+		<div class="govuk-breadcrumbs">
+			<ol class="govuk-breadcrumbs__list">
+				<li class="govuk-breadcrumbs__list-item">
+					<a class="govuk-breadcrumbs__link" href="{% url 'core:home' %}">
+						{% lcs 'hub.ACCOUNT_HOME' %}
+					</a>
+				</li>
+				<li class="govuk-breadcrumbs__list-item">
+					<a class="govuk-breadcrumbs__link" href="{% url 'goods:goods' %}">
+						{% lcs 'goods.GoodsList.TITLE' %}
+					</a>
+				</li>
+				<li class="govuk-breadcrumbs__list-item">
+					{% lcs 'goods.GoodPage.TITLE' %}
+				</li>
+			</ol>
+		</div>
+	{% endif %}
 {% endblock %}
 
 {% block two_thirds %}

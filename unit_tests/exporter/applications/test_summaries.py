@@ -109,7 +109,7 @@ def test_firearm_product_summary():
         ],
         "is_pv_graded": {
             "key": "no",
-            "value": "Not pv graded",
+            "value": "No",
         },
         "is_document_available": True,
         "is_document_sensitive": False,
@@ -168,7 +168,7 @@ def test_firearm_product_summary():
         ),
         (
             "is-pv-graded",
-            "Not pv graded",
+            "No",
             "Does the product have a government security grading or classification?",
         ),
         (

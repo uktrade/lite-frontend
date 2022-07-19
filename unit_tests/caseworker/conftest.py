@@ -106,6 +106,24 @@ def mock_standard_case(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    data_standard_case["case"]["queue_details"] = [
+        {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "LU Post circulation", "alias": "LU_POST_CIRC_FINALISE"},
+    ]
+    yield requests_mock.get(url=url, json=data_standard_case)
+
+
+@pytest.fixture
+def mock_standard_case_on_fcdo_countersigning_queue(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    data_standard_case["case"]["queue_details"] = [
+        {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "FCDO Countersigning", "alias": "FCDO_COUNTER_SIGNING"},
+    ]
+    yield requests_mock.get(url=url, json=data_standard_case)
+
+
+@pytest.fixture
 def mock_case(
     mock_case_ecju_queries,
     mock_case_assigned_queues,
@@ -227,6 +245,45 @@ def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses):
     requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=data)
 
     yield data
+
+
+@pytest.fixture
+def mock_gov_fcdo_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+    mock_gov_user["user"]["team"] = {
+        "id": "521154de-f39e-45bf-9922-baaaaaa",
+        "name": "FCDO",
+        "alias": "FCDO",
+    }
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
+
+
+@pytest.fixture
+def mock_gov_tau_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+    mock_gov_user["user"]["team"] = {
+        "id": "521154de-f39e-45bf-9922-baaaaaa",
+        "name": "TAU",
+        "alias": "TAU",
+    }
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
+
+
+@pytest.fixture
+def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+    mock_gov_user["user"]["team"] = {
+        "id": "521154de-f39e-45bf-9922-baaaaaa",
+        "name": "Licencing Unit",
+        "alias": "LICENSING_UNIT",
+    }
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
 
 
 @pytest.fixture
@@ -1290,13 +1347,14 @@ def mock_precedents_api(requests_mock, data_standard_case, data_queue):
                     "application": case_id,
                     "queue": data_queue["id"],
                     "reference": data_standard_case["case"]["reference_code"],
-                    "destinations": ["GB"],
+                    "destinations": ["France"],
                     "control_list_entries": ["ML1a"],
                     "wassenaar": False,
                     "quantity": 10.0,
                     "value": "test-value",
                     "report_summary": "test-report-summary",
                     "submitted_at": "2021-06-21T11:27:36.145000Z",
+                    "goods_starting_point": "GB",
                 },
                 {
                     "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
@@ -1304,13 +1362,14 @@ def mock_precedents_api(requests_mock, data_standard_case, data_queue):
                     "application": case_id,
                     "queue": data_queue["id"],
                     "reference": data_standard_case["case"]["reference_code"],
-                    "destinations": ["GB"],
+                    "destinations": ["France"],
                     "control_list_entries": ["ML1a"],
                     "wassenaar": False,
                     "quantity": 10.0,
                     "value": "test-value",
                     "report_summary": "test-report-summary",
                     "submitted_at": "2021-06-20T11:27:36.145000Z",
+                    "goods_starting_point": "NI",
                 },
             ]
         },
