@@ -10,20 +10,6 @@ from exporter.core.organisation.forms import (
     RegisterDetailsForm,
     RegisterAddressDetailsForm,
 )
-from unit_tests.helpers import reload_urlconf
-
-
-@pytest.fixture(autouse=True)
-def setup(no_op_storage, settings):
-    settings.FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = True
-    settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED = True
-    reload_urlconf(["exporter.core.urls", settings.ROOT_URLCONF, "conf.exporter", "conf.base"])
-    # Need to add this since reloading conf doesn't appear to work. Can remove once FF is being destroyed
-    settings.LOGOUT_URL = f"{settings.AUTHBROKER_URL}/logout"
-    settings.AUTHBROKER_SCOPE = "openid,email,offline_access"
-    settings.AUTHBROKER_AUTHORIZATION_URL = urljoin(settings.AUTHBROKER_URL, "authorize")
-    settings.AUTHBROKER_TOKEN_URL = urljoin(settings.AUTHBROKER_URL, "token")
-    settings.AUTHBROKER_PROFILE_URL = urljoin(settings.AUTHBROKER_URL, "userinfo")
 
 
 @pytest.fixture()
