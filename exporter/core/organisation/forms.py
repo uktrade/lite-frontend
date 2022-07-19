@@ -238,3 +238,221 @@ class SelectOrganisationForm(BaseForm):
 
     def get_layout_fields(self):
         return ("organisation",)
+
+
+class RegistrationEditName(BaseForm):
+    class Layout:
+        TITLE = "First and last name"
+
+    name = forms.CharField(
+        label="First and last name",
+        error_messages={
+            "required": "Enter a name",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("name",)
+
+
+class RegistrationEditEoriNumber(BaseForm):
+    class Layout:
+        TITLE = "EORI number"
+
+    eori_number = forms.CharField(
+        label="European Union registration and identification number (EORI)",
+        error_messages={
+            "required": "Enter a EORI number",
+        },
+        validators=[validate_eori],
+    )
+
+    def get_layout_fields(self):
+        return ("eori_number",)
+
+
+class RegistrationEditVatNumber(BaseForm):
+    class Layout:
+        TITLE = "UK VAT number "
+
+    vat_number = forms.CharField(required=False, label="UK VAT number (optional)", validators=[validate_vat])
+
+    def get_layout_fields(self):
+        return ("vat_number",)
+
+
+class RegistrationEditSICNumber(BaseForm):
+    class Layout:
+        TITLE = "SIC Code"
+
+    sic_number = forms.CharField(
+        label="SIC Code",
+        error_messages={
+            "required": "Enter a SIC code",
+        },
+        validators=[validate_sic_number],
+    )
+
+    def get_layout_fields(self):
+        return ("sic_number",)
+
+
+class RegistrationEditRegistrationNumber(BaseForm):
+    class Layout:
+        TITLE = "Company registration number"
+
+    registration_number = forms.CharField(
+        label="Company registration number (CRN)",
+        error_messages={
+            "required": "Enter a registration number",
+        },
+        validators=[validate_registration],
+    )
+
+    def get_layout_fields(self):
+        return ("registration_number",)
+
+
+class RegistrationEditAddressName(BaseForm):
+    class Layout:
+        TITLE = "Name of headquarters"
+
+    name = forms.CharField(
+        label="Name of headquarters",
+        error_messages={
+            "required": "Enter a name for your site",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("name",)
+
+
+class RegistrationEditAddress(BaseForm):
+    class Layout:
+        TITLE = "Address"
+
+    address = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Address",
+        error_messages={
+            "required": "Enter an address",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("address",)
+
+
+class RegistrationEditAddress1(BaseForm):
+    class Layout:
+        TITLE = "Change address1"
+
+    address_line_1 = forms.CharField(
+        label="Building and street",
+        error_messages={
+            "required": "Enter a real building and street name",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("address_line_1",)
+
+
+class RegistrationEditAddress2(BaseForm):
+    class Layout:
+        TITLE = "Address"
+
+    address_line_2 = forms.CharField(
+        label="",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return ("address_line_2",)
+
+
+class RegistrationEditCity(BaseForm):
+    class Layout:
+        TITLE = "City"
+
+    city = forms.CharField(
+        label="Town or city",
+        error_messages={
+            "required": "Enter a real city",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("city",)
+
+
+class RegistrationEditRegion(BaseForm):
+    class Layout:
+        TITLE = "County or state"
+
+    region = forms.CharField(
+        label="County or state",
+        error_messages={
+            "required": "Enter a real region",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("region",)
+
+
+class RegistrationEditPostCode(BaseForm):
+    class Layout:
+        TITLE = "Postcode"
+
+    postcode = forms.CharField(
+        label="Postcode",
+        error_messages={
+            "required": "Enter a real postcode",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("postcode",)
+
+
+class RegistrationEditPhoneNumber(BaseForm):
+    class Layout:
+        TITLE = "Phone number"
+
+    phone_number = forms.CharField(
+        label="Phone number",
+        error_messages={
+            "required": "Enter a phone number",
+        },
+        validators=[validate_phone],
+    )
+
+    def get_layout_fields(self):
+        return ("phone_number",)
+
+
+class RegistrationEditWebsite(BaseForm):
+    class Layout:
+        TITLE = "Website"
+
+    website = forms.CharField(label="Website", required=False, validators=[validate_website])
+
+    def get_layout_fields(self):
+        return ("website",)
+
+
+class RegistrationEditCountry(BaseForm):
+    class Layout:
+        TITLE = "Country"
+
+    country = forms.CharField(
+        label="Country",
+        error_messages={
+            "required": "Enter a country",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("country",)

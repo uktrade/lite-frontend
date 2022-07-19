@@ -101,6 +101,24 @@ def mock_exporter_user_me(requests_mock, lite_api_user_id):
                 "name": "Archway Communications",
                 "joined_at": "2020-06-29T09:30:58.425994Z",
                 "status": {"key": "active", "value": "Active"},
+                "eori_number": "1234567890AAA",
+                "sic_number": "2345",
+                "vat_number": "GB123456789",
+                "registration_number": "09876543",
+                "phone_number": "+441234567890",
+                "website": "http://www.notreal.com",
+                "primary_site": {
+                    "name": "joe",
+                    "address": {
+                        "address": "address of org",
+                        "address_line_1": "xyz",
+                        "address_line_2": "",
+                        "city": "c1",
+                        "region": "r",
+                        "postcode": "pc",
+                        "country": {"id": "usa"},
+                    },
+                },
             }
         ],
     }
@@ -283,9 +301,8 @@ def data_organisations():
 @pytest.fixture
 def mock_get_organisation(requests_mock, mock_exporter_user_me):
     organisation_id = mock_exporter_user_me["organisations"][0]["id"]
-    organisation_name = mock_exporter_user_me["organisations"][0]["name"]
     url = client._build_absolute_uri(f"/organisations/{organisation_id}")
-    data = {"id": organisation_id, "name": organisation_name}
+    data = mock_exporter_user_me["organisations"][0]
     requests_mock.get(url=url, json=data)
     yield data
 

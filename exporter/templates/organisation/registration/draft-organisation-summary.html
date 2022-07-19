@@ -1,0 +1,33 @@
+{% extends 'layouts/base.html' %}
+{% block back_link %}
+{% endblock %}
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-xl">
+                Check your answer before completing your application
+            </h1>
+        </div>
+    </div>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="registration-draft-details">
+        {% if organisation.type.key == 'individual' %}
+            {% include 'organisation/registration/individual-details.html' %}
+        {% else %}
+            {% include 'organisation/registration/organisation-details.html' %}
+        {% endif %}
+    </dl>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="registration-draft-details-address">
+        {% if is_uk_based %}
+            {% include 'organisation/registration/uk-address.html' %}
+        {% else %}
+            {% include 'organisation/registration/non-uk-address.html' %}
+        {% endif %}
+    </dl>
+    <form action="" method="post">
+        {% csrf_token %}
+        <button type="submit" class="govuk-button" id="save">Save and Accept</button>
+    </form>
+{% endblock %}

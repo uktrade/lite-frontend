@@ -214,3 +214,70 @@ def test_select_organisation_form_valid(data_organisations):
         organisations=data_organisations, data={"organisation": data_organisations[0]["id"]}
     )
     assert form.is_valid()
+
+
+@pytest.mark.parametrize(
+    "data, valid, form_field, error_message, form_class",
+    (
+        ({"name": "test"}, True, "name", None, forms.RegistrationEditName),
+        ({"name": ""}, False, "name", "Enter a name", forms.RegistrationEditName),
+        ({"eori_number": "GB205672212000"}, True, "eori_number", None, forms.RegistrationEditEoriNumber),
+        ({"eori_number": "ewfwef"}, False, "eori_number", "Invalid UK EORI number", forms.RegistrationEditEoriNumber),
+        ({"vat_number": "GB123456789"}, True, "vat_number", None, forms.RegistrationEditVatNumber),
+        (
+            {"vat_number": "ewfwef"},
+            False,
+            "vat_number",
+            "Standard UK VAT numbers are 9 digits long",
+            forms.RegistrationEditVatNumber,
+        ),
+        ({"sic_number": "12345"}, True, "sic_number", None, forms.RegistrationEditSICNumber),
+        ({"sic_number": "abc"}, False, "sic_number", "Only enter numbers", forms.RegistrationEditSICNumber),
+        (
+            {"registration_number": "12345678"},
+            True,
+            "registration_number",
+            None,
+            forms.RegistrationEditRegistrationNumber,
+        ),
+        (
+            {"registration_number": "1234567x"},
+            False,
+            "registration_number",
+            "Registration numbers are 8 numbers long",
+            forms.RegistrationEditRegistrationNumber,
+        ),
+        ({"name": "Can building"}, True, "name", None, forms.RegistrationEditAddressName),
+        ({"name": ""}, False, "name", "Enter a name for your site", forms.RegistrationEditAddressName),
+        ({"address": "address 0"}, True, "address", None, forms.RegistrationEditAddress),
+        ({"address": ""}, False, "address", "Enter an address", forms.RegistrationEditAddress),
+        ({"address_line_1": "55 lite av"}, True, "address_line_1", None, forms.RegistrationEditAddress1),
+        (
+            {"address_line_1": ""},
+            False,
+            "address_line_1",
+            "Enter a real building and street name",
+            forms.RegistrationEditAddress1,
+        ),
+        ({"address_line_2": "lite town"}, True, "address_line_2", None, forms.RegistrationEditAddress2),
+        ({"city": "lite town"}, True, "city", None, forms.RegistrationEditCity),
+        ({"city": ""}, False, "city", "Enter a real city", forms.RegistrationEditCity),
+        ({"region": "lite region"}, True, "region", None, forms.RegistrationEditRegion),
+        ({"region": ""}, False, "region", "Enter a real region", forms.RegistrationEditRegion),
+        ({"postcode": "LR1 8GG"}, True, "postcode", None, forms.RegistrationEditPostCode),
+        ({"postcode": ""}, False, "postcode", "Enter a real postcode", forms.RegistrationEditPostCode),
+        ({"phone_number": "+441234567890"}, True, "phone_number", None, forms.RegistrationEditPhoneNumber),
+        ({"phone_number": "424rwew"}, False, "phone_number", "Invalid phone number", forms.RegistrationEditPhoneNumber),
+        ({"website": "http://www.notreal.com"}, True, "website", None, forms.RegistrationEditWebsite),
+        ({"website": "efew"}, False, "website", "Enter a valid URL", forms.RegistrationEditWebsite),
+        ({"country": "UK"}, True, "country", None, forms.RegistrationEditCountry),
+        ({"country": ""}, False, "country", "Enter a country", forms.RegistrationEditCountry),
+    ),
+)
+def test_draft_registration_single_edit_form(data, valid, form_field, error_message, form_class):
+    form = form_class(data=data)
+    assert form.is_valid() == valid
+    if not valid:
+        assert form.errors[form_field][0] == error_message
+    else:
+        assert form.cleaned_data[form_field]

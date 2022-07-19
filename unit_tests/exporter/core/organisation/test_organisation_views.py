@@ -41,8 +41,25 @@ def registration_data():
 
 
 @pytest.fixture(autouse=True)
-def mock_organisations_post(requests_mock):
-    return requests_mock.post(url="/organisations/", json={}, status_code=201)
+def mock_organisations_post(requests_mock, mock_exporter_user_me):
+    return_value = {
+        "id": mock_exporter_user_me["organisations"][0]["id"],
+        "name": mock_exporter_user_me["organisations"][0]["name"],
+    }
+    return requests_mock.post(url="/organisations/", json=return_value, status_code=201)
+
+
+@pytest.fixture
+def mock_edit_organisation(requests_mock, mock_exporter_user_me):
+    organisations_id = mock_exporter_user_me["organisations"][0]["id"]
+    return requests_mock.put(url=f"/organisations/{organisations_id}/update/", json={}, status_code=200)
+
+
+@pytest.fixture(autouse=True)
+def mock_sso_userinfo(requests_mock, mock_exporter_user):
+    return requests_mock.get(
+        url="https://oidc.integration.account.gov.uk/userinfo", json={"email": "foo@example.com"}, status_code=200
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -163,16 +180,18 @@ def test_registration_individual_end_to_end_uk_based(
             "address": {"address_line_1": "xyz", "address_line_2": "", "city": "c1", "region": "r", "postcode": "pc"},
         },
         "phone_number": "+441234567890",
+        "status": "draft",
         "website": "http://www.notreal.com",
         "user": {"email": "foo@example.com"},
     }
+
     assert mock_authenticate_user_post.last_request.json() == {
         "email": "foo@example.com",
         "user_profile": {"first_name": "Foo", "last_name": "Bar"},
     }
 
     assert response.status_code == 302
-    assert response.url == "/register-an-organisation/confirm/?animate=True"
+    assert response.url == reverse("core:register_draft_confirm")
 
 
 def test_registration_individual_end_to_end_non_uk_based(
@@ -214,6 +233,7 @@ def test_registration_individual_end_to_end_non_uk_based(
         "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",
+        "status": "draft",
         "user": {"email": "foo@example.com"},
     }
     assert mock_authenticate_user_post.last_request.json() == {
@@ -222,7 +242,7 @@ def test_registration_individual_end_to_end_non_uk_based(
     }
 
     assert response.status_code == 302
-    assert response.url == "/register-an-organisation/confirm/?animate=True"
+    assert response.url == reverse("core:register_draft_confirm")
 
 
 def test_registration_commercial_end_to_end(
@@ -277,6 +297,7 @@ def test_registration_commercial_end_to_end(
         "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",
+        "status": "draft",
         "user": {"email": "foo@example.com"},
     }
     assert mock_authenticate_user_post.last_request.json() == {
@@ -285,7 +306,7 @@ def test_registration_commercial_end_to_end(
     }
 
     assert response.status_code == 302
-    assert response.url == "/register-an-organisation/confirm/?animate=True"
+    assert response.url == reverse("core:register_draft_confirm")
 
 
 def test_select_organisation_load(authorized_client, mock_exporter_user_me):
@@ -342,3 +363,87 @@ def test_select_organisation_licenses(authorized_client, mock_get_organisation, 
     )
     assert response.status_code == 302
     assert response.url == "/applications/?submitted=False"
+
+
+@pytest.mark.parametrize(
+    "data, field_name, post_data",
+    (
+        (
+            {"name": "test"},
+            "name",
+            {"name": "test"},
+        ),
+        (
+            {"eori_number": "GB205672212000"},
+            "eori_number",
+            {"eori_number": "GB205672212000"},
+        ),
+        (
+            {"vat_number": "GB123456789"},
+            "vat_number",
+            {"vat_number": "GB123456789"},
+        ),
+        (
+            {"sic_number": "12345"},
+            "sic_number",
+            {"sic_number": "12345"},
+        ),
+        (
+            {"registration_number": "12345678"},
+            "registration_number",
+            {"registration_number": "12345678"},
+        ),
+        (
+            {"address": "address 0"},
+            "address",
+            {"site": {"address": {"address": "address 0", "country": {"id": "usa"}}}},
+        ),
+        (
+            {"address_line_1": "55 lite av"},
+            "address_line_1",
+            {"site": {"address": {"address_line_1": "55 lite av"}}},
+        ),
+        (
+            {"address_line_2": ""},
+            "address_line_2",
+            {"site": {"address": {"address_line_2": ""}}},
+        ),
+        (
+            {"city": "lite town"},
+            "city",
+            {"site": {"address": {"city": "lite town"}}},
+        ),
+        (
+            {"region": "lite region"},
+            "region",
+            {"site": {"address": {"region": "lite region"}}},
+        ),
+        (
+            {"postcode": "LR1 8GG"},
+            "postcode",
+            {"site": {"address": {"postcode": "LR1 8GG"}}},
+        ),
+        (
+            {"phone_number": "+441234567890"},
+            "phone_number",
+            {"phone_number": "+441234567890"},
+        ),
+        (
+            {"website": "http://www.notreal.com"},
+            "website",
+            {"website": "http://www.notreal.com"},
+        ),
+        (
+            {"country": "UK"},
+            "country",
+            {"site": {"address": {"country": "UK"}}},
+        ),
+    ),
+)
+def test_edit_registration_views(data, field_name, post_data, authorized_client, mock_edit_organisation):
+    url = reverse(f"core:register_draft_edit", kwargs={"field": field_name})
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+
+    assert mock_edit_organisation.last_request.json() == post_data
+    assert response.url == reverse("core:register_draft_confirm")

@@ -1,0 +1,34 @@
+       <p class="govuk-body govuk-!-font-weight-bold ">Register a private individual</p>
+            <div class="govuk-summary-list__row" id="Name">
+                <dt class="govuk-summary-list__key">
+                    First and last name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.name }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'name' %}">Change</a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row" id="eori_number">
+                <dt class="govuk-summary-list__key">
+                    EORI number
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.eori_number }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'eori_number' %}">Change</a>
+                </dd>
+            </div>
+        <div class="govuk-summary-list__row" id="vat_number">
+                <dt class="govuk-summary-list__key">
+                    UK VAT Number
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.vat_number }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'vat_number' %}">Change</a>
+                </dd>
+        </div>

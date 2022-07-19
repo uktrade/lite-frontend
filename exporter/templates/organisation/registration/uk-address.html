@@ -1,0 +1,89 @@
+ <p class="govuk-body govuk-!-font-weight-bold ">Where in the United Kingdom are you based ?</p>
+            <div class="govuk-summary-list__row" id="address_name">
+                <dt class="govuk-summary-list__key">
+                    Name of headquarters
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.primary_site.name }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'address_name' %}">Change</a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row" id="address_line_1">
+                <dt class="govuk-summary-list__key">
+                    Building and street
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.primary_site.address.address_line_1 }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'address_line_1' %}">Change</a>
+                </dd>
+            </div>
+             <div class="govuk-summary-list__row" id="address_line_2">
+                <dt class="govuk-summary-list__key">
+                 </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.primary_site.address.address_line_2 }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'address_line_2' %}">Change</a>
+                </dd>
+            </div>
+        <div class="govuk-summary-list__row" id="city">
+                <dt class="govuk-summary-list__key">
+                    Town or city
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.primary_site.address.city }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'city' %}">Change</a>
+                </dd>
+        </div>
+
+        <div class="govuk-summary-list__row" id="region">
+            <dt class="govuk-summary-list__key">
+                County or state
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ organisation.primary_site.address.region }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'region' %}">Change</a>
+            </dd>
+        </div>
+            <div class="govuk-summary-list__row" id="postcode">
+            <dt class="govuk-summary-list__key">
+                Postcode
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ organisation.primary_site.address.postcode }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'postcode' %}">Change</a>
+            </dd>
+        </div>
+    <div class="govuk-summary-list__row" id="phone_number">
+            <dt class="govuk-summary-list__key">
+                Phone number
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ organisation.phone_number }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'phone_number' %}">Change</a>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row" id="website">
+            <dt class="govuk-summary-list__key">
+                Website
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ organisation.website }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'website' %}">Change</a>
+            </dd>
+        </div>

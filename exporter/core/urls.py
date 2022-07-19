@@ -2,7 +2,12 @@ from django.urls import path
 from django.conf import settings
 
 from exporter.core import views
-from exporter.core.organisation.views import Registration, SelectOrganisation
+from exporter.core.organisation.views import (
+    Registration,
+    SelectOrganisation,
+    DraftConfirmation,
+    OrganisationEditField,
+)
 
 
 app_name = "core"
@@ -18,6 +23,16 @@ if settings.FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED:
             "register-an-organisation/confirm/",
             views.RegisterAnOrganisationConfirmation.as_view(),
             name="register_an_organisation_confirm",
+        ),
+        path(
+            "register-an-organisation/draft-confirmation/",
+            DraftConfirmation.as_view(),
+            name="register_draft_confirm",
+        ),
+        path(
+            "register-an-organisation/edit/<str:field>/",
+            OrganisationEditField.as_view(),
+            name="register_draft_edit",
         ),
     ]
 

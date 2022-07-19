@@ -1,0 +1,56 @@
+       <p class="govuk-body govuk-!-font-weight-bold">Register a commercial organisation</p>
+            <div class="govuk-summary-list__row" id="Name">
+                <dt class="govuk-summary-list__key">
+                    First and last name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.name }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'name' %}">Change</a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row" id="eori_number">
+                <dt class="govuk-summary-list__key">
+                    European Union registration and identification number (EORI)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.eori_number }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'eori_number' %}">Change</a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row" id="sic_number">
+                <dt class="govuk-summary-list__key">
+                    SIC Code
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.sic_number }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'sic_number' %}">Change</a>
+                </dd>
+            </div>
+        <div class="govuk-summary-list__row" id="vat_number">
+                <dt class="govuk-summary-list__key">
+                    VAT Number
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ organisation.vat_number }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'vat_number' %}">Change</a>
+                </dd>
+        </div>
+            <div class="govuk-summary-list__row" id="registration_number">
+            <dt class="govuk-summary-list__key">
+                Company registration number (CRN)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ organisation.registration_number }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:register_draft_edit' 'registration_number' %}">Change</a>
+            </dd>
+        </div>
