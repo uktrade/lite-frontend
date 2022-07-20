@@ -246,13 +246,6 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
             is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
 
         control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
-        if good_on_application["is_good_controlled"] is not None:
-            is_controlled_application = good_on_application["is_good_controlled"]["value"]
-            if is_controlled != is_controlled_application:
-                is_controlled = f"<span class='strike'>{is_controlled}</span><br> {is_controlled_application}"
-            control_list_application = convert_control_list_entries(good_on_application["control_list_entries"])
-            if control_list_entries != control_list_application:
-                control_list_entries = f"<span class='strike'>{control_list_entries}</span> {control_list_application}"
 
         if good_on_application["good"].get("name"):
             name = good_on_application["good"]["name"]
