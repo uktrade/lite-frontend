@@ -1,10 +1,11 @@
+{% if precedents %}
 <div class="precedents govuk-!-padding-5">
   <h3 class="govuk-heading-m">Previous assessments</h3>
   {% for precedent in precedents %}
   <table id="table-precedents-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
       <tr class="govuk-table__row">
-        <td class="govuk-table__header"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' precedent.queue precedent.application %}" target="_blank">{{ precedent.control_list_entries | join:", " }} (opens in new tab)</a></td>
+        <td colspan="2" class="govuk-table__header"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' precedent.queue precedent.application %}" target="_blank">{{ precedent.control_list_entries | join:", " }} (opens in new tab)</a></td>
       </tr>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Destinations</td>
@@ -22,3 +23,4 @@
   </table>
   {% endfor %}
 </div>
+{% endif %}
