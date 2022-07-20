@@ -1,3 +1,4 @@
+{% if precedents %}
 <div class="precedents govuk-!-padding-5">
   <h3 class="govuk-heading-m">Previous assessments</h3>
   {% for precedent in precedents %}
@@ -22,3 +23,4 @@
   </table>
   {% endfor %}
 </div>
+{% endif %}
