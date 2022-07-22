@@ -9,9 +9,9 @@ from .constants import OrganisationStatus
 logger = logging.getLogger(__name__)
 
 ignore_paths = [
-    reverse("core:register_draft_confirm"),
-    reverse("auth:logout"),
-    reverse("core:register_an_organisation_confirm"),
+    reverse_lazy("core:register_draft_confirm"),
+    reverse_lazy("auth:logout"),
+    reverse_lazy("core:register_an_organisation_confirm"),
 ]
 
 
