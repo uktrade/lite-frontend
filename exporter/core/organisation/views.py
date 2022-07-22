@@ -19,6 +19,7 @@ from exporter.auth.services import authenticate_exporter_user
 from exporter.organisation.members.services import get_user
 from exporter.core.services import get_organisation
 from exporter.core.common.exceptions import ServiceError
+from exporter.core.constants import OrganisationStatus
 
 from .constants import RegistrationSteps
 from .forms import (
@@ -55,7 +56,7 @@ class OrganisationMixin:
     @cached_property
     def organisation(self):
         try:
-            organisation = get_user(self.request, params={"draft": True})["organisations"][0]
+            organisation = get_user(self.request, params={OrganisationStatus.DRAFT: True})["organisations"][0]
             self.organisation_data = get_organisation(self.request, organisation["id"])
         except requests.exceptions.HTTPError:
             raise Http404("Couldn't get organisation")
@@ -97,7 +98,7 @@ class Registration(
     )
     def post_registration(self, form_dict):
         payload = RegistrationPayloadBuilder().build(form_dict)
-        payload["status"] = "draft"
+        payload["status"] = OrganisationStatus.DRAFT
         return register_organisation(
             self.request,
             payload,
@@ -219,7 +220,7 @@ class DraftConfirmation(TemplateView, OrganisationMixin):
         return context
 
     def post(self, request, *args, **kwargs):
-        update_organisation(request, self.organisation_id, {"status": "in_review"})
+        update_organisation(request, self.organisation_id, {"status": OrganisationStatus.REVIEW})
         return redirect(reverse("core:register_an_organisation_confirm") + "?animate=True")
 
 

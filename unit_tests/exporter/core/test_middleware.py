@@ -26,6 +26,23 @@ def mock_get_user():
     yield mock.patch("exporter.core.middleware.get_user", {"organisations": []})
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "/register-an-organisation/draft-confirmation/",
+        "/auth/logout/",
+        "/register-an-organisation/confirm/",
+        "/register-an-organisation/edit/name",
+    ],
+)
+def test_organisation_redirect_ignore_paths(rf, url):
+    request = rf.get(url)
+    get_response = mock.Mock(return_value=Response())
+    instance = OrganisationRedirectMiddleWare(get_response)
+    response = instance(request)
+    assert response.status_code == 200
+
+
 def test_organisation_redirect_logged_in(mock_token_request):
     # Instantiate and call the middleware
     get_response = mock.Mock(return_value=Response())

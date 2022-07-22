@@ -13,7 +13,7 @@ def test_register_name(authorized_client):
     assert response.status_code == 200
 
 
-def test_register_name_save(authorized_client, requests_mock, mock_get_profile, settings):
+def test_register_name_save(authorized_client, requests_mock, mock_get_profile):
     session = authorized_client.session
     session["first_name"] = None
     session["last_name"] = None

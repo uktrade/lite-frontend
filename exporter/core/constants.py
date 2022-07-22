@@ -238,3 +238,9 @@ class PartyDocumentType:
 
 class DocumentType:
     RFD_CERTIFICATE = "rfd-certificate"
+
+
+class OrganisationStatus:
+    DRAFT = "draft"
+    REVIEW = "in_review"
+    ACTIVE = "active"

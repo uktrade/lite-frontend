@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 
 from django.test import Client
 from django.urls import reverse
+from django.conf import settings
 
 from exporter.core.organisation.constants import RegistrationSteps
 from exporter.core.organisation.forms import (
@@ -52,9 +53,7 @@ def mock_edit_organisation(requests_mock, mock_exporter_user_me):
 
 @pytest.fixture(autouse=True)
 def mock_sso_userinfo(requests_mock, mock_exporter_user):
-    return requests_mock.get(
-        url="https://oidc.integration.account.gov.uk/userinfo", json={"email": "foo@example.com"}, status_code=200
-    )
+    return requests_mock.get(url=settings.AUTHBROKER_PROFILE_URL, json={"email": "foo@example.com"}, status_code=200)
 
 
 @pytest.fixture(autouse=True)
@@ -308,7 +307,7 @@ def test_registration_commercial_end_to_end(
 def test_select_organisation_load(authorized_client, mock_exporter_user_me):
 
     mock_exporter_user_me["organisations"] = mock_exporter_user_me["organisations"] + [
-        {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2"}
+        {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2", "status": {"key": "active"}}
     ]
     url = reverse("core:select_organisation")
     response = authorized_client.get(url)
@@ -329,7 +328,7 @@ def test_select_organisation_licenses(authorized_client, mock_get_organisation, 
     session.save()
 
     mock_exporter_user_me["organisations"] = mock_exporter_user_me["organisations"] + [
-        {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2"}
+        {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2", "status": {"key": "active"}}
     ]
     url = reverse("core:select_organisation")
     response = authorized_client.post(url, data={"organisation": mock_exporter_user_me["organisations"][0]["id"]})

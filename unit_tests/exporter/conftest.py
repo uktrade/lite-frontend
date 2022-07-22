@@ -28,7 +28,7 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True)
-def default_feature_flags(no_op_storage, settings):
+def default_feature_flags(settings):
     settings.FEATURE_FLAG_PRODUCT_2_0 = False
     settings.FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = True
     settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED = True
@@ -163,7 +163,7 @@ def authorized_client(authorized_client_factory, mock_exporter_user):
     return authorized_client_factory(mock_exporter_user["user"])
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def mock_get_profile(requests_mock, mock_exporter_user):
     url = settings.AUTHBROKER_PROFILE_URL
     yield requests_mock.get(url=url, json={"sub": "123456789xyzqpr", "email": mock_exporter_user["user"]["email"]})
