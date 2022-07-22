@@ -619,6 +619,7 @@ def standard_case_with_advice(current_user):
                                 "text": "clc entry description",
                             }
                         ],
+                        "status": {"key": "draft", "value": "Draft"},
                         "description": "Pair of shotgun barrels",
                         "is_good_controlled": {"key": "True", "value": "Yes"},
                         "name": "Pair of shotgun barrels",
@@ -638,6 +639,7 @@ def standard_case_with_advice(current_user):
                     "good": {
                         "comment": None,
                         "control_list_entries": [],
+                        "status": {"key": "draft", "value": "Draft"},
                         "description": "Pair of shotgun barrels",
                         "is_good_controlled": {"key": "True", "value": "Yes"},
                         "name": "Pair of shotgun barrels 12 bore",
@@ -1068,7 +1070,7 @@ def mock_firearm_good_on_application_documents(requests_mock, mock_case, data_st
     return requests_mock.get(url=url, json={"documents": []})
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def data_search():
     return {
         "count": 1,
@@ -1112,22 +1114,16 @@ def data_search():
     }
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def mock_application_search(requests_mock, data_search):
     url = client._build_absolute_uri("/search/application/search/")
-    yield requests_mock.get(url=url, json=data_search)
+    return requests_mock.get(url=url, json=data_search)
 
 
-@pytest.fixture(autouse=True)
-def mock_product_search(requests_mock, data_search):
-    url = client._build_absolute_uri("/search/product/search/")
-    yield requests_mock.get(url=url, json=data_search)
-
-
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def mock_product_more_like_this(requests_mock, data_search):
     url = client._build_absolute_uri("/search/product/more-like-this/")
-    yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_search)
+    return requests_mock.get(url=re.compile(f"{url}.*/"), json=data_search)
 
 
 @pytest.fixture(autouse=True)

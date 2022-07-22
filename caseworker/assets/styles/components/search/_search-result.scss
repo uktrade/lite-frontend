@@ -1,0 +1,24 @@
+.search-result {
+    @extend .govuk-body;
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: govuk-spacing(2);
+    }
+
+    &__header-wrapper {
+        align-items: center;
+        display: flex;
+        margin-bottom: govuk-spacing(2);
+    }
+
+    &__product-name {
+        margin-bottom: 0;
+        margin-right: govuk-spacing(4);
+    }
+
+    &__company-name, &__part-number {
+        color: $govuk-secondary-text-colour;
+    }
+}

@@ -31,12 +31,8 @@ def test_convert_goods_on_application_application_level_control_list_entries(app
 
     # then the differences in export characteristics are highlighted
     assert len(actual) == 1
-    assert actual[0]["Controlled"] == "<span class='strike'>No</span><br> Yes"
-    assert actual[0]["Control list entries"] == (
-        "<span class='strike'><span class=\"govuk-hint govuk-!-margin-0\">N/A</span></span> "
-        "<span data-definition-title='ML1' data-definition-text='Smooth-bore weapons...'>ML1</span>, "
-        "<span data-definition-title='ML2' data-definition-text='Smooth-bore weapons...'>ML2</span>"
-    )
+    assert actual[0]["Controlled"] == "No"
+    assert actual[0]["Control list entries"] == '<span class="govuk-hint govuk-!-margin-0">N/A</span>'
 
 
 def test_convert_goods_on_application_application_level_control_list_entries_same(

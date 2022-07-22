@@ -122,7 +122,7 @@ def test_home_content(
     assert get_cells(soup, "assessed-products") == [
         "2.",
         "p2",
-        "",
+        "ML8a,ML9a",
         "No",
         "",
         "scale compelling technologies",

@@ -16,48 +16,64 @@ from caseworker.cases.objects import Case
         # Base case
         (
             [
-                {"good": {"control_list_entries": [{"rating": "a"}]}},
-                {"good": {"control_list_entries": [{"rating": "b"}]}},
+                {"good": {"control_list_entries": [{"rating": "a"}], "status": {"key": "draft", "value": "Draft"}}},
+                {"good": {"control_list_entries": [{"rating": "b"}], "status": {"key": "draft", "value": "Draft"}}},
             ],
             ["a", "b"],
         ),
         # One of the CLC is empty
         (
-            [{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {"control_list_entries": []}}],
+            [
+                {"good": {"control_list_entries": [{"rating": "a"}], "status": {"key": "draft", "value": "Draft"}}},
+                {"good": {"control_list_entries": [], "status": {"key": "draft", "value": "Draft"}}},
+            ],
             ["a"],
         ),
         # Same control_list_entry
         (
             [
-                {"good": {"control_list_entries": [{"rating": "a"}]}},
-                {"good": {"control_list_entries": [{"rating": "a"}]}},
+                {"good": {"control_list_entries": [{"rating": "a"}], "status": {"key": "draft", "value": "Draft"}}},
+                {"good": {"control_list_entries": [{"rating": "a"}], "status": {"key": "draft", "value": "Draft"}}},
             ],
             ["a"],
         ),
         # One of the CLC has more than one entry
         (
             [
-                {"good": {"control_list_entries": [{"rating": "a"}, {"rating": "b"}]}},
-                {"good": {"control_list_entries": [{"rating": "c"}]}},
+                {
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}, {"rating": "b"}],
+                        "status": {"key": "draft", "value": "Draft"},
+                    }
+                },
+                {"good": {"control_list_entries": [{"rating": "c"}], "status": {"key": "draft", "value": "Draft"}}},
             ],
             ["a", "b", "c"],
         ),
         # One of the CLC has a None entry
         (
             [
-                {"good": {"control_list_entries": [{"rating": "a"}, None]}},
-                {"good": {"control_list_entries": [{"rating": "b"}]}},
+                {
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}, None],
+                        "status": {"key": "draft", "value": "Draft"},
+                    }
+                },
+                {"good": {"control_list_entries": [{"rating": "b"}], "status": {"key": "draft", "value": "Draft"}}},
             ],
             ["a", "b"],
         ),
         # Missing control_list_entries key
         (
-            [{"good": {"control_list_entries": [{"rating": "a"}]}}, {"good": {}}],
+            [
+                {"good": {"control_list_entries": [{"rating": "a"}], "status": {"key": "draft", "value": "Draft"}}},
+                {"good": {"status": {"key": "draft", "value": "Draft"}}},
+            ],
             ["a"],
         ),
         # Missing good key
         (
-            [{"good": {"control_list_entries": [{"rating": "a"}]}}, {}],
+            [{"good": {"control_list_entries": [{"rating": "a"}], "status": {"key": "draft", "value": "Draft"}}}, {}],
             ["a"],
         ),
     ),
@@ -68,10 +84,145 @@ def test_get_clc(goods, expected_value):
 
 
 @pytest.mark.parametrize(
+    "products_on_application, expected_value",
+    (
+        # Base case
+        (
+            [
+                {
+                    "control_list_entries": [{"rating": "a"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+                {
+                    "control_list_entries": [{"rating": "b"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "b"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+            ],
+            ["a", "b"],
+        ),
+        # One of the CLC is empty
+        (
+            [
+                {
+                    "control_list_entries": [{"rating": "a"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+                {
+                    "control_list_entries": [{"rating": "a"}],
+                    "good": {"control_list_entries": [], "status": {"key": "verified", "value": "Verified"}},
+                },
+            ],
+            ["a"],
+        ),
+        # Same control_list_entry
+        (
+            [
+                {
+                    "control_list_entries": [{"rating": "a"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+                {
+                    "control_list_entries": [{"rating": "a"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+            ],
+            ["a"],
+        ),
+        # One of the CLC has more than one entry
+        (
+            [
+                {
+                    "control_list_entries": [{"rating": "a"}, {"rating": "b"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}, {"rating": "b"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+                {
+                    "control_list_entries": [{"rating": "c"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "c"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+            ],
+            ["a", "b", "c"],
+        ),
+        # One of the CLC has a None entry
+        (
+            [
+                {
+                    "control_list_entries": [{"rating": "a"}, None],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}, None],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+                {
+                    "control_list_entries": [{"rating": "b"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "b"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+            ],
+            ["a", "b"],
+        ),
+        # Missing control_list_entries key
+        (
+            [
+                {
+                    "control_list_entries": [{"rating": "a"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+                {"good": {"status": {"key": "verified", "value": "Verified"}}},
+            ],
+            ["a"],
+        ),
+        # Missing good key
+        (
+            [
+                {
+                    "control_list_entries": [{"rating": "a"}],
+                    "good": {
+                        "control_list_entries": [{"rating": "a"}],
+                        "status": {"key": "verified", "value": "Verified"},
+                    },
+                },
+                {},
+            ],
+            ["a"],
+        ),
+    ),
+)
+def test_get_clc_verified_products(products_on_application, expected_value):
+    result = get_clc(products_on_application)
+    assert result == expected_value
+
+
+@pytest.mark.parametrize(
     "good, expected_value",
     (
         (
-            {"good": {"control_list_entries": [{"rating": "a"}]}},
+            {"good": {"control_list_entries": [{"rating": "a"}], "status": {"key": "draft", "value": "Draft"}}},
             ["a"],
         ),
     ),
