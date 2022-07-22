@@ -2,18 +2,18 @@ from bs4 import BeautifulSoup
 from pytest_bdd import scenarios, then, given, when
 
 from ui_tests.exporter.fixtures.register_organisation import get_eori_number
-from ui_tests.exporter.pages.great_signin_page import GreatSigninPage
+from ui_tests.exporter.pages.govuk_signin_page import GovukSigninPage
 from ui_tests.exporter.pages.register_organisation import RegisterOrganisation
 from ui_tests.exporter.pages.start_page import StartPage
 from tests_common import functions
-from tests_common.api_client.sub_helpers.users import create_great_sso_user
+from tests_common.api_client.sub_helpers.users import create_govuk_sso_user
 
 scenarios("../features/register_an_organisation.feature", strict_gherkin=False)
 
 
 @given("I register but I don't belong to an organisation")
 def new_log_in(context):
-    response = create_great_sso_user()
+    response = create_govuk_sso_user()
     context.newly_registered_email = response["email"]
     context.newly_registered_password = response["password"]
 
@@ -56,8 +56,8 @@ def go_to_exporter_when(driver, exporter_url, context):  # noqa
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
 
-    if "login" in driver.current_url:
-        GreatSigninPage(driver).sign_in(context.newly_registered_email, context.newly_registered_password)
+    if "signin" in driver.current_url:
+        GovukSigninPage(driver).sign_in(context.newly_registered_email, context.newly_registered_password)
 
 
 @given("I am not signed into LITE but signed into GREAT SSO")
@@ -67,7 +67,7 @@ def not_logged_into_LITE(exporter_url, driver, context):
         driver.find_element_by_css_selector("[action='/sso/accounts/logout/'] button").click()
         driver.get(exporter_url)
 
-    response = create_great_sso_user()
+    response = create_govuk_sso_user()
     context.newly_registered_email = response["email"]
     context.newly_registered_password = response["password"]
 

@@ -1,8 +1,6 @@
 import base64
 import os
 
-from directory_sso_api_client.client import sso_api_client
-
 
 AUTH_USER_NAME = os.environ.get("AUTH_USER_NAME")
 AUTH_USER_PASSWORD = os.environ.get("AUTH_USER_PASSWORD")
@@ -16,21 +14,12 @@ class BasicAuthenticator:
         self.headers = {"Authorization": f"Basic {encoded_credentials.decode('ascii')}"}
 
 
-def create_great_sso_user():
-    if BASIC_AUTH_ENABLED == "True":
-        auth_user_name = AUTH_USER_NAME
-        auth_user_password = AUTH_USER_PASSWORD
-        authenticator = BasicAuthenticator(auth_user_name, auth_user_password)
-    else:
-        authenticator = None
-
-    response_create = sso_api_client.post("/testapi/test-users/", authenticator=authenticator)
-    response_create.raise_for_status()
-    parsed = response_create.json()
-
-    response_update = sso_api_client.patch(
-        url=f"testapi/user-by-email/{parsed['email']}/", data={"is_verified": True}, authenticator=authenticator
-    )
-    response_update.raise_for_status()
-
-    return parsed
+def create_govuk_sso_user():
+    # we should decide if we would like to create a govuk user, if so it should be here
+    first_name, last_name = os.environ.get("TEST_SSO_NAME").split(" ")
+    return {
+        "email": os.environ.get("TEST_SSO_EMAIL"),
+        "first_name": first_name,
+        "last_name": last_name,
+        "password": os.environ.get("TEST_SSO_PASSWORD")
+    }

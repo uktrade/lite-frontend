@@ -2,7 +2,7 @@ from pytest import fixture
 
 from ..api_client.api_client import ApiClient
 from ..api_client.libraries.request_data import build_request_data
-from ..api_client.sub_helpers.users import create_great_sso_user
+from ..api_client.sub_helpers.users import create_govuk_sso_user
 from ..tools.utils import build_test_helper
 
 MAX_WORKERS = 3
@@ -18,7 +18,7 @@ def context(request):
 
 @fixture(scope="session")
 def exporter_info(request, environment):
-    return create_great_sso_user()
+    return create_govuk_sso_user()
 
 
 @fixture(scope="session")

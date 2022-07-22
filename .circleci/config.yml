@@ -326,12 +326,9 @@ jobs:
             docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.3
             docker pull redis:5-alpine
             docker pull gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
-      - vpn_install
-      - vpn_connect
       - run_make:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
-      - vpn_disconnect
       - store_selenium_artifacts
 
 workflows:
