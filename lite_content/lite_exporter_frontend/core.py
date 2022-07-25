@@ -43,7 +43,7 @@ class StartPageGovUK:
         "edit or check an application",
         "view existing licences issued in LITE ",
     ]
-    DESCRIPTION = "You this service to:"
+    DESCRIPTION = "Use this service to:"
     SIGN_IN_BUTTON = "Start now >"
     SIGN_IN_BUTTON_SUFFIX = "GOV.UK"
     OR = "or"
