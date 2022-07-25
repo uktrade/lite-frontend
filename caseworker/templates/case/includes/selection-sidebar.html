@@ -1,5 +1,5 @@
 {% if goods %}
-	<h3 class="govuk-heading-s">{{ goods|length }} good{{ goods|pluralize }}</h3>
+	<h3 class="govuk-heading-s">{{ goods|length }} product{{ goods|pluralize }}</h3>
 	<ul class="govuk-list govuk-list--number">
 		{% for good in goods %}
 			<li class="govuk-!-margin-bottom-3">
