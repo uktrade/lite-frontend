@@ -59,6 +59,7 @@ commands:
       - run:
           name: << parameters.label >>
           command: make << parameters.target >>
+
   store_selenium_artifacts:
     description: Store Selenium artifacts
     steps:
@@ -236,7 +237,7 @@ jobs:
       - run: git submodule update --init
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
       - run:
-          name: Download docker images before VPN setup
+          name: Download docker images beforehand
           command: |
             docker pull gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
             docker pull eu.gcr.io/sre-docker-registry/lite-db:latest
@@ -249,6 +250,8 @@ jobs:
       - run_make:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-selenium-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
+      - store_artifacts:
+          path: ui_tests/screenshots
 
 workflows:
   version: 2
