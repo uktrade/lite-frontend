@@ -81,7 +81,7 @@ class AddGoodDetails(BasePage):
     FIREARMS_SERIAL_NUMBERS = "serial_numbers"
 
     TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = (
-        "#div_id_PRODUCT_CONTROL_LIST_ENTRY-control_list_entries input.tokenfield-input"
+        "input.tokenfield-input"
     )
 
     def true_or_false(self, status):
