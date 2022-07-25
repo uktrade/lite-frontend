@@ -24,7 +24,7 @@ def build_user(user):
     return {
         "first_name": user["first_name"],
         "last_name": user["last_name"],
-        "email": os.environ.get("PW_EXPORT_SSO_USER", "test-uat-user@digital.trade.gov.uk"),
+        "email": user["email"],
     }
 
 
