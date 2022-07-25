@@ -25,7 +25,7 @@ class GovukSigninPage(BasePage):
 
     def enter_basic_auth(self):
         username = os.environ.get("GOVUK_BASIC_AUTH_USER_NAME")
-        password = os.os.environ.get("GOVUK_BASIC_AUTH_USER_PASSWORD")
+        password = os.environ.get("GOVUK_BASIC_AUTH_USER_PASSWORD")
         url = self.driver.current_url
         url = url.replace("https://", f"https://{username}:{password}@")
         self.driver.get(url)

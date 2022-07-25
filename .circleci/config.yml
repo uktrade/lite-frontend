@@ -106,6 +106,7 @@ commands:
           path: openvpn.log
       - store_test_results:
           path: test-results
+
   lint:
     steps:
       - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
