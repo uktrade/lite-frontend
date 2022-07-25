@@ -65,6 +65,14 @@ commands:
       - store_artifacts:
           path: ui_tests/screenshots
 
+  setup_code:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo/tmp
+      - run: pipenv install --dev --deploy
+      - run: git submodule update --init
+
   backend_unit_tests:
     parameters:
       alias:
