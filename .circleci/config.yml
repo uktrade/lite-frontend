@@ -243,6 +243,9 @@ jobs:
             docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.3
             docker pull redis:5-alpine
             docker pull gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
+      - run:
+            name: "decode secret ENV variable"
+            command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
       - run_make:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-selenium-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
