@@ -21,5 +21,5 @@ def create_govuk_sso_user():
         "email": os.environ.get("TEST_SSO_EMAIL"),
         "first_name": first_name,
         "last_name": last_name,
-        "password": os.environ.get("TEST_SSO_PASSWORD")
+        "password": os.environ.get("TEST_SSO_PASSWORD"),
     }

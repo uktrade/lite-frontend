@@ -1,6 +1,4 @@
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
-
+import os
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -24,10 +22,12 @@ class GovukSigninPage(BasePage):
 
     def click_continue(self):
         self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON_CSS_SELECTOR).click()
-    
+
     def enter_basic_auth(self):
+        username = os.environ.get("GOVUK_BASIC_AUTH_USER_NAME")
+        password = os.os.environ.get("GOVUK_BASIC_AUTH_USER_PASSWORD")
         url = self.driver.current_url
-        url = url.replace('https://', 'https://integration-user:winter2021@')
+        url = url.replace("https://", f"https://{username}:{password}@")
         self.driver.get(url)
 
     def click_create_govuk_account(self):

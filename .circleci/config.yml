@@ -244,7 +244,7 @@ jobs:
             docker pull gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
       - run_make:
           label: Run exporter e2e tests
-          target: start-exporter exporter-e2e-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
+          target: start-exporter exporter-e2e-selenium-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
 
 workflows:
   version: 2

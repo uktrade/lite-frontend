@@ -80,9 +80,7 @@ class AddGoodDetails(BasePage):
     FIREARMS_NUMBER_OF_ITEMS = "number_of_items"
     FIREARMS_SERIAL_NUMBERS = "serial_numbers"
 
-    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = (
-        "input.tokenfield-input"
-    )
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = ("input.tokenfield-input")
 
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
