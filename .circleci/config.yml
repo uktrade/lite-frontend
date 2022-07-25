@@ -64,97 +64,6 @@ commands:
     steps:
       - store_artifacts:
           path: ui_tests/screenshots
-  vpn_install:
-    description: "Install OpenVPN client"
-    steps:
-      - run:
-          name: Install OpenVPN
-          command: |
-            sudo apt-get update
-            sudo apt-get install openvpn openvpn-systemd-resolved
-  vpn_connect:
-    parameters:
-      config:
-        description: "ENV var name containing OpenVPN client .ovpn config file content base64 encoded"
-        type: env_var_name
-        default: VPN_CONFIG
-    steps:
-      - run:
-          name: VPN Setup
-          background: true
-          command: |
-            ip a
-            echo "Public IP before VPN connection is $(curl checkip.amazonaws.com)"
-
-            echo ${<<parameters.config>>:?} | base64 --decode > /tmp/config.ovpn
-
-            vpn_command=(sudo openvpn
-              --config /tmp/config.ovpn
-              --route 169.254.0.0 255.255.0.0 net_gateway
-              --script-security 2
-              --up /etc/openvpn/update-systemd-resolved --up-restart
-              --down /etc/openvpn/update-systemd-resolved --down-pre
-              --dhcp-option DOMAIN-ROUTE .)
-
-            ET_phone_home=$(ss -Hnto state established '( sport = :ssh )' | head -n1 | awk '{ split($4, a, ":"); print a[1] }')
-            echo $ET_phone_home
-
-            if [ -n "$ET_phone_home" ]; then
-              vpn_command+=(--route $ET_phone_home 255.255.255.255 net_gateway)
-            fi
-
-            for IP in $(host runner.circleci.com | awk '{ print $4; }')
-              do
-                vpn_command+=(--route $IP 255.255.255.255 net_gateway)
-                echo $IP
-            done
-
-            for SYS_RES_DNS in $(systemd-resolve --status | grep 'DNS Servers'|awk '{print $3}')
-              do
-                vpn_command+=(--route $SYS_RES_DNS 255.255.255.255 net_gateway)
-                echo $SYS_RES_DNS
-            done
-
-            "${vpn_command[@]}" > /tmp/openvpn.log
-
-            dig great.dev.uktrade.digital +short
-            curl -I https://great.dev.uktrade.digital/
-
-      - run:
-          name: VPN logs
-          background: true
-          command: tail -f /var/log/syslog
-
-      - run:
-          name: Wait for the connection to be established and check
-          command: |
-            counter=1
-            until [ -f /tmp/openvpn.log ] && [ "$(grep -c "Initialization Sequence Completed" /tmp/openvpn.log)" != 0 ] || [ "$counter" -ge 5 ]; do
-              ((counter++))
-              echo "Attempting to connect to VPN server..."
-              sleep 1;
-            done
-
-            if [ ! -f /tmp/openvpn.log ] || (! grep -iq "Initialization Sequence Completed" /tmp/openvpn.log); then
-              printf "\nUnable to establish connection within the allocated time ---> Giving up.\n"
-            else
-              printf "\nVPN connected\n"
-              printf "\nPublic IP is now %s\n" "$(curl -s http://checkip.amazonaws.com)"
-            fi
-  vpn_disconnect:
-    steps:
-      - run:
-          name: Disconnect from OpenVPN
-          command: |
-            sudo killall openvpn || true
-          when: always
-  setup_code:
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/repo/tmp
-      - run: pipenv install --dev --deploy
-      - run: git submodule update --init
 
   backend_unit_tests:
     parameters:
@@ -308,7 +217,6 @@ jobs:
       - run_make:
           label: Run caseworker e2e tests
           target: start-caseworker caseworker-e2e-selenium-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
-      - store_playwright_artifacts
 
   exporter_e2e_test:
     machine:
@@ -329,7 +237,6 @@ jobs:
       - run_make:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-test API_GIT_TAG="<< pipeline.parameters.api_git_tag >>"
-      - store_selenium_artifacts
 
 workflows:
   version: 2
