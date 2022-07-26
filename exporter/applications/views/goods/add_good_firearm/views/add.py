@@ -456,7 +456,7 @@ class AddGoodFirearmToApplication(
             service_error.response,
             exc_info=True,
         )
-        if settings.DEBUG:
+        if settings.DEBUG:  # pragma: no cover
             raise service_error
         return error_page(self.request, service_error.user_message)
 

@@ -1,8 +1,13 @@
 import datetime
+import logging
 import pytest
+
+from pytest_django.asserts import assertInHTML
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+
+from core import client
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
 from exporter.core.helpers import decompose_date
@@ -649,3 +654,116 @@ def test_firearm_category_made_before_1938_end_to_end(
         "unit": "NAR",
         "value": "16.32",
     }
+
+
+def test_add_firearm_to_application_end_to_end_handles_service_error(
+    requests_mock,
+    expected_good_data,
+    application,
+    good_on_application,
+    goto_step,
+    post_to_step,
+    data_standard_case,
+    caplog,
+):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
+    requests_mock.post(url=url, json={"errors": ["Failed to post"]}, status_code=400)
+
+    requests_mock.get(
+        f"/goods/{expected_good_data['id']}/documents/",
+        json={},
+    )
+
+    goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
+        {"is_made_before_1938": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
+        {"year_of_manufacture": 1937},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        {"is_onward_exported": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
+        {"is_deactivated": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
+        {
+            "date_of_deactivation_0": "12",
+            "date_of_deactivation_1": "11",
+            "date_of_deactivation_2": "2007",
+            "is_deactivated_to_standard": True,
+        },
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
+        {"number_of_items": "2", "value": "16.32"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmSerialIdentificationMarkingsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING,
+        {"serial_numbers_available": "AVAILABLE"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmSerialNumbersForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS,
+        {
+            "serial_numbers_0": "s111",
+            "serial_numbers_1": "s222",
+        },
+    )
+
+    assert response.status_code == 200
+    assertInHTML("Unexpected error adding firearm to application", str(response.content))
+    assert len(caplog.records) == 1
+    log = caplog.records[0]
+    assert log.message == "Error adding firearm to application - response was: 400 - {'errors': ['Failed to post']}"
+    assert log.levelno == logging.ERROR
