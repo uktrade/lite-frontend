@@ -110,8 +110,8 @@ class SetFlagsForm:
             TITLE = "Specify why you're changing this organisation's flags (optional)"
 
     class Goods:
-        TITLE = "Set goods flags"
-        DESCRIPTION = "Select all flags that you want to set on these goods."
+        TITLE = "Set product flags"
+        DESCRIPTION = "Select all flags that you want to set."
         SUBMIT_BUTTON = "Set flags"
         SUCCESS_MESSAGE = "Flags set successfully on good(s)"
         FILTER = "Filter"
