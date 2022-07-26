@@ -142,7 +142,6 @@ def post_firearm_good_on_application(request, pk, good_id, json):
         **json,
     }
     response = client.post(request, f"/applications/{pk}/goods/", json)
-    response.raise_for_status()
     return response.json(), response.status_code
 
 
