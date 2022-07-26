@@ -449,6 +449,17 @@ class AddGoodFirearmToApplication(
 
         return ctx
 
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        if settings.DEBUG:  # pragma: no cover
+            raise service_error
+        return error_page(self.request, service_error.user_message)
+
     def done(self, form_list, form_dict, **kwargs):
         try:
             good_on_application, _ = self.post_firearm_to_application(form_dict)
