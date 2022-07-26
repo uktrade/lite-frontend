@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile.e2e
     environment:
       # Below values can be found in vault
+      FEATURE_FLAG_GOVUK_SIGNIN_ENABLED: "True"
       PW_SSO_USER: ${PW_SSO_USER}
       PW_EXPORT_SSO_USER: ${PW_EXPORT_SSO_USER}
       PW_SSO_PASSWORD: ${PW_SSO_PASSWORD}
