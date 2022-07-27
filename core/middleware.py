@@ -52,6 +52,11 @@ class SessionTimeoutMiddleware:
 
         # Expire the session if more than start time + timeout time has occurred
         if end - start > timeout:
+            logger.info(
+                "Session timeout force logout user: %s client_ip: %s",
+                request.session.get("lite_api_user_id"),
+                get_client_ip(request),
+            )
             request.session.flush()
             logout(request)
             return redirect(settings.LOGOUT_URL)
@@ -121,10 +126,20 @@ class AuthBrokerTokenIntrospectionMiddleware:
         is_new_token = False
         token = request.authbroker_client.token.get("access_token")
         try:
+            logger.info(
+                "Introspecting SSO decoding token: %s client_ip: %s",
+                request.session.get("lite_api_user_id"),
+                get_client_ip(request),
+            )
             jwt.decode(token, options={"verify_signature": False, "verify_exp": True})
         except jwt.ExpiredSignatureError:
             # Token expired lets get a new one using refresh token
             # We making a big assumption here assuming client uses openid PrivateJWT auth method
+            logger.info(
+                "Introspecting SSO token expired attempt refresh: %s client_ip: %s",
+                request.session.get("lite_api_user_id"),
+                get_client_ip(request),
+            )
             request.authbroker_client.token_endpoint_auth_method = PrivateKeyJWT(
                 token_endpoint=settings.AUTHBROKER_TOKEN_URL
             )
@@ -162,6 +177,11 @@ class AuthBrokerTokenIntrospectionMiddleware:
             # This is to prevent another client call if only just received a new token
             self.client_introspect_call(request)
 
+        logger.info(
+            "Introspecting SSO set new cache key: %s client_ip: %s",
+            request.session.get("lite_api_user_id"),
+            get_client_ip(request),
+        )
         ttl = settings.AUTHBROKER_TOKEN_INTROSPECTION_TTL
         cache.set(cache_key, True, timeout=ttl)
 
