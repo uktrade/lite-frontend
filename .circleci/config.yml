@@ -237,14 +237,6 @@ jobs:
       - run: git submodule update --init
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
       - run:
-          name: Download docker images beforehand
-          command: |
-            docker pull gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
-            docker pull eu.gcr.io/sre-docker-registry/lite-db:latest
-            docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-            docker pull redis:5-alpine
-            docker pull gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
-      - run:
             name: "decode secret ENV variable"
             command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
       - run_make:
