@@ -40,8 +40,8 @@ from dotenv import load_dotenv
 
 load_dotenv("caseworker.env")
 
-sso_user = os.environ.get("PW_SSO_USER")
-sso_export_user = os.environ.get("PW_EXPORT_SSO_USER")
+sso_user = os.environ.get("TEST_SSO_EMAIL")
+sso_export_user = os.environ.get("EXPORTER_TEST_SSO_EMAIL")
 
 
 def create_application():
