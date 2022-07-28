@@ -52,9 +52,14 @@ class SessionTimeoutMiddleware:
 
         # Expire the session if more than start time + timeout time has occurred
         if end - start > timeout:
+            logger.info(
+                "Session timeout force logout user: %s client_ip: %s",
+                request.session.get("lite_api_user_id"),
+                get_client_ip(request),
+            )
             request.session.flush()
             logout(request)
-            return redirect(settings.LOGOUT_URL)
+            return redirect(settings.LOGIN_URL)
 
         request.session[SESSION_TIMEOUT_KEY] = end
 
@@ -121,21 +126,48 @@ class AuthBrokerTokenIntrospectionMiddleware:
         is_new_token = False
         token = request.authbroker_client.token.get("access_token")
         try:
+            logger.info(
+                "Introspecting SSO decoding checking token: %s client_ip: %s",
+                request.session.get("lite_api_user_id"),
+                get_client_ip(request),
+            )
             jwt.decode(token, options={"verify_signature": False, "verify_exp": True})
         except jwt.ExpiredSignatureError:
             # Token expired lets get a new one using refresh token
             # We making a big assumption here assuming client uses openid PrivateJWT auth method
-            request.authbroker_client.token_endpoint_auth_method = PrivateKeyJWT(
-                token_endpoint=settings.AUTHBROKER_TOKEN_URL
-            )
-            new_jwt_token = request.authbroker_client.refresh_token(
-                url=settings.AUTHBROKER_TOKEN_URL,
-                code=request.session[f"{settings.TOKEN_SESSION_KEY}_auth_code"],
-                client_id=settings.AUTHBROKER_CLIENT_ID,
-            )
-            token = new_jwt_token.get("access_token")
-            request.session[settings.TOKEN_SESSION_KEY] = dict(new_jwt_token)
-            is_new_token = True
+            try:
+                logger.info(
+                    "Introspecting SSO decoding checking refresh token: %s client_ip: %s",
+                    request.session.get("lite_api_user_id"),
+                    get_client_ip(request),
+                )
+                refresh_token = request.authbroker_client.token.get("refresh_token")
+                jwt.decode(refresh_token, options={"verify_signature": False, "verify_exp": True})
+                logger.info(
+                    "Introspecting SSO attempt token refresh: %s client_ip: %s",
+                    request.session.get("lite_api_user_id"),
+                    get_client_ip(request),
+                )
+                request.authbroker_client.token_endpoint_auth_method = PrivateKeyJWT(
+                    token_endpoint=settings.AUTHBROKER_TOKEN_URL
+                )
+
+                new_jwt_token = request.authbroker_client.refresh_token(
+                    url=settings.AUTHBROKER_TOKEN_URL,
+                    code=request.session[f"{settings.TOKEN_SESSION_KEY}_auth_code"],
+                    client_id=settings.AUTHBROKER_CLIENT_ID,
+                )
+
+                token = new_jwt_token.get("access_token")
+                request.session[settings.TOKEN_SESSION_KEY] = dict(new_jwt_token)
+                is_new_token = True
+            except jwt.ExpiredSignatureError:
+                logger.info(
+                    "Introspecting SSO refresh token expired: %s client_ip: %s",
+                    request.session.get("lite_api_user_id"),
+                    get_client_ip(request),
+                )
+                raise jwt.ExpiredSignatureError
         except jwt.DecodeError:
             # The client doesn't have the correct support for full JWT we will return the original token
             pass
@@ -162,6 +194,11 @@ class AuthBrokerTokenIntrospectionMiddleware:
             # This is to prevent another client call if only just received a new token
             self.client_introspect_call(request)
 
+        logger.info(
+            "Introspecting SSO set new cache key: %s client_ip: %s",
+            request.session.get("lite_api_user_id"),
+            get_client_ip(request),
+        )
         ttl = settings.AUTHBROKER_TOKEN_INTROSPECTION_TTL
         cache.set(cache_key, True, timeout=ttl)
 
@@ -181,7 +218,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
             )
 
             request.session.flush()
-            return redirect(settings.LOGOUT_URL)
+            return redirect(settings.LOGIN_URL)
         return self.get_response(request)
 
 
