@@ -739,37 +739,37 @@ def get_summary_value(driver, id):
 
 @then(parsers.parse('I see "{firearm_product}" as the type of firearm product'))
 def verify_firearm_product(driver, firearm_product):
-    value = get_summary_value(driver, "firearm-product")
+    value = get_summary_value(driver, "firearm-type")
     assert value == firearm_product
 
 
 @then(parsers.parse('I see "{firearm_category}" as the firearm category'))
-def verify_firearm_product(driver, firearm_product):
-    value = get_summary_value(driver, "firearm-product")
-    assert value == firearm_product
+def verify_firearm_category(driver, firearm_category):
+    value = get_summary_value(driver, "firearm-category")
+    assert value == firearm_category
 
 
 @then(parsers.parse('I see "{name}" as the descriptive name'))
 def verify_descriptive_name(driver, name):
-    value = get_summary_value(driver, "descriptive-name")
+    value = get_summary_value(driver, "name")
     assert value == name
 
 
 @then(parsers.parse('I see "{knows_product_control_list_entry}" as whether they know the control list entry'))
 def verify_knows_product_control_list_entry(driver, knows_product_control_list_entry):
-    value = get_summary_value(driver, "knows-product-control-list-entry")
+    value = get_summary_value(driver, "is-good-controlled")
     assert value == knows_product_control_list_entry
 
 
 @then(parsers.parse('I see "{control_list_entry}" as the control list entry'))
 def verify_control_list_entry(driver, control_list_entry):
-    value = get_summary_value(driver, "control-list-entry")
+    value = get_summary_value(driver, "control-list-entries")
     assert value == control_list_entry
 
 
 @then(parsers.parse('I see "{security_grading}" as the security grading'))
 def verify_security_grading(driver, security_grading):
-    value = get_summary_value(driver, "security-grading")
+    value = get_summary_value(driver, "is-pv-graded")
     assert value == security_grading
 
 
@@ -781,13 +781,13 @@ def verify_calibre(driver, calibre):
 
 @then(parsers.parse('I see "{is_replica_firearm}" as the replica firearm'))
 def verify_is_replica_firearm(driver, is_replica_firearm):
-    value = get_summary_value(driver, "is-replica-firearm")
+    value = get_summary_value(driver, "is-replica")
     assert value == is_replica_firearm
 
 
 @then(parsers.parse('I see "{is_rfd}" as RFD'))
 def verify_is_rfd(driver, is_rfd):
-    value = get_summary_value(driver, "is-rfd")
+    value = get_summary_value(driver, "is-registered-firearms-dealer")
     assert value == is_rfd
 
 
@@ -846,8 +846,9 @@ def verify_is_onward_exported(driver, is_onward_exported):
 
 @then(parsers.parse('I see "{is_altered}" for it being altered and "{reason}" as reason'))
 def verify_is_altered(driver, is_altered, reason):
-    is_altered_value, reason_value = get_summary_value(driver, "is-altered").split("\n")
+    is_altered_value = get_summary_value(driver, "is-altered")
     assert is_altered_value == is_altered
+    reason_value = get_summary_value(driver, "is-altered-comments")
     assert reason_value == reason
 
 

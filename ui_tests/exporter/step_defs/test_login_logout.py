@@ -13,6 +13,8 @@ def click_the_logout_link(driver):
     driver.find_element_by_link_text("Sign out").click()
 
 
-@then("I am taken to the GREAT.GOV.UK page")
+@then("I am taken to the GOV UK page")
 def taken_to_the_great_page(driver):
-    assert "logout" in driver.current_url
+    SIGN_IN_BUTTON_ID = "button-sign-in"
+    driver.find_element_by_id(SIGN_IN_BUTTON_ID).click()
+    assert "signin" in driver.current_url

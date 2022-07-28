@@ -11,4 +11,4 @@ Feature: I want to be able to login and logout of LITE
   Scenario: Logout of LITE
     Given I signin and go to exporter homepage and choose Test Org
     When I click the logout link
-    Then I am taken to the GREAT.GOV.UK page
+    Then I am taken to the GOV UK page

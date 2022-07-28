@@ -46,7 +46,7 @@ class AddGoodDetails(BasePage):
 
     # Firearms - Product type
     FIREARM_TYPE_PREFIX = "type-"
-    FIREARM_TYPE_FIREARM_ID = FIREARM_TYPE_PREFIX + "firearms"
+    FIREARM_TYPE_FIREARM_ID = "id_GROUP_TWO_PRODUCT_TYPE-type_1"
     FIREARM_TYPE_FIREARM_COMPONENT_ID = FIREARM_TYPE_PREFIX + "components_for_firearms"
     FIREARM_TYPE_AMMUNITION_ID = FIREARM_TYPE_PREFIX + "ammunition"
     FIREARM_TYPE_AMMUNITION_COMPONENT_ID = FIREARM_TYPE_PREFIX + "components_for_ammunition"
@@ -80,9 +80,7 @@ class AddGoodDetails(BasePage):
     FIREARMS_NUMBER_OF_ITEMS = "number_of_items"
     FIREARMS_SERIAL_NUMBERS = "serial_numbers"
 
-    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = (
-        "#div_id_PRODUCT_CONTROL_LIST_ENTRY-control_list_entries input.tokenfield-input"
-    )
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "input.tokenfield-input"
 
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
@@ -208,7 +206,7 @@ class AddGoodDetails(BasePage):
     def select_firearm_product_type(self, option):
         """Only applicable to firearm goods"""
         if option == "Firearm":
-            self.driver.find_element(by=By.CSS_SELECTOR, value="input[value='firearms']").click()
+            self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_ID).click()
         if option == "components_for_firearm":
             self.driver.find_element(by=By.ID, value=self.FIREARM_TYPE_FIREARM_COMPONENT_ID).click()
         if option == "ammunition":

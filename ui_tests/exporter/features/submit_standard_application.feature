@@ -33,8 +33,6 @@ Feature: I want to indicate the standard licence I want
     And I see ".22" as the calibre of the product
     And I see "No" as the replica firearm
     And I see "No" as RFD
-    And I see "Don't know" as firearms act
-    And I see "Explanation" as firearms act explanation
     And I see "No" as product document
     And I see "reason" as product document reason
     When I click continue on application
@@ -68,8 +66,6 @@ Feature: I want to indicate the standard licence I want
     And I see ".22" as the calibre of the product
     And I see "No" as the replica firearm
     And I see "No" as RFD
-    And I see "Don't know" as firearms act
-    And I see "Explanation" as firearms act explanation
     And I see "No" as product document
     And I see "reason" as product document reason
     When I click continue on application
@@ -166,8 +162,6 @@ Feature: I want to indicate the standard licence I want
     And I see ".22" as the calibre of the product
     And I see "No" as the replica firearm
     And I see "No" as RFD
-    And I see "Don't know" as firearms act
-    And I see "Explanation" as firearms act explanation
     And I see "No" as product document
     And I see "reason" as product document reason
     When I click continue on application
@@ -199,8 +193,6 @@ Feature: I want to indicate the standard licence I want
     And I see ".22" as the calibre of the product
     And I see "No" as the replica firearm
     And I see "No" as RFD
-    And I see "Don't know" as firearms act
-    And I see "Explanation" as firearms act explanation
     And I see "No" as product document
     And I see "reason" as product document reason
     When I click continue on application

@@ -16,7 +16,7 @@ class CasesListPage:
         INFORMATION = "Information"
         CASE = "Case"
         ASSIGNEES = "Assignees"
-        GOODS = "Goods"
+        GOODS = "Products"
         DESTINATIONS = "Destinations"
         FLAGS = "Flags"
 

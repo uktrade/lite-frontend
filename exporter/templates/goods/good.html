@@ -4,7 +4,7 @@
 
 {% block back_link %}
 	{% if from_preexisting_url %}
-		<a href={{ from_preexisting_url }} class="govuk-back-link">Back</a>
+		<a role="button" href={% url "applications:preexisting_good" application_id  %} class="govuk-back-link">Back</a>
 	{% else %}
 		<div class="govuk-breadcrumbs">
 			<ol class="govuk-breadcrumbs__list">

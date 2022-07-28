@@ -1,13 +1,13 @@
 {% load svg humanize %}
 
 {% with goods=goods|default:case.goods %}
-	<h2 class="govuk-heading-m">{{ case.goods|length }} good{{ case.goods|pluralize }}</h2>
+	<h2 class="govuk-heading-m">{% if case.goods|length <= 1 %}Product{% else %}{{ case.goods|length }} products{% endif %}</h2>
 
 	{% if not hide_controls %}
 		<form method="get">
 			<div class="lite-buttons-row" data-enable-on-checkboxes="#table-goods">
 				<button id="button-edit-goods-flags" formaction="{% url 'cases:assign_flags' queue.id case.id %}" class="govuk-button" data-module="govuk-button">
-					Edit goods flags
+					Edit product flags
 				</button>
 			</div>
 	{% endif %}

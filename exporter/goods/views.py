@@ -176,12 +176,13 @@ class Goods(LoginRequiredMixin, TemplateView):
 
 class GoodsDetailEmpty(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
-        is_preexisting = ""
-        if request.GET.get("is_preexisting"):
-            is_preexisting = "?is_preexisting=true"
-
+        is_preexisting_with_id = ""
+        if request.GET.get("is_preexisting") and request.GET.get("application_id"):
+            application_id = request.GET.get("application_id")
+            is_preexisting_with_id = f"?is_preexisting=true&application_id={application_id}"
         return redirect(
-            reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"}) + is_preexisting
+            reverse_lazy("goods:good_detail", kwargs={"pk": kwargs["pk"], "type": "case-notes"})
+            + is_preexisting_with_id
         )
 
 
@@ -205,8 +206,10 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
 
         # check for query params is_preexisting
         from_preexisting_url = None
+        application_id = None
         if request.GET.get("is_preexisting") == "true":
             from_preexisting_url = True
+            application_id = request.GET.get("application_id")
 
         context = {
             "good": self.good,
@@ -216,6 +219,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             "text": kwargs.get("text", ""),
             "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
             "from_preexisting_url": from_preexisting_url,
+            "application_id": application_id,
         }
 
         if self.good["query"]:

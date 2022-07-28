@@ -23,7 +23,7 @@
 	</div>
 
 	{% include 'filters.html' %}
-
+	
 	{% if not filtered and not goods.count %}
 		{% include "includes/notice.html" with text='goods.GoodsList.Count.ORGANISATION_ZERO' %}
 	{% elif not goods.count %}

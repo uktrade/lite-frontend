@@ -34,7 +34,7 @@
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">{{good.name}}</a>
 								{% else %}
 									{% url "goods:good" good.id as good_url %}
-									<a class="govuk-link govuk-link--no-visited-state" href="{{good_url}}?is_preexisting=true">{{good.name}}</a>
+									<a class="govuk-link govuk-link--no-visited-state" href="{{good_url}}?is_preexisting=true&application_id={{application.id}}">{{good.name}}</a>
 								{% endif %}
 								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 							</td>
@@ -42,7 +42,7 @@
 								Firearms
 							</td>
 							<td class="govuk-table__cell" id="good-control_code">
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
 							</td>
 							{% if feature_flag_firearms_enabled %}
 							<td class="govuk-table__cell lite-!-text-align-right">

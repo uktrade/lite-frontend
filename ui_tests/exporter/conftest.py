@@ -73,7 +73,7 @@ from tests_common.fixtures.urls import exporter_url, api_url  # noqa
 from tests_common.tools.wait import wait_for_download_button_on_exporter_main_content
 
 from ui_tests.exporter.pages.start_page import StartPage
-from ui_tests.exporter.pages.great_signin_page import GreatSigninPage
+from ui_tests.exporter.pages.govuk_signin_page import GovukSigninPage
 from tests_common.helpers import applications
 
 
@@ -111,10 +111,10 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
 
-    if "login" in driver.current_url:
-        GreatSigninPage(driver).sign_in(exporter_info["email"], exporter_info["password"])
+    if "signin" in driver.current_url:
+        GovukSigninPage(driver).sign_in(exporter_info["email"], exporter_info["password"])
 
-    if "pick-organisation" in driver.current_url:
+    if "select-organisation" in driver.current_url:
         no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
         Shared(driver).click_on_radio_buttons(no)
         functions.click_submit(driver)
