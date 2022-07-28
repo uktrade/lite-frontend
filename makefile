@@ -1,7 +1,13 @@
 ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 
-docker-e2e-caseworker = API_GIT_TAG="$(API_GIT_TAG)" docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
-docker-e2e-exporter = API_GIT_TAG="$(API_GIT_TAG)" docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
+ifdef CI
+	docker-e2e-caseworker = API_GIT_TAG="$(API_GIT_TAG)" docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
+	docker-e2e-exporter = API_GIT_TAG="$(API_GIT_TAG)" docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
+else
+	docker-e2e-caseworker = API_GIT_TAG="latest" docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
+	docker-e2e-exporter = API_GIT_TAG="latest" docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
+endif
+
 wait-for-caseworker = dockerize -wait http://localhost:8200/healthcheck -timeout 5m -wait-retry-interval 5s
 wait-for-exporter = dockerize -wait http://localhost:8300/healthcheck -timeout 5m -wait-retry-interval 5s
 
@@ -85,20 +91,12 @@ start-exporter:
 stop-exporter:
 	$(docker-e2e-exporter) down --remove-orphans
 
-caseworker-e2e-test:
-	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
-	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest playwright_tests/specs/caseworker/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8200/'
-
 caseworker-e2e-selenium-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
 	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest --headless ./ui_tests/caseworker'
 
-exporter-e2e-test:
-	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
-	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest playwright_tests/specs/exporter/test_smoke.py --video=retain-on-failure --output=/app/playwright_videos --base-url=http://localhost:8300/'
-
 exporter-e2e-selenium-test:
-	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-exporter' ***"
+	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
 	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest --headless ./ui_tests/exporter'
 
 build-exporter:
