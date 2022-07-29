@@ -56,14 +56,22 @@ export AV_SERVICE_URL=
 export AV_SERVICE_USERNAME=
 ```
 
-### Caseworker Setup and run tests
+### Caseworker Setup and run tests locally
 
 - Open a terminal, source both api.env and caseworker.env. This will ensure all export statements are run and appropriate env vars are set and ready for docker-compose.
 - run `make start-caseworker`
 - Wait for it to start up. Open another terminal and run `make caseworker-e2e-selenium-test`
 
-### Exporter Setup and run tests
+### Exporter Setup and run tests locally
 
 - Open a terminal, source both api.env and exporter.env. This will ensure env vars are ready for docker-compose.
 - run `make start-exporter`
 - Wait for it to start up. Open another terminal and run `make exporter-e2e-selenium-test`
+
+
+### Running automated tests before production release
+Jenkins job `lite-frontend-ui-tests` is designed to run both caseworker and exporter tests on demand for specific release tags or branches.
+
+First step is to make sure the `lite-api` image is tagged correctly in GCR. A GCR trigger builds image upon preparing git release. But, until fixed, it won't be tagging that image with correct release tag. This must be done manually using GCR console. As soon as git release process is done on Github, head to triggered builds [here](https://console.cloud.google.com/gcr/images/sre-docker-registry/global/github.com/uktrade/lite-api). And tag the latest built image with the release tag (v1.34.0 for ex).
+
+Once tagging is done, open Jenkins [job](https://jenkins.ci.uktrade.digital/view/LITE/job/lite-frontend-ui-tests/) >> Build with parameters >> select correct release tag for FE and API as you would do with UAT/Production release >> let it run the tests. You can see the tests running [here](https://app.circleci.com/pipelines/github/uktrade/lite-frontend?filter=all) in CircleCI.

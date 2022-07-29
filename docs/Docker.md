@@ -87,7 +87,9 @@ Note that `lite-db` image is hosted in private registry.
 
 ## Creating and pushing the lite-api docker image
 
-`lite-api` image is hosted in GCR and latest image is pulled from there each time stack is built. A GCR trigger, lite-api, is responsible for building it for each merge to master and another, lite-api-release-tag, does the same upon git releases.
+`lite-api` image is hosted in GCR and latest image is pulled from there each time stack is built. A GCR trigger, lite-api, is responsible for building it for each merge to master and tag it as `latest`. 
+
+Note: In order to run automated tests before production release, we need `lite-api` image tagged with release tag that is ready for release. There is another GCR trigger `lite-api-release-tag`, that builds api image upon git releases. But currently it is not able to tag correctly with release tag, it is done manually until fixed.
 
 In case we want to update the image manually, simply run the trigger from GCR console.
 
