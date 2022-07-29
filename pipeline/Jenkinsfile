@@ -58,7 +58,7 @@ def waitForBuildStatusToChange(number, status, wait_states, msg){
 pipeline {
 
     parameters {
-        choice(name: 'ENVIRONMENT', defaultValue: 'devdata', description: '(not used)', choices: 'dev\nuat\ndevdata\ndemo')
+        choice(name: 'ENVIRONMENT', description: '(not used)', choices: 'dev\nuat\ndevdata\ndemo')
         gitParameter(
             branch: '',
             branchFilter: 'origin/(.*)',
