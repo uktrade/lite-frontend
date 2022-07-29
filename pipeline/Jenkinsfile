@@ -69,7 +69,7 @@ pipeline {
             selectedValue: 'NONE',
             sortMode: 'NONE',
             tagFilter: '*',
-            type: 'PT_BRANCH_TAG'
+            type: 'PT_BRANCH_TAG',
             useRepository: 'git@github.com:uktrade/lite-frontend.git'
         )
         gitParameter(
