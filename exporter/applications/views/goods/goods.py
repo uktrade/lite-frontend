@@ -130,7 +130,7 @@ class SectionDocumentMixin:
 class CheckNonFirearmEnabledMixin:
     def dispatch(self, request, **kwargs):
         if not settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
-            return Http404
+            raise Http404
         return super().dispatch(request, **kwargs)
 
 
