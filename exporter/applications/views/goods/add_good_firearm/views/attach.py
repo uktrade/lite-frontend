@@ -65,7 +65,7 @@ from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
     AttachFirearmToApplicationGoodPayloadBuilder,
     AttachFirearmToApplicationGoodOnApplicationPayloadBuilder,
-    FirearmsActPayloadBuilder,
+    FirearmsActSection5PayloadBuilder,
 )
 
 
@@ -203,7 +203,7 @@ class AttachFirearmToApplication(
 
     def get_firearm_to_application_payload(self, form_dict):
         good_payload = AttachFirearmToApplicationGoodOnApplicationPayloadBuilder().build(form_dict)
-        firearms_act_payload = FirearmsActPayloadBuilder(
+        firearms_act_payload = FirearmsActSection5PayloadBuilder(
             self.application,
             good_payload["firearm_details"],
         ).build(form_dict)

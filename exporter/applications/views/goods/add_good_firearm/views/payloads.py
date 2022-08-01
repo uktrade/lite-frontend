@@ -228,31 +228,26 @@ class FirearmsActPayloadBuilder:
         return firearms_act_section == section_value and attach_step_name not in form_dict
 
     def get_payload(self, form_dict):
-        if not self.firearm_details.get("is_covered_by_firearm_act_section_one_two_or_five") == "Yes":
+        if self.firearm_details.get("is_covered_by_firearm_act_section_one_two_or_five") != "Yes":
             return {}
 
-        for section_value, attach_step_name, document_type in (
-            (
-                FirearmsActSections.SECTION_5,
-                AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
-                FirearmsActDocumentType.SECTION_5,
-            ),
+        if not self.has_skipped_firearms_attach_step(
+            form_dict,
+            self.firearm_details,
+            FirearmsActSections.SECTION_5,
+            AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY,
         ):
-            if not self.has_skipped_firearms_attach_step(
-                form_dict, self.firearm_details, section_value, attach_step_name
-            ):
-                continue
+            return {}
 
-            certificate = get_organisation_documents(self.application)[document_type]
-            return {
-                "section_certificate_missing": False,
-                "section_certificate_number": certificate["reference_code"],
-                "section_certificate_date_of_expiry": convert_api_date_string_to_date(
-                    certificate["expiry_date"]
-                ).isoformat(),
-            }
+        certificate = get_organisation_documents(self.application)[FirearmsActDocumentType.SECTION_5]
 
-        return {}
+        return {
+            "section_certificate_missing": False,
+            "section_certificate_number": certificate["reference_code"],
+            "section_certificate_date_of_expiry": convert_api_date_string_to_date(
+                certificate["expiry_date"]
+            ).isoformat(),
+        }
 
     def build(self, form_dict):
         return {"firearm_details": self.get_payload(form_dict)}
