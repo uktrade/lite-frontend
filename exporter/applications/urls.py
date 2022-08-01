@@ -97,6 +97,8 @@ urlpatterns = [
     path("<uuid:pk>/optional-note/", optional_note.ApplicationOptionalNote.as_view(), name="optional_note"),
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
+    path("<uuid:pk>/goods/is-firearm/", goods.IsGoodFirearm.as_view(), name="is_good_firearm"),
+    path("<uuid:pk>/goods/non-firearm/", goods.NonFirearmCategory.as_view(), name="non_firearm_category"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
     path("<uuid:pk>/goods/add-new/firearm/", AddGoodFirearm.as_view(), name="new_good_firearm"),
     path(

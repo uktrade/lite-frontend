@@ -3,10 +3,13 @@ import json
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
+from crispy_forms_gds.choices import Choice
+
 from django import forms
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.db import models
 
 from core.builtins.custom_tags import default_na, linkify
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
@@ -17,6 +20,7 @@ from exporter.core.helpers import (
 )
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
+from exporter.core.common.forms import BaseForm
 from lite_content.lite_exporter_frontend.goods import (
     AddGoodToApplicationForm,
     AttachDocumentForm,
@@ -680,6 +684,67 @@ class ProductUsesInformationSecurityForm(forms.Form):
             ),
             Submit("submit", "Save"),
         )
+
+
+class IsFirearmForm(BaseForm):
+    class Layout:
+        TITLE = "Is it a firearm product?"
+
+    is_firearm_product = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label="This includes components, accessories, software and technology relating to firearms.",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select whether it’s a complete product, forms part of a product or helps operate a product",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("is_firearm_product",)
+
+
+class NonFirearmCategoryForm(BaseForm):
+    class Layout:
+        TITLE = "Select the product category"
+
+    class NonFirearmCategoryChoices(models.TextChoices):
+        COMPLETE_PRODUCT = "COMPLETE_PRODUCT", "It's a complete product"
+        PART_PRODUCT = "PART_PRODUCT", "It forms part of a product"
+        HELPS_PRODUCT = "HELPS_PRODUCT", "It helps to operate a product"
+
+    CATEGORY_CHOICES = (
+        Choice(
+            NonFirearmCategoryChoices.COMPLETE_PRODUCT.name,
+            NonFirearmCategoryChoices.COMPLETE_PRODUCT.label,
+            hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
+        ),
+        Choice(
+            NonFirearmCategoryChoices.PART_PRODUCT.name,
+            NonFirearmCategoryChoices.PART_PRODUCT.label,
+            hint="Hardware such as components and accessories, or raw materials and substances.",
+        ),
+        Choice(
+            NonFirearmCategoryChoices.HELPS_PRODUCT.name,
+            NonFirearmCategoryChoices.HELPS_PRODUCT.label,
+            hint="For example, software or information such as technology manuals and specifications.",
+            enable=False,
+        ),
+    )
+
+    no_firearm_category = forms.ChoiceField(
+        choices=CATEGORY_CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Select the product category",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("no_firearm_category",)
 
 
 class AddGoodsQuestionsForm(forms.Form):
