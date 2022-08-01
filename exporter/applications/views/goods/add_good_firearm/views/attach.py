@@ -1,5 +1,6 @@
 import logging
 
+from deepmerge import always_merger
 from http import HTTPStatus
 from urllib.parse import urlencode
 
@@ -64,6 +65,7 @@ from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
     AttachFirearmToApplicationGoodPayloadBuilder,
     AttachFirearmToApplicationGoodOnApplicationPayloadBuilder,
+    AttachFirearmSection5PayloadBuilder,
 )
 
 
@@ -178,17 +180,22 @@ class AttachFirearmToApplication(
             raise service_error
         return error_page(self.request, service_error.user_message)
 
-    def get_edit_firearm_payload(self, form_dict):
-        return AttachFirearmToApplicationGoodPayloadBuilder().build(form_dict)
+    def get_edit_firearm_payload(self, application, good, form_dict):
+        good_payload = AttachFirearmToApplicationGoodPayloadBuilder().build(form_dict)
+        section_5_payload = AttachFirearmSection5PayloadBuilder(application, good).build(form_dict)
+
+        payload = always_merger.merge(good_payload, section_5_payload)
+
+        return payload
 
     @expect_status(
         HTTPStatus.OK,
         "Error updating firearm",
         "Unexpected error updating firearm",
     )
-    def edit_firearm(self, good_pk, form_dict):
-        payload = self.get_edit_firearm_payload(form_dict)
-        return edit_firearm_for_attaching(self.request, good_pk, payload)
+    def edit_firearm(self, application, good, form_dict):
+        payload = self.get_edit_firearm_payload(application, good, form_dict)
+        return edit_firearm_for_attaching(self.request, good["id"], payload)
 
     def is_rfd_invalid(self, form_dict):
         if AttachFirearmToApplicationSteps.IS_RFD_CERTIFICATE_VALID not in form_dict:
@@ -200,9 +207,7 @@ class AttachFirearmToApplication(
         return is_rfd_certificate_data.get("is_rfd_certificate_valid") is False
 
     def get_firearm_to_application_payload(self, form_dict):
-        payload = AttachFirearmToApplicationGoodOnApplicationPayloadBuilder().build(form_dict)
-
-        return payload
+        return AttachFirearmToApplicationGoodOnApplicationPayloadBuilder().build(form_dict)
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -279,8 +284,7 @@ class AttachFirearmToApplication(
             return error_page(self.request, "RFD invalid. Cannot submit.")
 
         try:
-            self.edit_firearm(self.good["id"], form_dict)
-
+            self.edit_firearm(self.application, self.good, form_dict)
             if self.has_existing_valid_organisation_rfd_certificate(self.application):
                 self.attach_rfd_certificate_to_application(self.application)
 
