@@ -1,6 +1,5 @@
 import logging
 
-from deepmerge import always_merger
 from http import HTTPStatus
 from urllib.parse import urlencode
 
@@ -65,7 +64,6 @@ from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
 from .payloads import (
     AttachFirearmToApplicationGoodPayloadBuilder,
     AttachFirearmToApplicationGoodOnApplicationPayloadBuilder,
-    FirearmsActSection5PayloadBuilder,
 )
 
 
@@ -202,13 +200,7 @@ class AttachFirearmToApplication(
         return is_rfd_certificate_data.get("is_rfd_certificate_valid") is False
 
     def get_firearm_to_application_payload(self, form_dict):
-        good_payload = AttachFirearmToApplicationGoodOnApplicationPayloadBuilder().build(form_dict)
-        firearms_act_payload = FirearmsActSection5PayloadBuilder(
-            self.application,
-            good_payload["firearm_details"],
-        ).build(form_dict)
-
-        payload = always_merger.merge(good_payload, firearms_act_payload)
+        payload = AttachFirearmToApplicationGoodOnApplicationPayloadBuilder().build(form_dict)
 
         return payload
 
