@@ -253,7 +253,7 @@ class IsGoodFirearm(LoginRequiredMixin, CheckNonFirearmEnabledMixin, FormView):
     form_class = IsFirearmForm
 
     def form_valid(self, form):
-        if str_to_bool(form.data["is_firearm_product"]):
+        if form.data["is_firearm_product"] == "True":
             return redirect("applications:new_good_firearm", pk=self.kwargs["pk"])
         return super().form_valid(form)
 
