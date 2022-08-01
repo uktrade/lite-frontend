@@ -8,10 +8,9 @@ import uuid
 @pytest.fixture(autouse=True)
 def setup():
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
-    pass
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def application_pk():
     return str(uuid.uuid4())
 
@@ -33,7 +32,7 @@ def test_is_good_firearm_view_raise_404(authorized_client, application_pk, post_
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
     url = reverse(f"applications:{post_url}", kwargs={"pk": application_pk})
     response = authorized_client.get(url)
-    response.status_code = 404
+    assert response.status_code == 404
 
 
 @pytest.mark.parametrize(

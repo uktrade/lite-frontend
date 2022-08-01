@@ -3,7 +3,6 @@ import json
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
-from crispy_forms_gds.choices import Choice
 
 from django import forms
 from django.conf import settings
@@ -13,6 +12,8 @@ from django.db import models
 
 from core.builtins.custom_tags import default_na, linkify
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
+from exporter.core.common.forms import TextChoice, coerce_str_to_bool
+
 from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES, PRODUCT_CATEGORY_FIREARM
 from exporter.core.helpers import (
     convert_control_list_entries,
@@ -695,6 +696,7 @@ class IsFirearmForm(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
+        coerce=coerce_str_to_bool,
         label="This includes components, accessories, software and technology relating to firearms.",
         widget=forms.RadioSelect,
         error_messages={
@@ -716,21 +718,17 @@ class NonFirearmCategoryForm(BaseForm):
         HELPS_PRODUCT = "HELPS_PRODUCT", "It helps to operate a product"
 
     CATEGORY_CHOICES = (
-        Choice(
-            NonFirearmCategoryChoices.COMPLETE_PRODUCT.name,
-            NonFirearmCategoryChoices.COMPLETE_PRODUCT.label,
+        TextChoice(
+            NonFirearmCategoryChoices.COMPLETE_PRODUCT,
             hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
         ),
-        Choice(
-            NonFirearmCategoryChoices.PART_PRODUCT.name,
-            NonFirearmCategoryChoices.PART_PRODUCT.label,
+        TextChoice(
+            NonFirearmCategoryChoices.PART_PRODUCT,
             hint="Hardware such as components and accessories, or raw materials and substances.",
         ),
-        Choice(
-            NonFirearmCategoryChoices.HELPS_PRODUCT.name,
-            NonFirearmCategoryChoices.HELPS_PRODUCT.label,
+        TextChoice(
+            NonFirearmCategoryChoices.HELPS_PRODUCT,
             hint="For example, software or information such as technology manuals and specifications.",
-            enable=False,
         ),
     )
 
