@@ -59,7 +59,7 @@ class SessionTimeoutMiddleware:
             )
             request.session.flush()
             logout(request)
-            return redirect(settings.LOGOUT_URL)
+            return redirect(settings.LOGIN_URL)
 
         request.session[SESSION_TIMEOUT_KEY] = end
 
