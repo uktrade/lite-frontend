@@ -129,3 +129,4 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
     INSTALLED_APPS.append("elasticapm.contrib.django")
 
 LITE_FEEDBACK_EMAIL = env.str("LITE_FEEDBACK_EMAIL", "")
+CONFIG_ADMIN_USERS_LIST = env.list("CONFIG_ADMIN_USERS_LIST", default=[])
