@@ -81,7 +81,7 @@ class RegisterDetailsForm(BaseForm):
     eori_number = forms.CharField(
         label="European Union registration and identification number (EORI)",
         error_messages={
-            "required": "Enter a EORI number",
+            "required": "Enter an EORI number",
         },
         validators=[validate_eori],
     )
@@ -262,7 +262,7 @@ class RegistrationEditEoriNumber(BaseForm):
     eori_number = forms.CharField(
         label="European Union registration and identification number (EORI)",
         error_messages={
-            "required": "Enter a EORI number",
+            "required": "Enter an EORI number",
         },
         validators=[validate_eori],
     )

@@ -39,7 +39,7 @@ def test_registration_uk_based_form(data, valid):
 @pytest.mark.parametrize(
     "data, valid, error",
     (
-        ({}, False, {"name": ["Enter a name"], "eori_number": ["Enter a EORI number"]}),
+        ({}, False, {"name": ["Enter a name"], "eori_number": ["Enter an EORI number"]}),
         ({"name": "joe", "eori_number": "123"}, False, {"eori_number": ["Invalid UK EORI number"]}),
         (
             {"name": "joe", "eori_number": "123456789101112131"},
@@ -82,7 +82,7 @@ def test_register_individual_details_form(data, valid, error):
             False,
             {
                 "name": ["Enter a name"],
-                "eori_number": ["Enter a EORI number"],
+                "eori_number": ["Enter an EORI number"],
                 "sic_number": ["Enter a SIC code"],
                 "vat_number": ["This field is required."],
                 "registration_number": ["Enter a registration number"],
