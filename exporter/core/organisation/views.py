@@ -51,16 +51,14 @@ logger = logging.getLogger(__name__)
 
 
 class OrganisationMixin:
-    organisation_data = None
-
     @cached_property
     def organisation(self):
         try:
             organisation = get_user(self.request, params={OrganisationStatus.DRAFT: True})["organisations"][0]
-            self.organisation_data = get_organisation(self.request, organisation["id"])
         except requests.exceptions.HTTPError:
             raise Http404("Couldn't get organisation")
-        return self.organisation_data
+
+        return get_organisation(self.request, organisation["id"])
 
     @cached_property
     def organisation_id(self):
@@ -68,7 +66,7 @@ class OrganisationMixin:
 
     @cached_property
     def is_uk_based(self):
-        return self.organisation_data["primary_site"]["address"]["country"]["id"] == "GB"
+        return self.organisation["primary_site"]["address"]["country"]["id"] == "GB"
 
 
 class Registration(
@@ -239,21 +237,21 @@ class BaseOrganisationEditView(
     def form_valid(self, form):
         if self.is_address_name:
             payload = {"site": form.cleaned_data}
-            if self.organisation_data["primary_site"]["address"].get("address_line_1"):
+            if self.organisation["primary_site"]["address"].get("address_line_1"):
                 payload["site"].update(
-                    {"address": {"address_line_1": self.organisation_data["primary_site"]["address"]["address_line_1"]}}
+                    {"address": {"address_line_1": self.organisation["primary_site"]["address"]["address_line_1"]}}
                 )
             else:
-                payload["site"].update({"address": self.organisation_data["primary_site"]["address"]})
+                payload["site"].update({"address": self.organisation["primary_site"]["address"]})
         elif self.is_address_field:
             payload = {"site": {"address": form.cleaned_data}}
             # This is a hack for BE address serializer won't load GB country unless it sees address_line_1
             if self.is_uk_based and self.field_name != "address_line_1":
-                payload["site"]["address"]["address_line_1"] = self.organisation_data["primary_site"]["address"][
+                payload["site"]["address"]["address_line_1"] = self.organisation["primary_site"]["address"][
                     "address_line_1"
                 ]
             elif self.field_name == "address":
-                payload["site"]["address"]["country"] = self.organisation_data["primary_site"]["address"]["country"]
+                payload["site"]["address"]["country"] = self.organisation["primary_site"]["address"]["country"]
         else:
             payload = form.cleaned_data
         update_organisation(self.request, self.organisation_id, payload)
