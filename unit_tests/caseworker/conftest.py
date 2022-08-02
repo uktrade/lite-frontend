@@ -206,7 +206,7 @@ def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses):
     data = {
         "user": {
             "id": gov_uk_user_id,
-            "email": "foo@example.com",
+            "email": "govuser@example.com",
             "first_name": "Foo",
             "last_name": "Bar",
             "status": "Active",
@@ -1130,6 +1130,12 @@ def mock_product_more_like_this(requests_mock, data_search):
 def mock_put_flags(requests_mock, stub_response):
     url = client._build_absolute_uri("/flags/assign/")
     yield requests_mock.put(url=url, json=stub_response), 200
+
+
+@pytest.fixture
+def mock_flagging_rules(requests_mock):
+    url = client._build_absolute_uri(f"/flags/rules/?page=1")
+    yield requests_mock.get(url=url, json={"results": []})
 
 
 @pytest.fixture(autouse=True)

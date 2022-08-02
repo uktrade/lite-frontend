@@ -1,5 +1,6 @@
 import functools
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -157,6 +158,8 @@ class ManageFlagRules(LoginRequiredMixin, TemplateView):
             ]
         )
 
+        user_data = get_gov_user(request)[0]["user"]
+
         countries, _ = get_countries(request)
         countries_map = {country["id"]: country["name"] for country in countries["countries"]}
         for rule in data["results"]:
@@ -165,8 +168,9 @@ class ManageFlagRules(LoginRequiredMixin, TemplateView):
 
         context = {
             "data": data,
-            "team": get_gov_user(request)[0]["user"]["team"]["id"],
+            "team": user_data["team"]["id"],
             "filters": filters,
+            "can_change_config": user_data["email"] in settings.CONFIG_ADMIN_USERS_LIST,
         }
         return render(request, "flags/flagging-rules-list.html", context)
 
