@@ -31,7 +31,7 @@ def mock_good_get(requests_mock, data_standard_case):
     )
     good["good"]["firearm_details"].update(
         {
-            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
             "is_covered_by_firearm_act_section_one_two_or_five_explanation": "No firearm act section",
         }
     )

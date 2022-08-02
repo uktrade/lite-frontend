@@ -176,6 +176,10 @@ def firearms_act_reducer(firearm_details, is_user_rfd, organisation_documents):
     elif firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"]:
         summary = (
             (
+                "firearms-act-1968-section",
+                firearm_details["is_covered_by_firearm_act_section_one_two_or_five"],
+            ),
+            (
                 "is-covered-by-firearm-act-section-one-two-or-five-explanation",
                 firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"],
             ),
