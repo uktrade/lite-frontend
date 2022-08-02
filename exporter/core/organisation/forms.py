@@ -273,7 +273,7 @@ class RegistrationEditEoriNumber(BaseForm):
 
 class RegistrationEditVatNumber(BaseForm):
     class Layout:
-        TITLE = "UK VAT number "
+        TITLE = "UK VAT number"
 
     vat_number = forms.CharField(required=False, label="UK VAT number (optional)", validators=[validate_vat])
 
