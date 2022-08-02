@@ -21,7 +21,7 @@ from core.forms.layouts import (
     Prefixed,
 )
 
-from exporter.core.common.forms import BaseForm, TextChoice
+from exporter.core.common.forms import BaseForm, TextChoice, coerce_str_to_bool
 from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from exporter.core.services import get_control_list_entries, get_pv_gradings_v2
 from exporter.core.validators import (
@@ -67,10 +67,6 @@ class CustomErrorDateInputField(DateInputField):
             if e.message == f"year {data_list[2]} is out of range":
                 raise ValidationError(self.custom_messages["year"]["invalid"])
             raise ValidationError(self.error_messages["invalid"])
-
-
-def coerce_str_to_bool(val):
-    return val == "True"
 
 
 class FirearmCategoryForm(BaseForm):
