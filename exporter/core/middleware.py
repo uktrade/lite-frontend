@@ -38,8 +38,7 @@ class OrganisationRedirectMiddleWare:
     def is_organisations_in_status(self, request, status):
         # TODO stream line this call to one call to retrieve all status
         organisations = get_user(request, params={status: True})["organisations"]
-        print(organisations)
-        if not len(organisations):
+        if not organisations:
             return False
-        filter_organisations = list(filter(lambda org: org["status"]["key"] == status, organisations))
-        return len(filter_organisations)
+
+        return any(org["status"]["key"] == status for org in organisations)
