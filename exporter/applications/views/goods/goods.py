@@ -6,7 +6,8 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+from django.http import Http404
 from formtools.wizard.storage.session import SessionStorage
 
 from core.auth.views import LoginRequiredMixin
@@ -83,6 +84,8 @@ from exporter.goods.forms import (
     document_grading_form,
     has_valid_section_five_certificate,
     upload_firearms_act_certificate_form,
+    IsFirearmForm,
+    NonFirearmCategoryForm,
 )
 from exporter.goods.services import (
     get_good,
@@ -124,6 +127,13 @@ class SectionDocumentMixin:
             return documents[FirearmsActDocumentType.SECTION_5]
 
 
+class CheckNonFirearmEnabledMixin:
+    def dispatch(self, request, **kwargs):
+        if not settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
+            raise Http404
+        return super().dispatch(request, **kwargs)
+
+
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
 
     template_name = "applications/goods/index.html"
@@ -139,6 +149,7 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
             exhibition=is_exhibition,
             goods_value=None if is_exhibition else get_total_goods_value(goods),
             includes_firearms=includes_firearms,
+            feature_flag_non_firearms_enabled=settings.FEATURE_FLAG_NON_FIREARMS_ENABLED,
             **kwargs,
         )
 
@@ -235,6 +246,37 @@ class SkipResetSessionStorage(SessionStorage):
         """
         if not self.request.session.pop("skip_reset", None):
             super().reset()
+
+
+class IsGoodFirearm(LoginRequiredMixin, CheckNonFirearmEnabledMixin, FormView):
+    template_name = "core/form.html"
+    form_class = IsFirearmForm
+
+    def form_valid(self, form):
+        if form.cleaned_data["is_firearm_product"]:
+            return redirect("applications:new_good_firearm", pk=self.kwargs["pk"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:non_firearm_category", kwargs={"pk": self.kwargs["pk"]})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+
+class NonFirearmCategory(LoginRequiredMixin, CheckNonFirearmEnabledMixin, FormView):
+    template_name = "core/form.html"
+    form_class = NonFirearmCategoryForm
+
+    def get_success_url(self):
+        return reverse("applications:new_good_firearm", kwargs={"pk": self.kwargs["pk"]})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        return context
 
 
 class AddGood(LoginRequiredMixin, BaseSessionWizardView):
