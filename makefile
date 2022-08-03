@@ -92,7 +92,7 @@ stop-exporter:
 	$(docker-e2e-exporter) down --remove-orphans
 
 caseworker-e2e-selenium-test:
-	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseowkrer' ***"
+	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker' ***"
 	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest --headless ./ui_tests/caseworker'
 
 exporter-e2e-selenium-test:
