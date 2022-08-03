@@ -11,11 +11,13 @@
 				{% endblock %}
 			</h1>
 		</div>
-		<div class="lite-app-bar__controls">
-			<a href="{% url 'routing_rules:create' %}" class="govuk-button" draggable="false" role="button" id="create-routing-rule">
-				{% lcs 'routing_rules.RoutingRulesList.CREATE_BUTTON' %}
-			</a>
-		</div>
+		{% if can_change_config %}
+			<div class="lite-app-bar__controls">
+				<a href="{% url 'routing_rules:create' %}" class="govuk-button" draggable="false" role="button" id="create-routing-rule">
+					{% lcs 'routing_rules.RoutingRulesList.CREATE_BUTTON' %}
+				</a>
+			</div>
+		{% endif %}
 	</div>
 
 	{% include "filters.html" %}
@@ -34,7 +36,9 @@
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.QUEUE' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.USERS' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.STATUS' %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.ACTIONS' %}</th>
+					{% if can_change_config %}
+						<th class="govuk-table__header" scope="col">{% lcs 'routing_rules.RoutingRulesList.Table.ACTIONS' %}</th>
+					{% endif %}
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -113,24 +117,26 @@
 								{% lcs 'routing_rules.RoutingRulesList.DEACTIVATED' %}
 							{% endif %}
 						</td>
-						<td class="govuk-table__cell govuk-table__cell--tight">
-							<ul class="govuk-table__cell__actions-list">
-								<li class="govuk-table__cell__actions-list-item">
-									{% if rule.active == True %}
-										<a href="{% url 'routing_rules:change_status' rule.id 'deactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state" id="deactivate">
-											{% lcs 'routing_rules.RoutingRulesList.DEACTIVATE' %}
-										</a>
-									{% elif rule.active == False %}
-										<a href="{% url 'routing_rules:change_status' rule.id 'reactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state" id="reactivate">
-											{% lcs 'routing_rules.RoutingRulesList.REACTIVATE' %}
-										</a>
-									{% endif %}
-								</li>
-								<li class="govuk-table__cell__actions-list-item">
-									<a href="{% url 'routing_rules:edit' rule.id %}" class="govuk-link govuk-link--no-visited-state" id="edit">{% lcs 'routing_rules.RoutingRulesList.EDIT' %}</a>
-								</li>
-							</ul>
-						</td>
+						{% if can_change_config %}
+							<td class="govuk-table__cell govuk-table__cell--tight">
+								<ul class="govuk-table__cell__actions-list">
+									<li class="govuk-table__cell__actions-list-item">
+										{% if rule.active == True %}
+											<a href="{% url 'routing_rules:change_status' rule.id 'deactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state" id="deactivate">
+												{% lcs 'routing_rules.RoutingRulesList.DEACTIVATE' %}
+											</a>
+										{% elif rule.active == False %}
+											<a href="{% url 'routing_rules:change_status' rule.id 'reactivate' %}" role="button" draggable="false" class="govuk-link govuk-link--no-visited-state" id="reactivate">
+												{% lcs 'routing_rules.RoutingRulesList.REACTIVATE' %}
+											</a>
+										{% endif %}
+									</li>
+									<li class="govuk-table__cell__actions-list-item">
+										<a href="{% url 'routing_rules:edit' rule.id %}" class="govuk-link govuk-link--no-visited-state" id="edit">{% lcs 'routing_rules.RoutingRulesList.EDIT' %}</a>
+									</li>
+								</ul>
+							</td>
+						{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>

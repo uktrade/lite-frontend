@@ -1,6 +1,7 @@
 import pytest
 from bs4 import BeautifulSoup
 
+from django.conf import settings
 from django.urls import reverse
 
 from lite_content.lite_internal_frontend.flags import SetFlagsForm
@@ -12,8 +13,31 @@ def setup(
     mock_put_flags,
     mock_case,
     mock_get_organisation,
+    mock_flagging_rules,
+    mock_countries,
 ):
     yield
+
+
+@pytest.fixture()
+def specify_config_users_list():
+    settings.CONFIG_ADMIN_USERS_LIST = ["govuser@example.com"]
+
+
+def test_flagging_rules_cannot_be_created_and_modified(authorized_client):
+
+    url = reverse("flags:flagging_rules")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == False
+
+
+def test_flagging_rules_can_be_created_and_modified(authorized_client, specify_config_users_list):
+
+    url = reverse("flags:flagging_rules")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == True
 
 
 def test_assign_flags_view_destination(authorized_client, queue_pk, open_case_pk):
