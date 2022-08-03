@@ -53,7 +53,7 @@ from exporter.core.helpers import (
     show_serial_numbers_form,
     str_to_bool,
 )
-from exporter.applications.views.goods.add_good_complete_product.views.mixins import NonFirearmsFlagMixin
+from exporter.applications.views.goods.add_good_platform.views.mixins import NonFirearmsFlagMixin
 from exporter.core.validators import validate_expiry_date
 from exporter.core.wizard.conditionals import C, Flag
 from exporter.core.wizard.views import BaseSessionWizardView
@@ -265,7 +265,7 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
     form_class = NonFirearmCategoryForm
 
     def get_success_url(self):
-        return reverse("applications:new_good_complete_product", kwargs={"pk": self.kwargs["pk"]})
+        return reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

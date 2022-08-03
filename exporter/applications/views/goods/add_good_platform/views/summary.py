@@ -7,26 +7,26 @@ from exporter.applications.views.goods.add_good_firearm.views.mixins import (
 )
 from .mixins import NonFirearmsFlagMixin
 from exporter.applications.summaries import (
-    complete_product_summary,
+    platform_summary,
     add_product_summary_edit_links,
     PRODUCT_SUMMARY_EDIT_LINKS,
 )
 
 
-class CompleteProductSummary(
+class PlatformSummary(
     LoginRequiredMixin,
     NonFirearmsFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,
 ):
-    template_name = "applications/goods/complete-product/product-summary.html"
+    template_name = "applications/goods/platform/product-summary.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["application_id"] = self.application["id"]
         context["good"] = self.good
-        summary = complete_product_summary(self.good)
+        summary = platform_summary(self.good)
         summary = add_product_summary_edit_links(
             summary,
             PRODUCT_SUMMARY_EDIT_LINKS,

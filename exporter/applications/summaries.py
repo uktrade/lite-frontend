@@ -3,10 +3,9 @@ from django.urls import reverse
 from core.summaries.formatters import (
     document_formatter,
 )
-from core.summaries.summaries import firearm_product_summary as core_firearm_product_summary
-from core.summaries.summaries import complete_product_summary as core_complete_product_summary
-
 from core.summaries.summaries import (
+    firearm_product_summary as core_firearm_product_summary,
+    platform_summary as core_platform_summary,
     firearm_product_on_application_summary as core_firearm_product_on_application_summary,
 )
 
@@ -197,7 +196,7 @@ def add_product_on_application_summary_edit_links(
     return summary_with_edit_links
 
 
-def complete_product_summary(good):
-    return core_complete_product_summary(
+def platform_summary(good):
+    return core_platform_summary(
         good,
     )

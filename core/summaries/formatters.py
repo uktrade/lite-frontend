@@ -51,7 +51,7 @@ FIREARM_LABELS = {
     "section-5-certificate-missing-reason": "Explain why you do not have a section 5 letter of authority",
 }
 
-COMPLETE_PRODUCT_LABELS = {
+platform_LABELS = {
     "name": "Give the product a descriptive name",
     "is-pv-graded": "Does the product have a government security grading or classification?",
     "pv-grading-prefix": "Enter a prefix (optional)",
@@ -254,7 +254,7 @@ FIREARM_ON_APPLICATION_LABELS = {
 }
 
 
-COMPLETE_PRODUCT_VALUE_FORMATTERS = {
+platform_VALUE_FORMATTERS = {
     "is-pv-graded": mapping_formatter(
         {
             "yes": "Yes",

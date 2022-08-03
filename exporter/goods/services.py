@@ -301,11 +301,8 @@ def post_good_document_sensitivity(request, pk, json):
     return data.json(), data.status_code
 
 
-def post_complete_product(request, json):
+def post_good_platform(request, json):
     json["item_category"] = PRODUCT_CATEGORY_PLATFORM
     json["is_good_controlled"] = None
     data = client.post(request, "/goods/", json)
-
-    if data.status_code == HTTPStatus.OK:
-        data.json().get("good"), data.status_code
     return data.json(), data.status_code

@@ -6,50 +6,49 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from lite_forms.generators import error_page
-
 from core.auth.views import LoginRequiredMixin
 
+from lite_forms.generators import error_page
+
 from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.core.common.decorators import expect_status
+from exporter.core.common.exceptions import ServiceError
+
 from exporter.goods.forms.firearms import (
     FirearmNameForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
 )
-from exporter.goods.services import (
-    post_complete_product,
-)
+from exporter.goods.services import post_good_platform
 
-from .constants import CompleteProductSteps
-from .payloads import AddGoodCompleteProductPayloadBuilder
-from .mixins import NonFirearmsFlagMixin
 from exporter.applications.views.goods.add_good_firearm.views.mixins import ApplicationMixin
 from exporter.applications.views.goods.add_good_firearm.views.conditionals import is_pv_graded
 
-from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
+from exporter.applications.views.goods.add_good_platform.views.constants import AddGoodPlatformSteps
+from exporter.applications.views.goods.add_good_platform.views.payloads import AddGoodPlatformPayloadBuilder
+from exporter.applications.views.goods.add_good_platform.views.mixins import NonFirearmsFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
-class AddGoodCompleteProduct(
+class AddGoodPlatform(
     LoginRequiredMixin,
     NonFirearmsFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
 ):
     form_list = [
-        (CompleteProductSteps.NAME, FirearmNameForm),
-        (CompleteProductSteps.PV_GRADING, FirearmPvGradingForm),
-        (CompleteProductSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+        (AddGoodPlatformSteps.NAME, FirearmNameForm),
+        (AddGoodPlatformSteps.PV_GRADING, FirearmPvGradingForm),
+        (AddGoodPlatformSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
     ]
     condition_dict = {
-        CompleteProductSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodPlatformSteps.PV_GRADING_DETAILS: is_pv_graded,
     }
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        if step == CompleteProductSteps.PV_GRADING_DETAILS:
+        if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
         return kwargs
 
@@ -67,13 +66,12 @@ class AddGoodCompleteProduct(
         return ctx
 
     def get_payload(self, form_dict):
-        good_payload = AddGoodCompleteProductPayloadBuilder().build(form_dict)
-        payload = good_payload
-        return payload
+        good_payload = AddGoodPlatformPayloadBuilder().build(form_dict)
+        return good_payload
 
     def get_success_url(self):
         return reverse(
-            "applications:compete_product_summary",
+            "applications:platform_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -82,10 +80,10 @@ class AddGoodCompleteProduct(
         "Error creating complete product",
         "Unexpected error adding complete product",
     )
-    def post_complete_product(self, form_dict):
+    def post_good_platform(self, form_dict):
         payload = self.get_payload(form_dict)
 
-        return post_complete_product(
+        return post_good_platform(
             self.request,
             payload,
         )
@@ -103,7 +101,7 @@ class AddGoodCompleteProduct(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            good, _ = self.post_complete_product(form_dict)
+            good, _ = self.post_good_platform(form_dict)
             self.good = good["good"]
         except ServiceError as e:
             return self.handle_service_error(e)

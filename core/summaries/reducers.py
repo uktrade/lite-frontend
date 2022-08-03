@@ -395,7 +395,7 @@ def serial_numbers_reducer(firearm_details):
     return summary
 
 
-def complete_product_reducer(good):
+def platform_reducer(good):
 
     summary = (
         (

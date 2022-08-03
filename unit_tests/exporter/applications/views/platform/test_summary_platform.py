@@ -10,9 +10,9 @@ def default_feature_flags(settings):
 
 
 @pytest.fixture
-def complete_product_summary_url(data_standard_case, good_id):
+def platform_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:compete_product_summary",
+        "applications:platform_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -29,9 +29,9 @@ def test_firearm_product_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    complete_product_summary_url,
+    platform_summary_url,
 ):
-    response = authorized_client.get(complete_product_summary_url)
+    response = authorized_client.get(platform_summary_url)
     assert response.status_code == 200
 
 
@@ -39,14 +39,14 @@ def test_firearm_product_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    complete_product_summary_url,
+    platform_summary_url,
 ):
-    response = authorized_client.get(complete_product_summary_url)
-    assertTemplateUsed(response, "applications/goods/complete-product/product-summary.html")
+    response = authorized_client.get(platform_summary_url)
+    assertTemplateUsed(response, "applications/goods/platform/product-summary.html")
 
 
 @pytest.fixture
-def complete_product_summary(good_id):
+def platform_summary(good_id):
     return (
         (
             "name",
@@ -95,12 +95,12 @@ def test_firearm_product_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    complete_product_summary_url,
+    platform_summary_url,
     data_standard_case,
     good_id,
-    complete_product_summary,
+    platform_summary,
 ):
-    response = authorized_client.get(complete_product_summary_url)
+    response = authorized_client.get(platform_summary_url)
 
     def _get_test_url(name):
         if not name:
@@ -119,7 +119,7 @@ def test_firearm_product_summary_context(
     }
 
     summary_with_links = tuple(
-        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in complete_product_summary
+        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in platform_summary
     )
 
     assert response.context["summary"] == summary_with_links

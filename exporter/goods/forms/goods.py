@@ -713,13 +713,13 @@ class NonFirearmCategoryForm(BaseForm):
         TITLE = "Select the product category"
 
     class NonFirearmCategoryChoices(models.TextChoices):
-        COMPLETE_PRODUCT = "COMPLETE_PRODUCT", "It's a complete product"
+        platform = "platform", "It's a complete product"
         PART_PRODUCT = "PART_PRODUCT", "It forms part of a product"
         HELPS_PRODUCT = "HELPS_PRODUCT", "It helps to operate a product"
 
     CATEGORY_CHOICES = (
         TextChoice(
-            NonFirearmCategoryChoices.COMPLETE_PRODUCT,
+            NonFirearmCategoryChoices.platform,
             hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
         ),
         TextChoice(
