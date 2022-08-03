@@ -393,3 +393,15 @@ def serial_numbers_reducer(firearm_details):
         summary += (("no-identification-markings-details", firearm_details["no_identification_markings_details"]),)
 
     return summary
+
+
+def complete_product_reducer(good):
+
+    summary = (
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += is_pv_graded_reducer(good)
+    return summary

@@ -73,6 +73,9 @@ from exporter.applications.views.goods.add_good_firearm.views.summary import (
     FirearmProductOnApplicationSummary,
 )
 
+from exporter.applications.views.goods.add_good_complete_product.views.add import AddGoodCompleteProduct
+from exporter.applications.views.goods.add_good_complete_product.views.summary import CompleteProductSummary
+
 app_name = "applications"
 urlpatterns = [
     # Common
@@ -97,8 +100,6 @@ urlpatterns = [
     path("<uuid:pk>/optional-note/", optional_note.ApplicationOptionalNote.as_view(), name="optional_note"),
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
-    path("<uuid:pk>/goods/is-firearm/", goods.IsGoodFirearm.as_view(), name="is_good_firearm"),
-    path("<uuid:pk>/goods/non-firearm/", goods.NonFirearmCategory.as_view(), name="non_firearm_category"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
     path("<uuid:pk>/goods/add-new/firearm/", AddGoodFirearm.as_view(), name="new_good_firearm"),
     path(
@@ -349,6 +350,17 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/documents/<uuid:doc_pk>/",
         goods.GoodOnApplicationDocumentView.as_view(),
         name="good-on-application-document",
+    ),
+    # Complete Product and non-firearm
+    path("<uuid:pk>/goods/is-firearm/", goods.IsGoodFirearm.as_view(), name="is_good_firearm"),
+    path("<uuid:pk>/goods/non-firearm-category/", goods.NonFirearmCategory.as_view(), name="non_firearm_category"),
+    path(
+        "<uuid:pk>/goods/add-new/complete-product/", AddGoodCompleteProduct.as_view(), name="new_good_complete_product"
+    ),
+    path(
+        "<uuid:pk>/goods/complete-product/<uuid:good_pk>/product-summary/",
+        CompleteProductSummary.as_view(),
+        name="compete_product_summary",
     ),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),

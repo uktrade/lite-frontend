@@ -51,6 +51,17 @@ FIREARM_LABELS = {
     "section-5-certificate-missing-reason": "Explain why you do not have a section 5 letter of authority",
 }
 
+COMPLETE_PRODUCT_LABELS = {
+    "name": "Give the product a descriptive name",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+}
+
 
 def add_labels(summary, labels):
     labelled_summary = ()
@@ -240,4 +251,16 @@ FIREARM_ON_APPLICATION_LABELS = {
     "has-serial-numbers": "Will each product have a serial number or other identification marking?",
     "no-identification-markings-details": "Explain why the product has not been marked",
     "serial-numbers": "Enter serial numbers or other identification markings",
+}
+
+
+COMPLETE_PRODUCT_VALUE_FORMATTERS = {
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
 }

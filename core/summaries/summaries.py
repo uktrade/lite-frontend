@@ -6,10 +6,13 @@ from core.summaries.formatters import (
     FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
     template_formatter,
+    COMPLETE_PRODUCT_VALUE_FORMATTERS,
+    COMPLETE_PRODUCT_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
+    complete_product_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -48,6 +51,17 @@ FIREARM_FIELDS = (
     "is-document-sensitive",
     "product-document",
     "product-document-description",
+)
+
+COMPLETE_PRODUCT_FIELDS = (
+    "name",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
 )
 
 
@@ -122,5 +136,21 @@ def firearm_product_on_application_summary(
     summary = pick_fields(summary, FIREARM_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, FIREARM_ON_APPLICATION_LABELS)
+
+    return summary
+
+
+def complete_product_summary(good, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = complete_product_reducer(good)
+    formatters = {
+        **COMPLETE_PRODUCT_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, COMPLETE_PRODUCT_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, COMPLETE_PRODUCT_LABELS)
 
     return summary

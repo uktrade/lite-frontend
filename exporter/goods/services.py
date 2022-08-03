@@ -3,7 +3,7 @@ from http import HTTPStatus
 from core import client
 from core.helpers import convert_parameters_to_query_params
 from exporter.applications.helpers.date_fields import format_date
-from exporter.core.constants import FIREARMS, PRODUCT_CATEGORY_FIREARM
+from exporter.core.constants import FIREARMS, PRODUCT_CATEGORY_FIREARM, PRODUCT_CATEGORY_PLATFORM
 
 
 def get_goods(
@@ -298,4 +298,14 @@ def get_good_document_sensitivity(request, pk):
 
 def post_good_document_sensitivity(request, pk, json):
     data = client.post(request, f"/goods/{pk}/document-sensitivity/", json)
+    return data.json(), data.status_code
+
+
+def post_complete_product(request, json):
+    json["item_category"] = PRODUCT_CATEGORY_PLATFORM
+    json["is_good_controlled"] = None
+    data = client.post(request, "/goods/", json)
+
+    if data.status_code == HTTPStatus.OK:
+        data.json().get("good"), data.status_code
     return data.json(), data.status_code

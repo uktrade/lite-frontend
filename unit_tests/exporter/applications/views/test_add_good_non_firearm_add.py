@@ -59,4 +59,4 @@ def test_non_firearm_category_select(authorized_client, application_pk):
     url = reverse("applications:non_firearm_category", kwargs={"pk": application_pk})
     response = authorized_client.post(url, data={"no_firearm_category": "COMPLETE_PRODUCT"})
     assert response.status_code == 302
-    assert response.url == reverse("applications:new_good_firearm", kwargs={"pk": application_pk})
+    assert response.url == reverse("applications:new_good_complete_product", kwargs={"pk": application_pk})

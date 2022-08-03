@@ -1,0 +1,4 @@
+class CompleteProductSteps:
+    NAME = "NAME"
+    PV_GRADING = "PV_GRADING"
+    PV_GRADING_DETAILS = "PV_GRADING_DETAILS"
