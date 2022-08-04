@@ -98,18 +98,28 @@ def case_filters_bar(request, filters, is_system_queue) -> FiltersBar:
                 title=CasesListPage.Filters.SUBMITTED_FROM,
                 prefix="submitted_from_",
                 inline_title=True,
+                suffix="submitted from",
             ),
             DateInput(
-                name="submitted_to", title=CasesListPage.Filters.SUBMITTED_TO, prefix="submitted_to_", inline_title=True
+                name="submitted_to",
+                title=CasesListPage.Filters.SUBMITTED_TO,
+                prefix="submitted_to_",
+                inline_title=True,
+                suffix="submitted by",
             ),
             DateInput(
                 name="finalised_from",
                 title=CasesListPage.Filters.FINALISED_FROM,
                 prefix="finalised_from_",
                 inline_title=True,
+                suffix="finalised from",
             ),
             DateInput(
-                name="finalised_to", title=CasesListPage.Filters.FINALISED_TO, prefix="finalised_to_", inline_title=True
+                name="finalised_to",
+                title=CasesListPage.Filters.FINALISED_TO,
+                prefix="finalised_to_",
+                inline_title=True,
+                suffix="finalised by",
             ),
             TextInput(name="party_name", title=CasesListPage.Filters.PARY_NAME),
             TextInput(name="party_address", title=CasesListPage.Filters.PARTY_ADDRESS),

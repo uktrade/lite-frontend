@@ -52,13 +52,6 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def control_list_entries(requests_mock):
-    clc_url = client._build_absolute_uri("/static/control-list-entries/")
-    matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
-    return matcher
-
-
-@pytest.fixture
 def post_goods_matcher(requests_mock, good_id):
     return requests_mock.post(
         f"/goods/",
