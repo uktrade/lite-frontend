@@ -238,3 +238,6 @@ class PartyDocumentType:
 
 class DocumentType:
     RFD_CERTIFICATE = "rfd-certificate"
+
+
+PRODUCT_CATEGORY_PLATFORM = "group1_platform"

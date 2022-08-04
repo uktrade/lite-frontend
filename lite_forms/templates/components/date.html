@@ -1,6 +1,7 @@
 <div class="govuk-form-group">
     <div class="govuk-date-input" id="date_of_issue">
         <div class="govuk-date-input__item">
+						
             <div class="govuk-form-group">
                 <label class="govuk-label govuk-date-input__label {% if component.inline_title %}govuk-visually-hidden{% endif %}" for="{{ component.prefix }}day">
                     Day
@@ -13,7 +14,8 @@
 					   name="{{ component.prefix }}day"
 					   type="number"
 					   value="{{ data.day }}"
-					   {% if component.inline_title %}placeholder="Day"{% endif %}
+					   {% if component.inline_title %}placeholder="Day {{component.suffix}}"{% endif %}
+						 
 				/>
             </div>
         </div>
@@ -30,7 +32,7 @@
 					   name="{{ component.prefix }}month"
 					   type="number"
 					   value="{{ data.month }}"
-					   {% if component.inline_title %}placeholder="Month"{% endif %}
+					   {% if component.inline_title %}placeholder="Month {{component.suffix}}"{% endif %}
 				/>
             </div>
         </div>
@@ -47,7 +49,7 @@
 					   name="{{ component.prefix }}year"
 					   type="number"
 					   value="{{ data.year }}"
-					   {% if component.inline_title %}placeholder="Year"{% endif %}
+					   {% if component.inline_title %}placeholder="Year {{component.suffix}}"{% endif %}
 				/>
             </div>
         </div>
