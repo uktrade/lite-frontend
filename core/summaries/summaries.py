@@ -6,8 +6,8 @@ from core.summaries.formatters import (
     FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
     template_formatter,
-    platform_VALUE_FORMATTERS,
-    platform_LABELS,
+    PLATFORM_VALUE_FORMATTERS,
+    PLATFORM_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
@@ -146,11 +146,11 @@ def platform_summary(good, additional_formatters=None):
 
     summary = platform_reducer(good)
     formatters = {
-        **platform_VALUE_FORMATTERS,
+        **PLATFORM_VALUE_FORMATTERS,
         **additional_formatters,
     }
     summary = pick_fields(summary, platform_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, platform_LABELS)
+    summary = add_labels(summary, PLATFORM_LABELS)
 
     return summary

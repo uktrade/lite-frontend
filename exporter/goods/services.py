@@ -303,6 +303,5 @@ def post_good_document_sensitivity(request, pk, json):
 
 def post_good_platform(request, json):
     json["item_category"] = PRODUCT_CATEGORY_PLATFORM
-    json["is_good_controlled"] = None
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code

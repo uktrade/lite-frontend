@@ -6,6 +6,7 @@ from exporter.applications.views.goods.add_good_platform.views.constants import 
 
 from exporter.goods.forms.firearms import (
     FirearmPvGradingForm,
+    FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
 )
 
@@ -71,6 +72,7 @@ def test_add_good_platform_end_to_end(
     good_id,
     new_good_platform_url,
     mock_application_get,
+    control_list_entries,
     pv_gradings,
     post_to_step,
     post_goods_matcher,
@@ -80,6 +82,20 @@ def test_add_good_platform_end_to_end(
     response = post_to_step(
         AddGoodPlatformSteps.NAME,
         {"name": "product_1"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmProductControlListEntryForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": True,
+            "control_list_entries": [
+                "ML1",
+                "ML1a",
+            ],
+        },
     )
 
     assert response.status_code == 200
@@ -117,7 +133,10 @@ def test_add_good_platform_end_to_end(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
+        "item_category": "group1_platform",
         "name": "product_1",
+        "is_good_controlled": True,
+        "control_list_entries": ["ML1", "ML1a"],
         "is_pv_graded": "yes",
         "pv_grading_details": {
             "prefix": "NATO",
@@ -127,8 +146,6 @@ def test_add_good_platform_end_to_end(
             "reference": "GR123",
             "date_of_issue": "2020-02-20",
         },
-        "item_category": "group1_platform",
-        "is_good_controlled": None,
     }
 
 
@@ -138,19 +155,23 @@ def test_add_good_platform_no_pv(
     good_id,
     new_good_platform_url,
     mock_application_get,
+    control_list_entries,
     post_to_step,
     post_goods_matcher,
 ):
     authorized_client.get(new_good_platform_url)
 
-    response = post_to_step(
+    post_to_step(
         AddGoodPlatformSteps.NAME,
         {"name": "product_1"},
     )
 
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmPvGradingForm)
-
+    post_to_step(
+        AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": False,
+        },
+    )
     response = post_to_step(
         AddGoodPlatformSteps.PV_GRADING,
         {"is_pv_graded": False},
@@ -166,9 +187,11 @@ def test_add_good_platform_no_pv(
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
+
     assert last_request.json() == {
-        "name": "product_1",
-        "is_pv_graded": "no",
         "item_category": "group1_platform",
-        "is_good_controlled": None,
+        "name": "product_1",
+        "is_good_controlled": False,
+        "control_list_entries": [],
+        "is_pv_graded": "no",
     }

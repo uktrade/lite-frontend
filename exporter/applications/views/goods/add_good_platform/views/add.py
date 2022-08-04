@@ -16,9 +16,11 @@ from exporter.core.common.exceptions import ServiceError
 
 from exporter.goods.forms.firearms import (
     FirearmNameForm,
+    FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
 )
+
 from exporter.goods.services import post_good_platform
 
 from exporter.applications.views.goods.add_good_firearm.views.mixins import ApplicationMixin
@@ -39,6 +41,7 @@ class AddGoodPlatform(
 ):
     form_list = [
         (AddGoodPlatformSteps.NAME, FirearmNameForm),
+        (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
         (AddGoodPlatformSteps.PV_GRADING, FirearmPvGradingForm),
         (AddGoodPlatformSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
     ]
@@ -48,6 +51,10 @@ class AddGoodPlatform(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
+
+        if step == AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY:
+            kwargs["request"] = self.request
+
         if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
         return kwargs
