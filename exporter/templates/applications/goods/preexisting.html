@@ -42,7 +42,7 @@
 								Firearms
 							</td>
 							<td class="govuk-table__cell" id="good-control_code">
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
+								{% include 'includes/verfied-control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
 							</td>
 							{% if feature_flag_firearms_enabled %}
 							<td class="govuk-table__cell lite-!-text-align-right">
