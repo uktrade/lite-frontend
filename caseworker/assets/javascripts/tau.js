@@ -1,6 +1,7 @@
 import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
+import DisablingButton from "core/disabling-button";
 import Headline from "./tau/headline";
 import SelectProducts from "./tau/select-products";
 import CLESuggestions from "./tau/cle-suggestions";
@@ -106,6 +107,12 @@ const initAssessmentForm = () => {
   }).init();
 };
 
+const initSaveAndContinueButton = () => {
+  const button = document.querySelector("#submit-id-submit");
+  new DisablingButton(button).init();
+};
+
 addSelectAllExpandAll();
 initCheckboxClassToggler();
 initAssessmentForm();
+initSaveAndContinueButton();
