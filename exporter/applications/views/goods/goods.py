@@ -7,7 +7,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
-from django.http import Http404
+
 from formtools.wizard.storage.session import SessionStorage
 
 from core.auth.views import LoginRequiredMixin
@@ -53,6 +53,7 @@ from exporter.core.helpers import (
     show_serial_numbers_form,
     str_to_bool,
 )
+from exporter.applications.views.goods.add_good_platform.views.mixins import NonFirearmsFlagMixin
 from exporter.core.validators import validate_expiry_date
 from exporter.core.wizard.conditionals import C, Flag
 from exporter.core.wizard.views import BaseSessionWizardView
@@ -125,13 +126,6 @@ class SectionDocumentMixin:
             return documents[FirearmsActDocumentType.SECTION_2]
         elif firearm_section == FirearmsActSections.SECTION_5:
             return documents[FirearmsActDocumentType.SECTION_5]
-
-
-class CheckNonFirearmEnabledMixin:
-    def dispatch(self, request, **kwargs):
-        if not settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
-            raise Http404
-        return super().dispatch(request, **kwargs)
 
 
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
@@ -248,7 +242,7 @@ class SkipResetSessionStorage(SessionStorage):
             super().reset()
 
 
-class IsGoodFirearm(LoginRequiredMixin, CheckNonFirearmEnabledMixin, FormView):
+class IsGoodFirearm(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
     template_name = "core/form.html"
     form_class = IsFirearmForm
 
@@ -266,12 +260,12 @@ class IsGoodFirearm(LoginRequiredMixin, CheckNonFirearmEnabledMixin, FormView):
         return context
 
 
-class NonFirearmCategory(LoginRequiredMixin, CheckNonFirearmEnabledMixin, FormView):
+class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
     template_name = "core/form.html"
     form_class = NonFirearmCategoryForm
 
     def get_success_url(self):
-        return reverse("applications:new_good_firearm", kwargs={"pk": self.kwargs["pk"]})
+        return reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
