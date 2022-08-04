@@ -403,5 +403,6 @@ def platform_reducer(good):
             good["name"],
         ),
     )
+    summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
     return summary

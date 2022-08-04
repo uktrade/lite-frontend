@@ -53,8 +53,10 @@ FIREARM_FIELDS = (
     "product-document-description",
 )
 
-platform_FIELDS = (
+PLATFORM_FIELDS = (
     "name",
+    "is-good-controlled",
+    "control-list-entries",
     "is-pv-graded",
     "pv-grading-prefix",
     "pv-grading-grading",
@@ -149,7 +151,7 @@ def platform_summary(good, additional_formatters=None):
         **PLATFORM_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, platform_FIELDS)
+    summary = pick_fields(summary, PLATFORM_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, PLATFORM_LABELS)
 

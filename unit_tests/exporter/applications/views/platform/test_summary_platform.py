@@ -54,6 +54,16 @@ def platform_summary(good_id):
             "Give the product a descriptive name",
         ),
         (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
             "is-pv-graded",
             "Yes",
             "Does the product have a government security grading or classification?",
@@ -109,6 +119,8 @@ def test_firearm_product_summary_context(
 
     url_map = {
         "name": "name",
+        "is-good-controlled": "control-list-entries",
+        "control-list-entries": "control-list-entries",
         "is-pv-graded": "pv-grading",
         "pv-grading-prefix": "pv-grading",
         "pv-grading-grading": "pv-grading",
