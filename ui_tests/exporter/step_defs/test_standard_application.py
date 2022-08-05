@@ -793,13 +793,13 @@ def verify_is_rfd(driver, is_rfd):
 
 @then(parsers.parse('I see "{firearms_act}" as firearms act'))
 def verify_firearms_act(driver, firearms_act):
-    value, _ = get_summary_value(driver, "firearms-act").split("\n")
+    value = get_summary_value(driver, "firearms-act-1968-section")
     assert value == firearms_act
 
 
 @then(parsers.parse('I see "{firearms_act_explanation}" as firearms act explanation'))
 def verify_firearms_act_explanation(driver, firearms_act_explanation):
-    _, value = get_summary_value(driver, "firearms-act").split("\n")
+    value = get_summary_value(driver, "is-covered-by-firearm-act-section-one-two-or-five-explanation")
     assert value == firearms_act_explanation
 
 

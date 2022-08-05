@@ -625,7 +625,7 @@ def data_standard_case():
                                 "number_of_items": 2,
                                 "serial_numbers_available": "AVAILABLE",
                                 "serial_numbers": ["12345", "ABC-123"],
-                                "is_covered_by_firearm_act_section_one_two_or_five": "No",
+                                "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
                                 "is_covered_by_firearm_act_section_one_two_or_five_explanation": "Not covered by firearm act sections",
                             },
                         },
@@ -1377,6 +1377,11 @@ def standard_firearm_expected_product_summary():
         ("calibre", "0.25", "What is the calibre of the product?"),
         ("is-replica", "No", "Is the product a replica firearm?"),
         ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
+        (
+            "firearms-act-1968-section",
+            "Don't know",
+            "Which section of the Firearms Act 1968 is the product covered by?",
+        ),
         (
             "is-covered-by-firearm-act-section-one-two-or-five-explanation",
             "Not covered by firearm act sections",

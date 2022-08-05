@@ -1,7 +1,7 @@
 @licences @all
 Feature: I want to be able to view licences as an exporter user
 
-  @skip @current
+  @current
   Scenario: View my standard application licences
     Given I signin and go to exporter homepage and choose Test Org
     And I put the test user in the admin team

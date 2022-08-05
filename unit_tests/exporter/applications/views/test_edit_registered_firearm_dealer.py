@@ -151,6 +151,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     good_id,
 ):
     good = data_standard_case["case"]["data"]["goods"][0]
+    good["good"]["firearm_details"].pop("is_covered_by_firearm_act_section_one_two_or_five")
     good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}
     url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
     requests_mock.get(url=url, json=good)
@@ -205,7 +206,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {"is_covered_by_section_5": "no"}
+    assert form.initial == {}
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
@@ -302,9 +303,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {
-        "is_covered_by_section_5": "no",
-    }
+    assert form.initial == {}
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
@@ -340,7 +339,6 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
 def test_edit_registered_firearms_dealer_rfd_to_not_rfd(
     data_standard_case,
     application_with_organisation_and_application_rfd_document,
-    mock_good_get,
     mock_good_put,
     product_summary_url,
     requests_mock,
@@ -348,6 +346,12 @@ def test_edit_registered_firearms_dealer_rfd_to_not_rfd(
     good_id,
     rfd_certificate,
 ):
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["good"]["firearm_details"].pop("is_covered_by_firearm_act_section_one_two_or_five")
+    good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}
+    url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
+    requests_mock.get(url=url, json=good)
+
     delete_rfd_organisation_document_matcher = requests_mock.delete(
         f"/organisations/{rfd_certificate['organisation']}/document/{rfd_certificate['id']}/",
         status_code=204,

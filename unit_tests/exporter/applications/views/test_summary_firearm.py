@@ -107,6 +107,11 @@ def product_summary(good_id):
             "Are you a registered firearms dealer?",
         ),
         (
+            "firearms-act-1968-section",
+            "Don't know",
+            "Which section of the Firearms Act 1968 is the product covered by?",
+        ),
+        (
             "is-covered-by-firearm-act-section-one-two-or-five-explanation",
             "No firearm act section",
             "Explain",
@@ -165,6 +170,7 @@ def test_firearm_product_summary_context(
         "calibre": "calibre",
         "is-replica": "replica",
         "is-registered-firearms-dealer": "registered-firearms-dealer",
+        "firearms-act-1968-section": "firearms-act-1968",
         "is-covered-by-firearm-act-section-one-two-or-five-explanation": "firearms-act-1968",
         "has-product-document": "product-document-availability",
         "is-document-sensitive": "product-document-sensitivity",

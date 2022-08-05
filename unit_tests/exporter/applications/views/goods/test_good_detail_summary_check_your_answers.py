@@ -115,6 +115,11 @@ def test_good_detail_summary_check_your_answers_context(
                 "Are you a registered firearms dealer?",
             ),
             (
+                "firearms-act-1968-section",
+                "Don't know",
+                "Which section of the Firearms Act 1968 is the product covered by?",
+            ),
+            (
                 "is-covered-by-firearm-act-section-one-two-or-five-explanation",
                 "Not covered by firearm act sections",
                 "Explain",
