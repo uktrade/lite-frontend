@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -78,6 +79,7 @@ class RoutingRulesList(LoginRequiredMixin, TemplateView):
             "status": status,
             "user_data": user_data,
             "filters": filters,
+            "can_change_config": user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST,
         }
         return render(request, "routing-rules/index.html", context)
 

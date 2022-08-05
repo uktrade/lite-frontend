@@ -252,3 +252,10 @@ def application_with_rfd_and_section_5_document(data_standard_case, requests_moc
     }
     matcher = requests_mock.get(url=app_url, json=case)
     return matcher
+
+
+@pytest.fixture
+def control_list_entries(requests_mock):
+    clc_url = client._build_absolute_uri("/static/control-list-entries/")
+    matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
+    return matcher

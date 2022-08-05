@@ -27,7 +27,7 @@ def test_is_firearm_form(data, is_valid, errors):
     "data, is_valid, errors",
     (
         ({}, False, {"no_firearm_category": ["Select the product category"]}),
-        ({"no_firearm_category": "COMPLETE_PRODUCT"}, True, {}),
+        ({"no_firearm_category": "PLATFORM"}, True, {}),
     ),
 )
 def test_non_firearm_category_form(data, is_valid, errors):
