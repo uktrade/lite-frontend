@@ -13,18 +13,27 @@ from lite_forms.generators import error_page
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
-
+from exporter.core.helpers import get_document_data
 from exporter.goods.forms.firearms import (
     FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
+    FirearmDocumentAvailability,
+    FirearmDocumentSensitivityForm,
+    FirearmDocumentUploadForm,
 )
+from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
-from exporter.goods.services import post_good_platform
+from exporter.goods.services import post_good_platform, post_good_documents
 
-from exporter.applications.views.goods.add_good_firearm.views.mixins import ApplicationMixin
-from exporter.applications.views.goods.add_good_firearm.views.conditionals import is_pv_graded
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
+from exporter.applications.views.goods.common.conditionals import (
+    is_pv_graded,
+    is_product_document_available,
+    is_document_sensitive,
+)
+from exporter.core.wizard.conditionals import C
 
 from exporter.applications.views.goods.add_good_platform.views.constants import AddGoodPlatformSteps
 from exporter.applications.views.goods.add_good_platform.views.payloads import AddGoodPlatformPayloadBuilder
@@ -38,15 +47,23 @@ class AddGoodPlatform(
     NonFirearmsFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
+    ProductUsesInformationSecurityForm,
 ):
     form_list = [
         (AddGoodPlatformSteps.NAME, FirearmNameForm),
         (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
         (AddGoodPlatformSteps.PV_GRADING, FirearmPvGradingForm),
         (AddGoodPlatformSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+        (AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
+        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
+        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
+        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+        (AddGoodPlatformSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
         AddGoodPlatformSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
 
     def get_form_kwargs(self, step=None):
@@ -58,6 +75,31 @@ class AddGoodPlatform(
         if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
         return kwargs
+
+    def has_product_documentation(self):
+        return self.condition_dict[AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD](self)
+
+    def get_product_document_payload(self):
+        data = self.get_cleaned_data_for_step(AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD)
+        document = data["product_document"]
+        payload = {
+            **get_document_data(document),
+            "description": data["description"],
+        }
+        return payload
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error with product document when creating platform",
+        "Unexpected error adding platform",
+    )
+    def post_product_documentation(self, good):
+        document_payload = self.get_product_document_payload()
+        return post_good_documents(
+            request=self.request,
+            pk=good["id"],
+            json=document_payload,
+        )
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
@@ -110,6 +152,8 @@ class AddGoodPlatform(
         try:
             good, _ = self.post_good_platform(form_dict)
             self.good = good["good"]
+            if self.has_product_documentation():
+                self.post_product_documentation(self.good)
         except ServiceError as e:
             return self.handle_service_error(e)
 

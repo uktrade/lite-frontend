@@ -61,7 +61,8 @@ from .conditionals import (
 from .constants import AttachFirearmToApplicationSteps
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
-from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
+from .mixins import GoodMixin, Product2FlagMixin
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from .payloads import (
     AttachFirearmToApplicationGoodPayloadBuilder,
     AttachFirearmToApplicationGoodOnApplicationPayloadBuilder,

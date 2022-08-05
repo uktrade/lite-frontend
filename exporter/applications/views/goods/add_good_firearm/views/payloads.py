@@ -10,6 +10,7 @@ from exporter.core.helpers import (
 )
 from exporter.core.wizard.payloads import MergingPayloadBuilder
 from exporter.core.common.forms import get_cleaned_data
+from exporter.applications.views.goods.common.payloads import get_pv_grading_payload, get_pv_grading_good_payload
 from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
     FirearmSection5Form,
@@ -52,18 +53,6 @@ def get_attach_firearm_act_certificate_payload(form):
 @firearm_details_payload
 def get_firearm_details_cleaned_data(form):
     return get_cleaned_data(form)
-
-
-def get_pv_grading_payload(form):
-    return {
-        "is_pv_graded": "yes" if form.cleaned_data["is_pv_graded"] else "no",
-    }
-
-
-def get_pv_grading_good_payload(form):
-    payload = form.cleaned_data.copy()
-    payload["date_of_issue"] = payload["date_of_issue"].isoformat()
-    return {"pv_grading_details": payload}
 
 
 @firearm_details_payload

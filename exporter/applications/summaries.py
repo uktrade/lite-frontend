@@ -197,6 +197,20 @@ def add_product_on_application_summary_edit_links(
 
 
 def platform_summary(good):
+    def goods_document_formatter(document):
+        url = reverse(
+            "goods:document",
+            kwargs={
+                "pk": good["id"],
+                "file_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document, url)
+
     return core_platform_summary(
         good,
+        {
+            "product-document": goods_document_formatter,
+        },
     )

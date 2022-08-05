@@ -98,10 +98,30 @@ def platform_summary(good_id):
             "20 February 2020",
             "Date of issue",
         ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
     )
 
 
-def test_firearm_product_summary_context(
+def test_platform_product_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -128,10 +148,13 @@ def test_firearm_product_summary_context(
         "pv-grading-issuing-authority": "pv-grading",
         "pv-grading-details-reference": "pv-grading",
         "pv-grading-details-date-of-issue": "pv-grading",
+        "has-product-document": "product-document-availability",
+        "is-document-sensitive": "product-document-sensitivity",
+        "product-document": "product-document",
+        "product-document-description": "product-document",
     }
 
     summary_with_links = tuple(
         (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in platform_summary
     )
-
     assert response.context["summary"] == summary_with_links
