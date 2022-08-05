@@ -95,7 +95,7 @@ def get_firearm_act_1968_initial_data(firearm_details):
     if is_covered_by_firearm_act_section_one_two_or_five == "No":
         return {}
 
-    if is_covered_by_firearm_act_section_one_two_or_five == "Unsure":
+    if is_covered_by_firearm_act_section_one_two_or_five == "Don't know":
         return {
             "firearms_act_section": FirearmFirearmAct1968Form.SectionChoices.DONT_KNOW,
             "not_covered_explanation": firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"],

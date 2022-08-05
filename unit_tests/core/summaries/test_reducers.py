@@ -402,13 +402,16 @@ def test_firearms_act_section5_reducer(firearm_details, organisation_documents, 
         ),
         (
             {
-                "is_covered_by_firearm_act_section_one_two_or_five": "No",
+                "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
                 "is_covered_by_firearm_act_section_one_two_or_five_explanation": "explanation",
             },
             False,
             ["document"],
             False,
-            (("is-covered-by-firearm-act-section-one-two-or-five-explanation", "explanation"),),
+            (
+                ("firearms-act-1968-section", "Don't know"),
+                ("is-covered-by-firearm-act-section-one-two-or-five-explanation", "explanation"),
+            ),
         ),
         (
             {

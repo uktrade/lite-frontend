@@ -185,6 +185,7 @@ FIREARM_VALUE_FORMATTERS = {
             FirearmsActSections.SECTION_1: "Section 1",
             FirearmsActSections.SECTION_2: "Section 2",
             FirearmsActSections.SECTION_5: "Section 5",
+            "Unsure": "Don't know",
         }
     ),
 }
