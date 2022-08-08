@@ -10,7 +10,7 @@
 	<h1 class="govuk-heading-l">{% block title %}{% lcs 'goods.AddPreexistingGoodToApplicationForm.TITLE' %}{% endblock %}</h1>
 
 	{% if data or name or control_code %}
-	
+
 		{% include 'filters.html' %}
 
 		{% if data %}
@@ -42,7 +42,7 @@
 								Firearms
 							</td>
 							<td class="govuk-table__cell" id="good-control_code">
-								{% include 'includes/verfied-control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
+								{% include 'includes/verified-control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
 							</td>
 							{% if feature_flag_firearms_enabled %}
 							<td class="govuk-table__cell lite-!-text-align-right">
