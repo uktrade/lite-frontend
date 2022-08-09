@@ -78,14 +78,16 @@ from .actions import (
 from .conditionals import (
     has_organisation_firearm_act_document,
     is_deactivated,
-    is_document_sensitive,
     is_onward_exported,
     is_product_covered_by_firearm_act_section,
-    is_product_document_available,
     is_product_made_before_1938,
-    is_pv_graded,
     is_registered_firearms_dealer,
     is_serial_numbers_available,
+)
+from exporter.applications.views.goods.common.conditionals import (
+    is_document_sensitive,
+    is_product_document_available,
+    is_pv_graded,
 )
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from exporter.core.common.decorators import expect_status
@@ -103,11 +105,11 @@ from .initial import (
     get_year_of_manufacture_initial_data,
 )
 from .mixins import (
-    ApplicationMixin,
     GoodMixin,
     GoodOnApplicationMixin,
     Product2FlagMixin,
 )
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from .payloads import (
     FirearmsActPayloadBuilder,
     FirearmEditFirearmsAct1968PayloadBuilder,

@@ -1,10 +1,8 @@
 from django.views.generic import TemplateView
 from core.auth.views import LoginRequiredMixin
 
-from exporter.applications.views.goods.add_good_firearm.views.mixins import (
-    ApplicationMixin,
-    GoodMixin,
-)
+from exporter.applications.views.goods.add_good_firearm.views.mixins import GoodMixin
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from .mixins import NonFirearmsFlagMixin
 from exporter.applications.summaries import (
     platform_summary,
@@ -26,6 +24,7 @@ class PlatformSummary(
         context = super().get_context_data(**kwargs)
         context["application_id"] = self.application["id"]
         context["good"] = self.good
+
         summary = platform_summary(self.good)
         summary = add_product_summary_edit_links(
             summary,

@@ -22,11 +22,11 @@ from exporter.core.helpers import (
 )
 
 from .mixins import (
-    ApplicationMixin,
     GoodMixin,
     GoodOnApplicationMixin,
     Product2FlagMixin,
 )
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
 
 
 class FirearmProductSummary(

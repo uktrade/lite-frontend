@@ -70,22 +70,25 @@ from .conditionals import (
     has_organisation_rfd_certificate,
     is_certificate_required,
     is_deactivated,
-    is_document_sensitive,
     is_onward_exported,
     is_product_category_made_before_1938,
     is_product_covered_by_firearm_act_section,
-    is_product_document_available,
     is_product_made_before_1938,
-    is_pv_graded,
     is_registered_firearms_dealer,
     is_rfd_certificate_invalid,
     is_serial_numbers_available,
     should_display_is_registered_firearms_dealer_step,
 )
+from exporter.applications.views.goods.common.conditionals import (
+    is_document_sensitive,
+    is_pv_graded,
+    is_product_document_available,
+)
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
-from .mixins import ApplicationMixin, GoodMixin, Product2FlagMixin
+from .mixins import GoodMixin, Product2FlagMixin
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from .payloads import (
     AddGoodFirearmPayloadBuilder,
     AddGoodFirearmToApplicationPayloadBuilder,

@@ -1,6 +1,7 @@
 import pytest
 
 from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.applications.views.goods.add_good_platform.views.constants import AddGoodPlatformSteps
 
@@ -8,7 +9,11 @@ from exporter.goods.forms.firearms import (
     FirearmPvGradingForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
+    FirearmDocumentAvailability,
+    FirearmDocumentSensitivityForm,
+    FirearmDocumentUploadForm,
 )
+from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
 
 @pytest.fixture(autouse=True)
@@ -47,6 +52,15 @@ def post_goods_matcher(requests_mock, good_id):
 
 
 @pytest.fixture
+def post_good_document_matcher(requests_mock, good_id):
+    return requests_mock.post(
+        f"/goods/{good_id}/documents/",
+        status_code=201,
+        json={},
+    )
+
+
+@pytest.fixture
 def goto_step(goto_step_factory, new_good_platform_url):
     return goto_step_factory(new_good_platform_url)
 
@@ -76,6 +90,7 @@ def test_add_good_platform_end_to_end(
     pv_gradings,
     post_to_step,
     post_goods_matcher,
+    post_good_document_matcher,
 ):
     authorized_client.get(new_good_platform_url)
 
@@ -121,6 +136,44 @@ def test_add_good_platform_end_to_end(
         },
     )
 
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY,
+        {"uses_information_security": True, "information_security_details": "secure encrypt"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentAvailability)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": True},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        {"is_document_sensitive": False},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], FirearmDocumentUploadForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductMilitaryUseForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_MILITARY_USE,
+        {"is_military_use": "yes_modified", "modified_military_use_details": "extra power"},
+    )
+
     assert response.status_code == 302
     assert response.url == reverse(
         "applications:platform_summary",
@@ -132,6 +185,7 @@ def test_add_good_platform_end_to_end(
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
+
     assert last_request.json() == {
         "item_category": "group1_platform",
         "name": "product_1",
@@ -146,7 +200,19 @@ def test_add_good_platform_end_to_end(
             "reference": "GR123",
             "date_of_issue": "2020-02-20",
         },
+        "uses_information_security": "True",
+        "information_security_details": "secure encrypt",
+        "is_document_available": True,
+        "no_document_comments": "",
+        "is_document_sensitive": False,
+        "is_military_use": "yes_modified",
+        "modified_military_use_details": "extra power",
     }
+
+    assert post_good_document_matcher.called_once
+    assert post_good_document_matcher.last_request.json() == [
+        {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}
+    ]
 
 
 def test_add_good_platform_no_pv(
@@ -172,10 +238,25 @@ def test_add_good_platform_no_pv(
             "is_good_controlled": False,
         },
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodPlatformSteps.PV_GRADING,
         {"is_pv_graded": False},
     )
+    post_to_step(
+        AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY,
+        {
+            "uses_information_security": False,
+        },
+    )
+    post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_MILITARY_USE,
+        {"is_military_use": "no"},
+    )
+
     assert response.status_code == 302
     assert response.url == reverse(
         "applications:platform_summary",
@@ -187,11 +268,16 @@ def test_add_good_platform_no_pv(
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
-
     assert last_request.json() == {
         "item_category": "group1_platform",
         "name": "product_1",
         "is_good_controlled": False,
         "control_list_entries": [],
         "is_pv_graded": "no",
+        "uses_information_security": "False",
+        "information_security_details": "",
+        "is_document_available": False,
+        "no_document_comments": "product not manufactured yet",
+        "is_military_use": "no",
+        "modified_military_use_details": "",
     }

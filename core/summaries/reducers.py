@@ -409,4 +409,5 @@ def platform_reducer(good):
     )
     summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
+    summary += has_product_document_reducer(good)
     return summary
