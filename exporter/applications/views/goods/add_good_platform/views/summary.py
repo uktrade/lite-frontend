@@ -9,8 +9,6 @@ from exporter.applications.summaries import (
     platform_summary,
     add_product_on_application_summary_edit_links,
     platform_product_on_application_summary,
-    add_product_summary_edit_links,
-    PRODUCT_SUMMARY_EDIT_LINKS,
     PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
 )
 from exporter.core.helpers import get_organisation_documents
@@ -80,11 +78,5 @@ class PlatformSummary(
         context["good"] = self.good
 
         summary = platform_summary(self.good)
-        summary = add_product_summary_edit_links(
-            summary,
-            PRODUCT_SUMMARY_EDIT_LINKS,
-            self.application,
-            self.good,
-        )
         context["summary"] = summary
         return context
