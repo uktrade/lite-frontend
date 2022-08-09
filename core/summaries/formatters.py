@@ -276,3 +276,21 @@ PLATFORM_VALUE_FORMATTERS = {
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
 }
+
+PLATFORM_ON_APPLICATION_FORMATTERS = {
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "total-value": money_formatter,
+}
+
+PLATFORM_ON_APPLICATION_LABELS = {
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+}

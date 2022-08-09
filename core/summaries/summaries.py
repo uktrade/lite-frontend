@@ -6,12 +6,15 @@ from core.summaries.formatters import (
     FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
     template_formatter,
-    PLATFORM_VALUE_FORMATTERS,
     PLATFORM_LABELS,
+    PLATFORM_VALUE_FORMATTERS,
+    PLATFORM_ON_APPLICATION_FORMATTERS,
+    PLATFORM_ON_APPLICATION_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
+    platform_on_application_reducer,
     platform_reducer,
 )
 from core.summaries.utils import pick_fields
@@ -147,6 +150,17 @@ def firearm_product_on_application_summary(
     return summary
 
 
+PLATFORM_ON_APPLICATION_FIELDS = (
+    "is-onward-exported",
+    "is-altered",
+    "is-altered-comments",
+    "is-incorporated",
+    "is-incorporated-comments",
+    "number-of-items",
+    "total-value",
+)
+
+
 def platform_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
@@ -159,5 +173,22 @@ def platform_summary(good, additional_formatters=None):
     summary = pick_fields(summary, PLATFORM_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, PLATFORM_LABELS)
+
+    return summary
+
+
+def platform_product_on_application_summary(good_on_application, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = platform_on_application_reducer(good_on_application)
+    formatters = {
+        **PLATFORM_ON_APPLICATION_FORMATTERS,
+        **additional_formatters,
+    }
+
+    summary = pick_fields(summary, PLATFORM_ON_APPLICATION_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, PLATFORM_ON_APPLICATION_LABELS)
 
     return summary

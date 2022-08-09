@@ -21,12 +21,8 @@ from exporter.core.helpers import (
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 
-from .mixins import (
-    GoodMixin,
-    GoodOnApplicationMixin,
-    Product2FlagMixin,
-)
-from exporter.applications.views.goods.common.mixins import ApplicationMixin
+from .mixins import Product2FlagMixin
+from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
 
 
 class FirearmProductSummary(
