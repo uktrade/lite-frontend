@@ -8,7 +8,7 @@ from core.summaries.utils import (
 )
 
 from exporter.applications.services import get_application_documents
-from exporter.applications.summaries import (
+from exporter.applications.summaries.firearm import (
     add_product_summary_edit_links,
     add_product_on_application_summary_edit_links,
     firearm_product_summary,

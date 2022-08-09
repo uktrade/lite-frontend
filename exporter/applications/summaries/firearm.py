@@ -5,9 +5,7 @@ from core.summaries.formatters import (
 )
 from core.summaries.summaries import (
     firearm_product_summary as core_firearm_product_summary,
-    platform_summary as core_platform_summary,
     firearm_product_on_application_summary as core_firearm_product_on_application_summary,
-    platform_product_on_application_summary as core_platform_product_on_application_summary,
 )
 
 
@@ -195,27 +193,3 @@ def add_product_on_application_summary_edit_links(
         summary_with_edit_links += ((key, value, *rest, edit_link),)
 
     return summary_with_edit_links
-
-
-def platform_summary(good):
-    def goods_document_formatter(document):
-        url = reverse(
-            "goods:document",
-            kwargs={
-                "pk": good["id"],
-                "file_pk": document["id"],
-            },
-        )
-
-        return document_formatter(document, url)
-
-    return core_platform_summary(
-        good,
-        {
-            "product-document": goods_document_formatter,
-        },
-    )
-
-
-def platform_product_on_application_summary(good_on_application):
-    return core_platform_product_on_application_summary(good_on_application)

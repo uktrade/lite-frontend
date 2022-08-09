@@ -5,7 +5,7 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
 from .mixins import NonFirearmsFlagMixin
-from exporter.applications.summaries import (
+from exporter.applications.summaries.platform import (
     platform_summary,
     platform_product_on_application_summary,
 )

@@ -1,6 +1,6 @@
 import uuid
 
-from exporter.applications.summaries import (
+from exporter.applications.summaries.firearm import (
     add_product_on_application_summary_edit_links,
     add_product_summary_edit_links,
     firearm_product_summary,
@@ -10,7 +10,7 @@ from exporter.applications.summaries import (
 
 
 def test_get_product_summary_edit_link_factory(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.return_value = "/reversed-url/"
 
     application = {
@@ -33,7 +33,7 @@ def test_get_product_summary_edit_link_factory(mocker):
 
 
 def test_add_product_summary_edit_links(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.side_effect = lambda name, kwargs: f"/{kwargs['pk']}/{kwargs['good_pk']}/{name}/"
 
     application = {
@@ -243,7 +243,7 @@ def test_firearm_product_summary():
 
 
 def test_get_product_on_application_summary_edit_link_factory(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.return_value = "/reversed-url/"
 
     application = {
@@ -272,7 +272,7 @@ def test_get_product_on_application_summary_edit_link_factory(mocker):
 
 
 def test_add_product_on_application_summary_edit_links(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.side_effect = (
         lambda name, kwargs: f"/{kwargs['pk']}/{kwargs['good_on_application_pk']}/{kwargs['summary_type']}/{name}/"
     )

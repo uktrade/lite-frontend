@@ -6,7 +6,7 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
-from exporter.applications.summaries import firearm_product_summary
+from exporter.applications.summaries.firearm import firearm_product_summary
 from exporter.core.helpers import (
     get_user_organisation_documents,
     has_valid_organisation_rfd_certificate,
