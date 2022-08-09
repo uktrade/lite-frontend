@@ -5,7 +5,7 @@ from formtools.wizard.views import SessionWizardView
 
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
-from caseworker.cases.helpers.summaries import firearm_product_summary, firearm_product_on_application_summary
+from caseworker.cases.helpers.summaries import firearm_summary, firearm_on_application_summary
 from caseworker.cases.services import (
     get_case,
     post_review_good,
@@ -236,13 +236,13 @@ class GoodDetails(LoginRequiredMixin, FormView):
     def get_product_summary(
         self, good_on_application, is_user_rfd, organisation_documents, good_on_application_documents
     ):
-        product_summary = firearm_product_summary(
+        product_summary = firearm_summary(
             good_on_application,
             is_user_rfd,
             organisation_documents,
             self.kwargs["queue_pk"],
         )
-        product_on_application_summary = firearm_product_on_application_summary(
+        product_on_application_summary = firearm_on_application_summary(
             good_on_application,
             good_on_application_documents,
             self.kwargs["queue_pk"],

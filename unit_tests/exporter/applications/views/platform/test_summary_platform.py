@@ -25,7 +25,7 @@ def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]
 
 
-def test_firearm_product_summary_response_status_code(
+def test_platform_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -35,7 +35,7 @@ def test_firearm_product_summary_response_status_code(
     assert response.status_code == 200
 
 
-def test_firearm_product_summary_template_used(
+def test_platform_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -165,7 +165,7 @@ def platform_on_application_summary():
     )
 
 
-def test_firearm_product_on_application_summary_context(
+def test_platform_on_application_summary_context(
     authorized_client,
     platform_on_application_summary_url,
     mock_application_get,

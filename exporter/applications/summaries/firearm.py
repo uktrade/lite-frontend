@@ -4,12 +4,12 @@ from core.summaries.formatters import (
     document_formatter,
 )
 from core.summaries.summaries import (
-    firearm_product_summary as core_firearm_product_summary,
-    firearm_product_on_application_summary as core_firearm_product_on_application_summary,
+    firearm_summary as core_firearm_summary,
+    firearm_on_application_summary as core_firearm_on_application_summary,
 )
 
 
-PRODUCT_SUMMARY_EDIT_LINKS = {
+FIREARM_SUMMARY_EDIT_LINKS = {
     "firearm-category": "category",
     "name": "name",
     "calibre": "calibre",
@@ -41,7 +41,7 @@ PRODUCT_SUMMARY_EDIT_LINKS = {
 }
 
 
-def get_product_summary_edit_link_factory(application, good):
+def get_firearm_summary_edit_link_factory(application, good):
     def get_edit_link(name):
         return reverse(
             f"applications:firearm_edit_{name}",
@@ -54,8 +54,8 @@ def get_product_summary_edit_link_factory(application, good):
     return get_edit_link
 
 
-def add_product_summary_edit_links(summary, edit_links, application, good):
-    get_edit_link = get_product_summary_edit_link_factory(application, good)
+def add_firearm_summary_edit_links(summary, edit_links, application, good):
+    get_edit_link = get_firearm_summary_edit_link_factory(application, good)
 
     summary_with_edit_links = ()
     for key, value, *rest in summary:
@@ -71,7 +71,7 @@ def add_product_summary_edit_links(summary, edit_links, application, good):
     return summary_with_edit_links
 
 
-def firearm_product_summary(good, is_user_rfd, organisation_documents):
+def firearm_summary(good, is_user_rfd, organisation_documents):
     def goods_document_formatter(document):
         url = reverse(
             "goods:document",
@@ -94,7 +94,7 @@ def firearm_product_summary(good, is_user_rfd, organisation_documents):
 
         return document_formatter(document["document"], url)
 
-    return core_firearm_product_summary(
+    return core_firearm_summary(
         good,
         is_user_rfd,
         organisation_documents,
@@ -105,7 +105,7 @@ def firearm_product_summary(good, is_user_rfd, organisation_documents):
     )
 
 
-def firearm_product_on_application_summary(good_on_application, good_on_application_documents):
+def firearm_on_application_summary(good_on_application, good_on_application_documents):
     def good_on_application_document_formatter(document):
         url = reverse(
             "applications:good-on-application-document",
@@ -118,7 +118,7 @@ def firearm_product_on_application_summary(good_on_application, good_on_applicat
 
         return document_formatter(document, url)
 
-    return core_firearm_product_on_application_summary(
+    return core_firearm_on_application_summary(
         good_on_application,
         good_on_application_documents,
         {
@@ -128,7 +128,7 @@ def firearm_product_on_application_summary(good_on_application, good_on_applicat
     )
 
 
-PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
+FIREARM_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
     "firearm-certificate": "firearm_certificate",
     "firearm-certificate-number": "firearm_certificate",
     "firearm-certificate-expiry-date": "firearm_certificate",
@@ -154,7 +154,7 @@ PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
 }
 
 
-def get_product_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
+def get_firearm_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
     def get_edit_link(name):
         return reverse(
             f"applications:product_on_application_summary_edit_{name}",
@@ -168,14 +168,14 @@ def get_product_on_application_summary_edit_link_factory(application, good_on_ap
     return get_edit_link
 
 
-def add_product_on_application_summary_edit_links(
+def add_firearm_on_application_summary_edit_links(
     summary,
     edit_links,
     application,
     good_on_application,
     summary_type,
 ):
-    get_edit_link = get_product_on_application_summary_edit_link_factory(
+    get_edit_link = get_firearm_on_application_summary_edit_link_factory(
         application,
         good_on_application,
         summary_type,
