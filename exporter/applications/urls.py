@@ -73,8 +73,11 @@ from exporter.applications.views.goods.add_good_firearm.views.summary import (
     FirearmProductOnApplicationSummary,
 )
 
-from exporter.applications.views.goods.add_good_platform.views.add import AddGoodPlatform
-from exporter.applications.views.goods.add_good_platform.views.summary import PlatformSummary
+from exporter.applications.views.goods.add_good_platform.views.add import AddGoodPlatform, AddGoodPlatformToApplication
+from exporter.applications.views.goods.add_good_platform.views.summary import (
+    PlatformSummary,
+    PlatformProductOnApplicationSummary,
+)
 
 app_name = "applications"
 urlpatterns = [
@@ -359,6 +362,16 @@ urlpatterns = [
         "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
         PlatformSummary.as_view(),
         name="platform_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add-new/platform-to-application/",
+        AddGoodPlatformToApplication.as_view(),
+        name="new_good_platform_to_application",
+    ),
+    path(
+        "<uuid:pk>/goods/platform/<uuid:good_on_application_pk>/platform-on-application-summary/",
+        PlatformProductOnApplicationSummary.as_view(),
+        name="platform_on_application_summary",
     ),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),

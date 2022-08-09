@@ -7,6 +7,7 @@ from core.summaries.summaries import (
     firearm_product_summary as core_firearm_product_summary,
     platform_summary as core_platform_summary,
     firearm_product_on_application_summary as core_firearm_product_on_application_summary,
+    platform_product_on_application_summary as core_platform_product_on_application_summary,
 )
 
 
@@ -214,3 +215,7 @@ def platform_summary(good):
             "product-document": goods_document_formatter,
         },
     )
+
+
+def platform_product_on_application_summary(good_on_application):
+    return core_platform_product_on_application_summary(good_on_application)

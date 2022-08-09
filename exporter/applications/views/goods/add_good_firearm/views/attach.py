@@ -54,15 +54,15 @@ from .conditionals import (
     is_certificate_required,
     is_deactivated,
     is_firearm_certificate_invalid,
-    is_onward_exported,
     is_product_made_before_1938,
     is_serial_numbers_available,
 )
+from exporter.applications.views.goods.common.conditionals import is_onward_exported
 from .constants import AttachFirearmToApplicationSteps
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
-from .mixins import GoodMixin, Product2FlagMixin
-from exporter.applications.views.goods.common.mixins import ApplicationMixin
+from .mixins import Product2FlagMixin
+from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from .payloads import (
     AttachFirearmToApplicationGoodPayloadBuilder,
     AttachFirearmToApplicationGoodOnApplicationPayloadBuilder,

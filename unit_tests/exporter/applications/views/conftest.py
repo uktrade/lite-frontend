@@ -55,6 +55,11 @@ def good_on_application(data_standard_case):
         "good": good["good"],
         "quantity": 3,
         "value": "16.32",
+        "is_onward_exported": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "I will alter it real good",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "I will onward incorporate",
         "firearm_details": {
             "section_certificate_date_of_expiry": "2030-12-12",
             "section_certificate_number": "12345",
@@ -259,3 +264,23 @@ def control_list_entries(requests_mock):
     clc_url = client._build_absolute_uri("/static/control-list-entries/")
     matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
     return matcher
+
+
+@pytest.fixture
+def platform_on_application_summary_url_factory(application, good_on_application):
+    def platform_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return platform_on_application_summary_url
+
+
+@pytest.fixture
+def platform_on_application_summary_url(platform_on_application_summary_url_factory):
+    return platform_on_application_summary_url_factory("platform-on-application-summary")
