@@ -1,9 +1,7 @@
 import pytest
 
-from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from unittest.mock import patch
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 
@@ -23,9 +21,20 @@ def setup(
     settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def good_on_application(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]["good"]
+
+
+@pytest.fixture
+def firearm_summary_url(application, good_on_application):
+    return reverse(
+        "applications:product_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_pk": good_on_application["id"],
+        },
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -87,7 +96,14 @@ def product_document():
     ),
 )
 def test_edit_firearm(
-    authorized_client, requests_mock, application, good_on_application, url_name, form_data, expected
+    authorized_client,
+    requests_mock,
+    application,
+    good_on_application,
+    url_name,
+    form_data,
+    expected,
+    firearm_summary_url,
 ):
     url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"], "good_pk": good_on_application["id"]})
 
@@ -97,6 +113,7 @@ def test_edit_firearm(
     )
 
     assert response.status_code == 302
+    assert response.url == firearm_summary_url
     assert requests_mock.last_request.json() == expected
 
 

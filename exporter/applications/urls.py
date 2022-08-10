@@ -74,6 +74,7 @@ from exporter.applications.views.goods.add_good_firearm.views.summary import (
 )
 
 from exporter.applications.views.goods.add_good_platform.views.add import AddGoodPlatform, AddGoodPlatformToApplication
+from exporter.applications.views.goods.add_good_platform.views.edit import PlatformEditName
 from exporter.applications.views.goods.add_good_platform.views.summary import (
     PlatformSummary,
     PlatformProductOnApplicationSummary,
@@ -373,6 +374,7 @@ urlpatterns = [
         PlatformProductOnApplicationSummary.as_view(),
         name="platform_on_application_summary",
     ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/platform/edit/name/", PlatformEditName.as_view(), name="platform_edit_name"),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
     path("<uuid:pk>/questions/", questions.AdditionalInformationFormView.as_view(), name="questions"),

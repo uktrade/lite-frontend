@@ -301,7 +301,12 @@ def post_good_document_sensitivity(request, pk, json):
     return data.json(), data.status_code
 
 
-def post_good_platform(request, json):
+def post_platform(request, json):
     json["item_category"] = PRODUCT_CATEGORY_PLATFORM
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
+
+
+def edit_platform(request, pk, json):
+    response = client.put(request, f"/goods/{pk}", json)
+    return response.json(), response.status_code

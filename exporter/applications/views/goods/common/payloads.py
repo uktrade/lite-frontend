@@ -1,3 +1,7 @@
+def get_cleaned_data(form):
+    return form.cleaned_data
+
+
 def get_pv_grading_payload(form):
     return {
         "is_pv_graded": "yes" if form.cleaned_data["is_pv_graded"] else "no",
