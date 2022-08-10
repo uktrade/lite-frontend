@@ -14,8 +14,8 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
+from exporter.goods.forms.common import ProductNameForm
 from exporter.goods.forms.firearms import (
-    FirearmNameForm,
     FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
@@ -29,7 +29,7 @@ from exporter.goods.forms.firearms import (
 )
 from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
-from exporter.goods.services import post_good_platform, post_good_documents
+from exporter.goods.services import post_platform, post_good_documents
 from exporter.applications.services import post_platform_good_on_application
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from exporter.applications.views.goods.common.conditionals import (
@@ -40,15 +40,16 @@ from exporter.applications.views.goods.common.conditionals import (
 )
 from exporter.core.wizard.conditionals import C
 
-from exporter.applications.views.goods.add_good_platform.views.constants import (
+from .constants import (
     AddGoodPlatformSteps,
     AddGoodPlatformToApplicationSteps,
 )
-from exporter.applications.views.goods.add_good_platform.views.payloads import (
+from .mixins import NonFirearmsFlagMixin
+from .payloads import (
     AddGoodPlatformPayloadBuilder,
     AddGoodPlatformToApplicationPayloadBuilder,
 )
-from exporter.applications.views.goods.add_good_platform.views.mixins import NonFirearmsFlagMixin
+
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ class AddGoodPlatform(
     ProductUsesInformationSecurityForm,
 ):
     form_list = [
-        (AddGoodPlatformSteps.NAME, FirearmNameForm),
+        (AddGoodPlatformSteps.NAME, ProductNameForm),
         (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
         (AddGoodPlatformSteps.PV_GRADING, FirearmPvGradingForm),
         (AddGoodPlatformSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
@@ -140,10 +141,10 @@ class AddGoodPlatform(
         "Error creating complete product",
         "Unexpected error adding complete product",
     )
-    def post_good_platform(self, form_dict):
+    def post_platform(self, form_dict):
         payload = self.get_payload(form_dict)
 
-        return post_good_platform(
+        return post_platform(
             self.request,
             payload,
         )
@@ -161,7 +162,7 @@ class AddGoodPlatform(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            good, _ = self.post_good_platform(form_dict)
+            good, _ = self.post_platform(form_dict)
             self.good = good["good"]
             if self.has_product_documentation():
                 self.post_product_documentation(self.good)
@@ -225,7 +226,7 @@ class AddGoodPlatformToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:product_summary",
+            "applications:platform_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],
