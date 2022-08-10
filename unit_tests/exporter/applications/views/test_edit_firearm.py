@@ -11,7 +11,6 @@ def setup(
     mock_application_get,
     mock_good_get,
     mock_good_put,
-    mock_control_list_entries_get,
     mock_good_document_post,
     mock_good_document_put,
     mock_good_document_delete,
@@ -131,7 +130,14 @@ def test_edit_firearm(
     ),
 )
 def test_edit_good_control_list_entry_options(
-    authorized_client, requests_mock, application, good_on_application, data, expected
+    authorized_client,
+    requests_mock,
+    application,
+    good_on_application,
+    data,
+    expected,
+    firearm_summary_url,
+    mock_control_list_entries_get,
 ):
     url = reverse(
         "applications:firearm_edit_control_list_entries",
@@ -141,6 +147,7 @@ def test_edit_good_control_list_entry_options(
     response = authorized_client.post(url, data=data)
 
     assert response.status_code == 302
+    assert response.url == firearm_summary_url
     assert requests_mock.last_request.json() == expected
 
 

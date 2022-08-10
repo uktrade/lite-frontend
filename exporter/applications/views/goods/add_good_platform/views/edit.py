@@ -5,7 +5,10 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
-from exporter.goods.forms.common import ProductNameForm
+from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
+    ProductNameForm,
+)
 from exporter.goods.services import edit_platform
 
 from .mixins import NonFirearmsFlagMixin
@@ -48,3 +51,22 @@ class PlatformEditName(BasePlatformEditView):
 
     def get_initial(self):
         return {"name": self.good["name"]}
+
+
+class PlatformEditControlListEntry(BasePlatformEditView):
+    form_class = ProductControlListEntryForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {**kwargs, "request": self.request}
+
+    def get_initial(self):
+        control_list_entries = []
+        is_good_controlled = self.good["is_good_controlled"]["key"]
+        if is_good_controlled == "True":
+            control_list_entries = [clc["rating"] for clc in self.good.get("control_list_entries", [])]
+
+        return {
+            "is_good_controlled": is_good_controlled,
+            "control_list_entries": control_list_entries,
+        }

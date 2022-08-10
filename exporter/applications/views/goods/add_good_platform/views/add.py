@@ -14,9 +14,11 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
-from exporter.goods.forms.common import ProductNameForm
+from exporter.goods.forms.common import (
+    ProductNameForm,
+    ProductControlListEntryForm,
+)
 from exporter.goods.forms.firearms import (
-    FirearmProductControlListEntryForm,
     FirearmPvGradingForm,
     FirearmPvGradingDetailsForm,
     FirearmDocumentAvailability,
@@ -63,7 +65,7 @@ class AddGoodPlatform(
 ):
     form_list = [
         (AddGoodPlatformSteps.NAME, ProductNameForm),
-        (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, FirearmProductControlListEntryForm),
+        (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
         (AddGoodPlatformSteps.PV_GRADING, FirearmPvGradingForm),
         (AddGoodPlatformSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
         (AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),

@@ -44,7 +44,10 @@ from exporter.core.helpers import (
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.goods.forms.common import ProductNameForm
+from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
+    ProductNameForm,
+)
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
@@ -61,7 +64,6 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardExportedForm,
     FirearmOnwardIncorporatedForm,
-    FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
     FirearmPvGradingForm,
     FirearmQuantityAndValueForm,
@@ -193,7 +195,7 @@ class FirearmEditCalibre(BaseFirearmEditView):
 
 
 class FirearmEditControlListEntry(BaseGoodEditView):
-    form_class = FirearmProductControlListEntryForm
+    form_class = ProductControlListEntryForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
