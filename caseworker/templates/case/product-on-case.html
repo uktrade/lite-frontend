@@ -330,7 +330,11 @@
                             {% endwith %}
                             <tr class="govuk-table__row app-table__row">
                                 <th scope="row" class="govuk-table__header">Incorporated</th>
-                                <td class="govuk-table__cell">{{ good_on_application|yesno|title }}</td>
+                                {% if firearm_details.is_onward_exported %}
+                                    <td class="govuk-table__cell">{{ firearm_details.is_onward_exported|yesno|title }}</td>
+                                {% else %}
+                                    <td class="govuk-table__cell">{{ good_on_application.is_onward_exported|yesno|title }}</td>
+                                {% endif %}
                             </tr>
                             <tr class="govuk-table__row app-table__row">
                                 <th scope="row" class="govuk-table__header">Document</th>
