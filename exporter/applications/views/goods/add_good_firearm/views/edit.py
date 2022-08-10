@@ -24,6 +24,16 @@ from exporter.applications.services import (
     edit_firearm_good_on_application,
     get_application_documents,
 )
+from exporter.applications.views.goods.common.conditionals import (
+    is_document_sensitive,
+    is_product_document_available,
+    is_pv_graded,
+    is_onward_exported,
+)
+from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
+from exporter.applications.views.goods.common.payloads import get_cleaned_data
+from exporter.core.common.decorators import expect_status
+from exporter.core.common.exceptions import ServiceError
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
@@ -34,12 +44,7 @@ from exporter.core.helpers import (
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.goods.services import (
-    delete_good_document,
-    edit_firearm,
-    post_good_documents,
-    update_good_document_data,
-)
+from exporter.goods.forms.common import ProductNameForm
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
@@ -53,7 +58,6 @@ from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
-    FirearmNameForm,
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardExportedForm,
     FirearmOnwardIncorporatedForm,
@@ -67,6 +71,12 @@ from exporter.goods.forms.firearms import (
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
     FirearmYearOfManufactureForm,
+)
+from exporter.goods.services import (
+    delete_good_document,
+    edit_firearm,
+    post_good_documents,
+    update_good_document_data,
 )
 
 from .actions import (
@@ -83,15 +93,7 @@ from .conditionals import (
     is_registered_firearms_dealer,
     is_serial_numbers_available,
 )
-from exporter.applications.views.goods.common.conditionals import (
-    is_document_sensitive,
-    is_product_document_available,
-    is_pv_graded,
-    is_onward_exported,
-)
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
-from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
 from .helpers import get_organisation_document_url
 from .initial import (
     get_attach_good_on_application_certificate_initial_data,
@@ -105,7 +107,6 @@ from .initial import (
     get_year_of_manufacture_initial_data,
 )
 from .mixins import Product2FlagMixin
-from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
 from .payloads import (
     FirearmsActPayloadBuilder,
     FirearmEditFirearmsAct1968PayloadBuilder,
@@ -119,7 +120,6 @@ from .payloads import (
     FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
     FirearmProductOnApplicationSummaryEditSerialIdentificationMarkingsPayloadBuilder,
     get_attach_firearm_act_certificate_payload,
-    get_cleaned_data,
     get_deactivation_details_payload,
     get_firearm_details_cleaned_data,
     get_onward_incorporated_payload,
@@ -170,7 +170,7 @@ class BaseFirearmEditView(BaseEditView):
 
 
 class FirearmEditName(BaseGoodEditView):
-    form_class = FirearmNameForm
+    form_class = ProductNameForm
 
     def get_initial(self):
         return {"name": self.good["name"]}

@@ -127,10 +127,24 @@ def test_platform_product_summary_context(
     mock_good_get,
     platform_summary_url,
     platform_summary,
+    data_standard_case,
+    good_id,
 ):
     response = authorized_client.get(platform_summary_url)
 
-    assert response.context["summary"] == platform_summary
+    def _get_test_url(name):
+        if not name:
+            return None
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/platform/edit/{name}/'
+
+    url_map = {
+        "name": "name",
+    }
+
+    summary_with_links = tuple(
+        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in platform_summary
+    )
+    assert response.context["summary"] == summary_with_links
 
 
 def test_platform_product_on_application_summary_response_status_code(

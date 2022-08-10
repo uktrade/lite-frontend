@@ -1,8 +1,8 @@
 from exporter.core.wizard.payloads import MergingPayloadBuilder
-from exporter.core.common.forms import get_cleaned_data
 
 from .constants import AddGoodPlatformSteps, AddGoodPlatformToApplicationSteps
 from exporter.applications.views.goods.common.payloads import (
+    get_cleaned_data,
     get_pv_grading_payload,
     get_pv_grading_good_payload,
 )

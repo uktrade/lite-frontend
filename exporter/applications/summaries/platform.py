@@ -9,6 +9,41 @@ from core.summaries.summaries import (
 )
 
 
+PLATFORM_SUMMARY_EDIT_LINKS = {
+    "name": "name",
+}
+
+
+def get_platform_summary_edit_link_factory(application, good):
+    def get_edit_link(name):
+        return reverse(
+            f"applications:platform_edit_{name}",
+            kwargs={
+                "pk": application["id"],
+                "good_pk": good["id"],
+            },
+        )
+
+    return get_edit_link
+
+
+def add_platform_summary_edit_links(summary, edit_links, application, good):
+    get_edit_link = get_platform_summary_edit_link_factory(application, good)
+
+    summary_with_edit_links = ()
+    for key, value, *rest in summary:
+        try:
+            edit_link_key = edit_links[key]
+        except KeyError:
+            edit_link = None
+        else:
+            edit_link = get_edit_link(edit_link_key)
+
+        summary_with_edit_links += ((key, value, *rest, edit_link),)
+
+    return summary_with_edit_links
+
+
 def platform_summary(good):
     def goods_document_formatter(document):
         url = reverse(
