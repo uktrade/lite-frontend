@@ -1,16 +1,16 @@
 import uuid
 
-from exporter.applications.summaries import (
-    add_product_on_application_summary_edit_links,
-    add_product_summary_edit_links,
-    firearm_product_summary,
-    get_product_summary_edit_link_factory,
-    get_product_on_application_summary_edit_link_factory,
+from exporter.applications.summaries.firearm import (
+    add_firearm_on_application_summary_edit_links,
+    add_firearm_summary_edit_links,
+    firearm_summary,
+    get_firearm_summary_edit_link_factory,
+    get_firearm_on_application_summary_edit_link_factory,
 )
 
 
-def test_get_product_summary_edit_link_factory(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+def test_get_firearm_summary_edit_link_factory(mocker):
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.return_value = "/reversed-url/"
 
     application = {
@@ -20,7 +20,7 @@ def test_get_product_summary_edit_link_factory(mocker):
         "id": uuid.uuid4(),
     }
 
-    get_edit_link = get_product_summary_edit_link_factory(application, good)
+    get_edit_link = get_firearm_summary_edit_link_factory(application, good)
 
     assert get_edit_link("test") == "/reversed-url/"
     mock_reverse.assert_called_with(
@@ -32,8 +32,8 @@ def test_get_product_summary_edit_link_factory(mocker):
     )
 
 
-def test_add_product_summary_edit_links(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+def test_add_firearm_summary_edit_links(mocker):
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.side_effect = lambda name, kwargs: f"/{kwargs['pk']}/{kwargs['good_pk']}/{name}/"
 
     application = {
@@ -54,7 +54,7 @@ def test_add_product_summary_edit_links(mocker):
         "has-another-edit-link": "another-edit-link-name",
     }
 
-    summary_with_edit_links = add_product_summary_edit_links(summary, edit_links, application, good)
+    summary_with_edit_links = add_firearm_summary_edit_links(summary, edit_links, application, good)
     assert summary_with_edit_links == (
         ("no-edit-link", "value", None),
         (
@@ -70,7 +70,7 @@ def test_add_product_summary_edit_links(mocker):
     )
 
 
-def test_firearm_product_summary():
+def test_firearm_summary():
     product_document = {
         "description": "Document description",
         "id": uuid.uuid4(),
@@ -140,7 +140,7 @@ def test_firearm_product_summary():
         "rfd-certificate": rfd_document,
     }
 
-    assert firearm_product_summary(good, is_user_rfd, organisation_documents) == (
+    assert firearm_summary(good, is_user_rfd, organisation_documents) == (
         (
             "firearm-type",
             "Type",
@@ -242,8 +242,8 @@ def test_firearm_product_summary():
     )
 
 
-def test_get_product_on_application_summary_edit_link_factory(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+def test_get_firearm_on_application_summary_edit_link_factory(mocker):
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.return_value = "/reversed-url/"
 
     application = {
@@ -254,7 +254,7 @@ def test_get_product_on_application_summary_edit_link_factory(mocker):
     }
     summary_type = "summary-type"
 
-    get_edit_link = get_product_on_application_summary_edit_link_factory(
+    get_edit_link = get_firearm_on_application_summary_edit_link_factory(
         application,
         good_on_application,
         summary_type,
@@ -271,8 +271,8 @@ def test_get_product_on_application_summary_edit_link_factory(mocker):
     )
 
 
-def test_add_product_on_application_summary_edit_links(mocker):
-    mock_reverse = mocker.patch("exporter.applications.summaries.reverse")
+def test_add_firearm_on_application_summary_edit_links(mocker):
+    mock_reverse = mocker.patch("exporter.applications.summaries.firearm.reverse")
     mock_reverse.side_effect = (
         lambda name, kwargs: f"/{kwargs['pk']}/{kwargs['good_on_application_pk']}/{kwargs['summary_type']}/{name}/"
     )
@@ -296,7 +296,7 @@ def test_add_product_on_application_summary_edit_links(mocker):
         "has-another-edit-link": "another-edit-link-name",
     }
 
-    summary_with_edit_links = add_product_on_application_summary_edit_links(
+    summary_with_edit_links = add_firearm_on_application_summary_edit_links(
         summary,
         edit_links,
         application,

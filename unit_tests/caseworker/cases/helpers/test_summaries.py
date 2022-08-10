@@ -1,18 +1,18 @@
 import uuid
 
 from caseworker.cases.helpers.summaries import (
-    firearm_product_summary,
-    firearm_product_on_application_summary,
+    firearm_summary,
+    firearm_on_application_summary,
 )
 
 from unit_tests.helpers import merge_summaries
 
 
-def test_firearm_product_summary(data_standard_case, standard_firearm_expected_product_summary):
+def test_firearm_summary(data_standard_case, standard_firearm_expected_product_summary):
     is_user_rfd = False
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     queue_pk = uuid.uuid4()
-    product_summary = firearm_product_summary(good_on_application, is_user_rfd, {}, queue_pk)
+    product_summary = firearm_summary(good_on_application, is_user_rfd, {}, queue_pk)
 
     expected_summary = merge_summaries(
         standard_firearm_expected_product_summary,
@@ -29,11 +29,9 @@ def test_firearm_product_summary(data_standard_case, standard_firearm_expected_p
     assert product_summary == expected_summary
 
 
-def test_firearm_product_on_application_summary(
-    data_standard_case, standard_firearm_expected_product_on_application_summary
-):
+def test_firearm_on_application_summary(data_standard_case, standard_firearm_expected_product_on_application_summary):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     queue_pk = uuid.uuid4()
-    product_summary = firearm_product_on_application_summary(good_on_application, {}, queue_pk)
+    product_summary = firearm_on_application_summary(good_on_application, {}, queue_pk)
 
     assert product_summary == standard_firearm_expected_product_on_application_summary

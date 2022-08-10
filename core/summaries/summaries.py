@@ -75,7 +75,7 @@ PLATFORM_FIELDS = (
 )
 
 
-def firearm_product_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
+def firearm_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
@@ -121,9 +121,7 @@ FIREARM_ON_APPLICATION_FIELDS = (
 )
 
 
-def firearm_product_on_application_summary(
-    good_on_application, good_on_application_documents, additional_formatters=None
-):
+def firearm_on_application_summary(good_on_application, good_on_application_documents, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
