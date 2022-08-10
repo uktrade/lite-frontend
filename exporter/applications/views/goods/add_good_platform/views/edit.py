@@ -3,6 +3,10 @@ from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 
+from exporter.applications.views.goods.common.initial import (
+    get_control_list_entry_initial_data,
+    get_name_initial_data,
+)
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from exporter.goods.forms.common import (
@@ -50,7 +54,7 @@ class PlatformEditName(BasePlatformEditView):
     form_class = ProductNameForm
 
     def get_initial(self):
-        return {"name": self.good["name"]}
+        return get_name_initial_data(self.good)
 
 
 class PlatformEditControlListEntry(BasePlatformEditView):
@@ -61,12 +65,4 @@ class PlatformEditControlListEntry(BasePlatformEditView):
         return {**kwargs, "request": self.request}
 
     def get_initial(self):
-        control_list_entries = []
-        is_good_controlled = self.good["is_good_controlled"]["key"]
-        if is_good_controlled == "True":
-            control_list_entries = [clc["rating"] for clc in self.good.get("control_list_entries", [])]
-
-        return {
-            "is_good_controlled": is_good_controlled,
-            "control_list_entries": control_list_entries,
-        }
+        return get_control_list_entry_initial_data(self.good)

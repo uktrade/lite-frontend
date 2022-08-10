@@ -14,6 +14,7 @@ def setup(
     mock_good_document_post,
     mock_good_document_put,
     mock_good_document_delete,
+    mock_control_list_entries_get,
     settings,
     no_op_storage,
 ):
@@ -94,7 +95,7 @@ def product_document():
         ),
     ),
 )
-def test_edit_firearm(
+def test_edit_firearm_post(
     authorized_client,
     requests_mock,
     application,
@@ -114,6 +115,33 @@ def test_edit_firearm(
     assert response.status_code == 302
     assert response.url == firearm_summary_url
     assert requests_mock.last_request.json() == expected
+
+
+@pytest.mark.parametrize(
+    "url_name,initial",
+    (
+        (
+            "firearm_edit_name",
+            {"name": "p1"},
+        ),
+        (
+            "firearm_edit_control_list_entries",
+            {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},
+        ),
+    ),
+)
+def test_edit_firearm_initial(
+    authorized_client,
+    application,
+    good_on_application,
+    url_name,
+    initial,
+):
+    url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"], "good_pk": good_on_application["id"]})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    assert response.context["form"].initial == initial
 
 
 @pytest.mark.parametrize(
@@ -137,7 +165,6 @@ def test_edit_good_control_list_entry_options(
     data,
     expected,
     firearm_summary_url,
-    mock_control_list_entries_get,
 ):
     url = reverse(
         "applications:firearm_edit_control_list_entries",
