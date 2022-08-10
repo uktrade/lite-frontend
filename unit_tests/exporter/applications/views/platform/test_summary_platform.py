@@ -139,6 +139,8 @@ def test_platform_product_summary_context(
 
     url_map = {
         "name": "name",
+        "is-good-controlled": "control-list-entries",
+        "control-list-entries": "control-list-entries",
     }
 
     summary_with_links = tuple(
