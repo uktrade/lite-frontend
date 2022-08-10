@@ -25,7 +25,7 @@ def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]
 
 
-def test_firearm_product_summary_response_status_code(
+def test_platform_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -35,7 +35,7 @@ def test_firearm_product_summary_response_status_code(
     assert response.status_code == 200
 
 
-def test_firearm_product_summary_template_used(
+def test_platform_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -126,38 +126,11 @@ def test_platform_product_summary_context(
     mock_application_get,
     mock_good_get,
     platform_summary_url,
-    data_standard_case,
-    good_id,
     platform_summary,
 ):
     response = authorized_client.get(platform_summary_url)
 
-    def _get_test_url(name):
-        if not name:
-            return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/firearm/edit/{name}/'
-
-    url_map = {
-        "name": "name",
-        "is-good-controlled": "control-list-entries",
-        "control-list-entries": "control-list-entries",
-        "is-pv-graded": "pv-grading",
-        "pv-grading-prefix": "pv-grading",
-        "pv-grading-grading": "pv-grading",
-        "pv-grading-suffix": "pv-grading",
-        "pv-grading-issuing-authority": "pv-grading",
-        "pv-grading-details-reference": "pv-grading",
-        "pv-grading-details-date-of-issue": "pv-grading",
-        "has-product-document": "product-document-availability",
-        "is-document-sensitive": "product-document-sensitivity",
-        "product-document": "product-document",
-        "product-document-description": "product-document",
-    }
-
-    summary_with_links = tuple(
-        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in platform_summary
-    )
-    assert response.context["summary"] == summary_with_links
+    assert response.context["summary"] == platform_summary
 
 
 def test_platform_product_on_application_summary_response_status_code(
@@ -192,7 +165,7 @@ def platform_on_application_summary():
     )
 
 
-def test_firearm_product_on_application_summary_context(
+def test_platform_on_application_summary_context(
     authorized_client,
     platform_on_application_summary_url,
     mock_application_get,
@@ -209,27 +182,8 @@ def test_firearm_product_on_application_summary_context(
     response = authorized_client.get(platform_on_application_summary_url)
     context = response.context
 
-    def _get_test_url(name):
-        if not name:
-            return None
-        return f"/applications/{application['id']}/goods/firearm/{good_on_application['id']}/platform-on-application-summary/edit/{name}/"
-
-    url_map = {
-        "is-onward-exported": "onward-exported",
-        "is-altered": "onward-altered",
-        "is-altered-comments": "onward-altered",
-        "is-incorporated": "onward-incorporated",
-        "is-incorporated-comments": "onward-incorporated",
-        "number-of-items": "quantity-value",
-        "total-value": "quantity-value",
-    }
-
-    platform_on_application_summary_with_links = tuple(
-        (key, value, label, _get_test_url(url_map.get(key, None)))
-        for key, value, label in platform_on_application_summary
-    )
     assert context["application"] == application
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
     assert context["product_summary"] == platform_summary
-    assert context["product_on_application_summary"] == platform_on_application_summary_with_links
+    assert context["product_on_application_summary"] == platform_on_application_summary

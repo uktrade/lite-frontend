@@ -8,7 +8,7 @@ def default_feature_flags(settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
 
 
-def test_firearm_product_summary_response_status_code(
+def test_firearm_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -18,7 +18,7 @@ def test_firearm_product_summary_response_status_code(
     assert response.status_code == 200
 
 
-def test_firearm_product_summary_template_used(
+def test_firearm_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -139,7 +139,7 @@ def product_summary(good_id):
     )
 
 
-def test_firearm_product_summary_context(
+def test_firearm_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -184,7 +184,7 @@ def test_firearm_product_summary_context(
     assert response.context["summary"] == summary_with_links
 
 
-def test_firearm_product_on_application_summary_response_status_code(
+def test_firearm_on_application_summary_response_status_code(
     authorized_client,
     product_on_application_summary_url,
     mock_application_get,
@@ -240,7 +240,7 @@ def product_on_application_summary():
     )
 
 
-def test_firearm_product_on_application_summary_context(
+def test_firearm_on_application_summary_context(
     authorized_client,
     product_on_application_summary_url,
     mock_application_get,

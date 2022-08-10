@@ -8,13 +8,13 @@ from core.summaries.utils import (
 )
 
 from exporter.applications.services import get_application_documents
-from exporter.applications.summaries import (
-    add_product_summary_edit_links,
-    add_product_on_application_summary_edit_links,
-    firearm_product_summary,
-    firearm_product_on_application_summary,
-    PRODUCT_SUMMARY_EDIT_LINKS,
-    PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+from exporter.applications.summaries.firearm import (
+    add_firearm_summary_edit_links,
+    add_firearm_on_application_summary_edit_links,
+    firearm_summary,
+    firearm_on_application_summary,
+    FIREARM_SUMMARY_EDIT_LINKS,
+    FIREARM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
 )
 from exporter.core.helpers import (
     get_organisation_documents,
@@ -42,14 +42,14 @@ class FirearmProductSummary(
 
         is_user_rfd = has_valid_organisation_rfd_certificate(self.application)
         organisation_documents = get_organisation_documents(self.application)
-        summary = firearm_product_summary(
+        summary = firearm_summary(
             self.good,
             is_user_rfd,
             organisation_documents,
         )
-        summary = add_product_summary_edit_links(
+        summary = add_firearm_summary_edit_links(
             summary,
-            PRODUCT_SUMMARY_EDIT_LINKS,
+            FIREARM_SUMMARY_EDIT_LINKS,
             self.application,
             self.good,
         )
@@ -76,7 +76,7 @@ class BaseProductOnApplicationSummary(
         return get_organisation_documents(self.application)
 
     def get_product_summary(self):
-        product_summary = firearm_product_summary(
+        product_summary = firearm_summary(
             self.good,
             self.is_user_rfd,
             self.organisation_documents,
@@ -101,13 +101,13 @@ class BaseProductOnApplicationSummary(
         return good_on_application_documents
 
     def get_product_on_application_summary(self):
-        product_on_application_summary = firearm_product_on_application_summary(
+        product_on_application_summary = firearm_on_application_summary(
             self.good_on_application,
             self.get_good_on_application_documents(),
         )
-        product_on_application_summary = add_product_on_application_summary_edit_links(
+        product_on_application_summary = add_firearm_on_application_summary_edit_links(
             product_on_application_summary,
-            PRODUCT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            FIREARM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
             self.application,
             self.good_on_application,
             self.summary_type,

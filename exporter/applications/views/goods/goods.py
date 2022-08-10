@@ -32,9 +32,9 @@ from exporter.applications.services import (
     post_application_document,
     post_good_on_application,
 )
-from exporter.applications.summaries import (
-    firearm_product_summary,
-    firearm_product_on_application_summary,
+from exporter.applications.summaries.firearm import (
+    firearm_summary,
+    firearm_on_application_summary,
 )
 from exporter.core import constants
 from exporter.core.constants import (
@@ -1038,12 +1038,12 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
         return good_on_application_documents
 
     def get_product_summary(self, good_on_application, is_user_rfd, organisation_documents):
-        product_summary = firearm_product_summary(
+        product_summary = firearm_summary(
             good_on_application["good"],
             is_user_rfd,
             organisation_documents,
         )
-        product_on_application_summary = firearm_product_on_application_summary(
+        product_on_application_summary = firearm_on_application_summary(
             good_on_application,
             self.get_good_on_application_documents(good_on_application),
         )
