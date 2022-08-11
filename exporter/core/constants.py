@@ -241,3 +241,4 @@ class DocumentType:
 
 
 PRODUCT_CATEGORY_PLATFORM = "group1_platform"
+COMPONENT_CATEGORY_PLATFORM = "group1_components"

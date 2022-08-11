@@ -82,6 +82,10 @@ from exporter.applications.views.goods.add_good_platform.views.summary import (
     PlatformSummary,
     PlatformProductOnApplicationSummary,
 )
+from exporter.applications.views.goods.add_good_component.views.add import (
+    AddGoodComponent,
+    AddGoodComponentToApplication,
+)
 
 app_name = "applications"
 urlpatterns = [
@@ -382,6 +386,22 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/control-list-entries/",
         PlatformEditControlListEntry.as_view(),
         name="platform_edit_control_list_entries",
+    ),
+    path("<uuid:pk>/goods/add-new/component/", AddGoodComponent.as_view(), name="new_good_component"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add-new/component-to-application/",
+        AddGoodComponentToApplication.as_view(),
+        name="new_good_component_to_application",
+    ),
+    path(
+        "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
+        PlatformSummary.as_view(),
+        name="component_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/component-on-application-summary/",
+        PlatformProductOnApplicationSummary.as_view(),
+        name="component_on_application_summary",
     ),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
