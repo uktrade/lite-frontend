@@ -15,12 +15,12 @@ from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
-    ProductNameForm,
     ProductControlListEntryForm,
+    ProductNameForm,
+    ProductPVGradingDetailsForm,
+    ProductPVGradingForm,
 )
 from exporter.goods.forms.firearms import (
-    FirearmPvGradingForm,
-    FirearmPvGradingDetailsForm,
     FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
@@ -66,8 +66,8 @@ class AddGoodPlatform(
     form_list = [
         (AddGoodPlatformSteps.NAME, ProductNameForm),
         (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
-        (AddGoodPlatformSteps.PV_GRADING, FirearmPvGradingForm),
-        (AddGoodPlatformSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+        (AddGoodPlatformSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodPlatformSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
         (AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),

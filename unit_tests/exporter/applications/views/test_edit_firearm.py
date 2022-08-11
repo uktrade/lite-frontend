@@ -189,7 +189,11 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
 
 
 def test_edit_pv_grading(
-    requests_mock, pv_gradings, goto_step_pv_grading, post_to_step_pv_grading, edit_pv_grading_url
+    requests_mock,
+    pv_gradings,
+    goto_step_pv_grading,
+    post_to_step_pv_grading,
+    firearm_summary_url,
 ):
     response = goto_step_pv_grading(AddGoodFirearmSteps.PV_GRADING)
     assert response.status_code == 200
@@ -215,6 +219,7 @@ def test_edit_pv_grading(
     )
 
     assert response.status_code == 302
+    assert response.url == firearm_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {
@@ -228,7 +233,14 @@ def test_edit_pv_grading(
     }
 
 
-def test_edit_pv_grading_details(authorized_client, application, good_on_application, requests_mock, pv_gradings):
+def test_edit_pv_grading_details(
+    authorized_client,
+    application,
+    good_on_application,
+    requests_mock,
+    pv_gradings,
+    firearm_summary_url,
+):
     url = reverse(
         "applications:firearm_edit_pv_grading_details",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
@@ -248,6 +260,7 @@ def test_edit_pv_grading_details(authorized_client, application, good_on_applica
     )
 
     assert response.status_code == 302
+    assert response.url == firearm_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {

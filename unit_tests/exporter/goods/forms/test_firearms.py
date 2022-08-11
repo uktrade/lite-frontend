@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.core.helpers import decompose_date
+from exporter.goods.forms.common import ProductPVGradingDetailsForm
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
@@ -19,8 +20,6 @@ from exporter.goods.forms.firearms import (
     FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
-    FirearmPvGradingForm,
-    FirearmPvGradingDetailsForm,
     FirearmQuantityAndValueForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
@@ -58,20 +57,6 @@ def pv_gradings(requests_mock):
         "/static/private-venture-gradings/v2/",
         json={"pv_gradings": [{"official": "Official"}, {"restricted": "Restricted"}]},
     )
-
-
-@pytest.mark.parametrize(
-    "data, is_valid, errors",
-    (
-        ({}, False, {"is_pv_graded": ["Select yes if the product has a security grading or classification"]}),
-        ({"is_pv_graded": True}, True, {}),
-        ({"is_pv_graded": False}, True, {}),
-    ),
-)
-def test_firearm_pv_security_gradings_form(data, is_valid, errors):
-    form = FirearmPvGradingForm(data=data)
-    assert form.is_valid() == is_valid
-    assert form.errors == errors
 
 
 @pytest.mark.parametrize(
@@ -191,7 +176,7 @@ def test_firearm_pv_security_gradings_form(data, is_valid, errors):
     ),
 )
 def test_firearm_pv_security_grading_details_form(data, is_valid, errors, request_with_session, pv_gradings):
-    form = FirearmPvGradingDetailsForm(data=data, request=request_with_session)
+    form = ProductPVGradingDetailsForm(data=data, request=request_with_session)
     assert form.is_valid() == is_valid
     assert form.errors == errors
 

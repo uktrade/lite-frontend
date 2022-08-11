@@ -13,6 +13,13 @@ PLATFORM_SUMMARY_EDIT_LINKS = {
     "name": "name",
     "is-good-controlled": "control_list_entries",
     "control-list-entries": "control_list_entries",
+    "is-pv-graded": "pv_grading",
+    "pv-grading-prefix": "pv_grading_details",
+    "pv-grading-grading": "pv_grading_details",
+    "pv-grading-suffix": "pv_grading_details",
+    "pv-grading-issuing-authority": "pv_grading_details",
+    "pv-grading-details-reference": "pv_grading_details",
+    "pv-grading-details-date-of-issue": "pv_grading_details",
 }
 
 
