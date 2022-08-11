@@ -17,10 +17,10 @@ from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductNameForm,
     ProductControlListEntryForm,
+    ProductPVGradingForm,
+    ProductPVGradingDetailsForm,
 )
 from exporter.goods.forms.firearms import (
-    FirearmPvGradingForm,
-    FirearmPvGradingDetailsForm,
     FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
@@ -65,8 +65,8 @@ class AddGoodComponent(
     form_list = [
         (AddGoodComponentSteps.NAME, ProductNameForm),
         (AddGoodComponentSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
-        (AddGoodComponentSteps.PV_GRADING, FirearmPvGradingForm),
-        (AddGoodComponentSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+        (AddGoodComponentSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodComponentSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodComponentSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
         (AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),

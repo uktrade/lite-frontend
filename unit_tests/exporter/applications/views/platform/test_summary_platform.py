@@ -141,6 +141,13 @@ def test_platform_product_summary_context(
         "name": "name",
         "is-good-controlled": "control-list-entries",
         "control-list-entries": "control-list-entries",
+        "is-pv-graded": "pv-grading",
+        "pv-grading-prefix": "pv-grading-details",
+        "pv-grading-grading": "pv-grading-details",
+        "pv-grading-suffix": "pv-grading-details",
+        "pv-grading-issuing-authority": "pv-grading-details",
+        "pv-grading-details-reference": "pv-grading-details",
+        "pv-grading-details-date-of-issue": "pv-grading-details",
     }
 
     summary_with_links = tuple(

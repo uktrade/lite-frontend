@@ -1,7 +1,5 @@
 import logging
 
-from datetime import date
-
 from deepmerge import always_merger
 from http import HTTPStatus
 
@@ -31,11 +29,16 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.initial import (
-    get_name_initial_data,
     get_control_list_entry_initial_data,
+    get_name_initial_data,
+    get_pv_grading_details_initial_data,
 )
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
-from exporter.applications.views.goods.common.payloads import get_cleaned_data
+from exporter.applications.views.goods.common.payloads import (
+    get_cleaned_data,
+    get_pv_grading_details_payload,
+    ProductEditPVGradingPayloadBuilder,
+)
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.forms import CurrentFile
@@ -51,6 +54,8 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductNameForm,
+    ProductPVGradingDetailsForm,
+    ProductPVGradingForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -68,8 +73,6 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardExportedForm,
     FirearmOnwardIncorporatedForm,
-    FirearmPvGradingDetailsForm,
-    FirearmPvGradingForm,
     FirearmQuantityAndValueForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
@@ -118,7 +121,6 @@ from .payloads import (
     FirearmEditFirearmsAct1968PayloadBuilder,
     FirearmEditProductDocumentAvailabilityPayloadBuilder,
     FirearmEditProductDocumentSensitivityPayloadBuilder,
-    FirearmEditPvGradingPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     FirearmEditSection5FirearmsAct1968PayloadBuilder,
     FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder,
@@ -129,7 +131,6 @@ from .payloads import (
     get_deactivation_details_payload,
     get_firearm_details_cleaned_data,
     get_onward_incorporated_payload,
-    get_pv_grading_good_payload,
     get_quantity_and_value_payload,
     get_serial_numbers_payload,
 )
@@ -257,10 +258,10 @@ class BaseEditWizardView(
         return edit_firearm(self.request, good_pk, payload)
 
 
-class FirearmEditPvGrading(BaseEditWizardView):
+class FirearmEditPVGrading(BaseEditWizardView):
     form_list = [
-        (AddGoodFirearmSteps.PV_GRADING, FirearmPvGradingForm),
-        (AddGoodFirearmSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+        (AddGoodFirearmSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodFirearmSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
     ]
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
@@ -276,17 +277,7 @@ class FirearmEditPvGrading(BaseEditWizardView):
         if step == AddGoodFirearmSteps.PV_GRADING:
             initial = {"is_pv_graded": str_to_bool(self.good["is_pv_graded"].get("key"))}
         elif step == AddGoodFirearmSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
-            pv_grading_details = self.good["pv_grading_details"]
-            initial = {
-                "prefix": pv_grading_details.get("prefix"),
-                "grading": pv_grading_details["grading"].get("key"),
-                "suffix": pv_grading_details.get("suffix"),
-                "issuing_authority": pv_grading_details.get("issuing_authority"),
-                "reference": pv_grading_details.get("reference"),
-                "date_of_issue": date.fromisoformat(pv_grading_details["date_of_issue"])
-                if pv_grading_details["date_of_issue"]
-                else None,
-            }
+            initial = get_pv_grading_details_initial_data(self.good)
         return initial
 
     def get_form_kwargs(self, step=None):
@@ -297,7 +288,7 @@ class FirearmEditPvGrading(BaseEditWizardView):
         return kwargs
 
     def get_payload(self, form_dict):
-        return FirearmEditPvGradingPayloadBuilder().build(form_dict)
+        return ProductEditPVGradingPayloadBuilder().build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         try:
@@ -309,27 +300,17 @@ class FirearmEditPvGrading(BaseEditWizardView):
 
 
 class FirearmEditPVGradingDetails(BaseGoodEditView):
-    form_class = FirearmPvGradingDetailsForm
+    form_class = ProductPVGradingDetailsForm
 
     def get_initial(self):
-        pv_grading_details = self.good["pv_grading_details"]
-        return {
-            "prefix": pv_grading_details.get("prefix"),
-            "grading": pv_grading_details["grading"].get("key"),
-            "suffix": pv_grading_details.get("suffix"),
-            "issuing_authority": pv_grading_details.get("issuing_authority"),
-            "reference": pv_grading_details.get("reference"),
-            "date_of_issue": date.fromisoformat(pv_grading_details["date_of_issue"])
-            if pv_grading_details["date_of_issue"]
-            else None,
-        }
+        return get_pv_grading_details_initial_data(self.good)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         return {**kwargs, "request": self.request}
 
     def get_edit_payload(self, form):
-        grading_details = get_pv_grading_good_payload(form)
+        grading_details = get_pv_grading_details_payload(form)
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 

@@ -28,8 +28,10 @@ from exporter.core.helpers import (
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
-    ProductNameForm,
     ProductControlListEntryForm,
+    ProductNameForm,
+    ProductPVGradingDetailsForm,
+    ProductPVGradingForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -44,8 +46,6 @@ from exporter.goods.forms.firearms import (
     FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
-    FirearmPvGradingForm,
-    FirearmPvGradingDetailsForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmRFDValidityForm,
@@ -125,8 +125,8 @@ class AddGoodFirearm(
         (AddGoodFirearmSteps.CATEGORY, FirearmCategoryForm),
         (AddGoodFirearmSteps.NAME, ProductNameForm),
         (AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
-        (AddGoodFirearmSteps.PV_GRADING, FirearmPvGradingForm),
-        (AddGoodFirearmSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+        (AddGoodFirearmSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodFirearmSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodFirearmSteps.CALIBRE, FirearmCalibreForm),
         (AddGoodFirearmSteps.IS_REPLICA, FirearmReplicaForm),
         (AddGoodFirearmSteps.IS_RFD_CERTIFICATE_VALID, FirearmRFDValidityForm),
