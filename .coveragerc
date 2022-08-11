@@ -14,3 +14,6 @@ omit =
   pipeline/*
   lite_content/*
   caseworker/search/proof_of_concept/*
+exclude_lines =
+  pragma: no cover
+  raise NotImplementedError
