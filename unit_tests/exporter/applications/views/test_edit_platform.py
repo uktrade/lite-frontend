@@ -8,6 +8,7 @@ def setup(
     mock_application_get,
     mock_good_get,
     mock_good_put,
+    mock_control_list_entries_get,
     settings,
 ):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
@@ -39,7 +40,7 @@ def platform_summary_url(application, good_on_application):
         ),
     ),
 )
-def test_edit_platform(
+def test_edit_platform_post(
     authorized_client,
     requests_mock,
     application,
@@ -55,6 +56,67 @@ def test_edit_platform(
         url,
         data=form_data,
     )
+
+    assert response.status_code == 302
+    assert response.url == platform_summary_url
+    assert requests_mock.last_request.json() == expected
+
+
+@pytest.mark.parametrize(
+    "url_name,initial",
+    (
+        (
+            "platform_edit_name",
+            {"name": "p1"},
+        ),
+        (
+            "platform_edit_control_list_entries",
+            {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},
+        ),
+    ),
+)
+def test_edit_platform_initial(
+    authorized_client,
+    application,
+    good_on_application,
+    url_name,
+    initial,
+):
+    url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"], "good_pk": good_on_application["id"]})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    assert response.context["form"].initial == initial
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    (
+        (
+            {"is_good_controlled": False},
+            {"is_good_controlled": False, "control_list_entries": []},
+        ),
+        (
+            {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
+            {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
+        ),
+    ),
+)
+def test_edit_good_control_list_entry_options(
+    authorized_client,
+    requests_mock,
+    application,
+    good_on_application,
+    data,
+    expected,
+    platform_summary_url,
+):
+    url = reverse(
+        "applications:platform_edit_control_list_entries",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+    response = authorized_client.post(url, data=data)
 
     assert response.status_code == 302
     assert response.url == platform_summary_url

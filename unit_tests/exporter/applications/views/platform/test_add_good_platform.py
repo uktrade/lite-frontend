@@ -5,9 +5,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.applications.views.goods.add_good_platform.views.constants import AddGoodPlatformSteps
 
+from exporter.goods.forms.common import ProductControlListEntryForm
 from exporter.goods.forms.firearms import (
     FirearmPvGradingForm,
-    FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
     FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
@@ -100,7 +100,7 @@ def test_add_good_platform_end_to_end(
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmProductControlListEntryForm)
+    assert isinstance(response.context["form"], ProductControlListEntryForm)
 
     response = post_to_step(
         AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY,

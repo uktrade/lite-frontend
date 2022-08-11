@@ -11,6 +11,8 @@ from core.summaries.summaries import (
 
 PLATFORM_SUMMARY_EDIT_LINKS = {
     "name": "name",
+    "is-good-controlled": "control_list_entries",
+    "control-list-entries": "control_list_entries",
 }
 
 

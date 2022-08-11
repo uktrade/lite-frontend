@@ -3,9 +3,16 @@ from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 
+from exporter.applications.views.goods.common.initial import (
+    get_control_list_entry_initial_data,
+    get_name_initial_data,
+)
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
-from exporter.goods.forms.common import ProductNameForm
+from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
+    ProductNameForm,
+)
 from exporter.goods.services import edit_platform
 
 from .mixins import NonFirearmsFlagMixin
@@ -47,4 +54,15 @@ class PlatformEditName(BasePlatformEditView):
     form_class = ProductNameForm
 
     def get_initial(self):
-        return {"name": self.good["name"]}
+        return get_name_initial_data(self.good)
+
+
+class PlatformEditControlListEntry(BasePlatformEditView):
+    form_class = ProductControlListEntryForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {**kwargs, "request": self.request}
+
+    def get_initial(self):
+        return get_control_list_entry_initial_data(self.good)

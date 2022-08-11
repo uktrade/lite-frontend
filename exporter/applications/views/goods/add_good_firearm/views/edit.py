@@ -30,6 +30,10 @@ from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_onward_exported,
 )
+from exporter.applications.views.goods.common.initial import (
+    get_name_initial_data,
+    get_control_list_entry_initial_data,
+)
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from exporter.core.common.decorators import expect_status
@@ -44,7 +48,10 @@ from exporter.core.helpers import (
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.goods.forms.common import ProductNameForm
+from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
+    ProductNameForm,
+)
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
@@ -61,7 +68,6 @@ from exporter.goods.forms.firearms import (
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardExportedForm,
     FirearmOnwardIncorporatedForm,
-    FirearmProductControlListEntryForm,
     FirearmPvGradingDetailsForm,
     FirearmPvGradingForm,
     FirearmQuantityAndValueForm,
@@ -173,7 +179,7 @@ class FirearmEditName(BaseGoodEditView):
     form_class = ProductNameForm
 
     def get_initial(self):
-        return {"name": self.good["name"]}
+        return get_name_initial_data(self.good)
 
 
 class FirearmEditCategory(BaseFirearmEditView):
@@ -193,22 +199,14 @@ class FirearmEditCalibre(BaseFirearmEditView):
 
 
 class FirearmEditControlListEntry(BaseGoodEditView):
-    form_class = FirearmProductControlListEntryForm
+    form_class = ProductControlListEntryForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         return {**kwargs, "request": self.request}
 
     def get_initial(self):
-        control_list_entries = []
-        is_good_controlled = self.good["is_good_controlled"]["key"]
-        if is_good_controlled == "True":
-            control_list_entries = [clc["rating"] for clc in self.good.get("control_list_entries", [])]
-
-        return {
-            "is_good_controlled": is_good_controlled,
-            "control_list_entries": control_list_entries,
-        }
+        return get_control_list_entry_initial_data(self.good)
 
 
 class FirearmEditReplica(BaseFirearmEditView):
