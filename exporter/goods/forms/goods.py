@@ -723,20 +723,34 @@ class NonFirearmCategoryForm(BaseForm):
         COMPONENTS = "COMPONENTS ", "It forms part of a product"
         SOFTWARE = "SOFTWARE", "It helps to operate a product"
 
-    CATEGORY_CHOICES = (
-        TextChoice(
-            NonFirearmCategoryChoices.PLATFORM,
-            hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
-        ),
-        TextChoice(
-            NonFirearmCategoryChoices.COMPONENTS,
-            hint="Hardware such as components and accessories, or raw materials and substances.",
-        ),
-        TextChoice(
-            NonFirearmCategoryChoices.SOFTWARE,
-            hint="For example, software or information such as technology manuals and specifications.",
-        ),
-    )
+    CATEGORY_CHOICES = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.CATEGORY_CHOICES = [
+            TextChoice(
+                self.NonFirearmCategoryChoices.PLATFORM,
+                hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
+            ),
+        ]
+
+        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED:
+            self.CATEGORY_CHOICES.append(
+                TextChoice(
+                    self.NonFirearmCategoryChoices.COMPONENTS,
+                    hint="Hardware such as components and accessories, or raw materials and substances.",
+                ),
+            )
+
+        if settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED:
+            self.CATEGORY_CHOICES.append(
+                TextChoice(
+                    self.NonFirearmCategoryChoices.SOFTWARE,
+                    hint="For example, software or information such as technology manuals and specifications.",
+                ),
+            )
+        self.fields["no_firearm_category"].choices = self.CATEGORY_CHOICES
 
     no_firearm_category = forms.ChoiceField(
         choices=CATEGORY_CHOICES,
