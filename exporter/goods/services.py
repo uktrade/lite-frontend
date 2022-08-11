@@ -3,7 +3,12 @@ from http import HTTPStatus
 from core import client
 from core.helpers import convert_parameters_to_query_params
 from exporter.applications.helpers.date_fields import format_date
-from exporter.core.constants import FIREARMS, PRODUCT_CATEGORY_FIREARM, PRODUCT_CATEGORY_PLATFORM
+from exporter.core.constants import (
+    FIREARMS,
+    PRODUCT_CATEGORY_FIREARM,
+    PRODUCT_CATEGORY_PLATFORM,
+    COMPONENT_CATEGORY_PLATFORM,
+)
 
 
 def get_goods(
@@ -303,6 +308,12 @@ def post_good_document_sensitivity(request, pk, json):
 
 def post_platform(request, json):
     json["item_category"] = PRODUCT_CATEGORY_PLATFORM
+    data = client.post(request, "/goods/", json)
+    return data.json(), data.status_code
+
+
+def post_component(request, json):
+    json["item_category"] = COMPONENT_CATEGORY_PLATFORM
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
