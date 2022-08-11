@@ -79,6 +79,7 @@ from exporter.applications.views.goods.add_good_platform.views.edit import (
     PlatformEditName,
     PlatformEditPVGrading,
     PlatformEditPVGradingDetails,
+    PlatformEditUsesInformationSecurity,
 )
 from exporter.applications.views.goods.add_good_platform.views.summary import (
     PlatformSummary,
@@ -398,6 +399,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/pv-grading-details/",
         PlatformEditPVGradingDetails.as_view(),
         name="platform_edit_pv_grading_details",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/uses-information-security/",
+        PlatformEditUsesInformationSecurity.as_view(),
+        name="platform_edit_uses_information_security",
     ),
     path("<uuid:pk>/goods/add-new/component/", AddGoodComponent.as_view(), name="new_good_component"),
     path(
