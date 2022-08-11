@@ -67,6 +67,8 @@ PLATFORM_FIELDS = (
     "pv-grading-issuing-authority",
     "pv-grading-details-reference",
     "pv-grading-details-date-of-issue",
+    "uses-information-security",
+    "uses-information-security-details",
     "has-product-document",
     "no-product-document-explanation",
     "is-document-sensitive",

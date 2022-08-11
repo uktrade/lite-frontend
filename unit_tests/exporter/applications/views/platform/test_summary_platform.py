@@ -99,6 +99,11 @@ def platform_summary(good_id):
             "Date of issue",
         ),
         (
+            "uses-information-security",
+            "No",
+            "Is the product designed to employ 'information security' features?",
+        ),
+        (
             "has-product-document",
             "Yes",
             "Do you have a document that shows what your product is and what it’s designed to do?",
