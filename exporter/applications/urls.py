@@ -76,6 +76,7 @@ from exporter.applications.views.goods.add_good_firearm.views.summary import (
 from exporter.applications.views.goods.add_good_platform.views.add import AddGoodPlatform, AddGoodPlatformToApplication
 from exporter.applications.views.goods.add_good_platform.views.edit import (
     PlatformEditControlListEntry,
+    PlatformEditProductDocumentAvailability,
     PlatformEditName,
     PlatformEditPVGrading,
     PlatformEditPVGradingDetails,
@@ -404,6 +405,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/uses-information-security/",
         PlatformEditUsesInformationSecurity.as_view(),
         name="platform_edit_uses_information_security",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/product-document-availability/",
+        PlatformEditProductDocumentAvailability.as_view(),
+        name="platform_edit_product_document_availability",
     ),
     path("<uuid:pk>/goods/add-new/component/", AddGoodComponent.as_view(), name="new_good_component"),
     path(

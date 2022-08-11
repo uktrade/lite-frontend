@@ -11,13 +11,15 @@ from core import client
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
+from exporter.goods.forms.common import (
+    ProductDocumentAvailability,
+    ProductDocumentSensitivityForm,
+    ProductDocumentUploadForm,
+)
 from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmAttachSection5LetterOfAuthorityForm,
     FirearmCategoryForm,
-    FirearmDocumentAvailability,
-    FirearmDocumentSensitivityForm,
-    FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
     FirearmRegisteredFirearmsDealerForm,
     FirearmRFDValidityForm,
@@ -231,7 +233,7 @@ def test_add_good_firearm_product_document_available_but_sensitive(
         {"is_document_available": True},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+    assert isinstance(response.context["form"], ProductDocumentSensitivityForm)
 
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
@@ -250,14 +252,14 @@ def test_add_good_firearm_product_document_available_but_not_sensitive(
         {"is_document_available": True},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+    assert isinstance(response.context["form"], ProductDocumentSensitivityForm)
 
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         {"is_document_sensitive": False},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentUploadForm)
+    assert isinstance(response.context["form"], ProductDocumentUploadForm)
 
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
@@ -287,15 +289,15 @@ def test_add_good_firearm_not_registered_firearm_dealer(
     (
         (
             {"firearms_act_section": "dont_know", "not_covered_explanation": "explanation"},
-            FirearmDocumentAvailability,
+            ProductDocumentAvailability,
         ),
         (
             {"firearms_act_section": "firearms_act_section1"},
-            FirearmDocumentAvailability,
+            ProductDocumentAvailability,
         ),
         (
             {"firearms_act_section": "firearms_act_section2"},
-            FirearmDocumentAvailability,
+            ProductDocumentAvailability,
         ),
         (
             {"firearms_act_section": "firearms_act_section5"},
@@ -369,7 +371,7 @@ def test_add_good_firearm_act_selection_skips_when_valid_certificate_already_exi
         form_data,
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentAvailability)
+    assert isinstance(response.context["form"], ProductDocumentAvailability)
 
 
 def test_add_good_firearm_with_rfd_document_submission(

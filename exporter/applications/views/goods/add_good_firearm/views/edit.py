@@ -28,6 +28,7 @@ from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_onward_exported,
 )
+from exporter.applications.views.goods.common.helpers import get_product_document
 from exporter.applications.views.goods.common.initial import (
     get_control_list_entry_initial_data,
     get_name_initial_data,
@@ -37,6 +38,7 @@ from exporter.applications.views.goods.common.mixins import ApplicationMixin, Go
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
+    ProductEditProductDocumentAvailabilityPayloadBuilder,
     ProductEditPVGradingPayloadBuilder,
 )
 from exporter.core.common.decorators import expect_status
@@ -53,6 +55,9 @@ from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDocumentAvailability,
+    ProductDocumentSensitivityForm,
+    ProductDocumentUploadForm,
     ProductNameForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
@@ -64,9 +69,6 @@ from exporter.goods.forms.firearms import (
     FirearmCalibreForm,
     FirearmCategoryForm,
     FirearmDeactivationDetailsForm,
-    FirearmDocumentAvailability,
-    FirearmDocumentSensitivityForm,
-    FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
@@ -119,7 +121,6 @@ from .mixins import Product2FlagMixin
 from .payloads import (
     FirearmsActPayloadBuilder,
     FirearmEditFirearmsAct1968PayloadBuilder,
-    FirearmEditProductDocumentAvailabilityPayloadBuilder,
     FirearmEditProductDocumentSensitivityPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     FirearmEditSection5FirearmsAct1968PayloadBuilder,
@@ -314,22 +315,8 @@ class FirearmEditPVGradingDetails(BaseGoodEditView):
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
-def get_product_document(good):
-    is_document_available = good["is_document_available"]
-    is_document_sensitive = good["is_document_sensitive"]
-    if not is_document_available or (is_document_available and is_document_sensitive):
-        return None
-
-    if not good["documents"]:
-        return None
-
-    # when creating new product we can only add one document but we save it as
-    # a list because from the product detail page user can add multiple documents
-    return good["documents"][0]
-
-
 class FirearmEditProductDocumentView(BaseGoodEditView):
-    form_class = FirearmDocumentUploadForm
+    form_class = ProductDocumentUploadForm
 
     @cached_property
     def product_document(self):
@@ -464,8 +451,8 @@ class BaseEditProductDocumentView(BaseEditWizardView):
 
 class FirearmEditProductDocumentSensitivity(BaseEditProductDocumentView):
     form_list = [
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
     ]
 
     condition_dict = {
@@ -508,9 +495,9 @@ class FirearmEditProductDocumentSensitivity(BaseEditProductDocumentView):
 
 class FirearmEditProductDocumentAvailability(BaseEditProductDocumentView):
     form_list = [
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailability),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
     ]
 
     condition_dict = {
@@ -519,7 +506,7 @@ class FirearmEditProductDocumentAvailability(BaseEditProductDocumentView):
     }
 
     def get_payload(self, form_dict):
-        return FirearmEditProductDocumentAvailabilityPayloadBuilder().build(form_dict)
+        return ProductEditProductDocumentAvailabilityPayloadBuilder().build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}

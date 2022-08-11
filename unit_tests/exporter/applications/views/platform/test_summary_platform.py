@@ -155,6 +155,7 @@ def test_platform_product_summary_context(
         "pv-grading-details-date-of-issue": "pv-grading-details",
         "uses-information-security": "uses-information-security",
         "uses-information-security-details": "uses-information-security",
+        "has-product-document": "product-document-availability",
     }
 
     summary_with_links = tuple(

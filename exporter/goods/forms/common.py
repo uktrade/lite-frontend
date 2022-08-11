@@ -4,6 +4,7 @@ from crispy_forms_gds.layout import HTML
 
 from django import forms
 from django.template.loader import render_to_string
+from django.urls import reverse
 
 from core.forms.layouts import (
     ConditionalQuestion,
@@ -251,3 +252,133 @@ class ProductPartNumberForm(BaseForm):
         elif part_number_missing and not no_part_number_comments:
             self.add_error("part_number_missing", error_message)
         return cleaned_data
+
+
+class ProductDocumentAvailability(BaseForm):
+    class Layout:
+        TITLE = "Do you have a document that shows what your product is and what it's designed to do?"
+
+    is_document_available = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Select yes or no",
+        },
+    )
+
+    no_document_comments = forms.CharField(
+        widget=forms.Textarea,
+        label="Explain why you are not able to upload a product document. This may delay your application.",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            HTML.p(render_to_string("goods/forms/common/product_document_hint_text.html")),
+            ConditionalRadios(
+                "is_document_available",
+                "Yes",
+                ConditionalQuestion("No", "no_document_comments"),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        comments = cleaned_data.get("no_document_comments")
+        if cleaned_data.get("is_document_available") is False and comments == "":
+            self.add_error(
+                "no_document_comments",
+                "Enter a reason why you cannot upload a product document",
+            )
+
+        if cleaned_data.get("is_document_available") is True:
+            cleaned_data["no_document_comments"] = ""
+
+        return cleaned_data
+
+
+class ProductDocumentSensitivityForm(BaseForm):
+    class Layout:
+        TITLE = "Is the document rated above Official-sensitive?"
+
+    is_document_sensitive = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the document is rated above Official-sensitive",
+        },
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_document_sensitive",
+                ConditionalQuestion(
+                    "Yes",
+                    HTML.p(render_to_string("goods/forms/common/product_document_contact_ecju.html")),
+                ),
+                "No",
+            ),
+        )
+
+
+class ProductDocumentUploadForm(BaseForm):
+    class Layout:
+        TITLE = "Upload a document that shows what your product is designed to do"
+
+    product_document = forms.FileField(
+        label="Upload a file",
+        error_messages={
+            "required": "Select a document that shows what your product is designed to do",
+        },
+    )
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="",
+        help_text="Description (optional)",
+        required=False,
+    )
+
+    def __init__(self, *args, good_id=None, document=None, **kwargs):
+        self.document = document
+        if self.document:
+            self.product_document_download_url = reverse(
+                "goods:document",
+                kwargs={
+                    "pk": good_id,
+                    "file_pk": self.document["id"],
+                },
+            )
+            self.document_name = self.document["name"]
+
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        layout_fields = ("product_document", "description")
+        if self.document:
+            self.fields["product_document"].required = False
+            layout_fields = (
+                HTML.p(
+                    render_to_string(
+                        "goods/forms/common/product_document_download_link.html",
+                        {
+                            "safe": self.document.get("safe", False),
+                            "url": self.product_document_download_url,
+                            "name": self.document_name,
+                        },
+                    ),
+                ),
+            ) + layout_fields
+
+        return layout_fields
