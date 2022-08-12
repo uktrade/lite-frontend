@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.views.generic.edit import CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
@@ -127,6 +128,7 @@ class QueuesList(LoginRequiredMixin, TemplateView):
             "user_data": user_data,
             "filters": filters,
             "name": name,
+            "can_change_config": user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST,
         }
         return render(request, "queues/manage.html", context)
 

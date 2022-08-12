@@ -11,9 +11,11 @@
 				{% endblock %}
 			</h1>
 		</div>
-		<div class="lite-app-bar__controls">
-			{% govuk_link_button id='add-a-queue' text='queues.QueuesList.CREATE_QUEUE_BUTTON' url='queues:add' %}
-		</div>
+		{% if can_change_config %}
+			<div class="lite-app-bar__controls">
+				{% govuk_link_button id='add-a-queue' text='queues.QueuesList.CREATE_QUEUE_BUTTON' url='queues:add' %}
+			</div>
+		{% endif %}
 	</div>
 
 	{% include 'filters.html' %}
@@ -25,7 +27,9 @@
 					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.NAME' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.TEAM' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.COUNTERSIGNING_QUEUE' %}</th>
-					<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.ACTIONS' %}</th>
+					{% if can_change_config %}
+						<th class="govuk-table__header" scope="col">{% lcs 'queues.QueuesList.Table.ACTIONS' %}</th>
+					{% endif %}
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -40,6 +44,7 @@
 						<td class="govuk-table__cell">
 							{{ queue.countersigning_queue.name|default_na }}
 						</td>
+						{% if can_change_config %}
 						<td class="govuk-table__cell">
 							<ul class="govuk-table__cell__actions-list">
 								{% if user_data.user.team.id == queue.team.id %}
@@ -56,6 +61,7 @@
 								{% endif %}
 							</ul>
 						</td>
+					{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>

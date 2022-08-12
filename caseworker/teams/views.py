@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -17,9 +18,11 @@ from core.auth.views import LoginRequiredMixin
 class TeamsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         data = get_teams(request)
+        user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
         context = {
             "data": data,
+            "can_change_config": user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST,
         }
         return render(request, "teams/index.html", context)
 

@@ -11,11 +11,13 @@
 				{% endblock %}
 			</h1>
 		</div>
-		<div class="lite-app-bar__controls">
-			<a href="{% url 'teams:add' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs 'teams.TeamsPage.ADD_A_TEAM_BUTTON' %}
-			</a>
-		</div>
+		{% if can_change_config %}
+			<div class="lite-app-bar__controls">
+				<a href="{% url 'teams:add' %}" class="govuk-button" draggable="false" role="button">
+					{% lcs 'teams.TeamsPage.ADD_A_TEAM_BUTTON' %}
+				</a>
+			</div>
+		{% endif %}
 	</div>
 
 	<table class="govuk-table">
@@ -23,7 +25,9 @@
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header" scope="col">{% lcs 'teams.TeamsPage.Table.NAME' %}</th>
 				<th class="govuk-table__header" scope="col">Part of ECJU</th>
-				<th class="govuk-table__header" scope="col">{% lcs 'teams.TeamsPage.Table.ACTIONS' %}</th>
+				{% if can_change_config %}
+					<th class="govuk-table__header" scope="col">{% lcs 'teams.TeamsPage.Table.ACTIONS' %}</th>
+				{% endif %}
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
@@ -37,14 +41,16 @@
 					</td>
 					<td class="govuk-table__cell">{{team.part_of_ecju|friendly_boolean}}
 					</td>
-					<td class="govuk-table__cell">
-						{% if not team.id|is_system_team %}
-							<span class="govuk-table__header" aria-hidden="true">{% lcs 'teams.TeamsPage.Table.ACTIONS' %}</span>
-							<a href="{% url 'teams:edit' team.id %}" class="govuk-link">
-								{% lcs 'teams.TeamsPage.Table.EDIT' %}
-							</a>
-						{% endif %}
-					</td>
+					{% if can_change_config %}
+						<td class="govuk-table__cell">
+							{% if not team.id|is_system_team %}
+								<span class="govuk-table__header" aria-hidden="true">{% lcs 'teams.TeamsPage.Table.ACTIONS' %}</span>
+								<a href="{% url 'teams:edit' team.id %}" class="govuk-link">
+									{% lcs 'teams.TeamsPage.Table.EDIT' %}
+								</a>
+							{% endif %}
+						</td>
+					{% endif %}
 				</tr>
 			{% endfor %}
 		</tbody>
