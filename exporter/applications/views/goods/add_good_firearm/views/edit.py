@@ -28,11 +28,13 @@ from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_onward_exported,
 )
-from exporter.applications.views.goods.common.edit import BaseProductEditView
+from exporter.applications.views.goods.common.edit import (
+    BaseEditName,
+    BaseProductEditView,
+)
 from exporter.applications.views.goods.common.helpers import get_product_document
 from exporter.applications.views.goods.common.initial import (
     get_control_list_entry_initial_data,
-    get_name_initial_data,
     get_pv_grading_details_initial_data,
 )
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
@@ -59,7 +61,6 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailability,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductNameForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
 )
@@ -162,11 +163,8 @@ class BaseFirearmEditView(BaseEditView):
         return get_firearm_details_cleaned_data(form)
 
 
-class FirearmEditName(BaseGoodEditView):
-    form_class = ProductNameForm
-
-    def get_initial(self):
-        return get_name_initial_data(self.good)
+class FirearmEditName(BaseEditName, BaseGoodEditView):
+    pass
 
 
 class FirearmEditCategory(BaseFirearmEditView):

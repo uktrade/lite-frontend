@@ -1,7 +1,11 @@
 from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
-from exporter.applications.views.goods.common.mixins import (
+
+from exporter.goods.forms.common import ProductNameForm
+
+from .initial import get_name_initial_data
+from .mixins import (
     ApplicationMixin,
     GoodMixin,
 )
@@ -37,3 +41,10 @@ class BaseProductEditView(
         ctx["back_link_url"] = self.get_back_link_url()
 
         return ctx
+
+
+class BaseEditName:
+    form_class = ProductNameForm
+
+    def get_initial(self):
+        return get_name_initial_data(self.good)

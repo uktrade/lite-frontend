@@ -16,11 +16,13 @@ from exporter.applications.views.goods.common.conditionals import (
     is_product_document_available,
     is_pv_graded,
 )
-from exporter.applications.views.goods.common.edit import BaseProductEditView
+from exporter.applications.views.goods.common.edit import (
+    BaseEditName,
+    BaseProductEditView,
+)
 from exporter.applications.views.goods.common.helpers import get_product_document
 from exporter.applications.views.goods.common.initial import (
     get_control_list_entry_initial_data,
-    get_name_initial_data,
     get_pv_grading_initial_data,
     get_pv_grading_details_initial_data,
 )
@@ -41,7 +43,6 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailability,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductNameForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
 )
@@ -76,11 +77,8 @@ class BasePlatformEditView(BaseEditView):
         return get_cleaned_data(form)
 
 
-class PlatformEditName(BasePlatformEditView):
-    form_class = ProductNameForm
-
-    def get_initial(self):
-        return get_name_initial_data(self.good)
+class PlatformEditName(BaseEditName, BasePlatformEditView):
+    pass
 
 
 class PlatformEditControlListEntry(BasePlatformEditView):
