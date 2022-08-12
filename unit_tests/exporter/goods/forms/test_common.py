@@ -3,6 +3,7 @@ import pytest
 from exporter.goods.forms.common import (
     ProductNameForm,
     ProductControlListEntryForm,
+    ProductPVGradingForm,
 )
 
 
@@ -42,5 +43,19 @@ def test_product_control_list_entry_form_init_control_list_entries(request_with_
 )
 def test_product_control_list_entry_form(data, is_valid, errors, request_with_session, control_list_entries):
     form = ProductControlListEntryForm(data=data, request=request_with_session)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_pv_graded": ["Select yes if the product has a security grading or classification"]}),
+        ({"is_pv_graded": True}, True, {}),
+        ({"is_pv_graded": False}, True, {}),
+    ),
+)
+def test_product_pv_security_gradings_form(data, is_valid, errors):
+    form = ProductPVGradingForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

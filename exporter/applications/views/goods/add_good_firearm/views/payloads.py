@@ -12,7 +12,7 @@ from exporter.core.wizard.payloads import MergingPayloadBuilder
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_payload,
-    get_pv_grading_good_payload,
+    get_pv_grading_details_payload,
 )
 from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
@@ -152,7 +152,7 @@ class AddGoodFirearmPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmSteps.NAME: get_cleaned_data,
         AddGoodFirearmSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
         AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
-        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
         AddGoodFirearmSteps.CATEGORY: get_firearm_details_cleaned_data,
@@ -176,13 +176,6 @@ class FirearmEditProductDocumentAvailabilityPayloadBuilder(MergingPayloadBuilder
 class FirearmEditProductDocumentSensitivityPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
-    }
-
-
-class FirearmEditPvGradingPayloadBuilder(MergingPayloadBuilder):
-    payload_dict = {
-        AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
-        AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
     }
 
 

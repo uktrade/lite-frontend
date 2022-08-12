@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from crispy_forms_gds.layout import HTML
 
 from django import forms
@@ -11,7 +13,12 @@ from exporter.core.common.forms import (
     BaseForm,
     coerce_str_to_bool,
 )
-from exporter.core.services import get_control_list_entries
+from exporter.core.forms import CustomErrorDateInputField
+from exporter.core.services import (
+    get_control_list_entries,
+    get_pv_gradings_v2,
+)
+from exporter.core.validators import PastDateValidator
 
 
 class ProductNameForm(BaseForm):
@@ -102,3 +109,110 @@ class ProductControlListEntryForm(BaseForm):
             self.add_error("control_list_entries", "Enter the control list entry")
 
         return cleaned_data
+
+
+class ProductPVGradingForm(BaseForm):
+    class Layout:
+        TITLE = "Does the product have a government security grading or classification?"
+
+    is_pv_graded = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes (includes Unclassified)"),
+            (False, "No"),
+        ),
+        label="",
+        coerce=coerce_str_to_bool,
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product has a security grading or classification",
+        },
+    )
+
+    def get_layout_fields(self):
+        return (
+            HTML.p("For example, UK Official or NATO Restricted."),
+            "is_pv_graded",
+            HTML.details(
+                "Help with security gradings",
+                render_to_string("goods/forms/common/help_with_security_gradings.html"),
+            ),
+        )
+
+
+class ProductPVGradingDetailsForm(BaseForm):
+    class Layout:
+        TITLE = "What is the security grading or classification?"
+
+    prefix = forms.CharField(
+        required=False, label="Enter a prefix (optional)", help_text="For example, UK, NATO or OCCAR"
+    )
+
+    grading = forms.ChoiceField(
+        choices=(),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select the security grading",
+        },
+    )
+    suffix = forms.CharField(required=False, label="Enter a suffix (optional)", help_text="For example, UK eyes only")
+
+    issuing_authority = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        label="Name and address of the issuing authority",
+        error_messages={
+            "required": "Enter the name and address of the issuing authority",
+        },
+    )
+
+    reference = forms.CharField(
+        label="Reference",
+        error_messages={
+            "required": "Enter the reference",
+        },
+    )
+
+    date_of_issue = CustomErrorDateInputField(
+        label="Date of issue",
+        require_all_fields=False,
+        help_text=f"For example, 20 2 {datetime.now().year-2}",
+        error_messages={
+            "required": "Enter the date of issue",
+            "incomplete": "Enter the date of issue",
+            "invalid": "Date of issue must be a real date",
+            "day": {
+                "incomplete": "Date of issue must include a day",
+                "invalid": "Date of issue must be a real date",
+            },
+            "month": {
+                "incomplete": "Date of issue must include a month",
+                "invalid": "Date of issue must be a real date",
+            },
+            "year": {
+                "incomplete": "Date of issue must include a year",
+                "invalid": "Date of issue must be a real date",
+            },
+        },
+        validators=[PastDateValidator("Date of issue must be in the past")],
+    )
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+
+        gradings = [(key, display) for grading in get_pv_gradings_v2(request) for key, display in grading.items()]
+        self.fields["grading"].choices += gradings
+
+    def get_layout_fields(self):
+        return (
+            "prefix",
+            "grading",
+            "suffix",
+            "issuing_authority",
+            "reference",
+            "date_of_issue",
+            HTML.details(
+                "Help with security gradings",
+                render_to_string("goods/forms/common/help_with_security_gradings.html"),
+            ),
+        )

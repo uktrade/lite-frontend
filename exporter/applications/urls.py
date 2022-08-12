@@ -51,7 +51,7 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditProductDocumentView,
     FirearmEditProductDocumentSensitivity,
     FirearmEditProductDocumentAvailability,
-    FirearmEditPvGrading,
+    FirearmEditPVGrading,
     FirearmEditPVGradingDetails,
     FirearmEditRegisteredFirearmsDealer,
     FirearmProductOnApplicationSummaryEditFirearmCertificate,
@@ -77,6 +77,9 @@ from exporter.applications.views.goods.add_good_platform.views.add import AddGoo
 from exporter.applications.views.goods.add_good_platform.views.edit import (
     PlatformEditControlListEntry,
     PlatformEditName,
+    PlatformEditPVGrading,
+    PlatformEditPVGradingDetails,
+    PlatformEditUsesInformationSecurity,
 )
 from exporter.applications.views.goods.add_good_platform.views.summary import (
     PlatformSummary,
@@ -151,7 +154,7 @@ urlpatterns = [
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/pv-grading/",
-        FirearmEditPvGrading.as_view(),
+        FirearmEditPVGrading.as_view(),
         name="firearm_edit_pv_grading",
     ),
     path(
@@ -386,6 +389,21 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/control-list-entries/",
         PlatformEditControlListEntry.as_view(),
         name="platform_edit_control_list_entries",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/pv-grading/",
+        PlatformEditPVGrading.as_view(),
+        name="platform_edit_pv_grading",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/pv-grading-details/",
+        PlatformEditPVGradingDetails.as_view(),
+        name="platform_edit_pv_grading_details",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/uses-information-security/",
+        PlatformEditUsesInformationSecurity.as_view(),
+        name="platform_edit_uses_information_security",
     ),
     path("<uuid:pk>/goods/add-new/component/", AddGoodComponent.as_view(), name="new_good_component"),
     path(
