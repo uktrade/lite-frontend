@@ -220,7 +220,7 @@ class ProductPVGradingDetailsForm(BaseForm):
 
 class ProductPartNumberForm(BaseForm):
     class Layout:
-        TITLE = "Do you have the part number ?"
+        TITLE = "Do you have the part number?"
 
     is_part_number = forms.TypedChoiceField(
         choices=(
