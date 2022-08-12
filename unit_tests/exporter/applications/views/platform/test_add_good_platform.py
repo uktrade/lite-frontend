@@ -122,7 +122,7 @@ def test_add_good_platform_end_to_end(
     response = post_to_step(
         AddGoodPlatformSteps.PART_NUMBER,
         {
-            "is_part_number": True,
+            "part_number_missing": False,
             "part_number": "abc12345",
         },
     )
@@ -256,7 +256,7 @@ def test_add_good_platform_no_pv(
     post_to_step(
         AddGoodPlatformSteps.PART_NUMBER,
         {
-            "is_part_number": False,
+            "part_number_missing": True,
             "no_part_number_comments": "no part number",
         },
     )

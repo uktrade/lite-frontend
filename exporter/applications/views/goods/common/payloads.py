@@ -21,15 +21,15 @@ def get_pv_grading_details_payload(form):
 
 
 def get_part_number_payload(form):
-    if form.cleaned_data["is_part_number"]:
-        return {
-            "part_number": form.cleaned_data["part_number"],
-            "no_part_number_comments": "",
-        }
-    else:
+    if form.cleaned_data["part_number_missing"]:
         return {
             "part_number": "",
             "no_part_number_comments": form.cleaned_data["no_part_number_comments"],
+        }
+    else:
+        return {
+            "part_number": form.cleaned_data["part_number"],
+            "no_part_number_comments": "",
         }
 
 

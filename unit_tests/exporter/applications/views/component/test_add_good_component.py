@@ -123,7 +123,7 @@ def test_add_good_component_end_to_end(
     response = post_to_step(
         AddGoodComponentSteps.PART_NUMBER,
         {
-            "is_part_number": True,
+            "part_number_missing": False,
             "part_number": "abc12345",
         },
     )
@@ -258,7 +258,7 @@ def test_add_good_component_no_pv(
     post_to_step(
         AddGoodComponentSteps.PART_NUMBER,
         {
-            "is_part_number": False,
+            "part_number_missing": True,
             "no_part_number_comments": "no part number",
         },
     )

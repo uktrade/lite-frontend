@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from core.forms.layouts import (
     ConditionalQuestion,
     ConditionalRadios,
+    ConditionalCheckbox,
 )
 from exporter.core.common.forms import (
     BaseForm,
@@ -222,18 +223,8 @@ class ProductPartNumberForm(BaseForm):
     class Layout:
         TITLE = "Do you have the part number?"
 
-    is_part_number = forms.TypedChoiceField(
-        choices=(
-            (True, "Yes"),
-            (False, "No"),
-        ),
-        coerce=coerce_str_to_bool,
-        label="",
-        widget=forms.RadioSelect,
-        error_messages={
-            "required": "Enter the part number or select that you do not have a part number",
-        },
-    )
+    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
+
     part_number = forms.CharField(required=False)
 
     no_part_number_comments = forms.CharField(
@@ -244,27 +235,19 @@ class ProductPartNumberForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            ConditionalRadios(
-                "is_part_number",
-                ConditionalQuestion(
-                    "Yes",
-                    "part_number",
-                ),
-                ConditionalQuestion("No", "no_part_number_comments"),
-            ),
+            "part_number",
+            ConditionalCheckbox("part_number_missing", "no_part_number_comments"),
         )
 
     def clean(self):
         cleaned_data = super().clean()
+        error_message = "Enter the part number or select that you do not have a part number"
 
+        part_number_missing = cleaned_data.get("part_number_missing")
         part_number = cleaned_data.get("part_number")
         no_part_number_comments = cleaned_data.get("no_part_number_comments")
-        is_part_number = cleaned_data.get("is_part_number")
-
-        if is_part_number and not part_number:
-            self.add_error("part_number", "Enter the part number or select that you do not have a part number")
-        elif not is_part_number and not no_part_number_comments:
-            self.add_error(
-                "no_part_number_comments", "Enter the part number or select that you do not have a part number"
-            )
+        if not part_number_missing and not part_number:
+            self.add_error("part_number", error_message)
+        elif part_number_missing and not no_part_number_comments:
+            self.add_error("part_number_missing", error_message)
         return cleaned_data
