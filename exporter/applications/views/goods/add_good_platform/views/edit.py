@@ -6,7 +6,6 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.views.generic import FormView
 
 from lite_forms.generators import error_page
 
@@ -17,6 +16,7 @@ from exporter.applications.views.goods.common.conditionals import (
     is_product_document_available,
     is_pv_graded,
 )
+from exporter.applications.views.goods.common.edit import BaseProductEditView
 from exporter.applications.views.goods.common.helpers import get_product_document
 from exporter.applications.views.goods.common.initial import (
     get_control_list_entry_initial_data,
@@ -61,30 +61,14 @@ logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    LoginRequiredMixin,
     NonFirearmsFlagMixin,
-    ApplicationMixin,
-    GoodMixin,
-    FormView,
+    BaseProductEditView,
 ):
-    template_name = "core/form.html"
-
     def get_success_url(self):
         return reverse("applications:platform_summary", kwargs=self.kwargs)
 
-    def get_edit_payload(self, form):
-        raise NotImplementedError(f"Implement `get_edit_payload` for {self.__class__.__name__}")
-
-    def form_valid(self, form):
-        edit_platform(self.request, self.good["id"], self.get_edit_payload(form))
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        ctx["back_link_url"] = reverse("applications:platform_summary", kwargs=self.kwargs)
-
-        return ctx
+    def edit_object(self, request, good_id, payload):
+        edit_platform(request, good_id, payload)
 
 
 class BasePlatformEditView(BaseEditView):
