@@ -49,7 +49,7 @@ def test_edit_certificate_submission_success(
     mock_good_put,
     authorized_client,
     url_name,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     certificate_type,
 ):
@@ -73,7 +73,7 @@ def test_edit_certificate_submission_success(
     response = authorized_client.post(url, data=post_data)
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert mock_good_put.called_once
     assert mock_good_put.last_request.json() == {

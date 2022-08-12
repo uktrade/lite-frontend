@@ -47,7 +47,7 @@ def test_edit_section_5_firearms_act_set_yes_without_document(
     post_to_step,
     edit_url,
     authorized_client,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     good_id,
 ):
@@ -79,7 +79,7 @@ def test_edit_section_5_firearms_act_set_yes_without_document(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
@@ -115,7 +115,7 @@ def test_edit_section_5_firearms_act_set_yes_with_document(
     post_to_step,
     edit_url,
     authorized_client,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     good_id,
 ):
@@ -130,7 +130,7 @@ def test_edit_section_5_firearms_act_set_yes_with_document(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
@@ -152,7 +152,7 @@ def test_edit_section_5_firearms_act_set_no(
     post_to_step,
     edit_url,
     authorized_client,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     good_id,
 ):
@@ -167,7 +167,7 @@ def test_edit_section_5_firearms_act_set_no(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
@@ -185,7 +185,7 @@ def test_edit_section_5_firearms_act_set_dont_know(
     post_to_step,
     edit_url,
     authorized_client,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     good_id,
 ):
@@ -200,7 +200,7 @@ def test_edit_section_5_firearms_act_set_dont_know(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert mock_good_put.last_request.json() == {
         "firearm_details": {

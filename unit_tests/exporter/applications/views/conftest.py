@@ -210,9 +210,20 @@ def application_without_rfd_document(application):
 
 
 @pytest.fixture
-def product_summary_url(data_standard_case, good_id):
+def firearm_product_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:product_summary",
+        "applications:firearm_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+
+@pytest.fixture
+def platform_product_summary_url(data_standard_case, good_id):
+    return reverse(
+        "applications:platform_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,

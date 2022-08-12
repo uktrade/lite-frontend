@@ -1,7 +1,18 @@
+import logging
+
+from http import HTTPStatus
+
+from django.conf import settings
+from django.shortcuts import redirect
 from django.views.generic import FormView
+
+from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 
+from exporter.core.common.decorators import expect_status
+from exporter.core.common.exceptions import ServiceError
+from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductNameForm,
@@ -15,6 +26,9 @@ from .mixins import (
     ApplicationMixin,
     GoodMixin,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseProductEditView(
@@ -65,3 +79,56 @@ class BaseEditControlListEntry:
 
     def get_initial(self):
         return get_control_list_entry_initial_data(self.good)
+
+
+class BaseProductEditWizardView(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    BaseSessionWizardView,
+):
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        if settings.DEBUG:
+            raise service_error
+        return error_page(self.request, service_error.user_message)
+
+    def get_success_url(self):
+        raise NotImplementedError(f"Implement `get_success_url` for {self.__class__.__name__}")
+
+    def get_back_link_url(self):
+        return self.get_success_url()
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+
+        ctx["back_link_url"] = self.get_success_url()
+        ctx["title"] = form.Layout.TITLE
+        return ctx
+
+    def get_payload(self, form_dict):
+        raise NotImplementedError(f"Implement `get_payload` on f{self.__class__.__name__}")
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
+    def edit_object(self, request, good_pk, payload):
+        raise NotImplementedError(f"Implement `edit_object` on f{self.__class__.__name__}")
+
+    def process_forms(self, form_list, form_dict, **kwargs):
+        self.edit_object(self.request, self.good["id"], self.get_payload(form_dict))
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.process_forms(form_list, form_dict, **kwargs)
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())

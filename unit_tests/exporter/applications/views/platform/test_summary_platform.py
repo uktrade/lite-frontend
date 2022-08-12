@@ -10,17 +10,6 @@ def default_feature_flags(settings):
 
 
 @pytest.fixture
-def platform_summary_url(data_standard_case, good_id):
-    return reverse(
-        "applications:platform_summary",
-        kwargs={
-            "pk": data_standard_case["case"]["id"],
-            "good_pk": good_id,
-        },
-    )
-
-
-@pytest.fixture
 def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]
 
@@ -29,9 +18,9 @@ def test_platform_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_summary_url,
+    platform_product_summary_url,
 ):
-    response = authorized_client.get(platform_summary_url)
+    response = authorized_client.get(platform_product_summary_url)
     assert response.status_code == 200
 
 
@@ -39,9 +28,9 @@ def test_platform_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_summary_url,
+    platform_product_summary_url,
 ):
-    response = authorized_client.get(platform_summary_url)
+    response = authorized_client.get(platform_product_summary_url)
     assertTemplateUsed(response, "applications/goods/platform/product-summary.html")
 
 
@@ -130,12 +119,12 @@ def test_platform_product_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_summary_url,
+    platform_product_summary_url,
     platform_summary,
     data_standard_case,
     good_id,
 ):
-    response = authorized_client.get(platform_summary_url)
+    response = authorized_client.get(platform_product_summary_url)
 
     def _get_test_url(name):
         if not name:

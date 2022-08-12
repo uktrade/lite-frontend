@@ -29,7 +29,7 @@ def good_on_application(data_standard_case):
 @pytest.fixture
 def firearm_summary_url(application, good_on_application):
     return reverse(
-        "applications:product_summary",
+        "applications:firearm_product_summary",
         kwargs={
             "pk": application["id"],
             "good_pk": good_on_application["id"],
@@ -275,7 +275,7 @@ def test_edit_pv_grading_details(
 
 
 def test_edit_product_document_upload_form(
-    authorized_client, requests_mock, application, good_on_application, product_document, product_summary_url
+    authorized_client, requests_mock, application, good_on_application, product_document, firearm_product_summary_url
 ):
     url = reverse(
         "applications:firearm_edit_product_document",
@@ -284,7 +284,7 @@ def test_edit_product_document_upload_form(
     response = authorized_client.post(url, data=product_document)
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -296,7 +296,7 @@ def test_edit_product_document_upload_form(
 
 
 def test_edit_product_document_is_sensitive(
-    requests_mock, post_to_step_edit_product_document_sensitivity, product_summary_url
+    requests_mock, post_to_step_edit_product_document_sensitivity, firearm_product_summary_url
 ):
     response = post_to_step_edit_product_document_sensitivity(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
@@ -304,7 +304,7 @@ def test_edit_product_document_is_sensitive(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     # if any document exists then we delete that one
     document_delete_request = requests_mock.request_history.pop()
@@ -323,7 +323,7 @@ def test_upload_new_product_document_to_replace_existing_one(
     requests_mock,
     post_to_step_edit_product_document_sensitivity,
     product_document,
-    product_summary_url,
+    firearm_product_summary_url,
 ):
     response = post_to_step_edit_product_document_sensitivity(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
@@ -335,7 +335,7 @@ def test_upload_new_product_document_to_replace_existing_one(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -354,7 +354,7 @@ def post_to_step_edit_product_document_availability(post_to_step_factory, edit_p
 
 
 def test_edit_product_document_availability_select_not_available(
-    requests_mock, post_to_step_edit_product_document_availability, product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, firearm_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -362,7 +362,7 @@ def test_edit_product_document_availability_select_not_available(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -375,7 +375,7 @@ def test_edit_product_document_availability_select_not_available(
 
 
 def test_edit_product_document_availability_select_available_but_sensitive(
-    requests_mock, post_to_step_edit_product_document_availability, product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, firearm_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -387,7 +387,7 @@ def test_edit_product_document_availability_select_available_but_sensitive(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -401,7 +401,7 @@ def test_edit_product_document_availability_select_available_but_sensitive(
 
 
 def test_edit_product_document_availability_upload_new_document(
-    requests_mock, post_to_step_edit_product_document_availability, product_document, product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, product_document, firearm_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -417,7 +417,7 @@ def test_edit_product_document_availability_upload_new_document(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"

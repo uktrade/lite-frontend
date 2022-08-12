@@ -2,14 +2,8 @@ import logging
 
 from http import HTTPStatus
 
-from django.conf import settings
-from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
-
-from lite_forms.generators import error_page
-
-from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.views.goods.common.conditionals import (
     is_document_sensitive,
@@ -20,13 +14,13 @@ from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
     BaseEditName,
     BaseProductEditView,
+    BaseProductEditWizardView,
 )
 from exporter.applications.views.goods.common.helpers import get_product_document
 from exporter.applications.views.goods.common.initial import (
     get_pv_grading_initial_data,
     get_pv_grading_details_initial_data,
 )
-from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
@@ -34,10 +28,8 @@ from exporter.applications.views.goods.common.payloads import (
     ProductEditPVGradingPayloadBuilder,
 )
 from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.core.wizard.conditionals import C
-from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductDocumentAvailability,
     ProductDocumentSensitivityForm,
@@ -65,7 +57,7 @@ class BaseEditView(
     BaseProductEditView,
 ):
     def get_success_url(self):
-        return reverse("applications:platform_summary", kwargs=self.kwargs)
+        return reverse("applications:platform_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_id, payload):
         edit_platform(request, good_id, payload)
@@ -85,39 +77,13 @@ class PlatformEditControlListEntry(BaseEditControlListEntry, BasePlatformEditVie
 
 
 class BaseEditWizardView(
-    LoginRequiredMixin,
     NonFirearmsFlagMixin,
-    ApplicationMixin,
-    GoodMixin,
-    BaseSessionWizardView,
+    BaseProductEditWizardView,
 ):
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
-    def get_context_data(self, form, **kwargs):
-        ctx = super().get_context_data(form, **kwargs)
-
-        ctx["back_link_url"] = reverse("applications:platform_summary", kwargs=self.kwargs)
-        ctx["title"] = form.Layout.TITLE
-        return ctx
-
     def get_success_url(self):
-        return reverse("applications:platform_summary", kwargs=self.kwargs)
+        return reverse("applications:platform_product_summary", kwargs=self.kwargs)
 
-    def get_payload(self, form_dict):
-        raise NotImplementedError(f"Implement `get_payload` on f{self.__class__.__name__}")
-
-    @expect_status(HTTPStatus.OK, "Error updating firearm", "Unexpected error updating firearm")
-    def edit_platform(self, good_pk, form_dict):
-        payload = self.get_payload(form_dict)
+    def edit_object(self, request, good_pk, payload):
         return edit_platform(self.request, good_pk, payload)
 
 
@@ -147,14 +113,6 @@ class PlatformEditPVGrading(BaseEditWizardView):
 
     def get_payload(self, form_dict):
         return ProductEditPVGradingPayloadBuilder().build(form_dict)
-
-    def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.edit_platform(self.good["id"], form_dict)
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
-        return redirect(self.get_success_url())
 
 
 class PlatformEditPVGradingDetails(BasePlatformEditView):
@@ -266,29 +224,23 @@ class PlatformEditProductDocumentAvailability(BaseEditProductDocumentView):
     def get_payload(self, form_dict):
         return ProductEditProductDocumentAvailabilityPayloadBuilder().build(form_dict)
 
-    def done(self, form_list, form_dict, **kwargs):
+    def process_forms(self, form_list, form_dict, **kwargs):
+        super().process_forms(form_list, form_dict, **kwargs)
+
         all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
         is_document_available = all_data.get("is_document_available", None)
         is_document_sensitive = all_data.get("is_document_sensitive", None)
 
-        try:
-            self.edit_platform(self.good["id"], form_dict)
-
-            existing_product_document = self.product_document
-            if not is_document_available or (is_document_available and is_document_sensitive):
+        existing_product_document = self.product_document
+        if not is_document_available or (is_document_available and is_document_sensitive):
+            if existing_product_document:
+                self.delete_product_documentation(self.good["id"], existing_product_document["id"])
+        else:
+            description = all_data.get("description", "")
+            if self.has_updated_product_documentation():
+                self.post_product_documentation(self.good["id"])
                 if existing_product_document:
                     self.delete_product_documentation(self.good["id"], existing_product_document["id"])
-            else:
-                description = all_data.get("description", "")
-                if self.has_updated_product_documentation():
-                    self.post_product_documentation(self.good["id"])
-                    if existing_product_document:
-                        self.delete_product_documentation(self.good["id"], existing_product_document["id"])
-                elif existing_product_document and existing_product_document["description"] != description:
-                    payload = {"description": description}
-                    self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)
-
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
-        return redirect(self.get_success_url())
+            elif existing_product_document and existing_product_document["description"] != description:
+                payload = {"description": description}
+                self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)

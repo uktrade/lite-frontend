@@ -189,7 +189,7 @@ def test_add_good_component_end_to_end(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_summary",
+        "applications:platform_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -282,7 +282,7 @@ def test_add_good_component_no_pv(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_summary",
+        "applications:platform_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,

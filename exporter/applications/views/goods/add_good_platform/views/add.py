@@ -136,7 +136,7 @@ class AddGoodPlatform(
 
     def get_success_url(self):
         return reverse(
-            "applications:platform_summary",
+            "applications:platform_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -230,7 +230,7 @@ class AddGoodPlatformToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:platform_summary",
+            "applications:platform_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],

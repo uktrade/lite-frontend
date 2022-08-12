@@ -83,8 +83,8 @@ from exporter.applications.views.goods.add_good_platform.views.edit import (
     PlatformEditUsesInformationSecurity,
 )
 from exporter.applications.views.goods.add_good_platform.views.summary import (
-    PlatformSummary,
     PlatformProductOnApplicationSummary,
+    PlatformProductSummary,
 )
 from exporter.applications.views.goods.add_good_component.views.add import (
     AddGoodComponent,
@@ -259,7 +259,7 @@ urlpatterns = [
     path(
         "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary/",
         FirearmProductSummary.as_view(),
-        name="product_summary",
+        name="firearm_product_summary",
     ),
     path(
         "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/",
@@ -372,8 +372,8 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-new/platform/", AddGoodPlatform.as_view(), name="new_good_platform"),
     path(
         "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
-        PlatformSummary.as_view(),
-        name="platform_summary",
+        PlatformProductSummary.as_view(),
+        name="platform_product_summary",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/add-new/platform-to-application/",
@@ -419,7 +419,7 @@ urlpatterns = [
     ),
     path(
         "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
-        PlatformSummary.as_view(),
+        PlatformProductSummary.as_view(),
         name="component_summary",
     ),
     path(
