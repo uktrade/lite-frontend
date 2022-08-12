@@ -399,8 +399,17 @@ def serial_numbers_reducer(firearm_details):
     return summary
 
 
-def platform_reducer(good):
+def uses_information_security_reducer(good):
+    if not good["uses_information_security"]:
+        return (("uses-information-security", False),)
 
+    return (
+        ("uses-information-security", True),
+        ("uses-information-security-details", good["information_security_details"]),
+    )
+
+
+def platform_reducer(good):
     summary = (
         (
             "name",
@@ -409,7 +418,9 @@ def platform_reducer(good):
     )
     summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
+    summary += uses_information_security_reducer(good)
     summary += has_product_document_reducer(good)
+
     return summary
 
 

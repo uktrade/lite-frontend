@@ -58,6 +58,17 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
             {"name": "new good"},
             {"name": "new good"},
         ),
+        (
+            "platform_edit_uses_information_security",
+            {
+                "uses_information_security": True,
+                "information_security_details": "Uses information security details",
+            },
+            {
+                "uses_information_security": "True",
+                "information_security_details": "Uses information security details",
+            },
+        ),
     ),
 )
 def test_edit_platform_post(
@@ -83,15 +94,27 @@ def test_edit_platform_post(
 
 
 @pytest.mark.parametrize(
-    "url_name,initial",
+    "url_name,good_on_application_data,initial",
     (
         (
             "platform_edit_name",
+            {},
             {"name": "p1"},
         ),
         (
             "platform_edit_control_list_entries",
+            {},
             {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},
+        ),
+        (
+            "platform_edit_uses_information_security",
+            {},
+            {"uses_information_security": False},
+        ),
+        (
+            "platform_edit_uses_information_security",
+            {"uses_information_security": True, "information_security_details": "Details"},
+            {"uses_information_security": True, "information_security_details": "Details"},
         ),
     ),
 )
@@ -100,8 +123,11 @@ def test_edit_platform_initial(
     application,
     good_on_application,
     url_name,
+    good_on_application_data,
     initial,
 ):
+    good_on_application.update(good_on_application_data)
+
     url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"], "good_pk": good_on_application["id"]})
     response = authorized_client.get(url)
 

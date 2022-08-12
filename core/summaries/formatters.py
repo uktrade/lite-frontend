@@ -62,6 +62,8 @@ PLATFORM_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
+    "uses-information-security": "Is the product designed to employ 'information security' features?",
+    "uses-information-security-details": "Provide details of the information security features (optional)",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
     "is-document-sensitive": "Is the document rated above Official-sensitive?",
@@ -273,6 +275,7 @@ PLATFORM_VALUE_FORMATTERS = {
     ),
     "pv-grading-grading": key_value_formatter,
     "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "uses-information-security": yesno,
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
 }
