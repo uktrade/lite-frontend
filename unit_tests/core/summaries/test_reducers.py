@@ -21,8 +21,10 @@ from core.summaries.reducers import (
     is_onward_exported_reducer,
     is_pv_graded_reducer,
     is_replica_reducer,
+    platform_reducer,
     rfd_reducer,
     serial_numbers_reducer,
+    uses_information_security_reducer,
     year_of_manufacture_reducer,
 )
 
@@ -823,3 +825,52 @@ def test_is_deactivated_reducer(firearm_details, output):
 )
 def test_serial_numbers_reducer(firearm_details, output):
     assert serial_numbers_reducer(firearm_details) == output
+
+
+def test_platform_reducer(mocker):
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_uses_information_security_reducer = mocker.patch(
+        "core.summaries.reducers.uses_information_security_reducer", return_value=()
+    )
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = platform_reducer(good)
+    assert result == (("name", "good-name"),)
+
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
+    mock_uses_information_security_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "uses_information_security": True,
+                "information_security_details": "Information security details",
+            },
+            (
+                ("uses-information-security", True),
+                ("uses-information-security-details", "Information security details"),
+            ),
+        ),
+        (
+            {
+                "uses_information_security": False,
+            },
+            (("uses-information-security", False),),
+        ),
+    ),
+)
+def test_uses_information_security_reducer(good, output):
+    assert uses_information_security_reducer(good) == output
