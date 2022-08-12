@@ -29,14 +29,12 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
+    BaseEditControlListEntry,
     BaseEditName,
     BaseProductEditView,
 )
 from exporter.applications.views.goods.common.helpers import get_product_document
-from exporter.applications.views.goods.common.initial import (
-    get_control_list_entry_initial_data,
-    get_pv_grading_details_initial_data,
-)
+from exporter.applications.views.goods.common.initial import get_pv_grading_details_initial_data
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
@@ -57,7 +55,6 @@ from exporter.core.helpers import (
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
-    ProductControlListEntryForm,
     ProductDocumentAvailability,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -183,15 +180,8 @@ class FirearmEditCalibre(BaseFirearmEditView):
         return {"calibre": self.good["firearm_details"]["calibre"]}
 
 
-class FirearmEditControlListEntry(BaseGoodEditView):
-    form_class = ProductControlListEntryForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        return {**kwargs, "request": self.request}
-
-    def get_initial(self):
-        return get_control_list_entry_initial_data(self.good)
+class FirearmEditControlListEntry(BaseEditControlListEntry, BaseGoodEditView):
+    pass
 
 
 class FirearmEditReplica(BaseFirearmEditView):

@@ -2,9 +2,15 @@ from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 
-from exporter.goods.forms.common import ProductNameForm
+from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
+    ProductNameForm,
+)
 
-from .initial import get_name_initial_data
+from .initial import (
+    get_control_list_entry_initial_data,
+    get_name_initial_data,
+)
 from .mixins import (
     ApplicationMixin,
     GoodMixin,
@@ -48,3 +54,14 @@ class BaseEditName:
 
     def get_initial(self):
         return get_name_initial_data(self.good)
+
+
+class BaseEditControlListEntry:
+    form_class = ProductControlListEntryForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {**kwargs, "request": self.request}
+
+    def get_initial(self):
+        return get_control_list_entry_initial_data(self.good)
