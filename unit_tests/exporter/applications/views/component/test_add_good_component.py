@@ -9,6 +9,7 @@ from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductPVGradingForm,
     ProductPVGradingDetailsForm,
+    ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmDocumentAvailability,
@@ -117,6 +118,17 @@ def test_add_good_component_end_to_end(
     )
 
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductPartNumberForm)
+
+    response = post_to_step(
+        AddGoodComponentSteps.PART_NUMBER,
+        {
+            "is_part_number": True,
+            "part_number": "abc12345",
+        },
+    )
+
+    assert response.status_code == 200
     assert isinstance(response.context["form"], ProductPVGradingForm)
 
     response = post_to_step(
@@ -210,6 +222,8 @@ def test_add_good_component_end_to_end(
         "is_military_use": "yes_modified",
         "modified_military_use_details": "extra power",
         "item_category": "group1_components",
+        "part_number": "abc12345",
+        "no_part_number_comments": "",
     }
     assert post_good_document_matcher.called_once
     assert post_good_document_matcher.last_request.json() == [
@@ -240,6 +254,15 @@ def test_add_good_component_no_pv(
             "is_good_controlled": False,
         },
     )
+
+    post_to_step(
+        AddGoodComponentSteps.PART_NUMBER,
+        {
+            "is_part_number": False,
+            "no_part_number_comments": "no part number",
+        },
+    )
+
     post_to_step(
         AddGoodComponentSteps.PV_GRADING,
         {"is_pv_graded": False},
@@ -282,4 +305,6 @@ def test_add_good_component_no_pv(
         "is_military_use": "no",
         "modified_military_use_details": "",
         "item_category": "group1_components",
+        "no_part_number_comments": "no part number",
+        "part_number": "",
     }

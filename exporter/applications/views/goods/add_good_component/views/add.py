@@ -19,6 +19,7 @@ from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductPVGradingForm,
     ProductPVGradingDetailsForm,
+    ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmDocumentAvailability,
@@ -65,6 +66,7 @@ class AddGoodComponent(
     form_list = [
         (AddGoodComponentSteps.NAME, ProductNameForm),
         (AddGoodComponentSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
+        (AddGoodComponentSteps.PART_NUMBER, ProductPartNumberForm),
         (AddGoodComponentSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodComponentSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodComponentSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),

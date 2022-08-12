@@ -19,6 +19,7 @@ from exporter.goods.forms.common import (
     ProductNameForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
+    ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmDocumentAvailability,
@@ -66,6 +67,7 @@ class AddGoodPlatform(
     form_list = [
         (AddGoodPlatformSteps.NAME, ProductNameForm),
         (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
+        (AddGoodPlatformSteps.PART_NUMBER, ProductPartNumberForm),
         (AddGoodPlatformSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodPlatformSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),

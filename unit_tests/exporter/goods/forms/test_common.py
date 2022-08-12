@@ -4,6 +4,7 @@ from exporter.goods.forms.common import (
     ProductNameForm,
     ProductControlListEntryForm,
     ProductPVGradingForm,
+    ProductPartNumberForm,
 )
 
 
@@ -57,5 +58,44 @@ def test_product_control_list_entry_form(data, is_valid, errors, request_with_se
 )
 def test_product_pv_security_gradings_form(data, is_valid, errors):
     form = ProductPVGradingForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "is_part_number": ["Enter the part number or select that you do not have a part number"],
+                "no_part_number_comments": ["Enter the part number or select that you do not have a part number"],
+            },
+        ),
+        (
+            {"is_part_number": True},
+            False,
+            {"part_number": ["Enter the part number or select that you do not have a part number"]},
+        ),
+        (
+            {"is_part_number": True, "no_part_number_comments": "some comments"},
+            False,
+            {"part_number": ["Enter the part number or select that you do not have a part number"]},
+        ),
+        (
+            {"is_part_number": False},
+            False,
+            {"no_part_number_comments": ["Enter the part number or select that you do not have a part number"]},
+        ),
+        (
+            {"is_part_number": False, "part_number": "abc12345"},
+            False,
+            {"no_part_number_comments": ["Enter the part number or select that you do not have a part number"]},
+        ),
+    ),
+)
+def test_product_part_number_form(data, is_valid, errors):
+    form = ProductPartNumberForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
