@@ -4,6 +4,7 @@ from exporter.goods.forms.common import (
     ProductNameForm,
     ProductControlListEntryForm,
     ProductPVGradingForm,
+    ProductPartNumberForm,
 )
 
 
@@ -57,5 +58,53 @@ def test_product_control_list_entry_form(data, is_valid, errors, request_with_se
 )
 def test_product_pv_security_gradings_form(data, is_valid, errors):
     form = ProductPVGradingForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "part_number": ["Enter the part number or select that you do not have a part number"],
+            },
+        ),
+        (
+            {"part_number_missing": True},
+            False,
+            {"part_number_missing": ["Enter the part number or select that you do not have a part number"]},
+        ),
+        (
+            {"part_number_missing": True, "part_number": "abc12345"},
+            False,
+            {"part_number_missing": ["Enter the part number or select that you do not have a part number"]},
+        ),
+        (
+            {"part_number_missing": False},
+            False,
+            {"part_number": ["Enter the part number or select that you do not have a part number"]},
+        ),
+        (
+            {"part_number_missing": False, "no_part_number_comments": "some comments"},
+            False,
+            {"part_number": ["Enter the part number or select that you do not have a part number"]},
+        ),
+        (
+            {"part_number_missing": False, "part_number": "abc12345"},
+            True,
+            {},
+        ),
+        (
+            {"part_number_missing": True, "no_part_number_comments": "some comments"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_part_number_form(data, is_valid, errors):
+    form = ProductPartNumberForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
