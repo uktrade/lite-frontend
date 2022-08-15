@@ -24,6 +24,7 @@ PLATFORM_SUMMARY_EDIT_LINKS = {
     "uses-information-security-details": "uses_information_security",
     "has-product-document": "product_document_availability",
     "no-product-document-explanation": "product_document_availability",
+    "is-document-sensitive": "product_document_sensitivity",
 }
 
 

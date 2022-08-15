@@ -44,6 +44,7 @@ from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
     ProductEditProductDocumentAvailabilityPayloadBuilder,
+    ProductEditProductDocumentSensitivityPayloadBuilder,
     ProductEditPVGradingPayloadBuilder,
 )
 from exporter.core.common.decorators import expect_status
@@ -124,7 +125,6 @@ from .mixins import Product2FlagMixin
 from .payloads import (
     FirearmsActPayloadBuilder,
     FirearmEditFirearmsAct1968PayloadBuilder,
-    FirearmEditProductDocumentSensitivityPayloadBuilder,
     FirearmEditRegisteredFirearmsDealerPayloadBuilder,
     FirearmEditSection5FirearmsAct1968PayloadBuilder,
     FirearmProductOnApplicationSummaryEditIsDeactivatedPayloadBuilder,
@@ -407,7 +407,7 @@ class FirearmEditProductDocumentSensitivity(BaseEditProductDocumentView):
         return {**cleaned_data, "is_document_available": True}
 
     def get_payload(self, form_dict):
-        return FirearmEditProductDocumentSensitivityPayloadBuilder().build(form_dict)
+        return ProductEditProductDocumentSensitivityPayloadBuilder().build(form_dict)
 
     def process_forms(self, form_list, form_dict, **kwargs):
         super().process_forms(form_list, form_dict, **kwargs)

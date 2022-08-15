@@ -45,3 +45,9 @@ class ProductEditProductDocumentAvailabilityPayloadBuilder(MergingPayloadBuilder
         constants.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         constants.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
     }
+
+
+class ProductEditProductDocumentSensitivityPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        constants.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }

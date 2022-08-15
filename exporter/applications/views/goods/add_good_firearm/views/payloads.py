@@ -166,12 +166,6 @@ class AddGoodFirearmPayloadBuilder(MergingPayloadBuilder):
     }
 
 
-class FirearmEditProductDocumentSensitivityPayloadBuilder(MergingPayloadBuilder):
-    payload_dict = {
-        AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
-    }
-
-
 class FirearmEditRegisteredFirearmsDealerPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER: get_firearm_details_cleaned_data,

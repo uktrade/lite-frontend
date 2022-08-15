@@ -350,3 +350,64 @@ def test_edit_product_document_availability_upload_new_document(
         "no_document_comments": "",
         "is_document_sensitive": False,
     }
+
+
+@pytest.fixture
+def edit_product_sensitivity_url(application, good_on_application):
+    return reverse(
+        "applications:platform_edit_product_document_sensitivity",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+
+@pytest.fixture
+def post_to_step_edit_product_document_sensitivity(post_to_step_factory, edit_product_sensitivity_url):
+    return post_to_step_factory(edit_product_sensitivity_url)
+
+
+def test_upload_new_product_document_to_replace_existing_one(
+    requests_mock,
+    post_to_step_edit_product_document_sensitivity,
+    product_document,
+    platform_product_summary_url,
+):
+    response = post_to_step_edit_product_document_sensitivity(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        data={"is_document_sensitive": False},
+    )
+    response = post_to_step_edit_product_document_sensitivity(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        data=product_document,
+    )
+
+    assert response.status_code == 302
+    assert response.url == platform_product_summary_url
+
+    document_delete_request = requests_mock.request_history.pop()
+    assert document_delete_request.method == "DELETE"
+    assert document_delete_request.matcher.called_once
+
+    assert requests_mock.request_history.pop().json() == [
+        {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": "product data sheet"}
+    ]
+
+    assert requests_mock.request_history.pop().json() == {"is_document_sensitive": False}
+
+
+def test_edit_product_document_is_sensitive(
+    requests_mock, post_to_step_edit_product_document_sensitivity, platform_product_summary_url
+):
+    response = post_to_step_edit_product_document_sensitivity(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        data={"is_document_sensitive": True},
+    )
+
+    assert response.status_code == 302
+    assert response.url == platform_product_summary_url
+
+    # if any document exists then we delete that one
+    document_delete_request = requests_mock.request_history.pop()
+    assert document_delete_request.method == "DELETE"
+    assert document_delete_request.matcher.called_once
+
+    assert requests_mock.last_request.json() == {"is_document_sensitive": True}

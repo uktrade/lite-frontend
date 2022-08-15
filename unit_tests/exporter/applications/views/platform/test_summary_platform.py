@@ -145,6 +145,7 @@ def test_platform_product_summary_context(
         "uses-information-security": "uses-information-security",
         "uses-information-security-details": "uses-information-security",
         "has-product-document": "product-document-availability",
+        "is-document-sensitive": "product-document-sensitivity",
     }
 
     summary_with_links = tuple(
