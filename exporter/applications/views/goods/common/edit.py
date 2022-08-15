@@ -289,3 +289,76 @@ class BaseEditProductDocumentSensitivity:
             elif existing_product_document and existing_product_document["description"] != description:
                 payload = {"description": description}
                 self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)
+
+
+class BaseProductDocumentUpload:
+    form_class = ProductDocumentUploadForm
+
+    @cached_property
+    def product_document(self):
+        return get_product_document(self.good)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {**kwargs, "good_id": self.good["id"], "document": self.product_document}
+
+    def get_initial(self):
+        return {"description": self.product_document["description"] if self.product_document else ""}
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error product document when creating firearm",
+        "Unexpected error adding document to firearm",
+    )
+    def post_good_documents(self, payload):
+        return post_good_documents(
+            request=self.request,
+            pk=self.good["id"],
+            json=payload,
+        )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error deleting the product document",
+        "Unexpected error deleting product document",
+    )
+    def delete_good_document(self):
+        return delete_good_document(
+            self.request,
+            self.good["id"],
+            self.product_document["id"],
+        )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating the product document description",
+        "Unexpected error updating product document description",
+    )
+    def update_good_document_data(self, payload):
+        return update_good_document_data(
+            self.request,
+            self.good["id"],
+            self.product_document["id"],
+            payload,
+        )
+
+    def form_valid(self, form):
+        existing_product_document = self.product_document
+        product_document = form.cleaned_data.get("product_document", None)
+        description = form.cleaned_data.get("description", "")
+        payload = {"description": description}
+        if product_document:
+            payload = {
+                **get_document_data(product_document),
+                **payload,
+            }
+            self.post_good_documents(payload)
+
+            # Delete existing document
+            if existing_product_document:
+                self.delete_good_document()
+
+        elif self.product_document["description"] != description:
+            self.update_good_document_data(payload)
+
+        return redirect(self.get_success_url())

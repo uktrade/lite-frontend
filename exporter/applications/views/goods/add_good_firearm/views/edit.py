@@ -7,7 +7,6 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.views.generic import FormView
 
 from lite_forms.generators import error_page
@@ -32,10 +31,10 @@ from exporter.applications.views.goods.common.edit import (
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
     BaseEditProductDocumentView,
+    BaseProductDocumentUpload,
     BaseProductEditView,
     BaseProductEditWizardView,
 )
-from exporter.applications.views.goods.common.helpers import get_product_document
 from exporter.applications.views.goods.common.initial import get_pv_grading_details_initial_data
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
@@ -51,7 +50,6 @@ from exporter.core.common.exceptions import ServiceError
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
-    get_document_data,
     get_rfd_certificate,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     str_to_bool,
@@ -59,7 +57,6 @@ from exporter.core.helpers import (
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
-    ProductDocumentUploadForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
 )
@@ -84,12 +81,7 @@ from exporter.goods.forms.firearms import (
     FirearmSerialNumbersForm,
     FirearmYearOfManufactureForm,
 )
-from exporter.goods.services import (
-    delete_good_document,
-    edit_firearm,
-    post_good_documents,
-    update_good_document_data,
-)
+from exporter.goods.services import edit_firearm
 
 from .actions import (
     GoodOnApplicationFirearmActCertificateAction,
@@ -255,77 +247,11 @@ class FirearmEditPVGradingDetails(BaseGoodEditView):
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
-class FirearmEditProductDocumentView(BaseGoodEditView):
-    form_class = ProductDocumentUploadForm
-
-    @cached_property
-    def product_document(self):
-        return get_product_document(self.good)
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        return {**kwargs, "good_id": self.good["id"], "document": self.product_document}
-
-    def get_initial(self):
-        return {"description": self.product_document["description"] if self.product_document else ""}
-
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error product document when creating firearm",
-        "Unexpected error adding document to firearm",
-    )
-    def post_good_documents(self, payload):
-        return post_good_documents(
-            request=self.request,
-            pk=self.good["id"],
-            json=payload,
-        )
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error deleting the product document",
-        "Unexpected error deleting product document",
-    )
-    def delete_good_document(self):
-        return delete_good_document(
-            self.request,
-            self.good["id"],
-            self.product_document["id"],
-        )
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating the product document description",
-        "Unexpected error updating product document description",
-    )
-    def update_good_document_data(self, payload):
-        return update_good_document_data(
-            self.request,
-            self.good["id"],
-            self.product_document["id"],
-            payload,
-        )
-
-    def form_valid(self, form):
-        existing_product_document = self.product_document
-        product_document = form.cleaned_data.get("product_document", None)
-        description = form.cleaned_data.get("description", "")
-        payload = {"description": description}
-        if product_document:
-            payload = {
-                **get_document_data(product_document),
-                **payload,
-            }
-            self.post_good_documents(payload)
-
-            # Delete existing document
-            if existing_product_document:
-                self.delete_good_document()
-
-        elif self.product_document["description"] != description:
-            self.update_good_document_data(payload)
-
-        return redirect(self.get_success_url())
+class FirearmEditProductDocumentView(
+    BaseProductDocumentUpload,
+    BaseGoodEditView,
+):
+    pass
 
 
 class BaseFirearmEditProductDocumentView(
