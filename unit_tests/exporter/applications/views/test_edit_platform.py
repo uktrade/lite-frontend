@@ -411,3 +411,24 @@ def test_edit_product_document_is_sensitive(
     assert document_delete_request.matcher.called_once
 
     assert requests_mock.last_request.json() == {"is_document_sensitive": True}
+
+
+def test_edit_product_document_upload_form(
+    authorized_client, requests_mock, application, good_on_application, product_document, platform_product_summary_url
+):
+    url = reverse(
+        "applications:platform_edit_product_document",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+    response = authorized_client.post(url, data=product_document)
+
+    assert response.status_code == 302
+    assert response.url == platform_product_summary_url
+
+    document_delete_request = requests_mock.request_history.pop()
+    assert document_delete_request.method == "DELETE"
+    assert document_delete_request.matcher.called_once
+
+    assert requests_mock.last_request.json() == [
+        {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": "product data sheet"}
+    ]
