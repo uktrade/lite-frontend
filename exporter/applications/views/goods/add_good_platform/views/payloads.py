@@ -5,6 +5,7 @@ from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_payload,
     get_pv_grading_details_payload,
+    get_part_number_payload,
 )
 
 
@@ -20,6 +21,7 @@ class AddGoodPlatformPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodPlatformSteps.NAME: get_cleaned_data,
         AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
+        AddGoodPlatformSteps.PART_NUMBER: get_part_number_payload,
         AddGoodPlatformSteps.PV_GRADING: get_pv_grading_payload,
         AddGoodPlatformSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
         AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY: get_cleaned_data,
