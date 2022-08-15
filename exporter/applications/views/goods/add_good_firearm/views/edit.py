@@ -23,8 +23,6 @@ from exporter.applications.services import (
     get_application_documents,
 )
 from exporter.applications.views.goods.common.conditionals import (
-    is_document_sensitive,
-    is_product_document_available,
     is_pv_graded,
     is_onward_exported,
 )
@@ -32,6 +30,7 @@ from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
     BaseEditName,
     BaseEditProductDocumentAvailability,
+    BaseEditProductDocumentSensitivity,
     BaseEditProductDocumentView,
     BaseProductEditView,
     BaseProductEditWizardView,
@@ -45,7 +44,6 @@ from exporter.applications.views.goods.common.mixins import (
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
-    ProductEditProductDocumentSensitivityPayloadBuilder,
     ProductEditPVGradingPayloadBuilder,
 )
 from exporter.core.common.decorators import expect_status
@@ -61,7 +59,6 @@ from exporter.core.helpers import (
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
-    ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
@@ -338,42 +335,11 @@ class BaseFirearmEditProductDocumentView(
     pass
 
 
-class FirearmEditProductDocumentSensitivity(BaseFirearmEditProductDocumentView):
-    form_list = [
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
-    ]
-
-    condition_dict = {
-        AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
-    }
-
-    def get_cleaned_data_for_step(self, step):
-        cleaned_data = super().get_cleaned_data_for_step(step)
-        return {**cleaned_data, "is_document_available": True}
-
-    def get_payload(self, form_dict):
-        return ProductEditProductDocumentSensitivityPayloadBuilder().build(form_dict)
-
-    def process_forms(self, form_list, form_dict, **kwargs):
-        super().process_forms(form_list, form_dict, **kwargs)
-
-        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
-        is_document_sensitive = all_data.get("is_document_sensitive", None)
-
-        existing_product_document = self.product_document
-        if is_document_sensitive:
-            if existing_product_document:
-                self.delete_product_documentation(self.good["id"], existing_product_document["id"])
-        else:
-            description = all_data.get("description", "")
-            if self.has_updated_product_documentation():
-                self.post_product_documentation(self.good["id"])
-                if existing_product_document:
-                    self.delete_product_documentation(self.good["id"], existing_product_document["id"])
-            elif existing_product_document and existing_product_document["description"] != description:
-                payload = {"description": description}
-                self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)
+class FirearmEditProductDocumentSensitivity(
+    BaseEditProductDocumentSensitivity,
+    BaseFirearmEditProductDocumentView,
+):
+    pass
 
 
 class FirearmEditProductDocumentAvailability(
