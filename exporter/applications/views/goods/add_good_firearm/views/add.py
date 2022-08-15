@@ -29,7 +29,7 @@ from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
-    ProductDocumentAvailability,
+    ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductNameForm,
@@ -135,7 +135,7 @@ class AddGoodFirearm(
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailability),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
     ]

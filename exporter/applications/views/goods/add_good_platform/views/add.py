@@ -16,7 +16,7 @@ from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
-    ProductDocumentAvailability,
+    ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductNameForm,
@@ -71,7 +71,7 @@ class AddGoodPlatform(
         (AddGoodPlatformSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodPlatformSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
-        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailability),
+        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
         (AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
         (AddGoodPlatformSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),

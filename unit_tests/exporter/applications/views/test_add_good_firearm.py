@@ -12,7 +12,7 @@ from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 from exporter.goods.forms.common import (
-    ProductDocumentAvailability,
+    ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
 )
@@ -289,15 +289,15 @@ def test_add_good_firearm_not_registered_firearm_dealer(
     (
         (
             {"firearms_act_section": "dont_know", "not_covered_explanation": "explanation"},
-            ProductDocumentAvailability,
+            ProductDocumentAvailabilityForm,
         ),
         (
             {"firearms_act_section": "firearms_act_section1"},
-            ProductDocumentAvailability,
+            ProductDocumentAvailabilityForm,
         ),
         (
             {"firearms_act_section": "firearms_act_section2"},
-            ProductDocumentAvailability,
+            ProductDocumentAvailabilityForm,
         ),
         (
             {"firearms_act_section": "firearms_act_section5"},
@@ -371,7 +371,7 @@ def test_add_good_firearm_act_selection_skips_when_valid_certificate_already_exi
         form_data,
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductDocumentAvailability)
+    assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
 
 
 def test_add_good_firearm_with_rfd_document_submission(

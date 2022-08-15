@@ -254,7 +254,7 @@ class ProductPartNumberForm(BaseForm):
         return cleaned_data
 
 
-class ProductDocumentAvailability(BaseForm):
+class ProductDocumentAvailabilityForm(BaseForm):
     class Layout:
         TITLE = "Do you have a document that shows what your product is and what it's designed to do?"
 

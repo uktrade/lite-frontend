@@ -3,7 +3,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.goods.forms.common import (
-    ProductDocumentAvailability,
+    ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductPVGradingDetailsForm,
@@ -264,7 +264,7 @@ def test_product_pv_security_grading_details_form(data, is_valid, errors, reques
     ),
 )
 def test_firearm_document_availability_form(data, is_valid, errors):
-    form = ProductDocumentAvailability(data=data)
+    form = ProductDocumentAvailabilityForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
 

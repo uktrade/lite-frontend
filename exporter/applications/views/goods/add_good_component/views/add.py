@@ -15,7 +15,7 @@ from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
-    ProductDocumentAvailability,
+    ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductNameForm,
@@ -70,7 +70,7 @@ class AddGoodComponent(
         (AddGoodComponentSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodComponentSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodComponentSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
-        (AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailability),
+        (AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
         (AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
         (AddGoodComponentSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
