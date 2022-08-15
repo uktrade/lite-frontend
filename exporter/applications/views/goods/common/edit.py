@@ -4,6 +4,7 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django.shortcuts import redirect
+from django.utils.functional import cached_property
 from django.views.generic import FormView
 
 from lite_forms.generators import error_page
@@ -12,12 +13,20 @@ from core.auth.views import LoginRequiredMixin
 
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
+from exporter.core.helpers import get_document_data
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductNameForm,
 )
+from exporter.goods.services import (
+    delete_good_document,
+    post_good_documents,
+    update_good_document_data,
+)
 
+from . import constants
+from .helpers import get_product_document
 from .initial import (
     get_control_list_entry_initial_data,
     get_name_initial_data,
@@ -132,3 +141,64 @@ class BaseProductEditWizardView(
             return self.handle_service_error(e)
 
         return redirect(self.get_success_url())
+
+
+class BaseEditProductDocumentView:
+    @cached_property
+    def product_document(self):
+        return get_product_document(self.good)
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == constants.PRODUCT_DOCUMENT_UPLOAD:
+            kwargs["good_id"] = self.good["id"]
+            kwargs["document"] = self.product_document
+
+        return kwargs
+
+    def get_form_initial(self, step):
+        return {
+            "is_document_available": self.good["is_document_available"],
+            "no_document_comments": self.good["no_document_comments"],
+            "is_document_sensitive": self.good["is_document_sensitive"],
+            "description": self.product_document["description"] if self.product_document else "",
+        }
+
+    def has_updated_product_documentation(self):
+        data = self.get_cleaned_data_for_step(constants.PRODUCT_DOCUMENT_UPLOAD)
+        return data.get("product_document", None)
+
+    def get_product_document_payload(self):
+        data = self.get_cleaned_data_for_step(constants.PRODUCT_DOCUMENT_UPLOAD)
+        document = data["product_document"]
+        payload = {
+            **get_document_data(document),
+            "description": data["description"],
+        }
+        return payload
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding product document when creating product",
+        "Unexpected error adding document to product",
+    )
+    def post_product_documentation(self, good_pk):
+        document_payload = self.get_product_document_payload()
+        return post_good_documents(
+            request=self.request,
+            pk=good_pk,
+            json=document_payload,
+        )
+
+    @expect_status(HTTPStatus.OK, "Error deleting the product document", "Unexpected error deleting product document")
+    def delete_product_documentation(self, good_pk, document_pk):
+        return delete_good_document(self.request, good_pk, document_pk)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating the product document description",
+        "Unexpected error updating product document description",
+    )
+    def update_product_document_data(self, good_pk, document_pk, payload):
+        return update_good_document_data(self.request, good_pk, document_pk, payload)

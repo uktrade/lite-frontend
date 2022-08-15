@@ -31,6 +31,7 @@ from exporter.applications.views.goods.common.conditionals import (
 from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
     BaseEditName,
+    BaseEditProductDocumentView,
     BaseProductEditView,
     BaseProductEditWizardView,
 )
@@ -199,7 +200,7 @@ class FirearmEditReplica(BaseFirearmEditView):
         }
 
 
-class BaseEditWizardView(
+class BaseFirearmEditWizardView(
     Product2FlagMixin,
     BaseProductEditWizardView,
 ):
@@ -210,7 +211,7 @@ class BaseEditWizardView(
         return edit_firearm(request, good_pk, payload)
 
 
-class FirearmEditPVGrading(BaseEditWizardView):
+class FirearmEditPVGrading(BaseFirearmEditWizardView):
     form_list = [
         (AddGoodFirearmSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodFirearmSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
@@ -331,68 +332,14 @@ class FirearmEditProductDocumentView(BaseGoodEditView):
         return redirect(self.get_success_url())
 
 
-class BaseEditProductDocumentView(BaseEditWizardView):
-    @cached_property
-    def product_document(self):
-        return get_product_document(self.good)
-
-    def get_form_kwargs(self, step=None):
-        kwargs = super().get_form_kwargs(step)
-
-        if step == AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD:
-            kwargs["good_id"] = self.good["id"]
-            kwargs["document"] = self.product_document
-
-        return kwargs
-
-    def get_form_initial(self, step):
-        return {
-            "is_document_available": self.good["is_document_available"],
-            "no_document_comments": self.good["no_document_comments"],
-            "is_document_sensitive": self.good["is_document_sensitive"],
-            "description": self.product_document["description"] if self.product_document else "",
-        }
-
-    def has_updated_product_documentation(self):
-        data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
-        return data.get("product_document", None)
-
-    def get_product_document_payload(self):
-        data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
-        document = data["product_document"]
-        payload = {
-            **get_document_data(document),
-            "description": data["description"],
-        }
-        return payload
-
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error adding product document when creating firearm",
-        "Unexpected error adding document to firearm",
-    )
-    def post_product_documentation(self, good_pk):
-        document_payload = self.get_product_document_payload()
-        return post_good_documents(
-            request=self.request,
-            pk=good_pk,
-            json=document_payload,
-        )
-
-    @expect_status(HTTPStatus.OK, "Error deleting the product document", "Unexpected error deleting product document")
-    def delete_product_documentation(self, good_pk, document_pk):
-        return delete_good_document(self.request, good_pk, document_pk)
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating the product document description",
-        "Unexpected error updating product document description",
-    )
-    def update_product_document_data(self, good_pk, document_pk, payload):
-        return update_good_document_data(self.request, good_pk, document_pk, payload)
+class BaseFirearmEditProductDocumentView(
+    BaseEditProductDocumentView,
+    BaseFirearmEditWizardView,
+):
+    pass
 
 
-class FirearmEditProductDocumentSensitivity(BaseEditProductDocumentView):
+class FirearmEditProductDocumentSensitivity(BaseFirearmEditProductDocumentView):
     form_list = [
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
@@ -430,7 +377,7 @@ class FirearmEditProductDocumentSensitivity(BaseEditProductDocumentView):
                 self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)
 
 
-class FirearmEditProductDocumentAvailability(BaseEditProductDocumentView):
+class FirearmEditProductDocumentAvailability(BaseFirearmEditProductDocumentView):
     form_list = [
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailability),
         (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
@@ -467,7 +414,7 @@ class FirearmEditProductDocumentAvailability(BaseEditProductDocumentView):
                 self.update_product_document_data(self.good["id"], existing_product_document["id"], payload)
 
 
-class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
+class FirearmEditRegisteredFirearmsDealer(BaseFirearmEditWizardView):
     form_list = [
         (AddGoodFirearmSteps.IS_REGISTERED_FIREARMS_DEALER, FirearmRegisteredFirearmsDealerForm),
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
@@ -563,7 +510,7 @@ class FirearmEditRegisteredFirearmsDealer(BaseEditWizardView):
         ).run()
 
 
-class FirearmEditSection5FirearmsAct1968(BaseEditWizardView):
+class FirearmEditSection5FirearmsAct1968(BaseFirearmEditWizardView):
     form_list = [
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
@@ -634,7 +581,7 @@ class FirearmEditLetterOfAuthority(BaseFirearmEditView):
         return response
 
 
-class FirearmEditFirearmsAct1968(BaseEditWizardView):
+class FirearmEditFirearmsAct1968(BaseFirearmEditWizardView):
     form_list = [
         (AddGoodFirearmSteps.FIREARM_ACT_1968, FirearmFirearmAct1968Form),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
