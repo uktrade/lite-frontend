@@ -1,7 +1,24 @@
 import pytest
+
 from django.urls import reverse
 
 pk = "67b9a4a3-6f3d-4511-8a19-23ccff221a74"
+
+
+def test_teams_cannot_be_created_and_modified(authorized_client, reset_config_users_list):
+
+    url = reverse("teams:teams")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == False
+
+
+def test_teams_can_be_created_and_modified(authorized_client, specify_config_users_list):
+
+    url = reverse("teams:teams")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == True
 
 
 def test_edit_team_view(authorized_client, form_team_data, requests_mock):

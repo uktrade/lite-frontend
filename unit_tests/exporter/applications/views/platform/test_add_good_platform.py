@@ -9,6 +9,7 @@ from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
+    ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmDocumentAvailability,
@@ -116,6 +117,17 @@ def test_add_good_platform_end_to_end(
     )
 
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductPartNumberForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PART_NUMBER,
+        {
+            "part_number_missing": False,
+            "part_number": "abc12345",
+        },
+    )
+
+    assert response.status_code == 200
     assert isinstance(response.context["form"], ProductPVGradingForm)
 
     response = post_to_step(
@@ -187,7 +199,6 @@ def test_add_good_platform_end_to_end(
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
-
     assert last_request.json() == {
         "item_category": "group1_platform",
         "name": "product_1",
@@ -209,6 +220,8 @@ def test_add_good_platform_end_to_end(
         "is_document_sensitive": False,
         "is_military_use": "yes_modified",
         "modified_military_use_details": "extra power",
+        "part_number": "abc12345",
+        "no_part_number_comments": "",
     }
 
     assert post_good_document_matcher.called_once
@@ -238,6 +251,13 @@ def test_add_good_platform_no_pv(
         AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": False,
+        },
+    )
+    post_to_step(
+        AddGoodPlatformSteps.PART_NUMBER,
+        {
+            "part_number_missing": True,
+            "no_part_number_comments": "no part number",
         },
     )
     post_to_step(
@@ -282,4 +302,6 @@ def test_add_good_platform_no_pv(
         "no_document_comments": "product not manufactured yet",
         "is_military_use": "no",
         "modified_military_use_details": "",
+        "no_part_number_comments": "no part number",
+        "part_number": "",
     }

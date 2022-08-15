@@ -1,7 +1,6 @@
 import pytest
 from bs4 import BeautifulSoup
 
-from django.conf import settings
 from django.urls import reverse
 
 from lite_content.lite_internal_frontend.flags import SetFlagsForm
@@ -17,11 +16,6 @@ def setup(
     mock_countries,
 ):
     yield
-
-
-@pytest.fixture()
-def specify_config_users_list():
-    settings.CONFIG_ADMIN_USERS_LIST = ["govuser@example.com"]
 
 
 def test_flagging_rules_cannot_be_created_and_modified(authorized_client):

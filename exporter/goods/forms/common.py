@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from core.forms.layouts import (
     ConditionalQuestion,
     ConditionalRadios,
+    ConditionalCheckbox,
 )
 from exporter.core.common.forms import (
     BaseForm,
@@ -216,3 +217,37 @@ class ProductPVGradingDetailsForm(BaseForm):
                 render_to_string("goods/forms/common/help_with_security_gradings.html"),
             ),
         )
+
+
+class ProductPartNumberForm(BaseForm):
+    class Layout:
+        TITLE = "Do you have the part number?"
+
+    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
+
+    part_number = forms.CharField(required=False)
+
+    no_part_number_comments = forms.CharField(
+        widget=forms.Textarea,
+        label="Explain why you do not have a part number",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            "part_number",
+            ConditionalCheckbox("part_number_missing", "no_part_number_comments"),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        error_message = "Enter the part number or select that you do not have a part number"
+
+        part_number_missing = cleaned_data.get("part_number_missing")
+        part_number = cleaned_data.get("part_number")
+        no_part_number_comments = cleaned_data.get("no_part_number_comments")
+        if not part_number_missing and not part_number:
+            self.add_error("part_number", error_message)
+        elif part_number_missing and not no_part_number_comments:
+            self.add_error("part_number_missing", error_message)
+        return cleaned_data
