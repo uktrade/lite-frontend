@@ -1,5 +1,6 @@
 import pytest
 
+from django.conf import settings
 from django.urls import reverse
 
 import os
@@ -11,8 +12,24 @@ queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_cases_search, authorized_client, queue_pk, mock_queue, mock_countries):
+def setup(mock_cases_search, authorized_client, queue_pk, mock_queue, mock_countries, mock_queues_list):
     yield
+
+
+def test_queues_cannot_be_created_and_modified(authorized_client, reset_config_users_list):
+
+    url = reverse("queues:manage")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == False
+
+
+def test_queues_can_be_created_and_modified(authorized_client, specify_config_users_list):
+
+    url = reverse("queues:manage")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == True
 
 
 @pytest.mark.parametrize(

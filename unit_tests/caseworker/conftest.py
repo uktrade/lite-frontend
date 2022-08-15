@@ -4,6 +4,7 @@ from urllib import parse
 
 import pytest
 from dotenv import load_dotenv
+from django.conf import settings
 from django.test import Client
 
 from core import client
@@ -1139,6 +1140,22 @@ def mock_put_flags(requests_mock, stub_response):
 @pytest.fixture
 def mock_flagging_rules(requests_mock):
     url = client._build_absolute_uri(f"/flags/rules/?page=1")
+    yield requests_mock.get(url=url, json={"results": []})
+
+
+@pytest.fixture()
+def reset_config_users_list():
+    settings.CONFIG_ADMIN_USERS_LIST = []
+
+
+@pytest.fixture()
+def specify_config_users_list():
+    settings.CONFIG_ADMIN_USERS_LIST = ["govuser@example.com"]
+
+
+@pytest.fixture
+def mock_queues_list(requests_mock):
+    url = client._build_absolute_uri(f"/queues/")
     yield requests_mock.get(url=url, json={"results": []})
 
 
