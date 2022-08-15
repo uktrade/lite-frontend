@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 from http import HTTPStatus
+from traceback import format_exception_only
+from unicodedata import category
 
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -265,7 +267,11 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
     form_class = NonFirearmCategoryForm
 
     def get_success_url(self):
-        return reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
+        category = self.request.POST.get("no_firearm_category")
+        if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.PLATFORM:
+            return reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
+        else:
+            return reverse("applications:new_good_software", kwargs={"pk": self.kwargs["pk"]})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -71,6 +71,26 @@ PLATFORM_LABELS = {
     "product-document-description": "Description (optional)",
 }
 
+SOFTWARE_LABELS = {
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Enter the part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "security-features": "Does the product include security features to protect information?",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+}
+
 
 def add_labels(summary, labels):
     labelled_summary = ()
@@ -288,6 +308,39 @@ PLATFORM_ON_APPLICATION_FORMATTERS = {
 }
 
 PLATFORM_ON_APPLICATION_LABELS = {
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+}
+
+SOFTWARE_VALUE_FORMATTERS = {
+    "is-good-controlled": key_value_formatter,
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+}
+
+SOFTWARE_ON_APPLICATION_FORMATTERS = {
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "total-value": money_formatter,
+}
+
+SOFTWARE_ON_APPLICATION_LABELS = {
     "is-onward-exported": "Will the product be onward exported to any additional countries?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",

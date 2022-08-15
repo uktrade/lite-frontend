@@ -431,3 +431,26 @@ def platform_on_application_reducer(good_on_application):
     )
     summary += is_onward_exported_reducer(good_on_application)
     return summary
+
+
+def software_reducer(good):
+
+    summary = (
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += has_product_document_reducer(good)
+    return summary
+
+
+def software_on_application_reducer(good_on_application):
+    summary = (
+        ("number-of-items", good_on_application["quantity"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+    summary += is_onward_exported_reducer(good_on_application)
+    return summary

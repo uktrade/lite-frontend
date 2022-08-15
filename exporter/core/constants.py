@@ -240,5 +240,29 @@ class DocumentType:
     RFD_CERTIFICATE = "rfd-certificate"
 
 
+class ProductSecurityFeatures:
+    TITLE = "Does the product include security features to protect information?"
+    SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
+    NO = "No"
+
+
+class ProductDeclaredAtCustoms:
+    TITLE = "Will the product be declared at customs?"
+    NO = "No, the product is sent electronically"
+
+
+class DocumentAvailability:
+    TITLE = "Do you have a document that shows what your product is and what it’s designed to do?"
+    DESCRIPTION = (
+        "For example, a technical specification, datasheet, sales brochure or something else that fully describes the product details."
+        "\nThis is required in order to process the application."
+    )
+    NO_DOCUMENT_TEXTFIELD_DESCRIPTION = (
+        "Explain why you are not able to upload a product document. This may delay your application."
+    )
+    SUBMIT_BUTTON = "Continue"
+
+
 PRODUCT_CATEGORY_PLATFORM = "group1_platform"
 COMPONENT_CATEGORY_PLATFORM = "group1_components"
+PRODUCT_CATEGORY_SOFTWARE = "group3_software"

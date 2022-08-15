@@ -14,7 +14,13 @@ from core.builtins.custom_tags import default_na, linkify
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
 from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 
-from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES, PRODUCT_CATEGORY_FIREARM
+from exporter.core.constants import (
+    ProductSecurityFeatures,
+    ProductDeclaredAtCustoms,
+    DocumentAvailability,
+    FIREARM_AMMUNITION_COMPONENT_TYPES,
+    PRODUCT_CATEGORY_FIREARM,
+)
 from exporter.core.helpers import (
     convert_control_list_entries,
     str_to_bool,
@@ -733,6 +739,10 @@ class NonFirearmCategoryForm(BaseForm):
                 self.NonFirearmCategoryChoices.PLATFORM,
                 hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
             ),
+            TextChoice(
+                self.NonFirearmCategoryChoices.SOFTWARE,
+                hint="For example, software or information such as technology manuals and specifications.",
+            ),
         ]
 
         if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED:
@@ -764,6 +774,130 @@ class NonFirearmCategoryForm(BaseForm):
     def get_layout_fields(self):
         return ("no_firearm_category",)
 
+
+class ProductSecurityFeaturesForm(forms.Form):
+    class Layout:
+        TITLE = ProductSecurityFeatures.TITLE
+
+    title = ProductSecurityFeatures.TITLE
+
+    has_security_features = forms.ChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, ProductSecurityFeatures.NO),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product include security features to protect information",
+        },
+    )
+
+    security_feature_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea,
+        label=ProductSecurityFeatures.SECURITY_FEATURE_DETAILS,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            ConditionalRadios(
+                "has_security_features",
+                ConditionalQuestion(
+                    "Yes",
+                    "security_feature_details",
+                ),
+                ProductSecurityFeatures.NO,
+            ),
+            Submit("submit", "Continue"),
+            HTML.details(
+                "Help with security features",
+                "<p>Information security features include cryptography, authentication, and"
+                "cryptanalytic functions. They are often found in communication, wireless"
+                "or internet-based products.</p>",
+            ),
+        )
+
+
+class ProductDeclaredAtCustomsForm(forms.Form):
+    class Layout:
+        TITLE = ProductDeclaredAtCustoms.TITLE
+
+    title = ProductDeclaredAtCustoms.TITLE
+
+    has_declared_at_customs = forms.ChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, ProductDeclaredAtCustoms.NO),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product will be declared at customs",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            "has_declared_at_customs",
+            Submit("submit", "Continue"),
+            HTML.details(
+                "Help with export declarations",
+                "<p>If your product is considered physical (tangible) it is declared at customs. "
+                "If it is sent digitally, such as through software or email, it is considered "
+                "intangible and does not need to be declared at customs.</p>",
+            ),
+        )
+
+
+class ProductDocumentAvailabilityForm(forms.Form):
+    class Layout:
+        TITLE = DocumentAvailability.TITLE
+
+    title = DocumentAvailability.TITLE
+
+    is_document_available = forms.ChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, ProductSecurityFeatures.NO),
+        ),
+        label=DocumentAvailability.DESCRIPTION,
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if you have a document that shows what your product is and what it’s designed to do",
+        },
+    )
+
+    no_document_comments = forms.CharField(
+        required=False,
+        widget=forms.Textarea,
+        label=ProductSecurityFeatures.SECURITY_FEATURE_DETAILS,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML.h1(self.title),
+            ConditionalRadios(
+                "is_document_available",
+                "Yes",
+                ConditionalQuestion(
+                    ProductSecurityFeatures.NO,
+                    "no_document_comments",
+                ),
+            ),
+            Submit("submit", "Continue"),
+        )
 
 class AddGoodsQuestionsForm(forms.Form):
 

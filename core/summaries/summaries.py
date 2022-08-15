@@ -10,12 +10,18 @@ from core.summaries.formatters import (
     PLATFORM_VALUE_FORMATTERS,
     PLATFORM_ON_APPLICATION_FORMATTERS,
     PLATFORM_ON_APPLICATION_LABELS,
+    SOFTWARE_LABELS,
+    SOFTWARE_VALUE_FORMATTERS,
+    SOFTWARE_ON_APPLICATION_FORMATTERS,
+    SOFTWARE_ON_APPLICATION_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
     platform_on_application_reducer,
     platform_reducer,
+    software_on_application_reducer,
+    software_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -69,6 +75,24 @@ PLATFORM_FIELDS = (
     "pv-grading-details-date-of-issue",
     "uses-information-security",
     "uses-information-security-details",
+    "has-product-document",
+    "no-product-document-explanation",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+)
+
+SOFTWARE_FIELDS = (
+    "name",
+    "is-good-controlled",
+    "control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
     "has-product-document",
     "no-product-document-explanation",
     "is-document-sensitive",
@@ -190,5 +214,49 @@ def platform_product_on_application_summary(good_on_application, additional_form
     summary = pick_fields(summary, PLATFORM_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, PLATFORM_ON_APPLICATION_LABELS)
+
+    return summary
+
+
+SOFTWARE_ON_APPLICATION_FIELDS = (
+    "is-onward-exported",
+    "is-altered",
+    "is-altered-comments",
+    "is-incorporated",
+    "is-incorporated-comments",
+    "number-of-items",
+    "total-value",
+)
+
+
+def software_summary(good, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = software_reducer(good)
+    formatters = {
+        **SOFTWARE_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, SOFTWARE_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, SOFTWARE_LABELS)
+
+    return summary
+
+
+def software_product_on_application_summary(good_on_application, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = software_on_application_reducer(good_on_application)
+    formatters = {
+        **SOFTWARE_ON_APPLICATION_FORMATTERS,
+        **additional_formatters,
+    }
+
+    summary = pick_fields(summary, SOFTWARE_ON_APPLICATION_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, SOFTWARE_ON_APPLICATION_FIELDS)
 
     return summary
