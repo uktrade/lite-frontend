@@ -13,6 +13,9 @@ SOFTWARE_SUMMARY_EDIT_LINKS = {
     "name": "name",
     "is-good-controlled": "control_list_entries",
     "control-list-entries": "control_list_entries",
+    "security-features": "has_security_features",
+    "security-features-details": "has_security_features",
+    "declared-at-customs": "has_declared_at_customs",
 }
 
 

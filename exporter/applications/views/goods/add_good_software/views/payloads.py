@@ -4,7 +4,8 @@ from .constants import AddGoodSoftwareSteps, AddGoodSoftwareToApplicationSteps
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_payload,
-    get_pv_grading_good_payload,
+    get_pv_grading_details_payload,
+    get_part_number_payload
 )
 
 
@@ -20,8 +21,9 @@ class AddGoodSoftwarePayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodSoftwareSteps.NAME: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
+        AddGoodSoftwareSteps.PART_NUMBER: get_part_number_payload,
         AddGoodSoftwareSteps.PV_GRADING: get_pv_grading_payload,
-        AddGoodSoftwareSteps.PV_GRADING_DETAILS: get_pv_grading_good_payload,
+        AddGoodSoftwareSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
         AddGoodSoftwareSteps.PRODUCT_USES_INFORMATION_SECURITY: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,

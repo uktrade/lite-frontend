@@ -84,6 +84,7 @@ SOFTWARE_LABELS = {
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
     "security-features": "Does the product include security features to protect information?",
+    "declared_at_customs": "Will the product be declared at customs?",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
     "is-document-sensitive": "Is the document rated above Official-sensitive?",

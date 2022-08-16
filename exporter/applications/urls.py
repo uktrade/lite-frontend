@@ -434,7 +434,7 @@ urlpatterns = [
         "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/component-on-application-summary/",
         PlatformProductOnApplicationSummary.as_view(),
         name="component_on_application_summary",
-    )
+    ),
     # Software product and non-firearm
     path("<uuid:pk>/goods/add-new/software/", AddGoodSoftware.as_view(), name="new_good_software"),
     path(

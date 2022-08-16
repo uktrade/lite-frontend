@@ -13,6 +13,7 @@ def is_product_document_available(wizard):
 
 def is_document_sensitive(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(PRODUCT_DOCUMENT_SENSITIVITY)
+    breakpoint()
     return cleaned_data.get("is_document_sensitive")
 
 

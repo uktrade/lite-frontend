@@ -447,6 +447,24 @@ def software_reducer(good):
     return summary
 
 
+def security_features_reducer(good):
+    if good["has_security_features"]:
+        return (
+            ("security-features", True),
+            ("security-features-details", good["security_feature_details"]),
+        )
+
+    return (("security-features", False),)
+
+
+def declared_at_customs_reducer(good):
+    if good["has_declared_at_customs"]:
+        return (("declared-at-customs", True),)
+
+    return (("declared-at-customs", False),)
+
+
+
 def software_on_application_reducer(good_on_application):
     summary = (
         ("number-of-items", good_on_application["quantity"]),

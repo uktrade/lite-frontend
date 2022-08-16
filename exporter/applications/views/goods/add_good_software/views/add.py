@@ -18,9 +18,15 @@ from exporter.goods.forms.common import (
     ProductNameForm,
     ProductControlListEntryForm,
 )
+from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
+    ProductNameForm,
+    ProductPVGradingDetailsForm,
+    ProductPVGradingForm,
+    ProductPartNumberForm,
+)
 from exporter.goods.forms.firearms import (
-    FirearmPvGradingForm,
-    FirearmPvGradingDetailsForm,
+    FirearmDocumentAvailability,
     FirearmDocumentSensitivityForm,
     FirearmDocumentUploadForm,
     FirearmOnwardExportedForm,
@@ -70,11 +76,12 @@ class AddGoodSoftware(
     form_list = [
         (AddGoodSoftwareSteps.NAME, ProductNameForm),
         (AddGoodSoftwareSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
-        (AddGoodSoftwareSteps.PV_GRADING, FirearmPvGradingForm),
-        (AddGoodSoftwareSteps.PV_GRADING_DETAILS, FirearmPvGradingDetailsForm),
+        (AddGoodSoftwareSteps.PART_NUMBER, ProductPartNumberForm),
+        (AddGoodSoftwareSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodSoftwareSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodSoftwareSteps.SECURITY_FEATURES, ProductSecurityFeaturesForm),
         (AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS, ProductDeclaredAtCustomsForm),
-        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
         (AddGoodSoftwareSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
@@ -96,11 +103,13 @@ class AddGoodSoftware(
         return kwargs
 
     def has_product_documentation(self):
-        return self.condition_dict[AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD](self)
+        data = self.get_cleaned_data_for_step(AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD)
+        return data.get("product_document", None)
+        # return self.condition_dict[AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD](self)
 
     def get_product_document_payload(self):
         data = self.get_cleaned_data_for_step(AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD)
-        document = data["product_document"]
+        document = data.get("product_document", None)
         payload = {
             **get_document_data(document),
             "description": data["description"],
