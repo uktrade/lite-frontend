@@ -443,11 +443,6 @@ urlpatterns = [
         name="software_summary",
     ),
     path(
-        "<uuid:pk>/goods/software/<uuid:good_pk>/product-summary/",
-        SoftwareSummary.as_view(),
-        name="software_summary",
-    ),
-    path(
         "<uuid:pk>/goods/<uuid:good_pk>/add-new/software-to-application/",
         AddGoodSoftwareToApplication.as_view(),
         name="new_good_software_to_application",

@@ -251,15 +251,8 @@ class ProductDeclaredAtCustoms:
     NO = "No, the product is sent electronically"
 
 
-class DocumentAvailability:
-    TITLE = "Do you have a document that shows what your product is and what it’s designed to do?"
-    DESCRIPTION = (
-        "For example, a technical specification, datasheet, sales brochure or something else that fully describes the product details."
-        "\nThis is required in order to process the application."
-    )
-    NO_DOCUMENT_TEXTFIELD_DESCRIPTION = (
-        "Explain why you are not able to upload a product document. This may delay your application."
-    )
+class ProductDesignDetails:
+    TITLE = "Describe the product and what it is designed to do"
     SUBMIT_BUTTON = "Continue"
 
 

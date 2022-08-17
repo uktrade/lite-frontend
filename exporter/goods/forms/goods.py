@@ -17,7 +17,7 @@ from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 from exporter.core.constants import (
     ProductSecurityFeatures,
     ProductDeclaredAtCustoms,
-    DocumentAvailability,
+    ProductDesignDetails,
     FIREARM_AMMUNITION_COMPONENT_TYPES,
     PRODUCT_CATEGORY_FIREARM,
 )
@@ -786,7 +786,7 @@ class ProductSecurityFeaturesForm(forms.Form):
             (True, "Yes"),
             (False, ProductSecurityFeatures.NO),
         ),
-        label="",
+        label="For example, authentication, encryption or any other information security controls.",
         widget=forms.RadioSelect,
         error_messages={
             "required": "Select yes if the product include security features to protect information",
@@ -816,8 +816,8 @@ class ProductSecurityFeaturesForm(forms.Form):
             Submit("submit", "Continue"),
             HTML.details(
                 "Help with security features",
-                "<p>Information security features include cryptography, authentication, and"
-                "cryptanalytic functions. They are often found in communication, wireless"
+                "<p>Information security features include cryptography, authentication, and "
+                "cryptanalytic functions. They are often found in communication, wireless "
                 "or internet-based products.</p>",
             ),
         )
@@ -858,28 +858,19 @@ class ProductDeclaredAtCustomsForm(forms.Form):
         )
 
 
-class ProductDocumentAvailabilityForm(forms.Form):
+class ProductDesignDetailsForm(forms.Form):
     class Layout:
-        TITLE = DocumentAvailability.TITLE
+        TITLE = ProductDesignDetails.TITLE
 
-    title = DocumentAvailability.TITLE
+    title = ProductDesignDetails.TITLE
 
-    is_document_available = forms.ChoiceField(
-        choices=(
-            (True, "Yes"),
-            (False, ProductSecurityFeatures.NO),
-        ),
-        label=DocumentAvailability.DESCRIPTION,
-        widget=forms.RadioSelect,
-        error_messages={
-            "required": "Select yes if you have a document that shows what your product is and what it’s designed to do",
-        },
-    )
-
-    no_document_comments = forms.CharField(
-        required=False,
+    design_details = forms.CharField(
+        required=True,
+        label="",
         widget=forms.Textarea,
-        label=ProductSecurityFeatures.SECURITY_FEATURE_DETAILS,
+        error_messages={
+            "required": "Provide details of the product and what it is designed to do.",
+        },
     )
 
     def __init__(self, *args, **kwargs):
@@ -888,14 +879,7 @@ class ProductDocumentAvailabilityForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
-            ConditionalRadios(
-                "is_document_available",
-                "Yes",
-                ConditionalQuestion(
-                    ProductSecurityFeatures.NO,
-                    "no_document_comments",
-                ),
-            ),
+            "design_details",
             Submit("submit", "Continue"),
         )
 

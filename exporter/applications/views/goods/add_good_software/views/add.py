@@ -36,9 +36,9 @@ from exporter.goods.forms.firearms import (
 )
 from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
-    ProductDocumentAvailabilityForm,
     ProductSecurityFeaturesForm,
     ProductMilitaryUseForm,
+    ProductDesignDetailsForm,
 )
 
 from exporter.goods.services import post_software, post_good_documents
@@ -83,6 +83,7 @@ class AddGoodSoftware(
         (AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS, ProductDeclaredAtCustomsForm),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
+        (AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS, ProductDesignDetailsForm),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
         (AddGoodSoftwareSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
@@ -90,6 +91,7 @@ class AddGoodSoftware(
         AddGoodSoftwareSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+        AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS: ~C(is_product_document_available),
     }
 
     def get_form_kwargs(self, step=None):
@@ -105,7 +107,6 @@ class AddGoodSoftware(
     def has_product_documentation(self):
         data = self.get_cleaned_data_for_step(AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD)
         return data.get("product_document", None)
-        # return self.condition_dict[AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD](self)
 
     def get_product_document_payload(self):
         data = self.get_cleaned_data_for_step(AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD)

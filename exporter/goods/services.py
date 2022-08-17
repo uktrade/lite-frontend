@@ -325,7 +325,6 @@ def edit_platform(request, pk, json):
 
 def post_software(request, json):
     json["item_category"] = PRODUCT_CATEGORY_SOFTWARE
-    breakpoint()
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
