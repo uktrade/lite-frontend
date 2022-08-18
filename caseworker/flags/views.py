@@ -76,6 +76,7 @@ class FlagsList(LoginRequiredMixin, TemplateView):
             "user_data": user_data,
             "filters": filters,
             "can_change_flag_status": Permission.ACTIVATE_FLAGS.value in get_user_permissions(request),
+            "can_change_config": user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST,
         }
         return render(request, "flags/index.html", context)
 

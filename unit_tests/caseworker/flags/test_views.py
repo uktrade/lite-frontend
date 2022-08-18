@@ -18,6 +18,22 @@ def setup(
     yield
 
 
+def test_flags_cannot_be_created_and_modified(authorized_client):
+
+    url = reverse("flags:flags")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == False
+
+
+def test_flags_can_be_created_and_modified(authorized_client, specify_config_users_list):
+
+    url = reverse("flags:flags")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["can_change_config"] == True
+
+
 def test_flagging_rules_cannot_be_created_and_modified(authorized_client):
 
     url = reverse("flags:flagging_rules")
