@@ -140,6 +140,7 @@ def test_platform_product_summary_context(
         "name": "name",
         "is-good-controlled": "control-list-entries",
         "control-list-entries": "control-list-entries",
+        "part-number": "part-number",
         "is-pv-graded": "pv-grading",
         "pv-grading-prefix": "pv-grading-details",
         "pv-grading-grading": "pv-grading-details",

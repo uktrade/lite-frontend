@@ -70,6 +70,27 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
                 "information_security_details": "Uses information security details",
             },
         ),
+        (
+            "platform_edit_part_number",
+            {
+                "part_number": "12345",
+            },
+            {
+                "no_part_number_comments": "",
+                "part_number": "12345",
+            },
+        ),
+        (
+            "platform_edit_part_number",
+            {
+                "part_number_missing": True,
+                "no_part_number_comments": "No part number",
+            },
+            {
+                "no_part_number_comments": "No part number",
+                "part_number": "",
+            },
+        ),
     ),
 )
 def test_edit_platform_post(
@@ -116,6 +137,16 @@ def test_edit_platform_post(
             "platform_edit_uses_information_security",
             {"uses_information_security": True, "information_security_details": "Details"},
             {"uses_information_security": True, "information_security_details": "Details"},
+        ),
+        (
+            "platform_edit_part_number",
+            {},
+            {"part_number": "44"},
+        ),
+        (
+            "platform_edit_part_number",
+            {"no_part_number_comments": "No part number"},
+            {"no_part_number_comments": "No part number", "part_number_missing": True},
         ),
     ),
 )

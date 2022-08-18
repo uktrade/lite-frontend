@@ -80,6 +80,7 @@ from exporter.applications.views.goods.add_good_platform.views.edit import (
     PlatformEditProductDocumentSensitivity,
     PlatformEditProductDocumentView,
     PlatformEditName,
+    PlatformEditPartNumberView,
     PlatformEditPVGrading,
     PlatformEditPVGradingDetails,
     PlatformEditUsesInformationSecurity,
@@ -422,6 +423,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/product-document/",
         PlatformEditProductDocumentView.as_view(),
         name="platform_edit_product_document",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/part-number/",
+        PlatformEditPartNumberView.as_view(),
+        name="platform_edit_part_number",
     ),
     path("<uuid:pk>/goods/add-new/component/", AddGoodComponent.as_view(), name="new_good_component"),
     path(

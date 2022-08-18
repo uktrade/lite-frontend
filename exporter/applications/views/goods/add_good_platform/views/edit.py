@@ -6,6 +6,7 @@ from exporter.applications.views.goods.common.conditionals import is_pv_graded
 from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
     BaseEditName,
+    BaseEditPartNumber,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
     BaseEditProductDocumentView,
@@ -57,6 +58,13 @@ class PlatformEditName(BaseEditName, BasePlatformEditView):
 
 
 class PlatformEditControlListEntry(BaseEditControlListEntry, BasePlatformEditView):
+    pass
+
+
+class PlatformEditPartNumberView(
+    BaseEditPartNumber,
+    BasePlatformEditView,
+):
     pass
 
 
