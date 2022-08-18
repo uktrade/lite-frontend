@@ -71,27 +71,6 @@ PLATFORM_LABELS = {
     "product-document-description": "Description (optional)",
 }
 
-SOFTWARE_LABELS = {
-    "name": "Give the product a descriptive name",
-    "is-good-controlled": "Do you know the product's control list entry?",
-    "control-list-entries": "Enter the control list entry",
-    "part-number": "Enter the part number",
-    "is-pv-graded": "Does the product have a government security grading or classification?",
-    "pv-grading-prefix": "Enter a prefix (optional)",
-    "pv-grading-grading": "What is the security grading or classification?",
-    "pv-grading-suffix": "Enter a suffix (optional)",
-    "pv-grading-issuing-authority": "Name and address of the issuing authority",
-    "pv-grading-details-reference": "Reference",
-    "pv-grading-details-date-of-issue": "Date of issue",
-    "security-features": "Does the product include security features to protect information?",
-    "declared_at_customs": "Will the product be declared at customs?",
-    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
-    "no-product-document-explanation": "Explain why you are not able to upload a product document",
-    "is-document-sensitive": "Is the document rated above Official-sensitive?",
-    "product-document": "Upload a document that shows what your product is designed to do",
-    "product-document-description": "Description (optional)",
-}
-
 
 def add_labels(summary, labels):
     labelled_summary = ()
@@ -319,7 +298,34 @@ PLATFORM_ON_APPLICATION_LABELS = {
     "total-value": "Total value",
 }
 
+SOFTWARE_LABELS = {
+    "product-type": "Is it a firearm product?",
+    "non-firearm-category": "Select the product category",
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Enter the part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "security-features": "Does the product include security features to protect information?",
+    "declared-at-customs": "Will the product be declared at customs?",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "design-details": "Describe the product and what it is designed to do",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "milatary-use": "Is the product specially designed or modified for military use?",
+    "milatary-use-details": "details of the modifications",
+}
+
 SOFTWARE_VALUE_FORMATTERS = {
+    "product-type": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
     "is-pv-graded": mapping_formatter(
@@ -330,8 +336,11 @@ SOFTWARE_VALUE_FORMATTERS = {
     ),
     "pv-grading-grading": key_value_formatter,
     "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "security-features": yesno,
+    "declared-at-customs": yesno,
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
+    "milatary-use": yesno,
 }
 
 SOFTWARE_ON_APPLICATION_FORMATTERS = {

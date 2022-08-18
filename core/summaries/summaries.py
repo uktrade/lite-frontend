@@ -83,6 +83,8 @@ PLATFORM_FIELDS = (
 )
 
 SOFTWARE_FIELDS = (
+    "product-type",
+    "non-firearm-category",
     "name",
     "is-good-controlled",
     "control-list-entries",
@@ -95,10 +97,11 @@ SOFTWARE_FIELDS = (
     "pv-grading-details-date-of-issue",
     "security-features",
     "security-features-details",
-    "declared_at_customs",
+    "declared-at-customs",
     "has-product-document",
     "no-product-document-explanation",
     "is-document-sensitive",
+    "design-details",
     "product-document",
     "product-document-description",
 )
@@ -260,6 +263,6 @@ def software_product_on_application_summary(good_on_application, additional_form
 
     summary = pick_fields(summary, SOFTWARE_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, SOFTWARE_ON_APPLICATION_FIELDS)
+    summary = add_labels(summary, SOFTWARE_ON_APPLICATION_LABELS)
 
     return summary

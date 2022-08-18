@@ -15,10 +15,6 @@ from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
-    ProductNameForm,
-    ProductControlListEntryForm,
-)
-from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductNameForm,
     ProductPVGradingDetailsForm,
