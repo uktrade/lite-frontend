@@ -53,6 +53,11 @@ def platform_summary(good_id):
             "Enter the control list entry",
         ),
         (
+            "part-number",
+            "44",
+            "Part number",
+        ),
+        (
             "is-pv-graded",
             "Yes",
             "Does the product have a government security grading or classification?",
