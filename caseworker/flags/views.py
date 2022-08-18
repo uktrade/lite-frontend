@@ -196,6 +196,12 @@ class ManageFlagRules(LoginRequiredMixin, TemplateView):
 
 
 class CreateFlagRules(LoginRequiredMixin, MultiFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
@@ -207,6 +213,12 @@ class CreateFlagRules(LoginRequiredMixin, MultiFormView):
 
 
 class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
@@ -256,6 +268,12 @@ class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
 
 class ChangeFlaggingRuleStatus(LoginRequiredMixin, SingleFormView):
     success_url = reverse_lazy("flags:flagging_rules")
+
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
 
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
