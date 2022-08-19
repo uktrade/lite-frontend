@@ -14,6 +14,8 @@ def setup(
     mock_get_organisation,
     mock_flagging_rules,
     mock_countries,
+    mock_flag_get,
+    mock_flagging_rule_get,
 ):
     yield
 
@@ -48,6 +50,82 @@ def test_flagging_rules_can_be_created_and_modified(authorized_client, specify_c
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert response.context["can_change_config"] == True
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("flags:add")),
+        (reverse("flags:edit", kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234"})),
+        (reverse("flags:change_status", kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234", "status": "Active"})),
+    ),
+)
+def test_flags_add_view_returns_unauthorized_user_not_on_config_admin_list(
+    authorized_client, reset_config_users_list, url
+):
+
+    response = authorized_client.get(url)
+    assert response.status_code == 403
+    assert response.context["title"] == "Sorry, unauthorized"
+    assert response.context["description"] == "You don't have authorisation to view this page"
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("flags:add")),
+        (reverse("flags:edit", kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234"})),
+        (reverse("flags:change_status", kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234", "status": "deactivate"})),
+    ),
+)
+def test_flags_add_view_returns_ok_user_on_config_admin_list(authorized_client, specify_config_users_list, url):
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("flags:create_flagging_rules")),
+        (reverse("flags:edit_flagging_rule", kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234"})),
+        (
+            reverse(
+                "flags:change_flagging_rule_status",
+                kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234", "status": "Active"},
+            )
+        ),
+    ),
+)
+def test_flagging_rules_add_view_returns_unauthorized_user_not_on_config_admin_list(
+    authorized_client, reset_config_users_list, url
+):
+
+    response = authorized_client.get(url)
+    assert response.status_code == 403
+    assert response.context["title"] == "Sorry, unauthorized"
+    assert response.context["description"] == "You don't have authorisation to view this page"
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("flags:create_flagging_rules")),
+        (reverse("flags:edit_flagging_rule", kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234"})),
+        (
+            reverse(
+                "flags:change_flagging_rule_status",
+                kwargs={"pk": "e9f8711e-b383-47e5-b160-153f27771234", "status": "Active"},
+            )
+        ),
+    ),
+)
+def test_flagging_rules_add_view_returns_ok_user_on_config_admin_list(
+    authorized_client, specify_config_users_list, url
+):
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
 
 
 def test_assign_flags_view_destination(authorized_client, queue_pk, open_case_pk):
