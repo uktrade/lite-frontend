@@ -446,7 +446,7 @@ def software_reducer(good):
     summary += security_features_reducer(good)
     summary += declared_at_customs_reducer(good)
     summary += design_details_reducer(good)
-    summary += designed_for_milatary_use_reducer(good)
+    summary += designed_for_military_use_reducer(good)
     return summary
 
 
@@ -474,14 +474,14 @@ def design_details_reducer(good):
     return (("declared-at-customs", False),)
 
 
-def designed_for_milatary_use_reducer(good):
+def designed_for_military_use_reducer(good):
     if good["is_military_use"]:
         return (
-            ("milatary-use", True),
-            ("smilatary-use-details", good["modified_military_use_details"]),
+            ("military-use", True),
+            ("military-use-details", good["modified_military_use_details"]),
         )
 
-    return (("milatary-use", False),)
+    return (("military-use", False),)
 
 
 def software_on_application_reducer(good_on_application):

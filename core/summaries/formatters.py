@@ -320,8 +320,8 @@ SOFTWARE_LABELS = {
     "is-document-sensitive": "Is the document rated above Official-sensitive?",
     "product-document": "Upload a document that shows what your product is designed to do",
     "product-document-description": "Description (optional)",
-    "milatary-use": "Is the product specially designed or modified for military use?",
-    "milatary-use-details": "details of the modifications",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "details of the modifications",
 }
 
 SOFTWARE_VALUE_FORMATTERS = {
@@ -340,7 +340,7 @@ SOFTWARE_VALUE_FORMATTERS = {
     "declared-at-customs": yesno,
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
-    "milatary-use": yesno,
+    "military-use": yesno,
 }
 
 SOFTWARE_ON_APPLICATION_FORMATTERS = {

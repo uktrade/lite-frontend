@@ -104,6 +104,8 @@ SOFTWARE_FIELDS = (
     "design-details",
     "product-document",
     "product-document-description",
+    "military-use",
+    "military-use-details",
 )
 
 
