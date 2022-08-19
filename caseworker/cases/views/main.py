@@ -13,13 +13,18 @@ from core.builtins.custom_tags import filter_advice_by_level
 from core.file_handler import s3_client
 
 from lite_content.lite_internal_frontend import cases
-from lite_content.lite_internal_frontend.cases import DoneWithCaseOnQueueForm, Manage
+from lite_content.lite_internal_frontend.cases import (
+    CasePage,
+    DoneWithCaseOnQueueForm,
+    Manage,
+)
 
 from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
 
+from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.additional_contacts import add_additional_contact_form
 from caseworker.cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
@@ -50,18 +55,68 @@ from caseworker.cases.services import (
     get_blocking_flags,
 )
 from caseworker.compliance.services import get_compliance_licences
+from caseworker.core.objects import Tab
 from caseworker.core.services import get_status_properties, get_permissible_statuses
 from caseworker.core.constants import Permission
 from caseworker.external_data.services import search_denials
 from caseworker.queues.services import put_queue_single_case_assignment, get_queue
 from caseworker.teams.services import get_teams
-from caseworker.users.services import get_gov_user_from_form_selection
+from caseworker.users.services import (
+    get_gov_user,
+    get_gov_user_from_form_selection,
+)
 
 
 logger = getLogger(__name__)
 
 
-class CaseDetail(CaseView):
+class CaseTabsMixin:
+    def get_tabs(self):
+        tabs = [
+            Tabs.DETAILS,
+            Tabs.ADDITIONAL_CONTACTS,
+            Tabs.ECJU_QUERIES,
+            Tabs.DOCUMENTS,
+        ]
+
+        return tabs
+
+    def get_standard_application_tabs(self):
+        tabs = self.get_tabs()
+        tabs.insert(1, Tabs.LICENCES)
+        tabs.append(self.get_notes_and_timelines_tab())
+        tabs.append(self.get_advice_tab())
+        tabs.append(self.get_assessment_tab())
+
+        return tabs
+
+    def get_advice_tab(self):
+        data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+        return Tab(
+            "advice",
+            "Recommendations and decision",
+            get_advice_tab_context(self.case, data["user"], str(self.kwargs["queue_pk"]))["url"],
+            has_template=False,
+        )
+
+    def get_assessment_tab(self):
+        return Tab(
+            "assessment",
+            "Product Assessment",
+            "cases:tau:home",
+            has_template=False,
+        )
+
+    def get_notes_and_timelines_tab(self):
+        return Tab(
+            "activities",
+            CasePage.Tabs.CASE_NOTES_AND_TIMELINE,
+            "cases:activities:notes-and-timeline",
+            has_template=False,
+        )
+
+
+class CaseDetail(CaseTabsMixin, CaseView):
     def get_advice_additional_context(self):
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         current_advice_level = ["user"]
@@ -155,11 +210,7 @@ class CaseDetail(CaseView):
         self.additional_context = self.get_advice_additional_context()
 
     def get_standard_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(self.get_notes_and_timelines_tab())
-        self.tabs.append(self.get_advice_tab())
-        self.tabs.append(self.get_assessment_tab())
+        self.tabs = self.get_standard_application_tabs()
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
