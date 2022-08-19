@@ -775,17 +775,16 @@ class NonFirearmCategoryForm(BaseForm):
         return ("no_firearm_category",)
 
 
-class ProductSecurityFeaturesForm(forms.Form):
+class ProductSecurityFeaturesForm(BaseForm):
     class Layout:
         TITLE = ProductSecurityFeatures.TITLE
 
-    title = ProductSecurityFeatures.TITLE
-
-    has_security_features = forms.ChoiceField(
+    has_security_features = forms.TypedChoiceField(
         choices=(
             (True, "Yes"),
-            (False, ProductSecurityFeatures.NO),
+            (False, "No"),
         ),
+        coerce=coerce_str_to_bool,
         label="For example, authentication, encryption or any other information security controls.",
         widget=forms.RadioSelect,
         error_messages={
@@ -799,12 +798,14 @@ class ProductSecurityFeaturesForm(forms.Form):
         label=ProductSecurityFeatures.SECURITY_FEATURE_DETAILS,
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
+    def get_layout_fields(self):
+        return (
+            HTML.details(
+                "Help with security features",
+                "<p>Information security features include cryptography, authentication, and "
+                "cryptanalytic functions. They are often found in communication, wireless "
+                "or internet-based products.</p>",
+            ),
             ConditionalRadios(
                 "has_security_features",
                 ConditionalQuestion(
@@ -813,56 +814,56 @@ class ProductSecurityFeaturesForm(forms.Form):
                 ),
                 ProductSecurityFeatures.NO,
             ),
-            Submit("submit", "Continue"),
-            HTML.details(
-                "Help with security features",
-                "<p>Information security features include cryptography, authentication, and "
-                "cryptanalytic functions. They are often found in communication, wireless "
-                "or internet-based products.</p>",
-            ),
         )
 
+    def clean(self):
+        cleaned_data = super().clean()
 
-class ProductDeclaredAtCustomsForm(forms.Form):
+        details = cleaned_data.get("security_feature_details")
+        if cleaned_data.get("has_security_features") is True and details == "":
+            self.add_error(
+                "security_feature_details",
+                "Enter the details of security features",
+            )
+
+        if cleaned_data.get("security_feature_details") is False:
+            cleaned_data["security_feature_details"] = ""
+
+        return cleaned_data
+
+
+class ProductDeclaredAtCustomsForm(BaseForm):
     class Layout:
         TITLE = ProductDeclaredAtCustoms.TITLE
 
-    title = ProductDeclaredAtCustoms.TITLE
-
-    has_declared_at_customs = forms.ChoiceField(
+    has_declared_at_customs = forms.TypedChoiceField(
         choices=(
             (True, "Yes"),
             (False, ProductDeclaredAtCustoms.NO),
         ),
         label="",
+        coerce=coerce_str_to_bool,
         widget=forms.RadioSelect,
         error_messages={
             "required": "Select yes if the product will be declared at customs",
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "has_declared_at_customs",
-            Submit("submit", "Continue"),
+    def get_layout_fields(self):
+        return (
             HTML.details(
                 "Help with export declarations",
                 "<p>If your product is considered physical (tangible) it is declared at customs. "
                 "If it is sent digitally, such as through software or email, it is considered "
                 "intangible and does not need to be declared at customs.</p>",
             ),
+            "has_declared_at_customs",
         )
 
 
-class ProductDesignDetailsForm(forms.Form):
+class ProductDesignDetailsForm(BaseForm):
     class Layout:
         TITLE = ProductDesignDetails.TITLE
-
-    title = ProductDesignDetails.TITLE
 
     design_details = forms.CharField(
         required=True,
@@ -873,15 +874,11 @@ class ProductDesignDetailsForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
+    def get_layout_fields(self):
+        return (
             "design_details",
-            Submit("submit", "Continue"),
         )
+
 
 class AddGoodsQuestionsForm(forms.Form):
 

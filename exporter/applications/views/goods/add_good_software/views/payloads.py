@@ -17,6 +17,19 @@ def get_quantity_and_value_payload(form):
     }
 
 
+def get_security_features_payload(form):
+    if form.cleaned_data["has_security_features"]:
+        return {
+            "has_security_features": True,
+            "security_feature_details": form.cleaned_data["security_feature_details"],
+        }
+    else:
+        return {
+            "has_security_features": False,
+            "security_feature_details": "",
+        }
+
+
 class AddGoodSoftwarePayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodSoftwareSteps.NAME: get_cleaned_data,
@@ -24,9 +37,11 @@ class AddGoodSoftwarePayloadBuilder(MergingPayloadBuilder):
         AddGoodSoftwareSteps.PART_NUMBER: get_part_number_payload,
         AddGoodSoftwareSteps.PV_GRADING: get_pv_grading_payload,
         AddGoodSoftwareSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
-        AddGoodSoftwareSteps.PRODUCT_USES_INFORMATION_SECURITY: get_cleaned_data,
+        AddGoodSoftwareSteps.SECURITY_FEATURES: get_security_features_payload,
+        AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+        AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_MILITARY_USE: get_cleaned_data,
     }
 
