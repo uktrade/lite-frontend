@@ -454,7 +454,7 @@ def security_features_reducer(good):
     if good["has_security_features"]:
         return (
             ("security-features", True),
-            ("security-features-details", good["security_feature_details"]),
+            ("security-feature-details", good["security_feature_details"]),
         )
 
     return (("security-features", False),)

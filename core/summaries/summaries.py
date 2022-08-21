@@ -96,7 +96,7 @@ SOFTWARE_FIELDS = (
     "pv-grading-details-reference",
     "pv-grading-details-date-of-issue",
     "security-features",
-    "security-features-details",
+    "security-feature-details",
     "declared-at-customs",
     "has-product-document",
     "no-product-document-explanation",
