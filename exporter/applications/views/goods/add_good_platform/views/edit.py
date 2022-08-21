@@ -194,7 +194,3 @@ class PlatformEditUsesInformationSecurity(BasePlatformEditView):
             "uses_information_security": self.good["uses_information_security"],
             "information_security_details": self.good["information_security_details"],
         }
-
-class BaseSoftwareEditView(BaseEditView):
-    def get_edit_payload(self, form):
-        return get_cleaned_data(form)

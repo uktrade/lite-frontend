@@ -384,11 +384,6 @@ urlpatterns = [
         name="platform_summary",
     ),
     path(
-        "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
-        PlatformSummary.as_view(),
-        name="software_summary",
-    ),
-    path(
         "<uuid:pk>/goods/<uuid:good_pk>/add-new/platform-to-application/",
         AddGoodPlatformToApplication.as_view(),
         name="new_good_platform_to_application",

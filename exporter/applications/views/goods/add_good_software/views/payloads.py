@@ -5,16 +5,9 @@ from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_payload,
     get_pv_grading_details_payload,
-    get_part_number_payload
+    get_part_number_payload,
+    get_quantity_and_value_payload
 )
-
-
-def get_quantity_and_value_payload(form):
-    return {
-        "unit": "NAR",
-        "quantity": form.cleaned_data["number_of_items"],
-        "value": str(form.cleaned_data["value"]),
-    }
 
 
 def get_security_features_payload(form):

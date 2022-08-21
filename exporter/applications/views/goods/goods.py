@@ -1,8 +1,6 @@
 import logging
 from datetime import datetime
 from http import HTTPStatus
-from traceback import format_exception_only
-from unicodedata import category
 
 from django.conf import settings
 from django.shortcuts import redirect, render
