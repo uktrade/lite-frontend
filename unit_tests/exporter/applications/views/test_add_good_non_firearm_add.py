@@ -55,8 +55,15 @@ def test_non_firearm_category(authorized_client, application_pk):
     assert response.status_code == 200
 
 
-def test_non_firearm_category_select(authorized_client, application_pk):
+def test_non_firearm_category_select_platform(authorized_client, application_pk):
     url = reverse("applications:non_firearm_category", kwargs={"pk": application_pk})
     response = authorized_client.post(url, data={"no_firearm_category": "PLATFORM"})
     assert response.status_code == 302
     assert response.url == reverse("applications:new_good_platform", kwargs={"pk": application_pk})
+
+
+def test_non_firearm_category_select_software(authorized_client, application_pk):
+    url = reverse("applications:non_firearm_category", kwargs={"pk": application_pk})
+    response = authorized_client.post(url, data={"no_firearm_category": "SOFTWARE"})
+    assert response.status_code == 302
+    assert response.url == reverse("applications:new_good_software", kwargs={"pk": application_pk})

@@ -460,14 +460,14 @@ def security_features_reducer(good):
     return (("security-features", False),)
 
 
-def declared_at_customs_reducer(good):
+def design_details_reducer(good):
     if good["design_details"]:
         return (("design-details", good["design_details"]),)
 
     return (("design-details", None),)
 
 
-def design_details_reducer(good):
+def declared_at_customs_reducer(good):
     if good["has_declared_at_customs"]:
         return (("declared-at-customs", True),)
 

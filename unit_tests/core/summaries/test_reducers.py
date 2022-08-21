@@ -9,6 +9,9 @@ from core.constants import (
     SerialChoices,
 )
 from core.summaries.reducers import (
+    declared_at_customs_reducer,
+    design_details_reducer,
+    designed_for_military_use_reducer,
     firearm_on_application_reducer,
     firearm_reducer,
     firearms_act_reducer,
@@ -23,6 +26,7 @@ from core.summaries.reducers import (
     is_replica_reducer,
     platform_reducer,
     rfd_reducer,
+    security_features_reducer,
     serial_numbers_reducer,
     uses_information_security_reducer,
     year_of_manufacture_reducer,
@@ -874,3 +878,99 @@ def test_platform_reducer(mocker):
 )
 def test_uses_information_security_reducer(good, output):
     assert uses_information_security_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "has_security_features": True,
+                "security_feature_details": "security features",
+            },
+            (
+                ("security-features", True),
+                ("security-feature-details", "security features"),
+            ),
+        ),
+        (
+            {
+                "has_security_features": False,
+            },
+            (("security-features", False),),
+        ),
+    ),
+)
+def test_security_features_reducer(good, output):
+    assert security_features_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "has_declared_at_customs": True,
+            },
+            (
+                ("declared-at-customs", True),
+            ),
+        ),
+        (
+            {
+                "has_declared_at_customs": False,
+            },
+            (("declared-at-customs", False),),
+        ),
+    ),
+)
+def test_declared_at_customs_reducer(good, output):
+    assert declared_at_customs_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "design_details": "design details",
+            },
+            (
+                ("design-details", "design details"),
+            ),
+        ),
+        (
+            {
+                "design_details": None,
+            },
+            (("design-details", None),),
+        ),
+    ),
+)
+def test_design_details_reducer(good, output):
+    assert design_details_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "is_military_use": True,
+                "modified_military_use_details": "modified military use details",
+            },
+            (
+                ("military-use", True),
+                ("military-use-details", "security features"),
+            ),
+        ),
+        (
+            {
+                "is_military_use": False,
+            },
+            (("military-use", False),),
+        ),
+    ),
+)
+def test_designed_for_military_use_reducer(good, output):
+    assert designed_for_military_use_reducer(good) == output

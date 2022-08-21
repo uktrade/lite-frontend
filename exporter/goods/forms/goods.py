@@ -870,7 +870,7 @@ class ProductDesignDetailsForm(BaseForm):
         label="",
         widget=forms.Textarea,
         error_messages={
-            "required": "Provide details of the product and what it is designed to do.",
+            "required": "Provide details of the product and what it is designed to do",
         },
     )
 
