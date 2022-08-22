@@ -1,8 +1,7 @@
 import pytest
+import uuid
 
 from django.urls import reverse
-from django.conf import settings
-import uuid
 
 
 @pytest.fixture(autouse=True)
@@ -30,7 +29,7 @@ def test_is_good_firearm_form(authorized_client, application_pk):
         "non_firearm_category",
     ),
 )
-def test_is_good_firearm_view_raise_404(authorized_client, application_pk, post_url):
+def test_is_good_firearm_view_raise_404(authorized_client, application_pk, post_url, settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
     url = reverse(f"applications:{post_url}", kwargs={"pk": application_pk})
     response = authorized_client.get(url)
