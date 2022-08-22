@@ -12,9 +12,9 @@ def test_firearm_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    product_summary_url,
+    firearm_product_summary_url,
 ):
-    response = authorized_client.get(product_summary_url)
+    response = authorized_client.get(firearm_product_summary_url)
     assert response.status_code == 200
 
 
@@ -22,9 +22,9 @@ def test_firearm_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    product_summary_url,
+    firearm_product_summary_url,
 ):
-    response = authorized_client.get(product_summary_url)
+    response = authorized_client.get(firearm_product_summary_url)
     assertTemplateUsed(response, "applications/goods/firearms/product-summary.html")
 
 
@@ -143,12 +143,12 @@ def test_firearm_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    product_summary_url,
+    firearm_product_summary_url,
     data_standard_case,
     good_id,
     product_summary,
 ):
-    response = authorized_client.get(product_summary_url)
+    response = authorized_client.get(firearm_product_summary_url)
 
     def _get_test_url(name):
         if not name:

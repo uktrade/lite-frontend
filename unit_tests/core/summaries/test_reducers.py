@@ -15,6 +15,7 @@ from core.summaries.reducers import (
     firearms_act_section1_reducer,
     firearms_act_section2_reducer,
     firearms_act_section5_reducer,
+    part_number_reducer,
     has_product_document_reducer,
     is_deactivated_reducer,
     is_good_controlled_reducer,
@@ -838,6 +839,10 @@ def test_platform_reducer(mocker):
     mock_has_product_document_reducer = mocker.patch(
         "core.summaries.reducers.has_product_document_reducer", return_value=()
     )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
 
     good = {
         "name": "good-name",
@@ -849,6 +854,7 @@ def test_platform_reducer(mocker):
     mock_is_pv_graded_reducer.assert_called_with(good)
     mock_uses_information_security_reducer.assert_called_with(good)
     mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
 
 
 @pytest.mark.parametrize(
@@ -874,3 +880,23 @@ def test_platform_reducer(mocker):
 )
 def test_uses_information_security_reducer(good, output):
     assert uses_information_security_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {"part_number": "231231"},
+            (("part-number", "231231"),),
+        ),
+        (
+            {"part_number": "", "no_part_number_comments": "No part number"},
+            (
+                ("has-part-number", False),
+                ("no-part-number-comments", "No part number"),
+            ),
+        ),
+    ),
+)
+def test_part_number_reducer(good, output):
+    assert part_number_reducer(good) == output

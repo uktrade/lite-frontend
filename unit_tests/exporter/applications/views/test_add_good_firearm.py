@@ -11,13 +11,15 @@ from core import client
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
+from exporter.goods.forms.common import (
+    ProductDocumentAvailabilityForm,
+    ProductDocumentSensitivityForm,
+    ProductDocumentUploadForm,
+)
 from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmAttachSection5LetterOfAuthorityForm,
     FirearmCategoryForm,
-    FirearmDocumentAvailability,
-    FirearmDocumentSensitivityForm,
-    FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
     FirearmRegisteredFirearmsDealerForm,
     FirearmRFDValidityForm,
@@ -231,7 +233,7 @@ def test_add_good_firearm_product_document_available_but_sensitive(
         {"is_document_available": True},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+    assert isinstance(response.context["form"], ProductDocumentSensitivityForm)
 
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
@@ -250,14 +252,14 @@ def test_add_good_firearm_product_document_available_but_not_sensitive(
         {"is_document_available": True},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+    assert isinstance(response.context["form"], ProductDocumentSensitivityForm)
 
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         {"is_document_sensitive": False},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentUploadForm)
+    assert isinstance(response.context["form"], ProductDocumentUploadForm)
 
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
@@ -287,15 +289,15 @@ def test_add_good_firearm_not_registered_firearm_dealer(
     (
         (
             {"firearms_act_section": "dont_know", "not_covered_explanation": "explanation"},
-            FirearmDocumentAvailability,
+            ProductDocumentAvailabilityForm,
         ),
         (
             {"firearms_act_section": "firearms_act_section1"},
-            FirearmDocumentAvailability,
+            ProductDocumentAvailabilityForm,
         ),
         (
             {"firearms_act_section": "firearms_act_section2"},
-            FirearmDocumentAvailability,
+            ProductDocumentAvailabilityForm,
         ),
         (
             {"firearms_act_section": "firearms_act_section5"},
@@ -369,7 +371,7 @@ def test_add_good_firearm_act_selection_skips_when_valid_certificate_already_exi
         form_data,
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentAvailability)
+    assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
 
 
 def test_add_good_firearm_with_rfd_document_submission(
@@ -463,7 +465,7 @@ def test_add_good_firearm_with_rfd_document_submission(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:product_summary",
+        "applications:firearm_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -601,7 +603,7 @@ def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:product_summary",
+        "applications:firearm_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -651,7 +653,7 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     control_list_entries,
     application_without_rfd_document,
     mock_application_get,
-    product_summary_url,
+    firearm_product_summary_url,
     good_id,
     post_goods_matcher,
 ):
@@ -717,7 +719,7 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
@@ -767,7 +769,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application_without_rfd_document,
     mock_application_get,
     good_id,
-    product_summary_url,
+    firearm_product_summary_url,
     post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -819,7 +821,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
@@ -854,7 +856,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application_without_rfd_document,
     mock_application_get,
     good_id,
-    product_summary_url,
+    firearm_product_summary_url,
     post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -902,7 +904,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
@@ -937,7 +939,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application_without_rfd_document,
     mock_application_get,
     good_id,
-    product_summary_url,
+    firearm_product_summary_url,
     post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -985,7 +987,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
@@ -1020,7 +1022,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
     application_without_rfd_document,
     mock_application_get,
     good_id,
-    product_summary_url,
+    firearm_product_summary_url,
     post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -1083,7 +1085,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
@@ -1137,7 +1139,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
     rfd_certificate,
     application,
     good_id,
-    product_summary_url,
+    firearm_product_summary_url,
     post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -1200,7 +1202,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
@@ -1264,7 +1266,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
     rfd_certificate,
     application,
     good_id,
-    product_summary_url,
+    firearm_product_summary_url,
     post_goods_matcher,
 ):
     authorized_client.get(new_good_firearm_url)
@@ -1318,7 +1320,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request

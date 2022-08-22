@@ -16,15 +16,15 @@ from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDocumentAvailabilityForm,
+    ProductDocumentSensitivityForm,
+    ProductDocumentUploadForm,
     ProductNameForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
-    FirearmDocumentAvailability,
-    FirearmDocumentSensitivityForm,
-    FirearmDocumentUploadForm,
     FirearmOnwardExportedForm,
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
@@ -71,9 +71,9 @@ class AddGoodPlatform(
         (AddGoodPlatformSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodPlatformSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
-        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
-        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
-        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
+        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
         (AddGoodPlatformSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
@@ -136,7 +136,7 @@ class AddGoodPlatform(
 
     def get_success_url(self):
         return reverse(
-            "applications:platform_summary",
+            "applications:platform_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -230,7 +230,7 @@ class AddGoodPlatformToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:platform_summary",
+            "applications:platform_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],
