@@ -89,6 +89,7 @@ from exporter.applications.views.goods.add_good_platform.views.summary import (
     PlatformProductOnApplicationSummary,
     PlatformProductSummary,
 )
+from exporter.applications.views.goods.add_good_platform.views.attach import AttachPlatformToApplication
 from exporter.applications.views.goods.add_good_component.views.add import (
     AddGoodComponent,
     AddGoodComponentToApplication,
@@ -387,6 +388,11 @@ urlpatterns = [
         "<uuid:pk>/goods/platform/<uuid:good_on_application_pk>/platform-on-application-summary/",
         PlatformProductOnApplicationSummary.as_view(),
         name="platform_on_application_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add/platform/",
+        AddGoodPlatformToApplication.as_view(),
+        name="attach_platform_to_application",
     ),
     path("<uuid:pk>/goods/<uuid:good_pk>/platform/edit/name/", PlatformEditName.as_view(), name="platform_edit_name"),
     path(
