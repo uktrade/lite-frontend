@@ -12,7 +12,7 @@ def default_feature_flags(settings):
 @pytest.fixture
 def software_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:software_summary",
+        "applications:software_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,

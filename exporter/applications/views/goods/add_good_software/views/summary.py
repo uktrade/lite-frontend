@@ -60,7 +60,7 @@ class SoftwareProductOnApplicationSummary(BaseSoftwareOnApplicationSummary):
     summary_type = "software-on-application-summary"
 
 
-class SoftwareSummary(
+class SoftwareProductSummary(
     LoginRequiredMixin,
     NonFirearmsFlagMixin,
     ApplicationMixin,

@@ -201,7 +201,7 @@ def test_add_good_software_end_to_end(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:software_summary",
+        "applications:software_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -321,7 +321,7 @@ def test_add_good_software_no_pv(
     )
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:software_summary",
+        "applications:software_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,

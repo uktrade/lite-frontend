@@ -144,7 +144,7 @@ class AddGoodSoftware(
 
     def get_success_url(self):
         return reverse(
-            "applications:software_summary",
+            "applications:software_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -238,7 +238,7 @@ class AddGoodSoftwareToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:software_summary",
+            "applications:software_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],

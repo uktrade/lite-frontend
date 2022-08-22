@@ -30,7 +30,7 @@ class BaseEditView(
     template_name = "core/form.html"
 
     def get_success_url(self):
-        return reverse("applications:software_summary", kwargs=self.kwargs)
+        return reverse("applications:software_product_summary", kwargs=self.kwargs)
 
     def get_edit_payload(self, form):
         raise NotImplementedError(f"Implement `get_edit_payload` for {self.__class__.__name__}")
@@ -42,7 +42,7 @@ class BaseEditView(
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx["back_link_url"] = reverse("applications:software_summary", kwargs=self.kwargs)
+        ctx["back_link_url"] = reverse("applications:software_product_summary", kwargs=self.kwargs)
 
         return ctx
 

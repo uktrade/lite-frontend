@@ -99,7 +99,7 @@ from exporter.applications.views.goods.add_good_software.views.edit import (
     SoftwareEditName,
 )
 from exporter.applications.views.goods.add_good_software.views.summary import (
-    SoftwareSummary,
+    SoftwareProductSummary,
     SoftwareProductOnApplicationSummary,
 )
 
@@ -458,8 +458,8 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-new/software/", AddGoodSoftware.as_view(), name="new_good_software"),
     path(
         "<uuid:pk>/goods/software/<uuid:good_pk>/product-summary/",
-        SoftwareSummary.as_view(),
-        name="software_summary",
+        SoftwareProductSummary.as_view(),
+        name="software_product_summary",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/add-new/software-to-application/",

@@ -232,6 +232,17 @@ def platform_product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
+def software_product_summary_url(data_standard_case, good_id):
+    return reverse(
+        "applications:software_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+
+@pytest.fixture
 def product_on_application_summary_url_factory(application, good_on_application):
     def product_on_application_summary_url(summary_type):
         url = reverse(
