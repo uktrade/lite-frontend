@@ -16,15 +16,15 @@ from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDocumentAvailabilityForm,
+    ProductDocumentSensitivityForm,
+    ProductDocumentUploadForm,
     ProductNameForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
-    FirearmDocumentAvailability,
-    FirearmDocumentSensitivityForm,
-    FirearmDocumentUploadForm,
     FirearmOnwardExportedForm,
     FirearmOnwardAlteredProcessedForm,
     FirearmOnwardIncorporatedForm,
@@ -77,10 +77,10 @@ class AddGoodSoftware(
         (AddGoodSoftwareSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodSoftwareSteps.SECURITY_FEATURES, ProductSecurityFeaturesForm),
         (AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS, ProductDeclaredAtCustomsForm),
-        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
-        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
+        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS, ProductDesignDetailsForm),
-        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
         (AddGoodSoftwareSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
