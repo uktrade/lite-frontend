@@ -16,6 +16,7 @@ from exporter.goods.forms.common import (
 )
 from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
+    ProductDesignDetailsForm,
     ProductMilitaryUseForm,
     ProductSecurityFeaturesForm,
 )
@@ -253,49 +254,71 @@ def test_add_good_software_no_pv(
 ):
     authorized_client.get(new_good_software_url)
 
-    post_to_step(
+    response = post_to_step(
         AddGoodSoftwareSteps.NAME,
         {"name": "product_1"},
     )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductControlListEntryForm)
 
-    post_to_step(
+    response = post_to_step(
         AddGoodSoftwareSteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": False,
         },
     )
-    post_to_step(
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductPartNumberForm)
+
+    response = post_to_step(
         AddGoodSoftwareSteps.PART_NUMBER,
         {
             "part_number_missing": True,
             "no_part_number_comments": "no part number",
         },
     )
-    post_to_step(
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductPVGradingForm)
+
+    response = post_to_step(
         AddGoodSoftwareSteps.PV_GRADING,
         {"is_pv_graded": False},
     )
-    post_to_step(
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductSecurityFeaturesForm)
+
+    response = post_to_step(
         AddGoodSoftwareSteps.SECURITY_FEATURES,
-        {"has_security_features": True, "has_security_features_details": "security features"},
+        {"has_security_features": True, "security_feature_details": "security features"},
     )
-    post_to_step(
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductDeclaredAtCustomsForm)
+
+    response = post_to_step(
         AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS,
         {"has_declared_at_customs": True},
     )
-    post_to_step(
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
+
+    response = post_to_step(
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
-    post_to_step(
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductDesignDetailsForm)
+
+    response = post_to_step(
         AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS,
         {"design_details": "some design details"},
     )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductMilitaryUseForm)
+
     response = post_to_step(
         AddGoodSoftwareSteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "no"},
     )
-
     assert response.status_code == 302
     assert response.url == reverse(
         "applications:software_summary",
@@ -314,7 +337,6 @@ def test_add_good_software_no_pv(
         "control_list_entries": [],
         "is_pv_graded": "no",
         "has_security_features": True,
-        "has_security_features_details": "security features",
         "has_declared_at_customs": True,
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
@@ -323,4 +345,5 @@ def test_add_good_software_no_pv(
         "modified_military_use_details": "",
         "no_part_number_comments": "no part number",
         "part_number": "",
+        "security_feature_details": "security features",
     }
