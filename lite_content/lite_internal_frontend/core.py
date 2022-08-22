@@ -9,6 +9,7 @@ def get_human_readable_exception(status_code):
     support_text = f"Contact [support](mailto:{settings.LITE_FEEDBACK_EMAIL}) if you need any help."
 
     data = {
+        403: {"title": "Sorry, unauthorized", "description": "You don't have authorisation to view this page"},
         404: {
             "title": "Page not found",
             "description": "If you entered a web address, check it is correct.\n\n\n\n"

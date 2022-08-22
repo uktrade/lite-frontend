@@ -1,7 +1,7 @@
 import functools
 
 from django.conf import settings
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -12,8 +12,9 @@ from django.views.generic import TemplateView
 from caseworker.cases.helpers.advice import get_param_goods, get_param_destinations
 from caseworker.cases.services import put_flag_assignments, get_case
 from caseworker.core.constants import Permission
-from caseworker.core.helpers import get_params_if_exist
+from caseworker.core.helpers import get_params_if_exist, is_user_config_admin
 from core.helpers import convert_dict_to_query_params
+from caseworker.core.views import handler403
 from caseworker.core.services import get_countries, get_user_permissions
 from caseworker.flags.enums import FlagLevel, FlagStatus
 from caseworker.flags.forms import (
@@ -76,11 +77,18 @@ class FlagsList(LoginRequiredMixin, TemplateView):
             "user_data": user_data,
             "filters": filters,
             "can_change_flag_status": Permission.ACTIVATE_FLAGS.value in get_user_permissions(request),
+            "can_change_config": user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST,
         }
         return render(request, "flags/index.html", context)
 
 
 class AddFlag(LoginRequiredMixin, SingleFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         self.form = add_flag_form()
         self.action = post_flags
@@ -90,6 +98,12 @@ class AddFlag(LoginRequiredMixin, SingleFormView):
 
 
 class EditFlag(LoginRequiredMixin, SingleFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         self.object_pk = str(kwargs["pk"])
         flag = get_flag(request, self.object_pk)
@@ -100,6 +114,12 @@ class EditFlag(LoginRequiredMixin, SingleFormView):
 
 
 class ChangeFlagStatus(LoginRequiredMixin, TemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, **kwargs):
         status = kwargs["status"]
         description = ""
@@ -176,6 +196,12 @@ class ManageFlagRules(LoginRequiredMixin, TemplateView):
 
 
 class CreateFlagRules(LoginRequiredMixin, MultiFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
@@ -187,6 +213,12 @@ class CreateFlagRules(LoginRequiredMixin, MultiFormView):
 
 
 class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
             return redirect(reverse_lazy("cases:cases"))
@@ -236,6 +268,12 @@ class EditFlaggingRules(LoginRequiredMixin, SingleFormView):
 
 class ChangeFlaggingRuleStatus(LoginRequiredMixin, SingleFormView):
     success_url = reverse_lazy("flags:flagging_rules")
+
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
 
     def init(self, request, **kwargs):
         if Permission.MANAGE_FLAGGING_RULES.value not in get_user_permissions(request):
