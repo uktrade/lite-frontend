@@ -267,12 +267,13 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
     template_name = "core/form.html"
     form_class = NonFirearmCategoryForm
 
-    def get_success_url(self):
-        category = self.request.POST.get("no_firearm_category")
-        if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.PLATFORM:
-            return reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
-        else:
-            return reverse("applications:new_good_software", kwargs={"pk": self.kwargs["pk"]})
+    def form_valid(self, form):
+        category = form.cleaned_data["no_firearm_category"]
+
+        return redirect(
+            f"applications:new_good_{category.lower()}",
+            pk=self.kwargs["pk"],
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
