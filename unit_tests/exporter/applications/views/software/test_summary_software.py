@@ -110,12 +110,17 @@ def software_summary(good_id):
         ),
         (
             "security-features",
-            "No",
+            "Yes",
             "Does the product include security features to protect information?",
         ),
         (
+            "security-feature-details",
+            "security features",
+            "security-feature-details",
+        ),
+        (
             "declared-at-customs",
-            "No",
+            "Yes",
             "Will the product be declared at customs?",
         ),
         (
@@ -127,6 +132,11 @@ def software_summary(good_id):
             "is-document-sensitive",
             "No",
             "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "design-details",
+            "some design details",
+            "Describe the product and what it is designed to do",
         ),
         (
             "product-document",
@@ -147,7 +157,7 @@ def software_summary(good_id):
             "military-use-details",
             None,
             "details of the modifications",
-        )
+        ),
     )
 
 
