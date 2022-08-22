@@ -55,6 +55,9 @@ PLATFORM_LABELS = {
     "name": "Give the product a descriptive name",
     "is-good-controlled": "Do you know the product's control list entry?",
     "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
     "is-pv-graded": "Does the product have a government security grading or classification?",
     "pv-grading-prefix": "Enter a prefix (optional)",
     "pv-grading-grading": "What is the security grading or classification?",
@@ -266,6 +269,7 @@ FIREARM_ON_APPLICATION_LABELS = {
 
 PLATFORM_VALUE_FORMATTERS = {
     "is-good-controlled": key_value_formatter,
+    "has-part-number": just("I do not have a part number"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
     "is-pv-graded": mapping_formatter(
         {
