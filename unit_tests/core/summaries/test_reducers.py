@@ -925,6 +925,10 @@ def test_part_number_reducer(good, output):
             },
             (("security-features", False),),
         ),
+        (
+            {},
+            (("security-features", False),),
+        ),
     ),
 )
 def test_security_features_reducer(good, output):
@@ -944,6 +948,10 @@ def test_security_features_reducer(good, output):
             {
                 "has_declared_at_customs": False,
             },
+            (("declared-at-customs", False),),
+        ),
+        (
+            {},
             (("declared-at-customs", False),),
         ),
     ),
@@ -967,6 +975,10 @@ def test_declared_at_customs_reducer(good, output):
             },
             (("design-details", None),),
         ),
+        (
+            {},
+            (("design-details", None),),
+        ),
     ),
 )
 def test_design_details_reducer(good, output):
@@ -983,7 +995,7 @@ def test_design_details_reducer(good, output):
             },
             (
                 ("military-use", True),
-                ("military-use-details", "security features"),
+                ("military-use-details", "modified military use details"),
             ),
         ),
         (

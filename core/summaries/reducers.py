@@ -468,7 +468,7 @@ def software_reducer(good):
 
 
 def security_features_reducer(good):
-    if good["has_security_features"]:
+    if good.get("has_security_features"):
         return (
             ("security-features", True),
             ("security-feature-details", good["security_feature_details"]),
@@ -478,14 +478,14 @@ def security_features_reducer(good):
 
 
 def design_details_reducer(good):
-    if good["design_details"]:
+    if good.get("design_details"):
         return (("design-details", good["design_details"]),)
 
     return (("design-details", None),)
 
 
 def declared_at_customs_reducer(good):
-    if good["has_declared_at_customs"]:
+    if good.get("has_declared_at_customs"):
         return (("declared-at-customs", True),)
 
     return (("declared-at-customs", False),)
