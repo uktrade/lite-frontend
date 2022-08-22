@@ -1,7 +1,13 @@
 {% extends 'layouts/case.html' %}
 
 {% block header_tabs %}
-    {% include "includes/case-tabs.html" with case=case queue=queue selected_tab="activities" %}
+    <div id="tab-bar" class="app-case-tab-bar">
+        <div class="govuk-width-container lite-tabs__container">
+            <div class="lite-tabs ">
+                {% include "includes/case-tabs.html" %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block details %}

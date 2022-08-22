@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
+from caseworker.cases.views.main import CaseTabsMixin
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
@@ -21,7 +22,7 @@ from .utils import get_cle_suggestions_json
 TAU_ALIAS = "TAU"
 
 
-class TAUMixin:
+class TAUMixin(CaseTabsMixin):
     """Mixin containing some useful functions used in TAU views."""
 
     @cached_property
@@ -107,6 +108,18 @@ class TAUMixin:
     def caseworker(self):
         data, _ = get_gov_user(self.request, self.caseworker_id)
         return data["user"]
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        context.update(
+            {
+                "tabs": self.get_standard_application_tabs(),
+                "current_tab": "cases:tau:home",
+            }
+        )
+
+        return context
 
 
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):

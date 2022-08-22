@@ -1,13 +1,14 @@
 from django.conf import settings
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
 from caseworker.core.constants import Permission
-from caseworker.core.helpers import has_permission, get_params_if_exist
+from caseworker.core.helpers import has_permission, get_params_if_exist, is_user_config_admin
 from core.helpers import convert_dict_to_query_params
 from caseworker.core.services import get_statuses
+from caseworker.core.views import handler403
 from lite_content.lite_internal_frontend.routing_rules import Filter, CONFIRM_FORM_ERROR
 from lite_forms.components import FiltersBar, Option, Checkboxes, Select, AutocompleteInput, TextInput
 from lite_forms.generators import form_page
@@ -85,6 +86,12 @@ class RoutingRulesList(LoginRequiredMixin, TemplateView):
 
 
 class CreateRoutingRule(LoginRequiredMixin, MultiFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         select_team = has_permission(request, Permission.MANAGE_ALL_ROUTING_RULES)
         team_id = request.POST.get("team", get_gov_user(request)[0]["user"]["team"]["id"])
@@ -107,6 +114,12 @@ class CreateRoutingRule(LoginRequiredMixin, MultiFormView):
 
 class ChangeRoutingRuleActiveStatus(LoginRequiredMixin, SingleFormView):
     success_url = reverse_lazy("routing_rules:list")
+
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
 
     def init(self, request, **kwargs):
         status = kwargs["status"]
@@ -135,6 +148,12 @@ class ChangeRoutingRuleActiveStatus(LoginRequiredMixin, SingleFormView):
 
 
 class EditRoutingRules(LoginRequiredMixin, MultiFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_routing_rule(request, self.object_pk)[0]

@@ -14,7 +14,13 @@ from core.builtins.custom_tags import default_na, linkify
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
 from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 
-from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES, PRODUCT_CATEGORY_FIREARM
+from exporter.core.constants import (
+    ProductSecurityFeatures,
+    ProductDeclaredAtCustoms,
+    ProductDesignDetails,
+    FIREARM_AMMUNITION_COMPONENT_TYPES,
+    PRODUCT_CATEGORY_FIREARM,
+)
 from exporter.core.helpers import (
     convert_control_list_entries,
     str_to_bool,
@@ -723,12 +729,10 @@ class NonFirearmCategoryForm(BaseForm):
         COMPONENTS = "COMPONENTS ", "It forms part of a product"
         SOFTWARE = "SOFTWARE", "It helps to operate a product"
 
-    CATEGORY_CHOICES = []
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.CATEGORY_CHOICES = [
+        category_choices = [
             TextChoice(
                 self.NonFirearmCategoryChoices.PLATFORM,
                 hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
@@ -736,7 +740,7 @@ class NonFirearmCategoryForm(BaseForm):
         ]
 
         if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED:
-            self.CATEGORY_CHOICES.append(
+            category_choices.append(
                 TextChoice(
                     self.NonFirearmCategoryChoices.COMPONENTS,
                     hint="Hardware such as components and accessories, or raw materials and substances.",
@@ -744,16 +748,16 @@ class NonFirearmCategoryForm(BaseForm):
             )
 
         if settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED:
-            self.CATEGORY_CHOICES.append(
+            category_choices.append(
                 TextChoice(
                     self.NonFirearmCategoryChoices.SOFTWARE,
                     hint="For example, software or information such as technology manuals and specifications.",
                 ),
             )
-        self.fields["no_firearm_category"].choices = self.CATEGORY_CHOICES
+        self.fields["no_firearm_category"].choices = category_choices
 
     no_firearm_category = forms.ChoiceField(
-        choices=CATEGORY_CHOICES,
+        choices=[],  # updated in init
         widget=forms.RadioSelect,
         label="",
         error_messages={
@@ -763,6 +767,109 @@ class NonFirearmCategoryForm(BaseForm):
 
     def get_layout_fields(self):
         return ("no_firearm_category",)
+
+
+class ProductSecurityFeaturesForm(BaseForm):
+    class Layout:
+        TITLE = ProductSecurityFeatures.TITLE
+
+    has_security_features = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="For example, authentication, encryption or any other information security controls.",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product include security features to protect information",
+        },
+    )
+
+    security_feature_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea,
+        label=ProductSecurityFeatures.SECURITY_FEATURE_DETAILS,
+    )
+
+    def get_layout_fields(self):
+        return (
+            HTML.details(
+                "Help with security features",
+                "<p>Information security features include cryptography, authentication, and "
+                "cryptanalytic functions. They are often found in communication, wireless "
+                "or internet-based products.</p>",
+            ),
+            ConditionalRadios(
+                "has_security_features",
+                ConditionalQuestion(
+                    "Yes",
+                    "security_feature_details",
+                ),
+                ProductSecurityFeatures.NO,
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        details = cleaned_data.get("security_feature_details")
+        if cleaned_data.get("has_security_features") is True and details == "":
+            self.add_error(
+                "security_feature_details",
+                "Enter the details of security features",
+            )
+
+        if cleaned_data.get("security_feature_details") is False:
+            cleaned_data["security_feature_details"] = ""
+
+        return cleaned_data
+
+
+class ProductDeclaredAtCustomsForm(BaseForm):
+    class Layout:
+        TITLE = ProductDeclaredAtCustoms.TITLE
+
+    has_declared_at_customs = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, ProductDeclaredAtCustoms.NO),
+        ),
+        label="",
+        coerce=coerce_str_to_bool,
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product will be declared at customs",
+        },
+    )
+
+    def get_layout_fields(self):
+        return (
+            HTML.details(
+                "Help with export declarations",
+                "<p>If your product is considered physical (tangible) it is declared at customs. "
+                "If it is sent digitally, such as through software or email, it is considered "
+                "intangible and does not need to be declared at customs.</p>",
+            ),
+            "has_declared_at_customs",
+        )
+
+
+class ProductDesignDetailsForm(BaseForm):
+    class Layout:
+        TITLE = ProductDesignDetails.TITLE
+
+    design_details = forms.CharField(
+        required=True,
+        label="",
+        widget=forms.Textarea,
+        error_messages={
+            "required": "Provide details of the product and what it is designed to do",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("design_details",)
 
 
 class AddGoodsQuestionsForm(forms.Form):

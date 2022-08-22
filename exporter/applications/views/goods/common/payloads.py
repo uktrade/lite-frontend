@@ -33,6 +33,14 @@ def get_part_number_payload(form):
         }
 
 
+def get_quantity_and_value_payload(form):
+    return {
+        "unit": "NAR",
+        "quantity": form.cleaned_data["number_of_items"],
+        "value": str(form.cleaned_data["value"]),
+    }
+
+
 class ProductEditPVGradingPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         constants.PV_GRADING: get_pv_grading_payload,

@@ -34,7 +34,11 @@ from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, Produ
 
 from exporter.goods.services import post_platform, post_good_documents
 from exporter.applications.services import post_platform_good_on_application
-from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
+from exporter.applications.views.goods.common.mixins import (
+    ApplicationMixin,
+    GoodMixin,
+    NonFirearmsFlagMixin,
+)
 from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_product_document_available,
@@ -47,7 +51,6 @@ from .constants import (
     AddGoodPlatformSteps,
     AddGoodPlatformToApplicationSteps,
 )
-from .mixins import NonFirearmsFlagMixin
 from .payloads import (
     AddGoodPlatformPayloadBuilder,
     AddGoodPlatformToApplicationPayloadBuilder,

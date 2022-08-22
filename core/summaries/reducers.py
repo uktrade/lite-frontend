@@ -442,3 +442,69 @@ def platform_on_application_reducer(good_on_application):
     )
     summary += is_onward_exported_reducer(good_on_application)
     return summary
+
+
+def software_reducer(good):
+
+    summary = (
+        (
+            "product-type",
+            "No",
+        ),
+        ("non-firearm-category", "It helps to operate a product"),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += has_product_document_reducer(good)
+    summary += security_features_reducer(good)
+    summary += declared_at_customs_reducer(good)
+    summary += design_details_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+    return summary
+
+
+def security_features_reducer(good):
+    if good.get("has_security_features"):
+        return (
+            ("security-features", True),
+            ("security-feature-details", good["security_feature_details"]),
+        )
+
+    return (("security-features", False),)
+
+
+def design_details_reducer(good):
+    if good.get("design_details"):
+        return (("design-details", good["design_details"]),)
+
+    return (("design-details", None),)
+
+
+def declared_at_customs_reducer(good):
+    if good.get("has_declared_at_customs"):
+        return (("declared-at-customs", True),)
+
+    return (("declared-at-customs", False),)
+
+
+def designed_for_military_use_reducer(good):
+    if good["is_military_use"]:
+        return (
+            ("military-use", True),
+            ("military-use-details", good["modified_military_use_details"]),
+        )
+
+    return (("military-use", False),)
+
+
+def software_on_application_reducer(good_on_application):
+    summary = (
+        ("number-of-items", good_on_application["quantity"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+    summary += is_onward_exported_reducer(good_on_application)
+    return summary
