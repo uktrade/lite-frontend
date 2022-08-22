@@ -89,7 +89,6 @@ from exporter.applications.views.goods.add_good_platform.views.summary import (
     PlatformProductOnApplicationSummary,
     PlatformProductSummary,
 )
-from exporter.applications.views.goods.add_good_platform.views.attach import AttachPlatformToApplication
 from exporter.applications.views.goods.add_good_component.views.add import (
     AddGoodComponent,
     AddGoodComponentToApplication,
