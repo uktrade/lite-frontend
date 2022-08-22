@@ -11,10 +11,11 @@ from caseworker.cases.services import (
     get_activity_filters,
     get_case,
 )
+from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
 
 
-class NotesAndTimeline(LoginRequiredMixin, TemplateView):
+class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, TemplateView):
     template_name = "activities/notes-and-timeline.html"
 
     @cached_property
@@ -72,4 +73,6 @@ class NotesAndTimeline(LoginRequiredMixin, TemplateView):
             "filtering_by": list(self.request.GET.keys()),
             "queue": self.queue,
             "team_filters": self.get_team_filters(),
+            "tabs": self.get_standard_application_tabs(),
+            "current_tab": "cases:activities:notes-and-timeline",
         }
