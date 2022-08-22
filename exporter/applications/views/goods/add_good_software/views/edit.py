@@ -7,15 +7,17 @@ from exporter.applications.views.goods.common.initial import (
     get_control_list_entry_initial_data,
     get_name_initial_data,
 )
-from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
+from exporter.applications.views.goods.common.mixins import (
+    ApplicationMixin,
+    GoodMixin,
+    NonFirearmsFlagMixin,
+)
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductNameForm,
 )
 from exporter.goods.services import edit_software
-
-from .mixins import NonFirearmsFlagMixin
 
 
 class BaseEditView(

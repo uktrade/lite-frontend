@@ -10,6 +10,7 @@ from core.auth.views import LoginRequiredMixin
 
 from lite_forms.generators import error_page
 
+from exporter.applications.views.goods.common.mixins import NonFirearmsFlagMixin
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
@@ -36,7 +37,6 @@ from exporter.goods.forms.goods import (
     ProductMilitaryUseForm,
     ProductDesignDetailsForm,
 )
-
 from exporter.goods.services import post_software, post_good_documents
 from exporter.applications.services import post_software_good_on_application
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
@@ -52,7 +52,6 @@ from .constants import (
     AddGoodSoftwareSteps,
     AddGoodSoftwareToApplicationSteps,
 )
-from .mixins import NonFirearmsFlagMixin
 from .payloads import (
     AddGoodSoftwarePayloadBuilder,
     AddGoodSoftwareToApplicationPayloadBuilder,

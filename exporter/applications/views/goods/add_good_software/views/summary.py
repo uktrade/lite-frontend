@@ -3,7 +3,12 @@ from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 
-from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
+from exporter.applications.views.goods.common.mixins import (
+    ApplicationMixin,
+    GoodMixin,
+    GoodOnApplicationMixin,
+    NonFirearmsFlagMixin,
+)
 from exporter.applications.summaries.software import (
     add_software_summary_edit_links,
     software_summary,
@@ -11,8 +16,6 @@ from exporter.applications.summaries.software import (
     software_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
-
-from .mixins import NonFirearmsFlagMixin
 
 
 class BaseSoftwareOnApplicationSummary(

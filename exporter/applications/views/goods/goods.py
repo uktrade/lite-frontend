@@ -53,7 +53,6 @@ from exporter.core.helpers import (
     show_serial_numbers_form,
     str_to_bool,
 )
-from exporter.applications.views.goods.add_good_platform.views.mixins import NonFirearmsFlagMixin
 from exporter.core.validators import validate_expiry_date
 from exporter.core.wizard.conditionals import C, Flag
 from exporter.core.wizard.views import BaseSessionWizardView
@@ -101,6 +100,10 @@ from exporter.goods.services import (
 from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
+
+
+from .common.mixins import NonFirearmsFlagMixin
+
 
 log = logging.getLogger(__name__)
 
