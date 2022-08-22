@@ -323,6 +323,7 @@ def edit_platform(request, pk, json):
     response = client.put(request, f"/goods/{pk}", json)
     return response.json(), response.status_code
 
+
 def post_software(request, json):
     json["item_category"] = PRODUCT_CATEGORY_SOFTWARE
     data = client.post(request, "/goods/", json)

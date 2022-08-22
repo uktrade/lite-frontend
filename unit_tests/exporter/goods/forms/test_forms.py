@@ -1185,9 +1185,24 @@ def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
     "data, valid, error_field, error_message",
     (
         ({"has_security_features": "True", "security_feature_details": "test desc"}, True, None, None),
-        ({"has_security_features": None}, False, "has_security_features", "Select yes if the product include security features to protect information"),
-        ({"has_security_features": ""}, False, "has_security_features", "Select yes if the product include security features to protect information"),
-        ({"has_security_features": "True", "security_feature_details": ""}, False, "security_feature_details", "Enter the details of security features"),
+        (
+            {"has_security_features": None},
+            False,
+            "has_security_features",
+            "Select yes if the product include security features to protect information",
+        ),
+        (
+            {"has_security_features": ""},
+            False,
+            "has_security_features",
+            "Select yes if the product include security features to protect information",
+        ),
+        (
+            {"has_security_features": "True", "security_feature_details": ""},
+            False,
+            "security_feature_details",
+            "Enter the details of security features",
+        ),
     ),
 )
 def test_security_features_form(data, valid, error_field, error_message):
@@ -1203,8 +1218,18 @@ def test_security_features_form(data, valid, error_field, error_message):
     "data, valid, error_field, error_message",
     (
         ({"has_declared_at_customs": "True"}, True, None, None),
-        ({"has_declared_at_customs": None}, False, "has_declared_at_customs", "Select yes if the product will be declared at customs"),
-        ({"has_declared_at_customs": ""}, False, "has_declared_at_customs", "Select yes if the product will be declared at customs"),
+        (
+            {"has_declared_at_customs": None},
+            False,
+            "has_declared_at_customs",
+            "Select yes if the product will be declared at customs",
+        ),
+        (
+            {"has_declared_at_customs": ""},
+            False,
+            "has_declared_at_customs",
+            "Select yes if the product will be declared at customs",
+        ),
         ({"has_declared_at_customs": "False"}, True, None, None),
     ),
 )
@@ -1221,8 +1246,18 @@ def test_product_declared_at_customs(data, valid, error_field, error_message):
     "data, valid, error_field, error_message",
     (
         ({"design_details": "design details"}, True, None, None),
-        ({"design_details": None}, False, "design_details", "Provide details of the product and what it is designed to do"),
-        ({"design_details": ""}, False, "design_details", "Provide details of the product and what it is designed to do"),
+        (
+            {"design_details": None},
+            False,
+            "design_details",
+            "Provide details of the product and what it is designed to do",
+        ),
+        (
+            {"design_details": ""},
+            False,
+            "design_details",
+            "Provide details of the product and what it is designed to do",
+        ),
     ),
 )
 def test_product_design_details(data, valid, error_field, error_message):
