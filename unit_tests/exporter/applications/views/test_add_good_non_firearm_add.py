@@ -6,8 +6,10 @@ import uuid
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup(settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
 
 
 @pytest.fixture
