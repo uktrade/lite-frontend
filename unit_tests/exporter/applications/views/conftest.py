@@ -295,3 +295,23 @@ def platform_on_application_summary_url_factory(application, good_on_application
 @pytest.fixture
 def platform_on_application_summary_url(platform_on_application_summary_url_factory):
     return platform_on_application_summary_url_factory("platform-on-application-summary")
+
+
+@pytest.fixture
+def software_on_application_summary_url_factory(application, good_on_application):
+    def software_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return software_on_application_summary_url
+
+
+@pytest.fixture
+def software_on_application_summary_url(software_on_application_summary_url_factory):
+    return software_on_application_summary_url_factory("software-on-application-summary")
