@@ -7,14 +7,12 @@ from exporter.applications.views.goods.add_good_platform.views.constants import 
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDocumentAvailabilityForm,
+    ProductDocumentSensitivityForm,
+    ProductDocumentUploadForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
-)
-from exporter.goods.forms.firearms import (
-    FirearmDocumentAvailability,
-    FirearmDocumentSensitivityForm,
-    FirearmDocumentUploadForm,
 )
 from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
@@ -159,21 +157,21 @@ def test_add_good_platform_end_to_end(
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentAvailability)
+    assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
 
     response = post_to_step(
         AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": True},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentSensitivityForm)
+    assert isinstance(response.context["form"], ProductDocumentSensitivityForm)
 
     response = post_to_step(
         AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         {"is_document_sensitive": False},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmDocumentUploadForm)
+    assert isinstance(response.context["form"], ProductDocumentUploadForm)
 
     response = post_to_step(
         AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
@@ -190,7 +188,7 @@ def test_add_good_platform_end_to_end(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_summary",
+        "applications:platform_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -281,7 +279,7 @@ def test_add_good_platform_no_pv(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_summary",
+        "applications:platform_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,

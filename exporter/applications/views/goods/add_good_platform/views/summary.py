@@ -57,7 +57,7 @@ class PlatformProductOnApplicationSummary(BasePlatformOnApplicationSummary):
     summary_type = "platform-on-application-summary"
 
 
-class PlatformSummary(
+class PlatformProductSummary(
     LoginRequiredMixin,
     NonFirearmsFlagMixin,
     ApplicationMixin,

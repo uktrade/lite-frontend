@@ -29,6 +29,9 @@ from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDocumentAvailabilityForm,
+    ProductDocumentSensitivityForm,
+    ProductDocumentUploadForm,
     ProductNameForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
@@ -41,9 +44,6 @@ from exporter.goods.forms.firearms import (
     FirearmCalibreForm,
     FirearmCategoryForm,
     FirearmDeactivationDetailsForm,
-    FirearmDocumentAvailability,
-    FirearmDocumentSensitivityForm,
-    FirearmDocumentUploadForm,
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
     FirearmRegisteredFirearmsDealerForm,
@@ -135,9 +135,9 @@ class AddGoodFirearm(
         (AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE, FirearmAttachRFDCertificate),
         (AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5, FirearmSection5Form),
         (AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY, FirearmAttachSection5LetterOfAuthorityForm),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, FirearmDocumentAvailability),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, FirearmDocumentSensitivityForm),
-        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, FirearmDocumentUploadForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
+        (AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
     ]
     condition_dict = {
         AddGoodFirearmSteps.PV_GRADING_DETAILS: is_pv_graded,
@@ -232,7 +232,7 @@ class AddGoodFirearm(
 
     def get_success_url(self):
         return reverse(
-            "applications:product_summary",
+            "applications:firearm_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -444,7 +444,7 @@ class AddGoodFirearmToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:product_summary",
+            "applications:firearm_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],

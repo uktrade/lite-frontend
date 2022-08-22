@@ -409,6 +409,16 @@ def uses_information_security_reducer(good):
     )
 
 
+def part_number_reducer(good):
+    no_part_number_comments = good.get("no_part_number_comments")
+    if no_part_number_comments:
+        return (
+            ("has-part-number", False),
+            ("no-part-number-comments", no_part_number_comments),
+        )
+    return (("part-number", good["part_number"]),)
+
+
 def platform_reducer(good):
     summary = (
         (
@@ -420,6 +430,7 @@ def platform_reducer(good):
     summary += is_pv_graded_reducer(good)
     summary += uses_information_security_reducer(good)
     summary += has_product_document_reducer(good)
+    summary += part_number_reducer(good)
 
     return summary
 
@@ -436,9 +447,15 @@ def platform_on_application_reducer(good_on_application):
 def software_reducer(good):
 
     summary = (
-        ("product-type", "No",),
+        (
+            "product-type",
+            "No",
+        ),
         ("non-firearm-category", "It helps to operate a product"),
-        ("name", good["name"],),
+        (
+            "name",
+            good["name"],
+        ),
     )
     summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
