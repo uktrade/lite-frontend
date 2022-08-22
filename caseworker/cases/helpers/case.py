@@ -6,7 +6,6 @@ from django.views.generic import TemplateView
 
 from core.constants import CaseStatusEnum
 
-from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.objects import Slice, Case
 from caseworker.cases.services import (
@@ -162,38 +161,3 @@ class CaseView(TemplateView):
         else:
             getattr(self, "get_" + self.case.sub_type)()
         return render(request, "case/case.html", self.get_context())
-
-    def get_tabs(self):
-        tabs = [
-            Tabs.DETAILS,
-            Tabs.ADDITIONAL_CONTACTS,
-            Tabs.ECJU_QUERIES,
-            Tabs.DOCUMENTS,
-        ]
-
-        return tabs
-
-    def get_advice_tab(self):
-        data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
-        return Tab(
-            "advice",
-            "Recommendations and decision",
-            get_advice_tab_context(self.case, data["user"], str(self.kwargs["queue_pk"]))["url"],
-            has_template=False,
-        )
-
-    def get_assessment_tab(self):
-        return Tab(
-            "assessment",
-            "Product Assessment",
-            "cases:tau:home",
-            has_template=False,
-        )
-
-    def get_notes_and_timelines_tab(self):
-        return Tab(
-            "activities",
-            CasePage.Tabs.CASE_NOTES_AND_TIMELINE,
-            "cases:activities:notes-and-timeline",
-            has_template=False,
-        )

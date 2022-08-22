@@ -8,6 +8,7 @@ import sentry_sdk
 from caseworker.advice import forms, services, constants
 from core import client
 from caseworker.cases.services import get_case
+from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_denial_reasons
 from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
@@ -140,7 +141,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
 
-class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
+class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, FormView):
     template_name = "advice/view_my_advice.html"
     form_class = forms.MoveCaseForwardForm
 
@@ -155,6 +156,8 @@ class AdviceDetailView(LoginRequiredMixin, CaseContextMixin, FormView):
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
             "denial_reasons_display": self.denial_reasons_display,
+            "tabs": self.get_standard_application_tabs(),
+            "current_tab": "cases:view_my_advice",
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
@@ -246,7 +249,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return reverse("cases:select_advice", kwargs=self.kwargs)
 
 
-class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, TemplateView):
     template_name = "advice/view-advice.html"
 
     @property
@@ -277,6 +280,8 @@ class AdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
+            "tabs": self.get_standard_application_tabs(),
+            "current_tab": "cases:advice_view",
             **services.get_advice_tab_context(
                 self.case,
                 self.caseworker,
@@ -328,6 +333,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
         context["denial_reasons_display"] = self.denial_reasons_display
+        context["current_tab"] = "cases:countersign_view"
         return context
 
 
@@ -353,6 +359,11 @@ class ConsolidateAdviceView(AdviceView):
         # For LU, we do not want to show the advice summary
         hide_advice = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["current_tab"] = "cases:consolidate_advice_view"
+        return context
 
 
 class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
