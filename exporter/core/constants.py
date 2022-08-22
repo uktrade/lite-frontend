@@ -240,5 +240,22 @@ class DocumentType:
     RFD_CERTIFICATE = "rfd-certificate"
 
 
+class ProductSecurityFeatures:
+    TITLE = "Does the product include security features to protect information?"
+    SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
+    NO = "No"
+
+
+class ProductDeclaredAtCustoms:
+    TITLE = "Will the product be declared at customs?"
+    NO = "No, the product is sent electronically"
+
+
+class ProductDesignDetails:
+    TITLE = "Describe the product and what it is designed to do"
+    SUBMIT_BUTTON = "Continue"
+
+
 PRODUCT_CATEGORY_PLATFORM = "group1_platform"
 COMPONENT_CATEGORY_PLATFORM = "group1_components"
+PRODUCT_CATEGORY_SOFTWARE = "group3_software"

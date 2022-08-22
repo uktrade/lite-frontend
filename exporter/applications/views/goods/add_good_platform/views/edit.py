@@ -18,6 +18,7 @@ from exporter.applications.views.goods.common.initial import (
     get_pv_grading_initial_data,
     get_pv_grading_details_initial_data,
 )
+from exporter.applications.views.goods.common.mixins import NonFirearmsFlagMixin
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
@@ -31,7 +32,6 @@ from exporter.goods.forms.goods import ProductUsesInformationSecurityForm
 from exporter.goods.services import edit_platform
 
 from .constants import AddGoodPlatformSteps
-from .mixins import NonFirearmsFlagMixin
 
 
 logger = logging.getLogger(__name__)

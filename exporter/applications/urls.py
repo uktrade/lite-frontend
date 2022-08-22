@@ -93,6 +93,15 @@ from exporter.applications.views.goods.add_good_component.views.add import (
     AddGoodComponent,
     AddGoodComponentToApplication,
 )
+from exporter.applications.views.goods.add_good_software.views.add import AddGoodSoftware, AddGoodSoftwareToApplication
+from exporter.applications.views.goods.add_good_software.views.edit import (
+    SoftwareEditControlListEntry,
+    SoftwareEditName,
+)
+from exporter.applications.views.goods.add_good_software.views.summary import (
+    SoftwareProductSummary,
+    SoftwareProductOnApplicationSummary,
+)
 
 app_name = "applications"
 urlpatterns = [
@@ -444,6 +453,29 @@ urlpatterns = [
         "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/component-on-application-summary/",
         PlatformProductOnApplicationSummary.as_view(),
         name="component_on_application_summary",
+    ),
+    # Software product and non-firearm
+    path("<uuid:pk>/goods/add-new/software/", AddGoodSoftware.as_view(), name="new_good_software"),
+    path(
+        "<uuid:pk>/goods/software/<uuid:good_pk>/product-summary/",
+        SoftwareProductSummary.as_view(),
+        name="software_product_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add-new/software-to-application/",
+        AddGoodSoftwareToApplication.as_view(),
+        name="new_good_software_to_application",
+    ),
+    path(
+        "<uuid:pk>/goods/software/<uuid:good_on_application_pk>/software-on-application-summary/",
+        SoftwareProductOnApplicationSummary.as_view(),
+        name="software_on_application_summary",
+    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/software/edit/name/", SoftwareEditName.as_view(), name="software_edit_name"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/control-list-entries/",
+        SoftwareEditControlListEntry.as_view(),
+        name="software_edit_control_list_entries",
     ),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),

@@ -60,6 +60,16 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
             {"name": "new good"},
         ),
         (
+            "platform_edit_control_list_entries",
+            {"is_good_controlled": False},
+            {"is_good_controlled": False, "control_list_entries": []},
+        ),
+        (
+            "platform_edit_control_list_entries",
+            {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
+            {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
+        ),
+        (
             "platform_edit_uses_information_security",
             {
                 "uses_information_security": True,
@@ -165,40 +175,6 @@ def test_edit_platform_initial(
 
     assert response.status_code == 200
     assert response.context["form"].initial == initial
-
-
-@pytest.mark.parametrize(
-    "data, expected",
-    (
-        (
-            {"is_good_controlled": False},
-            {"is_good_controlled": False, "control_list_entries": []},
-        ),
-        (
-            {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
-            {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
-        ),
-    ),
-)
-def test_edit_good_control_list_entry_options(
-    authorized_client,
-    requests_mock,
-    application,
-    good_on_application,
-    data,
-    expected,
-    platform_product_summary_url,
-):
-    url = reverse(
-        "applications:platform_edit_control_list_entries",
-        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
-    )
-
-    response = authorized_client.post(url, data=data)
-
-    assert response.status_code == 302
-    assert response.url == platform_product_summary_url
-    assert requests_mock.last_request.json() == expected
 
 
 def test_edit_pv_grading(
