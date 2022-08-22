@@ -13,6 +13,9 @@ PLATFORM_SUMMARY_EDIT_LINKS = {
     "name": "name",
     "is-good-controlled": "control_list_entries",
     "control-list-entries": "control_list_entries",
+    "part-number": "part_number",
+    "has-part-number": "part_number",
+    "no-part-number-comments": "part_number",
     "is-pv-graded": "pv_grading",
     "pv-grading-prefix": "pv_grading_details",
     "pv-grading-grading": "pv_grading_details",
@@ -22,6 +25,11 @@ PLATFORM_SUMMARY_EDIT_LINKS = {
     "pv-grading-details-date-of-issue": "pv_grading_details",
     "uses-information-security": "uses_information_security",
     "uses-information-security-details": "uses_information_security",
+    "has-product-document": "product_document_availability",
+    "no-product-document-explanation": "product_document_availability",
+    "is-document-sensitive": "product_document_sensitivity",
+    "product-document": "product_document",
+    "product-document-description": "product_document",
 }
 
 

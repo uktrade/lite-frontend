@@ -38,3 +38,16 @@ class ProductEditPVGradingPayloadBuilder(MergingPayloadBuilder):
         constants.PV_GRADING: get_pv_grading_payload,
         constants.PV_GRADING_DETAILS: get_pv_grading_details_payload,
     }
+
+
+class ProductEditProductDocumentAvailabilityPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        constants.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
+        constants.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
+
+
+class ProductEditProductDocumentSensitivityPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        constants.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+    }
