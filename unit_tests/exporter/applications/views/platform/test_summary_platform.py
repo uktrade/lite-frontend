@@ -117,6 +117,11 @@ def platform_summary(good_id):
             "product data sheet",
             "Description (optional)",
         ),
+        (
+            "military-use",
+            "No",
+            "Is the product for military use?",
+        ),
     )
 
 

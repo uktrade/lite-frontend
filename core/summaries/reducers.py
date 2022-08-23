@@ -431,6 +431,7 @@ def platform_reducer(good):
     summary += uses_information_security_reducer(good)
     summary += has_product_document_reducer(good)
     summary += part_number_reducer(good)
+    summary += designed_for_military_use_reducer(good)
 
     return summary
 
@@ -492,13 +493,13 @@ def declared_at_customs_reducer(good):
 
 
 def designed_for_military_use_reducer(good):
-    if good["is_military_use"]:
-        return (
-            ("military-use", True),
-            ("military-use-details", good["modified_military_use_details"]),
-        )
+    is_military_use_key = good["is_military_use"]["key"]
 
-    return (("military-use", False),)
+    summary = (("military-use", is_military_use_key),)
+    if is_military_use_key == "yes_modified":
+        summary += (("military-use-details", good["modified_military_use_details"]),)
+
+    return summary
 
 
 def software_on_application_reducer(good_on_application):

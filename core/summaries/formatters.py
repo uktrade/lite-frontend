@@ -9,6 +9,8 @@ from django.utils.formats import date_format
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from lite_content.lite_exporter_frontend.goods import CreateGoodForm
+
 from core.constants import (
     FirearmsActSections,
     SerialChoices,
@@ -72,6 +74,8 @@ PLATFORM_LABELS = {
     "is-document-sensitive": "Is the document rated above Official-sensitive?",
     "product-document": "Upload a document that shows what your product is designed to do",
     "product-document-description": "Description (optional)",
+    "military-use": "Is the product for military use?",
+    "military-use-details": "Provide details of the modifications",
 }
 
 
@@ -282,6 +286,13 @@ PLATFORM_VALUE_FORMATTERS = {
     "uses-information-security": yesno,
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
+    "military-use": mapping_formatter(
+        {
+            "yes_designed": CreateGoodForm.MilitaryUse.YES_DESIGNED,
+            "yes_modified": CreateGoodForm.MilitaryUse.YES_MODIFIED,
+            "no": CreateGoodForm.MilitaryUse.NO,
+        },
+    ),
 }
 
 PLATFORM_ON_APPLICATION_FORMATTERS = {
