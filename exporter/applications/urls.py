@@ -397,6 +397,11 @@ urlpatterns = [
         PlatformProductOnApplicationSummary.as_view(),
         name="platform_on_application_summary",
     ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add/platform/",
+        AddGoodPlatformToApplication.as_view(),
+        name="attach_platform_to_application",
+    ),
     path("<uuid:pk>/goods/<uuid:good_pk>/platform/edit/name/", PlatformEditName.as_view(), name="platform_edit_name"),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/platform/edit/control-list-entries/",

@@ -39,7 +39,7 @@
 								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 							</td>
 							<td class="govuk-table__cell" id="good-part-number">
-								Firearms
+								{{ good.item_category.value }}
 							</td>
 							<td class="govuk-table__cell" id="good-control_code">
 								{% include 'includes/verified-control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
@@ -52,6 +52,10 @@
 							<td class="govuk-table__cell lite-!-text-align-right">
 								{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
 									<a href="{% url 'applications:attach_firearm_to_application' draft_id good.id %}" id="add-firearm-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+                                {% elif good.item_category.key == "group1_platform"  %}
+                                    	<a href="{% url 'applications:attach_platform_to_application' draft_id good.id %}" id="add-platform-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
 								{% else %}
