@@ -1143,6 +1143,56 @@ def mock_flagging_rules(requests_mock):
     yield requests_mock.get(url=url, json={"results": []})
 
 
+@pytest.fixture
+def mock_flag_get(requests_mock, request):
+    url = client._build_absolute_uri("/flags/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={})
+
+
+@pytest.fixture
+def mock_flagging_rule_get(requests_mock):
+    url = client._build_absolute_uri("/flags/rules/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={"flag": {"level": "Destination", "matching_values": []}})
+
+
+@pytest.fixture
+def mock_routing_rules(requests_mock):
+    url = client._build_absolute_uri(f"/routing-rules/?page=1")
+    yield requests_mock.get(url=url, json={"results": []})
+
+
+@pytest.fixture
+def mock_routing_rule_get(requests_mock, mock_gov_user):
+    url = client._build_absolute_uri("/routing-rules/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={"team": mock_gov_user["user"]["team"]["id"]})
+
+
+@pytest.fixture
+def mock_team_queues_get(requests_mock, mock_gov_user):
+    team_id = mock_gov_user["user"]["team"]["id"]
+    url = client._build_absolute_uri(f"/teams/{team_id}/queues/")
+    yield requests_mock.get(url=url, json={})
+
+
+@pytest.fixture
+def mock_users_by_team_get(requests_mock, mock_gov_user):
+    team_id = mock_gov_user["user"]["team"]["id"]
+    url = client._build_absolute_uri(f"/teams/{team_id}/users/")
+    yield requests_mock.get(url=url, json={"users": []})
+
+
+@pytest.fixture
+def mock_case_types_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/case-types/")
+    yield requests_mock.get(url=url, json={"case_types": []})
+
+
+@pytest.fixture
+def mock_team_get(requests_mock, request):
+    url = client._build_absolute_uri("/teams/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={"team": {"name": "lite-internal", "is_ogd": False, "part_of_ecju": True}})
+
+
 @pytest.fixture()
 def reset_config_users_list():
     settings.CONFIG_ADMIN_USERS_LIST = []
@@ -1156,7 +1206,13 @@ def specify_config_users_list():
 @pytest.fixture
 def mock_queues_list(requests_mock):
     url = client._build_absolute_uri(f"/queues/")
-    yield requests_mock.get(url=url, json={"results": []})
+    yield requests_mock.get(url=url, json=[])
+
+
+@pytest.fixture
+def mock_users_team_queues_list(requests_mock, gov_uk_user_id):
+    url = client._build_absolute_uri(f"/users/{gov_uk_user_id}/team-queues/")
+    yield requests_mock.get(url=url, json={"queues": []})
 
 
 @pytest.fixture(autouse=True)

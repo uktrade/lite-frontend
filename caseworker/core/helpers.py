@@ -1,9 +1,11 @@
 from collections import defaultdict
+from django.conf import settings
 from typing import List
 
 from caseworker.core import decorators
 from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions
+from caseworker.users.services import get_gov_user
 from lite_forms.components import FiltersBar, Option, Select, DateInput
 
 
@@ -102,3 +104,8 @@ def format_date(data, date_field):
     if len(day) == 1:
         day = "0" + day
     return f"{year}-{month}-{day}" if year or month or day else None
+
+
+def is_user_config_admin(request):
+    user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
+    return user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST

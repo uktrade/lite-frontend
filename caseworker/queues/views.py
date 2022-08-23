@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from django.conf import settings
+from django.http import HttpResponseForbidden
 from django.views.generic.edit import CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
@@ -25,6 +26,8 @@ from caseworker.core.constants import (
     SLA_RADIUS,
 )
 from caseworker.core.services import get_user_permissions
+from caseworker.core.helpers import is_user_config_admin
+from caseworker.core.views import handler403
 from caseworker.queues import forms
 from caseworker.queues.services import (
     get_queues,
@@ -134,6 +137,12 @@ class QueuesList(LoginRequiredMixin, TemplateView):
 
 
 class AddQueue(LoginRequiredMixin, SingleFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         self.form = forms.new_queue_form(request)
         self.action = post_queues
@@ -141,6 +150,12 @@ class AddQueue(LoginRequiredMixin, SingleFormView):
 
 
 class EditQueue(LoginRequiredMixin, SingleFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.data = get_queue(request, self.object_pk)
