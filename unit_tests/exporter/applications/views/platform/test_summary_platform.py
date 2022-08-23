@@ -117,6 +117,11 @@ def platform_summary(good_id):
             "product data sheet",
             "Description (optional)",
         ),
+        (
+            "military-use",
+            "No",
+            "Is the product for military use?",
+        ),
     )
 
 
@@ -154,6 +159,7 @@ def test_platform_product_summary_context(
         "is-document-sensitive": "product-document-sensitivity",
         "product-document": "product-document",
         "product-document-description": "product-document",
+        "military-use": "military-use",
     }
 
     summary_with_links = tuple(

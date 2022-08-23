@@ -153,15 +153,10 @@ def software_summary(good_id):
             "Yes",
             "Is the product specially designed or modified for military use?",
         ),
-        (
-            "military-use-details",
-            None,
-            "details of the modifications",
-        ),
     )
 
 
-def _test_software_product_summary_context(
+def test_software_product_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
@@ -181,15 +176,6 @@ def _test_software_product_summary_context(
         "name": "name",
         "is-good-controlled": "control-list-entries",
         "control-list-entries": "control-list-entries",
-        "is-pv-graded": "pv-grading",
-        "pv-grading-prefix": "pv-grading-details",
-        "pv-grading-grading": "pv-grading-details",
-        "pv-grading-suffix": "pv-grading-details",
-        "pv-grading-issuing-authority": "pv-grading-details",
-        "pv-grading-details-reference": "pv-grading-details",
-        "pv-grading-details-date-of-issue": "pv-grading-details",
-        "security-features": "security-features",
-        "security-feature-details": "security-features",
     }
 
     summary_with_links = tuple(

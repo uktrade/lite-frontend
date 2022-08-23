@@ -83,6 +83,8 @@ PLATFORM_FIELDS = (
     "is-document-sensitive",
     "product-document",
     "product-document-description",
+    "military-use",
+    "military-use-details",
 )
 
 SOFTWARE_FIELDS = (

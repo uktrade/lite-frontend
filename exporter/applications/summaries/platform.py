@@ -30,6 +30,8 @@ PLATFORM_SUMMARY_EDIT_LINKS = {
     "is-document-sensitive": "product_document_sensitivity",
     "product-document": "product_document",
     "product-document-description": "product_document",
+    "military-use": "military_use",
+    "military-use-details": "military_use",
 }
 
 

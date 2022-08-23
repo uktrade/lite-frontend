@@ -101,6 +101,24 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
                 "part_number": "",
             },
         ),
+        (
+            "platform_edit_military_use",
+            {
+                "is_military_use": "yes_designed",
+            },
+            {
+                "is_military_use": "yes_designed",
+                "modified_military_use_details": "",
+            },
+        ),
+        (
+            "platform_edit_military_use",
+            {"is_military_use": "yes_modified", "modified_military_use_details": "Modified details"},
+            {
+                "is_military_use": "yes_modified",
+                "modified_military_use_details": "Modified details",
+            },
+        ),
     ),
 )
 def test_edit_platform_post(
@@ -119,7 +137,6 @@ def test_edit_platform_post(
         url,
         data=form_data,
     )
-
     assert response.status_code == 302
     assert response.url == platform_product_summary_url
     assert requests_mock.last_request.json() == expected
@@ -157,6 +174,24 @@ def test_edit_platform_post(
             "platform_edit_part_number",
             {"no_part_number_comments": "No part number"},
             {"no_part_number_comments": "No part number", "part_number_missing": True},
+        ),
+        (
+            "platform_edit_military_use",
+            {
+                "is_military_use": {"key": "yes_designed"},
+            },
+            {
+                "is_military_use": "yes_designed",
+                "modified_military_use_details": None,
+            },
+        ),
+        (
+            "platform_edit_military_use",
+            {"is_military_use": {"key": "yes_modified"}, "modified_military_use_details": "Modified details"},
+            {
+                "is_military_use": "yes_modified",
+                "modified_military_use_details": "Modified details",
+            },
         ),
     ),
 )
