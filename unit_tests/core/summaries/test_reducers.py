@@ -1,5 +1,4 @@
 import pytest
-import uuid
 
 from decimal import Decimal
 
@@ -847,6 +846,10 @@ def test_platform_reducer(mocker):
         "core.summaries.reducers.part_number_reducer",
         return_value=(),
     )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
 
     good = {
         "name": "good-name",
@@ -859,6 +862,7 @@ def test_platform_reducer(mocker):
     mock_uses_information_security_reducer.assert_called_with(good)
     mock_has_product_document_reducer.assert_called_with(good)
     mock_part_number_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
 
 
 @pytest.mark.parametrize(
@@ -990,19 +994,34 @@ def test_design_details_reducer(good, output):
     (
         (
             {
-                "is_military_use": True,
+                "is_military_use": {
+                    "key": "yes_designed",
+                    "value": "Yes, specially designed for military use",
+                },
+            },
+            (("military-use", "yes_designed"),),
+        ),
+        (
+            {
+                "is_military_use": {
+                    "key": "yes_modified",
+                    "value": "Yes, modified for military use",
+                },
                 "modified_military_use_details": "modified military use details",
             },
             (
-                ("military-use", True),
+                ("military-use", "yes_modified"),
                 ("military-use-details", "modified military use details"),
             ),
         ),
         (
             {
-                "is_military_use": False,
+                "is_military_use": {
+                    "key": "no",
+                    "value": "No",
+                },
             },
-            (("military-use", False),),
+            (("military-use", "no"),),
         ),
     ),
 )

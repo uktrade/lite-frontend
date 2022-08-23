@@ -28,7 +28,10 @@ from exporter.goods.forms.common import (
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
 )
-from exporter.goods.forms.goods import ProductUsesInformationSecurityForm
+from exporter.goods.forms.goods import (
+    ProductMilitaryUseForm,
+    ProductUsesInformationSecurityForm,
+)
 from exporter.goods.services import edit_platform
 
 from .constants import AddGoodPlatformSteps
@@ -136,8 +139,15 @@ class PlatformEditUsesInformationSecurity(BasePlatformEditView):
             "information_security_details": self.good["information_security_details"],
         }
 
-    def get_edit_payload(self, form):
-        return get_cleaned_data(form)
+
+class PlatformEditMilitaryUseView(BasePlatformEditView):
+    form_class = ProductMilitaryUseForm
+
+    def get_initial(self):
+        return {
+            "is_military_use": self.good["is_military_use"]["key"],
+            "modified_military_use_details": self.good["modified_military_use_details"],
+        }
 
 
 class BasePlatformEditProductDocumentView(
