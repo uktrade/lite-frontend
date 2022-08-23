@@ -11,6 +11,7 @@ from core.summaries.formatters import (
     document_formatter,
     format_values,
     identity,
+    integer,
     just,
     key_value_formatter,
     mapping_formatter,
@@ -327,3 +328,16 @@ def test_model_choices_formatter(input, output):
 def test_template_formatter():
     formatter = template_formatter("tests/template-formatter.html", lambda val: {"key": val})
     assert formatter("value") == "<p>value</p>\n"
+
+
+@pytest.mark.parametrize(
+    "input,output",
+    (
+        ("1", "1"),
+        (1.0, "1"),
+        (1, "1"),
+        (1.5, "1"),
+    ),
+)
+def test_integer(input, output):
+    assert integer(input) == output
