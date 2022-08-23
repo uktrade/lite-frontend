@@ -53,7 +53,7 @@ def good_on_application(data_standard_case):
     return {
         "id": str(uuid.uuid4()),
         "good": good["good"],
-        "quantity": 3,
+        "quantity": 3.0,
         "value": "16.32",
         "is_onward_exported": True,
         "is_onward_altered_processed": True,
@@ -79,7 +79,7 @@ def good_on_application(data_standard_case):
             "serial_numbers_available": SerialChoices.NOT_AVAILABLE,
             "no_identification_markings_details": "No markings",
             "serial_numbers": ["111", "222", "333"],
-            "number_of_items": 3,
+            "number_of_items": 3.0,
         },
     }
 
