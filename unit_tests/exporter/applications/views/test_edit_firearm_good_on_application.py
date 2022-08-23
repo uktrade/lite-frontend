@@ -9,13 +9,15 @@ from exporter.applications.views.goods.add_good_firearm.views.constants import A
 from exporter.applications.views.goods.add_good_firearm.views.edit import SummaryTypeMixin
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import decompose_date
+from exporter.goods.forms.common import (
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
+    ProductOnwardIncorporatedForm,
+)
 from exporter.goods.forms.firearms import (
     FirearmDeactivationDetailsForm,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
-    FirearmOnwardAlteredProcessedForm,
-    FirearmOnwardExportedForm,
-    FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
@@ -620,7 +622,7 @@ def test_edit_onward_exported_true(
     response = authorized_client.get(edit_onward_exported_url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, FirearmOnwardExportedForm)
+    assert isinstance(form, ProductOnwardExportedForm)
     assert form.initial == {
         "is_onward_exported": True,
     }
@@ -631,7 +633,7 @@ def test_edit_onward_exported_true(
     )
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, FirearmOnwardAlteredProcessedForm)
+    assert isinstance(form, ProductOnwardAlteredProcessedForm)
     assert form.initial == {
         "is_onward_altered_processed": True,
         "is_onward_altered_processed_comments": "I will alter it real good",
@@ -646,7 +648,7 @@ def test_edit_onward_exported_true(
     )
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, FirearmOnwardIncorporatedForm)
+    assert isinstance(form, ProductOnwardIncorporatedForm)
     assert form.initial == {
         "is_onward_incorporated": True,
         "is_onward_incorporated_comments": "I will onward incorporate",
@@ -690,7 +692,7 @@ def test_edit_onward_exported_false(
     response = authorized_client.get(edit_onward_exported_url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, FirearmOnwardExportedForm)
+    assert isinstance(form, ProductOnwardExportedForm)
     assert form.initial == {
         "is_onward_exported": True,
     }
@@ -736,7 +738,7 @@ def test_edit_onward_altered_processed(
 ):
     response = authorized_client.get(edit_onward_altered_url)
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
     assert response.context["form"].initial == {
         "is_onward_altered_processed": True,
         "is_onward_altered_processed_comments": "I will alter it real good",
@@ -786,7 +788,7 @@ def test_edit_onward_incorporated(
 ):
     response = authorized_client.get(edit_onward_incorporated_url)
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
     assert response.context["form"].initial == {
         "is_onward_incorporated": True,
         "is_onward_incorporated_comments": "I will onward incorporate",

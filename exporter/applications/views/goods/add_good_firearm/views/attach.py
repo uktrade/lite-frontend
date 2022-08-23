@@ -27,6 +27,11 @@ from exporter.core.helpers import (
 )
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.goods.forms.common import (
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
+    ProductOnwardIncorporatedForm,
+)
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachShotgunCertificateForm,
@@ -37,9 +42,6 @@ from exporter.goods.forms.firearms import (
     FirearmRFDValidityForm,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
-    FirearmOnwardExportedForm,
-    FirearmOnwardAlteredProcessedForm,
-    FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
@@ -93,9 +95,9 @@ class AttachFirearmToApplication(
         (AttachFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE, FirearmAttachShotgunCertificateForm),
         (AttachFirearmToApplicationSteps.MADE_BEFORE_1938, FirearmMadeBefore1938Form),
         (AttachFirearmToApplicationSteps.YEAR_OF_MANUFACTURE, FirearmYearOfManufactureForm),
-        (AttachFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
-        (AttachFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
-        (AttachFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
+        (AttachFirearmToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AttachFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AttachFirearmToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
         (AttachFirearmToApplicationSteps.IS_DEACTIVATED, FirearmIsDeactivatedForm),
         (AttachFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD, FirearmDeactivationDetailsForm),
         (AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
