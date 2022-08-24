@@ -116,20 +116,6 @@ def get_year_of_manufacture_initial_data(firearm_details):
     }
 
 
-def get_onward_altered_processed_initial_data(firearm_details):
-    return {
-        "is_onward_altered_processed": firearm_details["is_onward_altered_processed"],
-        "is_onward_altered_processed_comments": firearm_details["is_onward_altered_processed_comments"],
-    }
-
-
-def get_onward_incorporated_initial_data(firearm_details):
-    return {
-        "is_onward_incorporated": firearm_details["is_onward_incorporated"],
-        "is_onward_incorporated_comments": firearm_details["is_onward_incorporated_comments"],
-    }
-
-
 def get_is_deactivated_to_standard_initial_data(firearm_details):
     date_of_deactivation = firearm_details["date_of_deactivation"]
     if date_of_deactivation:

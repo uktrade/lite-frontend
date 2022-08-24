@@ -186,7 +186,7 @@ def post_product_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
-def edit_firearm_good_on_application(request, pk, json):
+def edit_good_on_application(request, pk, json):
     response = client.put(request, f"/applications/good-on-application/{pk}/", json)
     response.raise_for_status()
     return response.json(), response.status_code
