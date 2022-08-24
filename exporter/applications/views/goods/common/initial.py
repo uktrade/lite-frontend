@@ -62,3 +62,10 @@ def get_onward_incorporated_initial_data(good_details):
         "is_onward_incorporated": good_details["is_onward_incorporated"],
         "is_onward_incorporated_comments": good_details["is_onward_incorporated_comments"],
     }
+
+
+def get_quantity_and_value_initial_data(good_on_application):
+    return {
+        "number_of_items": int(good_on_application["quantity"]),
+        "value": good_on_application["value"],
+    }

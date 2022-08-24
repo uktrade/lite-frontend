@@ -40,6 +40,7 @@ from exporter.applications.views.goods.common.initial import (
     get_onward_altered_processed_initial_data,
     get_onward_incorporated_initial_data,
     get_pv_grading_details_initial_data,
+    get_quantity_and_value_initial_data,
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
@@ -781,10 +782,7 @@ class FirearmProductOnApplicationSummaryEditQuantityValue(BaseGoodOnApplicationE
     form_class = ProductQuantityAndValueForm
 
     def get_initial(self):
-        return {
-            "number_of_items": int(self.good_on_application["quantity"]),
-            "value": self.good_on_application["value"],
-        }
+        return get_quantity_and_value_initial_data(self.good_on_application)
 
     def get_edit_payload(self, form):
         return get_quantity_and_value_payload(form)
