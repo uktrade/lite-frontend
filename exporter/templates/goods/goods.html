@@ -23,7 +23,7 @@
 	</div>
 
 	{% include 'filters.html' %}
-	
+
 	{% if not filtered and not goods.count %}
 		{% include "includes/notice.html" with text='goods.GoodsList.Count.ORGANISATION_ZERO' %}
 	{% elif not goods.count %}
@@ -87,7 +87,9 @@
 						<td class="govuk-table__cell govuk-table__cell--tight">
 							{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
 								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">View</a>
-							{% else %}
+                            {% elif good.item_category.key == "group1_platform"  %}
+                    		    <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:platform_detail" good.id %}">View</a>
+                            {% else %}
 								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
 							{% endif %}
 						</td>
