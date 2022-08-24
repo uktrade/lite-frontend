@@ -1,8 +1,17 @@
 import logging
 
+from http import HTTPStatus
+
+from django.http import Http404
+from django.shortcuts import redirect
 from django.urls import reverse
 
-from exporter.applications.views.goods.common.conditionals import is_pv_graded
+from core.auth.views import LoginRequiredMixin
+from exporter.applications.services import edit_platform_good_on_application
+from exporter.applications.views.goods.common.conditionals import (
+    is_pv_graded,
+    is_onward_exported,
+)
 from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
     BaseEditName,
@@ -15,16 +24,29 @@ from exporter.applications.views.goods.common.edit import (
     BaseProductEditWizardView,
 )
 from exporter.applications.views.goods.common.initial import (
+    get_is_onward_exported_initial_data,
+    get_onward_altered_processed_initial_data,
+    get_onward_incorporated_initial_data,
     get_pv_grading_initial_data,
     get_pv_grading_details_initial_data,
 )
-from exporter.applications.views.goods.common.mixins import NonFirearmsFlagMixin
+from exporter.applications.views.goods.common.mixins import (
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    NonFirearmsFlagMixin,
+)
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
     ProductEditPVGradingPayloadBuilder,
 )
+from exporter.core.common.decorators import expect_status
+from exporter.core.common.exceptions import ServiceError
+from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
+    ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
 )
@@ -34,7 +56,11 @@ from exporter.goods.forms.goods import (
 )
 from exporter.goods.services import edit_platform
 
-from .constants import AddGoodPlatformSteps
+from .constants import (
+    AddGoodPlatformToApplicationSteps,
+    AddGoodPlatformSteps,
+)
+from .payloads import PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
 
 
 logger = logging.getLogger(__name__)
@@ -176,3 +202,98 @@ class PlatformEditProductDocumentView(
     BasePlatformEditView,
 ):
     pass
+
+
+class SummaryTypeMixin:
+    SUMMARY_TYPES = [
+        "platform-on-application-summary",
+    ]
+
+    def dispatch(self, request, *args, **kwargs):
+        if kwargs["summary_type"] not in self.SUMMARY_TYPES:
+            raise Http404("Not a valid summary type")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_summary_url(self):
+        summary_url_name = self.kwargs["summary_type"].replace("-", "_")
+
+        return reverse(
+            f"applications:{summary_url_name}",
+            kwargs={
+                "pk": self.application["id"],
+                "good_on_application_pk": self.good_on_application["id"],
+            },
+        )
+
+    def get_success_url(self):
+        return self.get_summary_url()
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx["back_link_url"] = self.get_summary_url()
+
+        return ctx
+
+
+class BaseProductOnApplicationSummaryEditWizardView(
+    LoginRequiredMixin,
+    NonFirearmsFlagMixin,
+    SummaryTypeMixin,
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    BaseSessionWizardView,
+):
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
+    def edit_platform_good_on_application(self, request, good_on_application_id, payload):
+        return edit_platform_good_on_application(
+            request,
+            good_on_application_id,
+            payload,
+        )
+
+    def done(self, form_list, form_dict, **kwargs):
+        try:
+            self.edit_platform_good_on_application(
+                self.request,
+                self.good_on_application["id"],
+                self.get_edit_platform_good_on_application_payload(form_dict),
+            )
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return redirect(self.get_success_url())
+
+
+class PlatformOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
+    form_list = [
+        (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
+    ]
+    condition_dict = {
+        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+
+        if step == AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED:
+            initial.update(get_is_onward_exported_initial_data(self.good_on_application))
+
+        if step == AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED:
+            initial.update(get_onward_altered_processed_initial_data(self.good_on_application))
+
+        if step == AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED:
+            initial.update(get_onward_incorporated_initial_data(self.good_on_application))
+
+        return initial
+
+    def get_edit_platform_good_on_application_payload(self, form_dict):
+        return PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)

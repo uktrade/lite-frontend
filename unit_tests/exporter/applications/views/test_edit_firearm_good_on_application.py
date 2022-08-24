@@ -67,12 +67,6 @@ def edit_firearm_certificate_url(application, good_on_application, summary_type)
     return url
 
 
-@pytest.fixture
-def mock_good_on_application_put(requests_mock, good_on_application):
-    url = f"/applications/good-on-application/{good_on_application['id']}/"
-    return requests_mock.put(url, json={})
-
-
 @pytest.mark.parametrize(
     "summary_type",
     SummaryTypeMixin.SUMMARY_TYPES,

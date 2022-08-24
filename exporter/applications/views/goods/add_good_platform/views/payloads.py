@@ -38,3 +38,20 @@ class AddGoodPlatformToApplicationPayloadBuilder(MergingPayloadBuilder):
         AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: get_cleaned_data,
         AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
     }
+
+
+def get_onward_incorporated_payload(form):
+    cleaned_data = get_cleaned_data(form)
+
+    return {
+        "is_good_incorporated": form.cleaned_data["is_onward_incorporated"],
+        **cleaned_data,
+    }
+
+
+class PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
+        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
+        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
+    }

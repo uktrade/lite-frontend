@@ -35,7 +35,12 @@ from exporter.applications.views.goods.common.edit import (
     BaseProductEditView,
     BaseProductEditWizardView,
 )
-from exporter.applications.views.goods.common.initial import get_pv_grading_details_initial_data
+from exporter.applications.views.goods.common.initial import (
+    get_is_onward_exported_initial_data,
+    get_onward_altered_processed_initial_data,
+    get_onward_incorporated_initial_data,
+    get_pv_grading_details_initial_data,
+)
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -105,8 +110,6 @@ from .initial import (
     get_firearm_act_1968_initial_data,
     get_is_covered_by_section_5_initial_data,
     get_is_deactivated_to_standard_initial_data,
-    get_onward_altered_processed_initial_data,
-    get_onward_incorporated_initial_data,
     get_serial_numbers_initial_data,
     get_year_of_manufacture_initial_data,
 )
@@ -707,7 +710,7 @@ class FirearmProductOnApplicationSummaryEditOnwardExported(BaseProductOnApplicat
         initial = super().get_form_initial(step)
 
         if step == AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED:
-            initial["is_onward_exported"] = self.good_on_application["firearm_details"]["is_onward_exported"]
+            initial.update(get_is_onward_exported_initial_data(self.good_on_application["firearm_details"]))
 
         if step == AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED:
             initial.update(get_onward_altered_processed_initial_data(self.good_on_application["firearm_details"]))
