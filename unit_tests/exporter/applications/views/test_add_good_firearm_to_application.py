@@ -11,15 +11,17 @@ from core import client
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
 from exporter.core.helpers import decompose_date
+from exporter.goods.forms.common import (
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
+    ProductOnwardIncorporatedForm,
+)
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachShotgunCertificateForm,
     FirearmCategoryForm,
     FirearmDeactivationDetailsForm,
     FirearmIsDeactivatedForm,
-    FirearmOnwardExportedForm,
-    FirearmOnwardAlteredProcessedForm,
-    FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
     FirearmYearOfManufactureForm,
     FirearmSerialIdentificationMarkingsForm,
@@ -95,7 +97,7 @@ def test_add_firearm_to_application_product_not_made_before_1938_step(
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert isinstance(response.context["form"], ProductOnwardExportedForm)
 
 
 def test_add_firearm_to_application_year_of_manufacture_step(goto_step, post_to_step):
@@ -110,7 +112,7 @@ def test_add_firearm_to_application_year_of_manufacture_step(goto_step, post_to_
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert isinstance(response.context["form"], ProductOnwardExportedForm)
 
 
 def test_add_firearm_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
@@ -191,7 +193,7 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert isinstance(response.context["form"], ProductOnwardExportedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
@@ -199,7 +201,7 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
@@ -207,7 +209,7 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
@@ -386,7 +388,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert isinstance(response.context["form"], ProductOnwardExportedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
@@ -394,7 +396,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
@@ -402,7 +404,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
@@ -551,7 +553,7 @@ def test_firearm_category_made_before_1938_end_to_end(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert isinstance(response.context["form"], ProductOnwardExportedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
@@ -559,7 +561,7 @@ def test_firearm_category_made_before_1938_end_to_end(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
@@ -567,7 +569,7 @@ def test_firearm_category_made_before_1938_end_to_end(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
@@ -690,7 +692,7 @@ def test_add_firearm_to_application_end_to_end_handles_service_error(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardExportedForm)
+    assert isinstance(response.context["form"], ProductOnwardExportedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
@@ -698,7 +700,7 @@ def test_add_firearm_to_application_end_to_end_handles_service_error(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
@@ -706,7 +708,7 @@ def test_add_firearm_to_application_end_to_end_handles_service_error(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
