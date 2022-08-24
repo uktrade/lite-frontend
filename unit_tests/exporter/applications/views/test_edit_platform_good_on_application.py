@@ -198,6 +198,55 @@ def test_edit_onward_altered_processed(
 
 
 @pytest.fixture
+def edit_onward_incorporated_url(application, good_on_application, summary_type):
+    url = reverse(
+        "applications:platform_on_application_summary_edit_onward_incorporated",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
+        },
+    )
+    return url
+
+
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
+def test_edit_onward_incorporated(
+    authorized_client,
+    edit_onward_incorporated_url,
+    product_on_application_summary_url_factory,
+    mock_good_on_application_put,
+    summary_type,
+):
+    response = authorized_client.get(edit_onward_incorporated_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
+    assert response.context["form"].initial == {
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "I will onward incorporate",
+    }
+
+    response = authorized_client.post(
+        edit_onward_incorporated_url,
+        data={
+            "is_onward_incorporated": True,
+            "is_onward_incorporated_comments": "Incorporated",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url_factory(summary_type)
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "Incorporated",
+        "is_good_incorporated": True,
+    }
+
+
+@pytest.fixture
 def edit_quantity_value_url(application, good_on_application, summary_type):
     url = reverse(
         "applications:platform_on_application_summary_edit_quantity_value",

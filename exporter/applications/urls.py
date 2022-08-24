@@ -87,6 +87,7 @@ from exporter.applications.views.goods.add_good_platform.views.edit import (
     PlatformEditUsesInformationSecurity,
     PlatformOnApplicationSummaryEditOnwardAltered,
     PlatformOnApplicationSummaryEditOnwardExported,
+    PlatformOnApplicationSummaryEditOnwardIncorporated,
     PlatformOnApplicationSummaryEditQuantityValue,
 )
 from exporter.applications.views.goods.add_good_platform.views.summary import (
@@ -461,6 +462,11 @@ urlpatterns = [
         "<uuid:pk>/goods/platform/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
         PlatformOnApplicationSummaryEditOnwardAltered.as_view(),
         name="platform_on_application_summary_edit_onward_altered",
+    ),
+    path(
+        "<uuid:pk>/goods/platform/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
+        PlatformOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        name="platform_on_application_summary_edit_onward_incorporated",
     ),
     path(
         "<uuid:pk>/goods/platform/<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
