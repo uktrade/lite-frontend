@@ -3,6 +3,7 @@ from django.urls import path
 
 from exporter.goods import views
 from exporter.goods.firearms.views import FirearmProductDetails
+from exporter.goods.platform.views import PlatformProductDetails
 
 app_name = "goods"
 urlpatterns = [
@@ -52,7 +53,9 @@ urlpatterns = [
     path("firearm/<uuid:pk>/", FirearmProductDetails.as_view(), name="firearm_detail"),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
+    path("platform/<uuid:pk>/", PlatformProductDetails.as_view(), name="platform_detail"),
 ]
+
 
 if settings.FEATURE_FLAG_FIREARMS_ENABLED:
     urlpatterns += [
