@@ -113,3 +113,36 @@ def test_edit_onward_exported_true(
         "is_onward_incorporated_comments": "Incorporated",
         "is_good_incorporated": True,
     }
+
+
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
+def test_edit_onward_exported_false(
+    authorized_client,
+    edit_onward_exported_url,
+    post_to_step_onward_exported,
+    product_on_application_summary_url_factory,
+    mock_good_on_application_put,
+    summary_type,
+):
+    response = authorized_client.get(edit_onward_exported_url)
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, ProductOnwardExportedForm)
+    assert form.initial == {
+        "is_onward_exported": True,
+    }
+
+    response = post_to_step_onward_exported(
+        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED,
+        data={"is_onward_exported": False},
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url_factory(summary_type)
+
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "is_onward_exported": False,
+    }

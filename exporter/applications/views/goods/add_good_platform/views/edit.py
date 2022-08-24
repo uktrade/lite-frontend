@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
-from exporter.applications.services import edit_platform_good_on_application
+from exporter.applications.services import edit_good_on_application
 from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_onward_exported,
@@ -251,7 +251,7 @@ class BaseProductOnApplicationSummaryEditWizardView(
         "Unexpected error updating product",
     )
     def edit_platform_good_on_application(self, request, good_on_application_id, payload):
-        return edit_platform_good_on_application(
+        return edit_good_on_application(
             request,
             good_on_application_id,
             payload,

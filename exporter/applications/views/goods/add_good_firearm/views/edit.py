@@ -18,7 +18,7 @@ from core.constants import (
 )
 
 from exporter.applications.services import (
-    edit_firearm_good_on_application,
+    edit_good_on_application,
     get_application_documents,
 )
 from exporter.applications.views.goods.common.conditionals import (
@@ -547,7 +547,7 @@ class BaseGoodOnApplicationEditView(
         "Unexpected error updating firearm",
     )
     def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
-        return edit_firearm_good_on_application(
+        return edit_good_on_application(
             request,
             good_on_application_id,
             payload,
@@ -645,7 +645,7 @@ class BaseProductOnApplicationSummaryEditWizardView(
         "Unexpected error updating firearm",
     )
     def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
-        return edit_firearm_good_on_application(
+        return edit_good_on_application(
             request,
             good_on_application_id,
             payload,
