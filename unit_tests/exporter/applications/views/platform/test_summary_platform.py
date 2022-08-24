@@ -224,6 +224,8 @@ def test_platform_on_application_summary_context(
 
     url_map = {
         "is-onward-exported": "onward-exported",
+        "is-altered": "onward-altered",
+        "is-altered-comments": "onward-altered",
     }
 
     platform_on_application_summary_with_links = tuple(

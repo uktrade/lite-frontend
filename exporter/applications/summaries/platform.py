@@ -91,6 +91,8 @@ def platform_product_on_application_summary(good_on_application):
 
 PLATFORM_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
     "is-onward-exported": "onward_exported",
+    "is-altered": "onward_altered",
+    "is-altered-comments": "onward_altered",
 }
 
 

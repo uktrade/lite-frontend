@@ -146,3 +146,51 @@ def test_edit_onward_exported_false(
     assert mock_good_on_application_put.last_request.json() == {
         "is_onward_exported": False,
     }
+
+
+@pytest.fixture
+def edit_onward_altered_url(application, good_on_application, summary_type):
+    url = reverse(
+        "applications:platform_on_application_summary_edit_onward_altered",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
+        },
+    )
+    return url
+
+
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
+def test_edit_onward_altered_processed(
+    authorized_client,
+    edit_onward_altered_url,
+    product_on_application_summary_url_factory,
+    mock_good_on_application_put,
+    summary_type,
+):
+    response = authorized_client.get(edit_onward_altered_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
+    assert response.context["form"].initial == {
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "I will alter it real good",
+    }
+
+    response = authorized_client.post(
+        edit_onward_altered_url,
+        data={
+            "is_onward_altered_processed": True,
+            "is_onward_altered_processed_comments": "Altered",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url_factory(summary_type)
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "Altered",
+    }

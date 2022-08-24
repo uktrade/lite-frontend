@@ -2,9 +2,13 @@ import logging
 
 from http import HTTPStatus
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.generic import FormView
+
+from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 from exporter.applications.services import edit_good_on_application
@@ -297,3 +301,62 @@ class PlatformOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSum
 
     def get_edit_platform_good_on_application_payload(self, form_dict):
         return PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
+
+
+class BasePlatformOnApplicationEditView(
+    LoginRequiredMixin,
+    NonFirearmsFlagMixin,
+    SummaryTypeMixin,
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    FormView,
+):
+    template_name = "core/form.html"
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating platform",
+        "Unexpected error updating platform",
+    )
+    def edit_platform_good_on_application(self, request, good_on_application_id, payload):
+        return edit_good_on_application(
+            request,
+            good_on_application_id,
+            payload,
+        )
+
+    def perform_actions(self, form):
+        self.edit_platform_good_on_application(
+            self.request,
+            self.good_on_application["id"],
+            self.get_edit_payload(form),
+        )
+
+    def handle_service_error(self, service_error):
+        logger.error(
+            service_error.log_message,
+            service_error.status_code,
+            service_error.response,
+            exc_info=True,
+        )
+        if settings.DEBUG:
+            raise service_error
+        return error_page(self.request, service_error.user_message)
+
+    def form_valid(self, form):
+        try:
+            self.perform_actions(form)
+        except ServiceError as e:
+            return self.handle_service_error(e)
+
+        return super().form_valid(form)
+
+    def get_edit_payload(self, form):
+        return get_cleaned_data(form)
+
+
+class PlatformOnApplicationSummaryEditOnwardAltered(BasePlatformOnApplicationEditView):
+    form_class = ProductOnwardAlteredProcessedForm
+
+    def get_initial(self):
+        return get_onward_altered_processed_initial_data(self.good_on_application)
