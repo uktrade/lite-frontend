@@ -57,6 +57,9 @@ from exporter.core.helpers import (
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
+    ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
 )
@@ -70,9 +73,6 @@ from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
-    FirearmOnwardAlteredProcessedForm,
-    FirearmOnwardExportedForm,
-    FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
@@ -694,9 +694,9 @@ class FirearmProductOnApplicationSummaryEditYearOfManufacture(BaseGoodOnApplicat
 
 class FirearmProductOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
     form_list = [
-        (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
-        (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
-        (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
     ]
     condition_dict = {
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
@@ -722,14 +722,14 @@ class FirearmProductOnApplicationSummaryEditOnwardExported(BaseProductOnApplicat
 
 
 class FirearmProductOnApplicationSummaryEditOnwardAltered(BaseGoodOnApplicationEditView):
-    form_class = FirearmOnwardAlteredProcessedForm
+    form_class = ProductOnwardAlteredProcessedForm
 
     def get_initial(self):
         return get_onward_altered_processed_initial_data(self.good_on_application["firearm_details"])
 
 
 class FirearmProductOnApplicationSummaryEditOnwardIncorporated(BaseGoodOnApplicationEditView):
-    form_class = FirearmOnwardIncorporatedForm
+    form_class = ProductOnwardIncorporatedForm
 
     def get_initial(self):
         return get_onward_incorporated_initial_data(self.good_on_application["firearm_details"])
