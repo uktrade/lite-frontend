@@ -31,6 +31,7 @@ from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -42,7 +43,6 @@ from exporter.goods.forms.firearms import (
     FirearmRFDValidityForm,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
-    FirearmQuantityAndValueForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
 )
@@ -100,7 +100,7 @@ class AttachFirearmToApplication(
         (AttachFirearmToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
         (AttachFirearmToApplicationSteps.IS_DEACTIVATED, FirearmIsDeactivatedForm),
         (AttachFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD, FirearmDeactivationDetailsForm),
-        (AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
         (AttachFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, FirearmSerialIdentificationMarkingsForm),
         (AttachFirearmToApplicationSteps.SERIAL_NUMBERS, FirearmSerialNumbersForm),
     ]

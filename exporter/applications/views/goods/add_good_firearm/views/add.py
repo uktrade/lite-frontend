@@ -38,6 +38,7 @@ from exporter.goods.forms.common import (
     ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -55,7 +56,6 @@ from exporter.goods.forms.firearms import (
     FirearmSection5Form,
     FirearmMadeBefore1938Form,
     FirearmYearOfManufactureForm,
-    FirearmQuantityAndValueForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
 )
@@ -384,7 +384,7 @@ class AddGoodFirearmToApplication(
         (AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
         (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED, FirearmIsDeactivatedForm),
         (AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD, FirearmDeactivationDetailsForm),
-        (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
         (AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING, FirearmSerialIdentificationMarkingsForm),
         (AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS, FirearmSerialNumbersForm),
     ]

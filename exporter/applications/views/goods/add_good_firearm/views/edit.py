@@ -67,6 +67,7 @@ from exporter.goods.forms.common import (
     ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -78,7 +79,6 @@ from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
-    FirearmQuantityAndValueForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmSection5Form,
@@ -778,7 +778,7 @@ class FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard(BaseGoodOnAp
 
 
 class FirearmProductOnApplicationSummaryEditQuantityValue(BaseGoodOnApplicationEditView):
-    form_class = FirearmQuantityAndValueForm
+    form_class = ProductQuantityAndValueForm
 
     def get_initial(self):
         return {
