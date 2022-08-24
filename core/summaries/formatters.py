@@ -138,6 +138,10 @@ def money_formatter(val):
     return f"£{val:.2f}"
 
 
+def integer(val):
+    return str(int(val))
+
+
 def model_choices_formatter(model_choice):
     def _model_choices_formatter(val):
         return model_choice[val].label
@@ -299,6 +303,7 @@ PLATFORM_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
+    "number-of-items": integer,
     "total-value": money_formatter,
 }
 

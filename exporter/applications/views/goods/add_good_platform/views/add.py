@@ -20,14 +20,14 @@ from exporter.goods.forms.common import (
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductNameForm,
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
+    ProductOnwardIncorporatedForm,
+    ProductPartNumberForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
-    ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
-    FirearmOnwardExportedForm,
-    FirearmOnwardAlteredProcessedForm,
-    FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
 )
 from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
@@ -187,9 +187,9 @@ class AddGoodPlatformToApplication(
     BaseSessionWizardView,
 ):
     form_list = [
-        (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
+        (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
         (AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
     ]
 

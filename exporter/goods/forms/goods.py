@@ -13,6 +13,7 @@ from django.db import models
 from core.builtins.custom_tags import default_na, linkify
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
 from exporter.core.common.forms import TextChoice, coerce_str_to_bool
+from exporter.core.constants import PRODUCT_CATEGORY_PLATFORM
 
 from exporter.core.constants import (
     ProductSecurityFeatures,
@@ -270,8 +271,10 @@ def delete_good_form(good):
     back_link = reverse("goods:good", kwargs={"pk": good["id"]})
     if settings.FEATURE_FLAG_PRODUCT_2_0:
         try:
-            if good["firearm_details"]["type"]["key"] == "firearms":
+            if good["firearm_details"] and good["firearm_details"]["type"]["key"] == "firearms":
                 back_link = reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
+            elif good["item_category"]["key"] == PRODUCT_CATEGORY_PLATFORM:
+                back_link = reverse("goods:platform_detail", kwargs={"pk": good["id"]})
         except KeyError:
             pass
 

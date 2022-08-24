@@ -195,7 +195,7 @@ def platform_on_application_summary():
             "I will onward incorporate",
             "Describe what you are incorporating the product into",
         ),
-        ("number-of-items", 3, "Number of items"),
+        ("number-of-items", "3", "Number of items"),
         ("total-value", "£16.32", "Total value"),
     )
 

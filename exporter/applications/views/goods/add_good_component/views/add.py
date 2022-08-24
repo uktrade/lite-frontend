@@ -15,19 +15,19 @@ from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductNameForm,
-    ProductControlListEntryForm,
+    ProductOnwardExportedForm,
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardIncorporatedForm,
     ProductPVGradingForm,
     ProductPVGradingDetailsForm,
     ProductPartNumberForm,
 )
 from exporter.goods.forms.firearms import (
-    FirearmOnwardExportedForm,
-    FirearmOnwardAlteredProcessedForm,
-    FirearmOnwardIncorporatedForm,
     FirearmQuantityAndValueForm,
 )
 from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
@@ -183,9 +183,9 @@ class AddGoodComponentToApplication(
     BaseSessionWizardView,
 ):
     form_list = [
-        (AddGoodComponentToApplicationSteps.ONWARD_EXPORTED, FirearmOnwardExportedForm),
-        (AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED, FirearmOnwardAlteredProcessedForm),
-        (AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED, FirearmOnwardIncorporatedForm),
+        (AddGoodComponentToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
         (AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
     ]
 

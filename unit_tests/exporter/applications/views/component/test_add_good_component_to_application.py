@@ -7,11 +7,11 @@ from core import client
 from pytest_django.asserts import assertInHTML
 
 from exporter.applications.views.goods.add_good_component.views.constants import AddGoodComponentToApplicationSteps
-from exporter.goods.forms.firearms import (
-    FirearmOnwardAlteredProcessedForm,
-    FirearmOnwardIncorporatedForm,
-    FirearmQuantityAndValueForm,
+from exporter.goods.forms.common import (
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardIncorporatedForm,
 )
+from exporter.goods.forms.firearms import FirearmQuantityAndValueForm
 
 
 @pytest.fixture(autouse=True)
@@ -88,7 +88,7 @@ def test_add_component_to_application_end_to_end(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
         AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED,
@@ -96,7 +96,7 @@ def test_add_component_to_application_end_to_end(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
         AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED,
@@ -154,7 +154,7 @@ def test_add_component_to_application_end_to_end_handles_service_error(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardAlteredProcessedForm)
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
         AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED,
@@ -162,7 +162,7 @@ def test_add_component_to_application_end_to_end_handles_service_error(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmOnwardIncorporatedForm)
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
         AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED,
