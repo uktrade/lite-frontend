@@ -112,7 +112,7 @@ class BaseMaterialEditWizardView(
         return reverse("applications:material_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_pk, payload):
-        return edit_Material(self.request, good_pk, payload)
+        return edit_material(self.request, good_pk, payload)
 
 
 class MaterialEditPVGrading(BaseMaterialEditWizardView):
