@@ -39,7 +39,7 @@ def test_is_good_firearm_view_raise_404(authorized_client, application_pk, post_
 @pytest.mark.parametrize(
     "data, post_url",
     (
-        ({"is_firearm_product": True}, "new_good_firearm"),
+        ({"is_firearm_product": True}, "new_good"),
         ({"is_firearm_product": False}, "non_firearm_category"),
     ),
 )
