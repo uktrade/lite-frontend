@@ -226,9 +226,9 @@ class ProductPartNumberForm(BaseForm):
     class Layout:
         TITLE = "Do you have the part number?"
 
-    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
+    part_number = forms.CharField(required=False, label="")
 
-    part_number = forms.CharField(required=False)
+    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
 
     no_part_number_comments = forms.CharField(
         widget=forms.Textarea,
@@ -244,15 +244,29 @@ class ProductPartNumberForm(BaseForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        error_message = "Enter the part number or select that you do not have a part number"
 
         part_number_missing = cleaned_data.get("part_number_missing")
         part_number = cleaned_data.get("part_number")
         no_part_number_comments = cleaned_data.get("no_part_number_comments")
-        if not part_number_missing and not part_number:
-            self.add_error("part_number", error_message)
-        elif part_number_missing and not no_part_number_comments:
-            self.add_error("part_number_missing", error_message)
+
+        mutually_exclusive_error_message = "Enter the part number or select that you do not have a part number"
+
+        if not part_number and not part_number_missing:
+            self.add_error(
+                "part_number",
+                mutually_exclusive_error_message,
+            )
+        elif part_number and part_number_missing:
+            self.add_error(
+                "part_number_missing",
+                mutually_exclusive_error_message,
+            )
+        elif not part_number and part_number_missing and not no_part_number_comments:
+            self.add_error(
+                "no_part_number_comments",
+                "Enter a reason why you do not have a part number",
+            )
+
         return cleaned_data
 
 

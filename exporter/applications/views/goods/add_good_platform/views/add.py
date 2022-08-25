@@ -90,6 +90,7 @@ class AddGoodPlatform(
 
         if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
+
         return kwargs
 
     def has_product_documentation(self):
@@ -121,7 +122,7 @@ class AddGoodPlatform(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:new_good",
+            "applications:non_firearm_category",
             kwargs={
                 "pk": self.kwargs["pk"],
             },
