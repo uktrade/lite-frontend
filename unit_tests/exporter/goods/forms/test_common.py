@@ -9,6 +9,9 @@ from exporter.goods.forms.common import (
     ProductPVGradingDetailsForm,
     ProductNameForm,
     ProductControlListEntryForm,
+    ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
+    ProductOnwardIncorporatedForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
     ProductQuantityAndValueForm,
@@ -22,7 +25,7 @@ from exporter.goods.forms.common import (
         ({"name": ["TEST NAME"]}, True, {}),
     ),
 )
-def test_product_form(data, is_valid, errors):
+def test_product_form_validation(data, is_valid, errors):
     form = ProductNameForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -49,7 +52,7 @@ def test_product_control_list_entry_form_init_control_list_entries(request_with_
         ({"is_good_controlled": False}, True, {}),
     ),
 )
-def test_product_control_list_entry_form(data, is_valid, errors, request_with_session, control_list_entries):
+def test_product_control_list_entry_form_validation(data, is_valid, errors, request_with_session, control_list_entries):
     form = ProductControlListEntryForm(data=data, request=request_with_session)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -63,7 +66,7 @@ def test_product_control_list_entry_form(data, is_valid, errors, request_with_se
         ({"is_pv_graded": False}, True, {}),
     ),
 )
-def test_product_pv_security_gradings_form(data, is_valid, errors):
+def test_product_pv_security_gradings_form_validation(data, is_valid, errors):
     form = ProductPVGradingForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -116,7 +119,7 @@ def test_product_pv_security_gradings_form(data, is_valid, errors):
         ),
     ),
 )
-def test_product_part_number_form(data, is_valid, errors):
+def test_product_part_number_form_validation(data, is_valid, errors):
     form = ProductPartNumberForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -246,7 +249,7 @@ def pv_gradings(requests_mock):
         ),
     ),
 )
-def test_product_pv_security_grading_details_form(data, is_valid, errors, request_with_session, pv_gradings):
+def test_product_pv_security_grading_details_form_validation(data, is_valid, errors, request_with_session, pv_gradings):
     form = ProductPVGradingDetailsForm(data=data, request=request_with_session)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -269,7 +272,7 @@ def test_product_pv_security_grading_details_form(data, is_valid, errors, reques
         ),
     ),
 )
-def test_firearm_document_availability_form(data, is_valid, errors):
+def test_firearm_document_availability_form_validation(data, is_valid, errors):
     form = ProductDocumentAvailabilityForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -283,7 +286,7 @@ def test_firearm_document_availability_form(data, is_valid, errors):
         ({"is_document_sensitive": False}, True, {}),
     ),
 )
-def test_firearm_document_sensitivity_form(data, is_valid, errors):
+def test_firearm_document_sensitivity_form_validation(data, is_valid, errors):
     form = ProductDocumentSensitivityForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -307,7 +310,7 @@ def test_firearm_document_sensitivity_form(data, is_valid, errors):
         ),
     ),
 )
-def test_firearm_product_document_upload_form(data, files, is_valid, errors):
+def test_firearm_product_document_upload_form_validation(data, files, is_valid, errors):
     form = ProductDocumentUploadForm(data=data, files=files)
     assert form.is_valid() == is_valid
     assert form.errors == errors
@@ -355,7 +358,139 @@ def test_firearm_product_document_upload_form(data, files, is_valid, errors):
         ),
     ),
 )
-def test_product_quantity_and_value(data, is_valid, errors):
+def test_product_quantity_and_value_form_validation(data, is_valid, errors):
     form = ProductQuantityAndValueForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {"is_onward_exported": ["Select yes if the product will be onward exported to additional countries"]},
+        ),
+        (
+            {"is_onward_exported": True},
+            True,
+            {},
+        ),
+        (
+            {"is_onward_exported": False},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_onward_exported_form_validation(data, is_valid, errors):
+    form = ProductOnwardExportedForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "is_onward_altered_processed": [
+                    "Select yes if the item will be altered or processed before it is exported again"
+                ]
+            },
+        ),
+        (
+            {"is_onward_altered_processed": True},
+            False,
+            {"is_onward_altered_processed_comments": ["Enter how the product will be altered or processed"]},
+        ),
+        (
+            {"is_onward_altered_processed": False},
+            True,
+            {},
+        ),
+        (
+            {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "Onward altered"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_onward_altered_processed_form_validation(data, is_valid, errors):
+    form = ProductOnwardAlteredProcessedForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, cleaned_data",
+    (
+        (
+            {"is_onward_altered_processed": False},
+            {
+                "is_onward_altered_processed": False,
+                "is_onward_altered_processed_comments": "",
+            },
+        ),
+    ),
+)
+def test_product_onward_altered_processed_form_cleaned_data(data, cleaned_data):
+    form = ProductOnwardAlteredProcessedForm(data=data)
+    assert form.is_valid()
+    assert form.cleaned_data == cleaned_data
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "is_onward_incorporated": [
+                    "Select yes if the product will be incorporated into another item before it is onward exported"
+                ]
+            },
+        ),
+        (
+            {"is_onward_incorporated": True},
+            False,
+            {"is_onward_incorporated_comments": ["Enter a description of what you are incorporating the product into"]},
+        ),
+        (
+            {"is_onward_incorporated": False},
+            True,
+            {},
+        ),
+        (
+            {"is_onward_incorporated": True, "is_onward_incorporated_comments": "Onward incorporated"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_onward_incorporated_form_validation(data, is_valid, errors):
+    form = ProductOnwardIncorporatedForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, cleaned_data",
+    (
+        (
+            {"is_onward_incorporated": False},
+            {
+                "is_onward_incorporated": False,
+                "is_onward_incorporated_comments": "",
+            },
+        ),
+    ),
+)
+def test_product_onward_incorporated_form_cleaned_data(data, cleaned_data):
+    form = ProductOnwardIncorporatedForm(data=data)
+    assert form.is_valid()
+    assert form.cleaned_data == cleaned_data
