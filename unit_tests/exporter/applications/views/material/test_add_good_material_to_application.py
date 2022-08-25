@@ -6,7 +6,7 @@ from django.urls import reverse
 from core import client
 from pytest_django.asserts import assertInHTML
 
-from exporter.applications.views.goods.add_good_component.views.constants import AddGoodComponentToApplicationSteps
+from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardIncorporatedForm,
@@ -20,10 +20,10 @@ def setup(mock_application_get, mock_good_get, no_op_storage):
 
 
 @pytest.fixture
-def new_component_to_application_url(application):
+def new_material_to_application_url(application):
     good = application["goods"][0]["good"]
     return reverse(
-        "applications:new_good_component_to_application",
+        "applications:new_good_material_to_application",
         kwargs={
             "pk": application["id"],
             "good_pk": good["id"],
@@ -39,17 +39,17 @@ def expected_good_data(application):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, new_component_to_application_url):
-    return goto_step_factory(new_component_to_application_url)
+def goto_step(goto_step_factory, new_material_to_application_url):
+    return goto_step_factory(new_material_to_application_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, new_component_to_application_url):
-    return post_to_step_factory(new_component_to_application_url)
+def post_to_step(post_to_step_factory, new_material_to_application_url):
+    return post_to_step_factory(new_material_to_application_url)
 
 
 @pytest.fixture(autouse=True)
@@ -60,10 +60,10 @@ def mock_get_document(requests_mock, expected_good_data):
     )
 
 
-def test_add_component_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
-    goto_step(AddGoodComponentToApplicationSteps.ONWARD_EXPORTED)
+def test_add_material_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
+    goto_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": False},
     )
 
@@ -71,7 +71,7 @@ def test_add_component_to_application_onward_exported_step_not_onward_export(got
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
 
-def test_add_component_to_application_end_to_end(
+def test_add_material_to_application_end_to_end(
     requests_mock,
     expected_good_data,
     mock_good_on_application_post,
@@ -82,7 +82,7 @@ def test_add_component_to_application_end_to_end(
 ):
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -90,7 +90,7 @@ def test_add_component_to_application_end_to_end(
     assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
     assert response.status_code == 200
@@ -98,7 +98,7 @@ def test_add_component_to_application_end_to_end(
     assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
     assert response.status_code == 200
@@ -106,13 +106,13 @@ def test_add_component_to_application_end_to_end(
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE,
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
         {"number_of_items": "2", "value": "16.32"},
     )
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:component_on_application_summary",
+        "applications:material_on_application_summary",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["good"]["id"],
@@ -133,7 +133,7 @@ def test_add_component_to_application_end_to_end(
     }
 
 
-def test_add_component_to_application_end_to_end_handles_service_error(
+def test_add_material_to_application_end_to_end_handles_service_error(
     requests_mock,
     expected_good_data,
     application,
@@ -148,7 +148,7 @@ def test_add_component_to_application_end_to_end_handles_service_error(
     requests_mock.post(url=url, json={"errors": ["Failed to post"]}, status_code=400)
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -156,7 +156,7 @@ def test_add_component_to_application_end_to_end_handles_service_error(
     assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
     assert response.status_code == 200
@@ -164,7 +164,7 @@ def test_add_component_to_application_end_to_end_handles_service_error(
     assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
     assert response.status_code == 200
@@ -172,13 +172,13 @@ def test_add_component_to_application_end_to_end_handles_service_error(
     assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
 
     response = post_to_step(
-        AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE,
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
         {"number_of_items": "2", "value": "16.32"},
     )
 
     assert response.status_code == 200
-    assertInHTML("Unexpected error adding component to application", str(response.content))
+    assertInHTML("Unexpected error adding material to application", str(response.content))
     assert len(caplog.records) == 1
     log = caplog.records[0]
-    assert log.message == "Error adding component to application - response was: 400 - {'errors': ['Failed to post']}"
+    assert log.message == "Error adding material to application - response was: 400 - {'errors': ['Failed to post']}"
     assert log.levelno == logging.ERROR

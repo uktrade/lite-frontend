@@ -6,7 +6,7 @@ from django.urls import reverse
 
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
 
 
 @pytest.fixture
@@ -14,28 +14,28 @@ def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]
 
 
-def test_platform_summary_response_status_code(
+def test_material_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_product_summary_url,
+    material_product_summary_url,
 ):
-    response = authorized_client.get(platform_product_summary_url)
+    response = authorized_client.get(material_product_summary_url)
     assert response.status_code == 200
 
 
-def test_platform_summary_template_used(
+def test_material_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_product_summary_url,
+    material_product_summary_url,
 ):
-    response = authorized_client.get(platform_product_summary_url)
-    assertTemplateUsed(response, "applications/goods/platform/product-summary.html")
+    response = authorized_client.get(material_product_summary_url)
+    assertTemplateUsed(response, "applications/goods/material/product-summary.html")
 
 
 @pytest.fixture
-def platform_summary(good_id):
+def material_summary(good_id):
     return (
         (
             "name",
@@ -125,21 +125,21 @@ def platform_summary(good_id):
     )
 
 
-def test_platform_product_summary_context(
+def test_material_product_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_product_summary_url,
-    platform_summary,
+    material_product_summary_url,
+    material_summary,
     data_standard_case,
     good_id,
 ):
-    response = authorized_client.get(platform_product_summary_url)
+    response = authorized_client.get(material_product_summary_url)
 
     def _get_test_url(name):
         if not name:
             return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/platform/edit/{name}/'
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/material/edit/{name}/'
 
     url_map = {
         "name": "name",
@@ -163,14 +163,14 @@ def test_platform_product_summary_context(
     }
 
     summary_with_links = tuple(
-        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in platform_summary
+        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in material_summary
     )
     assert response.context["summary"] == summary_with_links
 
 
-def test_platform_product_on_application_summary_response_status_code(
+def test_material_product_on_application_summary_response_status_code(
     authorized_client,
-    platform_on_application_summary_url,
+    material_on_application_summary_url,
     mock_application_get,
     mock_good_get,
     mock_good_on_application_get,
@@ -179,12 +179,12 @@ def test_platform_product_on_application_summary_response_status_code(
     requests_mock,
 ):
 
-    response = authorized_client.get(platform_on_application_summary_url)
+    response = authorized_client.get(material_on_application_summary_url)
     assert response.status_code == 200
 
 
 @pytest.fixture
-def platform_on_application_summary():
+def material_on_application_summary():
     return (
         ("is-onward-exported", "Yes", "Will the product be onward exported to any additional countries?"),
         ("is-altered", "Yes", "Will the item be altered or processed before it is exported again?"),
@@ -200,9 +200,9 @@ def platform_on_application_summary():
     )
 
 
-def test_platform_on_application_summary_context(
+def test_material_on_application_summary_context(
     authorized_client,
-    platform_on_application_summary_url,
+    material_on_application_summary_url,
     mock_application_get,
     mock_good_get,
     mock_good_on_application_get,
@@ -210,15 +210,15 @@ def test_platform_on_application_summary_context(
     good,
     good_on_application,
     requests_mock,
-    platform_summary,
-    platform_on_application_summary,
+    material_summary,
+    material_on_application_summary,
 ):
 
-    response = authorized_client.get(platform_on_application_summary_url)
+    response = authorized_client.get(material_on_application_summary_url)
     context = response.context
 
     assert context["application"] == application
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
-    assert context["product_summary"] == platform_summary
-    assert context["product_on_application_summary"] == platform_on_application_summary
+    assert context["product_summary"] == material_summary
+    assert context["product_on_application_summary"] == material_on_application_summary

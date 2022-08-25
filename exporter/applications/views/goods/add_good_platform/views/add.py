@@ -37,7 +37,6 @@ from exporter.applications.services import post_platform_good_on_application
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
-    NonFirearmsFlagMixin,
 )
 from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
@@ -55,14 +54,14 @@ from .payloads import (
     AddGoodPlatformPayloadBuilder,
     AddGoodPlatformToApplicationPayloadBuilder,
 )
-
+from .mixins import NonFirearmsPlatformFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodPlatform(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
     ProductUsesInformationSecurityForm,
@@ -181,7 +180,7 @@ class AddGoodPlatform(
 
 class AddGoodPlatformToApplication(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,

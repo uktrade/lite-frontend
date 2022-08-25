@@ -9,7 +9,7 @@ from core import client
 
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED = True
 
 
 @pytest.fixture
