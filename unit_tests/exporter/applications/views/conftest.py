@@ -98,6 +98,12 @@ def mock_good_on_application_get(requests_mock, good_on_application):
 
 
 @pytest.fixture
+def mock_good_on_application_put(requests_mock, good_on_application):
+    url = f"/applications/good-on-application/{good_on_application['id']}/"
+    return requests_mock.put(url, json={})
+
+
+@pytest.fixture
 def mock_control_list_entries_get(requests_mock):
     url = client._build_absolute_uri(f"/static/control-list-entries/")
     return requests_mock.get(url=url, json={"control_list_entries": [{"rating": "ML1a"}, {"rating": "ML22b"}]})

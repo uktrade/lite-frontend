@@ -36,3 +36,36 @@ def get_pv_grading_details_initial_data(good):
         if pv_grading_details["date_of_issue"]
         else None,
     }
+
+
+def get_is_onward_exported_initial_data(good_details):
+    # The `good_details` could be the `good_on_application` or the `firearm_details` as the onward exported fields are
+    # currently in both as we are transitioning them from one model `FirearmDetails`` to the other `GoodOnApplication`.
+    return {
+        "is_onward_exported": good_details["is_onward_exported"],
+    }
+
+
+def get_onward_altered_processed_initial_data(good_details):
+    # The `good_details` could be the `good_on_application` or the `firearm_details` as the onward exported fields are
+    # currently in both as we are transitioning them from one model `FirearmDetails`` to the other `GoodOnApplication`.
+    return {
+        "is_onward_altered_processed": good_details["is_onward_altered_processed"],
+        "is_onward_altered_processed_comments": good_details["is_onward_altered_processed_comments"],
+    }
+
+
+def get_onward_incorporated_initial_data(good_details):
+    # The `good_details` could be the `good_on_application` or the `firearm_details` as the onward exported fields are
+    # currently in both as we are transitioning them from one model `FirearmDetails`` to the other `GoodOnApplication`.
+    return {
+        "is_onward_incorporated": good_details["is_onward_incorporated"],
+        "is_onward_incorporated_comments": good_details["is_onward_incorporated_comments"],
+    }
+
+
+def get_quantity_and_value_initial_data(good_on_application):
+    return {
+        "number_of_items": int(good_on_application["quantity"]),
+        "value": good_on_application["value"],
+    }

@@ -18,7 +18,7 @@ from core.constants import (
 )
 
 from exporter.applications.services import (
-    edit_firearm_good_on_application,
+    edit_good_on_application,
     get_application_documents,
 )
 from exporter.applications.views.goods.common.conditionals import (
@@ -35,7 +35,13 @@ from exporter.applications.views.goods.common.edit import (
     BaseProductEditView,
     BaseProductEditWizardView,
 )
-from exporter.applications.views.goods.common.initial import get_pv_grading_details_initial_data
+from exporter.applications.views.goods.common.initial import (
+    get_is_onward_exported_initial_data,
+    get_onward_altered_processed_initial_data,
+    get_onward_incorporated_initial_data,
+    get_pv_grading_details_initial_data,
+    get_quantity_and_value_initial_data,
+)
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -62,6 +68,7 @@ from exporter.goods.forms.common import (
     ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -73,7 +80,6 @@ from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
-    FirearmQuantityAndValueForm,
     FirearmRegisteredFirearmsDealerForm,
     FirearmReplicaForm,
     FirearmSection5Form,
@@ -105,8 +111,6 @@ from .initial import (
     get_firearm_act_1968_initial_data,
     get_is_covered_by_section_5_initial_data,
     get_is_deactivated_to_standard_initial_data,
-    get_onward_altered_processed_initial_data,
-    get_onward_incorporated_initial_data,
     get_serial_numbers_initial_data,
     get_year_of_manufacture_initial_data,
 )
@@ -544,7 +548,7 @@ class BaseGoodOnApplicationEditView(
         "Unexpected error updating firearm",
     )
     def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
-        return edit_firearm_good_on_application(
+        return edit_good_on_application(
             request,
             good_on_application_id,
             payload,
@@ -642,7 +646,7 @@ class BaseProductOnApplicationSummaryEditWizardView(
         "Unexpected error updating firearm",
     )
     def edit_firearm_good_on_application(self, request, good_on_application_id, payload):
-        return edit_firearm_good_on_application(
+        return edit_good_on_application(
             request,
             good_on_application_id,
             payload,
@@ -707,7 +711,7 @@ class FirearmProductOnApplicationSummaryEditOnwardExported(BaseProductOnApplicat
         initial = super().get_form_initial(step)
 
         if step == AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED:
-            initial["is_onward_exported"] = self.good_on_application["firearm_details"]["is_onward_exported"]
+            initial.update(get_is_onward_exported_initial_data(self.good_on_application["firearm_details"]))
 
         if step == AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED:
             initial.update(get_onward_altered_processed_initial_data(self.good_on_application["firearm_details"]))
@@ -775,13 +779,10 @@ class FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard(BaseGoodOnAp
 
 
 class FirearmProductOnApplicationSummaryEditQuantityValue(BaseGoodOnApplicationEditView):
-    form_class = FirearmQuantityAndValueForm
+    form_class = ProductQuantityAndValueForm
 
     def get_initial(self):
-        return {
-            "number_of_items": int(self.good_on_application["quantity"]),
-            "value": self.good_on_application["value"],
-        }
+        return get_quantity_and_value_initial_data(self.good_on_application)
 
     def get_edit_payload(self, form):
         return get_quantity_and_value_payload(form)
