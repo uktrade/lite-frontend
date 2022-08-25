@@ -40,7 +40,7 @@ class ProductNameForm(BaseForm):
         return (
             HTML.p(
                 "Try to match the name as closely as possible to any documentation such as the technical "
-                "specification, end user certificate or Product certificate.",
+                "specification, end user certificate or firearm certificate.",
             ),
             "name",
             HTML.details(
