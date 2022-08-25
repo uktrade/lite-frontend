@@ -365,6 +365,21 @@ class PlatformOnApplicationSummaryEditOnwardAltered(BasePlatformOnApplicationEdi
         return get_onward_altered_processed_initial_data(self.good_on_application)
 
 
+class PlatformOnApplicationSummaryEditOnwardIncorporated(BasePlatformOnApplicationEditView):
+    form_class = ProductOnwardIncorporatedForm
+
+    def get_initial(self):
+        return get_onward_incorporated_initial_data(self.good_on_application)
+
+    def get_edit_payload(self, form):
+        cleaned_data = super().get_edit_payload(form)
+
+        return {
+            "is_good_incorporated": form.cleaned_data["is_onward_incorporated"],
+            **cleaned_data,
+        }
+
+
 class PlatformOnApplicationSummaryEditQuantityValue(BasePlatformOnApplicationEditView):
     form_class = ProductQuantityAndValueForm
 
