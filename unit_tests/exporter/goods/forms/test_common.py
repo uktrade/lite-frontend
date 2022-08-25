@@ -82,7 +82,12 @@ def test_product_pv_security_gradings_form(data, is_valid, errors):
         (
             {"part_number_missing": True},
             False,
-            {"part_number_missing": ["Enter the part number or select that you do not have a part number"]},
+            {"no_part_number_comments": ["Enter a reason why you do not have a part number"]},
+        ),
+        (
+            {"part_number_missing": True, "no_part_number_comments": ""},
+            False,
+            {"no_part_number_comments": ["Enter a reason why you do not have a part number"]},
         ),
         (
             {"part_number_missing": True, "part_number": "abc12345"},
