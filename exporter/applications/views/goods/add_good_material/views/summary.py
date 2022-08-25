@@ -9,7 +9,9 @@ from exporter.applications.summaries.material import (
     add_material_summary_edit_links,
     material_summary,
     MATERIAL_SUMMARY_EDIT_LINKS,
+    MATERIAL_ON_APPLICATION_SUMMARY_EDIT_LINKS,
     material_product_on_application_summary,
+    add_material_on_application_summary_edit_links,
 )
 from exporter.core.helpers import get_organisation_documents
 
@@ -37,23 +39,29 @@ class BaseMaterialOnApplicationSummary(
         product_on_application_summary = material_product_on_application_summary(
             self.good_on_application,
         )
+        product_on_application_summary = add_material_on_application_summary_edit_links(
+            product_on_application_summary,
+            MATERIAL_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            self.application,
+            self.good_on_application,
+            self.summary_type,
+        )
         return product_on_application_summary
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         return {
             **context,
             "application": self.application,
             "good": self.good,
             "good_on_application": self.good_on_application,
-            "product_summary": self.get_Materials_summary(),
+            "product_summary": self.get_material_summary(),
             "product_on_application_summary": self.get_material_on_application_summary(),
         }
 
 
 class MaterialProductOnApplicationSummary(BaseMaterialOnApplicationSummary):
-    summary_type = "Material-on-application-summary"
+    summary_type = "material-on-application-summary"
 
 
 class MaterialProductSummary(

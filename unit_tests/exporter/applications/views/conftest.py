@@ -342,7 +342,7 @@ def material_on_application_summary_url_factory(application, good_on_application
 
 @pytest.fixture
 def material_on_application_summary_url(material_on_application_summary_url_factory):
-    return material_on_application_summary_url_factory("platform-on-application-summary")
+    return material_on_application_summary_url_factory("material-on-application-summary")
 
 
 @pytest.fixture

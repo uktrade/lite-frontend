@@ -170,15 +170,14 @@ def test_material_product_summary_context(
 
 def test_material_product_on_application_summary_response_status_code(
     authorized_client,
-    material_on_application_summary_url,
     mock_application_get,
+    material_on_application_summary_url,
     mock_good_get,
     mock_good_on_application_get,
     application,
     good_id,
     requests_mock,
 ):
-
     response = authorized_client.get(material_on_application_summary_url)
     assert response.status_code == 200
 
@@ -217,8 +216,28 @@ def test_material_on_application_summary_context(
     response = authorized_client.get(material_on_application_summary_url)
     context = response.context
 
+    def _get_test_url(name):
+        if not name:
+            return None
+        return f"/applications/{application['id']}/goods/material/{good_on_application['id']}/material-on-application-summary/edit/{name}/"
+
+    url_map = {
+        "is-onward-exported": "onward-exported",
+        "is-altered": "onward-altered",
+        "is-altered-comments": "onward-altered",
+        "is-incorporated": "onward-incorporated",
+        "is-incorporated-comments": "onward-incorporated",
+        "number-of-items": "quantity-value",
+        "total-value": "quantity-value",
+    }
+
+    material_on_application_summary_with_links = tuple(
+        (key, value, label, _get_test_url(url_map.get(key, None)))
+        for key, value, label in material_on_application_summary
+    )
+
     assert context["application"] == application
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
     assert context["product_summary"] == material_summary
-    assert context["product_on_application_summary"] == material_on_application_summary
+    assert context["product_on_application_summary"] == material_on_application_summary_with_links

@@ -85,5 +85,57 @@ def material_summary(good):
     )
 
 
+MATERIAL_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
+    "is-onward-exported": "onward_exported",
+    "is-altered": "onward_altered",
+    "is-altered-comments": "onward_altered",
+    "is-incorporated": "onward_incorporated",
+    "is-incorporated-comments": "onward_incorporated",
+    "number-of-items": "quantity_value",
+    "total-value": "quantity_value",
+}
+
+
+def get_material_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
+    def get_edit_link(name):
+        return reverse(
+            f"applications:material_on_application_summary_edit_{name}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+                "summary_type": summary_type,
+            },
+        )
+
+    return get_edit_link
+
+
 def material_product_on_application_summary(good_on_application):
     return core_material_product_on_application_summary(good_on_application)
+
+
+def add_material_on_application_summary_edit_links(
+    summary,
+    edit_links,
+    application,
+    good_on_application,
+    summary_type,
+):
+    get_edit_link = get_material_on_application_summary_edit_link_factory(
+        application,
+        good_on_application,
+        summary_type,
+    )
+
+    summary_with_edit_links = ()
+    for key, value, *rest in summary:
+        try:
+            edit_link_key = edit_links[key]
+        except KeyError:
+            edit_link = None
+        else:
+            edit_link = get_edit_link(edit_link_key)
+
+        summary_with_edit_links += ((key, value, *rest, edit_link),)
+
+    return summary_with_edit_links

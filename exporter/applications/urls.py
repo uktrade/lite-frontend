@@ -110,6 +110,10 @@ from exporter.applications.views.goods.add_good_material.views.edit import (
     MaterialEditPVGrading,
     MaterialEditPVGradingDetails,
     MaterialEditUsesInformationSecurity,
+    MaterialOnApplicationSummaryEditOnwardExported,
+    MaterialOnApplicationSummaryEditOnwardAltered,
+    MaterialOnApplicationSummaryEditOnwardIncorporated,
+    MaterialOnApplicationSummaryEditQuantityValue,
 )
 from exporter.applications.views.goods.add_good_component.views.add import (
     AddGoodComponent,
@@ -573,6 +577,26 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/material/edit/military-use/",
         MaterialEditMilitaryUseView.as_view(),
         name="material_edit_military_use",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-exported/",
+        MaterialOnApplicationSummaryEditOnwardExported.as_view(),
+        name="material_on_application_summary_edit_onward_exported",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
+        MaterialOnApplicationSummaryEditOnwardAltered.as_view(),
+        name="material_on_application_summary_edit_onward_altered",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
+        MaterialOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        name="material_on_application_summary_edit_onward_incorporated",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
+        MaterialOnApplicationSummaryEditQuantityValue.as_view(),
+        name="material_on_application_summary_edit_quantity_value",
     ),
     # Software product and non-firearm
     path("<uuid:pk>/goods/add-new/software/", AddGoodSoftware.as_view(), name="new_good_software"),
