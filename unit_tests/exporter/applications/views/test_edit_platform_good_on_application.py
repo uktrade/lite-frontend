@@ -9,6 +9,7 @@ from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
+    ProductQuantityAndValueForm,
 )
 
 
@@ -193,4 +194,53 @@ def test_edit_onward_altered_processed(
     assert mock_good_on_application_put.last_request.json() == {
         "is_onward_altered_processed": True,
         "is_onward_altered_processed_comments": "Altered",
+    }
+
+
+@pytest.fixture
+def edit_quantity_value_url(application, good_on_application, summary_type):
+    url = reverse(
+        "applications:platform_on_application_summary_edit_quantity_value",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["id"],
+            "summary_type": summary_type,
+        },
+    )
+    return url
+
+
+@pytest.mark.parametrize(
+    "summary_type",
+    SummaryTypeMixin.SUMMARY_TYPES,
+)
+def test_edit_quantity_value(
+    authorized_client,
+    edit_quantity_value_url,
+    product_on_application_summary_url_factory,
+    mock_good_on_application_put,
+    summary_type,
+):
+    response = authorized_client.get(edit_quantity_value_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
+    assert response.context["form"].initial == {
+        "number_of_items": 3,
+        "value": "16.32",
+    }
+
+    response = authorized_client.post(
+        edit_quantity_value_url,
+        data={
+            "number_of_items": 20,
+            "value": "20.22",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == product_on_application_summary_url_factory(summary_type)
+    assert mock_good_on_application_put.called_once
+    assert mock_good_on_application_put.last_request.json() == {
+        "quantity": 20,
+        "unit": "NAR",
+        "value": "20.22",
     }

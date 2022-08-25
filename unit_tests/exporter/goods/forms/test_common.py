@@ -11,6 +11,7 @@ from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
+    ProductQuantityAndValueForm,
 )
 
 
@@ -303,5 +304,53 @@ def test_firearm_document_sensitivity_form(data, is_valid, errors):
 )
 def test_firearm_product_document_upload_form(data, files, is_valid, errors):
     form = ProductDocumentUploadForm(data=data, files=files)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"number_of_items": ["Enter the number of items"], "value": ["Enter the total value"]}),
+        (
+            {"number_of_items": "not a number", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be a number, like 16"]},
+        ),
+        (
+            {"number_of_items": "1.5", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be a number, like 16"]},
+        ),
+        (
+            {"number_of_items": "0", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be 1 or more"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "not a number"},
+            False,
+            {"value": ["Total value must be a number, like 16.32"]},
+        ),
+        ({"number_of_items": "1", "value": "0"}, False, {"value": ["Total value must be 0.01 or more"]}),
+        (
+            {"number_of_items": "1", "value": "16.12345"},
+            False,
+            {"value": ["Total value must not be more than 2 decimals"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "16"},
+            True,
+            {},
+        ),
+        (
+            {"number_of_items": "1", "value": "16.32"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_quantity_and_value(data, is_valid, errors):
+    form = ProductQuantityAndValueForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

@@ -33,6 +33,7 @@ from exporter.applications.views.goods.common.initial import (
     get_onward_incorporated_initial_data,
     get_pv_grading_initial_data,
     get_pv_grading_details_initial_data,
+    get_quantity_and_value_initial_data,
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
@@ -42,6 +43,7 @@ from exporter.applications.views.goods.common.mixins import (
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
+    get_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
 from exporter.core.common.decorators import expect_status
@@ -53,6 +55,7 @@ from exporter.goods.forms.common import (
     ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.goods import (
     ProductMilitaryUseForm,
@@ -360,3 +363,13 @@ class PlatformOnApplicationSummaryEditOnwardAltered(BasePlatformOnApplicationEdi
 
     def get_initial(self):
         return get_onward_altered_processed_initial_data(self.good_on_application)
+
+
+class PlatformOnApplicationSummaryEditQuantityValue(BasePlatformOnApplicationEditView):
+    form_class = ProductQuantityAndValueForm
+
+    def get_initial(self):
+        return get_quantity_and_value_initial_data(self.good_on_application)
+
+    def get_edit_payload(self, form):
+        return get_quantity_and_value_payload(form)

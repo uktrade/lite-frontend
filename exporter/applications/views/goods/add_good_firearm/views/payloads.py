@@ -13,6 +13,7 @@ from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_payload,
     get_pv_grading_details_payload,
+    get_quantity_and_value_payload as common_get_quantity_and_value_payload,
 )
 from exporter.goods.forms.firearms import (
     FirearmFirearmAct1968Form,
@@ -125,12 +126,10 @@ def get_deactivation_details_payload(form):
 
 def get_quantity_and_value_payload(form):
     return {
-        "unit": "NAR",
-        "quantity": form.cleaned_data["number_of_items"],
-        "value": str(form.cleaned_data["value"]),
         "firearm_details": {
             "number_of_items": form.cleaned_data["number_of_items"],
         },
+        **common_get_quantity_and_value_payload(form),
     }
 
 

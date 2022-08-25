@@ -13,12 +13,12 @@ from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmDeactivationDetailsForm,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
-    FirearmQuantityAndValueForm,
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
     FirearmYearOfManufactureForm,
@@ -990,7 +990,7 @@ def test_edit_quantity_value(
 ):
     response = authorized_client.get(edit_quantity_value_url)
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
     assert response.context["form"].initial == {
         "number_of_items": 3,
         "value": "16.32",

@@ -14,6 +14,7 @@ from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
@@ -22,7 +23,6 @@ from exporter.goods.forms.firearms import (
     FirearmDeactivationDetailsForm,
     FirearmIsDeactivatedForm,
     FirearmMadeBefore1938Form,
-    FirearmQuantityAndValueForm,
     FirearmRFDInvalidForm,
     FirearmRFDValidityForm,
     FirearmSerialIdentificationMarkingsForm,
@@ -231,7 +231,7 @@ def test_attach_firearm_to_application_end_to_end_no_category_no_firearm_certifi
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE,
@@ -379,7 +379,7 @@ def test_attach_firearm_to_application_end_to_end_rfd_valid(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE,
@@ -588,7 +588,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE,
@@ -778,7 +778,7 @@ def test_attach_firearm_to_application_end_to_end_section_5_good_with_section_5_
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE,
@@ -960,7 +960,7 @@ def test_attach_firearm_to_application_end_to_end_section_5_good_without_section
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE,
@@ -1143,7 +1143,7 @@ def test_attach_firearm_to_application_end_to_end_section_5_good_without_section
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE,

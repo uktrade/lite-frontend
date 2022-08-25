@@ -93,6 +93,8 @@ PLATFORM_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
     "is-onward-exported": "onward_exported",
     "is-altered": "onward_altered",
     "is-altered-comments": "onward_altered",
+    "number-of-items": "quantity_value",
+    "total-value": "quantity_value",
 }
 
 

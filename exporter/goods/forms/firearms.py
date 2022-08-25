@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from crispy_forms_gds.layout import Field, HTML
 
 from django import forms
@@ -15,7 +13,6 @@ from core.forms.layouts import (
     ConditionalCheckbox,
     ConditionalQuestion,
     ConditionalRadios,
-    Prefixed,
 )
 
 from exporter.core.common.forms import BaseForm, TextChoice, coerce_str_to_bool
@@ -597,39 +594,6 @@ class FirearmDeactivationDetailsForm(BaseForm):
             cleaned_data["not_deactivated_to_standard_comments"] = ""
 
         return cleaned_data
-
-
-class FirearmQuantityAndValueForm(BaseForm):
-    class Layout:
-        TITLE = "Quantity and value"
-
-    number_of_items = forms.IntegerField(
-        error_messages={
-            "invalid": "Number of items must be a number, like 16",
-            "required": "Enter the number of items",
-            "min_value": "Number of items must be 1 or more",
-        },
-        min_value=1,
-        widget=forms.TextInput,
-    )
-    value = forms.DecimalField(
-        decimal_places=2,
-        error_messages={
-            "invalid": "Total value must be a number, like 16.32",
-            "required": "Enter the total value",
-            "max_decimal_places": "Total value must not be more than 2 decimals",
-            "min_value": "Total value must be 0.01 or more",
-        },
-        label="Total value",
-        min_value=Decimal("0.01"),
-        widget=forms.TextInput,
-    )
-
-    def get_layout_fields(self):
-        return (
-            Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
-            Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
-        )
 
 
 class FirearmSerialIdentificationMarkingsForm(BaseForm):

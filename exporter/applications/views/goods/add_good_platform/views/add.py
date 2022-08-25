@@ -26,9 +26,7 @@ from exporter.goods.forms.common import (
     ProductPartNumberForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
-)
-from exporter.goods.forms.firearms import (
-    FirearmQuantityAndValueForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
@@ -190,7 +188,7 @@ class AddGoodPlatformToApplication(
         (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
         (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
         (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
-        (AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
     ]
 
     condition_dict = {

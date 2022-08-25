@@ -10,8 +10,8 @@ from exporter.applications.views.goods.add_good_component.views.constants import
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardIncorporatedForm,
+    ProductQuantityAndValueForm,
 )
-from exporter.goods.forms.firearms import FirearmQuantityAndValueForm
 
 
 @pytest.fixture(autouse=True)
@@ -69,7 +69,7 @@ def test_add_component_to_application_onward_exported_step_not_onward_export(got
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
 
 def test_add_component_to_application_end_to_end(
@@ -104,7 +104,7 @@ def test_add_component_to_application_end_to_end(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE,
@@ -170,7 +170,7 @@ def test_add_component_to_application_end_to_end_handles_service_error(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE,
