@@ -226,9 +226,9 @@ class ProductPartNumberForm(BaseForm):
     class Layout:
         TITLE = "Do you have the part number?"
 
-    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
+    part_number = forms.CharField(required=False, label="")
 
-    part_number = forms.CharField(required=False)
+    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
 
     no_part_number_comments = forms.CharField(
         widget=forms.Textarea,
