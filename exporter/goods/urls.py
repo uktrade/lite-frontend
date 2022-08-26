@@ -4,6 +4,7 @@ from django.urls import path
 from exporter.goods import views
 from exporter.goods.firearms.views import FirearmProductDetails
 from exporter.goods.platform.views import PlatformProductDetails
+from exporter.goods.materials.views import MaterialProductDetails
 
 app_name = "goods"
 urlpatterns = [
@@ -54,6 +55,7 @@ urlpatterns = [
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
     path("platform/<uuid:pk>/", PlatformProductDetails.as_view(), name="platform_detail"),
+    path("material/<uuid:pk>/", MaterialProductDetails.as_view(), name="material_detail"),
 ]
 
 
