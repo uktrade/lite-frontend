@@ -236,8 +236,10 @@ def test_add_good_platform_no_pv(
     new_good_platform_url,
     mock_application_get,
     control_list_entries,
+    pv_gradings,
     post_to_step,
     post_goods_matcher,
+    post_good_document_matcher,
 ):
     authorized_client.get(new_good_platform_url)
 
@@ -271,7 +273,15 @@ def test_add_good_platform_no_pv(
     )
     post_to_step(
         AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
-        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+        {"is_document_available": True},
+    )
+    post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        {"is_document_sensitive": False},
+    )
+    post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
     )
     response = post_to_step(
         AddGoodPlatformSteps.PRODUCT_MILITARY_USE,
@@ -297,8 +307,9 @@ def test_add_good_platform_no_pv(
         "is_pv_graded": "no",
         "uses_information_security": False,
         "information_security_details": "",
-        "is_document_available": False,
-        "no_document_comments": "product not manufactured yet",
+        "is_document_available": True,
+        "is_document_sensitive": False,
+        "no_document_comments": "",
         "is_military_use": "no",
         "modified_military_use_details": "",
         "no_part_number_comments": "no part number",
