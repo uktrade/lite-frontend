@@ -27,8 +27,9 @@ from exporter.goods.forms.common import (
     ProductPVGradingDetailsForm,
     ProductPartNumberForm,
     ProductQuantityAndValueForm,
+    ProductUsesInformationSecurityForm,
 )
-from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
+from exporter.goods.forms.goods import ProductMilitaryUseForm
 
 from exporter.goods.services import post_component, post_good_documents
 from exporter.applications.services import post_product_good_on_application
