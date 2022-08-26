@@ -19,6 +19,7 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductMilitaryUseForm,
     ProductNameForm,
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
@@ -31,7 +32,6 @@ from exporter.goods.forms.common import (
 from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
     ProductSecurityFeaturesForm,
-    ProductMilitaryUseForm,
     ProductDesignDetailsForm,
 )
 from exporter.goods.services import post_software, post_good_documents

@@ -3,17 +3,18 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.goods.forms.common import (
+    ProductControlListEntryForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductPVGradingDetailsForm,
+    ProductMilitaryUseForm,
     ProductNameForm,
-    ProductControlListEntryForm,
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
-    ProductPVGradingForm,
     ProductPartNumberForm,
+    ProductPVGradingDetailsForm,
+    ProductPVGradingForm,
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
 )
@@ -533,5 +534,46 @@ def test_product_onward_incorporated_form_cleaned_data(data, cleaned_data):
 )
 def test_product_uses_information_security_form_validation(data, is_valid, errors):
     form = ProductUsesInformationSecurityForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {"is_military_use": ["Select if the product is specially designed or modified for military use"]},
+        ),
+        (
+            {"is_military_use": "yes_modified"},
+            False,
+            {"modified_military_use_details": ["Enter details of modifications"]},
+        ),
+        (
+            {"is_military_use": "yes_modified", "modified_military_use_details": ""},
+            False,
+            {"modified_military_use_details": ["Enter details of modifications"]},
+        ),
+        (
+            {"is_military_use": "yes_designed"},
+            True,
+            {},
+        ),
+        (
+            {"is_military_use": "yes_modified", "modified_military_use_details": "Details"},
+            True,
+            {},
+        ),
+        (
+            {"is_military_use": "no"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_military_use_form_validation(data, is_valid, errors):
+    form = ProductMilitaryUseForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

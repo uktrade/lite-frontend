@@ -74,5 +74,5 @@ def test_platform_product_details_context(
             "Upload a document that shows what your product is designed to do",
         ),
         ("product-document-description", "product data sheet", "Description (optional)"),
-        ("military-use", "No", "Is the product for military use?"),
+        ("military-use", "No", "Is the product specially designed or modified for military use?"),
     )

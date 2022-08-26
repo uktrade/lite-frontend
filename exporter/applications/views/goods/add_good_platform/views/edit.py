@@ -49,6 +49,7 @@ from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
+    ProductMilitaryUseForm,
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
@@ -57,7 +58,6 @@ from exporter.goods.forms.common import (
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
 )
-from exporter.goods.forms.goods import ProductMilitaryUseForm
 from exporter.goods.services import edit_platform
 
 from .constants import (
