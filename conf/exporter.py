@@ -106,7 +106,8 @@ if any(
     ]
 ):
     FEATURE_FLAG_NON_FIREARMS_ENABLED = True
-
+else:
+    FEATURE_FLAG_NON_FIREARMS_ENABLED = False
 
 if "redis" in VCAP_SERVICES:
     REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
