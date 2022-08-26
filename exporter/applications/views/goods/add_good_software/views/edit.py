@@ -10,7 +10,6 @@ from exporter.applications.views.goods.common.initial import (
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
-    NonFirearmsFlagMixin,
 )
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from exporter.goods.forms.common import (
@@ -18,11 +17,12 @@ from exporter.goods.forms.common import (
     ProductNameForm,
 )
 from exporter.goods.services import edit_software
+from .mixins import NonFirearmsSoftwareFlagMixin
 
 
 class BaseEditView(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodMixin,
     FormView,

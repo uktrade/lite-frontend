@@ -38,7 +38,6 @@ from exporter.applications.views.goods.common.initial import (
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodOnApplicationMixin,
-    NonFirearmsFlagMixin,
 )
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
@@ -66,13 +65,13 @@ from .constants import (
     AddGoodPlatformSteps,
 )
 from .payloads import PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
-
+from .mixins import NonFirearmsPlatformFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     BaseProductEditView,
 ):
     def get_success_url(self):
@@ -103,7 +102,7 @@ class PlatformEditPartNumberView(
 
 
 class BasePlatformEditWizardView(
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
@@ -244,7 +243,7 @@ class SummaryTypeMixin:
 
 class BaseProductOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -306,7 +305,7 @@ class PlatformOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSum
 
 class BasePlatformOnApplicationEditView(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
