@@ -95,7 +95,7 @@ def material_summary(good_id):
         (
             "uses-information-security",
             "No",
-            "Is the product designed to employ 'information security' features?",
+            "Does the product include security features to protect information?",
         ),
         (
             "has-product-document",
