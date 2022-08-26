@@ -424,6 +424,14 @@ def part_number_reducer(good):
 def platform_reducer(good):
     summary = (
         (
+            "is-firearm-product",
+            False,
+        ),
+        (
+            "product-category",
+            "platform",
+        ),
+        (
             "name",
             good["name"],
         ),

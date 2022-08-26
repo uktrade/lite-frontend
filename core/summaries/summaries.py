@@ -69,6 +69,8 @@ FIREARM_FIELDS = (
 )
 
 PLATFORM_FIELDS = (
+    "is-firearm-product",
+    "product-category",
     "name",
     "is-good-controlled",
     "control-list-entries",

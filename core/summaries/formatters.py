@@ -53,6 +53,8 @@ FIREARM_LABELS = {
 }
 
 PLATFORM_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "product-category": "Select the product category",
     "name": "Give the product a descriptive name",
     "is-good-controlled": "Do you know the product's control list entry?",
     "control-list-entries": "Enter the control list entry",
@@ -301,6 +303,12 @@ FIREARM_ON_APPLICATION_LABELS = {
 
 
 PLATFORM_VALUE_FORMATTERS = {
+    "is-firearm-product": yesno,
+    "product-category": mapping_formatter(
+        {
+            "platform": "It's a complete product",
+        }
+    ),
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("I do not have a part number"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
