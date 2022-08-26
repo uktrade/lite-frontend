@@ -867,7 +867,11 @@ def test_platform_reducer(mocker):
         "name": "good-name",
     }
     result = platform_reducer(good)
-    assert result == (("name", "good-name"),)
+    assert result == (
+        ("is-firearm-product", False),
+        ("product-category", "platform"),
+        ("name", "good-name"),
+    )
 
     mock_is_good_controlled_reducer.assert_called_with(good)
     mock_is_pv_graded_reducer.assert_called_with(good)
