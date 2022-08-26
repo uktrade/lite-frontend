@@ -10,12 +10,12 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductMilitaryUseForm,
     ProductPVGradingForm,
     ProductPVGradingDetailsForm,
     ProductPartNumberForm,
     ProductUsesInformationSecurityForm,
 )
-from exporter.goods.forms.goods import ProductMilitaryUseForm
 
 
 @pytest.fixture(autouse=True)

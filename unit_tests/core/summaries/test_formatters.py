@@ -303,25 +303,43 @@ class TextChoice(models.TextChoices):
     C = "C", "This is c"
 
 
+class DifferingNameAndValueTextChoice(models.TextChoices):
+    FOO = "different", "foo"
+    BAR = "another", "bar"
+
+
 @pytest.mark.parametrize(
-    "input,output",
+    "enum_type,input,output",
     (
         (
+            TextChoice,
             TextChoice.A,
             TextChoice.A.label,
         ),
         (
+            TextChoice,
             TextChoice.B,
             TextChoice.B.label,
         ),
         (
+            TextChoice,
             TextChoice.C,
             TextChoice.C.label,
         ),
+        (
+            DifferingNameAndValueTextChoice,
+            DifferingNameAndValueTextChoice.FOO,
+            DifferingNameAndValueTextChoice.FOO.label,
+        ),
+        (
+            DifferingNameAndValueTextChoice,
+            DifferingNameAndValueTextChoice.BAR,
+            DifferingNameAndValueTextChoice.BAR.label,
+        ),
     ),
 )
-def test_model_choices_formatter(input, output):
-    formatter = model_choices_formatter(TextChoice)
+def test_model_choices_formatter(enum_type, input, output):
+    formatter = model_choices_formatter(enum_type)
     assert formatter(input) == output
 
 

@@ -10,6 +10,7 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductMilitaryUseForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
@@ -17,7 +18,6 @@ from exporter.goods.forms.common import (
 from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
     ProductDesignDetailsForm,
-    ProductMilitaryUseForm,
     ProductSecurityFeaturesForm,
 )
 
