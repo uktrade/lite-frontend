@@ -14,6 +14,10 @@ from core.summaries.formatters import (
     SOFTWARE_VALUE_FORMATTERS,
     SOFTWARE_ON_APPLICATION_FORMATTERS,
     SOFTWARE_ON_APPLICATION_LABELS,
+    MATERIAL_LABELS,
+    MATERIAL_VALUE_FORMATTERS,
+    MATERIAL_ON_APPLICATION_FORMATTERS,
+    MATERIAL_ON_APPLICATION_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
@@ -22,6 +26,8 @@ from core.summaries.reducers import (
     platform_reducer,
     software_on_application_reducer,
     software_reducer,
+    material_reducer,
+    material_on_application_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -63,6 +69,31 @@ FIREARM_FIELDS = (
 )
 
 PLATFORM_FIELDS = (
+    "name",
+    "is-good-controlled",
+    "control-list-entries",
+    "part-number",
+    "has-part-number",
+    "no-part-number-comments",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "uses-information-security",
+    "uses-information-security-details",
+    "has-product-document",
+    "no-product-document-explanation",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+    "military-use",
+    "military-use-details",
+)
+
+MATERIAL_FIELDS = (
     "name",
     "is-good-controlled",
     "control-list-entries",
@@ -227,6 +258,50 @@ def platform_product_on_application_summary(good_on_application, additional_form
     summary = pick_fields(summary, PLATFORM_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, PLATFORM_ON_APPLICATION_LABELS)
+
+    return summary
+
+
+MATERIAL_ON_APPLICATION_FIELDS = (
+    "is-onward-exported",
+    "is-altered",
+    "is-altered-comments",
+    "is-incorporated",
+    "is-incorporated-comments",
+    "number-of-items",
+    "total-value",
+)
+
+
+def material_summary(good, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = material_reducer(good)
+    formatters = {
+        **MATERIAL_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, PLATFORM_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, MATERIAL_LABELS)
+
+    return summary
+
+
+def material_product_on_application_summary(good_on_application, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = material_on_application_reducer(good_on_application)
+    formatters = {
+        **MATERIAL_ON_APPLICATION_FORMATTERS,
+        **additional_formatters,
+    }
+
+    summary = pick_fields(summary, MATERIAL_ON_APPLICATION_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, MATERIAL_ON_APPLICATION_LABELS)
 
     return summary
 

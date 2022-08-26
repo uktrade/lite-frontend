@@ -259,3 +259,4 @@ class ProductDesignDetails:
 PRODUCT_CATEGORY_PLATFORM = "group1_platform"
 COMPONENT_CATEGORY_PLATFORM = "group1_components"
 PRODUCT_CATEGORY_SOFTWARE = "group3_software"
+PRODUCT_CATEGORY_MATERIAL = "group1_materials"

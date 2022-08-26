@@ -3,7 +3,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from exporter.applications.views.goods.add_good_platform.views.constants import AddGoodPlatformSteps
+from exporter.applications.views.goods.add_good_material.views.constants import AddGoodMaterialSteps
 
 
 @pytest.fixture(autouse=True)
@@ -17,7 +17,7 @@ def setup(
     settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def product_document():
 @pytest.fixture(autouse=True)
 def edit_pv_grading_url(application, good_on_application):
     return reverse(
-        "applications:platform_edit_pv_grading",
+        "applications:material_edit_pv_grading",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -55,22 +55,22 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
     "url_name, form_data, expected",
     (
         (
-            "platform_edit_name",
+            "material_edit_name",
             {"name": "new good"},
             {"name": "new good"},
         ),
         (
-            "platform_edit_control_list_entries",
+            "material_edit_control_list_entries",
             {"is_good_controlled": False},
             {"is_good_controlled": False, "control_list_entries": []},
         ),
         (
-            "platform_edit_control_list_entries",
+            "material_edit_control_list_entries",
             {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
             {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
         ),
         (
-            "platform_edit_uses_information_security",
+            "material_edit_uses_information_security",
             {
                 "uses_information_security": True,
                 "information_security_details": "Uses information security details",
@@ -81,7 +81,7 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
             },
         ),
         (
-            "platform_edit_part_number",
+            "material_edit_part_number",
             {
                 "part_number": "12345",
             },
@@ -91,7 +91,7 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
             },
         ),
         (
-            "platform_edit_part_number",
+            "material_edit_part_number",
             {
                 "part_number_missing": True,
                 "no_part_number_comments": "No part number",
@@ -102,7 +102,7 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
             },
         ),
         (
-            "platform_edit_military_use",
+            "material_edit_military_use",
             {
                 "is_military_use": "yes_designed",
             },
@@ -112,7 +112,7 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
             },
         ),
         (
-            "platform_edit_military_use",
+            "material_edit_military_use",
             {"is_military_use": "yes_modified", "modified_military_use_details": "Modified details"},
             {
                 "is_military_use": "yes_modified",
@@ -121,7 +121,7 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
         ),
     ),
 )
-def test_edit_platform_post(
+def test_edit_material_post(
     authorized_client,
     requests_mock,
     application,
@@ -129,7 +129,7 @@ def test_edit_platform_post(
     url_name,
     form_data,
     expected,
-    platform_product_summary_url,
+    material_product_summary_url,
 ):
     url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"], "good_pk": good_on_application["id"]})
 
@@ -138,7 +138,7 @@ def test_edit_platform_post(
         data=form_data,
     )
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
     assert requests_mock.last_request.json() == expected
 
 
@@ -146,37 +146,37 @@ def test_edit_platform_post(
     "url_name,good_on_application_data,initial",
     (
         (
-            "platform_edit_name",
+            "material_edit_name",
             {},
             {"name": "p1"},
         ),
         (
-            "platform_edit_control_list_entries",
+            "material_edit_control_list_entries",
             {},
             {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},
         ),
         (
-            "platform_edit_uses_information_security",
+            "material_edit_uses_information_security",
             {},
             {"uses_information_security": False},
         ),
         (
-            "platform_edit_uses_information_security",
+            "material_edit_uses_information_security",
             {"uses_information_security": True, "information_security_details": "Details"},
             {"uses_information_security": True, "information_security_details": "Details"},
         ),
         (
-            "platform_edit_part_number",
+            "material_edit_part_number",
             {},
             {"part_number": "44"},
         ),
         (
-            "platform_edit_part_number",
+            "material_edit_part_number",
             {"no_part_number_comments": "No part number"},
             {"no_part_number_comments": "No part number", "part_number_missing": True},
         ),
         (
-            "platform_edit_military_use",
+            "material_edit_military_use",
             {
                 "is_military_use": {"key": "yes_designed"},
             },
@@ -186,7 +186,7 @@ def test_edit_platform_post(
             },
         ),
         (
-            "platform_edit_military_use",
+            "material_edit_military_use",
             {"is_military_use": {"key": "yes_modified"}, "modified_military_use_details": "Modified details"},
             {
                 "is_military_use": "yes_modified",
@@ -195,7 +195,7 @@ def test_edit_platform_post(
         ),
     ),
 )
-def test_edit_platform_initial(
+def test_edit_material_initial(
     authorized_client,
     application,
     good_on_application,
@@ -217,20 +217,20 @@ def test_edit_pv_grading(
     pv_gradings,
     goto_step_pv_grading,
     post_to_step_pv_grading,
-    platform_product_summary_url,
+    material_product_summary_url,
 ):
-    response = goto_step_pv_grading(AddGoodPlatformSteps.PV_GRADING)
+    response = goto_step_pv_grading(AddGoodMaterialSteps.PV_GRADING)
     assert response.status_code == 200
 
     response = post_to_step_pv_grading(
-        AddGoodPlatformSteps.PV_GRADING,
+        AddGoodMaterialSteps.PV_GRADING,
         {"is_pv_graded": True},
     )
 
     assert response.status_code == 200
 
     response = post_to_step_pv_grading(
-        AddGoodPlatformSteps.PV_GRADING_DETAILS,
+        AddGoodMaterialSteps.PV_GRADING_DETAILS,
         {
             "prefix": "NATO",
             "grading": "official",
@@ -243,7 +243,7 @@ def test_edit_pv_grading(
     )
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {
@@ -263,10 +263,10 @@ def test_edit_pv_grading_details(
     good_on_application,
     requests_mock,
     pv_gradings,
-    platform_product_summary_url,
+    material_product_summary_url,
 ):
     url = reverse(
-        "applications:platform_edit_pv_grading_details",
+        "applications:material_edit_pv_grading_details",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -284,7 +284,7 @@ def test_edit_pv_grading_details(
     )
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {
@@ -301,7 +301,7 @@ def test_edit_pv_grading_details(
 @pytest.fixture
 def edit_product_availability_url(application, good_on_application):
     return reverse(
-        "applications:platform_edit_product_document_availability",
+        "applications:material_edit_product_document_availability",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -312,15 +312,15 @@ def post_to_step_edit_product_document_availability(post_to_step_factory, edit_p
 
 
 def test_edit_product_document_availability_select_not_available(
-    requests_mock, post_to_step_edit_product_document_availability, platform_product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, material_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": False, "no_document_comments": "Product not manufactured yet"},
     )
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -335,19 +335,19 @@ def test_edit_product_document_availability_select_not_available(
 def test_edit_product_document_availability_select_available_but_sensitive(
     requests_mock,
     post_to_step_edit_product_document_availability,
-    platform_product_summary_url,
+    material_product_summary_url,
 ):
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": True},
     )
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": True},
     )
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -361,23 +361,23 @@ def test_edit_product_document_availability_select_available_but_sensitive(
 
 
 def test_edit_product_document_availability_upload_new_document(
-    requests_mock, post_to_step_edit_product_document_availability, product_document, platform_product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, product_document, material_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": True},
     )
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": False},
     )
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD,
         data=product_document,
     )
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -397,7 +397,7 @@ def test_edit_product_document_availability_upload_new_document(
 @pytest.fixture
 def edit_product_sensitivity_url(application, good_on_application):
     return reverse(
-        "applications:platform_edit_product_document_sensitivity",
+        "applications:material_edit_product_document_sensitivity",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -411,19 +411,19 @@ def test_upload_new_product_document_to_replace_existing_one(
     requests_mock,
     post_to_step_edit_product_document_sensitivity,
     product_document,
-    platform_product_summary_url,
+    material_product_summary_url,
 ):
     response = post_to_step_edit_product_document_sensitivity(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": False},
     )
     response = post_to_step_edit_product_document_sensitivity(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD,
         data=product_document,
     )
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -437,15 +437,15 @@ def test_upload_new_product_document_to_replace_existing_one(
 
 
 def test_edit_product_document_is_sensitive(
-    requests_mock, post_to_step_edit_product_document_sensitivity, platform_product_summary_url
+    requests_mock, post_to_step_edit_product_document_sensitivity, material_product_summary_url
 ):
     response = post_to_step_edit_product_document_sensitivity(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": True},
     )
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
 
     # if any document exists then we delete that one
     document_delete_request = requests_mock.request_history.pop()
@@ -456,16 +456,16 @@ def test_edit_product_document_is_sensitive(
 
 
 def test_edit_product_document_upload_form(
-    authorized_client, requests_mock, application, good_on_application, product_document, platform_product_summary_url
+    authorized_client, requests_mock, application, good_on_application, product_document, material_product_summary_url
 ):
     url = reverse(
-        "applications:platform_edit_product_document",
+        "applications:material_edit_product_document",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
     response = authorized_client.post(url, data=product_document)
 
     assert response.status_code == 302
-    assert response.url == platform_product_summary_url
+    assert response.url == material_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"

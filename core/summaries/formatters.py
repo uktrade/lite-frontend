@@ -77,6 +77,31 @@ PLATFORM_LABELS = {
     "military-use-details": "Provide details of the modifications",
 }
 
+MATERIAL_LABELS = {
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "uses-information-security": "Does the product include security features to protect information?",
+    "uses-information-security-details": "Provide details of the information security features (optional)",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
+}
+
 
 def add_labels(summary, labels):
     labelled_summary = ()
@@ -311,6 +336,45 @@ PLATFORM_ON_APPLICATION_LABELS = {
     "total-value": "Total value",
 }
 
+
+MATERIAL_VALUE_FORMATTERS = {
+    "is-good-controlled": key_value_formatter,
+    "has-part-number": just("I do not have a part number"),
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "uses-information-security": yesno,
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
+}
+
+MATERIAL_ON_APPLICATION_FORMATTERS = {
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "number-of-items": integer,
+    "total-value": money_formatter,
+}
+
+MATERIAL_ON_APPLICATION_LABELS = {
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+}
+
+
 SOFTWARE_LABELS = {
     "product-type": "Is it a firearm product?",
     "non-firearm-category": "Select the product category",
@@ -334,7 +398,7 @@ SOFTWARE_LABELS = {
     "product-document": "Upload a document that shows what your product is designed to do",
     "product-document-description": "Description (optional)",
     "military-use": "Is the product specially designed or modified for military use?",
-    "military-use-details": "details of the modifications",
+    "military-use-details": "Provide details of the modifications",
 }
 
 SOFTWARE_VALUE_FORMATTERS = {
@@ -353,7 +417,7 @@ SOFTWARE_VALUE_FORMATTERS = {
     "declared-at-customs": yesno,
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
-    "military-use": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
 SOFTWARE_ON_APPLICATION_FORMATTERS = {

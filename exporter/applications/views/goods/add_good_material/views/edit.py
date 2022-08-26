@@ -49,90 +49,91 @@ from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
-    ProductMilitaryUseForm,
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
+    ProductMilitaryUseForm,
     ProductUsesInformationSecurityForm,
 )
-from exporter.goods.services import edit_platform
+
+from exporter.goods.services import edit_material
 
 from .constants import (
-    AddGoodPlatformToApplicationSteps,
-    AddGoodPlatformSteps,
+    AddGoodMaterialToApplicationSteps,
+    AddGoodMaterialSteps,
 )
-from .payloads import PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
-from .mixins import NonFirearmsPlatformFlagMixin
+from .payloads import MaterialProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
+from .mixins import NonFirearmsMaterialFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    NonFirearmsPlatformFlagMixin,
+    NonFirearmsMaterialFlagMixin,
     BaseProductEditView,
 ):
     def get_success_url(self):
-        return reverse("applications:platform_product_summary", kwargs=self.kwargs)
+        return reverse("applications:material_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_id, payload):
-        edit_platform(request, good_id, payload)
+        edit_material(request, good_id, payload)
 
 
-class BasePlatformEditView(BaseEditView):
+class BaseMaterialEditView(BaseEditView):
     def get_edit_payload(self, form):
         return get_cleaned_data(form)
 
 
-class PlatformEditName(BaseEditName, BasePlatformEditView):
+class MaterialEditName(BaseEditName, BaseMaterialEditView):
     pass
 
 
-class PlatformEditControlListEntry(BaseEditControlListEntry, BasePlatformEditView):
+class MaterialEditControlListEntry(BaseEditControlListEntry, BaseMaterialEditView):
     pass
 
 
-class PlatformEditPartNumberView(
+class MaterialEditPartNumberView(
     BaseEditPartNumber,
-    BasePlatformEditView,
+    BaseMaterialEditView,
 ):
     pass
 
 
-class BasePlatformEditWizardView(
-    NonFirearmsPlatformFlagMixin,
+class BaseMaterialEditWizardView(
+    NonFirearmsMaterialFlagMixin,
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
-        return reverse("applications:platform_product_summary", kwargs=self.kwargs)
+        return reverse("applications:material_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_pk, payload):
-        return edit_platform(self.request, good_pk, payload)
+        return edit_material(self.request, good_pk, payload)
 
 
-class PlatformEditPVGrading(BasePlatformEditWizardView):
+class MaterialEditPVGrading(BaseMaterialEditWizardView):
     form_list = [
-        (AddGoodPlatformSteps.PV_GRADING, ProductPVGradingForm),
-        (AddGoodPlatformSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
+        (AddGoodMaterialSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodMaterialSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
     ]
     condition_dict = {
-        AddGoodPlatformSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodMaterialSteps.PV_GRADING_DETAILS: is_pv_graded,
     }
 
     def get_form_initial(self, step):
         initial = {}
-        if step == AddGoodPlatformSteps.PV_GRADING:
+        if step == AddGoodMaterialSteps.PV_GRADING:
             initial = get_pv_grading_initial_data(self.good)
-        elif step == AddGoodPlatformSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
+        elif step == AddGoodMaterialSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
             initial = get_pv_grading_details_initial_data(self.good)
         return initial
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
+        if step == AddGoodMaterialSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
         return kwargs
 
@@ -140,7 +141,7 @@ class PlatformEditPVGrading(BasePlatformEditWizardView):
         return ProductEditPVGradingPayloadBuilder().build(form_dict)
 
 
-class PlatformEditPVGradingDetails(BasePlatformEditView):
+class MaterialEditPVGradingDetails(BaseMaterialEditView):
     form_class = ProductPVGradingDetailsForm
 
     def get_initial(self):
@@ -155,7 +156,7 @@ class PlatformEditPVGradingDetails(BasePlatformEditView):
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
-class PlatformEditUsesInformationSecurity(BasePlatformEditView):
+class MaterialEditUsesInformationSecurity(BaseMaterialEditView):
     form_class = ProductUsesInformationSecurityForm
 
     def get_initial(self):
@@ -170,7 +171,7 @@ class PlatformEditUsesInformationSecurity(BasePlatformEditView):
         }
 
 
-class PlatformEditMilitaryUseView(BasePlatformEditView):
+class MaterialEditMilitaryUseView(BaseMaterialEditView):
     form_class = ProductMilitaryUseForm
 
     def get_initial(self):
@@ -180,37 +181,37 @@ class PlatformEditMilitaryUseView(BasePlatformEditView):
         }
 
 
-class BasePlatformEditProductDocumentView(
+class BaseMaterialEditProductDocumentView(
     BaseEditProductDocumentView,
-    BasePlatformEditWizardView,
+    BaseMaterialEditWizardView,
 ):
     pass
 
 
-class PlatformEditProductDocumentAvailability(
+class MaterialEditProductDocumentAvailability(
     BaseEditProductDocumentAvailability,
-    BasePlatformEditProductDocumentView,
+    BaseMaterialEditProductDocumentView,
 ):
     pass
 
 
-class PlatformEditProductDocumentSensitivity(
+class MaterialEditProductDocumentSensitivity(
     BaseEditProductDocumentSensitivity,
-    BasePlatformEditProductDocumentView,
+    BaseMaterialEditProductDocumentView,
 ):
     pass
 
 
-class PlatformEditProductDocumentView(
+class MaterialEditProductDocumentView(
     BaseProductDocumentUpload,
-    BasePlatformEditView,
+    BaseMaterialEditView,
 ):
     pass
 
 
 class SummaryTypeMixin:
     SUMMARY_TYPES = [
-        "platform-on-application-summary",
+        "material-on-application-summary",
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -241,9 +242,9 @@ class SummaryTypeMixin:
         return ctx
 
 
-class BaseProductOnApplicationSummaryEditWizardView(
+class BaseMaterialOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
+    NonFirearmsMaterialFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -251,10 +252,10 @@ class BaseProductOnApplicationSummaryEditWizardView(
 ):
     @expect_status(
         HTTPStatus.OK,
-        "Error updating product",
-        "Unexpected error updating product",
+        "Error updating material",
+        "Unexpected error updating material",
     )
-    def edit_platform_good_on_application(self, request, good_on_application_id, payload):
+    def edit_material_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -263,10 +264,10 @@ class BaseProductOnApplicationSummaryEditWizardView(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            self.edit_platform_good_on_application(
+            self.edit_material_good_on_application(
                 self.request,
                 self.good_on_application["id"],
-                self.get_edit_platform_good_on_application_payload(form_dict),
+                self.get_edit_material_good_on_application_payload(form_dict),
             )
         except ServiceError as e:
             return self.handle_service_error(e)
@@ -274,38 +275,38 @@ class BaseProductOnApplicationSummaryEditWizardView(
         return redirect(self.get_success_url())
 
 
-class PlatformOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
+class MaterialOnApplicationSummaryEditOnwardExported(BaseMaterialOnApplicationSummaryEditWizardView):
     form_list = [
-        (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
+        (AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
     ]
     condition_dict = {
-        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
-        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+        AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
     }
 
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
 
-        if step == AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED:
+        if step == AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED:
             initial.update(get_is_onward_exported_initial_data(self.good_on_application))
 
-        if step == AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED:
+        if step == AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED:
             initial.update(get_onward_altered_processed_initial_data(self.good_on_application))
 
-        if step == AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED:
+        if step == AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED:
             initial.update(get_onward_incorporated_initial_data(self.good_on_application))
 
         return initial
 
-    def get_edit_platform_good_on_application_payload(self, form_dict):
-        return PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
+    def get_edit_material_good_on_application_payload(self, form_dict):
+        return MaterialProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
-class BasePlatformOnApplicationEditView(
+class BaseMaterialOnApplicationEditView(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
+    NonFirearmsMaterialFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -315,10 +316,10 @@ class BasePlatformOnApplicationEditView(
 
     @expect_status(
         HTTPStatus.OK,
-        "Error updating platform",
-        "Unexpected error updating platform",
+        "Error updating material",
+        "Unexpected error updating material",
     )
-    def edit_platform_good_on_application(self, request, good_on_application_id, payload):
+    def edit_Material_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -326,7 +327,7 @@ class BasePlatformOnApplicationEditView(
         )
 
     def perform_actions(self, form):
-        self.edit_platform_good_on_application(
+        self.edit_Material_good_on_application(
             self.request,
             self.good_on_application["id"],
             self.get_edit_payload(form),
@@ -355,14 +356,14 @@ class BasePlatformOnApplicationEditView(
         return get_cleaned_data(form)
 
 
-class PlatformOnApplicationSummaryEditOnwardAltered(BasePlatformOnApplicationEditView):
+class MaterialOnApplicationSummaryEditOnwardAltered(BaseMaterialOnApplicationEditView):
     form_class = ProductOnwardAlteredProcessedForm
 
     def get_initial(self):
         return get_onward_altered_processed_initial_data(self.good_on_application)
 
 
-class PlatformOnApplicationSummaryEditOnwardIncorporated(BasePlatformOnApplicationEditView):
+class MaterialOnApplicationSummaryEditOnwardIncorporated(BaseMaterialOnApplicationEditView):
     form_class = ProductOnwardIncorporatedForm
 
     def get_initial(self):
@@ -377,7 +378,7 @@ class PlatformOnApplicationSummaryEditOnwardIncorporated(BasePlatformOnApplicati
         }
 
 
-class PlatformOnApplicationSummaryEditQuantityValue(BasePlatformOnApplicationEditView):
+class MaterialOnApplicationSummaryEditQuantityValue(BaseMaterialOnApplicationEditView):
     form_class = ProductQuantityAndValueForm
 
     def get_initial(self):

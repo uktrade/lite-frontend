@@ -10,7 +10,6 @@ from core.auth.views import LoginRequiredMixin
 
 from lite_forms.generators import error_page
 
-from exporter.applications.views.goods.common.mixins import NonFirearmsFlagMixin
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
@@ -54,14 +53,14 @@ from .payloads import (
     AddGoodSoftwarePayloadBuilder,
     AddGoodSoftwareToApplicationPayloadBuilder,
 )
-
+from .mixins import NonFirearmsSoftwareFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodSoftware(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
     ProductSecurityFeaturesForm,
@@ -184,7 +183,7 @@ class AddGoodSoftware(
 
 class AddGoodSoftwareToApplication(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,

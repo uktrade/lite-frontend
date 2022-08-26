@@ -36,7 +36,6 @@ def new_good_component_url(data_standard_case):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED = True
 
 

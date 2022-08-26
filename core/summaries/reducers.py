@@ -436,7 +436,33 @@ def platform_reducer(good):
     return summary
 
 
+def material_reducer(good):
+    summary = (
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += uses_information_security_reducer(good)
+    summary += has_product_document_reducer(good)
+    summary += part_number_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+
+    return summary
+
+
 def platform_on_application_reducer(good_on_application):
+    summary = (
+        ("number-of-items", good_on_application["quantity"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+    summary += is_onward_exported_reducer(good_on_application)
+    return summary
+
+
+def material_on_application_reducer(good_on_application):
     summary = (
         ("number-of-items", good_on_application["quantity"]),
         ("total-value", Decimal(good_on_application["value"])),

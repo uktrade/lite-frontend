@@ -19,7 +19,6 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductMilitaryUseForm,
     ProductNameForm,
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
@@ -29,10 +28,11 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
+    ProductMilitaryUseForm,
 )
 
-from exporter.goods.services import post_platform, post_good_documents
-from exporter.applications.services import post_platform_good_on_application
+from exporter.goods.services import post_material, post_good_documents
+from exporter.applications.services import post_material_good_on_application
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
@@ -46,58 +46,57 @@ from exporter.applications.views.goods.common.conditionals import (
 from exporter.core.wizard.conditionals import C
 
 from .constants import (
-    AddGoodPlatformSteps,
-    AddGoodPlatformToApplicationSteps,
+    AddGoodMaterialSteps,
+    AddGoodMaterialToApplicationSteps,
 )
 from .payloads import (
-    AddGoodPlatformPayloadBuilder,
-    AddGoodPlatformToApplicationPayloadBuilder,
+    AddGoodMaterialPayloadBuilder,
+    AddGoodMaterialToApplicationPayloadBuilder,
 )
-from .mixins import NonFirearmsPlatformFlagMixin
+from .mixins import NonFirearmsMaterialFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
-class AddGoodPlatform(
+class AddGoodMaterial(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
+    NonFirearmsMaterialFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
 ):
     form_list = [
-        (AddGoodPlatformSteps.NAME, ProductNameForm),
-        (AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
-        (AddGoodPlatformSteps.PART_NUMBER, ProductPartNumberForm),
-        (AddGoodPlatformSteps.PV_GRADING, ProductPVGradingForm),
-        (AddGoodPlatformSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
-        (AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
-        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
-        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
-        (AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
-        (AddGoodPlatformSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
+        (AddGoodMaterialSteps.NAME, ProductNameForm),
+        (AddGoodMaterialSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
+        (AddGoodMaterialSteps.PART_NUMBER, ProductPartNumberForm),
+        (AddGoodMaterialSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodMaterialSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
+        (AddGoodMaterialSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
+        (AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
+        (AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
+        (AddGoodMaterialSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
-        AddGoodPlatformSteps.PV_GRADING_DETAILS: is_pv_graded,
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+        AddGoodMaterialSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
+        AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY:
+        if step == AddGoodMaterialSteps.PRODUCT_CONTROL_LIST_ENTRY:
             kwargs["request"] = self.request
 
-        if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
+        if step == AddGoodMaterialSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
-
         return kwargs
 
     def has_product_documentation(self):
-        return self.condition_dict[AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD](self)
+        return self.condition_dict[AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD](self)
 
     def get_product_document_payload(self):
-        data = self.get_cleaned_data_for_step(AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD)
+        data = self.get_cleaned_data_for_step(AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD)
         document = data["product_document"]
         payload = {
             **get_document_data(document),
@@ -107,8 +106,8 @@ class AddGoodPlatform(
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error with product document when creating platform",
-        "Unexpected error adding platform",
+        "Error with product document when creating material",
+        "Unexpected error adding material to application",
     )
     def post_product_documentation(self, good):
         document_payload = self.get_product_document_payload()
@@ -122,7 +121,7 @@ class AddGoodPlatform(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:non_firearm_category",
+            "applications:new_good",
             kwargs={
                 "pk": self.kwargs["pk"],
             },
@@ -132,12 +131,12 @@ class AddGoodPlatform(
         return ctx
 
     def get_payload(self, form_dict):
-        good_payload = AddGoodPlatformPayloadBuilder().build(form_dict)
+        good_payload = AddGoodMaterialPayloadBuilder().build(form_dict)
         return good_payload
 
     def get_success_url(self):
         return reverse(
-            "applications:platform_product_summary",
+            "applications:material_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -146,10 +145,10 @@ class AddGoodPlatform(
         "Error creating complete product",
         "Unexpected error adding complete product",
     )
-    def post_platform(self, form_dict):
+    def post_material(self, form_dict):
         payload = self.get_payload(form_dict)
 
-        return post_platform(
+        return post_material(
             self.request,
             payload,
         )
@@ -167,7 +166,7 @@ class AddGoodPlatform(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            good, _ = self.post_platform(form_dict)
+            good, _ = self.post_material(form_dict)
             self.good = good["good"]
             if self.has_product_documentation():
                 self.post_product_documentation(self.good)
@@ -177,23 +176,23 @@ class AddGoodPlatform(
         return redirect(self.get_success_url())
 
 
-class AddGoodPlatformToApplication(
+class AddGoodMaterialToApplication(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
+    NonFirearmsMaterialFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,
 ):
     form_list = [
-        (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
-        (AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
+        (AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
+        (AddGoodMaterialToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
     ]
 
     condition_dict = {
-        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
-        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+        AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
     }
 
     def get_form_kwargs(self, step=None):
@@ -202,7 +201,7 @@ class AddGoodPlatformToApplication(
 
     def get_success_url(self):
         return reverse(
-            "applications:platform_on_application_summary",
+            "applications:material_on_application_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_on_application_pk": self.good_on_application["id"],
@@ -210,17 +209,17 @@ class AddGoodPlatformToApplication(
         )
 
     def get_payload(self, form_dict):
-        good_on_application_payload = AddGoodPlatformToApplicationPayloadBuilder().build(form_dict)
+        good_on_application_payload = AddGoodMaterialToApplicationPayloadBuilder().build(form_dict)
         return good_on_application_payload
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error adding platform to application",
-        "Unexpected error adding platform to application",
+        "Error adding material to application",
+        "Unexpected error adding material to application",
     )
-    def post_platform_to_application(self, form_dict):
+    def post_Material_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
-        return post_platform_good_on_application(
+        return post_material_good_on_application(
             self.request,
             self.application["id"],
             self.good["id"],
@@ -231,7 +230,7 @@ class AddGoodPlatformToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:platform_product_summary",
+            "applications:material_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],
@@ -254,7 +253,7 @@ class AddGoodPlatformToApplication(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            good_on_application, _ = self.post_platform_to_application(form_dict)
+            good_on_application, _ = self.post_Material_to_application(form_dict)
             good_on_application = good_on_application["good"]
         except ServiceError as e:
             return self.handle_service_error(e)

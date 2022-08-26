@@ -6,7 +6,7 @@ from django.urls import reverse
 
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
 
 
 @pytest.fixture
@@ -150,7 +150,7 @@ def software_summary(good_id):
         ),
         (
             "military-use",
-            "Yes",
+            "No",
             "Is the product specially designed or modified for military use?",
         ),
     )

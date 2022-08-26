@@ -94,6 +94,27 @@ from exporter.applications.views.goods.add_good_platform.views.summary import (
     PlatformProductOnApplicationSummary,
     PlatformProductSummary,
 )
+from exporter.applications.views.goods.add_good_material.views.add import AddGoodMaterial, AddGoodMaterialToApplication
+from exporter.applications.views.goods.add_good_material.views.summary import (
+    MaterialProductOnApplicationSummary,
+    MaterialProductSummary,
+)
+from exporter.applications.views.goods.add_good_material.views.edit import (
+    MaterialEditControlListEntry,
+    MaterialEditMilitaryUseView,
+    MaterialEditName,
+    MaterialEditProductDocumentAvailability,
+    MaterialEditProductDocumentSensitivity,
+    MaterialEditProductDocumentView,
+    MaterialEditPartNumberView,
+    MaterialEditPVGrading,
+    MaterialEditPVGradingDetails,
+    MaterialEditUsesInformationSecurity,
+    MaterialOnApplicationSummaryEditOnwardExported,
+    MaterialOnApplicationSummaryEditOnwardAltered,
+    MaterialOnApplicationSummaryEditOnwardIncorporated,
+    MaterialOnApplicationSummaryEditQuantityValue,
+)
 from exporter.applications.views.goods.add_good_component.views.add import (
     AddGoodComponent,
     AddGoodComponentToApplication,
@@ -488,6 +509,94 @@ urlpatterns = [
         "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/component-on-application-summary/",
         PlatformProductOnApplicationSummary.as_view(),
         name="component_on_application_summary",
+    ),
+    # Material product
+    path("<uuid:pk>/goods/add-new/material/", AddGoodMaterial.as_view(), name="new_good_material"),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_pk>/product-summary/",
+        MaterialProductSummary.as_view(),
+        name="material_product_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add-new/material-to-application/",
+        AddGoodMaterialToApplication.as_view(),
+        name="new_good_material_to_application",
+    ),
+    path(
+        "<uuid:pk>/goods/platform/<uuid:good_on_application_pk>/material-on-application-summary/",
+        MaterialProductOnApplicationSummary.as_view(),
+        name="material_on_application_summary",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add/material/",
+        AddGoodMaterialToApplication.as_view(),
+        name="attach_material_to_application",
+    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/material/edit/name/", MaterialEditName.as_view(), name="material_edit_name"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/control-list-entries/",
+        MaterialEditControlListEntry.as_view(),
+        name="material_edit_control_list_entries",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/pv-grading/",
+        MaterialEditPVGrading.as_view(),
+        name="material_edit_pv_grading",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/pv-grading-details/",
+        MaterialEditPVGradingDetails.as_view(),
+        name="material_edit_pv_grading_details",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/uses-information-security/",
+        MaterialEditUsesInformationSecurity.as_view(),
+        name="material_edit_uses_information_security",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/product-document-availability/",
+        MaterialEditProductDocumentAvailability.as_view(),
+        name="material_edit_product_document_availability",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/product-document-sensitivity/",
+        MaterialEditProductDocumentSensitivity.as_view(),
+        name="material_edit_product_document_sensitivity",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/product-document/",
+        MaterialEditProductDocumentView.as_view(),
+        name="material_edit_product_document",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/part-number/",
+        MaterialEditPartNumberView.as_view(),
+        name="material_edit_part_number",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/military-use/",
+        MaterialEditMilitaryUseView.as_view(),
+        name="material_edit_military_use",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-exported/",
+        MaterialOnApplicationSummaryEditOnwardExported.as_view(),
+        name="material_on_application_summary_edit_onward_exported",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
+        MaterialOnApplicationSummaryEditOnwardAltered.as_view(),
+        name="material_on_application_summary_edit_onward_altered",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
+        MaterialOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        name="material_on_application_summary_edit_onward_incorporated",
+    ),
+    path(
+        "<uuid:pk>/goods/material/<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
+        MaterialOnApplicationSummaryEditQuantityValue.as_view(),
+        name="material_on_application_summary_edit_quantity_value",
     ),
     # Software product and non-firearm
     path("<uuid:pk>/goods/add-new/software/", AddGoodSoftware.as_view(), name="new_good_software"),

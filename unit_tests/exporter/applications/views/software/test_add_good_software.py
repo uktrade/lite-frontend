@@ -40,7 +40,7 @@ def new_good_software_url(data_standard_case):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
 
 
 @pytest.fixture
@@ -81,7 +81,7 @@ def test_add_good_software_access_denied_without_feature_flag(
     authorized_client,
     new_good_software_url,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
+    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = False
     response = authorized_client.get(new_good_software_url)
     assert response.status_code == 404
 

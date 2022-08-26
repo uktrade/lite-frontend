@@ -7,7 +7,6 @@ from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
     GoodOnApplicationMixin,
-    NonFirearmsFlagMixin,
 )
 from exporter.applications.summaries.platform import (
     add_platform_summary_edit_links,
@@ -18,11 +17,12 @@ from exporter.applications.summaries.platform import (
     platform_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
+from .mixins import NonFirearmsPlatformFlagMixin
 
 
 class BasePlatformOnApplicationSummary(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
@@ -71,7 +71,7 @@ class PlatformProductOnApplicationSummary(BasePlatformOnApplicationSummary):
 
 class PlatformProductSummary(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,
