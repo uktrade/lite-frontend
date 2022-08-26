@@ -82,6 +82,7 @@ class BaseProductEditView(
         ctx = super().get_context_data(**kwargs)
 
         ctx["back_link_url"] = self.get_back_link_url()
+        ctx["title"] = self.form_class.Layout.TITLE
 
         return ctx
 
