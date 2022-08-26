@@ -56,11 +56,9 @@ from exporter.goods.forms.common import (
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
-)
-from exporter.goods.forms.goods import (
-    ProductMilitaryUseForm,
     ProductUsesInformationSecurityForm,
 )
+from exporter.goods.forms.goods import ProductMilitaryUseForm
 from exporter.goods.services import edit_platform
 
 from .constants import (

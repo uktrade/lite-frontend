@@ -563,3 +563,55 @@ class ProductQuantityAndValueForm(BaseForm):
             Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
         )
+
+
+class ProductUsesInformationSecurityForm(BaseForm):
+    class Layout:
+        TITLE = "Does the product include security features to protect information?"
+        SUBTITLE = "For example, authentication, encryption or any other information security controls."
+
+    uses_information_security = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product includes security features to protect information",
+        },
+    )
+
+    information_security_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        label=f"Provide details of the information security features",
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "uses_information_security",
+                ConditionalQuestion(
+                    "Yes",
+                    "information_security_details",
+                ),
+                "No",
+            ),
+            HTML.details(
+                "Help with security features",
+                render_to_string("goods/forms/common/help_with_security_features.html"),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        uses_information_security = cleaned_data.get("uses_information_security")
+        information_security_details = cleaned_data.get("information_security_details")
+
+        if uses_information_security and not information_security_details:
+            self.add_error("information_security_details", "Enter details of the information security features")
+
+        return cleaned_data

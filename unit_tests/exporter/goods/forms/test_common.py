@@ -15,6 +15,7 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductPartNumberForm,
     ProductQuantityAndValueForm,
+    ProductUsesInformationSecurityForm,
 )
 
 
@@ -494,3 +495,43 @@ def test_product_onward_incorporated_form_cleaned_data(data, cleaned_data):
     form = ProductOnwardIncorporatedForm(data=data)
     assert form.is_valid()
     assert form.cleaned_data == cleaned_data
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "uses_information_security": [
+                    "Select yes if the product includes security features to protect information"
+                ]
+            },
+        ),
+        (
+            {"uses_information_security": True},
+            False,
+            {"information_security_details": ["Enter details of the information security features"]},
+        ),
+        (
+            {"uses_information_security": True, "information_security_details": ""},
+            False,
+            {"information_security_details": ["Enter details of the information security features"]},
+        ),
+        (
+            {"uses_information_security": True, "information_security_details": "These are the details"},
+            True,
+            {},
+        ),
+        (
+            {"uses_information_security": False},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_uses_information_security_form_validation(data, is_valid, errors):
+    form = ProductUsesInformationSecurityForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
