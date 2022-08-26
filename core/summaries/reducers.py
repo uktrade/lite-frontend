@@ -224,6 +224,8 @@ def has_product_document_reducer(good):
                 good["no_document_comments"],
             ),
         )
+        if good.get("product_description"):
+            summary += (("product-description", good["product_description"]),)
 
     return summary
 

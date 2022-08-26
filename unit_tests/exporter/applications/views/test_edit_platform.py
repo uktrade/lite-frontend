@@ -22,7 +22,13 @@ def setup(
 
 @pytest.fixture
 def good_on_application(data_standard_case):
-    return data_standard_case["case"]["data"]["goods"][0]["good"]
+    good_on_application = data_standard_case["case"]["data"]["goods"][0]["good"]
+    good_on_application.update(
+        {
+            "product_description": "Product description",
+        }
+    )
+    return good_on_application
 
 
 @pytest.fixture
@@ -119,6 +125,11 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
                 "modified_military_use_details": "Modified details",
             },
         ),
+        (
+            "platform_edit_product_description",
+            {"product_description": "Product description"},
+            {"product_description": "Product description"},
+        ),
     ),
 )
 def test_edit_platform_post(
@@ -192,6 +203,11 @@ def test_edit_platform_post(
                 "is_military_use": "yes_modified",
                 "modified_military_use_details": "Modified details",
             },
+        ),
+        (
+            "platform_edit_product_description",
+            {"product_description": "Product description"},
+            {"product_description": "Product description"},
         ),
     ),
 )

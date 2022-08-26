@@ -1,8 +1,6 @@
 from django.urls import reverse
 
-from core.summaries.formatters import (
-    document_formatter,
-)
+from core.summaries.formatters import document_formatter
 from core.summaries.summaries import (
     platform_summary as core_platform_summary,
     platform_product_on_application_summary as core_platform_product_on_application_summary,
@@ -30,6 +28,7 @@ PLATFORM_SUMMARY_EDIT_LINKS = {
     "is-document-sensitive": "product_document_sensitivity",
     "product-document": "product_document",
     "product-document-description": "product_document",
+    "product-description": "product_description",
     "military-use": "military_use",
     "military-use-details": "military_use",
 }

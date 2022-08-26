@@ -7,6 +7,7 @@ from exporter.applications.views.goods.add_good_platform.views.constants import 
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -236,8 +237,10 @@ def test_add_good_platform_no_pv(
     new_good_platform_url,
     mock_application_get,
     control_list_entries,
+    pv_gradings,
     post_to_step,
     post_goods_matcher,
+    post_good_document_matcher,
 ):
     authorized_client.get(new_good_platform_url)
 
@@ -271,7 +274,15 @@ def test_add_good_platform_no_pv(
     )
     post_to_step(
         AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
-        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+        {"is_document_available": True},
+    )
+    post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        {"is_document_sensitive": False},
+    )
+    post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
     )
     response = post_to_step(
         AddGoodPlatformSteps.PRODUCT_MILITARY_USE,
@@ -297,10 +308,113 @@ def test_add_good_platform_no_pv(
         "is_pv_graded": "no",
         "uses_information_security": False,
         "information_security_details": "",
-        "is_document_available": False,
-        "no_document_comments": "product not manufactured yet",
+        "is_document_available": True,
+        "is_document_sensitive": False,
+        "no_document_comments": "",
         "is_military_use": "no",
         "modified_military_use_details": "",
         "no_part_number_comments": "no part number",
         "part_number": "",
+    }
+
+
+def test_add_good_platform_no_product_document(
+    authorized_client,
+    data_standard_case,
+    good_id,
+    new_good_platform_url,
+    mock_application_get,
+    control_list_entries,
+    pv_gradings,
+    post_to_step,
+    post_goods_matcher,
+):
+    authorized_client.get(new_good_platform_url)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.NAME,
+        {"name": "product_1"},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductControlListEntryForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        {
+            "is_good_controlled": False,
+        },
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductPartNumberForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PART_NUMBER,
+        {
+            "part_number_missing": True,
+            "no_part_number_comments": "no part number",
+        },
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductPVGradingForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PV_GRADING,
+        {"is_pv_graded": False},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY,
+        {
+            "uses_information_security": False,
+        },
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {"is_document_available": False, "no_document_comments": "no document available"},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductDescriptionForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductMilitaryUseForm)
+
+    response = post_to_step(
+        AddGoodPlatformSteps.PRODUCT_MILITARY_USE,
+        {"is_military_use": "no"},
+    )
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:platform_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+    assert post_goods_matcher.called_once
+    last_request = post_goods_matcher.last_request
+    assert last_request.json() == {
+        "item_category": "group1_platform",
+        "name": "product_1",
+        "is_good_controlled": False,
+        "control_list_entries": [],
+        "is_pv_graded": "no",
+        "uses_information_security": False,
+        "information_security_details": "",
+        "is_document_available": False,
+        "no_document_comments": "no document available",
+        "is_military_use": "no",
+        "modified_military_use_details": "",
+        "no_part_number_comments": "no part number",
+        "part_number": "",
+        "product_description": "This is the product description",
     }

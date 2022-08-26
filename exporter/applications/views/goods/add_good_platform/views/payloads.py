@@ -25,6 +25,7 @@ class AddGoodPlatformPayloadBuilder(MergingPayloadBuilder):
         AddGoodPlatformSteps.PV_GRADING: get_pv_grading_payload,
         AddGoodPlatformSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
         AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY: get_cleaned_data,
+        AddGoodPlatformSteps.PRODUCT_DESCRIPTION: get_cleaned_data,
         AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
         AddGoodPlatformSteps.PRODUCT_MILITARY_USE: get_cleaned_data,
