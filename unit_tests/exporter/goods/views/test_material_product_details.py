@@ -49,6 +49,7 @@ def test_material_product_details_context(
 
     response = authorized_client.get(material_product_details_url)
     assert response.status_code == 200
+
     assert response.context["summary"] == (
         ("name", "p1", "Give the product a descriptive name"),
         ("is-good-controlled", "Yes", "Do you know the product's control list entry?"),
@@ -61,7 +62,7 @@ def test_material_product_details_context(
         ("pv-grading-issuing-authority", "Government entity", "Name and address of the issuing authority"),
         ("pv-grading-details-reference", "GR123", "Reference"),
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
-        ("uses-information-security", "No", "Is the product designed to employ 'information security' features?"),
+        ("uses-information-security", "No", "Does the product include security features to protect information?"),
         (
             "has-product-document",
             "Yes",
@@ -74,5 +75,5 @@ def test_material_product_details_context(
             "Upload a document that shows what your product is designed to do",
         ),
         ("product-document-description", "product data sheet", "Description (optional)"),
-        ("military-use", "No", "Is the product for military use?"),
+        ("military-use", "No", "Is the product specially designed or modified for military use?"),
     )
