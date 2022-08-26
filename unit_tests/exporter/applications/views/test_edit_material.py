@@ -17,7 +17,7 @@ def setup(
     settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
 
 
 @pytest.fixture

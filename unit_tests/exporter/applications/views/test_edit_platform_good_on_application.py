@@ -27,7 +27,7 @@ def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture
