@@ -13,8 +13,9 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductPVGradingDetailsForm,
     ProductPartNumberForm,
+    ProductUsesInformationSecurityForm,
 )
-from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
+from exporter.goods.forms.goods import ProductMilitaryUseForm
 
 
 @pytest.fixture(autouse=True)
@@ -212,7 +213,7 @@ def test_add_good_component_end_to_end(
             "reference": "GR123",
             "date_of_issue": "2020-02-20",
         },
-        "uses_information_security": "True",
+        "uses_information_security": True,
         "information_security_details": "secure encrypt",
         "is_document_available": True,
         "no_document_comments": "",
@@ -296,7 +297,7 @@ def test_add_good_component_no_pv(
         "is_good_controlled": False,
         "control_list_entries": [],
         "is_pv_graded": "no",
-        "uses_information_security": "False",
+        "uses_information_security": False,
         "information_security_details": "",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
