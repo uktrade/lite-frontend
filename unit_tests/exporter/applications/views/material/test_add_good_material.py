@@ -14,8 +14,8 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductPartNumberForm,
     ProductUsesInformationSecurityForm,
+    ProductMilitaryUseForm,
 )
-from exporter.goods.forms.goods import ProductMilitaryUseForm
 
 
 @pytest.fixture(autouse=True)

@@ -150,7 +150,7 @@ def software_summary(good_id):
         ),
         (
             "military-use",
-            "Yes",
+            "No",
             "Is the product specially designed or modified for military use?",
         ),
     )
