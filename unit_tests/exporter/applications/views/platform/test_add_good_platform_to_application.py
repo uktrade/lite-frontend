@@ -10,8 +10,8 @@ from exporter.applications.views.goods.add_good_firearm.views.constants import A
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardIncorporatedForm,
+    ProductQuantityAndValueForm,
 )
-from exporter.goods.forms.firearms import FirearmQuantityAndValueForm
 
 
 @pytest.fixture(autouse=True)
@@ -39,7 +39,7 @@ def expected_good_data(application):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture
@@ -68,7 +68,7 @@ def test_add_platform_to_application_onward_exported_step_not_onward_export(goto
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
 
 def test_add_platform_to_application_end_to_end(
@@ -103,7 +103,7 @@ def test_add_platform_to_application_end_to_end(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
@@ -169,7 +169,7 @@ def test_add_platform_to_application_end_to_end_handles_service_error(
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], FirearmQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,

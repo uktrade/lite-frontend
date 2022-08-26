@@ -38,6 +38,7 @@ ADD_GOOD_VIEW = "add_good"
 @pytest.fixture(autouse=True)
 def setup(no_op_storage, settings):
     settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = False
+    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
 
 
 @pytest.fixture(autouse=True)
@@ -63,12 +64,29 @@ def url(data_standard_case):
     return reverse("applications:new_good", kwargs={"pk": data_standard_case["case"]["id"]})
 
 
-def test_add_good_start(url, authorized_client):
+@pytest.fixture
+def goods_url(data_standard_case):
+    return reverse("applications:goods", kwargs={"pk": data_standard_case["case"]["id"]})
+
+
+@pytest.fixture
+def is_good_firearm_url(data_standard_case):
+    return reverse("applications:is_good_firearm", kwargs={"pk": data_standard_case["case"]["id"]})
+
+
+def test_add_good_start(url, authorized_client, goods_url):
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductCategoryForm)
     assert CreateGoodForm.ProductCategory.TITLE.encode("utf-8") in response.content
     assert b"Step 1 of" not in response.content
+    assert response.context["back_link_url"] == goods_url
+
+
+def test_add_good_back_link_with_non_firearm_feature_switch(url, authorized_client, settings, is_good_firearm_url):
+    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    response = authorized_client.get(url)
+    assert response.context["back_link_url"] == is_good_firearm_url
 
 
 def test_add_good_product_category(url, authorized_client):

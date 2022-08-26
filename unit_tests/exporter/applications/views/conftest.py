@@ -98,6 +98,12 @@ def mock_good_on_application_get(requests_mock, good_on_application):
 
 
 @pytest.fixture
+def mock_good_on_application_put(requests_mock, good_on_application):
+    url = f"/applications/good-on-application/{good_on_application['id']}/"
+    return requests_mock.put(url, json={})
+
+
+@pytest.fixture
 def mock_control_list_entries_get(requests_mock):
     url = client._build_absolute_uri(f"/static/control-list-entries/")
     return requests_mock.get(url=url, json={"control_list_entries": [{"rating": "ML1a"}, {"rating": "ML22b"}]})
@@ -232,6 +238,17 @@ def platform_product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
+def material_product_summary_url(data_standard_case, good_id):
+    return reverse(
+        "applications:material_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+
+@pytest.fixture
 def software_product_summary_url(data_standard_case, good_id):
     return reverse(
         "applications:software_product_summary",
@@ -306,6 +323,26 @@ def platform_on_application_summary_url_factory(application, good_on_application
 @pytest.fixture
 def platform_on_application_summary_url(platform_on_application_summary_url_factory):
     return platform_on_application_summary_url_factory("platform-on-application-summary")
+
+
+@pytest.fixture
+def material_on_application_summary_url_factory(application, good_on_application):
+    def material_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return material_on_application_summary_url
+
+
+@pytest.fixture
+def material_on_application_summary_url(material_on_application_summary_url_factory):
+    return material_on_application_summary_url_factory("material-on-application-summary")
 
 
 @pytest.fixture

@@ -10,11 +10,12 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductMilitaryUseForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
+    ProductUsesInformationSecurityForm,
 )
-from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
 
 @pytest.fixture(autouse=True)
@@ -35,7 +36,7 @@ def new_good_platform_url(data_standard_case):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture
@@ -76,7 +77,7 @@ def test_add_good_platform_access_denied_without_feature_flag(
     authorized_client,
     new_good_platform_url,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = False
     response = authorized_client.get(new_good_platform_url)
     assert response.status_code == 404
 
@@ -211,7 +212,7 @@ def test_add_good_platform_end_to_end(
             "reference": "GR123",
             "date_of_issue": "2020-02-20",
         },
-        "uses_information_security": "True",
+        "uses_information_security": True,
         "information_security_details": "secure encrypt",
         "is_document_available": True,
         "no_document_comments": "",
@@ -294,7 +295,7 @@ def test_add_good_platform_no_pv(
         "is_good_controlled": False,
         "control_list_entries": [],
         "is_pv_graded": "no",
-        "uses_information_security": "False",
+        "uses_information_security": False,
         "information_security_details": "",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",

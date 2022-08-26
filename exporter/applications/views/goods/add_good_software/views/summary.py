@@ -7,7 +7,6 @@ from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
     GoodOnApplicationMixin,
-    NonFirearmsFlagMixin,
 )
 from exporter.applications.summaries.software import (
     add_software_summary_edit_links,
@@ -16,11 +15,12 @@ from exporter.applications.summaries.software import (
     software_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
+from .mixins import NonFirearmsSoftwareFlagMixin
 
 
 class BaseSoftwareOnApplicationSummary(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
@@ -62,7 +62,7 @@ class SoftwareProductOnApplicationSummary(BaseSoftwareOnApplicationSummary):
 
 class SoftwareProductSummary(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,

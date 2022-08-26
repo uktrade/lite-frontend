@@ -7,20 +7,22 @@ from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
     GoodOnApplicationMixin,
-    NonFirearmsFlagMixin,
 )
 from exporter.applications.summaries.platform import (
     add_platform_summary_edit_links,
+    add_platform_on_application_summary_edit_links,
+    PLATFORM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
     platform_summary,
     PLATFORM_SUMMARY_EDIT_LINKS,
     platform_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
+from .mixins import NonFirearmsPlatformFlagMixin
 
 
 class BasePlatformOnApplicationSummary(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
@@ -40,6 +42,13 @@ class BasePlatformOnApplicationSummary(
     def get_platform_on_application_summary(self):
         product_on_application_summary = platform_product_on_application_summary(
             self.good_on_application,
+        )
+        product_on_application_summary = add_platform_on_application_summary_edit_links(
+            product_on_application_summary,
+            PLATFORM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            self.application,
+            self.good_on_application,
+            self.summary_type,
         )
         return product_on_application_summary
 
@@ -62,7 +71,7 @@ class PlatformProductOnApplicationSummary(BasePlatformOnApplicationSummary):
 
 class PlatformProductSummary(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,

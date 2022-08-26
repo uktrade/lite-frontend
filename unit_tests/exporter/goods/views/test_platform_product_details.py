@@ -9,7 +9,7 @@ from core import client
 
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def test_platform_product_details_context(
         ("pv-grading-issuing-authority", "Government entity", "Name and address of the issuing authority"),
         ("pv-grading-details-reference", "GR123", "Reference"),
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
-        ("uses-information-security", "No", "Is the product designed to employ 'information security' features?"),
+        ("uses-information-security", "No", "Does the product include security features to protect information?"),
         (
             "has-product-document",
             "Yes",
@@ -74,5 +74,5 @@ def test_platform_product_details_context(
             "Upload a document that shows what your product is designed to do",
         ),
         ("product-document-description", "product data sheet", "Description (optional)"),
-        ("military-use", "No", "Is the product for military use?"),
+        ("military-use", "No", "Is the product specially designed or modified for military use?"),
     )

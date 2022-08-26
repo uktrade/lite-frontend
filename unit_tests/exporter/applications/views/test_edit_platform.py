@@ -17,7 +17,7 @@ def setup(
     settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture
@@ -76,7 +76,7 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
                 "information_security_details": "Uses information security details",
             },
             {
-                "uses_information_security": "True",
+                "uses_information_security": True,
                 "information_security_details": "Uses information security details",
             },
         ),

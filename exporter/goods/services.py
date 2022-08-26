@@ -9,6 +9,7 @@ from exporter.core.constants import (
     PRODUCT_CATEGORY_PLATFORM,
     PRODUCT_CATEGORY_SOFTWARE,
     COMPONENT_CATEGORY_PLATFORM,
+    PRODUCT_CATEGORY_MATERIAL,
 )
 
 
@@ -320,6 +321,17 @@ def post_component(request, json):
 
 
 def edit_platform(request, pk, json):
+    response = client.put(request, f"/goods/{pk}", json)
+    return response.json(), response.status_code
+
+
+def post_material(request, json):
+    json["item_category"] = PRODUCT_CATEGORY_MATERIAL
+    data = client.post(request, "/goods/", json)
+    return data.json(), data.status_code
+
+
+def edit_material(request, pk, json):
     response = client.put(request, f"/goods/{pk}", json)
     return response.json(), response.status_code
 

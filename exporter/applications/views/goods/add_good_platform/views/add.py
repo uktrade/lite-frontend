@@ -19,6 +19,7 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductMilitaryUseForm,
     ProductNameForm,
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
@@ -26,18 +27,15 @@ from exporter.goods.forms.common import (
     ProductPartNumberForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
+    ProductQuantityAndValueForm,
+    ProductUsesInformationSecurityForm,
 )
-from exporter.goods.forms.firearms import (
-    FirearmQuantityAndValueForm,
-)
-from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
 from exporter.goods.services import post_platform, post_good_documents
 from exporter.applications.services import post_platform_good_on_application
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
-    NonFirearmsFlagMixin,
 )
 from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
@@ -55,17 +53,16 @@ from .payloads import (
     AddGoodPlatformPayloadBuilder,
     AddGoodPlatformToApplicationPayloadBuilder,
 )
-
+from .mixins import NonFirearmsPlatformFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodPlatform(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
-    ProductUsesInformationSecurityForm,
 ):
     form_list = [
         (AddGoodPlatformSteps.NAME, ProductNameForm),
@@ -93,6 +90,7 @@ class AddGoodPlatform(
 
         if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
+
         return kwargs
 
     def has_product_documentation(self):
@@ -124,7 +122,7 @@ class AddGoodPlatform(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:new_good",
+            "applications:non_firearm_category",
             kwargs={
                 "pk": self.kwargs["pk"],
             },
@@ -181,7 +179,7 @@ class AddGoodPlatform(
 
 class AddGoodPlatformToApplication(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,
@@ -190,7 +188,7 @@ class AddGoodPlatformToApplication(
         (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
         (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
         (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
-        (AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
     ]
 
     condition_dict = {

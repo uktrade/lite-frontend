@@ -251,7 +251,7 @@ class IsGoodFirearm(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
 
     def form_valid(self, form):
         if form.cleaned_data["is_firearm_product"]:
-            return redirect("applications:new_good_firearm", pk=self.kwargs["pk"])
+            return redirect("applications:new_good", pk=self.kwargs["pk"])
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -277,7 +277,7 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        context["back_link_url"] = reverse("applications:is_good_firearm", kwargs={"pk": self.kwargs["pk"]})
         return context
 
 
@@ -357,6 +357,8 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
         # The back_link_url is used for the first form in the sequence. For subsequent forms,
         # the wizard automatically generates the back link to the previous form.
         context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        if settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
+            context["back_link_url"] = reverse("applications:is_good_firearm", kwargs={"pk": self.kwargs["pk"]})
         return context
 
     def get_form_kwargs(self, step=None):

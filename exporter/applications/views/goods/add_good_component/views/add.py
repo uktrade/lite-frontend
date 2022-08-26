@@ -19,6 +19,7 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductMilitaryUseForm,
     ProductNameForm,
     ProductOnwardExportedForm,
     ProductOnwardAlteredProcessedForm,
@@ -26,11 +27,9 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductPVGradingDetailsForm,
     ProductPartNumberForm,
+    ProductQuantityAndValueForm,
+    ProductUsesInformationSecurityForm,
 )
-from exporter.goods.forms.firearms import (
-    FirearmQuantityAndValueForm,
-)
-from exporter.goods.forms.goods import ProductUsesInformationSecurityForm, ProductMilitaryUseForm
 
 from exporter.goods.services import post_component, post_good_documents
 from exporter.applications.services import post_product_good_on_application
@@ -120,7 +119,7 @@ class AddGoodComponent(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:new_good",
+            "applications:non_firearm_category",
             kwargs={
                 "pk": self.kwargs["pk"],
             },
@@ -186,7 +185,7 @@ class AddGoodComponentToApplication(
         (AddGoodComponentToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
         (AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
         (AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
-        (AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
     ]
 
     condition_dict = {

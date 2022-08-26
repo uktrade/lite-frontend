@@ -10,7 +10,6 @@ from core.auth.views import LoginRequiredMixin
 
 from lite_forms.generators import error_page
 
-from exporter.applications.views.goods.common.mixins import NonFirearmsFlagMixin
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
@@ -20,6 +19,7 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductMilitaryUseForm,
     ProductNameForm,
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
@@ -27,14 +27,11 @@ from exporter.goods.forms.common import (
     ProductPartNumberForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
-)
-from exporter.goods.forms.firearms import (
-    FirearmQuantityAndValueForm,
+    ProductQuantityAndValueForm,
 )
 from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
     ProductSecurityFeaturesForm,
-    ProductMilitaryUseForm,
     ProductDesignDetailsForm,
 )
 from exporter.goods.services import post_software, post_good_documents
@@ -56,14 +53,14 @@ from .payloads import (
     AddGoodSoftwarePayloadBuilder,
     AddGoodSoftwareToApplicationPayloadBuilder,
 )
-
+from .mixins import NonFirearmsSoftwareFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodSoftware(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
     ProductSecurityFeaturesForm,
@@ -129,7 +126,7 @@ class AddGoodSoftware(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:new_good",
+            "applications:non_firearm_category",
             kwargs={
                 "pk": self.kwargs["pk"],
             },
@@ -186,7 +183,7 @@ class AddGoodSoftware(
 
 class AddGoodSoftwareToApplication(
     LoginRequiredMixin,
-    NonFirearmsFlagMixin,
+    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,
@@ -195,7 +192,7 @@ class AddGoodSoftwareToApplication(
         (AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
         (AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
         (AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
-        (AddGoodSoftwareToApplicationSteps.QUANTITY_AND_VALUE, FirearmQuantityAndValueForm),
+        (AddGoodSoftwareToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
     ]
 
     condition_dict = {

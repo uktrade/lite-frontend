@@ -1,8 +1,10 @@
 from datetime import datetime
+from decimal import Decimal
 
-from crispy_forms_gds.layout import HTML
+from crispy_forms_gds.layout import Field, HTML
 
 from django import forms
+from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
@@ -10,6 +12,7 @@ from core.forms.layouts import (
     ConditionalQuestion,
     ConditionalRadios,
     ConditionalCheckbox,
+    Prefixed,
 )
 from exporter.core.common.forms import (
     BaseForm,
@@ -38,7 +41,7 @@ class ProductNameForm(BaseForm):
         return (
             HTML.p(
                 "Try to match the name as closely as possible to any documentation such as the technical "
-                "specification, end user certificate or Product certificate.",
+                "specification, end user certificate or firearm certificate.",
             ),
             "name",
             HTML.details(
@@ -224,9 +227,9 @@ class ProductPartNumberForm(BaseForm):
     class Layout:
         TITLE = "Do you have the part number?"
 
-    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
+    part_number = forms.CharField(required=False, label="")
 
-    part_number = forms.CharField(required=False)
+    part_number_missing = forms.BooleanField(required=False, label="I do not have a part number")
 
     no_part_number_comments = forms.CharField(
         widget=forms.Textarea,
@@ -242,15 +245,29 @@ class ProductPartNumberForm(BaseForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        error_message = "Enter the part number or select that you do not have a part number"
 
         part_number_missing = cleaned_data.get("part_number_missing")
         part_number = cleaned_data.get("part_number")
         no_part_number_comments = cleaned_data.get("no_part_number_comments")
-        if not part_number_missing and not part_number:
-            self.add_error("part_number", error_message)
-        elif part_number_missing and not no_part_number_comments:
-            self.add_error("part_number_missing", error_message)
+
+        mutually_exclusive_error_message = "Enter the part number or select that you do not have a part number"
+
+        if not part_number and not part_number_missing:
+            self.add_error(
+                "part_number",
+                mutually_exclusive_error_message,
+            )
+        elif part_number and part_number_missing:
+            self.add_error(
+                "part_number_missing",
+                mutually_exclusive_error_message,
+            )
+        elif not part_number and part_number_missing and not no_part_number_comments:
+            self.add_error(
+                "no_part_number_comments",
+                "Enter a reason why you do not have a part number",
+            )
+
         return cleaned_data
 
 
@@ -512,5 +529,139 @@ class ProductOnwardIncorporatedForm(BaseForm):
 
         if cleaned_data.get("is_onward_incorporated") is False:
             cleaned_data["is_onward_incorporated_comments"] = ""
+
+        return cleaned_data
+
+
+class ProductQuantityAndValueForm(BaseForm):
+    class Layout:
+        TITLE = "Quantity and value"
+
+    number_of_items = forms.IntegerField(
+        error_messages={
+            "invalid": "Number of items must be a number, like 16",
+            "required": "Enter the number of items",
+            "min_value": "Number of items must be 1 or more",
+        },
+        min_value=1,
+        widget=forms.TextInput,
+    )
+    value = forms.DecimalField(
+        decimal_places=2,
+        error_messages={
+            "invalid": "Total value must be a number, like 16.32",
+            "required": "Enter the total value",
+            "max_decimal_places": "Total value must not be more than 2 decimals",
+            "min_value": "Total value must be 0.01 or more",
+        },
+        label="Total value",
+        min_value=Decimal("0.01"),
+        widget=forms.TextInput,
+    )
+
+    def get_layout_fields(self):
+        return (
+            Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
+            Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
+        )
+
+
+class ProductUsesInformationSecurityForm(BaseForm):
+    class Layout:
+        TITLE = "Does the product include security features to protect information?"
+        SUBTITLE = "For example, authentication, encryption or any other information security controls."
+
+    uses_information_security = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        coerce=coerce_str_to_bool,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product includes security features to protect information",
+        },
+    )
+
+    information_security_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        label=f"Provide details of the information security features",
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "uses_information_security",
+                ConditionalQuestion(
+                    "Yes",
+                    "information_security_details",
+                ),
+                "No",
+            ),
+            HTML.details(
+                "Help with security features",
+                render_to_string("goods/forms/common/help_with_security_features.html"),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        uses_information_security = cleaned_data.get("uses_information_security")
+        information_security_details = cleaned_data.get("information_security_details")
+
+        if uses_information_security and not information_security_details:
+            self.add_error("information_security_details", "Enter details of the information security features")
+
+        return cleaned_data
+
+
+class ProductMilitaryUseForm(BaseForm):
+    class Layout:
+        TITLE = "Is the product specially designed or modified for military use?"
+
+    class IsMilitaryUseChoices(models.TextChoices):
+        YES_DESIGNED = "yes_designed", "Yes, it is specially designed for military use"
+        YES_MODIFIED = "yes_modified", "Yes, it is modified for military use"
+        NO = "no", "No"
+
+    is_military_use = forms.ChoiceField(
+        choices=IsMilitaryUseChoices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select if the product is specially designed or modified for military use",
+        },
+    )
+
+    modified_military_use_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        label="Provide details of the modifications",
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_military_use",
+                self.IsMilitaryUseChoices.YES_DESIGNED.label,
+                ConditionalQuestion(
+                    self.IsMilitaryUseChoices.YES_MODIFIED.label,
+                    "modified_military_use_details",
+                ),
+                self.IsMilitaryUseChoices.NO.label,
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_military_use = cleaned_data.get("is_military_use")
+        modified_military_use_details = cleaned_data.get("modified_military_use_details")
+
+        if is_military_use == self.IsMilitaryUseChoices.YES_MODIFIED and not modified_military_use_details:
+            self.add_error("modified_military_use_details", "Enter details of modifications")
 
         return cleaned_data

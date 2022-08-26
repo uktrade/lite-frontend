@@ -6,7 +6,7 @@ from django.urls import reverse
 
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture
@@ -95,7 +95,7 @@ def platform_summary(good_id):
         (
             "uses-information-security",
             "No",
-            "Is the product designed to employ 'information security' features?",
+            "Does the product include security features to protect information?",
         ),
         (
             "has-product-document",
@@ -120,7 +120,7 @@ def platform_summary(good_id):
         (
             "military-use",
             "No",
-            "Is the product for military use?",
+            "Is the product specially designed or modified for military use?",
         ),
     )
 
@@ -217,8 +217,28 @@ def test_platform_on_application_summary_context(
     response = authorized_client.get(platform_on_application_summary_url)
     context = response.context
 
+    def _get_test_url(name):
+        if not name:
+            return None
+        return f"/applications/{application['id']}/goods/platform/{good_on_application['id']}/platform-on-application-summary/edit/{name}/"
+
+    url_map = {
+        "is-onward-exported": "onward-exported",
+        "is-altered": "onward-altered",
+        "is-altered-comments": "onward-altered",
+        "is-incorporated": "onward-incorporated",
+        "is-incorporated-comments": "onward-incorporated",
+        "number-of-items": "quantity-value",
+        "total-value": "quantity-value",
+    }
+
+    platform_on_application_summary_with_links = tuple(
+        (key, value, label, _get_test_url(url_map.get(key, None)))
+        for key, value, label in platform_on_application_summary
+    )
+
     assert context["application"] == application
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
     assert context["product_summary"] == platform_summary
-    assert context["product_on_application_summary"] == platform_on_application_summary
+    assert context["product_on_application_summary"] == platform_on_application_summary_with_links
