@@ -609,9 +609,6 @@ class UpdateSerialNumbersForm(BaseSerialNumbersForm):
 
 
 class ProductMilitaryUseForm(forms.Form):
-    class Layout:
-        TITLE = CreateGoodForm.MilitaryUse.TITLE
-
     title = CreateGoodForm.MilitaryUse.TITLE
 
     is_military_use = forms.ChoiceField(

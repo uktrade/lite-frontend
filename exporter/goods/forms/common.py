@@ -4,6 +4,7 @@ from decimal import Decimal
 from crispy_forms_gds.layout import Field, HTML
 
 from django import forms
+from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 
@@ -613,5 +614,54 @@ class ProductUsesInformationSecurityForm(BaseForm):
 
         if uses_information_security and not information_security_details:
             self.add_error("information_security_details", "Enter details of the information security features")
+
+        return cleaned_data
+
+
+class ProductMilitaryUseForm(BaseForm):
+    class Layout:
+        TITLE = "Is the product specially designed or modified for military use?"
+
+    class IsMilitaryUseChoices(models.TextChoices):
+        YES_DESIGNED = "yes_designed", "Yes, it is specially designed for military use"
+        YES_MODIFIED = "yes_modified", "Yes, it is modified for military use"
+        NO = "no", "No"
+
+    is_military_use = forms.ChoiceField(
+        choices=IsMilitaryUseChoices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select if the product is specially designed or modified for military use",
+        },
+    )
+
+    modified_military_use_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        label="Provide details of the modifications",
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_military_use",
+                self.IsMilitaryUseChoices.YES_DESIGNED.label,
+                ConditionalQuestion(
+                    self.IsMilitaryUseChoices.YES_MODIFIED.label,
+                    "modified_military_use_details",
+                ),
+                self.IsMilitaryUseChoices.NO.label,
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        is_military_use = cleaned_data.get("is_military_use")
+        modified_military_use_details = cleaned_data.get("modified_military_use_details")
+
+        if is_military_use == self.IsMilitaryUseChoices.YES_MODIFIED and not modified_military_use_details:
+            self.add_error("modified_military_use_details", "Enter details of modifications")
 
         return cleaned_data

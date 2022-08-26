@@ -120,7 +120,7 @@ def platform_summary(good_id):
         (
             "military-use",
             "No",
-            "Is the product for military use?",
+            "Is the product specially designed or modified for military use?",
         ),
     )
 
