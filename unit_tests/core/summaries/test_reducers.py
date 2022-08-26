@@ -483,6 +483,18 @@ def test_firearms_act_reducer(
                 ("no-product-document-explanation", "No document comments"),
             ),
         ),
+        (
+            {
+                "is_document_available": False,
+                "no_document_comments": "No document comments",
+                "product_description": "Product description",
+            },
+            (
+                ("has-product-document", False),
+                ("no-product-document-explanation", "No document comments"),
+                ("product-description", "Product description"),
+            ),
+        ),
     ),
 )
 def test_has_product_document_reducer(good, output):

@@ -18,6 +18,7 @@ from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -120,6 +121,15 @@ class BaseEditPartNumber:
             }
         return {
             "part_number": self.good["part_number"],
+        }
+
+
+class BaseEditProductDescription:
+    form_class = ProductDescriptionForm
+
+    def get_initial(self):
+        return {
+            "product_description": self.good["product_description"],
         }
 
 
