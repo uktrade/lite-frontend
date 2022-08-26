@@ -665,3 +665,19 @@ class ProductMilitaryUseForm(BaseForm):
             self.add_error("modified_military_use_details", "Enter details of modifications")
 
         return cleaned_data
+
+
+class ProductDescriptionForm(BaseForm):
+    class Layout:
+        TITLE = "Describe the product and what it is designed to do"
+
+    product_description = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 5}),
+        label="",
+        error_messages={
+            "required": "Enter a description of the product and what it is designed to do",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("product_description",)

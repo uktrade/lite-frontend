@@ -20,6 +20,7 @@ from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
     BaseEditName,
     BaseEditPartNumber,
+    BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
     BaseEditProductDocumentView,
@@ -204,6 +205,13 @@ class PlatformEditProductDocumentSensitivity(
 
 class PlatformEditProductDocumentView(
     BaseProductDocumentUpload,
+    BasePlatformEditView,
+):
+    pass
+
+
+class PlatformEditProductDescriptionView(
+    BaseEditProductDescription,
     BasePlatformEditView,
 ):
     pass

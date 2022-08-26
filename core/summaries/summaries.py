@@ -80,6 +80,7 @@ PLATFORM_FIELDS = (
     "uses-information-security-details",
     "has-product-document",
     "no-product-document-explanation",
+    "product-description",
     "is-document-sensitive",
     "product-document",
     "product-document-description",
