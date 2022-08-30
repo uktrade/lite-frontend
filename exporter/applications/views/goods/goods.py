@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from http import HTTPStatus
 
+from django.http import Http404
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -86,6 +87,7 @@ from exporter.goods.forms import (
     upload_firearms_act_certificate_form,
     IsFirearmForm,
     NonFirearmCategoryForm,
+    IsMaterialSubstanceCategoryForm,
 )
 from exporter.goods.services import (
     get_good,
@@ -269,11 +271,37 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
 
     def form_valid(self, form):
         category = form.cleaned_data["no_firearm_category"]
+        redirect_url = reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
+        if category.lower() == "software":
+            redirect_url = reverse("applications:new_good_software", kwargs={"pk": self.kwargs["pk"]})
+        elif category.lower() == "material_category":
+            redirect_url = reverse("applications:is_material_substance", kwargs={"pk": self.kwargs["pk"]})
+        return redirect(redirect_url)
 
-        return redirect(
-            f"applications:new_good_{category.lower()}",
-            pk=self.kwargs["pk"],
-        )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("applications:is_good_firearm", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+
+class IsMaterialSubstanceCategory(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = IsMaterialSubstanceCategoryForm
+
+    def dispatch(self, request, **kwargs):
+        if not (
+            settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED
+            and settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED
+        ):
+            raise Http404
+        return super().dispatch(request, **kwargs)
+
+    def form_valid(self, form):
+        is_material_substance = form.cleaned_data["is_material_substance"]
+        redirect_url = reverse("applications:new_good_component", kwargs={"pk": self.kwargs["pk"]})
+        if is_material_substance:
+            redirect_url = reverse("applications:new_good_material", kwargs={"pk": self.kwargs["pk"]})
+        return redirect(redirect_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

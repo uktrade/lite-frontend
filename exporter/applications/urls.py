@@ -407,6 +407,11 @@ urlpatterns = [
     # Platform product and non-firearm
     path("<uuid:pk>/goods/is-firearm/", goods.IsGoodFirearm.as_view(), name="is_good_firearm"),
     path("<uuid:pk>/goods/non-firearm-category/", goods.NonFirearmCategory.as_view(), name="non_firearm_category"),
+    path(
+        "<uuid:pk>/goods/is-material-substance/",
+        goods.IsMaterialSubstanceCategory.as_view(),
+        name="is_material_substance",
+    ),
     path("<uuid:pk>/goods/add-new/platform/", AddGoodPlatform.as_view(), name="new_good_platform"),
     path(
         "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
