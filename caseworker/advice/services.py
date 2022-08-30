@@ -15,7 +15,8 @@ MOD_CONSOLIDATE_QUEUES = [
     "MOD_DI_CASES_TO_REVIEW",
     "MOD_DSR_CASES_TO_REVIEW",
     "MOD_DSTL_CASES_TO_REVIEW",
-    "MOD_WECA_CASES_TO_REVIEW",
+    "MOD_WECA_CASES_TO_REVIEW",  # TODO: Remove this after https://uktrade.atlassian.net/browse/LTD-2730 released
+    "MOD_CAPPROT_CASES_TO_REVIEW",
     "MOD_ECJU_REVIEW_AND_COMBINE",
 ]
 LU_POST_CIRC_FINALISE_QUEUE = "LU_POST_CIRC_FINALISE"
@@ -28,7 +29,8 @@ MOD_CONSOLIDATE_TEAMS = [
     "MOD_DI",
     "MOD_DSR",
     "MOD_DSTL",
-    "MOD_WECA",
+    "MOD_WECA",  # TODO: Remove this after https://uktrade.atlassian.net/browse/LTD-2730 released
+    "MOD_CAPPROT",
 ]
 LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 

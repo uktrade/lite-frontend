@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -575,5 +576,26 @@ def test_product_uses_information_security_form_validation(data, is_valid, error
 )
 def test_product_military_use_form_validation(data, is_valid, errors):
     form = ProductMilitaryUseForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {"product_description": ["Enter a description of the product and what it is designed to do"]},
+        ),
+        (
+            {"product_description": "Product description"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_description_form_validation(data, is_valid, errors):
+    form = ProductDescriptionForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
