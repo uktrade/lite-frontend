@@ -272,9 +272,9 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
     def form_valid(self, form):
         category = form.cleaned_data["no_firearm_category"]
         redirect_url = reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
-        if category.lower() == "software":
+        if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.SOFTWARE.value:
             redirect_url = reverse("applications:new_good_software", kwargs={"pk": self.kwargs["pk"]})
-        elif category.lower() == "material_category":
+        elif category == NonFirearmCategoryForm.NonFirearmCategoryChoices.MATERIAL_CATEGORY.value:
             redirect_url = reverse("applications:is_material_substance", kwargs={"pk": self.kwargs["pk"]})
         return redirect(redirect_url)
 

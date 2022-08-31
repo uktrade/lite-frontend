@@ -771,7 +771,7 @@ class NonFirearmCategoryForm(BaseForm):
 
 class IsMaterialSubstanceCategoryForm(BaseForm):
     class Layout:
-        TITLE = "Is it material or substance ?"
+        TITLE = "Is it a material or substance?"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

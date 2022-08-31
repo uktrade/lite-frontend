@@ -68,7 +68,7 @@ def test_non_firearm_category_form_ff_enabled(settings, disable_non_firearms, fe
     form = NonFirearmCategoryForm()
     choice_values = [c.value for c in form.fields["no_firearm_category"].choices]
     assert len(choice_values) == 1
-    assert choice_values[0] == choice
+    assert choice_values == [choice]
 
 
 @pytest.mark.parametrize(
