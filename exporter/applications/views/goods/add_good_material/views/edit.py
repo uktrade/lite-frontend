@@ -156,21 +156,6 @@ class MaterialEditPVGradingDetails(BaseMaterialEditView):
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
-class MaterialEditUsesInformationSecurity(BaseMaterialEditView):
-    form_class = ProductUsesInformationSecurityForm
-
-    def get_initial(self):
-        if not self.good["uses_information_security"]:
-            return {
-                "uses_information_security": self.good["uses_information_security"],
-            }
-
-        return {
-            "uses_information_security": self.good["uses_information_security"],
-            "information_security_details": self.good["information_security_details"],
-        }
-
-
 class MaterialEditMilitaryUseView(BaseMaterialEditView):
     form_class = ProductMilitaryUseForm
 

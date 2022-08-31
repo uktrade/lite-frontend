@@ -70,17 +70,6 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
             {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
         ),
         (
-            "material_edit_uses_information_security",
-            {
-                "uses_information_security": True,
-                "information_security_details": "Uses information security details",
-            },
-            {
-                "uses_information_security": True,
-                "information_security_details": "Uses information security details",
-            },
-        ),
-        (
             "material_edit_part_number",
             {
                 "part_number": "12345",
@@ -154,16 +143,6 @@ def test_edit_material_post(
             "material_edit_control_list_entries",
             {},
             {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},
-        ),
-        (
-            "material_edit_uses_information_security",
-            {},
-            {"uses_information_security": False},
-        ),
-        (
-            "material_edit_uses_information_security",
-            {"uses_information_security": True, "information_security_details": "Details"},
-            {"uses_information_security": True, "information_security_details": "Details"},
         ),
         (
             "material_edit_part_number",

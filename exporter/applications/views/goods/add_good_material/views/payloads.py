@@ -24,7 +24,6 @@ class AddGoodMaterialPayloadBuilder(MergingPayloadBuilder):
         AddGoodMaterialSteps.PART_NUMBER: get_part_number_payload,
         AddGoodMaterialSteps.PV_GRADING: get_pv_grading_payload,
         AddGoodMaterialSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
-        AddGoodMaterialSteps.PRODUCT_USES_INFORMATION_SECURITY: get_cleaned_data,
         AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
         AddGoodMaterialSteps.PRODUCT_MILITARY_USE: get_cleaned_data,

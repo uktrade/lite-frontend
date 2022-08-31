@@ -110,8 +110,6 @@ MATERIAL_FIELDS = (
     "pv-grading-issuing-authority",
     "pv-grading-details-reference",
     "pv-grading-details-date-of-issue",
-    "uses-information-security",
-    "uses-information-security-details",
     "has-product-document",
     "no-product-document-explanation",
     "is-document-sensitive",
@@ -285,7 +283,7 @@ def material_summary(good, additional_formatters=None):
         **MATERIAL_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, PLATFORM_FIELDS)
+    summary = pick_fields(summary, MATERIAL_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, MATERIAL_LABELS)
 
