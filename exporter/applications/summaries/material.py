@@ -23,8 +23,6 @@ MATERIAL_SUMMARY_EDIT_LINKS = {
     "pv-grading-issuing-authority": "pv_grading_details",
     "pv-grading-details-reference": "pv_grading_details",
     "pv-grading-details-date-of-issue": "pv_grading_details",
-    "uses-information-security": "uses_information_security",
-    "uses-information-security-details": "uses_information_security",
     "has-product-document": "product_document_availability",
     "no-product-document-explanation": "product_document_availability",
     "is-document-sensitive": "product_document_sensitivity",

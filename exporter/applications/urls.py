@@ -110,7 +110,6 @@ from exporter.applications.views.goods.add_good_material.views.edit import (
     MaterialEditPartNumberView,
     MaterialEditPVGrading,
     MaterialEditPVGradingDetails,
-    MaterialEditUsesInformationSecurity,
     MaterialOnApplicationSummaryEditOnwardExported,
     MaterialOnApplicationSummaryEditOnwardAltered,
     MaterialOnApplicationSummaryEditOnwardIncorporated,
@@ -558,11 +557,6 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/material/edit/pv-grading-details/",
         MaterialEditPVGradingDetails.as_view(),
         name="material_edit_pv_grading_details",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/uses-information-security/",
-        MaterialEditUsesInformationSecurity.as_view(),
-        name="material_edit_uses_information_security",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/material/edit/product-document-availability/",
