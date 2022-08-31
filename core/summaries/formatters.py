@@ -53,6 +53,8 @@ FIREARM_LABELS = {
 }
 
 PLATFORM_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "product-category": "Select the product category",
     "name": "Give the product a descriptive name",
     "is-good-controlled": "Do you know the product's control list entry?",
     "control-list-entries": "Enter the control list entry",
@@ -70,6 +72,7 @@ PLATFORM_LABELS = {
     "uses-information-security-details": "Provide details of the information security features (optional)",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
     "is-document-sensitive": "Is the document rated above Official-sensitive?",
     "product-document": "Upload a document that shows what your product is designed to do",
     "product-document-description": "Description (optional)",
@@ -300,6 +303,12 @@ FIREARM_ON_APPLICATION_LABELS = {
 
 
 PLATFORM_VALUE_FORMATTERS = {
+    "is-firearm-product": yesno,
+    "product-category": mapping_formatter(
+        {
+            "platform": "It's a complete product",
+        }
+    ),
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("I do not have a part number"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
