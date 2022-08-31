@@ -56,7 +56,6 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
     ProductMilitaryUseForm,
-    ProductUsesInformationSecurityForm,
 )
 
 from exporter.goods.services import edit_material
