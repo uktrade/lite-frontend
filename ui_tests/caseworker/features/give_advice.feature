@@ -46,14 +46,14 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I change my team to "MOD-ECJU" and default queue to "Circulate to sub-advisers"
     And I go to my case list
     And I click the application previously created
-    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I assign the case to "MOD-CapProt cases to review" queue
     And I click I'm done
     And I click submit
     Then I don't see previously created application
 
     ##### Sub-advisor to give advice #####
     When I go to my profile page
-    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
     And I go to my case list
     Then I should see my case in the cases list
     When I click the application previously created
@@ -100,9 +100,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
-    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
-    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -135,9 +135,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
-    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
-    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -157,7 +157,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click confirm
     Then I am asked what my recommendation is
     When I click back
-    Then I see there are no recommendations from "MOD-WECA"
+    Then I see there are no recommendations from "MOD-CapProt"
 
 
   @mod_refuse_advice
@@ -165,9 +165,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
-    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
-    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -181,7 +181,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     # The following step will implicitly navigate through the "All cases" queue
     When I go to application previously created
     And I click the recommendations and decision tab
-    And I expand the details for "MOD-WECA has refused"
+    And I expand the details for "MOD-CapProt has refused"
     Then I see "reason for this refusal" as the reasons for refusal
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
 
@@ -224,9 +224,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I prepare the application for final review
     # OGD refusal
     When I go to application previously created
-    And I assign the case to "MOD-WECA Cases to Review" queue
+    And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
-    And I change my team to "MOD-WECA" and default queue to "MOD-WECA Cases to Review"
+    And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab

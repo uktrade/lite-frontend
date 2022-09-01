@@ -93,11 +93,6 @@ def material_summary(good_id):
             "Date of issue",
         ),
         (
-            "uses-information-security",
-            "No",
-            "Does the product include security features to protect information?",
-        ),
-        (
             "has-product-document",
             "Yes",
             "Do you have a document that shows what your product is and what it’s designed to do?",
@@ -153,8 +148,6 @@ def test_material_product_summary_context(
         "pv-grading-issuing-authority": "pv-grading-details",
         "pv-grading-details-reference": "pv-grading-details",
         "pv-grading-details-date-of-issue": "pv-grading-details",
-        "uses-information-security": "uses-information-security",
-        "uses-information-security-details": "uses-information-security",
         "has-product-document": "product-document-availability",
         "is-document-sensitive": "product-document-sensitivity",
         "product-document": "product-document",

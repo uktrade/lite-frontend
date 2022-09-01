@@ -27,7 +27,6 @@ from exporter.goods.forms.common import (
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
-    ProductUsesInformationSecurityForm,
     ProductMilitaryUseForm,
 )
 
@@ -70,7 +69,6 @@ class AddGoodMaterial(
         (AddGoodMaterialSteps.PART_NUMBER, ProductPartNumberForm),
         (AddGoodMaterialSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodMaterialSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
-        (AddGoodMaterialSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
         (AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
         (AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
