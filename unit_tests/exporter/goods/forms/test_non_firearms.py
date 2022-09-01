@@ -9,11 +9,7 @@ from exporter.goods.forms import IsFirearmForm, NonFirearmCategoryForm
         (
             {},
             False,
-            {
-                "is_firearm_product": [
-                    "Select yes to add a firearm product"
-                ]
-            },
+            {"is_firearm_product": ["Select yes to add a firearm product"]},
         ),
         ({"is_firearm_product": True}, True, {}),
     ),
