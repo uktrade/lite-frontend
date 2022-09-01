@@ -11,7 +11,7 @@ from exporter.goods.forms import IsFirearmForm, NonFirearmCategoryForm
             False,
             {
                 "is_firearm_product": [
-                    "Select whether it’s a complete product, forms part of a product or helps operate a product"
+                    "Select yes to add a firearm product"
                 ]
             },
         ),
