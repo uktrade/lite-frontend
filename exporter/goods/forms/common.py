@@ -420,10 +420,8 @@ class ProductOnwardExportedForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML(
-                "<p>ell us if the item will be exported again, beyond its first destination.</p>"
-                "<p>This includes when the product has been incorporated into another item.</p>"
-            ),
+            HTML.p("Tell us if the item will be exported again, beyond its first destination."),
+            HTML.p("This includes when the product has been incorporated into another item."),
             "is_onward_exported",
             HTML.details(
                 "Help with incorporated products",
