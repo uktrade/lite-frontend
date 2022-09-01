@@ -225,7 +225,7 @@ class ProductPVGradingDetailsForm(BaseForm):
 
 class ProductPartNumberForm(BaseForm):
     class Layout:
-        TITLE = "Do you have the part number?"
+        TITLE = "Enter the part number"
 
     part_number = forms.CharField(required=False, label="")
 
