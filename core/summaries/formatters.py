@@ -94,8 +94,6 @@ MATERIAL_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
-    "uses-information-security": "Does the product include security features to protect information?",
-    "uses-information-security-details": "Provide details of the information security features (optional)",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
     "is-document-sensitive": "Is the document rated above Official-sensitive?",

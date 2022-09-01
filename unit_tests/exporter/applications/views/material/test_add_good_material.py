@@ -13,7 +13,6 @@ from exporter.goods.forms.common import (
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductPartNumberForm,
-    ProductUsesInformationSecurityForm,
     ProductMilitaryUseForm,
 )
 
@@ -150,14 +149,6 @@ def test_add_good_material_end_to_end(
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
-
-    response = post_to_step(
-        AddGoodMaterialSteps.PRODUCT_USES_INFORMATION_SECURITY,
-        {"uses_information_security": True, "information_security_details": "secure encrypt"},
-    )
-
-    assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
 
     response = post_to_step(
@@ -212,8 +203,6 @@ def test_add_good_material_end_to_end(
             "reference": "GR123",
             "date_of_issue": "2020-02-20",
         },
-        "uses_information_security": True,
-        "information_security_details": "secure encrypt",
         "is_document_available": True,
         "no_document_comments": "",
         "is_document_sensitive": False,
@@ -263,12 +252,7 @@ def test_add_good_material_no_pv(
         AddGoodMaterialSteps.PV_GRADING,
         {"is_pv_graded": False},
     )
-    post_to_step(
-        AddGoodMaterialSteps.PRODUCT_USES_INFORMATION_SECURITY,
-        {
-            "uses_information_security": False,
-        },
-    )
+
     post_to_step(
         AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
@@ -295,8 +279,6 @@ def test_add_good_material_no_pv(
         "is_good_controlled": False,
         "control_list_entries": [],
         "is_pv_graded": "no",
-        "uses_information_security": False,
-        "information_security_details": "",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
         "is_military_use": "no",

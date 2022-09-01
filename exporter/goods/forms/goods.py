@@ -723,23 +723,26 @@ class NonFirearmCategoryForm(BaseForm):
 
     class NonFirearmCategoryChoices(models.TextChoices):
         PLATFORM = "PLATFORM", "It's a complete product"
-        COMPONENTS = "COMPONENTS ", "It forms part of a product"
+        MATERIAL_CATEGORY = "MATERIAL_CATEGORY", "It forms part of a product"
         SOFTWARE = "SOFTWARE", "It helps to operate a product"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        category_choices = [
-            TextChoice(
-                self.NonFirearmCategoryChoices.PLATFORM,
-                hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
-            ),
-        ]
+        category_choices = []
 
-        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED:
+        if settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED:
             category_choices.append(
                 TextChoice(
-                    self.NonFirearmCategoryChoices.COMPONENTS,
+                    self.NonFirearmCategoryChoices.PLATFORM,
+                    hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
+                ),
+            )
+
+        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
+            category_choices.append(
+                TextChoice(
+                    self.NonFirearmCategoryChoices.MATERIAL_CATEGORY,
                     hint="Hardware such as components and accessories, or raw materials and substances.",
                 ),
             )
@@ -764,6 +767,33 @@ class NonFirearmCategoryForm(BaseForm):
 
     def get_layout_fields(self):
         return ("no_firearm_category",)
+
+
+class IsMaterialSubstanceCategoryForm(BaseForm):
+    class Layout:
+        TITLE = "Is it a material or substance?"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        material_substance_choices = []
+        if settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
+            material_substance_choices.append((True, "Yes"))
+        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED:
+            material_substance_choices.append((False, "No, it's a component, accessory or module"))
+        self.fields["is_material_substance"].choices = material_substance_choices
+
+    is_material_substance = forms.TypedChoiceField(
+        choices=[],  # updated in init
+        coerce=coerce_str_to_bool,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Select yes if material or substance category",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("is_material_substance",)
 
 
 class ProductSecurityFeaturesForm(BaseForm):

@@ -56,7 +56,6 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
     ProductMilitaryUseForm,
-    ProductUsesInformationSecurityForm,
 )
 
 from exporter.goods.services import edit_material
@@ -154,21 +153,6 @@ class MaterialEditPVGradingDetails(BaseMaterialEditView):
     def get_edit_payload(self, form):
         grading_details = get_pv_grading_details_payload(form)
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
-
-
-class MaterialEditUsesInformationSecurity(BaseMaterialEditView):
-    form_class = ProductUsesInformationSecurityForm
-
-    def get_initial(self):
-        if not self.good["uses_information_security"]:
-            return {
-                "uses_information_security": self.good["uses_information_security"],
-            }
-
-        return {
-            "uses_information_security": self.good["uses_information_security"],
-            "information_security_details": self.good["information_security_details"],
-        }
 
 
 class MaterialEditMilitaryUseView(BaseMaterialEditView):

@@ -110,7 +110,6 @@ from exporter.applications.views.goods.add_good_material.views.edit import (
     MaterialEditPartNumberView,
     MaterialEditPVGrading,
     MaterialEditPVGradingDetails,
-    MaterialEditUsesInformationSecurity,
     MaterialOnApplicationSummaryEditOnwardExported,
     MaterialOnApplicationSummaryEditOnwardAltered,
     MaterialOnApplicationSummaryEditOnwardIncorporated,
@@ -408,6 +407,11 @@ urlpatterns = [
     # Platform product and non-firearm
     path("<uuid:pk>/goods/is-firearm/", goods.IsGoodFirearm.as_view(), name="is_good_firearm"),
     path("<uuid:pk>/goods/non-firearm-category/", goods.NonFirearmCategory.as_view(), name="non_firearm_category"),
+    path(
+        "<uuid:pk>/goods/is-material-substance/",
+        goods.IsMaterialSubstanceCategory.as_view(),
+        name="is_material_substance",
+    ),
     path("<uuid:pk>/goods/add-new/platform/", AddGoodPlatform.as_view(), name="new_good_platform"),
     path(
         "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
@@ -553,11 +557,6 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/material/edit/pv-grading-details/",
         MaterialEditPVGradingDetails.as_view(),
         name="material_edit_pv_grading_details",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/uses-information-security/",
-        MaterialEditUsesInformationSecurity.as_view(),
-        name="material_edit_uses_information_security",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/material/edit/product-document-availability/",
