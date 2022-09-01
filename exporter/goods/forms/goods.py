@@ -709,7 +709,7 @@ class IsFirearmForm(BaseForm):
         label="This includes components, accessories, software and technology relating to firearms.",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select whether it’s a complete product, forms part of a product or helps operate a product",
+            "required": "Select yes to add a firearm product",
         },
     )
 
