@@ -449,6 +449,14 @@ def platform_reducer(good):
 def material_reducer(good):
     summary = (
         (
+            "is-firearm-product",
+            False,
+        ),
+        (
+            "product-category",
+            "material",
+        ),
+        (
             "name",
             good["name"],
         ),
