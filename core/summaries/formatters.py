@@ -366,7 +366,7 @@ MATERIAL_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
-    "number-of-items": integer,
+    "quantity": integer,
     "total-value": money_formatter,
 }
 
@@ -377,7 +377,8 @@ MATERIAL_ON_APPLICATION_LABELS = {
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
     "is-incorporated-comments": "Describe what you are incorporating the product into",
     "is-deactivated": "Has the product been deactivated?",
-    "number-of-items": "Number of items",
+    "unit": "Unit",
+    "quantity": "Quantity",
     "total-value": "Total value",
 }
 

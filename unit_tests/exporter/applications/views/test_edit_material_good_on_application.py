@@ -9,7 +9,7 @@ from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
-    ProductQuantityAndValueForm,
+    ProductUnitQuantityAndValueForm,
 )
 
 
@@ -247,9 +247,9 @@ def test_edit_onward_incorporated(
 
 
 @pytest.fixture
-def edit_quantity_value_url(application, good_on_application, summary_type):
+def edit_unit_quantity_value_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:material_on_application_summary_edit_quantity_value",
+        "applications:material_on_application_summary_edit_unit_quantity_value",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -265,23 +265,26 @@ def edit_quantity_value_url(application, good_on_application, summary_type):
 )
 def test_edit_quantity_value(
     authorized_client,
-    edit_quantity_value_url,
+    edit_unit_quantity_value_url,
     product_on_application_summary_url_factory,
     mock_good_on_application_put,
     summary_type,
+    get_units_mock,
 ):
-    response = authorized_client.get(edit_quantity_value_url)
+    response = authorized_client.get(edit_unit_quantity_value_url)
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
     assert response.context["form"].initial == {
-        "number_of_items": 3,
+        "unit": "GRM",
+        "quantity": 3,
         "value": "16.32",
     }
 
     response = authorized_client.post(
-        edit_quantity_value_url,
+        edit_unit_quantity_value_url,
         data={
-            "number_of_items": 20,
+            "unit": "TON",
+            "quantity": 20,
             "value": "20.22",
         },
     )
@@ -289,7 +292,7 @@ def test_edit_quantity_value(
     assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
+        "unit": "TON",
         "quantity": 20,
-        "unit": "NAR",
         "value": "20.22",
     }

@@ -17,6 +17,7 @@ from exporter.goods.forms.common import (
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
+    ProductUnitQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
 )
 
@@ -363,6 +364,62 @@ def test_firearm_product_document_upload_form_validation(data, files, is_valid, 
 )
 def test_product_quantity_and_value_form_validation(data, is_valid, errors):
     form = ProductQuantityAndValueForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {
+                "unit": ["Select a unit of measurement"],
+                "quantity": ["Enter the quantity"],
+                "value": ["Enter the total value"],
+            },
+        ),
+        (
+            {"unit": "TON", "quantity": "not a number", "value": "100.00"},
+            False,
+            {"quantity": ["Quantity must be a number, like 16"]},
+        ),
+        (
+            {"unit": "TON", "quantity": "1.5", "value": "100.00"},
+            False,
+            {"quantity": ["Quantity must be a number, like 16"]},
+        ),
+        (
+            {"unit": "TON", "quantity": "0", "value": "100.00"},
+            False,
+            {"quantity": ["Quantity cannot be 0"]},
+        ),
+        (
+            {"unit": "TON", "quantity": "1", "value": "not a number"},
+            False,
+            {"value": ["Total value must be a number, like 16.32"]},
+        ),
+        ({"unit": "TON", "quantity": "1", "value": "0"}, False, {"value": ["Total value must be 0.01 or more"]}),
+        (
+            {"unit": "TON", "quantity": "1", "value": "16.12345"},
+            False,
+            {"value": ["Total value must be less than 3 decimal places, like 123.45 or 156"]},
+        ),
+        (
+            {"unit": "TON", "quantity": "1", "value": "16"},
+            True,
+            {},
+        ),
+        (
+            {"unit": "TON", "quantity": "1", "value": "16.32"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_unit_quantity_and_value_form_validation(data, is_valid, errors, request_with_session, get_units_mock):
+    form = ProductUnitQuantityAndValueForm(data=data, request=request_with_session)
     assert form.is_valid() == is_valid
     assert form.errors == errors
 

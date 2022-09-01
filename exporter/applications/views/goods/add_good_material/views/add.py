@@ -26,7 +26,7 @@ from exporter.goods.forms.common import (
     ProductPartNumberForm,
     ProductPVGradingDetailsForm,
     ProductPVGradingForm,
-    ProductQuantityAndValueForm,
+    ProductUnitQuantityAndValueForm,
     ProductMilitaryUseForm,
 )
 
@@ -185,7 +185,7 @@ class AddGoodMaterialToApplication(
         (AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
         (AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
         (AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
-        (AddGoodMaterialToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
+        (AddGoodMaterialToApplicationSteps.UNIT_QUANTITY_AND_VALUE, ProductUnitQuantityAndValueForm),
     ]
 
     condition_dict = {
@@ -195,6 +195,9 @@ class AddGoodMaterialToApplication(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
+        if step == AddGoodMaterialToApplicationSteps.UNIT_QUANTITY_AND_VALUE:
+            kwargs["request"] = self.request
+
         return kwargs
 
     def get_success_url(self):
@@ -215,7 +218,7 @@ class AddGoodMaterialToApplication(
         "Error adding material to application",
         "Unexpected error adding material to application",
     )
-    def post_Material_to_application(self, form_dict):
+    def post_material_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
         return post_material_good_on_application(
             self.request,
@@ -251,7 +254,7 @@ class AddGoodMaterialToApplication(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            good_on_application, _ = self.post_Material_to_application(form_dict)
+            good_on_application, _ = self.post_material_to_application(form_dict)
             good_on_application = good_on_application["good"]
         except ServiceError as e:
             return self.handle_service_error(e)

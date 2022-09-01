@@ -187,7 +187,8 @@ def material_on_application_summary():
             "I will onward incorporate",
             "Describe what you are incorporating the product into",
         ),
-        ("number-of-items", "3", "Number of items"),
+        ("unit", "Gram(s)", "Unit"),
+        ("quantity", "3", "Quantity"),
         ("total-value", "£16.32", "Total value"),
     )
 
@@ -220,8 +221,9 @@ def test_material_on_application_summary_context(
         "is-altered-comments": "onward-altered",
         "is-incorporated": "onward-incorporated",
         "is-incorporated-comments": "onward-incorporated",
-        "number-of-items": "quantity-value",
-        "total-value": "quantity-value",
+        "unit": "unit-quantity-value",
+        "quantity": "unit-quantity-value",
+        "total-value": "unit-quantity-value",
     }
 
     material_on_application_summary_with_links = tuple(

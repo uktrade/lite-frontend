@@ -269,7 +269,8 @@ MATERIAL_ON_APPLICATION_FIELDS = (
     "is-altered-comments",
     "is-incorporated",
     "is-incorporated-comments",
-    "number-of-items",
+    "unit",
+    "quantity",
     "total-value",
 )
 

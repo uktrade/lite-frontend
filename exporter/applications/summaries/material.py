@@ -89,8 +89,9 @@ MATERIAL_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
     "is-altered-comments": "onward_altered",
     "is-incorporated": "onward_incorporated",
     "is-incorporated-comments": "onward_incorporated",
-    "number-of-items": "quantity_value",
-    "total-value": "quantity_value",
+    "unit": "unit_quantity_value",
+    "quantity": "unit_quantity_value",
+    "total-value": "unit_quantity_value",
 }
 
 

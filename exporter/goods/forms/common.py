@@ -22,6 +22,7 @@ from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.services import (
     get_control_list_entries,
     get_pv_gradings_v2,
+    get_units,
 )
 from exporter.core.validators import PastDateValidator
 
@@ -562,6 +563,56 @@ class ProductQuantityAndValueForm(BaseForm):
     def get_layout_fields(self):
         return (
             Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
+            Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
+        )
+
+
+class ProductUnitQuantityAndValueForm(BaseForm):
+    class Layout:
+        TITLE = "Quantity and value"
+
+    unit = forms.ChoiceField(
+        choices=[],  # This will get appended to in init
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select a unit of measurement",
+        },
+        label="Unit of measurement",
+    )
+
+    quantity = forms.IntegerField(
+        error_messages={
+            "invalid": "Quantity must be a number, like 16",
+            "required": "Enter the quantity",
+            "min_value": "Quantity cannot be 0",
+        },
+        min_value=1,
+        widget=forms.TextInput,
+    )
+    value = forms.DecimalField(
+        decimal_places=2,
+        error_messages={
+            "invalid": "Total value must be a number, like 16.32",
+            "required": "Enter the total value",
+            "max_decimal_places": "Total value must be less than 3 decimal places, like 123.45 or 156",
+            "min_value": "Total value must be 0.01 or more",
+        },
+        label="Total value",
+        min_value=Decimal("0.01"),
+        widget=forms.TextInput,
+    )
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        unit_field = self.fields["unit"]
+        units = get_units(request)
+
+        unit_field.choices = list(units.items())
+
+    def get_layout_fields(self):
+        return (
+            "unit",
+            Field("quantity", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
         )
 

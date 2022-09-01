@@ -473,7 +473,8 @@ def platform_on_application_reducer(good_on_application):
 
 def material_on_application_reducer(good_on_application):
     summary = (
-        ("number-of-items", good_on_application["quantity"]),
+        ("unit", good_on_application["unit"]["value"]),
+        ("quantity", good_on_application["quantity"]),
         ("total-value", Decimal(good_on_application["value"])),
     )
     summary += is_onward_exported_reducer(good_on_application)
