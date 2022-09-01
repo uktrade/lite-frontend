@@ -26,11 +26,7 @@ def disable_non_firearms(settings):
         (
             {},
             False,
-            {
-                "is_firearm_product": [
-                    "Select whether it’s a complete product, forms part of a product or helps operate a product"
-                ]
-            },
+            {"is_firearm_product": ["Select yes to add a firearm product"]},
         ),
         ({"is_firearm_product": True}, True, {}),
     ),
