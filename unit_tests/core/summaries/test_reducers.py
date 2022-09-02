@@ -25,6 +25,9 @@ from core.summaries.reducers import (
     is_pv_graded_reducer,
     is_replica_reducer,
     platform_reducer,
+    platform_on_application_reducer,
+    material_reducer,
+    material_on_application_reducer,
     rfd_reducer,
     security_features_reducer,
     serial_numbers_reducer,
@@ -565,6 +568,46 @@ def test_firearm_on_application_reducer(mocker):
     )
 
 
+def test_platform_on_application_reducer(mocker):
+
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(),
+    )
+    good_on_application = {
+        "quantity": "6",
+        "value": "14.44",
+    }
+    assert platform_on_application_reducer(good_on_application) == (
+        ("number-of-items", "6"),
+        ("total-value", Decimal("14.44")),
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application,
+    )
+
+
+def test_material_on_application_reducer(mocker):
+
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(),
+    )
+    good_on_application = {
+        "unit": {"key": "GRM", "value": "Gram(s)"},
+        "quantity": "6",
+        "value": "14.44",
+    }
+    assert material_on_application_reducer(good_on_application) == (
+        ("unit", "Gram(s)"),
+        ("quantity", "6"),
+        ("total-value", Decimal("14.44")),
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application,
+    )
+
+
 @pytest.mark.parametrize(
     "firearm_details,good_on_application_documents,output",
     (
@@ -876,6 +919,40 @@ def test_platform_reducer(mocker):
     mock_is_good_controlled_reducer.assert_called_with(good)
     mock_is_pv_graded_reducer.assert_called_with(good)
     mock_uses_information_security_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
+
+
+def test_material_reducer(mocker):
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = material_reducer(good)
+    assert result == (
+        ("is-firearm-product", False),
+        ("product-category", "material"),
+        ("name", "good-name"),
+    )
+
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
     mock_has_product_document_reducer.assert_called_with(good)
     mock_part_number_reducer.assert_called_with(good)
     mock_designed_for_military_use_reducer.assert_called_with(good)

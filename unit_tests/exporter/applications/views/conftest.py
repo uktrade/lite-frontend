@@ -55,6 +55,7 @@ def good_on_application(data_standard_case):
         "good": good["good"],
         "quantity": 3.0,
         "value": "16.32",
+        "unit": {"key": "GRM", "value": "Gram(s)"},
         "is_onward_exported": True,
         "is_onward_altered_processed": True,
         "is_onward_altered_processed_comments": "I will alter it real good",

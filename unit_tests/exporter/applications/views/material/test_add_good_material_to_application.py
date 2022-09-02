@@ -6,11 +6,11 @@ from django.urls import reverse
 from core import client
 from pytest_django.asserts import assertInHTML
 
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
+from exporter.applications.views.goods.add_good_material.views.constants import AddGoodMaterialToApplicationSteps
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardIncorporatedForm,
-    ProductQuantityAndValueForm,
+    ProductUnitQuantityAndValueForm,
 )
 
 
@@ -60,15 +60,15 @@ def mock_get_document(requests_mock, expected_good_data):
     )
 
 
-def test_add_material_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
-    goto_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
+def test_add_material_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step, get_units_mock):
+    goto_step(AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED)
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": False},
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
 
 
 def test_add_material_to_application_end_to_end(
@@ -79,10 +79,11 @@ def test_add_material_to_application_end_to_end(
     good_on_application,
     goto_step,
     post_to_step,
+    get_units_mock,
 ):
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -90,7 +91,7 @@ def test_add_material_to_application_end_to_end(
     assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
     assert response.status_code == 200
@@ -98,16 +99,16 @@ def test_add_material_to_application_end_to_end(
     assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
-        {"number_of_items": "2", "value": "16.32"},
+        AddGoodMaterialToApplicationSteps.UNIT_QUANTITY_AND_VALUE,
+        {"unit": "TON", "quantity": "2", "value": "16.32"},
     )
 
     assert response.status_code == 302
@@ -128,7 +129,7 @@ def test_add_material_to_application_end_to_end(
         "good_id": expected_good_data["id"],
         "is_good_incorporated": False,
         "quantity": 2,
-        "unit": "NAR",
+        "unit": "TON",
         "value": "16.32",
     }
 
@@ -142,13 +143,14 @@ def test_add_material_to_application_end_to_end_handles_service_error(
     post_to_step,
     data_standard_case,
     caplog,
+    get_units_mock,
 ):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
     requests_mock.post(url=url, json={"errors": ["Failed to post"]}, status_code=400)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -156,7 +158,7 @@ def test_add_material_to_application_end_to_end_handles_service_error(
     assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
     assert response.status_code == 200
@@ -164,16 +166,16 @@ def test_add_material_to_application_end_to_end_handles_service_error(
     assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
 
     response = post_to_step(
-        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
-        {"number_of_items": "2", "value": "16.32"},
+        AddGoodMaterialToApplicationSteps.UNIT_QUANTITY_AND_VALUE,
+        {"unit": "TON", "quantity": "2", "value": "16.32"},
     )
 
     assert response.status_code == 200

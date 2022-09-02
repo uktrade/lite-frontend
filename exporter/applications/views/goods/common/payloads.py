@@ -41,6 +41,14 @@ def get_quantity_and_value_payload(form):
     }
 
 
+def get_unit_quantity_and_value_payload(form):
+    return {
+        "unit": form.cleaned_data["unit"],
+        "quantity": form.cleaned_data["quantity"],
+        "value": str(form.cleaned_data["value"]),
+    }
+
+
 class ProductEditPVGradingPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         constants.PV_GRADING: get_pv_grading_payload,

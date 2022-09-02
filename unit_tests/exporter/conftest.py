@@ -465,3 +465,8 @@ def platform_summary(good_id):
             "Is the product specially designed or modified for military use?",
         ),
     )
+
+
+@pytest.fixture
+def get_units_mock(requests_mock):
+    requests_mock.get("/static/units/", json={"units": {"TON": "Tonne(s)", "KGM": "Kilogram(s)", "GRM": "Gram(s)"}})
