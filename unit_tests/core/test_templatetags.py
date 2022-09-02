@@ -7,6 +7,7 @@ from django.template import RequestContext, Template
     "firearm_details, output",
     (
         ({}, "no"),
+        (None, "no"),
         ({"serial_numbers_available": "NOT_AVAILABLE"}, "no"),
         ({"serial_numbers_available": "AVAILABLE"}, "no"),
         ({"serial_numbers_available": "LATER"}, "no"),

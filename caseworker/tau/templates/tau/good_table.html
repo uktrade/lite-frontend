@@ -15,6 +15,8 @@
 {% include "tau/technology_related_to_firearms_table.html" %}
 {% elif good.good.item_category.key == "group1_platform" %}
 {% include "tau/platform_table.html" %}
+{% elif good.good.item_category.key == "group1_materials" %}
+{% include "tau/material_table.html" %}
 {% else %}
 Unknown good type
 {% endif %}

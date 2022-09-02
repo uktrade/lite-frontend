@@ -46,9 +46,13 @@
                 </td>
             </tr>
         {% endif %}
+         <tr class="govuk-table__row">
+          <td class="govuk-table__header">Unit</td>
+          <td class="govuk-table__cell">{{ good_on_application.unit.value }}</td>
+        </tr>
 
         <tr class="govuk-table__row">
-          <td class="govuk-table__header">Number of items</td>
+          <td class="govuk-table__header">Quantity</td>
           <td class="govuk-table__cell">{{ good_on_application.quantity }}</td>
         </tr>
         <tr class="govuk-table__row">
