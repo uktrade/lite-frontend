@@ -89,6 +89,33 @@ def test_application_task_list_template_rendered(
             ],
             True,
         ),
+        (
+            [{"is_onward_exported": False}],
+            False,
+        ),
+        (
+            [{"is_onward_exported": True}],
+            True,
+        ),
+        (
+            [
+                {"is_onward_exported": True},
+                {"is_onward_exported": False},
+            ],
+            True,
+        ),
+        (
+            [
+                {"is_onward_exported": True, "is_good_incorporated": False},
+            ],
+            True,
+        ),
+        (
+            [
+                {"is_onward_exported": False, "is_good_incorporated": True},
+            ],
+            True,
+        ),
     ),
 )
 def test_application_task_list_ultimate_end_users_required(
