@@ -143,7 +143,10 @@ def test_home_content(
     assert edit_url == soup.find(id="assessed-products").find("tbody").find("a").attrs["href"]
 
     # Test if the unassessed products table is sane
+
     assert get_cells(soup, "table-products-1") == [
+        "Product type",
+        "Device, equipment or object",
         "Product document (PDF, opens in new tab)",
         "",
         "Select the type of firearm product",
