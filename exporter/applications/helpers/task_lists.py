@@ -139,6 +139,6 @@ def get_application_task_list(request, application, errors=None):
 
     if not application_type == OPEN:
         context["goods"] = get_application_goods(request, application["id"])
-        context["ultimate_end_users_required"] = True in [good["is_good_incorporated"] for good in context["goods"]]
+        context["ultimate_end_users_required"] = any(good["is_good_incorporated"] for good in context["goods"])
 
     return render(request, "applications/task-list.html", context)
