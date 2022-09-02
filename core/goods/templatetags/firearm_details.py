@@ -8,6 +8,8 @@ register = template.Library()
 
 @register.filter(name="has_added_serial_numbers")
 def has_added_serial_numbers(firearm_details):
+    if not firearm_details:
+        return False
     try:
         serial_numbers_available = firearm_details["serial_numbers_available"]
     except KeyError:

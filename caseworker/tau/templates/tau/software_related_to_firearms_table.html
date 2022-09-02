@@ -2,6 +2,7 @@
 <table id="table-products-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
     {% with good_on_application=good good=good.good firearm_details=good.good.firearm_details organisation_documents=good.organisation_documents %}
+      {% include "tau/includes/product_type_details.html" %}
       {% include "tau/includes/product_document.html" %}
       {% include "tau/includes/product_details.html" %}
       {% include "tau/includes/security_grading.html" %}

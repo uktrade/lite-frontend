@@ -1,0 +1,11 @@
+{% if good.part_number %}
+<tr class="govuk-table__row">
+  <td class="govuk-table__header">Part number (optional)</td>
+  <td class="govuk-table__cell">{{ good.part_number }}</td>
+</tr>
+{% else %}
+<tr class="govuk-table__row">
+  <td class="govuk-table__header">No Part Number Comments</td>
+  <td class="govuk-table__cell">{{ good.no_part_number_comments }}</td>
+</tr>
+{% endif %}
