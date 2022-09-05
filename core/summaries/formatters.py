@@ -41,6 +41,7 @@ FIREARM_LABELS = {
     "is-covered-by-firearm-act-section-one-two-or-five-explanation": "Explain",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
     "is-document-sensitive": "Is the document rated above Official-sensitive?",
     "product-document": "Upload a document that shows what your product is designed to do",
     "product-document-description": "Description (optional)",

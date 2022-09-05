@@ -63,6 +63,7 @@ FIREARM_FIELDS = (
     "section-5-certificate-missing-reason",
     "has-product-document",
     "no-product-document-explanation",
+    "product-description",
     "is-document-sensitive",
     "product-document",
     "product-document-description",
