@@ -476,6 +476,13 @@ def select_product_document_available(driver, reason):
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I enter "{product_description}" to product description'))
+def enter_product_description(driver, product_description):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_product_description(product_description)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select "{choice}" to document available question'))
 def check_product_document_available(driver, choice):
     good_details_page = AddGoodDetails(driver)

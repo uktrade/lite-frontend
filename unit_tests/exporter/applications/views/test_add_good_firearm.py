@@ -12,6 +12,7 @@ from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 from exporter.goods.forms.common import (
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -221,7 +222,7 @@ def test_add_good_firearm_product_document_not_available(
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], FirearmCategoryForm)
+    assert isinstance(response.context["form"], ProductDescriptionForm)
 
 
 def test_add_good_firearm_product_document_available_but_sensitive(
@@ -596,9 +597,13 @@ def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
         AddGoodFirearmSteps.FIREARM_ACT_1968,
         {"firearms_act_section": "dont_know", "not_covered_explanation": "not covered"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
 
     assert response.status_code == 302
@@ -639,6 +644,7 @@ def test_add_good_firearm_with_rfd_document_marked_as_invalid_submission(
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
     assert post_applications_document_matcher.called_once
@@ -713,9 +719,13 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
             **decompose_date("expiry_date", expiry_date),
         },
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
 
     assert response.status_code == 302
@@ -741,6 +751,7 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
     assert post_additional_document_matcher.called_once
@@ -815,9 +826,13 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
             "not_covered_explanation": "firearms act not covered explanation",
         },
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
 
     assert response.status_code == 302
@@ -843,6 +858,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
 
@@ -899,9 +915,13 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         AddGoodFirearmSteps.FIREARM_ACT_1968,
         {"firearms_act_section": "firearms_act_section1"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
     assert response.status_code == 302
     assert response.url == firearm_product_summary_url
@@ -926,6 +946,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
 
@@ -982,9 +1003,13 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         AddGoodFirearmSteps.FIREARM_ACT_1968,
         {"firearms_act_section": "firearms_act_section2"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
     assert response.status_code == 302
     assert response.url == firearm_product_summary_url
@@ -1009,6 +1034,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
 
@@ -1080,9 +1106,13 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
             **decompose_date("section_certificate_date_of_expiry", certificate_expiry_date),
         },
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
     assert response.status_code == 302
     assert response.url == firearm_product_summary_url
@@ -1110,6 +1140,7 @@ def test_add_good_firearm_without_rfd_document_submission_not_registered_firearm
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
     assert post_application_document_matcher.called_once
@@ -1197,9 +1228,13 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
             **decompose_date("section_certificate_date_of_expiry", certificate_expiry_date),
         },
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
     assert response.status_code == 302
     assert response.url == firearm_product_summary_url
@@ -1228,6 +1263,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
     assert post_applications_document_matcher.call_count == 2
@@ -1315,9 +1351,13 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
         {"is_covered_by_section_5": "yes"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
     assert response.status_code == 302
     assert response.url == firearm_product_summary_url
@@ -1346,6 +1386,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
         "item_category": "group2_firearms",
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
     assert post_applications_document_matcher.called_once
@@ -1415,9 +1456,13 @@ def test_add_good_firearm_submission_error(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
         {"is_covered_by_section_5": "no"},
     )
-    response = post_to_step(
+    post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    response = post_to_step(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
 
     assert response.status_code == 200

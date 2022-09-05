@@ -153,6 +153,7 @@ class AddGoodFirearmPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmSteps.PV_GRADING: get_pv_grading_payload,
         AddGoodFirearmSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION: get_cleaned_data,
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
         AddGoodFirearmSteps.CATEGORY: get_firearm_details_cleaned_data,
         AddGoodFirearmSteps.CALIBRE: get_firearm_details_cleaned_data,
