@@ -180,6 +180,16 @@ def post_material_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
+def post_component_good_on_application(request, pk, good_id, json):
+    json = {
+        "good_id": good_id,
+        "is_good_incorporated": False,
+        **json,
+    }
+    response = client.post(request, f"/applications/{pk}/goods/", json)
+    return response.json(), response.status_code
+
+
 def post_product_good_on_application(request, pk, good_id, json):
     # Lets replace above 2 with this one to be more generic
     # We have a default for `is_good_incorporated` however this may get overriden

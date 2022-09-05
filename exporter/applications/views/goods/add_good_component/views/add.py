@@ -16,42 +16,46 @@ from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
     ProductMilitaryUseForm,
     ProductNameForm,
-    ProductOnwardExportedForm,
     ProductOnwardAlteredProcessedForm,
+    ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
-    ProductPVGradingForm,
-    ProductPVGradingDetailsForm,
     ProductPartNumberForm,
+    ProductPVGradingDetailsForm,
+    ProductPVGradingForm,
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
 )
-
+from exporter.goods.forms.goods import ProductIsComponentForm, ProductComponentTypeForm
 from exporter.goods.services import post_component, post_good_documents
-from exporter.applications.services import post_product_good_on_application
-from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
+from exporter.applications.services import post_component_good_on_application
+from exporter.applications.views.goods.common.mixins import (
+    ApplicationMixin,
+    GoodMixin,
+)
 from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_product_document_available,
     is_document_sensitive,
     is_onward_exported,
 )
+from .conditionals import is_component
 from exporter.core.wizard.conditionals import C
 
 from .constants import (
     AddGoodComponentSteps,
     AddGoodComponentToApplicationSteps,
 )
-from .mixins import NonFirearmsComponentFlagMixin
 from .payloads import (
     AddGoodComponentPayloadBuilder,
     AddGoodComponentToApplicationPayloadBuilder,
 )
-
+from .mixins import NonFirearmsComponentFlagMixin
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +68,8 @@ class AddGoodComponent(
 ):
     form_list = [
         (AddGoodComponentSteps.NAME, ProductNameForm),
+        (AddGoodComponentSteps.IS_COMPONENT, ProductIsComponentForm),
+        (AddGoodComponentSteps.COMPONENT_TYPE, ProductComponentTypeForm),
         (AddGoodComponentSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
         (AddGoodComponentSteps.PART_NUMBER, ProductPartNumberForm),
         (AddGoodComponentSteps.PV_GRADING, ProductPVGradingForm),
@@ -76,6 +82,7 @@ class AddGoodComponent(
     ]
     condition_dict = {
         AddGoodComponentSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodComponentSteps.COMPONENT_TYPE: is_component,
         AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }
@@ -88,6 +95,7 @@ class AddGoodComponent(
 
         if step == AddGoodComponentSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
+
         return kwargs
 
     def has_product_documentation(self):
@@ -134,14 +142,14 @@ class AddGoodComponent(
 
     def get_success_url(self):
         return reverse(
-            "applications:component_summary",
+            "applications:component_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
     @expect_status(
         HTTPStatus.CREATED,
         "Error creating complete component",
-        "Unexpected error adding complete component",
+        "Unexpected error adding complete product",
     )
     def post_component(self, form_dict):
         payload = self.get_payload(form_dict)
@@ -217,7 +225,7 @@ class AddGoodComponentToApplication(
     )
     def post_component_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
-        return post_product_good_on_application(
+        return post_component_good_on_application(
             self.request,
             self.application["id"],
             self.good["id"],
@@ -228,7 +236,7 @@ class AddGoodComponentToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:component_summary",
+            "applications:component_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],

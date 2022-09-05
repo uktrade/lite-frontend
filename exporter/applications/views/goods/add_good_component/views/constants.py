@@ -3,6 +3,8 @@ from exporter.applications.views.goods.common import constants
 
 class AddGoodComponentSteps:
     NAME = constants.NAME
+    IS_COMPONENT = "IS_COMPONENT"
+    COMPONENT_TYPE = "COMPONENT_TYPE"
     PRODUCT_CONTROL_LIST_ENTRY = constants.PRODUCT_CONTROL_LIST_ENTRY
     PV_GRADING = constants.PV_GRADING
     PV_GRADING_DETAILS = constants.PV_GRADING_DETAILS

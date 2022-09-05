@@ -1,5 +1,11 @@
 import pytest
-from exporter.goods.forms import IsFirearmForm, NonFirearmCategoryForm, IsMaterialSubstanceCategoryForm
+from exporter.goods.forms import (
+    IsFirearmForm,
+    NonFirearmCategoryForm,
+    IsMaterialSubstanceCategoryForm,
+    ProductIsComponentForm,
+    ProductComponentTypeForm,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -91,5 +97,44 @@ def test_is_material_form_feaature_ff_enabled(settings, disable_non_firearms, fe
 )
 def test_is_material_form(data, is_valid, errors):
     form = IsMaterialSubstanceCategoryForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"is_component": ["Select yes if the product is a component"]}),
+        ({"is_component": True}, True, {}),
+    ),
+)
+def test_is_component_form(data, is_valid, errors):
+    form = ProductIsComponentForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"component_type": ["Select the type of component"]}),
+        ({"component_type": "hardware"}, False, {"hardware_details": ["Enter details of the specific hardware"]}),
+        (
+            {"component_type": "hardware_modified"},
+            False,
+            {"modified_hardware_details": ["Enter details of the modifications and the specific hardware"]},
+        ),
+        (
+            {"component_type": "general_purpose"},
+            False,
+            {"general_purpose_details": ["Enter details of the intended general-purpose use"]},
+        ),
+        ({"component_type": "hardware", "hardware_details": "hardware details"}, True, {}),
+        ({"component_type": "hardware_modified", "modified_hardware_details": "modified hardware details"}, True, {}),
+        ({"component_type": "general_purpose", "general_purpose_details": "general purpose details"}, True, {}),
+    ),
+)
+def test_component_type_form(data, is_valid, errors):
+    form = ProductComponentTypeForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors

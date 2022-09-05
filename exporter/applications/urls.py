@@ -511,9 +511,9 @@ urlpatterns = [
         name="new_good_component_to_application",
     ),
     path(
-        "<uuid:pk>/goods/platform/<uuid:good_pk>/product-summary/",
-        PlatformProductSummary.as_view(),
-        name="component_summary",
+        "<uuid:pk>/goods/component/<uuid:good_pk>/product-summary/",
+        MaterialProductSummary.as_view(),
+        name="component_product_summary",
     ),
     path(
         "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/component-on-application-summary/",

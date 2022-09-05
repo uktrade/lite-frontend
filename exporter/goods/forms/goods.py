@@ -5,6 +5,7 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
 
 from django import forms
+from django.template.loader import render_to_string
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -2002,5 +2003,115 @@ class UnitQuantityValueForm(forms.Form):
                 self.add_error("quantity", "Enter a quantity")
             if not cleaned_data.get("value"):
                 self.add_error("value", "Enter the total value of the products")
+
+        return cleaned_data
+
+
+class ProductIsComponentForm(BaseForm):
+    class Layout:
+        TITLE = "Is the product a component?"
+
+    is_component = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label="",
+        coerce=coerce_str_to_bool,
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if the product is a component",
+        },
+    )
+
+    def get_layout_fields(self):
+        return (
+            "is_component",
+            HTML.details(
+                "Help with components and accessories",
+                render_to_string("goods/forms/common/help_with_component_accessories.html"),
+            ),
+        )
+
+
+class ProductComponentTypeForm(BaseForm):
+    class Layout:
+        TITLE = "What type of component is it?"
+
+    class ComponentTypeChoices(models.TextChoices):
+        HARDWARE = "hardware", "Specially designed for hardware"
+        HARDWARE_MODIFIED = "hardware_modified", "Modified for hardware"
+        GENERAL_PURPOSE = "general_purpose", "General-purpose component"
+
+    component_type = forms.ChoiceField(
+        choices=ComponentTypeChoices.choices,
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select the type of component",
+        },
+    )
+
+    hardware_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        label="Provide details of the specific hardware",
+    )
+
+    modified_hardware_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        label="Provide details of the modifications and the specific hardware",
+    )
+
+    general_purpose_details = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        label="Provide details of the intended general-purpose use",
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "component_type",
+                ConditionalQuestion(
+                    self.ComponentTypeChoices.HARDWARE.label,
+                    "hardware_details",
+                ),
+                ConditionalQuestion(
+                    self.ComponentTypeChoices.HARDWARE_MODIFIED.label,
+                    "modified_hardware_details",
+                ),
+                ConditionalQuestion(
+                    self.ComponentTypeChoices.GENERAL_PURPOSE.label,
+                    "general_purpose_details",
+                ),
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        component_type = cleaned_data.get("component_type")
+
+        hardware_details = cleaned_data.get("hardware_details")
+        modified_hardware_details = cleaned_data.get("modified_hardware_details")
+        general_purpose_details = cleaned_data.get("general_purpose_details")
+
+        if component_type == self.ComponentTypeChoices.HARDWARE.value and not hardware_details:
+            self.add_error(
+                "hardware_details",
+                "Enter details of the specific hardware",
+            )
+        elif component_type == self.ComponentTypeChoices.HARDWARE_MODIFIED.value and not modified_hardware_details:
+            self.add_error(
+                "modified_hardware_details",
+                "Enter details of the modifications and the specific hardware",
+            )
+        elif component_type == self.ComponentTypeChoices.GENERAL_PURPOSE.value and not general_purpose_details:
+            self.add_error(
+                "general_purpose_details",
+                "Enter details of the intended general-purpose use",
+            )
 
         return cleaned_data
