@@ -24,6 +24,12 @@ def setup(
 
 @pytest.fixture
 def good_on_application(data_standard_case):
+    good_on_application = data_standard_case["case"]["data"]["goods"][0]["good"]
+    good_on_application.update(
+        {
+            "product_description": "Product description",
+        }
+    )
     return data_standard_case["case"]["data"]["goods"][0]["good"]
 
 
@@ -93,6 +99,11 @@ def product_document():
             "firearm_edit_replica",
             {"is_replica": False, "replica_description": "photocopy of real item"},
             {"firearm_details": {"is_replica": False, "replica_description": ""}},
+        ),
+        (
+            "firearm_edit_product_description",
+            {"product_description": "Product description"},
+            {"product_description": "Product description"},
         ),
     ),
 )

@@ -26,6 +26,7 @@ FIREARM_SUMMARY_EDIT_LINKS = {
     "is-replica-description": "replica",
     "has-product-document": "product_document_availability",
     "no-product-document-explanation": "product_document_availability",
+    "product-description": "product_description",
     "is-document-sensitive": "product_document_sensitivity",
     "product-document": "product_document",
     "product-document-description": "product_document",
