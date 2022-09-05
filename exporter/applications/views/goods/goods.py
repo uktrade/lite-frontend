@@ -1111,7 +1111,6 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
             "is_user_rfd": is_user_rfd,
             "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
-            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
 
 

@@ -187,7 +187,6 @@ def test_good_detail_summary_check_your_answers_context(
     assert not context["is_user_rfd"]
     assert not context["application_status_draft"]
     assert context["organisation_documents"] == {}
-    assert not context["feature_flag_product_2_0"]
 
 
 def test_good_detail_summary_check_your_answers_non_firearm_product_type(
@@ -213,4 +212,3 @@ def test_good_detail_summary_check_your_answers_non_firearm_product_type(
     assert not context["is_user_rfd"]
     assert not context["application_status_draft"]
     assert context["organisation_documents"] == {}
-    assert not context["feature_flag_product_2_0"]
