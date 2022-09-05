@@ -16,6 +16,7 @@ from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -70,12 +71,14 @@ class AddGoodMaterial(
         (AddGoodMaterialSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodMaterialSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
         (AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (AddGoodMaterialSteps.PRODUCT_DESCRIPTION, ProductDescriptionForm),
         (AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
         (AddGoodMaterialSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
         AddGoodMaterialSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodMaterialSteps.PRODUCT_DESCRIPTION: ~C(is_product_document_available),
         AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }

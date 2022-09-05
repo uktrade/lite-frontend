@@ -206,6 +206,7 @@ class BaseEditProductDocumentView:
             "no_document_comments": self.good["no_document_comments"],
             "is_document_sensitive": self.good["is_document_sensitive"],
             "description": self.product_document["description"] if self.product_document else "",
+            "product_description": self.good.get("product_description", ""),
         }
 
     def has_updated_product_documentation(self):
@@ -250,11 +251,13 @@ class BaseEditProductDocumentView:
 class BaseEditProductDocumentAvailability:
     form_list = [
         (constants.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (constants.PRODUCT_DESCRIPTION, ProductDescriptionForm),
         (constants.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (constants.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
     ]
 
     condition_dict = {
+        constants.PRODUCT_DESCRIPTION: ~C(is_product_document_available),
         constants.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         constants.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
     }

@@ -29,6 +29,7 @@ from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
     BaseEditName,
     BaseEditProductDocumentAvailability,
+    BaseEditProductDescription,
     BaseEditProductDocumentSensitivity,
     BaseEditProductDocumentView,
     BaseProductDocumentUpload,
@@ -253,6 +254,13 @@ class FirearmEditPVGradingDetails(BaseGoodEditView):
 
 class FirearmEditProductDocumentView(
     BaseProductDocumentUpload,
+    BaseGoodEditView,
+):
+    pass
+
+
+class FirearmEditProductDescriptionView(
+    BaseEditProductDescription,
     BaseGoodEditView,
 ):
     pass

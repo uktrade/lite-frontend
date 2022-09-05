@@ -7,6 +7,7 @@ from exporter.applications.views.goods.add_good_material.views.constants import 
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -252,10 +253,13 @@ def test_add_good_material_no_pv(
         AddGoodMaterialSteps.PV_GRADING,
         {"is_pv_graded": False},
     )
-
     post_to_step(
         AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+    )
+    post_to_step(
+        AddGoodMaterialSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
     response = post_to_step(
         AddGoodMaterialSteps.PRODUCT_MILITARY_USE,
@@ -285,4 +289,5 @@ def test_add_good_material_no_pv(
         "modified_military_use_details": "",
         "no_part_number_comments": "no part number",
         "part_number": "",
+        "product_description": "This is the product description",
     }

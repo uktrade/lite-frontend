@@ -353,3 +353,7 @@ class AddGoodDetails(BasePage):
             value=f"//input[@type='radio' and contains(@id, 'serial_numbers_available_{index}')]",
         )
         element.click()
+
+    def enter_product_description(self, product_description):
+        element = self.driver.find_element(by=By.XPATH, value=f"//textarea[contains(@id, 'product_description')]")
+        element.send_keys(product_description)
