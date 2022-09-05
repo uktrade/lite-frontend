@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from exporter.applications.views.goods.add_good_material.views.constants import AddGoodMaterialSteps
+from exporter.goods.forms.common import ProductDescriptionForm
 
 
 @pytest.fixture(autouse=True)
@@ -22,7 +23,13 @@ def setup(
 
 @pytest.fixture
 def good_on_application(data_standard_case):
-    return data_standard_case["case"]["data"]["goods"][0]["good"]
+    good_on_application = data_standard_case["case"]["data"]["goods"][0]["good"]
+    good_on_application.update(
+        {
+            "product_description": "Product description",
+        }
+    )
+    return good_on_application
 
 
 @pytest.fixture
@@ -108,6 +115,11 @@ def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
                 "modified_military_use_details": "Modified details",
             },
         ),
+        (
+            "material_edit_product_description",
+            {"product_description": "Product description"},
+            {"product_description": "Product description"},
+        ),
     ),
 )
 def test_edit_material_post(
@@ -171,6 +183,11 @@ def test_edit_material_post(
                 "is_military_use": "yes_modified",
                 "modified_military_use_details": "Modified details",
             },
+        ),
+        (
+            "material_edit_product_description",
+            {"product_description": "Product description"},
+            {"product_description": "Product description"},
         ),
     ),
 )
@@ -297,6 +314,13 @@ def test_edit_product_document_availability_select_not_available(
         AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": False, "no_document_comments": "Product not manufactured yet"},
     )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductDescriptionForm)
+
+    response = post_to_step_edit_product_document_availability(
+        AddGoodMaterialSteps.PRODUCT_DESCRIPTION,
+        data={"product_description": "This is the product description"},
+    )
 
     assert response.status_code == 302
     assert response.url == material_product_summary_url
@@ -308,6 +332,7 @@ def test_edit_product_document_availability_select_not_available(
     assert requests_mock.request_history.pop().json() == {
         "is_document_available": False,
         "no_document_comments": "Product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
 

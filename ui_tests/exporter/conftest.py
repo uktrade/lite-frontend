@@ -869,6 +869,13 @@ def select_has_product_documentation(driver, has_product_documentation, explanat
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I enter "{product_description}" to product description'))
+def enter_product_description(driver, product_description):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_product_description(product_description)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select "{made_before_1938}" for the product being made before 1938'))
 def select_product_being_made_before_1938(driver, made_before_1938):  # noqa
     good_details_page = AddGoodDetails(driver)

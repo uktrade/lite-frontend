@@ -23,6 +23,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to registered firearms dealer
     And I select "Don't know" to firearms act 1968 section and enter "Explanation"
     And I select "no" to product document and enter "reason"
+    And I enter "Product description" to product description
     Then I see the product saved summary
     And I see "Firearm" as the type of firearm product
     And I see "Non automatic shotgun" as the firearm category
@@ -154,6 +155,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to registered firearms dealer
     And I select "Don't know" to firearms act 1968 section and enter "Explanation"
     And I select "no" to product document and enter "reason"
+    And I enter "Product description" to product description
     Then I see the product saved summary
     And I see "Firearm" as the type of firearm product
     And I see "Non automatic shotgun" as the firearm category

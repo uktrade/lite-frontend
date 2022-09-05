@@ -48,6 +48,7 @@ from exporter.applications.views.goods.add_good_firearm.views.edit import (
     FirearmEditSection5FirearmsAct1968,
     FirearmEditName,
     FirearmEditReplica,
+    FirearmEditProductDescriptionView,
     FirearmEditProductDocumentView,
     FirearmEditProductDocumentSensitivity,
     FirearmEditProductDocumentAvailability,
@@ -104,6 +105,7 @@ from exporter.applications.views.goods.add_good_material.views.edit import (
     MaterialEditControlListEntry,
     MaterialEditMilitaryUseView,
     MaterialEditName,
+    MaterialEditProductDescriptionView,
     MaterialEditProductDocumentAvailability,
     MaterialEditProductDocumentSensitivity,
     MaterialEditProductDocumentView,
@@ -215,6 +217,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-document/",
         FirearmEditProductDocumentView.as_view(),
         name="firearm_edit_product_document",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-description/",
+        FirearmEditProductDescriptionView.as_view(),
+        name="firearm_edit_product_description",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/registered-firearms-dealer/",
@@ -572,6 +579,11 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/material/edit/product-document/",
         MaterialEditProductDocumentView.as_view(),
         name="material_edit_product_document",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/material/edit/product-description/",
+        MaterialEditProductDescriptionView.as_view(),
+        name="material_edit_product_description",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/material/edit/part-number/",

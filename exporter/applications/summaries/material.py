@@ -25,6 +25,7 @@ MATERIAL_SUMMARY_EDIT_LINKS = {
     "pv-grading-details-date-of-issue": "pv_grading_details",
     "has-product-document": "product_document_availability",
     "no-product-document-explanation": "product_document_availability",
+    "product-description": "product_description",
     "is-document-sensitive": "product_document_sensitivity",
     "product-document": "product_document",
     "product-document-description": "product_document",

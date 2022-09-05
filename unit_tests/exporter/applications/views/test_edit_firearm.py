@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
+from exporter.goods.forms.common import ProductDescriptionForm
 
 
 @pytest.fixture(autouse=True)
@@ -23,6 +24,12 @@ def setup(
 
 @pytest.fixture
 def good_on_application(data_standard_case):
+    good_on_application = data_standard_case["case"]["data"]["goods"][0]["good"]
+    good_on_application.update(
+        {
+            "product_description": "Product description",
+        }
+    )
     return data_standard_case["case"]["data"]["goods"][0]["good"]
 
 
@@ -92,6 +99,11 @@ def product_document():
             "firearm_edit_replica",
             {"is_replica": False, "replica_description": "photocopy of real item"},
             {"firearm_details": {"is_replica": False, "replica_description": ""}},
+        ),
+        (
+            "firearm_edit_product_description",
+            {"product_description": "Product description"},
+            {"product_description": "Product description"},
         ),
     ),
 )
@@ -360,6 +372,13 @@ def test_edit_product_document_availability_select_not_available(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": False, "no_document_comments": "Product not manufactured yet"},
     )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductDescriptionForm)
+
+    response = post_to_step_edit_product_document_availability(
+        AddGoodFirearmSteps.PRODUCT_DESCRIPTION,
+        data={"product_description": "This is the product description"},
+    )
 
     assert response.status_code == 302
     assert response.url == firearm_product_summary_url
@@ -371,6 +390,7 @@ def test_edit_product_document_availability_select_not_available(
     assert requests_mock.request_history.pop().json() == {
         "is_document_available": False,
         "no_document_comments": "Product not manufactured yet",
+        "product_description": "This is the product description",
     }
 
 
