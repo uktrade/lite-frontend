@@ -29,6 +29,7 @@ from exporter.goods.forms.common import (
     ProductPVGradingForm,
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
+    ProductDescriptionForm,
 )
 from exporter.goods.forms.goods import ProductIsComponentForm, ProductComponentTypeForm
 from exporter.goods.services import post_component, post_good_documents
@@ -77,6 +78,7 @@ class AddGoodComponent(
         (AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
         (AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
         (AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
+        (AddGoodComponentSteps.PRODUCT_DESCRIPTION, ProductDescriptionForm),
         (AddGoodComponentSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
@@ -84,6 +86,7 @@ class AddGoodComponent(
         AddGoodComponentSteps.COMPONENT_TYPE: is_component,
         AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+        AddGoodComponentSteps.PRODUCT_DESCRIPTION: ~C(is_product_document_available),
     }
 
     def get_form_kwargs(self, step=None):

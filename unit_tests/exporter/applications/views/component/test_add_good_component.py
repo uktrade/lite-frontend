@@ -300,6 +300,10 @@ def test_add_good_component_short_end_to_end(
             "no_document_comments": "no available",
         },
     )
+    post_to_step(
+        AddGoodComponentSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
+    )
     response = post_to_step(
         AddGoodComponentSteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "no"},
@@ -327,6 +331,7 @@ def test_add_good_component_short_end_to_end(
         "is_document_available": False,
         "no_document_comments": "no available",
         "is_military_use": "no",
+        "product_description": "This is the product description",
         "modified_military_use_details": "",
         "item_category": "group1_components",
     }
