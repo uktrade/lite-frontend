@@ -39,7 +39,7 @@ def expected_good_data(application):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
 
 
 @pytest.fixture

@@ -7,7 +7,7 @@ from django.urls import reverse
 @pytest.fixture(autouse=True)
 def setup(settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
@@ -88,7 +88,7 @@ def test_is_material_substance_select(authorized_client, application_pk, data, r
 
 
 def test_is_material_substance_404(authorized_client, application_pk, settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED = False
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = False
     settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = False
     url = reverse("applications:is_material_substance", kwargs={"pk": application_pk})
     response = authorized_client.post(url, data={"is_material_substance": True})
