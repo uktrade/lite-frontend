@@ -37,6 +37,18 @@ from exporter.applications.summaries.firearm import (
     firearm_summary,
     firearm_on_application_summary,
 )
+from exporter.applications.summaries.material import (
+    material_summary,
+    material_product_on_application_summary,
+)
+from exporter.applications.summaries.platform import (
+    platform_summary,
+    platform_product_on_application_summary,
+)
+from exporter.applications.summaries.software import (
+    software_summary,
+    software_product_on_application_summary,
+)
 from exporter.core import constants
 from exporter.core.constants import (
     AddGoodFormSteps,
@@ -1057,10 +1069,10 @@ class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
 class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
     template_name = "applications/goods/goods-detail-summary.html"
 
-    def get_good_on_application_documents(self, good_on_application):
+    def get_good_on_application_documents(self, application, good_on_application):
         application_documents, _ = get_application_documents(
             self.request,
-            good_on_application["application"],
+            application["id"],
             good_on_application["good"]["id"],
             include_unsafe=True,
         )
@@ -1074,17 +1086,38 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
 
         return good_on_application_documents
 
-    def get_product_summary(self, good_on_application, is_user_rfd, organisation_documents):
-        product_summary = firearm_summary(
-            good_on_application["good"],
-            is_user_rfd,
-            organisation_documents,
-        )
-        product_on_application_summary = firearm_on_application_summary(
-            good_on_application,
-            self.get_good_on_application_documents(good_on_application),
-        )
-        return product_summary + product_on_application_summary
+    def get_product_summary(self, application, good_on_application, is_user_rfd, organisation_documents):
+        if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
+            product_summary = firearm_summary(
+                good_on_application["good"],
+                is_user_rfd,
+                organisation_documents,
+            )
+            product_on_application_summary = firearm_on_application_summary(
+                good_on_application,
+                self.get_good_on_application_documents(application, good_on_application),
+            )
+            return product_summary + product_on_application_summary
+
+        if not good_on_application.get("firearm_details"):
+            item_category = good_on_application["good"]["item_category"]["key"]
+            try:
+                _product_summary, _product_on_application_summary = {
+                    constants.PRODUCT_CATEGORY_PLATFORM: (platform_summary, platform_product_on_application_summary),
+                    constants.PRODUCT_CATEGORY_MATERIAL: (material_summary, material_product_on_application_summary),
+                    constants.PRODUCT_CATEGORY_SOFTWARE: (software_summary, software_product_on_application_summary),
+                }[item_category]
+            except KeyError:
+                return None
+
+            product_summary = _product_summary(
+                good_on_application["good"],
+            )
+            product_on_application_summary = _product_on_application_summary(good_on_application)
+
+            return product_summary + product_on_application_summary
+
+        return None
 
     def get_context_data(self, **kwargs):
         application_id = str(kwargs["pk"])
@@ -1099,10 +1132,9 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
 
         goods = []
         for good_on_application in application["goods"]:
-            if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
-                product_summary = self.get_product_summary(good_on_application, is_user_rfd, organisation_documents)
-            else:
-                product_summary = None
+            product_summary = self.get_product_summary(
+                application, good_on_application, is_user_rfd, organisation_documents
+            )
             goods.append((good_on_application, product_summary))
 
         return {
@@ -1111,7 +1143,6 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
             "is_user_rfd": is_user_rfd,
             "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
-            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
 
 
