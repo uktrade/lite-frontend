@@ -338,7 +338,7 @@ PLATFORM_VALUE_FORMATTERS = {
         }
     ),
     "is-good-controlled": key_value_formatter,
-    "has-part-number": just("I do not have a part number"),
+    "has-part-number": just("Yes"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
     "is-pv-graded": mapping_formatter(
         {
@@ -376,7 +376,7 @@ PLATFORM_ON_APPLICATION_LABELS = {
 
 MATERIAL_VALUE_FORMATTERS = {
     "is-good-controlled": key_value_formatter,
-    "has-part-number": just("I do not have a part number"),
+    "has-part-number": just("Yes"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
     "is-pv-graded": mapping_formatter(
         {
