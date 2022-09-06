@@ -28,6 +28,7 @@ class AddGoodComponentPayloadBuilder(MergingPayloadBuilder):
         AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
         AddGoodComponentSteps.PRODUCT_MILITARY_USE: get_cleaned_data,
+        AddGoodComponentSteps.PRODUCT_DESCRIPTION: get_cleaned_data,
     }
 
 

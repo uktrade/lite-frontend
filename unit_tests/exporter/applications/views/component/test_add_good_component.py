@@ -17,6 +17,8 @@ from exporter.goods.forms.common import (
     ProductUsesInformationSecurityForm,
 )
 
+from exporter.goods.forms.goods import ProductComponentTypeForm, ProductIsComponentForm
+
 
 @pytest.fixture(autouse=True)
 def setup(no_op_storage):
@@ -95,10 +97,25 @@ def test_add_good_component_end_to_end(
     post_good_document_matcher,
 ):
     authorized_client.get(new_good_component_url)
-
     response = post_to_step(
         AddGoodComponentSteps.NAME,
         {"name": "product_1"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductIsComponentForm)
+
+    response = post_to_step(
+        AddGoodComponentSteps.IS_COMPONENT,
+        {"is_component": True},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductComponentTypeForm)
+
+    response = post_to_step(
+        AddGoodComponentSteps.COMPONENT_TYPE,
+        {"component_type": "hardware_modified", "modified_hardware_details": "modified with new chip"},
     )
 
     assert response.status_code == 200
@@ -189,7 +206,7 @@ def test_add_good_component_end_to_end(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_product_summary",
+        "applications:component_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -229,7 +246,7 @@ def test_add_good_component_end_to_end(
     ]
 
 
-def test_add_good_component_no_pv(
+def test_add_good_component_short_end_to_end(
     authorized_client,
     data_standard_case,
     good_id,
@@ -244,6 +261,11 @@ def test_add_good_component_no_pv(
     post_to_step(
         AddGoodComponentSteps.NAME,
         {"name": "product_1"},
+    )
+
+    post_to_step(
+        AddGoodComponentSteps.IS_COMPONENT,
+        {"is_component": False},
     )
 
     post_to_step(
@@ -273,16 +295,22 @@ def test_add_good_component_no_pv(
     )
     post_to_step(
         AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY,
-        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+        {
+            "is_document_available": False,
+            "no_document_comments": "no available",
+        },
+    )
+    post_to_step(
+        AddGoodComponentSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "This is the product description"},
     )
     response = post_to_step(
         AddGoodComponentSteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "no"},
     )
-
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_product_summary",
+        "applications:component_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -295,14 +323,15 @@ def test_add_good_component_no_pv(
         "name": "product_1",
         "is_good_controlled": False,
         "control_list_entries": [],
+        "part_number": "",
+        "no_part_number_comments": "no part number",
         "is_pv_graded": "no",
         "uses_information_security": False,
         "information_security_details": "",
         "is_document_available": False,
-        "no_document_comments": "product not manufactured yet",
+        "no_document_comments": "no available",
         "is_military_use": "no",
+        "product_description": "This is the product description",
         "modified_military_use_details": "",
         "item_category": "group1_components",
-        "no_part_number_comments": "no part number",
-        "part_number": "",
     }
