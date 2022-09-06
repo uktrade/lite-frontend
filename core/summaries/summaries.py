@@ -18,6 +18,10 @@ from core.summaries.formatters import (
     MATERIAL_VALUE_FORMATTERS,
     MATERIAL_ON_APPLICATION_FORMATTERS,
     MATERIAL_ON_APPLICATION_LABELS,
+    COMPONENT_LABELS,
+    COMPONENT_VALUE_FORMATTERS,
+    COMPONENT_ON_APPLICATION_FORMATTERS,
+    COMPONENT_ON_APPLICATION_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
@@ -28,6 +32,8 @@ from core.summaries.reducers import (
     software_reducer,
     material_reducer,
     material_on_application_reducer,
+    component_on_application_reducer,
+    component_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -141,6 +147,34 @@ SOFTWARE_FIELDS = (
     "no-product-document-explanation",
     "is-document-sensitive",
     "design-details",
+    "product-document",
+    "product-document-description",
+    "military-use",
+    "military-use-details",
+)
+
+COMPONENT_FIELDS = (
+    "is-firearm-product",
+    "product-category",
+    "name",
+    "is-good-controlled",
+    "control-list-entries",
+    "part-number",
+    "has-part-number",
+    "no-part-number-comments",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "uses-information-security",
+    "uses-information-security-details",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
     "product-document",
     "product-document-description",
     "military-use",
@@ -350,5 +384,49 @@ def software_product_on_application_summary(good_on_application, additional_form
     summary = pick_fields(summary, SOFTWARE_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, SOFTWARE_ON_APPLICATION_LABELS)
+
+    return summary
+
+
+COMPONENT_ON_APPLICATION_FIELDS = (
+    "is-onward-exported",
+    "is-altered",
+    "is-altered-comments",
+    "is-incorporated",
+    "is-incorporated-comments",
+    "number-of-items",
+    "total-value",
+)
+
+
+def component_summary(good, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = component_reducer(good)
+    formatters = {
+        **COMPONENT_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, COMPONENT_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, COMPONENT_LABELS)
+
+    return summary
+
+
+def component_product_on_application_summary(good_on_application, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = component_on_application_reducer(good_on_application)
+    formatters = {
+        **COMPONENT_ON_APPLICATION_FORMATTERS,
+        **additional_formatters,
+    }
+
+    summary = pick_fields(summary, COMPONENT_ON_APPLICATION_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, COMPONENT_ON_APPLICATION_LABELS)
 
     return summary
