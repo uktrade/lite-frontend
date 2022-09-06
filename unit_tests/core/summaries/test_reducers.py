@@ -33,6 +33,8 @@ from core.summaries.reducers import (
     serial_numbers_reducer,
     uses_information_security_reducer,
     year_of_manufacture_reducer,
+    component_reducer,
+    component_on_application_reducer,
 )
 
 
@@ -587,6 +589,25 @@ def test_platform_on_application_reducer(mocker):
     )
 
 
+def test_component_on_application_reducer(mocker):
+
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(),
+    )
+    good_on_application = {
+        "quantity": "6",
+        "value": "14.44",
+    }
+    assert component_on_application_reducer(good_on_application) == (
+        ("number-of-items", "6"),
+        ("total-value", Decimal("14.44")),
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application,
+    )
+
+
 def test_material_on_application_reducer(mocker):
 
     mock_is_onward_exported_reducer = mocker.patch(
@@ -913,6 +934,44 @@ def test_platform_reducer(mocker):
     assert result == (
         ("is-firearm-product", False),
         ("product-category", "platform"),
+        ("name", "good-name"),
+    )
+
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
+    mock_uses_information_security_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
+
+
+def test_component_reducer(mocker):
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_uses_information_security_reducer = mocker.patch(
+        "core.summaries.reducers.uses_information_security_reducer", return_value=()
+    )
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = component_reducer(good)
+    assert result == (
+        ("is-firearm-product", False),
+        ("product-category", "component"),
         ("name", "good-name"),
     )
 

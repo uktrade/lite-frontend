@@ -121,6 +121,10 @@ from exporter.applications.views.goods.add_good_component.views.add import (
     AddGoodComponent,
     AddGoodComponentToApplication,
 )
+from exporter.applications.views.goods.add_good_component.views.summary import (
+    ComponentProductOnApplicationSummary,
+    ComponentProductSummary,
+)
 from exporter.applications.views.goods.add_good_software.views.add import AddGoodSoftware, AddGoodSoftwareToApplication
 from exporter.applications.views.goods.add_good_software.views.edit import (
     SoftwareEditControlListEntry,
@@ -519,13 +523,84 @@ urlpatterns = [
     ),
     path(
         "<uuid:pk>/goods/component/<uuid:good_pk>/product-summary/",
-        MaterialProductSummary.as_view(),
+        ComponentProductSummary.as_view(),
         name="component_product_summary",
     ),
     path(
         "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/component-on-application-summary/",
-        PlatformProductOnApplicationSummary.as_view(),
+        ComponentProductOnApplicationSummary.as_view(),
         name="component_on_application_summary",
+    ),
+    path("<uuid:pk>/goods/<uuid:good_pk>/component/edit/name/", PlatformEditName.as_view(), name="component_edit_name"),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/control-list-entries/",
+        PlatformEditControlListEntry.as_view(),
+        name="component_edit_control_list_entries",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/pv-grading/",
+        PlatformEditPVGrading.as_view(),
+        name="component_edit_pv_grading",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/pv-grading-details/",
+        PlatformEditPVGradingDetails.as_view(),
+        name="component_edit_pv_grading_details",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/uses-information-security/",
+        PlatformEditUsesInformationSecurity.as_view(),
+        name="component_edit_uses_information_security",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/product-document-availability/",
+        PlatformEditProductDocumentAvailability.as_view(),
+        name="component_edit_product_document_availability",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/product-document-sensitivity/",
+        PlatformEditProductDocumentSensitivity.as_view(),
+        name="component_edit_product_document_sensitivity",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/product-document/",
+        PlatformEditProductDocumentView.as_view(),
+        name="component_edit_product_document",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/product-description/",
+        PlatformEditProductDescriptionView.as_view(),
+        name="component_edit_product_description",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/part-number/",
+        PlatformEditPartNumberView.as_view(),
+        name="component_edit_part_number",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/military-use/",
+        PlatformEditMilitaryUseView.as_view(),
+        name="component_edit_military_use",
+    ),
+    path(
+        "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-exported/",
+        PlatformOnApplicationSummaryEditOnwardExported.as_view(),
+        name="component_on_application_summary_edit_onward_exported",
+    ),
+    path(
+        "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
+        PlatformOnApplicationSummaryEditOnwardAltered.as_view(),
+        name="component_on_application_summary_edit_onward_altered",
+    ),
+    path(
+        "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
+        PlatformOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        name="component_on_application_summary_edit_onward_incorporated",
+    ),
+    path(
+        "<uuid:pk>/goods/component/<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
+        PlatformOnApplicationSummaryEditQuantityValue.as_view(),
+        name="component_on_application_summary_edit_quantity_value",
     ),
     # Material product
     path("<uuid:pk>/goods/add-new/material/", AddGoodMaterial.as_view(), name="new_good_material"),

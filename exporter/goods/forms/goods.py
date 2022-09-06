@@ -740,7 +740,7 @@ class NonFirearmCategoryForm(BaseForm):
                 ),
             )
 
-        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
+        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
             category_choices.append(
                 TextChoice(
                     self.NonFirearmCategoryChoices.MATERIAL_CATEGORY,
@@ -779,7 +779,7 @@ class IsMaterialSubstanceCategoryForm(BaseForm):
         material_substance_choices = []
         if settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
             material_substance_choices.append((True, "Yes"))
-        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED:
+        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED:
             material_substance_choices.append((False, "No, it's a component, accessory or module"))
         self.fields["is_material_substance"].choices = material_substance_choices
 

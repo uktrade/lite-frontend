@@ -302,7 +302,7 @@ class IsMaterialSubstanceCategory(LoginRequiredMixin, FormView):
 
     def dispatch(self, request, **kwargs):
         if not (
-            settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_COMPONENTS_ENABLED
+            settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED
         ):
             raise Http404
         return super().dispatch(request, **kwargs)
