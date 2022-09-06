@@ -1,5 +1,7 @@
 import pytest
 
+from core.constants import ProductCategories
+
 from caseworker.tau import forms
 
 
@@ -7,9 +9,26 @@ from caseworker.tau import forms
     "data, valid, errors",
     (
         # Empty form
-        ({}, False, ["report_summary", "goods", "does_not_have_control_list_entries"]),
+        (
+            {},
+            False,
+            {
+                "goods": ["Select the products that you want to assess"],
+                "does_not_have_control_list_entries": [
+                    "Select a control list entry or select 'This product does not have a control list entry'"
+                ],
+            },
+        ),
         # Valid form
-        ({"goods": ["test-id"], "report_summary": "test", "does_not_have_control_list_entries": True}, True, []),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+            },
+            True,
+            {},
+        ),
         # Valid form - with comments
         (
             {
@@ -19,27 +38,35 @@ from caseworker.tau import forms
                 "comments": "test",
             },
             True,
-            [],
+            {},
         ),
         # Invalid good-id
         (
             {"goods": ["test-id-not"], "report_summary": "test", "does_not_have_control_list_entries": True},
             False,
-            ["goods"],
+            {"goods": ["Select a valid choice. test-id-not is not one of the available choices."]},
         ),
         # Missing goods
-        ({"goods": [], "report_summary": "test", "does_not_have_control_list_entries": True}, False, ["goods"]),
+        (
+            {"goods": [], "report_summary": "test", "does_not_have_control_list_entries": True},
+            False,
+            {"goods": ["Select the products that you want to assess"]},
+        ),
         # Missing report-summart
         (
             {"goods": ["test-id"], "report_summary": None, "does_not_have_control_list_entries": True},
-            False,
-            ["report_summary"],
+            True,
+            {},
         ),
         # does_not_have_control_list_entries=False and missing control_list_entries
         (
             {"goods": ["test-id"], "report_summary": "test", "does_not_have_control_list_entries": False},
             False,
-            ["does_not_have_control_list_entries"],
+            {
+                "does_not_have_control_list_entries": [
+                    "Select a control list entry or select 'This product does not have a control list entry'"
+                ]
+            },
         ),
         # does_not_have_control_list_entries=False but with control_list_entries
         (
@@ -50,38 +77,212 @@ from caseworker.tau import forms
                 "control_list_entries": ["test-rating"],
             },
             True,
-            [],
+            {},
         ),
         # Set is_wassenaar to False
         (
             {
+                "goods": ["test-id"],
                 "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "is_wassenaar": False,
             },
             True,
-            [],
+            {},
         ),
         # Set is_wassenaar to False
         (
             {
+                "goods": ["test-id"],
                 "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "is_wassenaar": True,
             },
             True,
-            [],
+            {},
         ),
     ),
 )
 def test_tau_assessment_form(data, valid, errors):
     form = forms.TAUAssessmentForm(
-        goods={"test-id": "test-name"}, control_list_entries_choices=[("test-rating", "test-text")], data=data
+        goods={"test-id": {}},
+        control_list_entries_choices=[("test-rating", "test-text")],
+        queue_pk="queue_pk",
+        application_pk="application_pk",
+        data=data,
     )
     assert form.is_valid() == valid
-    assert list(form.errors.keys()) == errors
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "goods, choices",
+    (
+        (
+            {
+                "no-data-no-summary": {},
+            },
+            [("no-data-no-summary", {"good_on_application": {}, "summary": None})],
+        ),
+        (
+            {
+                "empty-good-no-summary": {
+                    "good": {},
+                },
+            },
+            [
+                (
+                    "empty-good-no-summary",
+                    {
+                        "good_on_application": {"good": {}},
+                        "summary": None,
+                    },
+                ),
+            ],
+        ),
+        (
+            {
+                "no-item-category-no-summary": {
+                    "good": {
+                        "name": "name",
+                    },
+                },
+            },
+            [
+                (
+                    "no-item-category-no-summary",
+                    {
+                        "good_on_application": {"good": {"name": "name"}},
+                        "summary": None,
+                    },
+                ),
+            ],
+        ),
+        (
+            {
+                "unknown-item-category-no-summary": {
+                    "good": {
+                        "item_category": {
+                            "key": "unknown-item-category",
+                        },
+                    },
+                },
+            },
+            [
+                (
+                    "unknown-item-category-no-summary",
+                    {
+                        "good_on_application": {"good": {"item_category": {"key": "unknown-item-category"}}},
+                        "summary": None,
+                    },
+                ),
+            ],
+        ),
+        (
+            {
+                "platform": {
+                    "good": {
+                        "item_category": {
+                            "key": ProductCategories.PRODUCT_CATEGORY_PLATFORM,
+                        },
+                    },
+                },
+            },
+            [
+                (
+                    "platform",
+                    {
+                        "good_on_application": {
+                            "good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM}}
+                        },
+                        "summary": (
+                            ("platform-summary",),
+                            ("platform-product-on-application-summary",),
+                        ),
+                    },
+                ),
+            ],
+        ),
+        (
+            {
+                "material": {
+                    "good": {
+                        "item_category": {
+                            "key": ProductCategories.PRODUCT_CATEGORY_MATERIAL,
+                        },
+                    },
+                },
+            },
+            [
+                (
+                    "material",
+                    {
+                        "good_on_application": {
+                            "good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_MATERIAL}}
+                        },
+                        "summary": (
+                            ("material-summary",),
+                            ("material-product-on-application-summary",),
+                        ),
+                    },
+                ),
+            ],
+        ),
+        (
+            {
+                "software": {
+                    "good": {
+                        "item_category": {
+                            "key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE,
+                        },
+                    },
+                },
+            },
+            [
+                (
+                    "software",
+                    {
+                        "good_on_application": {
+                            "good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE}}
+                        },
+                        "summary": (
+                            ("software-summary",),
+                            ("software-product-on-application-summary",),
+                        ),
+                    },
+                ),
+            ],
+        ),
+    ),
+)
+def test_tau_assessment_form_goods_choices(mocker, goods, choices):
+    mocker.patch("caseworker.tau.forms.platform_summary", return_value=(("platform-summary",),))
+    mocker.patch(
+        "caseworker.tau.forms.platform_product_on_application_summary",
+        return_value=(("platform-product-on-application-summary",),),
+    )
+
+    mocker.patch("caseworker.tau.forms.material_summary", return_value=(("material-summary",),))
+    mocker.patch(
+        "caseworker.tau.forms.material_product_on_application_summary",
+        return_value=(("material-product-on-application-summary",),),
+    )
+
+    mocker.patch("caseworker.tau.forms.software_summary", return_value=(("software-summary",),))
+    mocker.patch(
+        "caseworker.tau.forms.software_product_on_application_summary",
+        return_value=(("software-product-on-application-summary",),),
+    )
+
+    form = forms.TAUAssessmentForm(
+        goods=goods,
+        control_list_entries_choices=[],
+        queue_pk="queue_pk",
+        application_pk="application_pk",
+    )
+    assert form.fields["goods"].choices == choices
 
 
 @pytest.mark.parametrize(
@@ -153,7 +354,7 @@ def test_tau_assessment_form(data, valid, errors):
         ),
     ),
 )
-def test_tau_assessment_form(data, valid, errors):
+def test_tau_edit_form(data, valid, errors):
     form = forms.TAUEditForm(control_list_entries_choices=[("test-rating", "test-text")], data=data)
     assert form.is_valid() == valid
     assert list(form.errors.keys()) == errors

@@ -116,7 +116,6 @@ class FirearmsProductType:
     TECHNOLOGY_RELATED_TO_FIREARM = "technology_related_to_firearms"
 
 
-PRODUCT_CATEGORY_FIREARM = "group2_firearms"
 FIREARMS = "firearms"
 FIREARMS_ACCESSORY = "firearms_accessory"
 FIREARM_COMPONENT = "components_for_firearms"
@@ -254,9 +253,3 @@ class ProductDeclaredAtCustoms:
 class ProductDesignDetails:
     TITLE = "Describe the product and what it is designed to do"
     SUBMIT_BUTTON = "Continue"
-
-
-PRODUCT_CATEGORY_PLATFORM = "group1_platform"
-COMPONENT_CATEGORY_PLATFORM = "group1_components"
-PRODUCT_CATEGORY_SOFTWARE = "group3_software"
-PRODUCT_CATEGORY_MATERIAL = "group1_materials"

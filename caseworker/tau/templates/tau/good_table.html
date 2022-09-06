@@ -1,6 +1,8 @@
 {% load advice_tags tau_tags %}
 
-{% if good.good.firearm_details.type.key == "firearms" %}
+{% if summary %}
+    {% include "tau/product_summary_table.html" %}
+{% elif good.good.firearm_details.type.key == "firearms" %}
     {% include "tau/firearms_table.html" %}
 {% elif good.good.firearm_details.type.key == "ammunition" %}
     {% include "tau/ammunition_table.html" %}
@@ -14,10 +16,6 @@
     {% include "tau/software_related_to_firearms_table.html" %}
 {% elif good.good.firearm_details.type.key == "technology_related_to_firearms" %}
     {% include "tau/technology_related_to_firearms_table.html" %}
-{% elif good.good.item_category.key == "group1_platform" %}
-    {% include "tau/platform_table.html" %}
-{% elif good.good.item_category.key == "group1_materials" %}
-    {% include "tau/material_table.html" %}
 {% else %}
     Unknown good type
 {% endif %}

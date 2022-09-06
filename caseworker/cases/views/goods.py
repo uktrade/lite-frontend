@@ -237,7 +237,8 @@ class GoodDetails(LoginRequiredMixin, FormView):
         self, good_on_application, is_user_rfd, organisation_documents, good_on_application_documents
     ):
         product_summary = firearm_summary(
-            good_on_application,
+            good_on_application["good"],
+            good_on_application["application"],
             is_user_rfd,
             organisation_documents,
             self.kwargs["queue_pk"],

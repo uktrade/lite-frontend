@@ -363,15 +363,19 @@ def year_of_manufacture_reducer(firearm_details):
     return summary
 
 
-def is_onward_exported_reducer(firearm_details):
-    summary = (("is-onward-exported", firearm_details["is_onward_exported"]),)
-    if firearm_details["is_onward_exported"]:
-        summary += (("is-altered", firearm_details["is_onward_altered_processed"]),)
-        if firearm_details["is_onward_altered_processed"]:
-            summary += (("is-altered-comments", firearm_details["is_onward_altered_processed_comments"]),)
-        summary += (("is-incorporated", firearm_details["is_onward_incorporated"]),)
-        if firearm_details["is_onward_incorporated"]:
-            summary += (("is-incorporated-comments", firearm_details["is_onward_incorporated_comments"]),)
+def is_onward_exported_reducer(onward_exported_object):
+    # The object could be firearm_details or good_on_application as we've
+    # copied this value back to the original object as it pertains to more than
+    # just firearms now but there may be current firearm goods that haven't
+    # had this data ported back yet
+    summary = (("is-onward-exported", onward_exported_object["is_onward_exported"]),)
+    if onward_exported_object["is_onward_exported"]:
+        summary += (("is-altered", onward_exported_object["is_onward_altered_processed"]),)
+        if onward_exported_object["is_onward_altered_processed"]:
+            summary += (("is-altered-comments", onward_exported_object["is_onward_altered_processed_comments"]),)
+        summary += (("is-incorporated", onward_exported_object["is_onward_incorporated"]),)
+        if onward_exported_object["is_onward_incorporated"]:
+            summary += (("is-incorporated-comments", onward_exported_object["is_onward_incorporated_comments"]),)
     return summary
 
 
