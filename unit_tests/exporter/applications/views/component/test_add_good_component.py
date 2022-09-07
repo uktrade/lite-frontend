@@ -17,7 +17,7 @@ from exporter.goods.forms.common import (
     ProductUsesInformationSecurityForm,
 )
 
-from exporter.goods.forms.goods import ProductComponentTypeForm, ProductIsComponentForm
+from exporter.goods.forms.goods import ProductComponentDetailsForm, ProductIsComponentForm
 
 
 @pytest.fixture(autouse=True)
@@ -111,11 +111,11 @@ def test_add_good_component_end_to_end(
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductComponentTypeForm)
+    assert isinstance(response.context["form"], ProductComponentDetailsForm)
 
     response = post_to_step(
-        AddGoodComponentSteps.COMPONENT_TYPE,
-        {"component_type": "hardware_modified", "modified_hardware_details": "modified with new chip"},
+        AddGoodComponentSteps.COMPONENT_DETAILS,
+        {"component_type": "yes_modified", "modified_details": "modified with new chip"},
     )
 
     assert response.status_code == 200
@@ -215,7 +215,6 @@ def test_add_good_component_end_to_end(
 
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
-
     assert last_request.json() == {
         "name": "product_1",
         "is_good_controlled": True,
@@ -239,6 +238,8 @@ def test_add_good_component_end_to_end(
         "item_category": "group1_components",
         "part_number": "abc12345",
         "no_part_number_comments": "",
+        "is_component": "yes_modified",
+        "component_details": "modified with new chip",
     }
     assert post_good_document_matcher.called_once
     assert post_good_document_matcher.last_request.json() == [
@@ -334,4 +335,5 @@ def test_add_good_component_short_end_to_end(
         "product_description": "This is the product description",
         "modified_military_use_details": "",
         "item_category": "group1_components",
+        "is_component": "no",
     }
