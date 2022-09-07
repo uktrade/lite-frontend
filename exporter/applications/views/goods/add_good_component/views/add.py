@@ -31,7 +31,7 @@ from exporter.goods.forms.common import (
     ProductUsesInformationSecurityForm,
     ProductDescriptionForm,
 )
-from exporter.goods.forms.goods import ProductIsComponentForm, ProductComponentTypeForm
+from exporter.goods.forms.goods import ProductIsComponentForm, ProductComponentDetailsForm
 from exporter.goods.services import post_component, post_good_documents
 from exporter.applications.services import post_component_good_on_application
 from exporter.applications.views.goods.common.mixins import (
@@ -69,7 +69,7 @@ class AddGoodComponent(
     form_list = [
         (AddGoodComponentSteps.NAME, ProductNameForm),
         (AddGoodComponentSteps.IS_COMPONENT, ProductIsComponentForm),
-        (AddGoodComponentSteps.COMPONENT_TYPE, ProductComponentTypeForm),
+        (AddGoodComponentSteps.COMPONENT_DETAILS, ProductComponentDetailsForm),
         (AddGoodComponentSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
         (AddGoodComponentSteps.PART_NUMBER, ProductPartNumberForm),
         (AddGoodComponentSteps.PV_GRADING, ProductPVGradingForm),
@@ -83,7 +83,7 @@ class AddGoodComponent(
     ]
     condition_dict = {
         AddGoodComponentSteps.PV_GRADING_DETAILS: is_pv_graded,
-        AddGoodComponentSteps.COMPONENT_TYPE: is_component,
+        AddGoodComponentSteps.COMPONENT_DETAILS: is_component,
         AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
         AddGoodComponentSteps.PRODUCT_DESCRIPTION: ~C(is_product_document_available),

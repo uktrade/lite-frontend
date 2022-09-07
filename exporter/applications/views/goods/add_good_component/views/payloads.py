@@ -8,6 +8,8 @@ from exporter.applications.views.goods.common.payloads import (
     get_part_number_payload,
 )
 
+from exporter.goods.forms.goods import ProductComponentDetailsForm
+
 
 def get_quantity_and_value_payload(form):
     return {
@@ -17,10 +19,41 @@ def get_quantity_and_value_payload(form):
     }
 
 
+def get_component_payload(form):
+    component_payload = {}
+    component_type_clean_data = form.cleaned_data["component_type"]
+    details = (
+        (ProductComponentDetailsForm.ComponentTypeChoices.DESIGNED.value, "designed_details"),
+        (ProductComponentDetailsForm.ComponentTypeChoices.MODIFIED.value, "modified_details"),
+        (ProductComponentDetailsForm.ComponentTypeChoices.GENERAL.value, "general_details"),
+    )
+    for is_component, details_field in details:
+        if component_type_clean_data == is_component:
+            component_details = form.cleaned_data[details_field]
+            if component_details:
+                component_payload = {
+                    "is_component": component_type_clean_data,
+                    "component_details": component_details,
+                }
+    return component_payload
+
+
+def get_is_component_payload(form):
+    if form.cleaned_data["is_component"]:
+        # component details will be used to fill details
+        return {}
+    else:
+        return {
+            "is_component": "no",
+        }
+
+
 class AddGoodComponentPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodComponentSteps.NAME: get_cleaned_data,
         AddGoodComponentSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
+        AddGoodComponentSteps.IS_COMPONENT: get_is_component_payload,
+        AddGoodComponentSteps.COMPONENT_DETAILS: get_component_payload,
         AddGoodComponentSteps.PART_NUMBER: get_part_number_payload,
         AddGoodComponentSteps.PV_GRADING: get_pv_grading_payload,
         AddGoodComponentSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,

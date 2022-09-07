@@ -1395,6 +1395,9 @@ class SoftwareTechnologyDetailsForm(forms.Form):
 
 
 class ProductComponentForm(forms.Form):
+    class Layout:
+        TITLE = CreateGoodForm.ProductComponent.TITLE
+
     title = CreateGoodForm.ProductComponent.TITLE
 
     is_component = forms.ChoiceField(
@@ -2034,14 +2037,14 @@ class ProductIsComponentForm(BaseForm):
         )
 
 
-class ProductComponentTypeForm(BaseForm):
+class ProductComponentDetailsForm(BaseForm):
     class Layout:
         TITLE = "What type of component is it?"
 
     class ComponentTypeChoices(models.TextChoices):
-        HARDWARE = "hardware", "Specially designed for hardware"
-        HARDWARE_MODIFIED = "hardware_modified", "Modified for hardware"
-        GENERAL_PURPOSE = "general_purpose", "General-purpose component"
+        DESIGNED = "yes_designed", "Specially designed for hardware"
+        MODIFIED = "yes_modified", "Modified for hardware"
+        GENERAL = "yes_general", "General-purpose component"
 
     component_type = forms.ChoiceField(
         choices=ComponentTypeChoices.choices,
@@ -2052,19 +2055,19 @@ class ProductComponentTypeForm(BaseForm):
         },
     )
 
-    hardware_details = forms.CharField(
+    designed_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
         label="Provide details of the specific hardware",
     )
 
-    modified_hardware_details = forms.CharField(
+    modified_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
         label="Provide details of the modifications and the specific hardware",
     )
 
-    general_purpose_details = forms.CharField(
+    general_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
         label="Provide details of the intended general-purpose use",
@@ -2075,16 +2078,16 @@ class ProductComponentTypeForm(BaseForm):
             ConditionalRadios(
                 "component_type",
                 ConditionalQuestion(
-                    self.ComponentTypeChoices.HARDWARE.label,
-                    "hardware_details",
+                    self.ComponentTypeChoices.DESIGNED.label,
+                    "designed_details",
                 ),
                 ConditionalQuestion(
-                    self.ComponentTypeChoices.HARDWARE_MODIFIED.label,
-                    "modified_hardware_details",
+                    self.ComponentTypeChoices.MODIFIED.label,
+                    "modified_details",
                 ),
                 ConditionalQuestion(
-                    self.ComponentTypeChoices.GENERAL_PURPOSE.label,
-                    "general_purpose_details",
+                    self.ComponentTypeChoices.GENERAL.label,
+                    "general_details",
                 ),
             ),
         )
@@ -2094,23 +2097,23 @@ class ProductComponentTypeForm(BaseForm):
 
         component_type = cleaned_data.get("component_type")
 
-        hardware_details = cleaned_data.get("hardware_details")
-        modified_hardware_details = cleaned_data.get("modified_hardware_details")
-        general_purpose_details = cleaned_data.get("general_purpose_details")
+        hardware_details = cleaned_data.get("designed_details")
+        modified_hardware_details = cleaned_data.get("modified_details")
+        general_purpose_details = cleaned_data.get("general_details")
 
-        if component_type == self.ComponentTypeChoices.HARDWARE.value and not hardware_details:
+        if component_type == self.ComponentTypeChoices.DESIGNED.value and not hardware_details:
             self.add_error(
-                "hardware_details",
+                "designed_details",
                 "Enter details of the specific hardware",
             )
-        elif component_type == self.ComponentTypeChoices.HARDWARE_MODIFIED.value and not modified_hardware_details:
+        elif component_type == self.ComponentTypeChoices.MODIFIED.value and not modified_hardware_details:
             self.add_error(
-                "modified_hardware_details",
+                "modified_details",
                 "Enter details of the modifications and the specific hardware",
             )
-        elif component_type == self.ComponentTypeChoices.GENERAL_PURPOSE.value and not general_purpose_details:
+        elif component_type == self.ComponentTypeChoices.GENERAL.value and not general_purpose_details:
             self.add_error(
-                "general_purpose_details",
+                "general_details",
                 "Enter details of the intended general-purpose use",
             )
 
