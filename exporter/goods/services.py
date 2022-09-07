@@ -325,6 +325,11 @@ def edit_platform(request, pk, json):
     return response.json(), response.status_code
 
 
+def edit_component(request, pk, json):
+    response = client.put(request, f"/goods/{pk}", json)
+    return response.json(), response.status_code
+
+
 def post_material(request, json):
     json["item_category"] = PRODUCT_CATEGORY_MATERIAL
     data = client.post(request, "/goods/", json)
