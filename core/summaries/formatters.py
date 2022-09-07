@@ -470,6 +470,7 @@ SOFTWARE_ON_APPLICATION_FORMATTERS = {
     "is-altered": yesno,
     "is-incorporated": yesno,
     "total-value": money_formatter,
+    "number-of-items": integer,
 }
 
 SOFTWARE_ON_APPLICATION_LABELS = {
