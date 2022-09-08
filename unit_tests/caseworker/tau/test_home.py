@@ -207,7 +207,12 @@ def test_tau_home_noauth(client, url):
 
 
 def test_form(
-    authorized_client, url, data_standard_case, requests_mock, mock_control_list_entries, mock_precedents_api
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_control_list_entries,
+    mock_precedents_api,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py

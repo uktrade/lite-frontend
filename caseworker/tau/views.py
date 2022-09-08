@@ -135,6 +135,8 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
+        form_kwargs["queue_pk"] = self.queue_id
+        form_kwargs["application_pk"] = self.case["id"]
         return form_kwargs
 
     def get_context_data(self, **kwargs):

@@ -1,16 +1,11 @@
 from http import HTTPStatus
 
 from core import client
+from core.constants import ProductCategories
 from core.helpers import convert_parameters_to_query_params
+
 from exporter.applications.helpers.date_fields import format_date
-from exporter.core.constants import (
-    FIREARMS,
-    PRODUCT_CATEGORY_FIREARM,
-    PRODUCT_CATEGORY_PLATFORM,
-    PRODUCT_CATEGORY_SOFTWARE,
-    COMPONENT_CATEGORY_PLATFORM,
-    PRODUCT_CATEGORY_MATERIAL,
-)
+from exporter.core.constants import FIREARMS
 
 
 def get_goods(
@@ -38,7 +33,7 @@ def get_good_details(request, pk):
 
 
 def post_goods(request, json):
-    json["item_category"] = json.get("item_category", PRODUCT_CATEGORY_FIREARM)
+    json["item_category"] = json.get("item_category", ProductCategories.PRODUCT_CATEGORY_FIREARM)
 
     if "is_pv_graded" in json and json["is_pv_graded"] == "yes":
         if "reference" in json:
@@ -52,7 +47,7 @@ def post_goods(request, json):
                 "date_of_issue": format_date(json, "date_of_issue"),
             }
 
-    if "item_category" in json and json["item_category"] == PRODUCT_CATEGORY_FIREARM:
+    if "item_category" in json and json["item_category"] == ProductCategories.PRODUCT_CATEGORY_FIREARM:
         add_firearm_details_to_data(json)
 
     data = client.post(request, "/goods/", json)
@@ -63,7 +58,7 @@ def post_goods(request, json):
 
 
 def post_firearm(request, json):
-    json["item_category"] = PRODUCT_CATEGORY_FIREARM
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_FIREARM
 
     json["firearm_details"]["type"] = FIREARMS
 
@@ -309,13 +304,13 @@ def post_good_document_sensitivity(request, pk, json):
 
 
 def post_platform(request, json):
-    json["item_category"] = PRODUCT_CATEGORY_PLATFORM
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_PLATFORM
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
 
 def post_component(request, json):
-    json["item_category"] = COMPONENT_CATEGORY_PLATFORM
+    json["item_category"] = ProductCategories.COMPONENT_CATEGORY_PLATFORM
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
@@ -331,7 +326,7 @@ def edit_component(request, pk, json):
 
 
 def post_material(request, json):
-    json["item_category"] = PRODUCT_CATEGORY_MATERIAL
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_MATERIAL
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
@@ -342,7 +337,7 @@ def edit_material(request, pk, json):
 
 
 def post_software(request, json):
-    json["item_category"] = PRODUCT_CATEGORY_SOFTWARE
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_SOFTWARE
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 

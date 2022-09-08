@@ -19,6 +19,8 @@ from django.templatetags.tz import localtime
 from django.utils.html import escape
 from django.utils.safestring import mark_safe, SafeString
 
+from core.constants import ProductCategories
+
 from exporter.core.constants import (
     DATE_FORMAT,
     CASE_SECTIONS,
@@ -28,7 +30,6 @@ from exporter.core.constants import (
     NOT_STARTED,
     DONE,
     IN_PROGRESS,
-    PRODUCT_CATEGORY_FIREARM,
     FIREARM_AMMUNITION_COMPONENT_TYPES,
 )
 from exporter.applications.constants import F680
@@ -690,7 +691,7 @@ def pluralise_quantity(good_on_app):
     quantity = good_on_app.get("quantity", 0)
     unit = good_on_app.get("unit", {}).get("key")
 
-    if good_on_app.get("good", {}).get("item_category", {}).get("key") == PRODUCT_CATEGORY_FIREARM:
+    if good_on_app.get("good", {}).get("item_category", {}).get("key") == ProductCategories.PRODUCT_CATEGORY_FIREARM:
         if (
             good_on_app.get("firearm_details") is not None
             and good_on_app["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES

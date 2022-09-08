@@ -8,6 +8,8 @@
         {% if widget.selected %}checked{% endif %}
     >
     <label class="tau__label govuk-label govuk-checkboxes__label" for="{{ widget.attrs.id }}">
-        {% include "tau/good_detail.html" with good=widget.label %}
+        {% with good=widget.label.good_on_application summary=widget.label.summary %}
+            {% include "tau/good_detail.html" with good=good summary=summary %}
+        {% endwith %}
     </label>
 </div>
