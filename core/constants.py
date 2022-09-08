@@ -105,3 +105,13 @@ class ProductCategories:
     PRODUCT_CATEGORY_MATERIAL = "group1_materials"
     PRODUCT_CATEGORY_DEVICE = "group1_device"
     PRODUCT_CATEGORY_TECHNOLOGY = "group3_technology"
+
+
+class FirearmsProductType:
+    FIREARMS = "firearms"
+    COMPONENTS_FOR_FIREARMS = "components_for_firearms"
+    AMMUNITION = "ammunition"
+    COMPONENTS_FOR_AMMUNITION = "components_for_ammunition"
+    FIREARMS_ACCESSORY = "firearms_accessory"
+    SOFTWARE_RELATED_TO_FIREARM = "software_related_to_firearms"
+    TECHNOLOGY_RELATED_TO_FIREARM = "technology_related_to_firearms"

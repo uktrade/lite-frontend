@@ -3,9 +3,15 @@ from django import forms
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
 
-from core.constants import ProductCategories
+from core.constants import (
+    FirearmsProductType,
+    ProductCategories,
+)
+from core.helpers import is_good_on_application_product_type
 
 from caseworker.cases.helpers.summaries import (
+    firearm_summary,
+    firearm_on_application_summary,
     material_summary,
     material_product_on_application_summary,
     platform_summary,
@@ -13,6 +19,7 @@ from caseworker.cases.helpers.summaries import (
     software_summary,
     software_product_on_application_summary,
 )
+from caseworker.cases.services import get_good_on_application_documents
 from caseworker.tau.widgets import GoodsMultipleSelect
 
 
@@ -94,11 +101,25 @@ class TAUAssessmentForm(TAUEditForm):
     MESSAGE_NO_CLC_MUTEX = "This is mutually exclusive with control list entries"
     MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
 
-    def __init__(self, goods, control_list_entries_choices, queue_pk, application_pk, *args, **kwargs):
+    def __init__(
+        self,
+        request,
+        goods,
+        control_list_entries_choices,
+        queue_pk,
+        application_pk,
+        is_user_rfd,
+        organisation_documents,
+        *args,
+        **kwargs,
+    ):
         super().__init__(control_list_entries_choices, *args, **kwargs)
 
+        self.request = request
         self.queue_pk = queue_pk
         self.application_pk = application_pk
+        self.is_user_rfd = is_user_rfd
+        self.organisation_documents = organisation_documents
 
         self.fields["goods"] = forms.MultipleChoiceField(
             choices=self.get_goods_choices(goods),
@@ -114,6 +135,35 @@ class TAUAssessmentForm(TAUEditForm):
         )
 
     def get_good_on_application_summary(self, good_on_application):
+        if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
+            organisation_documents = {
+                document["document_type"]: document for document in self.organisation_documents.values()
+            }
+            product_summary = firearm_summary(
+                good_on_application["good"],
+                self.queue_pk,
+                self.application_pk,
+                self.is_user_rfd,
+                organisation_documents,
+            )
+            good_on_application_documents = get_good_on_application_documents(
+                self.request,
+                self.application_pk,
+                good_on_application["good"]["id"],
+            )
+            good_on_application_documents = {
+                item["document_type"]: item
+                for item in good_on_application_documents["documents"]
+                if item.get("document_type")
+            }
+            product_on_application_summary = firearm_on_application_summary(
+                good_on_application,
+                self.queue_pk,
+                self.application_pk,
+                good_on_application_documents,
+            )
+            return product_summary + product_on_application_summary
+
         if not good_on_application.get("firearm_details"):
             good = good_on_application.get("good")
             if not good:

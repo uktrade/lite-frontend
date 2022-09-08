@@ -1,6 +1,11 @@
 import pytest
+import requests
+import uuid
 
-from core.constants import ProductCategories
+from core.constants import (
+    FirearmsProductType,
+    ProductCategories,
+)
 
 from caseworker.tau import forms
 
@@ -105,12 +110,15 @@ from caseworker.tau import forms
         ),
     ),
 )
-def test_tau_assessment_form(data, valid, errors):
+def test_tau_assessment_form(data, valid, errors, rf):
     form = forms.TAUAssessmentForm(
+        request=rf.get("/"),
         goods={"test-id": {}},
         control_list_entries_choices=[("test-rating", "test-text")],
         queue_pk="queue_pk",
         application_pk="application_pk",
+        is_user_rfd=False,
+        organisation_documents={},
         data=data,
     )
     assert form.is_valid() == valid
@@ -176,6 +184,47 @@ def test_tau_assessment_form(data, valid, errors):
                     {
                         "good_on_application": {"good": {"item_category": {"key": "unknown-item-category"}}},
                         "summary": None,
+                    },
+                ),
+            ],
+        ),
+        (
+            {
+                "firearm": {
+                    "firearm_details": {
+                        "type": {
+                            "key": FirearmsProductType.FIREARMS,
+                        },
+                    },
+                    "good": {
+                        "id": "12345",
+                        "item_category": {
+                            "key": ProductCategories.PRODUCT_CATEGORY_FIREARM,
+                        },
+                    },
+                }
+            },
+            [
+                (
+                    "firearm",
+                    {
+                        "good_on_application": {
+                            "firearm_details": {
+                                "type": {
+                                    "key": FirearmsProductType.FIREARMS,
+                                }
+                            },
+                            "good": {
+                                "id": "12345",
+                                "item_category": {
+                                    "key": ProductCategories.PRODUCT_CATEGORY_FIREARM,
+                                },
+                            },
+                        },
+                        "summary": (
+                            ("firearm-summary",),
+                            ("firearm-on-application-summary",),
+                        ),
                     },
                 ),
             ],
@@ -257,7 +306,20 @@ def test_tau_assessment_form(data, valid, errors):
         ),
     ),
 )
-def test_tau_assessment_form_goods_choices(mocker, goods, choices):
+def test_tau_assessment_form_goods_choices(
+    mocker,
+    rf,
+    client,
+    goods,
+    choices,
+    requests_mock,
+):
+    mocker.patch("caseworker.tau.forms.firearm_summary", return_value=(("firearm-summary",),))
+    mocker.patch(
+        "caseworker.tau.forms.firearm_on_application_summary",
+        return_value=(("firearm-on-application-summary",),),
+    )
+
     mocker.patch("caseworker.tau.forms.platform_summary", return_value=(("platform-summary",),))
     mocker.patch(
         "caseworker.tau.forms.platform_product_on_application_summary",
@@ -276,11 +338,27 @@ def test_tau_assessment_form_goods_choices(mocker, goods, choices):
         return_value=(("software-product-on-application-summary",),),
     )
 
+    queue_pk = uuid.uuid4()
+    application_pk = uuid.uuid4()
+    good_pk = "12345"
+
+    requests_mock.get(
+        f"/applications/{application_pk}/goods/{good_pk}/documents/",
+        json={"documents": []},
+    )
+
+    request = rf.get("/")
+    request.session = client.session
+    request.requests_session = requests.Session()
+
     form = forms.TAUAssessmentForm(
+        request=request,
         goods=goods,
         control_list_entries_choices=[],
-        queue_pk="queue_pk",
-        application_pk="application_pk",
+        queue_pk=queue_pk,
+        application_pk=application_pk,
+        is_user_rfd=False,
+        organisation_documents={},
     )
     assert form.fields["goods"].choices == choices
 

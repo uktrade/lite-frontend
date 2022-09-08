@@ -15,6 +15,7 @@ from core.auth.views import LoginRequiredMixin
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    FirearmsProductType,
     ProductCategories,
 )
 from core.helpers import (
@@ -54,10 +55,7 @@ from exporter.applications.summaries.software import (
     software_product_on_application_summary,
 )
 from exporter.core import constants
-from exporter.core.constants import (
-    AddGoodFormSteps,
-    FirearmsProductType,
-)
+from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
     is_category_firearms,

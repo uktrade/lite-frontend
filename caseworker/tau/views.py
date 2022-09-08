@@ -133,10 +133,18 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
+
+        form_kwargs["request"] = self.request
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         form_kwargs["queue_pk"] = self.queue_id
         form_kwargs["application_pk"] = self.case["id"]
+        form_kwargs["organisation_documents"] = self.organisation_documents
+
+        rfd_certificate = self.organisation_documents.get("rfd_certificate")
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+        form_kwargs["is_user_rfd"] = is_user_rfd
+
         return form_kwargs
 
     def get_context_data(self, **kwargs):
