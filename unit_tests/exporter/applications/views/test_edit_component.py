@@ -163,6 +163,11 @@ def test_edit_component_post(
             {"name": "p1"},
         ),
         (
+            "component_edit_name",
+            {},
+            {"name": "p1"},
+        ),
+        (
             "component_edit_control_list_entries",
             {},
             {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},

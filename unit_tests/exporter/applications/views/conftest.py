@@ -61,6 +61,8 @@ def good_on_application(data_standard_case):
         "is_onward_altered_processed_comments": "I will alter it real good",
         "is_onward_incorporated": True,
         "is_onward_incorporated_comments": "I will onward incorporate",
+        "is_component": {"value": "This is a modified component", "key": "yes_modified"},
+        "modified_details": "modified component",
         "firearm_details": {
             "section_certificate_date_of_expiry": "2030-12-12",
             "section_certificate_number": "12345",

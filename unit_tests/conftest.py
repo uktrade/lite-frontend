@@ -604,10 +604,10 @@ def data_standard_case():
                             "status": {"key": "verified", "value": "Verified"},
                             "item_category": {"key": "group1_device", "value": "Device, equipment or object"},
                             "is_military_use": {"key": "no", "value": "No"},
-                            "is_component": {"key": "no", "value": "No"},
+                            "is_component": {"key": "yes_modified", "value": "This has been modified"},
                             "uses_information_security": False,
                             "modified_military_use_details": None,
-                            "component_details": None,
+                            "component_details": "modified details",
                             "information_security_details": None,
                             "missing_document_reason": {
                                 "key": "OFFICIAL_SENSITIVE",

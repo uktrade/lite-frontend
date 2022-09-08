@@ -82,3 +82,16 @@ class SerialChoices(models.TextChoices):
     AVAILABLE = "AVAILABLE", "Yes, I can add serial numbers now"
     LATER = "LATER", "Yes, I can add serial numbers later"
     NOT_AVAILABLE = "NOT_AVAILABLE", "No"
+
+
+class ComponentChoices(models.TextChoices):
+    DESIGNED = "yes_designed", "Specially designed for hardware"
+    MODIFIED = "yes_modified", "Modified for hardware"
+    GENERAL = "yes_general", "General-purpose component"
+
+
+COMPONENT_DETAILS_MAP = {
+    ComponentChoices.DESIGNED.value: "designed_details",
+    ComponentChoices.MODIFIED.value: "modified_details",
+    ComponentChoices.GENERAL.value: "general_details",
+}

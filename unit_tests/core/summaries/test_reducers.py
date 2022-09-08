@@ -946,6 +946,10 @@ def test_platform_reducer(mocker):
 
 
 def test_component_reducer(mocker):
+    mock_component_details_reducer = mocker.patch(
+        "core.summaries.reducers.component_details_reducer",
+        return_value=(),
+    )
     mock_is_good_controlled_reducer = mocker.patch(
         "core.summaries.reducers.is_good_controlled_reducer", return_value=()
     )
@@ -975,6 +979,7 @@ def test_component_reducer(mocker):
         ("name", "good-name"),
     )
 
+    mock_component_details_reducer.assert_called_with(good)
     mock_is_good_controlled_reducer.assert_called_with(good)
     mock_is_pv_graded_reducer.assert_called_with(good)
     mock_uses_information_security_reducer.assert_called_with(good)

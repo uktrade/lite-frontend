@@ -157,6 +157,12 @@ COMPONENT_FIELDS = (
     "is-firearm-product",
     "product-category",
     "name",
+    "is-component",
+    "component-type",
+    "component-details",
+    "designed-details",
+    "modified-details",
+    "general-details",
     "is-good-controlled",
     "control-list-entries",
     "part-number",
@@ -402,7 +408,6 @@ COMPONENT_ON_APPLICATION_FIELDS = (
 def component_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
-
     summary = component_reducer(good)
     formatters = {
         **COMPONENT_VALUE_FORMATTERS,

@@ -4,8 +4,10 @@ from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
     SerialChoices,
+    COMPONENT_DETAILS_MAP,
 )
 from core.goods.helpers import is_product_category_made_before_1938
+from core.constants import ComponentChoices
 
 
 def _get_assessed_control_list_item(precedent):
@@ -411,6 +413,18 @@ def uses_information_security_reducer(good):
     )
 
 
+def component_details_reducer(good):
+    is_component_key = good.get("is_component", {}).get("key")
+    if not is_component_key or is_component_key == "no":
+        return (("is-component", False),)
+    else:
+        return (
+            ("is-component", True),
+            (COMPONENT_DETAILS_MAP[is_component_key].replace("_", "-"), good["component_details"]),
+            ("component-type", is_component_key),
+        )
+
+
 def part_number_reducer(good):
     no_part_number_comments = good.get("no_part_number_comments")
     if no_part_number_comments:
@@ -461,6 +475,7 @@ def component_reducer(good):
             good["name"],
         ),
     )
+    summary += component_details_reducer(good)
     summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
     summary += uses_information_security_reducer(good)

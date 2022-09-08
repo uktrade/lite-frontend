@@ -59,14 +59,20 @@ from exporter.goods.forms.common import (
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
 )
+from exporter.goods.forms.goods import ProductIsComponentForm, ProductComponentDetailsForm
 from exporter.goods.services import edit_component
 
 from .constants import (
     AddGoodComponentToApplicationSteps,
     AddGoodComponentSteps,
 )
-from .payloads import ComponentProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
+from .payloads import (
+    ComponentProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
+    ProductEditComponentDetailsPayloadBuilder,
+)
 from .mixins import NonFirearmsComponentFlagMixin
+from .conditionals import is_component
+from .initial import get_is_component_initial_data, get_component_details_initial_data
 
 logger = logging.getLogger(__name__)
 
@@ -393,3 +399,24 @@ class ComponentOnApplicationSummaryEditQuantityValue(BaseComponentOnApplicationE
 
     def get_edit_payload(self, form):
         return get_quantity_and_value_payload(form)
+
+
+class ComponentEditComponentDetails(BaseComponentEditWizardView):
+    form_list = [
+        (AddGoodComponentSteps.IS_COMPONENT, ProductIsComponentForm),
+        (AddGoodComponentSteps.COMPONENT_DETAILS, ProductComponentDetailsForm),
+    ]
+    condition_dict = {
+        AddGoodComponentSteps.COMPONENT_DETAILS: is_component,
+    }
+
+    def get_form_initial(self, step):
+        initial = {}
+        if step == AddGoodComponentSteps.IS_COMPONENT:
+            initial = get_is_component_initial_data(self.good)
+        elif step == AddGoodComponentSteps.COMPONENT_DETAILS and self.good["component_details"]:
+            initial = get_component_details_initial_data(self.good)
+        return initial
+
+    def get_payload(self, form_dict):
+        return ProductEditComponentDetailsPayloadBuilder().build(form_dict)
