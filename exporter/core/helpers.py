@@ -9,6 +9,8 @@ from django.template.defaultfilters import safe
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
+from core.constants import ProductCategories
+
 from exporter.core import decorators
 from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps, SetPartyFormSteps
@@ -154,7 +156,10 @@ def is_category_firearms(wizard):
         return True
 
     item_category = product_category_cleaned_data["item_category"]
-    return item_category == constants.PRODUCT_CATEGORY_FIREARM or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
+    return (
+        item_category == ProductCategories.PRODUCT_CATEGORY_FIREARM
+        or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
+    )
 
 
 def is_product_type(product_type):

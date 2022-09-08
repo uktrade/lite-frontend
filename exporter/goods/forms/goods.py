@@ -12,16 +12,15 @@ from django.utils import timezone
 from django.db import models
 
 from core.builtins.custom_tags import default_na, linkify
+from core.constants import ProductCategories
 from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
-from exporter.core.common.forms import TextChoice, coerce_str_to_bool
-from exporter.core.constants import PRODUCT_CATEGORY_PLATFORM
 
+from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 from exporter.core.constants import (
     ProductSecurityFeatures,
     ProductDeclaredAtCustoms,
     ProductDesignDetails,
     FIREARM_AMMUNITION_COMPONENT_TYPES,
-    PRODUCT_CATEGORY_FIREARM,
 )
 from exporter.core.helpers import (
     convert_control_list_entries,
@@ -275,7 +274,7 @@ def delete_good_form(good):
         try:
             if good["firearm_details"] and good["firearm_details"]["type"]["key"] == "firearms":
                 back_link = reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
-            elif good["item_category"]["key"] == PRODUCT_CATEGORY_PLATFORM:
+            elif good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_PLATFORM:
                 back_link = reverse("goods:platform_detail", kwargs={"pk": good["id"]})
         except KeyError:
             pass
@@ -376,13 +375,13 @@ class ProductCategoryForm(forms.Form):
 
     item_category = forms.ChoiceField(
         choices=(
-            ("group1_platform", CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
-            ("group1_device", CreateGoodForm.ProductCategory.GROUP1_DEVICE),
-            ("group1_components", CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
-            ("group1_materials", CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
-            (PRODUCT_CATEGORY_FIREARM, CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
-            ("group3_software", CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
-            ("group3_technology", CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
+            (ProductCategories.PRODUCT_CATEGORY_PLATFORM, CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
+            (ProductCategories.PRODUCT_CATEGORY_DEVICE, CreateGoodForm.ProductCategory.GROUP1_DEVICE),
+            (ProductCategories.COMPONENT_CATEGORY_PLATFORM, CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
+            (ProductCategories.PRODUCT_CATEGORY_MATERIAL, CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
+            (ProductCategories.PRODUCT_CATEGORY_FIREARM, CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
+            (ProductCategories.PRODUCT_CATEGORY_SOFTWARE, CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
+            (ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY, CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
         ),
         widget=forms.RadioSelect,
         label="",
@@ -1492,7 +1491,7 @@ def get_unit_quantity_value_summary_list_items(good, number_of_items):
         ("Part number", default_na(good["part_number"])),
     ]
 
-    if good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
+    if good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_FIREARM:
         firearm_type = good["firearm_details"]["type"]["key"]
 
         if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:

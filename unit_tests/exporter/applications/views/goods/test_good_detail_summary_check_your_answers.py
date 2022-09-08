@@ -5,6 +5,8 @@ from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
+from core.constants import ProductCategories
+
 from exporter.core import constants
 
 
@@ -95,7 +97,7 @@ def test_good_detail_summary_check_your_answers_view_template_used(
                 "good": {
                     "id": str(uuid.uuid4()),
                     "item_category": {
-                        "key": constants.PRODUCT_CATEGORY_PLATFORM,
+                        "key": ProductCategories.PRODUCT_CATEGORY_PLATFORM,
                     },
                 },
             },
@@ -109,7 +111,7 @@ def test_good_detail_summary_check_your_answers_view_template_used(
                 "good": {
                     "id": str(uuid.uuid4()),
                     "item_category": {
-                        "key": constants.PRODUCT_CATEGORY_MATERIAL,
+                        "key": ProductCategories.PRODUCT_CATEGORY_MATERIAL,
                     },
                 },
             },
@@ -123,7 +125,7 @@ def test_good_detail_summary_check_your_answers_view_template_used(
                 "good": {
                     "id": str(uuid.uuid4()),
                     "item_category": {
-                        "key": constants.PRODUCT_CATEGORY_SOFTWARE,
+                        "key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE,
                     },
                 },
             },

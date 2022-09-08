@@ -12,7 +12,11 @@ from django.views.generic import TemplateView, FormView
 from formtools.wizard.storage.session import SessionStorage
 
 from core.auth.views import LoginRequiredMixin
-from core.constants import FirearmsActDocumentType, FirearmsActSections
+from core.constants import (
+    FirearmsActDocumentType,
+    FirearmsActSections,
+    ProductCategories,
+)
 from core.helpers import (
     convert_dict_to_query_params,
     is_good_on_application_product_type,
@@ -817,20 +821,20 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
             C(is_preexisting(True)) & C(is_product_type("firearm"))
         ),
         AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES))
             & C(is_firearm_type_not_in([constants.FIREARM_COMPONENT, "components_for_ammunition"]))
         ),
         AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_in([constants.FIREARM_COMPONENT]))
         ),
         AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_in(["components_for_ammunition"]))
         ),
         AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_not_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES))
         ),
         AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER: C(is_preexisting(True)) & C(show_rfd_question),
@@ -1103,9 +1107,18 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
             item_category = good_on_application["good"]["item_category"]["key"]
             try:
                 _product_summary, _product_on_application_summary = {
-                    constants.PRODUCT_CATEGORY_PLATFORM: (platform_summary, platform_product_on_application_summary),
-                    constants.PRODUCT_CATEGORY_MATERIAL: (material_summary, material_product_on_application_summary),
-                    constants.PRODUCT_CATEGORY_SOFTWARE: (software_summary, software_product_on_application_summary),
+                    ProductCategories.PRODUCT_CATEGORY_PLATFORM: (
+                        platform_summary,
+                        platform_product_on_application_summary,
+                    ),
+                    ProductCategories.PRODUCT_CATEGORY_MATERIAL: (
+                        material_summary,
+                        material_product_on_application_summary,
+                    ),
+                    ProductCategories.PRODUCT_CATEGORY_SOFTWARE: (
+                        software_summary,
+                        software_product_on_application_summary,
+                    ),
                 }[item_category]
             except KeyError:
                 return None
