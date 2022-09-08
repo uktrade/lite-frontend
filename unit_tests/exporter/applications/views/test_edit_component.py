@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from exporter.applications.views.goods.add_good_component.views.constants import AddGoodComponentSteps
 from exporter.goods.forms.common import ProductDescriptionForm
+from exporter.goods.forms.goods import ProductComponentDetailsForm
 
 
 @pytest.fixture(autouse=True)
@@ -48,6 +49,14 @@ def edit_pv_grading_url(application, good_on_application):
     )
 
 
+@pytest.fixture(autouse=True)
+def edit_component_details_url(application, good_on_application):
+    return reverse(
+        "applications:component_edit_component_details",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+
 @pytest.fixture
 def goto_step_pv_grading(goto_step_factory, edit_pv_grading_url):
     return goto_step_factory(edit_pv_grading_url)
@@ -56,6 +65,16 @@ def goto_step_pv_grading(goto_step_factory, edit_pv_grading_url):
 @pytest.fixture
 def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
     return post_to_step_factory(edit_pv_grading_url)
+
+
+@pytest.fixture
+def goto_step_component_details(goto_step_factory, edit_component_details_url):
+    return goto_step_factory(edit_component_details_url)
+
+
+@pytest.fixture
+def post_to_step_component_details(post_to_step_factory, edit_component_details_url):
+    return post_to_step_factory(edit_component_details_url)
 
 
 @pytest.mark.parametrize(
@@ -163,9 +182,14 @@ def test_edit_component_post(
             {"name": "p1"},
         ),
         (
-            "component_edit_name",
-            {},
-            {"name": "p1"},
+            "component_edit_component_details",
+            {"is_component": {"key": "yes_modified"}, "component_details": "modified"},
+            {"is_component": True},
+        ),
+        (
+            "component_edit_component_details",
+            {"is_component": {"key": "no"}},
+            {"is_component": False},
         ),
         (
             "component_edit_control_list_entries",
@@ -317,6 +341,40 @@ def test_edit_pv_grading_details(
             "reference": "GR123",
             "date_of_issue": "2020-02-20",
         },
+    }
+
+
+def test_edit_component_details(
+    requests_mock,
+    goto_step_component_details,
+    post_to_step_component_details,
+    component_product_summary_url,
+):
+    response = goto_step_component_details(AddGoodComponentSteps.IS_COMPONENT)
+    assert response.status_code == 200
+
+    response = post_to_step_component_details(
+        AddGoodComponentSteps.IS_COMPONENT,
+        {"is_component": True},
+    )
+
+    assert response.status_code == 200
+
+    assert isinstance(response.context["form"], ProductComponentDetailsForm)
+
+    response = post_to_step_component_details(
+        AddGoodComponentSteps.COMPONENT_DETAILS,
+        {
+            "component_type": "yes_modified",
+            "modified_details": "modified component",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == component_product_summary_url
+    assert requests_mock.last_request.json() == {
+        "is_component": "yes_modified",
+        "modified_details": "modified component",
     }
 
 

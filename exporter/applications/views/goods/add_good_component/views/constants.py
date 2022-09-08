@@ -1,5 +1,4 @@
 from exporter.applications.views.goods.common import constants
-from core.constants import ComponentChoices
 
 
 class AddGoodComponentSteps:

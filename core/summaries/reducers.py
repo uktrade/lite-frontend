@@ -7,7 +7,6 @@ from core.constants import (
     COMPONENT_DETAILS_MAP,
 )
 from core.goods.helpers import is_product_category_made_before_1938
-from core.constants import ComponentChoices
 
 
 def _get_assessed_control_list_item(precedent):
