@@ -91,9 +91,9 @@ class ComponentChoices(models.TextChoices):
 
 
 COMPONENT_DETAILS_MAP = {
-    ComponentChoices.DESIGNED.value: "designed_details",
-    ComponentChoices.MODIFIED.value: "modified_details",
-    ComponentChoices.GENERAL.value: "general_details",
+    ComponentChoices.DESIGNED: "designed_details",
+    ComponentChoices.MODIFIED: "modified_details",
+    ComponentChoices.GENERAL: "general_details",
 }
 
 
