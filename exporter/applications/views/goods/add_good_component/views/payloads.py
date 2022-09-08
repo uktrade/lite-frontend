@@ -7,7 +7,7 @@ from exporter.applications.views.goods.common.payloads import (
     get_pv_grading_details_payload,
     get_part_number_payload,
 )
-from .constants import ComponentChoices
+from core.constants import ComponentChoices
 
 
 def get_quantity_and_value_payload(form):
