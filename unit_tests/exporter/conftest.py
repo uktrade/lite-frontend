@@ -485,6 +485,9 @@ def component_summary(good_id):
             "p1",
             "Give the product a descriptive name",
         ),
+        ("is-component", "Yes", "Is the product a component?"),
+        ("component-type", "Modified for hardware", "What type of component is it?"),
+        ("modified-details", "modified details", "Provide details of the modifications and the specific hardware"),
         (
             "is-good-controlled",
             "Yes",

@@ -84,6 +84,19 @@ class SerialChoices(models.TextChoices):
     NOT_AVAILABLE = "NOT_AVAILABLE", "No"
 
 
+class ComponentChoices(models.TextChoices):
+    DESIGNED = "yes_designed", "Specially designed for hardware"
+    MODIFIED = "yes_modified", "Modified for hardware"
+    GENERAL = "yes_general", "General-purpose component"
+
+
+COMPONENT_DETAILS_MAP = {
+    ComponentChoices.DESIGNED: "designed_details",
+    ComponentChoices.MODIFIED: "modified_details",
+    ComponentChoices.GENERAL: "general_details",
+}
+
+
 class ProductCategories:
     PRODUCT_CATEGORY_FIREARM = "group2_firearms"
     PRODUCT_CATEGORY_PLATFORM = "group1_platform"

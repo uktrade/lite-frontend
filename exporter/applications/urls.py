@@ -129,6 +129,7 @@ from exporter.applications.views.goods.add_good_component.views.edit import (
     ComponentEditControlListEntry,
     ComponentEditMilitaryUseView,
     ComponentEditName,
+    ComponentEditComponentDetails,
     ComponentEditPartNumberView,
     ComponentEditProductDescriptionView,
     ComponentEditProductDocumentAvailability,
@@ -550,6 +551,11 @@ urlpatterns = [
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/component/edit/name/", ComponentEditName.as_view(), name="component_edit_name"
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/component/edit/component-details/",
+        ComponentEditComponentDetails.as_view(),
+        name="component_edit_component_details",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/component/edit/control-list-entries/",

@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 from core.constants import (
     FirearmsActSections,
     SerialChoices,
+    ComponentChoices,
 )
 from exporter.goods.forms.common import ProductMilitaryUseForm
 
@@ -109,6 +110,11 @@ COMPONENT_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "product-category": "Select the product category",
     "name": "Give the product a descriptive name",
+    "is-component": "Is the product a component?",
+    "component-type": "What type of component is it?",
+    "designed-details": "Provide details of the specific hardware",
+    "modified-details": "Provide details of the modifications and the specific hardware",
+    "general-details": "Provide details of the intended general-purpose use",
     "is-good-controlled": "Do you know the product's control list entry?",
     "control-list-entries": "Enter the control list entry",
     "part-number": "Part number",
@@ -483,6 +489,8 @@ COMPONENT_VALUE_FORMATTERS = {
             "component": "Component",
         }
     ),
+    "is-component": yesno,
+    "component-type": model_choices_formatter(ComponentChoices),
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("I do not have a part number"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),

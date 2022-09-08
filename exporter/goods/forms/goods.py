@@ -26,6 +26,7 @@ from exporter.core.helpers import (
     convert_control_list_entries,
     str_to_bool,
 )
+from core.constants import ComponentChoices
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
 from exporter.core.common.forms import BaseForm
@@ -2040,13 +2041,8 @@ class ProductComponentDetailsForm(BaseForm):
     class Layout:
         TITLE = "What type of component is it?"
 
-    class ComponentTypeChoices(models.TextChoices):
-        DESIGNED = "yes_designed", "Specially designed for hardware"
-        MODIFIED = "yes_modified", "Modified for hardware"
-        GENERAL = "yes_general", "General-purpose component"
-
     component_type = forms.ChoiceField(
-        choices=ComponentTypeChoices.choices,
+        choices=ComponentChoices.choices,
         label="",
         widget=forms.RadioSelect,
         error_messages={
@@ -2077,15 +2073,15 @@ class ProductComponentDetailsForm(BaseForm):
             ConditionalRadios(
                 "component_type",
                 ConditionalQuestion(
-                    self.ComponentTypeChoices.DESIGNED.label,
+                    ComponentChoices.DESIGNED.label,
                     "designed_details",
                 ),
                 ConditionalQuestion(
-                    self.ComponentTypeChoices.MODIFIED.label,
+                    ComponentChoices.MODIFIED.label,
                     "modified_details",
                 ),
                 ConditionalQuestion(
-                    self.ComponentTypeChoices.GENERAL.label,
+                    ComponentChoices.GENERAL.label,
                     "general_details",
                 ),
             ),
@@ -2100,17 +2096,17 @@ class ProductComponentDetailsForm(BaseForm):
         modified_hardware_details = cleaned_data.get("modified_details")
         general_purpose_details = cleaned_data.get("general_details")
 
-        if component_type == self.ComponentTypeChoices.DESIGNED.value and not hardware_details:
+        if component_type == ComponentChoices.DESIGNED.value and not hardware_details:
             self.add_error(
                 "designed_details",
                 "Enter details of the specific hardware",
             )
-        elif component_type == self.ComponentTypeChoices.MODIFIED.value and not modified_hardware_details:
+        elif component_type == ComponentChoices.MODIFIED.value and not modified_hardware_details:
             self.add_error(
                 "modified_details",
                 "Enter details of the modifications and the specific hardware",
             )
-        elif component_type == self.ComponentTypeChoices.GENERAL.value and not general_purpose_details:
+        elif component_type == ComponentChoices.GENERAL.value and not general_purpose_details:
             self.add_error(
                 "general_details",
                 "Enter details of the intended general-purpose use",

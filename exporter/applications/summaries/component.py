@@ -8,6 +8,11 @@ from core.summaries.summaries import (
 
 COMPONENT_SUMMARY_EDIT_LINKS = {
     "name": "name",
+    "is-component": "component_details",
+    "component-type": "component_details",
+    "designed-details": "component_details",
+    "modified-details": "component_details",
+    "general-details": "component_details",
     "is-good-controlled": "control_list_entries",
     "control-list-entries": "control_list_entries",
     "part-number": "part_number",

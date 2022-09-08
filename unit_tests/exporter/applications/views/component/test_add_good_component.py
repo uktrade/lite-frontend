@@ -239,7 +239,7 @@ def test_add_good_component_end_to_end(
         "part_number": "abc12345",
         "no_part_number_comments": "",
         "is_component": "yes_modified",
-        "component_details": "modified with new chip",
+        "modified_details": "modified with new chip",
     }
     assert post_good_document_matcher.called_once
     assert post_good_document_matcher.last_request.json() == [
