@@ -64,7 +64,7 @@ def add_material_summary_edit_links(summary, edit_links, application, good):
     return summary_with_edit_links
 
 
-def material_summary(good):
+def material_summary(good, *args, **kwargs):
     def goods_document_formatter(document):
         url = reverse(
             "goods:document",
@@ -110,7 +110,7 @@ def get_material_on_application_summary_edit_link_factory(application, good_on_a
     return get_edit_link
 
 
-def material_product_on_application_summary(good_on_application):
+def material_product_on_application_summary(good_on_application, *args, **kwargs):
     return core_material_product_on_application_summary(good_on_application)
 
 

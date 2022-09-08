@@ -46,7 +46,7 @@ def add_software_summary_edit_links(summary, edit_links, application, good):
     return summary_with_edit_links
 
 
-def software_summary(good):
+def software_summary(good, *args, **kwargs):
     def goods_document_formatter(document):
         url = reverse(
             "goods:document",
@@ -66,5 +66,5 @@ def software_summary(good):
     )
 
 
-def software_product_on_application_summary(good_on_application):
+def software_product_on_application_summary(good_on_application, *args, **kwargs):
     return core_software_product_on_application_summary(good_on_application)

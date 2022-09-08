@@ -7,27 +7,10 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
-from core.constants import (
-    FirearmsProductType,
-    ProductCategories,
-)
-from core.helpers import is_good_on_application_product_type
 
 from caseworker.advice.services import move_case_forward
-from caseworker.cases.helpers.summaries import (
-    firearm_summary,
-    firearm_on_application_summary,
-    material_summary,
-    material_product_on_application_summary,
-    platform_summary,
-    platform_product_on_application_summary,
-    software_summary,
-    software_product_on_application_summary,
-)
-from caseworker.cases.services import (
-    get_case,
-    get_good_on_application_documents,
-)
+from caseworker.cases.helpers.summaries import get_good_on_application_summary
+from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
@@ -235,82 +218,23 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
                 return good
         raise Http404
 
-    def get_good_on_application_summary(self, good_on_application):
-        if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
-            rfd_certificate = self.organisation_documents.get("rfd-certificate")
-            is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+    def get_good_on_application_summary(self, good):
+        organisation_documents = {
+            document["document_type"]: document for document in self.organisation_documents.values()
+        }
+        rfd_certificate = organisation_documents.get("rfd-certificate")
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
-            organisation_documents = {
-                document["document_type"]: document for document in self.organisation_documents.values()
-            }
+        summary = get_good_on_application_summary(
+            self.request,
+            good,
+            self.queue_id,
+            self.case["id"],
+            is_user_rfd,
+            organisation_documents,
+        )
 
-            product_summary = firearm_summary(
-                good_on_application["good"],
-                self.queue_id,
-                self.case["id"],
-                is_user_rfd,
-                organisation_documents,
-            )
-            good_on_application_documents = get_good_on_application_documents(
-                self.request,
-                self.case["id"],
-                good_on_application["good"]["id"],
-            )
-            good_on_application_documents = {
-                item["document_type"]: item
-                for item in good_on_application_documents["documents"]
-                if item.get("document_type")
-            }
-            product_on_application_summary = firearm_on_application_summary(
-                good_on_application,
-                self.queue_id,
-                self.case["id"],
-                good_on_application_documents,
-            )
-            return product_summary + product_on_application_summary
-
-        if not good_on_application.get("firearm_details"):
-            good = good_on_application.get("good")
-            if not good:
-                return None
-
-            item_category = good.get("item_category")
-            if not item_category:
-                return None
-
-            item_category = item_category["key"]
-            try:
-                _product_summary, _product_on_application_summary = {
-                    ProductCategories.PRODUCT_CATEGORY_PLATFORM: (
-                        platform_summary,
-                        platform_product_on_application_summary,
-                    ),
-                    ProductCategories.PRODUCT_CATEGORY_MATERIAL: (
-                        material_summary,
-                        material_product_on_application_summary,
-                    ),
-                    ProductCategories.PRODUCT_CATEGORY_SOFTWARE: (
-                        software_summary,
-                        software_product_on_application_summary,
-                    ),
-                }[item_category]
-            except KeyError:
-                return None
-
-            product_summary = _product_summary(
-                good_on_application["good"],
-                self.queue_id,
-                self.case["id"],
-            )
-            product_on_application_summary = _product_on_application_summary(
-                good_on_application,
-                self.queue_id,
-                self.case["id"],
-            )
-
-            return product_summary + product_on_application_summary
-
-        return None
+        return summary
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -233,6 +233,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
             {
                 "platform": {
                     "good": {
+                        "id": "12345",
                         "item_category": {
                             "key": ProductCategories.PRODUCT_CATEGORY_PLATFORM,
                         },
@@ -244,7 +245,10 @@ def test_tau_assessment_form(data, valid, errors, rf):
                     "platform",
                     {
                         "good_on_application": {
-                            "good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM}}
+                            "good": {
+                                "id": "12345",
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM},
+                            }
                         },
                         "summary": (
                             ("platform-summary",),
@@ -258,6 +262,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
             {
                 "material": {
                     "good": {
+                        "id": "12345",
                         "item_category": {
                             "key": ProductCategories.PRODUCT_CATEGORY_MATERIAL,
                         },
@@ -269,7 +274,10 @@ def test_tau_assessment_form(data, valid, errors, rf):
                     "material",
                     {
                         "good_on_application": {
-                            "good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_MATERIAL}}
+                            "good": {
+                                "id": "12345",
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_MATERIAL},
+                            }
                         },
                         "summary": (
                             ("material-summary",),
@@ -283,6 +291,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
             {
                 "software": {
                     "good": {
+                        "id": "12345",
                         "item_category": {
                             "key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE,
                         },
@@ -294,7 +303,10 @@ def test_tau_assessment_form(data, valid, errors, rf):
                     "software",
                     {
                         "good_on_application": {
-                            "good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE}}
+                            "good": {
+                                "id": "12345",
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE},
+                            }
                         },
                         "summary": (
                             ("software-summary",),
@@ -314,27 +326,27 @@ def test_tau_assessment_form_goods_choices(
     choices,
     requests_mock,
 ):
-    mocker.patch("caseworker.tau.forms.firearm_summary", return_value=(("firearm-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.firearm_summary", return_value=(("firearm-summary",),))
     mocker.patch(
-        "caseworker.tau.forms.firearm_on_application_summary",
+        "caseworker.cases.helpers.summaries.firearm_on_application_summary",
         return_value=(("firearm-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.tau.forms.platform_summary", return_value=(("platform-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.platform_summary", return_value=(("platform-summary",),))
     mocker.patch(
-        "caseworker.tau.forms.platform_product_on_application_summary",
+        "caseworker.cases.helpers.summaries.platform_product_on_application_summary",
         return_value=(("platform-product-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.tau.forms.material_summary", return_value=(("material-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.material_summary", return_value=(("material-summary",),))
     mocker.patch(
-        "caseworker.tau.forms.material_product_on_application_summary",
+        "caseworker.cases.helpers.summaries.material_product_on_application_summary",
         return_value=(("material-product-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.tau.forms.software_summary", return_value=(("software-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.software_summary", return_value=(("software-summary",),))
     mocker.patch(
-        "caseworker.tau.forms.software_product_on_application_summary",
+        "caseworker.cases.helpers.summaries.software_product_on_application_summary",
         return_value=(("software-product-on-application-summary",),),
     )
 

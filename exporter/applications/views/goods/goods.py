@@ -1,4 +1,5 @@
 import logging
+
 from datetime import datetime
 from http import HTTPStatus
 
@@ -15,12 +16,13 @@ from core.auth.views import LoginRequiredMixin
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
-    FirearmsProductType,
     ProductCategories,
 )
-from core.helpers import (
-    convert_dict_to_query_params,
-    is_good_on_application_product_type,
+from core.helpers import convert_dict_to_query_params
+from core.summaries.summaries import (
+    get_summaries_type_good_on_application,
+    NoSummaryForType,
+    SummaryTypes,
 )
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.helpers.date_fields import format_date
@@ -1089,46 +1091,43 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
         return good_on_application_documents
 
     def get_product_summary(self, application, good_on_application, is_user_rfd, organisation_documents):
-        if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
-            product_summary = firearm_summary(
-                good_on_application["good"],
-                is_user_rfd,
-                organisation_documents,
-            )
-            product_on_application_summary = firearm_on_application_summary(
-                good_on_application,
-                self.get_good_on_application_documents(application, good_on_application),
-            )
-            return product_summary + product_on_application_summary
+        try:
+            summary_type = get_summaries_type_good_on_application(good_on_application)
+        except NoSummaryForType:
+            return None
 
-        if not good_on_application.get("firearm_details"):
-            item_category = good_on_application["good"]["item_category"]["key"]
-            try:
-                _product_summary, _product_on_application_summary = {
-                    ProductCategories.PRODUCT_CATEGORY_PLATFORM: (
-                        platform_summary,
-                        platform_product_on_application_summary,
-                    ),
-                    ProductCategories.PRODUCT_CATEGORY_MATERIAL: (
-                        material_summary,
-                        material_product_on_application_summary,
-                    ),
-                    ProductCategories.PRODUCT_CATEGORY_SOFTWARE: (
-                        software_summary,
-                        software_product_on_application_summary,
-                    ),
-                }[item_category]
-            except KeyError:
-                return None
+        summary_type_map = {
+            SummaryTypes.FIREARM: (
+                firearm_summary,
+                firearm_on_application_summary,
+            ),
+            SummaryTypes.PLATFORM: (
+                platform_summary,
+                platform_product_on_application_summary,
+            ),
+            SummaryTypes.MATERIAL: (
+                material_summary,
+                material_product_on_application_summary,
+            ),
+            SummaryTypes.SOFTWARE: (
+                software_summary,
+                software_product_on_application_summary,
+            ),
+        }
 
-            product_summary = _product_summary(
-                good_on_application["good"],
-            )
-            product_on_application_summary = _product_on_application_summary(good_on_application)
+        _product_summary, _product_on_application_summary = summary_type_map[summary_type]
 
-            return product_summary + product_on_application_summary
+        product_summary = _product_summary(
+            good_on_application["good"],
+            is_user_rfd,
+            organisation_documents,
+        )
+        product_on_application_summary = _product_on_application_summary(
+            good_on_application,
+            self.get_good_on_application_documents(application, good_on_application),
+        )
 
-        return None
+        return product_summary + product_on_application_summary
 
     def get_context_data(self, **kwargs):
         application_id = str(kwargs["pk"])
