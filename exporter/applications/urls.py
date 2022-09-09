@@ -540,6 +540,11 @@ urlpatterns = [
         name="new_good_component_to_application",
     ),
     path(
+        "<uuid:pk>/goods/<uuid:good_pk>/add/component/",
+        AddGoodComponentToApplication.as_view(),
+        name="attach_component_to_application",
+    ),
+    path(
         "<uuid:pk>/goods/component/<uuid:good_pk>/product-summary/",
         ComponentProductSummary.as_view(),
         name="component_product_summary",
