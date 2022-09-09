@@ -1593,6 +1593,148 @@ def standard_platform_expected_product_on_application_summary():
 
 
 @pytest.fixture
+def standard_component_expected_product_summary():
+    return (
+        (
+            "is-firearm-product",
+            "No",
+            "Is it a firearm product?",
+        ),
+        ("product-category", "Component", "Select the product category"),
+        ("name", "p1", "Give the product a descriptive name"),
+        ("is-component", "Yes", "Is the product a component?"),
+        ("component-type", "Modified for hardware", "What type of component is it?"),
+        ("modified-details", "modified details", "Provide details of the modifications and the specific hardware"),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "uses-information-security",
+            "No",
+            "Does the product include security features to protect information?",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            "link",
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_component_expected_product_on_application_summary():
+    return (
+        (
+            "is-onward-exported",
+            "Yes",
+            "Will the product be onward exported to any additional countries?",
+        ),
+        (
+            "is-altered",
+            "Yes",
+            "Will the item be altered or processed before it is exported again?",
+        ),
+        (
+            "is-altered-comments",
+            "Will be altered",
+            "Explain how the product will be processed or altered",
+        ),
+        (
+            "is-incorporated",
+            "Yes",
+            "Will the product be incorporated into another item before it is onward exported?",
+        ),
+        (
+            "is-incorporated-comments",
+            "Will be incorporated",
+            "Describe what you are incorporating the product into",
+        ),
+        (
+            "number-of-items",
+            "444",
+            "Number of items",
+        ),
+        (
+            "total-value",
+            "£444.00",
+            "Total value",
+        ),
+    )
+
+
+@pytest.fixture
 def standard_material_expected_product_summary():
     return (
         (

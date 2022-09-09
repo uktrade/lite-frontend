@@ -14,6 +14,8 @@ from core.summaries.summaries import (
     platform_product_on_application_summary as core_platform_product_on_application_summary,
     software_summary as core_software_summary,
     software_product_on_application_summary as core_software_product_on_application_summary,
+    component_summary as core_component_summary,
+    component_product_on_application_summary as core_component_summary_on_application_summary,
     SummaryTypes,
 )
 
@@ -114,6 +116,23 @@ def software_summary(good, queue_pk, application_pk, *args, **kwargs):
     )
 
 
+def component_product_on_application_summary(good_on_application, *args, **kwargs):
+    return core_component_summary_on_application_summary(good_on_application)
+
+
+def component_summary(good, queue_pk, application_pk, *args, **kwargs):
+    def product_document_formatter(document):
+        url = _get_document_url(queue_pk, application_pk, document)
+        return document_formatter(document, url)
+
+    return core_component_summary(
+        good,
+        {
+            "product-document": product_document_formatter,
+        },
+    )
+
+
 def software_product_on_application_summary(good_on_application, *args, **kwargs):
     return core_software_product_on_application_summary(good_on_application)
 
@@ -147,6 +166,10 @@ def get_good_on_application_summary(
         SummaryTypes.SOFTWARE: (
             software_summary,
             software_product_on_application_summary,
+        ),
+        SummaryTypes.COMPONENT: (
+            component_summary,
+            component_product_on_application_summary,
         ),
     }
 
