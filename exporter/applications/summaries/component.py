@@ -68,7 +68,7 @@ def add_component_summary_edit_links(summary, edit_links, application, good):
     return summary_with_edit_links
 
 
-def component_summary(good):
+def component_summary(good, *args, **kwargs):
     def goods_document_formatter(document):
         url = reverse(
             "goods:document",
@@ -88,7 +88,7 @@ def component_summary(good):
     )
 
 
-def component_product_on_application_summary(good_on_application):
+def component_product_on_application_summary(good_on_application, *args, **kwargs):
     return core_component_product_on_application_summary(good_on_application)
 
 

@@ -238,15 +238,16 @@ class GoodDetails(LoginRequiredMixin, FormView):
     ):
         product_summary = firearm_summary(
             good_on_application["good"],
+            self.kwargs["queue_pk"],
             good_on_application["application"],
             is_user_rfd,
             organisation_documents,
-            self.kwargs["queue_pk"],
         )
         product_on_application_summary = firearm_on_application_summary(
             good_on_application,
-            good_on_application_documents,
             self.kwargs["queue_pk"],
+            good_on_application["application"],
+            good_on_application_documents,
         )
         return product_summary + product_on_application_summary
 

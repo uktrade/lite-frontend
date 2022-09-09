@@ -3,16 +3,7 @@ from django import forms
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
 
-from core.constants import ProductCategories
-
-from caseworker.cases.helpers.summaries import (
-    material_summary,
-    material_product_on_application_summary,
-    platform_summary,
-    platform_product_on_application_summary,
-    software_summary,
-    software_product_on_application_summary,
-)
+from caseworker.cases.helpers.summaries import get_good_on_application_summary
 from caseworker.tau.widgets import GoodsMultipleSelect
 
 
@@ -94,11 +85,25 @@ class TAUAssessmentForm(TAUEditForm):
     MESSAGE_NO_CLC_MUTEX = "This is mutually exclusive with control list entries"
     MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
 
-    def __init__(self, goods, control_list_entries_choices, queue_pk, application_pk, *args, **kwargs):
+    def __init__(
+        self,
+        request,
+        goods,
+        control_list_entries_choices,
+        queue_pk,
+        application_pk,
+        is_user_rfd,
+        organisation_documents,
+        *args,
+        **kwargs,
+    ):
         super().__init__(control_list_entries_choices, *args, **kwargs)
 
+        self.request = request
         self.queue_pk = queue_pk
         self.application_pk = application_pk
+        self.is_user_rfd = is_user_rfd
+        self.organisation_documents = organisation_documents
 
         self.fields["goods"] = forms.MultipleChoiceField(
             choices=self.get_goods_choices(goods),
@@ -113,57 +118,20 @@ class TAUAssessmentForm(TAUEditForm):
             *self.helper.layout.fields,
         )
 
-    def get_good_on_application_summary(self, good_on_application):
-        if not good_on_application.get("firearm_details"):
-            good = good_on_application.get("good")
-            if not good:
-                return None
-
-            item_category = good.get("item_category")
-            if not item_category:
-                return None
-
-            item_category = item_category["key"]
-            try:
-                _product_summary, _product_on_application_summary = {
-                    ProductCategories.PRODUCT_CATEGORY_PLATFORM: (
-                        platform_summary,
-                        platform_product_on_application_summary,
-                    ),
-                    ProductCategories.PRODUCT_CATEGORY_MATERIAL: (
-                        material_summary,
-                        material_product_on_application_summary,
-                    ),
-                    ProductCategories.PRODUCT_CATEGORY_SOFTWARE: (
-                        software_summary,
-                        software_product_on_application_summary,
-                    ),
-                }[item_category]
-            except KeyError:
-                return None
-
-            product_summary = _product_summary(
-                good_on_application["good"],
-                self.queue_pk,
-                self.application_pk,
-            )
-            product_on_application_summary = _product_on_application_summary(
-                good_on_application,
-                self.queue_pk,
-                self.application_pk,
-            )
-
-            return product_summary + product_on_application_summary
-
-        return None
-
     def get_goods_choices(self, goods):
         return [
             (
                 good_on_application_id,
                 {
                     "good_on_application": good_on_application,
-                    "summary": self.get_good_on_application_summary(good_on_application),
+                    "summary": get_good_on_application_summary(
+                        self.request,
+                        good_on_application,
+                        self.queue_pk,
+                        self.application_pk,
+                        self.is_user_rfd,
+                        self.organisation_documents,
+                    ),
                 },
             )
             for good_on_application_id, good_on_application in goods.items()

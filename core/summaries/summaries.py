@@ -1,3 +1,8 @@
+from core.constants import (
+    FirearmsProductType,
+    ProductCategories,
+)
+from core.helpers import is_good_on_application_product_type
 from core.summaries.formatters import (
     add_labels,
     format_values,
@@ -435,3 +440,43 @@ def component_product_on_application_summary(good_on_application, additional_for
     summary = add_labels(summary, COMPONENT_ON_APPLICATION_LABELS)
 
     return summary
+
+
+class NoSummaryForType(Exception):
+    pass
+
+
+class SummaryTypes:
+    FIREARM = "FIREARM"
+    PLATFORM = "PLATFORM"
+    MATERIAL = "MATERIAL"
+    SOFTWARE = "SOFTWARE"
+
+
+def get_summaries_type_good_on_application(good_on_application):
+    if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
+        return SummaryTypes.FIREARM
+
+    if good_on_application.get("firearm_details"):
+        raise NoSummaryForType
+
+    good = good_on_application.get("good")
+    if not good:
+        raise NoSummaryForType
+
+    item_category = good.get("item_category")
+    if not item_category:
+        raise NoSummaryForType
+
+    item_category = item_category["key"]
+
+    summary_map = {
+        ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
+        ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
+        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
+    }
+
+    try:
+        return summary_map[item_category]
+    except KeyError:
+        raise NoSummaryForType

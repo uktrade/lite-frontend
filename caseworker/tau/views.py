@@ -6,10 +6,12 @@ from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
 from django.urls import reverse
 
+from core.auth.views import LoginRequiredMixin
+
 from caseworker.advice.services import move_case_forward
+from caseworker.cases.helpers.summaries import get_good_on_application_summary
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
-from core.auth.views import LoginRequiredMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
 from caseworker.users.services import get_gov_user
@@ -133,10 +135,18 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
+
+        form_kwargs["request"] = self.request
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         form_kwargs["queue_pk"] = self.queue_id
         form_kwargs["application_pk"] = self.case["id"]
+        form_kwargs["organisation_documents"] = self.organisation_documents
+
+        rfd_certificate = self.organisation_documents.get("rfd_certificate")
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+        form_kwargs["is_user_rfd"] = is_user_rfd
+
         return form_kwargs
 
     def get_context_data(self, **kwargs):
@@ -208,14 +218,36 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
                 return good
         raise Http404
 
+    def get_good_on_application_summary(self, good):
+        organisation_documents = {
+            document["document_type"]: document for document in self.organisation_documents.values()
+        }
+        rfd_certificate = organisation_documents.get("rfd-certificate")
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+
+        summary = get_good_on_application_summary(
+            self.request,
+            good,
+            self.queue_id,
+            self.case["id"],
+            is_user_rfd,
+            organisation_documents,
+        )
+
+        return summary
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         good = self.get_good()
+        summary = self.get_good_on_application_summary(good)
+
         return {
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
             "good": good,
+            "summary": summary,
             "organisation_documents": self.organisation_documents,
             "cle_suggestions_json": get_cle_suggestions_json([good]),
         }

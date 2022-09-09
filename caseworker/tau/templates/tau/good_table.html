@@ -2,8 +2,6 @@
 
 {% if summary %}
     {% include "tau/product_summary_table.html" %}
-{% elif good.good.firearm_details.type.key == "firearms" %}
-    {% include "tau/firearms_table.html" %}
 {% elif good.good.firearm_details.type.key == "ammunition" %}
     {% include "tau/ammunition_table.html" %}
 {% elif good.good.firearm_details.type.key == "components_for_firearms" %}
