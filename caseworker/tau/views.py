@@ -241,7 +241,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
         good = self.get_good()
         summary = self.get_good_on_application_summary(good)
-
         return {
             **context,
             "case": self.case,

@@ -316,6 +316,35 @@ def test_tau_assessment_form(data, valid, errors, rf):
                 ),
             ],
         ),
+        (
+            {
+                "component": {
+                    "good": {
+                        "id": "12345",
+                        "item_category": {
+                            "key": ProductCategories.COMPONENT_CATEGORY_PLATFORM,
+                        },
+                    },
+                },
+            },
+            [
+                (
+                    "component",
+                    {
+                        "good_on_application": {
+                            "good": {
+                                "id": "12345",
+                                "item_category": {"key": ProductCategories.COMPONENT_CATEGORY_PLATFORM},
+                            }
+                        },
+                        "summary": (
+                            ("component-summary",),
+                            ("component-product-on-application-summary",),
+                        ),
+                    },
+                ),
+            ],
+        ),
     ),
 )
 def test_tau_assessment_form_goods_choices(
@@ -348,6 +377,12 @@ def test_tau_assessment_form_goods_choices(
     mocker.patch(
         "caseworker.cases.helpers.summaries.software_product_on_application_summary",
         return_value=(("software-product-on-application-summary",),),
+    )
+
+    mocker.patch("caseworker.cases.helpers.summaries.component_summary", return_value=(("component-summary",),))
+    mocker.patch(
+        "caseworker.cases.helpers.summaries.component_product_on_application_summary",
+        return_value=(("component-product-on-application-summary",),),
     )
 
     queue_pk = uuid.uuid4()

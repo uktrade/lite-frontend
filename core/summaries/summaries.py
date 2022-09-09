@@ -451,6 +451,7 @@ class SummaryTypes:
     PLATFORM = "PLATFORM"
     MATERIAL = "MATERIAL"
     SOFTWARE = "SOFTWARE"
+    COMPONENT = "COMPONENT"
 
 
 def get_summaries_type_good_on_application(good_on_application):
@@ -474,6 +475,7 @@ def get_summaries_type_good_on_application(good_on_application):
         ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
         ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
+        ProductCategories.COMPONENT_CATEGORY_PLATFORM: SummaryTypes.COMPONENT,
     }
 
     try:
