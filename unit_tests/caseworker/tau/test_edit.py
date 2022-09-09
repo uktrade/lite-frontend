@@ -1,13 +1,26 @@
-from bs4 import BeautifulSoup
-from django.urls import reverse
 import pytest
-from http import HTTPStatus
+import re
+
+from bs4 import BeautifulSoup
+
+from django.urls import reverse
+
 from core import client
 
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case):
-    yield
+    pass
+
+
+@pytest.fixture(autouse=True)
+def mock_application_good_documents(data_standard_case, requests_mock):
+    requests_mock.get(
+        re.compile(
+            rf"/applications/{data_standard_case['case']['id']}/goods/[0-9a-fA-F-]+/documents/",
+        ),
+        json={"documents": []},
+    )
 
 
 @pytest.fixture

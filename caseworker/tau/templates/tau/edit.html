@@ -8,9 +8,9 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div>
-                    <h3 class="govuk-heading-m">{{ good.line_number }}.  {{ good.good.name }}</h3>
+                    <h3 class="govuk-heading-m">{{ good.line_number }}. {{ good.good.name }}</h3>
                     <div>
-                      {% include "tau/good_table.html" with good=good %}
+                      {% include "tau/good_table.html" with good=good summary=summary %}
                       {% include "tau/precedent_table.html" with precedents=good.precedents %}
                     </div>
                 </div>

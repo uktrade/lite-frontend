@@ -5,9 +5,10 @@ from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
-from core.constants import ProductCategories
-
-from exporter.core import constants
+from core.constants import (
+    FirearmsProductType,
+    ProductCategories,
+)
 
 
 @pytest.fixture
@@ -71,7 +72,7 @@ def test_good_detail_summary_check_your_answers_view_template_used(
             {
                 "firearm_details": {
                     "type": {
-                        "key": constants.FirearmsProductType.FIREARMS,
+                        "key": FirearmsProductType.FIREARMS,
                     },
                 },
                 "good": {"id": str(uuid.uuid4())},
