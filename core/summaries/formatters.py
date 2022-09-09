@@ -279,11 +279,11 @@ def format_values(summary, formatters):
     return formatted_values_summary
 
 
-def document_formatter(document, url):
+def document_formatter(document, url, link_text=None):
     if not document["safe"]:
         return document["name"]
 
-    name = escape(document["name"])
+    name = link_text or escape(document["name"])
 
     return mark_safe(  # nosec
         f'<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">{name}</a>'

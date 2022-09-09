@@ -277,6 +277,30 @@ def test_document_formatter(document, output):
     assert document_formatter(document, url) == output.format(url=url)
 
 
+@pytest.mark.parametrize(
+    "document,output",
+    (
+        (
+            {
+                "safe": True,
+                "name": "document name",
+            },
+            '<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">overridden text</a>',
+        ),
+        (
+            {
+                "safe": False,
+                "name": "document name",
+            },
+            "document name",
+        ),
+    ),
+)
+def test_document_formatter_overriden_name(document, output):
+    url = "http://example.com/test"
+    assert document_formatter(document, url, "overridden text") == output.format(url=url)
+
+
 def test_just():
     formatter = just("This value")
     assert formatter("something else") == "This value"
