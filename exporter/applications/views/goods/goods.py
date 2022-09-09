@@ -211,7 +211,6 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
             "feature_flag_firearms_enabled": settings.FEATURE_FLAG_FIREARMS_ENABLED,
-            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
 
         return render(request, "applications/goods/preexisting.html", context)
@@ -433,7 +432,7 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
         return kwargs
 
     def render_next_step(self, form, **kwargs):
-        if settings.FEATURE_FLAG_PRODUCT_2_0 and self.steps.current == AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE:
+        if self.steps.current == AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE:
             if form.cleaned_data["type"] == "firearms":
                 return redirect("applications:new_good_firearm", pk=self.kwargs["pk"])
         return super().render_next_step(form, **kwargs)

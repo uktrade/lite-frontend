@@ -1,5 +1,4 @@
 import os
-import pytest
 
 import tests_common.tools.helpers as utils
 
@@ -30,16 +29,6 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
         import IPython
 
         IPython.embed(using=False)
-
-
-def pytest_bdd_apply_tag(tag, function):
-    if tag == "skip_feature_flag_product_2_0":
-        feature_flag_product_2_0 = environ.bool("FEATURE_FLAG_PRODUCT_2_0", False)
-        if feature_flag_product_2_0:
-            marker = pytest.mark.skip(reason="Feature flag for product 2.0 disabled")
-            marker(function)
-            return True
-    return None
 
 
 def pytest_configure(config):

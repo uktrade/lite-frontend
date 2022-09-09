@@ -24,16 +24,9 @@ def test_is_good_firearm_form(authorized_client, application_pk):
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize(
-    "post_url",
-    (
-        "new_good_firearm",
-        "non_firearm_category",
-    ),
-)
-def test_is_good_firearm_view_raise_404(authorized_client, application_pk, post_url, settings):
+def test_is_good_firearm_view_raise_404(authorized_client, application_pk, settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
-    url = reverse(f"applications:{post_url}", kwargs={"pk": application_pk})
+    url = reverse(f"applications:is_good_firearm", kwargs={"pk": application_pk})
     response = authorized_client.get(url)
     assert response.status_code == 404
 
