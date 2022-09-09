@@ -1,5 +1,29 @@
 <table id="table-products-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
+        {% with good=good.good %}
+            {% if good.is_document_available %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" colspan="2">
+                        {% for document in good.documents %}
+                            <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">
+                                Product document ({{ document.type }}, opens in new tab)
+                            </a>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__header">Explain why you are not able to upload a product document</td>
+                    <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
+                </tr>
+                {% if good.product_description %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Product description</td>
+                        <td class="govuk-table__cell">{{ good.product_description }}</td>
+                    </tr>
+                {% endif %}
+            {% endif %}
+        {% endwith %}
         {% for id, value, label in summary %}
             <tr class="govuk-table__row" id="table-product-{{ forloop.counter }}-{{ id }}">
                 <td class="govuk-table__header">{{ label }}</td>
