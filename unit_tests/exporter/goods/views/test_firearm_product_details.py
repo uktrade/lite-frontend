@@ -7,11 +7,6 @@ from django.urls import reverse
 from core import client
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
-
-
 @pytest.fixture
 def firearm_product_details_url(good_id):
     return reverse(

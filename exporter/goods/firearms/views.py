@@ -8,10 +8,8 @@ from exporter.core.helpers import (
 )
 from exporter.goods.common.mixins import ProductDetailsMixin
 
-from exporter.applications.views.goods.add_good_firearm.views.mixins import Product2FlagMixin
 
-
-class FirearmProductDetails(LoginRequiredMixin, Product2FlagMixin, ProductDetailsMixin, TemplateView):
+class FirearmProductDetails(LoginRequiredMixin, ProductDetailsMixin, TemplateView):
     template_name = "goods/product-details.html"
 
     def get_context_data(self, **kwargs):

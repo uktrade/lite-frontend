@@ -10,7 +10,7 @@ from exporter.goods.forms.firearms import FirearmAttachSection5LetterOfAuthority
 
 @pytest.fixture(autouse=True)
 def setup(settings, no_op_storage):
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
+    pass
 
 
 @pytest.mark.parametrize(

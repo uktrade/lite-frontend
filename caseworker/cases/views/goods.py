@@ -1,6 +1,5 @@
 from collections import OrderedDict
 
-from django.conf import settings
 from formtools.wizard.views import SessionWizardView
 
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
@@ -198,9 +197,6 @@ class GoodDetails(LoginRequiredMixin, FormView):
 
     def get_template_names(self):
         product_1_template = "case/product-on-case.html"
-
-        if not settings.FEATURE_FLAG_PRODUCT_2_0:
-            return product_1_template
 
         firearm_details = self.object.get("firearm_details")
         if not firearm_details:
