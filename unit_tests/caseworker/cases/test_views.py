@@ -4,7 +4,11 @@ import uuid
 
 from bs4 import BeautifulSoup
 
-from django.test import override_settings
+from pytest_django.asserts import (
+    assertTemplateNotUsed,
+    assertTemplateUsed,
+)
+
 from django.urls import reverse
 
 from core import client
@@ -273,6 +277,9 @@ def test_good_on_application_detail(
     assert response.context_data["good_on_application"] == data_good_on_application
     assert response.context_data["case"] == data_standard_case["case"]
     assert response.context_data["product_summary"] == None
+    assertTemplateUsed(response, "case/product-on-case.html")
+    assertTemplateNotUsed(response, "case/includes/_product-on-case-summary.html")
+    assertTemplateUsed(response, "case/includes/_legacy-product-on-case-summary.html")
 
 
 def test_good_on_application_firearm_detail(
@@ -313,6 +320,9 @@ def test_good_on_application_firearm_detail(
     )
 
     assert response.context_data["product_summary"] == expected_product_summary
+    assertTemplateUsed(response, "case/product-on-case.html")
+    assertTemplateUsed(response, "case/includes/_product-on-case-summary.html")
+    assertTemplateNotUsed(response, "case/includes/_legacy-product-on-case-summary.html")
 
 
 def test_good_on_application_firearm_detail_non_firearm_type(
@@ -337,6 +347,9 @@ def test_good_on_application_firearm_detail_non_firearm_type(
     assert response.context_data["good_on_application"] == good
     assert response.context_data["case"] == data_standard_case["case"]
     assert response.context_data["product_summary"] is None
+    assertTemplateUsed(response, "case/product-on-case.html")
+    assertTemplateNotUsed(response, "case/includes/_product-on-case-summary.html")
+    assertTemplateUsed(response, "case/includes/_legacy-product-on-case-summary.html")
 
 
 def test_good_on_application_detail_no_part_number(
