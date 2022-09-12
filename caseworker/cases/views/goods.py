@@ -4,7 +4,7 @@ from formtools.wizard.views import SessionWizardView
 
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
-from caseworker.cases.helpers.summaries import firearm_summary, firearm_on_application_summary
+from caseworker.cases.helpers.summaries import get_good_on_application_summary
 from caseworker.cases.services import (
     get_case,
     post_review_good,
@@ -19,7 +19,6 @@ from caseworker.core.helpers import has_permission
 from caseworker.core.services import get_control_list_entries
 from caseworker.search.services import get_product_like_this
 from core.auth.views import LoginRequiredMixin
-from core.helpers import is_good_on_application_product_type
 from lite_forms.views import SingleFormView
 
 from django.shortcuts import redirect
@@ -218,24 +217,6 @@ class GoodDetails(LoginRequiredMixin, FormView):
             search_string += f' clc_rating:"{item["rating"]}"'
         return {"search_string": search_string.strip()}
 
-    def get_product_summary(
-        self, good_on_application, is_user_rfd, organisation_documents, good_on_application_documents
-    ):
-        product_summary = firearm_summary(
-            good_on_application["good"],
-            self.kwargs["queue_pk"],
-            good_on_application["application"],
-            is_user_rfd,
-            organisation_documents,
-        )
-        product_on_application_summary = firearm_on_application_summary(
-            good_on_application,
-            self.kwargs["queue_pk"],
-            good_on_application["application"],
-            good_on_application_documents,
-        )
-        return product_summary + product_on_application_summary
-
     def get_context_data(self, **kwargs):
         form = self.get_form()
 
@@ -257,11 +238,14 @@ class GoodDetails(LoginRequiredMixin, FormView):
         rfd_certificate = organisation_documents.get("rfd-certificate")
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
-        product_summary = None
-        if is_good_on_application_product_type(self.object, "firearms"):
-            product_summary = self.get_product_summary(
-                self.object, is_user_rfd, organisation_documents, good_on_application_documents
-            )
+        product_summary = get_good_on_application_summary(
+            self.request,
+            self.object,
+            self.kwargs["queue_pk"],
+            self.object["application"],
+            is_user_rfd,
+            organisation_documents,
+        )
 
         return super().get_context_data(
             good_on_application=self.object,
