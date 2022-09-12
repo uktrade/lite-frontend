@@ -9,7 +9,6 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.advice.services import move_case_forward
-from caseworker.cases.helpers.summaries import get_good_on_application_summary
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
@@ -18,6 +17,7 @@ from caseworker.users.services import get_gov_user
 
 from .forms import TAUAssessmentForm, TAUEditForm
 from .services import get_first_precedents
+from .summaries import get_good_on_application_tau_summary
 from .utils import get_cle_suggestions_json
 
 
@@ -225,7 +225,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         rfd_certificate = organisation_documents.get("rfd-certificate")
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
-        summary = get_good_on_application_summary(
+        summary = get_good_on_application_tau_summary(
             self.request,
             good,
             self.queue_id,

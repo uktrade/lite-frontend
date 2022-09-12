@@ -3,8 +3,8 @@ from django import forms
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
 
-from caseworker.cases.helpers.summaries import get_good_on_application_summary
-from caseworker.tau.widgets import GoodsMultipleSelect
+from .summaries import get_good_on_application_tau_summary
+from .widgets import GoodsMultipleSelect
 
 
 class TAUEditForm(forms.Form):
@@ -124,7 +124,7 @@ class TAUAssessmentForm(TAUEditForm):
                 good_on_application_id,
                 {
                     "good_on_application": good_on_application,
-                    "summary": get_good_on_application_summary(
+                    "summary": get_good_on_application_tau_summary(
                         self.request,
                         good_on_application,
                         self.queue_pk,
