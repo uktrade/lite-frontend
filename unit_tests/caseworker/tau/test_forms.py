@@ -410,6 +410,67 @@ def test_tau_assessment_form_goods_choices(
     assert form.fields["goods"].choices == choices
 
 
+def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
+    mocker,
+    rf,
+    client,
+    requests_mock,
+):
+    mocker.patch(
+        "caseworker.tau.summaries.get_good_on_application_summary",
+        return_value=(
+            ("keep-value", "keep_value"),
+            ("name", "to_remove"),
+            ("is-good-controlled", "to_remove"),
+            ("control-list-entries", "to_remove"),
+            ("has-product-document", "to_remove"),
+            ("is-document-sensitive", "to_remove"),
+            ("no-product-document-explanation", "to_remove"),
+            ("product-document", "to_remove"),
+            ("product-document-description", "to_remove"),
+            ("product-description", "to_remove"),
+        ),
+    )
+
+    queue_pk = uuid.uuid4()
+    application_pk = uuid.uuid4()
+    good_pk = "12345"
+
+    requests_mock.get(
+        f"/applications/{application_pk}/goods/{good_pk}/documents/",
+        json={"documents": []},
+    )
+
+    request = rf.get("/")
+    request.session = client.session
+    request.requests_session = requests.Session()
+
+    form = forms.TAUAssessmentForm(
+        request=request,
+        goods={
+            "12345": {
+                "good": {
+                    "id": "12345",
+                },
+            },
+        },
+        control_list_entries_choices=[],
+        queue_pk=queue_pk,
+        application_pk=application_pk,
+        is_user_rfd=False,
+        organisation_documents={},
+    )
+    assert form.fields["goods"].choices == [
+        (
+            "12345",
+            {
+                "good_on_application": {"good": {"id": "12345"}},
+                "summary": (("keep-value", "keep_value"),),
+            },
+        )
+    ]
+
+
 @pytest.mark.parametrize(
     "data, valid, errors",
     (

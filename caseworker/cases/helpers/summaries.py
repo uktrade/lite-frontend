@@ -33,14 +33,36 @@ def _get_document_url(queue_pk, application_pk, document):
     )
 
 
-def firearm_summary(good, queue_pk, application_pk, is_user_rfd, organisation_documents):
+def organisation_document_formatter_factory(queue_pk, application_pk):
     def organisation_document_formatter(document):
         url = _get_document_url(queue_pk, application_pk, document)
         return document_formatter(document["document"], url)
 
+    return organisation_document_formatter
+
+
+def product_document_formatter_factory(queue_pk, application_pk):
     def product_document_formatter(document):
         url = _get_document_url(queue_pk, application_pk, document)
         return document_formatter(document, url)
+
+    return product_document_formatter
+
+
+def good_on_application_document_formatter_factory(queue_pk, application_pk):
+    def good_on_application_document_formatter(document):
+        url = _get_document_url(queue_pk, application_pk, document)
+        return document_formatter(document, url)
+
+    return good_on_application_document_formatter
+
+
+def firearm_summary(good, queue_pk, application_pk, is_user_rfd, organisation_documents):
+    product_document_formatter = product_document_formatter_factory(
+        queue_pk,
+        application_pk,
+    )
+    organisation_document_formatter = organisation_document_formatter_factory(queue_pk, application_pk)
 
     return core_firearm_summary(
         good,
@@ -55,10 +77,7 @@ def firearm_summary(good, queue_pk, application_pk, is_user_rfd, organisation_do
 
 
 def firearm_on_application_summary(good_on_application, queue_pk, application_pk, good_on_application_documents):
-    def good_on_application_document_formatter(document):
-        url = _get_document_url(queue_pk, good_on_application, document)
-        return document_formatter(document, url)
-
+    good_on_application_document_formatter = good_on_application_document_formatter_factory(queue_pk, application_pk)
     return core_firearm_on_application_summary(
         good_on_application,
         good_on_application_documents,
@@ -70,10 +89,7 @@ def firearm_on_application_summary(good_on_application, queue_pk, application_pk
 
 
 def platform_summary(good, queue_pk, application_pk, *args, **kwargs):
-    def product_document_formatter(document):
-        url = _get_document_url(queue_pk, application_pk, document)
-        return document_formatter(document, url)
-
+    product_document_formatter = product_document_formatter_factory(queue_pk, application_pk)
     return core_platform_summary(
         good,
         {
@@ -87,10 +103,7 @@ def platform_product_on_application_summary(good_on_application, *args, **kwargs
 
 
 def material_summary(good, queue_pk, application_pk, *args, **kwargs):
-    def product_document_formatter(document):
-        url = _get_document_url(queue_pk, application_pk, document)
-        return document_formatter(document, url)
-
+    product_document_formatter = product_document_formatter_factory(queue_pk, application_pk)
     return core_material_summary(
         good,
         {
@@ -104,10 +117,7 @@ def material_product_on_application_summary(good_on_application, *args, **kwargs
 
 
 def software_summary(good, queue_pk, application_pk, *args, **kwargs):
-    def product_document_formatter(document):
-        url = _get_document_url(queue_pk, application_pk, document)
-        return document_formatter(document, url)
-
+    product_document_formatter = product_document_formatter_factory(queue_pk, application_pk)
     return core_software_summary(
         good,
         {
