@@ -9,7 +9,6 @@ from exporter.goods.materials.views import MaterialProductDetails
 app_name = "goods"
 urlpatterns = [
     path("", views.Goods.as_view(), name="goods"),
-    path("add/", views.AddGood.as_view(), name="add"),
     path("<uuid:pk>/edit/", views.EditGood.as_view(), name="edit"),
     path("<uuid:pk>/software-technology/", views.GoodSoftwareTechnologyView.as_view(), name="good_software_technology"),
     path("<uuid:pk>/military-use/", views.GoodMilitaryUseView.as_view(), name="good_military_use"),

@@ -115,7 +115,6 @@ from .initial import (
     get_serial_numbers_initial_data,
     get_year_of_manufacture_initial_data,
 )
-from .mixins import Product2FlagMixin
 from .payloads import (
     FirearmsActPayloadBuilder,
     FirearmEditFirearmsAct1968PayloadBuilder,
@@ -137,10 +136,7 @@ from .payloads import (
 logger = logging.getLogger(__name__)
 
 
-class BaseEditView(
-    Product2FlagMixin,
-    BaseProductEditView,
-):
+class BaseEditView(BaseProductEditView):
     def get_success_url(self):
         return reverse("applications:firearm_product_summary", kwargs=self.kwargs)
 
@@ -193,10 +189,7 @@ class FirearmEditReplica(BaseFirearmEditView):
         }
 
 
-class BaseFirearmEditWizardView(
-    Product2FlagMixin,
-    BaseProductEditWizardView,
-):
+class BaseFirearmEditWizardView(BaseProductEditWizardView):
     def get_success_url(self):
         return reverse("applications:firearm_product_summary", kwargs=self.kwargs)
 
@@ -542,7 +535,6 @@ class SummaryTypeMixin:
 
 class BaseGoodOnApplicationEditView(
     LoginRequiredMixin,
-    Product2FlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -642,7 +634,6 @@ class FirearmProductOnApplicationSummaryEditShotgunCertificate(BaseFirearmActCer
 
 class BaseProductOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
-    Product2FlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,

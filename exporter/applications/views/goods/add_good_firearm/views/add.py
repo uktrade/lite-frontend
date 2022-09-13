@@ -87,11 +87,11 @@ from exporter.applications.views.goods.common.conditionals import (
     is_product_document_available,
     is_onward_exported,
 )
-from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
-from .mixins import Product2FlagMixin
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
+
+from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
 from .payloads import (
     AddGoodFirearmPayloadBuilder,
     AddGoodFirearmToApplicationPayloadBuilder,
@@ -118,7 +118,6 @@ def get_product_document(good):
 
 class AddGoodFirearm(
     LoginRequiredMixin,
-    Product2FlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
 ):
@@ -372,7 +371,6 @@ class AddGoodFirearm(
 
 class AddGoodFirearmToApplication(
     LoginRequiredMixin,
-    Product2FlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,

@@ -60,11 +60,11 @@ from .conditionals import (
     is_serial_numbers_available,
 )
 from exporter.applications.views.goods.common.conditionals import is_onward_exported
-from .constants import AttachFirearmToApplicationSteps
 from exporter.core.common.decorators import expect_status
 from exporter.core.common.exceptions import ServiceError
-from .mixins import Product2FlagMixin
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
+
+from .constants import AttachFirearmToApplicationSteps
 from .payloads import (
     AttachFirearmToApplicationGoodPayloadBuilder,
     AttachFirearmToApplicationGoodOnApplicationPayloadBuilder,
@@ -82,7 +82,6 @@ has_user_marked_rfd_as_invalid = (
 
 class AttachFirearmToApplication(
     LoginRequiredMixin,
-    Product2FlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,

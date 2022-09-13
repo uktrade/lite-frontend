@@ -16,10 +16,9 @@ def setup(
     mock_good_document_put,
     mock_good_document_delete,
     mock_control_list_entries_get,
-    settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
+    pass
 
 
 @pytest.fixture

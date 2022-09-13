@@ -33,7 +33,6 @@ def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
     settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = True
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
 
 @pytest.fixture

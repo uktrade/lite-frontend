@@ -1,0 +1,11 @@
+<h2 class="govuk-heading-l">Exporter application - 'Tell us about the products'</h2>
+<table class="govuk-table app-table">
+    <tbody class="govuk-table__body" id="tbody-placeholder">
+        {% for key, value, label in product_summary %}
+            <tr class="govuk-table__row app-table__row" id="{{key}}">
+                <th scope="row" class="govuk-table__header">{{label}}</th>
+                <td class="govuk-table__cell">{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
