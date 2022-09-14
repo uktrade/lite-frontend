@@ -542,7 +542,6 @@ def component_on_application_reducer(good_on_application):
 
 
 def software_reducer(good):
-
     summary = (
         (
             "product-type",
