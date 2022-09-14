@@ -66,6 +66,11 @@ def test_non_firearm_category_select(authorized_client, application_pk, data, re
     assert response.url == reverse(f"applications:{redirect_url}", kwargs={"pk": application_pk})
 
 
+@pytest.fixture
+def is_material_substance_url(application_pk):
+    return reverse("applications:is_material_substance", kwargs={"pk": application_pk})
+
+
 @pytest.mark.parametrize(
     "data, redirect_url",
     (
@@ -73,16 +78,22 @@ def test_non_firearm_category_select(authorized_client, application_pk, data, re
         (False, "new_good_component"),
     ),
 )
-def test_is_material_substance_select(authorized_client, application_pk, data, redirect_url):
-    url = reverse("applications:is_material_substance", kwargs={"pk": application_pk})
-    response = authorized_client.post(url, data={"is_material_substance": data})
+def test_is_material_substance_select(authorized_client, application_pk, data, redirect_url, is_material_substance_url):
+    response = authorized_client.post(is_material_substance_url, data={"is_material_substance": data})
     assert response.status_code == 302
     assert response.url == reverse(f"applications:{redirect_url}", kwargs={"pk": application_pk})
 
 
-def test_is_material_substance_404(authorized_client, application_pk, settings):
+def test_is_material_substance_404(authorized_client, settings, is_material_substance_url):
     settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = False
     settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = False
-    url = reverse("applications:is_material_substance", kwargs={"pk": application_pk})
-    response = authorized_client.post(url, data={"is_material_substance": True})
+    response = authorized_client.get(is_material_substance_url, data={"is_material_substance": True})
     assert response.status_code == 404
+
+
+def test_is_material_substance_context_data(authorized_client, application_pk, is_material_substance_url):
+    response = authorized_client.get(is_material_substance_url)
+    assert response.status_code == 200
+    assert response.context["back_link_url"] == reverse(
+        "applications:non_firearm_category", kwargs={"pk": application_pk}
+    )
