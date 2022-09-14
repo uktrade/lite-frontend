@@ -352,13 +352,6 @@ product_category_formatter = mapping_formatter(
     {
         "platform": "It's a complete product",
         "material": "It forms part of a product",
-    }
-)
-
-
-product_category_formatter = mapping_formatter(
-    {
-        "platform": "It's a complete product",
         "component": "It forms part of a product",
     }
 )
