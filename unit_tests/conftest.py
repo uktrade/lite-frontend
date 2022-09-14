@@ -1851,7 +1851,7 @@ def standard_material_expected_product_on_application_summary():
         (
             "unit",
             "Gram(s)",
-            "Unit",
+            "Unit of measurement",
         ),
         (
             "quantity",
