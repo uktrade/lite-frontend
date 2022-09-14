@@ -471,7 +471,7 @@ def component_summary(good_id):
         ),
         (
             "product-category",
-            "Component",
+            "It forms part of a product",
             "Select the product category",
         ),
         (

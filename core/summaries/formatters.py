@@ -337,13 +337,17 @@ FIREARM_ON_APPLICATION_LABELS = {
 }
 
 
+product_category_formatter = mapping_formatter(
+    {
+        "platform": "It's a complete product",
+        "component": "It forms part of a product",
+    }
+)
+
+
 PLATFORM_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
-    "product-category": mapping_formatter(
-        {
-            "platform": "It's a complete product",
-        }
-    ),
+    "product-category": product_category_formatter,
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("Yes"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
@@ -487,11 +491,7 @@ SOFTWARE_ON_APPLICATION_LABELS = {
 
 COMPONENT_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
-    "product-category": mapping_formatter(
-        {
-            "component": "Component",
-        }
-    ),
+    "product-category": product_category_formatter,
     "is-component": yesno,
     "component-type": model_choices_formatter(ComponentChoices),
     "is-good-controlled": key_value_formatter,
