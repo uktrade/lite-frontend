@@ -187,7 +187,7 @@ def material_on_application_summary():
             "I will onward incorporate",
             "Describe what you are incorporating the product into",
         ),
-        ("unit", "Gram(s)", "Unit"),
+        ("unit", "Gram(s)", "Unit of measurement"),
         ("quantity", "3", "Quantity"),
         ("total-value", "£16.32", "Total value"),
     )
