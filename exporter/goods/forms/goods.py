@@ -1,5 +1,3 @@
-import json
-
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
@@ -1949,9 +1947,19 @@ class UnitQuantityValueForm(forms.Form):
         label=AddGoodToApplicationForm.Units.TITLE,
     )
 
-    quantity = forms.CharField(label="Quantity", required=False)
+    quantity = forms.CharField(
+        label="Quantity",
+        error_messages={
+            "required": "Enter a quantity",
+        },
+    )
 
-    value = forms.CharField(label="Total value", required=False)
+    value = forms.CharField(
+        label="Total value",
+        error_messages={
+            "required": "Enter the total value of the products",
+        },
+    )
 
     is_good_incorporated = forms.TypedChoiceField(
         choices=((True, "Yes"), (False, "No")),
@@ -1962,8 +1970,6 @@ class UnitQuantityValueForm(forms.Form):
         label="Will the product be incorporated into another product?",
         widget=forms.RadioSelect(),
     )
-
-    OPTIONAL_VALUE = "ITG"
 
     def __init__(self, *args, good, number_of_items, request, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1976,16 +1982,7 @@ class UnitQuantityValueForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             summary_list(get_unit_quantity_value_summary_list_items(good, number_of_items)),
-            Field(
-                "unit",
-                data_unit_toggle=json.dumps(
-                    {
-                        "quantity_id": self["quantity"].id_for_label,
-                        "value_id": self["value"].id_for_label,
-                        "optional_value": self.OPTIONAL_VALUE,
-                    }
-                ),
-            ),
+            "unit",
             Field(
                 "quantity",
                 autocomplete="off",
@@ -1997,17 +1994,6 @@ class UnitQuantityValueForm(forms.Form):
             Field.radios("is_good_incorporated", inline=True),
             Submit("submit", "Save"),
         )
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        if cleaned_data.get("unit") != self.OPTIONAL_VALUE:
-            if not cleaned_data.get("quantity"):
-                self.add_error("quantity", "Enter a quantity")
-            if not cleaned_data.get("value"):
-                self.add_error("value", "Enter the total value of the products")
-
-        return cleaned_data
 
 
 class ProductIsComponentForm(BaseForm):
