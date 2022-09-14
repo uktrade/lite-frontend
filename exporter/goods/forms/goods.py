@@ -789,7 +789,7 @@ class IsMaterialSubstanceCategoryForm(BaseForm):
         widget=forms.RadioSelect,
         label="",
         error_messages={
-            "required": "Select yes if material or substance category",
+            "required": "Select yes if the product is a material or substance",
         },
     )
 
