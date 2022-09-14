@@ -528,3 +528,23 @@ COMPONENT_ON_APPLICATION_LABELS = {
     "number-of-items": "Number of items",
     "total-value": "Total value",
 }
+
+
+def add_edit_links(
+    summary,
+    edit_links,
+    get_edit_link,
+):
+    summary_with_edit_links = ()
+
+    for key, value, *rest in summary:
+        try:
+            edit_link_key = edit_links[key]
+        except KeyError:
+            edit_link = None
+        else:
+            edit_link = get_edit_link(edit_link_key)
+
+        summary_with_edit_links += ((key, value, *rest, edit_link),)
+
+    return summary_with_edit_links

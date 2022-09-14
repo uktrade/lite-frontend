@@ -1,6 +1,7 @@
 from django.urls import reverse
 
 from core.summaries.formatters import (
+    add_edit_links,
     document_formatter,
 )
 from core.summaries.summaries import (
@@ -50,18 +51,7 @@ def get_material_summary_edit_link_factory(application, good):
 def add_material_summary_edit_links(summary, edit_links, application, good):
     get_edit_link = get_material_summary_edit_link_factory(application, good)
 
-    summary_with_edit_links = ()
-    for key, value, *rest in summary:
-        try:
-            edit_link_key = edit_links[key]
-        except KeyError:
-            edit_link = None
-        else:
-            edit_link = get_edit_link(edit_link_key)
-
-        summary_with_edit_links += ((key, value, *rest, edit_link),)
-
-    return summary_with_edit_links
+    return add_edit_links(summary, edit_links, get_edit_link)
 
 
 def material_summary(good, *args, **kwargs):
@@ -127,15 +117,4 @@ def add_material_on_application_summary_edit_links(
         summary_type,
     )
 
-    summary_with_edit_links = ()
-    for key, value, *rest in summary:
-        try:
-            edit_link_key = edit_links[key]
-        except KeyError:
-            edit_link = None
-        else:
-            edit_link = get_edit_link(edit_link_key)
-
-        summary_with_edit_links += ((key, value, *rest, edit_link),)
-
-    return summary_with_edit_links
+    return add_edit_links(summary, edit_links, get_edit_link)
