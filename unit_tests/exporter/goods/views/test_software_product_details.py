@@ -66,7 +66,7 @@ def test_software_product_details_context(
         (
             "security-feature-details",
             "security features",
-            "security-feature-details",
+            "Provide details of the information security features",
         ),
         (
             "declared-at-customs",
