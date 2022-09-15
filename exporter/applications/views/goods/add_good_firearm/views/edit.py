@@ -3,19 +3,17 @@ import logging
 from deepmerge import always_merger
 from http import HTTPStatus
 
-from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView
-
-from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
 )
+from core.decorators import expect_status
 
 from exporter.applications.services import (
     edit_good_on_application,
@@ -52,8 +50,6 @@ from exporter.applications.views.goods.common.payloads import (
     get_pv_grading_details_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
@@ -561,23 +557,8 @@ class BaseGoodOnApplicationEditView(
             self.get_edit_payload(form),
         )
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
     def form_valid(self, form):
-        try:
-            self.perform_actions(form)
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
+        self.perform_actions(form)
         return super().form_valid(form)
 
     def get_edit_payload(self, form):
@@ -652,14 +633,11 @@ class BaseProductOnApplicationSummaryEditWizardView(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.edit_firearm_good_on_application(
-                self.request,
-                self.good_on_application["id"],
-                self.get_edit_firearm_good_on_application_payload(form_dict),
-            )
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        self.edit_firearm_good_on_application(
+            self.request,
+            self.good_on_application["id"],
+            self.get_edit_firearm_good_on_application_payload(form_dict),
+        )
 
         return redirect(self.get_success_url())
 
