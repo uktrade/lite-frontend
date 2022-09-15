@@ -65,7 +65,7 @@ def test_application_export_details_end_to_end(
     response = post_to_step(
         ExportDetailsSteps.SECURITY_CLASSIFIED,
         {
-            "has_security_approval": True,
+            "is_mod_security_approved": True,
             "security_approvals": ["F680", "F1686", "Other"],
         },
     )
@@ -110,7 +110,7 @@ def test_application_export_details_end_to_end(
 
     assert last_request.json() == {
         "security_approvals": ["F680", "F1686", "Other"],
-        "has_security_approval": True,
+        "is_mod_security_approved": True,
         "f680_reference_number": "dummy ref",
         "f1686_contracting_authority": "dummy contracting authority",
         "other_security_approval_details": "dummy other details",
@@ -137,7 +137,7 @@ def test_application_export_details_end_to_end_alternative(
     response = post_to_step(
         ExportDetailsSteps.SECURITY_CLASSIFIED,
         {
-            "has_security_approval": True,
+            "is_mod_security_approved": True,
             "security_approvals": ["F1686", "Other"],
         },
     )
@@ -174,7 +174,7 @@ def test_application_export_details_end_to_end_alternative(
 
     assert last_request.json() == {
         "security_approvals": ["F1686", "Other"],
-        "has_security_approval": True,
+        "is_mod_security_approved": True,
         "f1686_contracting_authority": "dummy contracting authority",
         "f1686_reference_number": "dummy f1686 reference number",
         "f1686_approval_date": "2020-02-02",
@@ -202,7 +202,7 @@ def test_application_export_details_short(
     response = post_to_step(
         ExportDetailsSteps.SECURITY_CLASSIFIED,
         {
-            "has_security_approval": False,
+            "is_mod_security_approved": False,
         },
     )
 
@@ -213,7 +213,7 @@ def test_application_export_details_short(
 
     assert last_request.json() == {
         "security_approvals": [],
-        "has_security_approval": False,
+        "is_mod_security_approved": False,
     }
     assert response.url == reverse(
         "applications:locations_summary",

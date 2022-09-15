@@ -16,20 +16,20 @@ from exporter.applications.views.application_export_details.forms import (
         (
             {},
             False,
-            {"has_security_approval": ["Select yes if product's are security required"]},
+            {"is_mod_security_approved": ["Select yes if product's are security required"]},
         ),
         (
-            {"has_security_approval": True},
+            {"is_mod_security_approved": True},
             False,
             {"security_approvals": ["Select at least 1 security approval"]},
         ),
         (
-            {"has_security_approval": False},
+            {"is_mod_security_approved": False},
             True,
             {},
         ),
         (
-            {"has_security_approval": True, "security_approvals": ["F680"]},
+            {"is_mod_security_approved": True, "security_approvals": ["F680"]},
             True,
             {},
         ),

@@ -23,7 +23,7 @@ class SecurityClassifiedDetailsForm(BaseForm):
         required=False,
     )
 
-    has_security_approval = forms.TypedChoiceField(
+    is_mod_security_approved = forms.TypedChoiceField(
         choices=(
             (True, "Yes"),
             (False, "No"),
@@ -38,7 +38,7 @@ class SecurityClassifiedDetailsForm(BaseForm):
     def get_layout_fields(self):
         return (
             ConditionalRadios(
-                "has_security_approval",
+                "is_mod_security_approved",
                 "No",
                 ConditionalQuestion(
                     "Yes",
@@ -49,10 +49,10 @@ class SecurityClassifiedDetailsForm(BaseForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        has_security_approval = cleaned_data.get("has_security_approval")
+        is_mod_security_approved = cleaned_data.get("is_mod_security_approved")
         mod_security_classified_approvals = cleaned_data.get("security_approvals")
 
-        if has_security_approval and not mod_security_classified_approvals:
+        if is_mod_security_approved and not mod_security_classified_approvals:
             self.add_error("security_approvals", "Select at least 1 security approval")
         return cleaned_data
 
