@@ -84,9 +84,10 @@ class SecurityOtherDetailsForm(BaseForm):
             "required": "Enter approval details",
         },
     )
+    approval_document_other = forms.FileField(label="Upload any supporting documents (optional)", required=False)
 
     def get_layout_fields(self):
-        return ("mod_security_other_details",)
+        return ("mod_security_other_details", "approval_document_other")
 
 
 class F1686DetailsForm(BaseForm):

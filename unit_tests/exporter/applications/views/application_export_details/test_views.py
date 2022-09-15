@@ -98,6 +98,7 @@ def test_application_export_details_end_to_end(
         ExportDetailsSteps.SECURITY_OTHER_DETAILS,
         {
             "mod_security_other_details": "dummy other details",
+            "approval_document_other": SimpleUploadedFile("data sheet", b"This is a an approval document"),
         },
     )
 
