@@ -144,14 +144,6 @@ def test_get_end_use_details_status(application, expected):
             },
             "9.0 Kilogram(s)",
         ),
-        (
-            {
-                "firearm_details": {"type": {"key": "firearms_accessory"}},
-                "quantity": 9,
-                "unit": {"key": "ITG", "value": "Intangible"},
-            },
-            "9 Intangible",
-        ),
     ],
 )
 def test_pluralise_quantity(good_on_app, quantity_display):

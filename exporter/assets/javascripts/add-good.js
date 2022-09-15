@@ -33,31 +33,6 @@ export default function initAddGood() {
     }
   });
 
-  $("[data-unit-toggle]").on("input", function () {
-    const self = $(this);
-    const config = self.data("unit-toggle");
-    const quantity_for = config.quantity_id;
-    const quantity_label = $("label[for=" + quantity_for + "]");
-    const value_for = config.value_id;
-    const value_label = $("label[for=" + value_for + "]");
-    const optional_value = config.optional_value;
-
-    // if Intangible is selected, add (optional) to the quantity and value titles
-    if (self.val() === optional_value) {
-      if (!quantity_label.children().is("span")) {
-        quantity_label.append(
-          '<span class="lite-form-optional">(optional)</span>'
-        );
-        value_label.append(
-          '<span class="lite-form-optional">(optional)</span>'
-        );
-      }
-    } else {
-      quantity_label.children().remove();
-      value_label.children().remove();
-    }
-  });
-
   function showHideCertificateMissingReason() {
     var textarea = $("#section_certificate_missing_reason");
     var label = $('label[for="section_certificate_missing_reason"]');
