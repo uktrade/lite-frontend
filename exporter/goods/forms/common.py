@@ -285,7 +285,7 @@ class ProductDocumentAvailabilityForm(BaseForm):
         widget=forms.RadioSelect,
         label="",
         error_messages={
-            "required": "Select yes or no",
+            "required": "Select yes if you have a document that shows what your product is and what it’s designed to do",
         },
     )
 

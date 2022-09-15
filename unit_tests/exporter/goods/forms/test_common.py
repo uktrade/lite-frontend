@@ -262,7 +262,15 @@ def test_product_pv_security_grading_details_form_validation(data, is_valid, err
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
-        ({}, False, {"is_document_available": ["Select yes or no"]}),
+        (
+            {},
+            False,
+            {
+                "is_document_available": [
+                    "Select yes if you have a document that shows what your product is and what it’s designed to do"
+                ]
+            },
+        ),
         (
             {"is_document_available": False},
             False,
