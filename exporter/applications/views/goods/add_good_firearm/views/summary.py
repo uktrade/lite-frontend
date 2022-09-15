@@ -16,18 +16,15 @@ from exporter.applications.summaries.firearm import (
     FIREARM_SUMMARY_EDIT_LINKS,
     FIREARM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
 )
+from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
 from exporter.core.helpers import (
     get_organisation_documents,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
 
-from .mixins import Product2FlagMixin
-from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
-
 
 class FirearmProductSummary(
     LoginRequiredMixin,
-    Product2FlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,
@@ -60,7 +57,6 @@ class FirearmProductSummary(
 
 class BaseProductOnApplicationSummary(
     LoginRequiredMixin,
-    Product2FlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,

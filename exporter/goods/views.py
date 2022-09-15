@@ -32,21 +32,11 @@ from exporter.applications.services import (
     post_case_notes,
 )
 from exporter.applications.views.goods import is_firearm_certificate_needed
-from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
-    is_category_firearms,
-    is_product_type,
-    is_pv_graded,
-    show_attach_rfd_form,
-    show_rfd_form,
     str_to_bool,
 )
-from exporter.core.wizard.conditionals import C
-from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms import (
-    AddGoodsQuestionsForm,
-    AttachFirearmsDealerCertificateForm,
     FirearmsActConfirmationForm,
     FirearmsCalibreDetailsForm,
     FirearmsCaptureSerialNumbersForm,
@@ -55,12 +45,9 @@ from exporter.goods.forms import (
     FirearmsYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
     IdentificationMarkingsForm,
-    ProductCategoryForm,
     ProductComponentForm,
     ProductMilitaryUseForm,
     ProductUsesInformationSecurityForm,
-    PvDetailsForm,
-    RegisteredFirearmsDealerForm,
     SoftwareTechnologyDetailsForm,
     UpdateSerialNumbersForm,
     attach_documents_form,
@@ -94,7 +81,6 @@ from exporter.goods.services import (
     post_good_document_availability,
     post_good_document_sensitivity,
     post_good_documents,
-    post_goods,
     raise_goods_query,
 )
 from lite_content.lite_exporter_frontend import goods
@@ -169,7 +155,6 @@ class Goods(LoginRequiredMixin, TemplateView):
             "part_number": part_number,
             "control_list_entry": control_list_entry,
             "filters": filters,
-            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
         return render(request, "goods/goods.html", context)
 
@@ -260,107 +245,6 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             return self.get(request, error=response["errors"]["text"][0], text=request.POST.get("text"), **kwargs)
 
         return redirect(reverse_lazy("goods:good_detail", kwargs={"pk": good_id, "type": "case-notes"}))
-
-
-class AddGood(LoginRequiredMixin, BaseSessionWizardView):
-    """This view manages the sequence of forms that are used add a new product
-    to a user's product list.
-    """
-
-    form_list = [
-        (AddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
-        (AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
-        (AddGoodFormSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
-        (AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
-        (AddGoodFormSteps.ADD_GOODS_QUESTIONS, AddGoodsQuestionsForm),
-        (AddGoodFormSteps.PV_DETAILS, PvDetailsForm),
-        (AddGoodFormSteps.FIREARMS_REPLICA, FirearmsReplicaForm),
-        (AddGoodFormSteps.FIREARMS_CALIBRE_DETAILS, FirearmsCalibreDetailsForm),
-        (AddGoodFormSteps.REGISTERED_FIREARMS_DEALER, RegisteredFirearmsDealerForm),
-        (AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE, AttachFirearmsDealerCertificateForm),
-        (AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS, SoftwareTechnologyDetailsForm),
-        (AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH, ProductMilitaryUseForm),
-        (AddGoodFormSteps.PRODUCT_COMPONENT, ProductComponentForm),
-        (AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH, ProductUsesInformationSecurityForm),
-    ]
-
-    condition_dict = {
-        AddGoodFormSteps.PRODUCT_CATEGORY: lambda w: not settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS,
-        AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
-        AddGoodFormSteps.PRODUCT_MILITARY_USE: ~C(is_category_firearms),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: ~C(is_category_firearms),
-        AddGoodFormSteps.PV_DETAILS: is_pv_graded,
-        AddGoodFormSteps.FIREARMS_REPLICA: is_product_type("firearm"),
-        AddGoodFormSteps.FIREARMS_CALIBRE_DETAILS: is_product_type("ammunition_or_component"),
-        AddGoodFormSteps.REGISTERED_FIREARMS_DEALER: show_rfd_form,
-        AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE: show_attach_rfd_form,
-        AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS: is_product_type("firearms_software_or_tech"),
-        AddGoodFormSteps.PRODUCT_MILITARY_USE_ACC_TECH: (
-            C(is_product_type("firearms_accessory")) | C(is_product_type("firearms_software_or_tech"))
-        ),
-        AddGoodFormSteps.PRODUCT_COMPONENT: is_product_type("firearms_accessory"),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY_ACC_TECH: (
-            C(is_product_type("firearms_accessory")) | C(is_product_type("firearms_software_or_tech"))
-        ),
-    }
-
-    def dispatch(self, *args, **kwargs):
-        if settings.FEATURE_FLAG_PRODUCT_2_0:
-            raise Http404()
-        return super().dispatch(*args, **kwargs)
-
-    def get_product_type(self):
-        group_two_product_type_cleaned_data = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE)
-
-        if group_two_product_type_cleaned_data:
-            return group_two_product_type_cleaned_data["type"]
-
-        return None
-
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form, **kwargs)
-        context["title"] = form.title
-        # The back_link_url is used for the first form in the sequence. For subsequent forms,
-        # the wizard automatically generates the back link to the previous form.
-        context["back_link_url"] = reverse("goods:goods")
-        return context
-
-    def get_form_kwargs(self, step=None):
-        kwargs = super().get_form_kwargs(step)
-
-        if step == AddGoodFormSteps.ADD_GOODS_QUESTIONS:
-            kwargs["request"] = self.request
-            kwargs["application_pk"] = None
-
-        if step == AddGoodFormSteps.PV_DETAILS:
-            kwargs["request"] = self.request
-
-        if step == AddGoodFormSteps.SOFTWARE_TECHNOLOGY_DETAILS:
-            kwargs["product_type"] = self.get_cleaned_data_for_step(AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE).get("type")
-
-        return kwargs
-
-    def done(self, form_list, **kwargs):
-        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
-        all_data.pop("file", None)
-
-        api_resp_data, status_code = post_goods(self.request, dict(all_data))
-
-        if status_code != HTTPStatus.CREATED:
-            log.error(
-                "Error creating good - response was: %s - %s",
-                status_code,
-                api_resp_data,
-                exc_info=True,
-            )
-            return error_page(self.request, "Unexpected error adding good")
-
-        return redirect(
-            reverse(
-                "goods:check_document_availability",
-                kwargs={"pk": api_resp_data["good"]["id"]},
-            )
-        )
 
 
 class GoodSoftwareTechnologyView(LoginRequiredMixin, GoodCommonMixin, FormView):

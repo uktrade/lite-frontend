@@ -413,7 +413,7 @@ MATERIAL_ON_APPLICATION_LABELS = {
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
     "is-incorporated-comments": "Describe what you are incorporating the product into",
     "is-deactivated": "Has the product been deactivated?",
-    "unit": "Unit",
+    "unit": "Unit of measurement",
     "quantity": "Quantity",
     "total-value": "Total value",
 }

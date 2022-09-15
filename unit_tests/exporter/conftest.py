@@ -30,11 +30,6 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_PRODUCT_2_0 = False
-
-
-@pytest.fixture(autouse=True)
 def upload_handler():
     settings.FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.MemoryFileUploadHandler"]
 

@@ -13,8 +13,8 @@ from exporter.goods.forms.firearms import (
 
 
 @pytest.fixture(autouse=True)
-def setup(settings, no_op_storage):
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
+def setup(no_op_storage):
+    pass
 
 
 @pytest.fixture

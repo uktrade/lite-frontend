@@ -270,14 +270,14 @@ def raise_a_goods_query(good_id, raise_a_clc: bool, raise_a_pv: bool):
 
 def delete_good_form(good):
     back_link = reverse("goods:good", kwargs={"pk": good["id"]})
-    if settings.FEATURE_FLAG_PRODUCT_2_0:
-        try:
-            if good["firearm_details"] and good["firearm_details"]["type"]["key"] == "firearms":
-                back_link = reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
-            elif good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_PLATFORM:
-                back_link = reverse("goods:platform_detail", kwargs={"pk": good["id"]})
-        except KeyError:
-            pass
+
+    try:
+        if good["firearm_details"] and good["firearm_details"]["type"]["key"] == "firearms":
+            back_link = reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
+        elif good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_PLATFORM:
+            back_link = reverse("goods:platform_detail", kwargs={"pk": good["id"]})
+    except KeyError:
+        pass
 
     return Form(
         title=EditGoodForm.DeleteConfirmationForm.TITLE,
@@ -789,7 +789,7 @@ class IsMaterialSubstanceCategoryForm(BaseForm):
         widget=forms.RadioSelect,
         label="",
         error_messages={
-            "required": "Select yes if material or substance category",
+            "required": "Select yes if the product is a material or substance",
         },
     )
 

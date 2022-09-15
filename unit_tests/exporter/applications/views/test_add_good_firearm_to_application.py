@@ -55,7 +55,6 @@ def expected_good_data(application):
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
     settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = True
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
 
 
 @pytest.fixture

@@ -91,7 +91,7 @@ def test_is_material_form_feaature_ff_enabled(settings, disable_non_firearms, fe
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
-        ({}, False, {"is_material_substance": ["Select yes if material or substance category"]}),
+        ({}, False, {"is_material_substance": ["Select yes if the product is a material or substance"]}),
         ({"is_material_substance": True}, True, {}),
     ),
 )
