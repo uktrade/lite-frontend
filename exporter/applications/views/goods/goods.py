@@ -20,7 +20,7 @@ from core.constants import (
 )
 from core.helpers import convert_dict_to_query_params
 from core.summaries.summaries import (
-    get_summaries_type_good_on_application,
+    get_summary_type_for_good_on_application,
     NoSummaryForType,
     SummaryTypes,
 )
@@ -1091,7 +1091,7 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
 
     def get_product_summary(self, application, good_on_application, is_user_rfd, organisation_documents):
         try:
-            summary_type = get_summaries_type_good_on_application(good_on_application)
+            summary_type = get_summary_type_for_good_on_application(good_on_application)
         except NoSummaryForType:
             return None
 

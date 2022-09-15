@@ -1,3 +1,5 @@
+from core.summaries.summaries import SummaryTypes
+
 from exporter.core.helpers import (
     get_user_organisation_documents,
     has_valid_organisation_rfd_certificate,
@@ -8,6 +10,8 @@ from ..common.base import BaseProductDetails
 
 
 class FirearmProductDetails(BaseProductDetails):
+    summary_type = SummaryTypes.FIREARM
+
     def get_summary(self):
         is_user_rfd = has_valid_organisation_rfd_certificate(self.organisation)
         organisation_documents = get_user_organisation_documents(self.organisation)

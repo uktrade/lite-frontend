@@ -5,6 +5,7 @@ from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 
 from core import client
+from core.constants import ProductCategories
 
 
 @pytest.fixture
@@ -24,11 +25,23 @@ def mock_good_get(requests_mock, data_standard_case):
         {
             "is_pv_graded": {"key": "yes", "value": "Yes"},
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
+            "item_category": {
+                "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT,
+            },
         }
     )
     del good["good"]["firearm_details"]
     url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
     return requests_mock.get(url=url, json=good)
+
+
+def test_component_product_details_status_code(
+    authorized_client,
+    component_product_details_url,
+    mock_good_get,
+):
+    response = authorized_client.get(component_product_details_url)
+    assert response.status_code == 200
 
 
 def test_component_product_details_template_used(
@@ -37,8 +50,7 @@ def test_component_product_details_template_used(
     mock_good_get,
 ):
     response = authorized_client.get(component_product_details_url)
-    assert response.status_code == 200
-    assertTemplateUsed("goods/product-details.html")
+    assertTemplateUsed(response, "goods/product-details.html")
 
 
 def test_component_product_details_context(
@@ -46,9 +58,7 @@ def test_component_product_details_context(
     component_product_details_url,
     mock_good_get,
 ):
-
     response = authorized_client.get(component_product_details_url)
-    assert response.status_code == 200
     assert response.context["summary"] == (
         ("is-firearm-product", "No", "Is it a firearm product?"),
         ("product-category", "Component", "Select the product category"),

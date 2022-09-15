@@ -108,9 +108,7 @@ Feature: I want to indicate the standard licence I want
     And I see "Direct to end user" as who are the products going to
     And I see "name" as name
     And I see "N/A" as part number
-    And I see "Yes" as controlled
     And I see "ML1a" as control list entry
-    And I see "No" as incorporated
     And I see "3 items" as quantity
     And I see "£12.12" as value
     And I see "end use details" as intended end use
@@ -236,9 +234,7 @@ Feature: I want to indicate the standard licence I want
     And I see "Direct to end user" as who are the products going to
     And I see "name" as name
     And I see "N/A" as part number
-    And I see "Yes" as controlled
     And I see "ML1a" as control list entry
-    And I see "No" as incorporated
     And I see "4 items" as quantity
     And I see "£12.12" as value
     And I see "end use details" as intended end use

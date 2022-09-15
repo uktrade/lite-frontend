@@ -310,7 +310,7 @@ def post_platform(request, json):
 
 
 def post_component(request, json):
-    json["item_category"] = ProductCategories.COMPONENT_CATEGORY_PLATFORM
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_COMPONENT
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
