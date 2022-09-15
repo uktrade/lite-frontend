@@ -127,7 +127,7 @@ class ExportDetails(
 
     def done(self, form_list, form_dict, **kwargs):
         try:
-            application, _ = self.update_application(form_dict)
+            _, _ = self.update_application(form_dict)
             if self.has_f1686_approval_document():
                 pass
         except ServiceError as e:
