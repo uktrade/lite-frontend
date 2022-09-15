@@ -375,7 +375,7 @@ class ProductCategoryForm(forms.Form):
         choices=(
             (ProductCategories.PRODUCT_CATEGORY_PLATFORM, CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
             (ProductCategories.PRODUCT_CATEGORY_DEVICE, CreateGoodForm.ProductCategory.GROUP1_DEVICE),
-            (ProductCategories.COMPONENT_CATEGORY_PLATFORM, CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
+            (ProductCategories.PRODUCT_CATEGORY_COMPONENT, CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
             (ProductCategories.PRODUCT_CATEGORY_MATERIAL, CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
             (ProductCategories.PRODUCT_CATEGORY_FIREARM, CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
             (ProductCategories.PRODUCT_CATEGORY_SOFTWARE, CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
