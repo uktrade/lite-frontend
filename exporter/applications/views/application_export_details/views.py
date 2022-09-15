@@ -7,10 +7,9 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.core.common.decorators import expect_status
-from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from exporter.applications.services import put_application, post_additional_document
 from exporter.core.helpers import get_document_data
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
@@ -98,7 +97,6 @@ class ExportDetails(
             "applications:locations_summary",
             kwargs={"pk": self.application["id"]},
         )
-
 
     @expect_status(
         HTTPStatus.OK,
