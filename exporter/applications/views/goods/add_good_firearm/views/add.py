@@ -3,17 +3,15 @@ import logging
 from deepmerge import always_merger
 from http import HTTPStatus
 
-from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
-
-from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
 )
+from core.decorators import expect_status
 
 from exporter.applications.services import (
     post_additional_document,
@@ -87,8 +85,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_product_document_available,
     is_onward_exported,
 )
-from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 
 from .constants import AddGoodFirearmSteps, AddGoodFirearmToApplicationSteps
@@ -329,42 +325,28 @@ class AddGoodFirearm(
             json=document_payload,
         )
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            good, _ = self.post_firearm(form_dict)
-            self.good = good["good"]
+        good, _ = self.post_firearm(form_dict)
+        self.good = good["good"]
 
-            if self.has_existing_valid_organisation_rfd_certificate(self.application):
-                self.attach_rfd_certificate_to_application(self.application)
-            else:
-                if self.is_existing_organisation_rfd_certificate_invalid(self.application):
-                    self.delete_existing_organisation_rfd_certificate(self.application)
-                if self.has_organisation_rfd_certificate_data():
-                    self.post_rfd_certificate(self.application)
+        if self.has_existing_valid_organisation_rfd_certificate(self.application):
+            self.attach_rfd_certificate_to_application(self.application)
+        else:
+            if self.is_existing_organisation_rfd_certificate_invalid(self.application):
+                self.delete_existing_organisation_rfd_certificate(self.application)
+            if self.has_organisation_rfd_certificate_data():
+                self.post_rfd_certificate(self.application)
 
-            OrganisationFirearmActCertificateAction(
-                self.request,
-                FirearmsActDocumentType.SECTION_5,
-                self.application,
-                self.good,
-                self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
-            ).run()
+        OrganisationFirearmActCertificateAction(
+            self.request,
+            FirearmsActDocumentType.SECTION_5,
+            self.application,
+            self.good,
+            self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
+        ).run()
 
-            if self.has_product_documentation():
-                self.post_product_documentation(self.good)
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        if self.has_product_documentation():
+            self.post_product_documentation(self.good)
 
         return redirect(self.get_success_url())
 
@@ -455,41 +437,27 @@ class AddGoodFirearmToApplication(
 
         return ctx
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:  # pragma: no cover
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            good_on_application, _ = self.post_firearm_to_application(form_dict)
-            good_on_application = good_on_application["good"]
+        good_on_application, _ = self.post_firearm_to_application(form_dict)
+        good_on_application = good_on_application["good"]
 
-            GoodOnApplicationFirearmActCertificateAction(
-                self.request,
-                FirearmsActDocumentType.SECTION_1,
-                self.application,
-                self.good,
-                good_on_application,
-                self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE),
-            ).run()
+        GoodOnApplicationFirearmActCertificateAction(
+            self.request,
+            FirearmsActDocumentType.SECTION_1,
+            self.application,
+            self.good,
+            good_on_application,
+            self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_FIREARM_CERTIFICATE),
+        ).run()
 
-            GoodOnApplicationFirearmActCertificateAction(
-                self.request,
-                FirearmsActDocumentType.SECTION_2,
-                self.application,
-                self.good,
-                good_on_application,
-                self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE),
-            ).run()
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        GoodOnApplicationFirearmActCertificateAction(
+            self.request,
+            FirearmsActDocumentType.SECTION_2,
+            self.application,
+            self.good,
+            good_on_application,
+            self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.ATTACH_SHOTGUN_CERTIFICATE),
+        ).run()
 
         self.good_on_application = good_on_application
 

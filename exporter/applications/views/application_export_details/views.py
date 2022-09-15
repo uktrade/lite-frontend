@@ -7,11 +7,8 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 
-from lite_forms.generators import error_page
-
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
-from exporter.core.common.exceptions import ServiceError
 
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
 
@@ -72,21 +69,5 @@ class ExportDetails(
             kwargs={"pk": self.application["id"]},
         )
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            pass
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
         return redirect(self.get_success_url())
