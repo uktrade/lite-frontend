@@ -41,42 +41,6 @@ def product_document():
     }
 
 
-@pytest.fixture(autouse=True)
-def edit_pv_grading_url(application, good_on_application):
-    return reverse(
-        "applications:component_edit_pv_grading",
-        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
-    )
-
-
-@pytest.fixture(autouse=True)
-def edit_component_details_url(application, good_on_application):
-    return reverse(
-        "applications:component_edit_component_details",
-        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
-    )
-
-
-@pytest.fixture
-def goto_step_pv_grading(goto_step_factory, edit_pv_grading_url):
-    return goto_step_factory(edit_pv_grading_url)
-
-
-@pytest.fixture
-def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
-    return post_to_step_factory(edit_pv_grading_url)
-
-
-@pytest.fixture
-def goto_step_component_details(goto_step_factory, edit_component_details_url):
-    return goto_step_factory(edit_component_details_url)
-
-
-@pytest.fixture
-def post_to_step_component_details(post_to_step_factory, edit_component_details_url):
-    return post_to_step_factory(edit_component_details_url)
-
-
 @pytest.mark.parametrize(
     "url_name, form_data, expected",
     (
@@ -258,6 +222,24 @@ def test_edit_component_initial(
     assert response.context["form"].initial == initial
 
 
+@pytest.fixture(autouse=True)
+def edit_pv_grading_url(application, good_on_application):
+    return reverse(
+        "applications:component_edit_pv_grading",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+
+@pytest.fixture
+def goto_step_pv_grading(goto_step_factory, edit_pv_grading_url):
+    return goto_step_factory(edit_pv_grading_url)
+
+
+@pytest.fixture
+def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
+    return post_to_step_factory(edit_pv_grading_url)
+
+
 def test_edit_pv_grading(
     requests_mock,
     pv_gradings,
@@ -342,6 +324,24 @@ def test_edit_pv_grading_details(
             "date_of_issue": "2020-02-20",
         },
     }
+
+
+@pytest.fixture(autouse=True)
+def edit_component_details_url(application, good_on_application):
+    return reverse(
+        "applications:component_edit_component_details",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+
+@pytest.fixture
+def goto_step_component_details(goto_step_factory, edit_component_details_url):
+    return goto_step_factory(edit_component_details_url)
+
+
+@pytest.fixture
+def post_to_step_component_details(post_to_step_factory, edit_component_details_url):
+    return post_to_step_factory(edit_component_details_url)
 
 
 def test_edit_component_details(

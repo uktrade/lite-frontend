@@ -10,7 +10,9 @@ from exporter.applications.views.goods.common.mixins import (
 )
 from exporter.applications.summaries.software import (
     add_software_summary_edit_links,
+    add_software_on_application_summary_edit_links,
     software_summary,
+    SOFTWARE_ON_APPLICATION_SUMMARY_EDIT_LINKS,
     SOFTWARE_SUMMARY_EDIT_LINKS,
     software_product_on_application_summary,
 )
@@ -40,6 +42,13 @@ class BaseSoftwareOnApplicationSummary(
     def get_software_on_application_summary(self):
         product_on_application_summary = software_product_on_application_summary(
             self.good_on_application,
+        )
+        product_on_application_summary = add_software_on_application_summary_edit_links(
+            product_on_application_summary,
+            SOFTWARE_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            self.application,
+            self.good_on_application,
+            self.summary_type,
         )
         return product_on_application_summary
 

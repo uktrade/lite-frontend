@@ -148,6 +148,21 @@ from exporter.applications.views.goods.add_good_software.views.add import AddGoo
 from exporter.applications.views.goods.add_good_software.views.edit import (
     SoftwareEditControlListEntry,
     SoftwareEditName,
+    SoftwareEditPVGrading,
+    SoftwareEditPVGradingDetails,
+    SoftwareEditSecurityFeatures,
+    SoftwareEditDesignDetails,
+    SoftwareEditDeclaredAtCustoms,
+    SoftwareEditProductDocumentAvailability,
+    SoftwareEditProductDocumentSensitivity,
+    SoftwareEditProductDocumentView,
+    SoftwareEditProductDescriptionView,
+    SoftwareEditPartNumberView,
+    SoftwareEditMilitaryUseView,
+    SoftwareOnApplicationSummaryEditOnwardExported,
+    SoftwareOnApplicationSummaryEditOnwardAltered,
+    SoftwareOnApplicationSummaryEditOnwardIncorporated,
+    SoftwareOnApplicationSummaryEditQuantityValue,
 )
 from exporter.applications.views.goods.add_good_software.views.summary import (
     SoftwareProductSummary,
@@ -738,11 +753,86 @@ urlpatterns = [
         SoftwareProductOnApplicationSummary.as_view(),
         name="software_on_application_summary",
     ),
+    path(
+        "<uuid:pk>/goods/software/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-exported/",
+        SoftwareOnApplicationSummaryEditOnwardExported.as_view(),
+        name="software_on_application_summary_edit_onward_exported",
+    ),
+    path(
+        "<uuid:pk>/goods/software/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
+        SoftwareOnApplicationSummaryEditOnwardAltered.as_view(),
+        name="software_on_application_summary_edit_onward_altered",
+    ),
+    path(
+        "<uuid:pk>/goods/software/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
+        SoftwareOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        name="software_on_application_summary_edit_onward_incorporated",
+    ),
+    path(
+        "<uuid:pk>/goods/software/<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
+        SoftwareOnApplicationSummaryEditQuantityValue.as_view(),
+        name="software_on_application_summary_edit_quantity_value",
+    ),
     path("<uuid:pk>/goods/<uuid:good_pk>/software/edit/name/", SoftwareEditName.as_view(), name="software_edit_name"),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/software/edit/control-list-entries/",
         SoftwareEditControlListEntry.as_view(),
         name="software_edit_control_list_entries",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/pv-grading/",
+        SoftwareEditPVGrading.as_view(),
+        name="software_edit_pv_grading",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/pv-grading-details/",
+        SoftwareEditPVGradingDetails.as_view(),
+        name="software_edit_pv_grading_details",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/security-features/",
+        SoftwareEditSecurityFeatures.as_view(),
+        name="software_edit_security_features",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/declared-at-customs/",
+        SoftwareEditDeclaredAtCustoms.as_view(),
+        name="software_edit_declared_at_customs",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/design-details/",
+        SoftwareEditDesignDetails.as_view(),
+        name="software_edit_design_details",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/product-document-availability/",
+        SoftwareEditProductDocumentAvailability.as_view(),
+        name="software_edit_product_document_availability",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/product-document-sensitivity/",
+        SoftwareEditProductDocumentSensitivity.as_view(),
+        name="software_edit_product_document_sensitivity",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/product-document/",
+        SoftwareEditProductDocumentView.as_view(),
+        name="software_edit_product_document",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/product-description/",
+        SoftwareEditProductDescriptionView.as_view(),
+        name="software_edit_product_description",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/part-number/",
+        SoftwareEditPartNumberView.as_view(),
+        name="software_edit_part_number",
+    ),
+    path(
+        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/military-use/",
+        SoftwareEditMilitaryUseView.as_view(),
+        name="software_edit_military_use",
     ),
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),

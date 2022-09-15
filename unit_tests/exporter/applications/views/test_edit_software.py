@@ -2,6 +2,8 @@ import pytest
 
 from django.urls import reverse
 
+from exporter.applications.views.goods.add_good_software.views.constants import AddGoodSoftwareSteps
+
 
 @pytest.fixture(autouse=True)
 def setup(
@@ -91,3 +93,107 @@ def test_edit_software_initial(
 
     assert response.status_code == 200
     assert response.context["form"].initial == initial
+
+
+@pytest.fixture(autouse=True)
+def edit_pv_grading_url(application, good_on_application):
+    return reverse(
+        "applications:software_edit_pv_grading",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+
+@pytest.fixture
+def goto_step_pv_grading(goto_step_factory, edit_pv_grading_url):
+    return goto_step_factory(edit_pv_grading_url)
+
+
+@pytest.fixture
+def post_to_step_pv_grading(post_to_step_factory, edit_pv_grading_url):
+    return post_to_step_factory(edit_pv_grading_url)
+
+
+def test_edit_pv_grading(
+    requests_mock,
+    pv_gradings,
+    goto_step_pv_grading,
+    post_to_step_pv_grading,
+    software_product_summary_url,
+):
+    response = goto_step_pv_grading(AddGoodSoftwareSteps.PV_GRADING)
+    assert response.status_code == 200
+
+    response = post_to_step_pv_grading(
+        AddGoodSoftwareSteps.PV_GRADING,
+        {"is_pv_graded": True},
+    )
+
+    assert response.status_code == 200
+
+    response = post_to_step_pv_grading(
+        AddGoodSoftwareSteps.PV_GRADING_DETAILS,
+        {
+            "prefix": "NATO",
+            "grading": "official",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue_0": "20",
+            "date_of_issue_1": "02",
+            "date_of_issue_2": "2020",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == software_product_summary_url
+    assert requests_mock.last_request.json() == {
+        "is_pv_graded": "yes",
+        "pv_grading_details": {
+            "prefix": "NATO",
+            "grading": "official",
+            "suffix": "",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue": "2020-02-20",
+        },
+    }
+
+
+def test_edit_pv_grading_details(
+    authorized_client,
+    application,
+    good_on_application,
+    requests_mock,
+    pv_gradings,
+    software_product_summary_url,
+):
+    url = reverse(
+        "applications:software_edit_pv_grading_details",
+        kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
+    )
+
+    response = authorized_client.post(
+        url,
+        data={
+            "prefix": "NATO",
+            "grading": "official",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue_0": "20",
+            "date_of_issue_1": "02",
+            "date_of_issue_2": "2020",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == software_product_summary_url
+    assert requests_mock.last_request.json() == {
+        "is_pv_graded": "yes",
+        "pv_grading_details": {
+            "prefix": "NATO",
+            "grading": "official",
+            "suffix": "",
+            "issuing_authority": "Government entity",
+            "reference": "GR123",
+            "date_of_issue": "2020-02-20",
+        },
+    }
