@@ -2007,7 +2007,7 @@ def standard_software_expected_product_on_application_summary():
         ),
         (
             "number-of-items",
-            444.0,
+            "444",
             "Number of items",
         ),
         (
