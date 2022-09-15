@@ -8,14 +8,12 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 
-from lite_forms.generators import error_page
-
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from exporter.applications.services import put_application, post_additional_document
 from exporter.core.helpers import get_document_data
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
 
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
 
@@ -101,16 +99,6 @@ class ExportDetails(
             kwargs={"pk": self.application["id"]},
         )
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
 
     @expect_status(
         HTTPStatus.OK,
@@ -126,11 +114,7 @@ class ExportDetails(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            _, _ = self.update_application(form_dict)
-            if self.has_f1686_approval_document():
-                pass
-        except ServiceError as e:
-            return self.handle_service_error(e)
-
+        _, _ = self.update_application(form_dict)
+        if self.has_f1686_approval_document():
+            pass
         return redirect(self.get_success_url())

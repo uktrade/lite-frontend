@@ -2,17 +2,13 @@ import logging
 
 from http import HTTPStatus
 
-from django.conf import settings
 from django.shortcuts import redirect
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
-from lite_forms.generators import error_page
-
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
-from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
@@ -139,17 +135,6 @@ class BaseProductEditWizardView(
     GoodMixin,
     BaseSessionWizardView,
 ):
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
     def get_success_url(self):
         raise NotImplementedError(f"Implement `get_success_url` for {self.__class__.__name__}")
 
@@ -178,10 +163,7 @@ class BaseProductEditWizardView(
         self.edit_object(self.request, self.good["id"], self.get_payload(form_dict))
 
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.process_forms(form_list, form_dict, **kwargs)
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        self.process_forms(form_list, form_dict, **kwargs)
 
         return redirect(self.get_success_url())
 

@@ -2,17 +2,13 @@ import logging
 
 from http import HTTPStatus
 
-from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
-
-from lite_forms.generators import error_page
+from core.decorators import expect_status
 
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.core.common.decorators import expect_status
-from exporter.core.common.exceptions import ServiceError
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
@@ -161,25 +157,11 @@ class AddGoodComponent(
             payload,
         )
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            good, _ = self.post_component(form_dict)
-            self.good = good["good"]
-            if self.has_product_documentation():
-                self.post_product_documentation(self.good)
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        good, _ = self.post_component(form_dict)
+        self.good = good["good"]
+        if self.has_product_documentation():
+            self.post_product_documentation(self.good)
 
         return redirect(self.get_success_url())
 
@@ -248,23 +230,9 @@ class AddGoodComponentToApplication(
 
         return ctx
 
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:  # pragma: no cover
-            raise service_error
-        return error_page(self.request, service_error.user_message)
-
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            good_on_application, _ = self.post_component_to_application(form_dict)
-            good_on_application = good_on_application["good"]
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        good_on_application, _ = self.post_component_to_application(form_dict)
+        good_on_application = good_on_application["good"]
         self.good_on_application = good_on_application
 
         return redirect(self.get_success_url())

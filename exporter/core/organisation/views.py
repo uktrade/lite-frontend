@@ -1,20 +1,17 @@
 import logging
 from http import HTTPStatus
 
-from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.views.generic import FormView
 
-from lite_forms.generators import error_page
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.core.common.decorators import expect_status
 from exporter.auth.services import authenticate_exporter_user
 from exporter.organisation.members.services import get_user
 from exporter.core.services import get_organisation
-from exporter.core.common.exceptions import ServiceError
 
 from .constants import RegistrationSteps
 from .forms import (
@@ -62,12 +59,9 @@ class Registration(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        try:
-            self.post_registration(form_dict)
-            self.update_authenticate_exporter_user()
-            return redirect(self.get_success_url())
-        except ServiceError as e:
-            return self.handle_service_error(e)
+        self.post_registration(form_dict)
+        self.update_authenticate_exporter_user()
+        return redirect(self.get_success_url())
 
     @expect_status(
         HTTPStatus.OK,
@@ -93,17 +87,6 @@ class Registration(
 
     def get_success_url(self):
         return reverse("core:register_an_organisation_confirm") + "?animate=True"
-
-    def handle_service_error(self, service_error):
-        logger.error(
-            service_error.log_message,
-            service_error.status_code,
-            service_error.response,
-            exc_info=True,
-        )
-        if settings.DEBUG:
-            raise service_error
-        return error_page(self.request, service_error.user_message)
 
     @property
     def is_uk_based(self):

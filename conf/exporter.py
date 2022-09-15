@@ -140,3 +140,5 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
         "DEBUG": DEBUG,
     }
     INSTALLED_APPS.append("elasticapm.contrib.django")
+
+MIDDLEWARE += ["exporter.core.middleware.ServiceErrorHandler"]

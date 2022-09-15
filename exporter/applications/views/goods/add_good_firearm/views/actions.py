@@ -3,6 +3,8 @@ from http import HTTPStatus
 from django.utils.functional import cached_property
 
 from core.constants import FirearmsActDocumentType
+from core.decorators import expect_status
+
 from exporter.applications.services import (
     delete_additional_document,
     delete_application_document,
@@ -24,8 +26,6 @@ from exporter.organisation.services import (
     delete_document_on_organisation,
     update_document_on_organisation,
 )
-
-from exporter.core.common.decorators import expect_status
 
 
 class OrganisationFirearmActCertificateAction:
