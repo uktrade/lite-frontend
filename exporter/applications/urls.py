@@ -17,6 +17,7 @@ from exporter.applications.views import (
     route_of_goods,
     export_details,
 )
+from exporter.applications.views.application_export_details.views import ExportDetails
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from exporter.applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
 from exporter.goods.views import (
@@ -923,6 +924,12 @@ urlpatterns = [
         "<uuid:pk>/export-details/",
         export_details.ExportDetails.as_view(),
         name="export_details",
+    ),
+    # Temporary export details new wizard version
+    path(
+        "<uuid:pk>/application-export-details/",
+        ExportDetails.as_view(),
+        name="application_export_details",
     ),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),
