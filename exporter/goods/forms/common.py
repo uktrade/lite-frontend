@@ -636,7 +636,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
     information_security_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
-        label=f"Provide details of the information security features",
+        label="Provide details of the information security features",
     )
 
     def get_layout_fields(self):
