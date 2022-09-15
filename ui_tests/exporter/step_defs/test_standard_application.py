@@ -583,22 +583,10 @@ def check_product_part_number(driver, part_number):
     assert part_number == answers_page.get_product_field_value("Part number")
 
 
-@then(parsers.parse('I see "{controlled}" as controlled'))
-def check_product_controlled_status(driver, controlled):
-    answers_page = CheckYourAnswers(driver)
-    assert controlled == answers_page.get_product_field_value("Controlled")
-
-
 @then(parsers.parse('I see "{clc_entry}" as control list entry'))
 def check_product_clc_entry(driver, clc_entry):
     answers_page = CheckYourAnswers(driver)
     assert clc_entry == answers_page.get_product_field_value("Control list entries")
-
-
-@then(parsers.parse('I see "{incorporated}" as incorporated'))
-def check_product_incorporation(driver, incorporated):
-    answers_page = CheckYourAnswers(driver)
-    assert incorporated == answers_page.get_product_field_value("Incorporated")
 
 
 @then(parsers.parse('I see "{quantity}" as quantity'))
