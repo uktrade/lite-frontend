@@ -239,12 +239,6 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
 
     requires_actions_column = any(requires_actions(application, g) for g in goods_on_application)
     for good_on_application in goods_on_application:
-        # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
-        if good_on_application["good"]["is_good_controlled"] is None:
-            is_controlled = "N/A"
-        else:
-            is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
-
         control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
 
         if good_on_application["good"].get("name"):
@@ -255,13 +249,11 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
         item = {
             "Name": name,
             "Part number": default_na(good_on_application["good"]["part_number"]),
-            "Controlled": mark_safe(is_controlled),  # nosec
             "Control list entries": mark_safe(control_list_entries),  # nosec
         }
         if is_exhibition:
             item["Product type"] = good_on_application["other_item_type"] or good_on_application["item_type"]
         else:
-            item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
             item["Quantity"] = pluralise_quantity(good_on_application)
             item["Value"] = f"£{good_on_application['value']}"
         if requires_actions(application, good_on_application):

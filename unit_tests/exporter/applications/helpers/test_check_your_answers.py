@@ -18,7 +18,6 @@ def test_convert_goods_on_application_no_answers(application, data_good_on_appli
 
     # then the differences in export characteristics are highlighted
     assert len(actual) == 1
-    assert actual[0]["Controlled"] == "N/A"
     assert actual[0]["Control list entries"] == '<span class="govuk-hint govuk-!-margin-0">N/A</span>'
 
 
@@ -31,7 +30,6 @@ def test_convert_goods_on_application_application_level_control_list_entries(app
 
     # then the differences in export characteristics are highlighted
     assert len(actual) == 1
-    assert actual[0]["Controlled"] == "No"
     assert actual[0]["Control list entries"] == '<span class="govuk-hint govuk-!-margin-0">N/A</span>'
 
 
@@ -47,7 +45,6 @@ def test_convert_goods_on_application_application_level_control_list_entries_sam
 
     # then no difference is highlighted
     assert len(actual) == 1
-    assert actual[0]["Controlled"] == "Yes"
     assert actual[0]["Control list entries"] == (
         "<span data-definition-title='ML1' data-definition-text='Smooth-bore weapons...'>ML1</span>, "
         "<span data-definition-title='ML2' data-definition-text='Smooth-bore weapons...'>ML2</span>"
@@ -64,7 +61,6 @@ def test_convert_goods_on_application_good_level_control_list_entries(applicatio
 
     # then no difference is highlighted
     assert len(actual) == 1
-    assert actual[0]["Controlled"] == "No"
     assert actual[0]["Control list entries"] == '<span class="govuk-hint govuk-!-margin-0">N/A</span>'
 
 
