@@ -21,6 +21,13 @@ def mock_application_get(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def mock_application_put(requests_mock, data_standard_case):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/applications/{application["id"]}/')
+    return requests_mock.put(url=url, json=application)
+
+
+@pytest.fixture
 def mock_good_get(requests_mock, data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"].update(

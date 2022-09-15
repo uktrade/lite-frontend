@@ -57,6 +57,7 @@ def test_application_export_details_end_to_end(
     data_standard_case,
     application_export_details_url,
     mock_application_get,
+    mock_application_put,
     post_to_step,
 ):
     authorized_client.get(application_export_details_url)
@@ -64,8 +65,8 @@ def test_application_export_details_end_to_end(
     response = post_to_step(
         ExportDetailsSteps.SECURITY_CLASSIFIED,
         {
-            "is_security_classified": True,
-            "mod_security_classified_approvals": ["F680", "F1686", "Other"],
+            "has_security_approval": True,
+            "security_approvals": ["F680", "F1686", "Other"],
         },
     )
 
@@ -86,7 +87,7 @@ def test_application_export_details_end_to_end(
         ExportDetailsSteps.F1686_DETAILS,
         {
             "f1686_contracting_authority": "dummy contracting authority",
-            "is_approval_document_available": True,
+            "is_f1686_approval_document_available": True,
             "f1686_approval_document": SimpleUploadedFile("data sheet", b"This is a an approval document"),
         },
     )
@@ -97,12 +98,123 @@ def test_application_export_details_end_to_end(
     response = post_to_step(
         ExportDetailsSteps.SECURITY_OTHER_DETAILS,
         {
-            "mod_security_other_details": "dummy other details",
-            "approval_document_other": SimpleUploadedFile("data sheet", b"This is a an approval document"),
+            "other_security_approval_details": "dummy other details",
+            "other_security_approval_document": SimpleUploadedFile("data sheet", b"Other approval document"),
         },
     )
 
     assert response.status_code == 302
+
+    assert mock_application_put.called_once
+    last_request = mock_application_put.last_request
+
+    assert last_request.json() == {
+        "security_approvals": ["F680", "F1686", "Other"],
+        "has_security_approval": True,
+        "f680_reference_number": "dummy ref",
+        "f1686_contracting_authority": "dummy contracting authority",
+        "other_security_approval_details": "dummy other details",
+    }
+
+    assert response.url == reverse(
+        "applications:locations_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+        },
+    )
+
+
+def test_application_export_details_end_to_end_alternative(
+    authorized_client,
+    data_standard_case,
+    application_export_details_url,
+    mock_application_get,
+    mock_application_put,
+    post_to_step,
+):
+    authorized_client.get(application_export_details_url)
+
+    response = post_to_step(
+        ExportDetailsSteps.SECURITY_CLASSIFIED,
+        {
+            "has_security_approval": True,
+            "security_approvals": ["F1686", "Other"],
+        },
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], F1686DetailsForm)
+
+    response = post_to_step(
+        ExportDetailsSteps.F1686_DETAILS,
+        {
+            "f1686_contracting_authority": "dummy contracting authority",
+            "is_f1686_approval_document_available": False,
+            "f1686_reference_number": "dummy f1686 reference number",
+            "f1686_approval_date_0": "02",
+            "f1686_approval_date_1": "02",
+            "f1686_approval_date_2": "2020",
+        },
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], SecurityOtherDetailsForm)
+
+    response = post_to_step(
+        ExportDetailsSteps.SECURITY_OTHER_DETAILS,
+        {
+            "other_security_approval_details": "dummy other details",
+        },
+    )
+
+    assert response.status_code == 302
+
+    assert mock_application_put.called_once
+    last_request = mock_application_put.last_request
+
+    assert last_request.json() == {
+        "security_approvals": ["F1686", "Other"],
+        "has_security_approval": True,
+        "f1686_contracting_authority": "dummy contracting authority",
+        "f1686_reference_number": "dummy f1686 reference number",
+        "f1686_approval_date": "2020-02-02",
+        "other_security_approval_details": "dummy other details",
+    }
+
+    assert response.url == reverse(
+        "applications:locations_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+        },
+    )
+
+
+def test_application_export_details_short(
+    authorized_client,
+    data_standard_case,
+    application_export_details_url,
+    mock_application_get,
+    mock_application_put,
+    post_to_step,
+):
+    authorized_client.get(application_export_details_url)
+
+    response = post_to_step(
+        ExportDetailsSteps.SECURITY_CLASSIFIED,
+        {
+            "has_security_approval": False,
+        },
+    )
+
+    assert response.status_code == 302
+
+    assert mock_application_put.called_once
+    last_request = mock_application_put.last_request
+
+    assert last_request.json() == {
+        "security_approvals": [],
+        "has_security_approval": False,
+    }
     assert response.url == reverse(
         "applications:locations_summary",
         kwargs={
