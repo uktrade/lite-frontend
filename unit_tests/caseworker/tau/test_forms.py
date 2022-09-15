@@ -322,7 +322,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
                     "good": {
                         "id": "12345",
                         "item_category": {
-                            "key": ProductCategories.COMPONENT_CATEGORY_PLATFORM,
+                            "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT,
                         },
                     },
                 },
@@ -334,7 +334,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
                         "good_on_application": {
                             "good": {
                                 "id": "12345",
-                                "item_category": {"key": ProductCategories.COMPONENT_CATEGORY_PLATFORM},
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT},
                             }
                         },
                         "summary": (

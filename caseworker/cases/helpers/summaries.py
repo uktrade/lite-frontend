@@ -6,7 +6,7 @@ from core.summaries.formatters import (
 from core.summaries.summaries import (
     firearm_summary as core_firearm_summary,
     firearm_on_application_summary as core_firearm_on_application_summary,
-    get_summaries_type_good_on_application,
+    get_summary_type_for_good_on_application,
     material_summary as core_material_summary,
     material_product_on_application_summary as core_material_product_on_application_summary,
     NoSummaryForType,
@@ -156,7 +156,7 @@ def get_good_on_application_summary(
     organisation_documents,
 ):
     try:
-        summary_type = get_summaries_type_good_on_application(good_on_application)
+        summary_type = get_summary_type_for_good_on_application(good_on_application)
     except NoSummaryForType:
         return None
 

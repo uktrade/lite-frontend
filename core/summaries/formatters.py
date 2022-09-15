@@ -434,6 +434,7 @@ SOFTWARE_LABELS = {
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
     "security-features": "Does the product include security features to protect information?",
+    "security-feature-details": "Provide details of the information security features",
     "declared-at-customs": "Will the product be declared at customs?",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "design-details": "Describe the product and what it is designed to do",

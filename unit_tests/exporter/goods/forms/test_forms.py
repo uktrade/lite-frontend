@@ -1147,7 +1147,6 @@ def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid,
             True,
             {},
         ),
-        ({"is_good_incorporated": True, "unit": "ITG"}, True, {}),
     ),
 )
 def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
@@ -1165,14 +1164,13 @@ def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
     form = forms.UnitQuantityValueForm(data=data, good=good, number_of_items=5, request=request)
     assert form.fields["unit"].choices == [
         ("", "Select"),
-        ("GRM", "Gram(s)"),
-        ("KGM", "Kilogram(s)"),
-        ("NAR", "Number of articles"),
-        ("MTK", "Square metre(s)"),
-        ("MTR", "Metre(s)"),
-        ("LTR", "Litre(s)"),
-        ("MTQ", "Cubic metre(s)"),
-        ("ITG", "Intangible"),
+        ("GRM", "Gram"),
+        ("KGM", "Kilogram"),
+        ("NAR", "Items"),
+        ("MTK", "Square metre"),
+        ("MTR", "Metre"),
+        ("LTR", "Litre"),
+        ("MTQ", "Cubic metre"),
     ]
 
     assert form.is_valid() == valid

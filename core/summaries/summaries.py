@@ -454,7 +454,33 @@ class SummaryTypes:
     COMPONENT = "COMPONENT"
 
 
-def get_summaries_type_good_on_application(good_on_application):
+def get_summary_type_for_good(good):
+    firearm_details = good.get("firearm_details")
+    if firearm_details:
+        if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS:
+            return SummaryTypes.FIREARM
+        raise NoSummaryForType
+
+    item_category = good.get("item_category")
+    if not item_category:
+        raise NoSummaryForType
+
+    item_category = item_category["key"]
+
+    summary_map = {
+        ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
+        ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
+        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
+        ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
+    }
+
+    try:
+        return summary_map[item_category]
+    except KeyError as e:
+        raise NoSummaryForType from e
+
+
+def get_summary_type_for_good_on_application(good_on_application):
     if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
         return SummaryTypes.FIREARM
 
@@ -475,7 +501,7 @@ def get_summaries_type_good_on_application(good_on_application):
         ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
         ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
-        ProductCategories.COMPONENT_CATEGORY_PLATFORM: SummaryTypes.COMPONENT,
+        ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
     }
 
     try:

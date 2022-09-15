@@ -363,13 +363,12 @@ def test_good_on_application_detail_verified_product(
     [
         (256, {"key": "NAR", "value": "items"}),
         (1, {"key": "NAR", "value": "item"}),
-        (123.45, {"key": "GRM", "value": "Gram(s)"}),
-        (128.64, {"key": "KGM", "value": "Kilogram(s)"}),
-        (1150.32, {"key": "MTK", "value": "Square metre(s)"}),
-        (100.00, {"key": "MTR", "value": "Metre(s)"}),
-        (2500.25, {"key": "LTR", "value": "Litre(s)"}),
-        (123.45, {"key": "MTQ", "value": "Cubic metre(s)"}),
-        (99, {"key": "ITG", "value": "Intangible"}),
+        (123.45, {"key": "GRM", "value": "Gram"}),
+        (128.64, {"key": "KGM", "value": "Kilogram"}),
+        (1150.32, {"key": "MTK", "value": "Square metre"}),
+        (100.00, {"key": "MTR", "value": "Metre"}),
+        (2500.25, {"key": "LTR", "value": "Litre"}),
+        (123.45, {"key": "MTQ", "value": "Cubic metre"}),
     ],
 )
 def test_good_on_application_display_quantity(data_good_on_application, quantity, unit):

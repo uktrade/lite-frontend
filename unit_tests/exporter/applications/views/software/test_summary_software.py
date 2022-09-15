@@ -116,7 +116,7 @@ def software_summary(good_id):
         (
             "security-feature-details",
             "security features",
-            "security-feature-details",
+            "Provide details of the information security features",
         ),
         (
             "declared-at-customs",
