@@ -5,6 +5,7 @@ import uuid
 from django.db import models
 
 from core.summaries.formatters import (
+    add_edit_links,
     add_labels,
     comma_separated_list,
     date_formatter,
@@ -383,3 +384,19 @@ def test_template_formatter():
 )
 def test_integer(input, output):
     assert integer(input) == output
+
+
+def test_add_edit_links():
+    summary = (
+        ("has-edit-link", "foo", "bar"),
+        ("no-edit-link", "foo", "bar"),
+    )
+    edit_links = {
+        "has-edit-link": "has_edit_link",
+    }
+    get_edit_link = lambda link: f"http://example.com/{link}/"
+
+    assert add_edit_links(summary, edit_links, get_edit_link) == (
+        ("has-edit-link", "foo", "bar", "http://example.com/has_edit_link/"),
+        ("no-edit-link", "foo", "bar", None),
+    )
