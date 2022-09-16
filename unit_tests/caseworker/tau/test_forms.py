@@ -423,8 +423,6 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             ("name", "to_remove"),
             ("is-good-controlled", "to_remove"),
             ("control-list-entries", "to_remove"),
-            ("has-product-document", "to_remove"),
-            ("is-document-sensitive", "to_remove"),
             ("no-product-document-explanation", "to_remove"),
             ("product-document", "to_remove"),
             ("product-document-description", "to_remove"),
