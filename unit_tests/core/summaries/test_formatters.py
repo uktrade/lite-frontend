@@ -7,6 +7,7 @@ from django.db import models
 from core.summaries.formatters import (
     add_edit_links,
     add_labels,
+    choices_formatter,
     comma_separated_list,
     date_formatter,
     document_formatter,
@@ -331,6 +332,41 @@ class TextChoice(models.TextChoices):
 class DifferingNameAndValueTextChoice(models.TextChoices):
     FOO = "different", "foo"
     BAR = "another", "bar"
+
+
+@pytest.mark.parametrize(
+    "choices, input, output",
+    (
+        (
+            (
+                (True, "This is the true value"),
+                (False, "This is the false value"),
+            ),
+            True,
+            "This is the true value",
+        ),
+        (
+            (
+                (True, "This is the true value"),
+                (False, "This is the false value"),
+            ),
+            False,
+            "This is the false value",
+        ),
+        (
+            (
+                ("foo", "This is the foo value"),
+                ("bar", "This is the bar value"),
+                ("baz", "This is the foo value"),
+            ),
+            "foo",
+            "This is the foo value",
+        ),
+    ),
+)
+def test_choices_formatter(choices, input, output):
+    formatter = choices_formatter(choices)
+    assert formatter(input) == output
 
 
 @pytest.mark.parametrize(
