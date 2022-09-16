@@ -1746,6 +1746,9 @@ def standard_component_expected_product_on_application_summary():
 @pytest.fixture
 def standard_material_expected_product_summary():
     return (
+        ("is-firearm-product", "No", "Is it a firearm product?"),
+        ("product-category", "It forms part of a product", "Select the product category"),
+        ("is-material-substance", "Yes", "Is it a material or substance?"),
         (
             "name",
             "p1",

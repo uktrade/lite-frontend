@@ -84,6 +84,9 @@ PLATFORM_LABELS = {
 }
 
 MATERIAL_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "product-category": "Select the product category",
+    "is-material-substance": "Is it a material or substance?",
     "name": "Give the product a descriptive name",
     "is-good-controlled": "Do you know the product's control list entry?",
     "control-list-entries": "Enter the control list entry",
@@ -345,6 +348,13 @@ FIREARM_ON_APPLICATION_LABELS = {
     "serial-numbers": "Enter serial numbers or other identification markings",
 }
 
+product_category_formatter = mapping_formatter(
+    {
+        "platform": "It's a complete product",
+        "material": "It forms part of a product",
+    }
+)
+
 
 product_category_formatter = mapping_formatter(
     {
@@ -395,6 +405,9 @@ PLATFORM_ON_APPLICATION_LABELS = {
 
 
 MATERIAL_VALUE_FORMATTERS = {
+    "is-firearm-product": yesno,
+    "product-category": product_category_formatter,
+    "is-material-substance": yesno,
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("Yes"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),

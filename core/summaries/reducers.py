@@ -506,6 +506,10 @@ def material_reducer(good):
             "material",
         ),
         (
+            "is-material-substance",
+            True,
+        ),
+        (
             "name",
             good["name"],
         ),
