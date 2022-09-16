@@ -126,6 +126,8 @@ def test_firearm_summary():
             "safe": True,
             "name": "section5.pdf",
         },
+        "reference_code": "section-certificate-number",
+        "expiry_date": "9 October 2020",
     }
     rfd_document = {
         "id": uuid.uuid4(),

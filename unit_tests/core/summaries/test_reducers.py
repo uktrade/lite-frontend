@@ -374,16 +374,23 @@ def test_is_replica_reducer(good, output):
             {
                 "firearms_act_section": "firearms_act_section5",
                 "section_certificate_missing": False,
-                "section_certificate_number": "section-certificate-number",
-                "section_certificate_date_of_expiry": "2030-10-09",
             },
             {
-                "section-five-certificate": "document",
+                "section-five-certificate": {
+                    "reference_code": "section-certificate-number",
+                    "expiry_date": "9 October 2030",
+                },
             },
             (
-                ("section-5-certificate-document", "document"),
+                (
+                    "section-5-certificate-document",
+                    {
+                        "reference_code": "section-certificate-number",
+                        "expiry_date": "9 October 2030",
+                    },
+                ),
                 ("section-5-certificate-reference-number", "section-certificate-number"),
-                ("section-5-certificate-date-of-expiry", "2030-10-09"),
+                ("section-5-certificate-date-of-expiry", "9 October 2030"),
             ),
         ),
     ),

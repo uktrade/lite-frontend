@@ -75,6 +75,8 @@ def test_firearm_summary_with_section_5_and_rfd_certificates(data_standard_case)
                     "name": "Section 5 document",
                     "safe": True,
                 },
+                "reference_code": "section-certificate-number",
+                "expiry_date": "9 October 2030",
             },
             OrganisationDocumentType.RFD_CERTIFICATE: {
                 "document": {

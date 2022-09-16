@@ -140,18 +140,19 @@ def firearms_act_section5_reducer(firearm_details, organisation_documents):
                 ),
             )
         else:
+            section_5_certificate_document = organisation_documents[FirearmsActDocumentType.SECTION_5]
             summary += (
                 (
                     "section-5-certificate-document",
-                    organisation_documents[FirearmsActDocumentType.SECTION_5],
+                    section_5_certificate_document,
                 ),
                 (
                     "section-5-certificate-reference-number",
-                    firearm_details["section_certificate_number"],
+                    section_5_certificate_document["reference_code"],
                 ),
                 (
                     "section-5-certificate-date-of-expiry",
-                    firearm_details["section_certificate_date_of_expiry"],
+                    section_5_certificate_document["expiry_date"],
                 ),
             )
 
