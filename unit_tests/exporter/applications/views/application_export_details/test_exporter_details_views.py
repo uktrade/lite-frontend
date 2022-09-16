@@ -117,7 +117,7 @@ def test_application_export_details_end_to_end(
     }
 
     assert response.url == reverse(
-        "applications:locations_summary",
+        "applications:application_export_details_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
         },
@@ -182,7 +182,7 @@ def test_application_export_details_end_to_end_alternative(
     }
 
     assert response.url == reverse(
-        "applications:locations_summary",
+        "applications:application_export_details_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
         },
@@ -216,7 +216,7 @@ def test_application_export_details_short(
         "is_mod_security_approved": False,
     }
     assert response.url == reverse(
-        "applications:locations_summary",
+        "applications:application_export_details_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
         },
