@@ -820,12 +820,6 @@ class ProductSecurityFeaturesForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.details(
-                "Help with security features",
-                "<p>Information security features include cryptography, authentication, and "
-                "cryptanalytic functions. They are often found in communication, wireless "
-                "or internet-based products.</p>",
-            ),
             ConditionalRadios(
                 "has_security_features",
                 ConditionalQuestion(
@@ -833,6 +827,10 @@ class ProductSecurityFeaturesForm(BaseForm):
                     "security_feature_details",
                 ),
                 ProductSecurityFeatures.NO,
+            ),
+            HTML.details(
+                "Help with security features",
+                render_to_string("goods/forms/common/help_with_security_features.html"),
             ),
         )
 
