@@ -109,6 +109,7 @@ MATERIAL_LABELS = {
 COMPONENT_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "product-category": "Select the product category",
+    "is-material-substance": "Is it a material or substance?",
     "name": "Give the product a descriptive name",
     "is-component": "Is the product a component?",
     "component-type": "What type of component is it?",
@@ -492,6 +493,7 @@ SOFTWARE_ON_APPLICATION_LABELS = {
 COMPONENT_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "product-category": product_category_formatter,
+    "is-material-substance": just("No, it's a component, accessory or module"),
     "is-component": yesno,
     "component-type": model_choices_formatter(ComponentChoices),
     "is-good-controlled": key_value_formatter,

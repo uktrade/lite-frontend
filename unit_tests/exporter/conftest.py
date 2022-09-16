@@ -475,6 +475,11 @@ def component_summary(good_id):
             "Select the product category",
         ),
         (
+            "is-material-substance",
+            "No, it's a component, accessory or module",
+            "Is it a material or substance?",
+        ),
+        (
             "name",
             "p1",
             "Give the product a descriptive name",
