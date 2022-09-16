@@ -5,6 +5,7 @@ from django.http import Http404
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -19,6 +20,7 @@ from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, Secur
 from .constants import ExportDetailsSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
 from .payloads import ExportDetailsStepsPayloadBuilder
+from .mixins import NonF680SecurityClassifiedFlagMixin
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +29,7 @@ class ExportDetails(
     LoginRequiredMixin,
     ApplicationMixin,
     BaseSessionWizardView,
+    NonF680SecurityClassifiedFlagMixin,
 ):
     form_list = [
         (ExportDetailsSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
@@ -94,7 +97,7 @@ class ExportDetails(
 
     def get_success_url(self):
         return reverse(
-            "applications:locations_summary",
+            "applications:application_export_details_summary",
             kwargs={"pk": self.application["id"]},
         )
 
@@ -116,3 +119,13 @@ class ExportDetails(
         if self.has_f1686_approval_document():
             pass
         return redirect(self.get_success_url())
+
+
+class ApplicationExportDetailsSummaryView(LoginRequiredMixin, ApplicationMixin, TemplateView):
+    template_name = "applications/export-details/application-export-details-summary.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["application"] = self.application
+        context["back_link_url"] = reverse("applications:export_details", kwargs={"pk": self.kwargs["pk"]})
+        return context

@@ -1,0 +1,62 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block back_link %}
+	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{% lcs 'generic.BACK' %}</a>
+{% endblock %}
+
+{% block body %}
+
+<h1 class="govuk-heading-xl">Export details summary</h1>
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-locations-summary">
+
+	<div class="govuk-summary-list__row">
+		<dt class="govuk-summary-list__key">Do you have a Ministry of Defence security approval (such as F680 or F1686)?</dt>
+        {% if not application.is_mod_security_approved %}
+		    <dd class="govuk-summary-list__value">{{ application.is_mod_security_approved|yesno|capfirst }}</dd>
+        {%  else %}
+            <dd class="govuk-summary-list__value">{{ application.security_approvals }}</dd>
+        {% endif %}
+        <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+	</div>
+    {% if "F680" in application.security_approvals %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">What is the F680 reference number?</dt>
+            <dd class="govuk-summary-list__value">{{ application.f680_reference_number }}</dd>
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_export_details_f680_reference_number' application.id %}">Change</a>
+        </div>
+    {% endif %}
+
+    {% if "F1686" in application.security_approvals %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">F1686 Do you have an approval document to upload?</dt>
+                <dd class="govuk-summary-list__value">{{ application.is_f1686_approval_document_available|yesno|capfirst  }}</dd>
+                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"  href="">Change</a>
+            </div>
+        {% if not application.is_f1686_approval_document_available %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">F1686 Reference number</dt>
+                <dd class="govuk-summary-list__value">{{ application.f1686_reference_number }}</dd>
+                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">F1686 Approval date</dt>
+                <dd class="govuk-summary-list__value">{{ application.f1686_approval_date }}</dd>
+                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if "Other" in application.security_approvals %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Provide details of your approval</dt>
+            <dd class="govuk-summary-list__value">{{ application.other_security_approval_details  }}</dd>
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+        </div>
+    {% endif %}
+</dl>
+
+<div class="govuk-button-group">
+	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Continue</a>
+</div>
+{% endblock %}
