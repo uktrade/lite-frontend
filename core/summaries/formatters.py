@@ -348,12 +348,13 @@ FIREARM_ON_APPLICATION_LABELS = {
     "serial-numbers": "Enter serial numbers or other identification markings",
 }
 
+
 product_category_formatter = mapping_formatter(
     {
         "platform": "It's a complete product",
         "material": "It forms part of a product",
         "component": "It forms part of a product",
-    }
+    },
 )
 
 
