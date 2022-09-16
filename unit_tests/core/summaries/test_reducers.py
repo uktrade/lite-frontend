@@ -5,6 +5,7 @@ from decimal import Decimal
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
     SerialChoices,
 )
 from core.summaries.reducers import (
@@ -69,15 +70,21 @@ def test_firearm_reducer(is_user_rfd, mocker):
     organisation_documents = {}
     extra_result_values = ()
     if is_user_rfd:
-        organisation_documents["rfd-certificate"] = {
+        organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE] = {
             "document": {},
             "reference_code": "12345",
             "expiry_date": "31 May 2025",
         }
         extra_result_values = (
-            ("rfd-certificate-document", organisation_documents["rfd-certificate"]),
-            ("rfd-certificate-reference-number", organisation_documents["rfd-certificate"]["reference_code"]),
-            ("rfd-certificate-date-of-expiry", organisation_documents["rfd-certificate"]["expiry_date"]),
+            ("rfd-certificate-document", organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]),
+            (
+                "rfd-certificate-reference-number",
+                organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]["reference_code"],
+            ),
+            (
+                "rfd-certificate-date-of-expiry",
+                organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]["expiry_date"],
+            ),
         )
     result = firearm_reducer(good, is_user_rfd, organisation_documents)
     assert result == (
@@ -193,7 +200,7 @@ def test_is_good_controlled_reducer(good, output):
         (
             True,
             {
-                "rfd-certificate": {
+                OrganisationDocumentType.RFD_CERTIFICATE: {
                     "document": {},
                     "reference_code": "12345",
                     "expiry_date": "31 May 2025",

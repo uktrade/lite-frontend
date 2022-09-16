@@ -2,7 +2,10 @@ from http import HTTPStatus
 
 from django.utils.functional import cached_property
 
-from core.constants import FirearmsActDocumentType
+from core.constants import (
+    FirearmsActDocumentType,
+    OrganisationDocumentType,
+)
 from core.decorators import expect_status
 
 from exporter.applications.services import (
@@ -13,7 +16,6 @@ from exporter.applications.services import (
     post_additional_document,
     post_application_document,
 )
-from exporter.core.constants import DocumentType
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     get_document_data,
@@ -354,11 +356,11 @@ class RfdCertificateAction:
         rfd_certificate_payload = {
             **get_document_data(cert_file),
             "description": "Registered firearm dealer certificate",
-            "document_type": DocumentType.RFD_CERTIFICATE,
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             "document_on_organisation": {
                 "expiry_date": expiry_date.isoformat(),
                 "reference_code": reference_code,
-                "document_type": DocumentType.RFD_CERTIFICATE,
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             },
         }
         return rfd_certificate_payload
@@ -389,7 +391,7 @@ class RfdCertificateAction:
         rfd_certificate_payload = {
             "expiry_date": expiry_date.isoformat(),
             "reference_code": reference_code,
-            "document_type": DocumentType.RFD_CERTIFICATE,
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         }
         return rfd_certificate_payload
 

@@ -16,6 +16,7 @@ from core.auth.views import LoginRequiredMixin
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
     ProductCategories,
 )
 from core.helpers import convert_dict_to_query_params
@@ -230,7 +231,7 @@ class RegisteredFirearmDealersMixin:
             "document_on_organisation": {
                 "expiry_date": format_date(self.request.POST, "expiry_date_"),
                 "reference_code": self.request.POST["reference_code"],
-                "document_type": constants.DocumentType.RFD_CERTIFICATE,
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             },
         }
 
@@ -469,7 +470,7 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
                 "document_on_organisation": {
                     "expiry_date": format_date(all_data, "expiry_date_"),
                     "reference_code": all_data["reference_code"],
-                    "document_type": constants.DocumentType.RFD_CERTIFICATE,
+                    "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 },
             }
 
@@ -971,7 +972,7 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
                 "document_on_organisation": {
                     "expiry_date": format_date(all_data, "expiry_date_"),
                     "reference_code": all_data["reference_code"],
-                    "document_type": constants.DocumentType.RFD_CERTIFICATE,
+                    "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 },
             }
 

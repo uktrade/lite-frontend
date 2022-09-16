@@ -1,5 +1,7 @@
 import uuid
 
+from core.constants import OrganisationDocumentType
+
 from exporter.applications.summaries.firearm import (
     add_firearm_on_application_summary_edit_links,
     add_firearm_summary_edit_links,
@@ -137,7 +139,7 @@ def test_firearm_summary():
     }
     organisation_documents = {
         "section-five-certificate": section_5_document,
-        "rfd-certificate": rfd_document,
+        OrganisationDocumentType.RFD_CERTIFICATE: rfd_document,
     }
 
     assert firearm_summary(good, is_user_rfd, organisation_documents) == (

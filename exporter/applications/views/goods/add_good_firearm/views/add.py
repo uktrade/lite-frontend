@@ -10,6 +10,7 @@ from core.auth.views import LoginRequiredMixin
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
 )
 from core.decorators import expect_status
 
@@ -17,7 +18,6 @@ from exporter.applications.services import (
     post_additional_document,
     post_firearm_good_on_application,
 )
-from exporter.core.constants import DocumentType
 from exporter.core.helpers import (
     get_document_data,
     get_rfd_certificate,
@@ -207,11 +207,11 @@ class AddGoodFirearm(
         rfd_certificate_payload = {
             **get_document_data(cert_file),
             "description": "Registered firearm dealer certificate",
-            "document_type": DocumentType.RFD_CERTIFICATE,
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             "document_on_organisation": {
                 "expiry_date": expiry_date.isoformat(),
                 "reference_code": reference_code,
-                "document_type": DocumentType.RFD_CERTIFICATE,
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             },
         }
         return rfd_certificate_payload
@@ -294,7 +294,7 @@ class AddGoodFirearm(
                 "s3_key": document["s3_key"],
                 "safe": document["safe"],
                 "size": document["size"],
-                "document_type": DocumentType.RFD_CERTIFICATE,
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 "description": "Registered firearm dealer certificate",
             },
         )

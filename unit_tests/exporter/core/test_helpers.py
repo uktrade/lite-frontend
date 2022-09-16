@@ -1,9 +1,15 @@
+from core.constants import OrganisationDocumentType
+
 from exporter.core.helpers import has_valid_rfd_certificate
 
 
 def test_has_valid_rfd_certificate_is_expired():
     actual = has_valid_rfd_certificate(
-        {"organisation": {"documents": [{"document_type": "rfd-certificate", "is_expired": True}]}}
+        {
+            "organisation": {
+                "documents": [{"document_type": OrganisationDocumentType.RFD_CERTIFICATE, "is_expired": True}]
+            }
+        }
     )
 
     assert actual is False
@@ -11,7 +17,11 @@ def test_has_valid_rfd_certificate_is_expired():
 
 def test_has_valid_rfd_certificate_not_expired():
     actual = has_valid_rfd_certificate(
-        {"organisation": {"documents": [{"document_type": "rfd-certificate", "is_expired": False}]}}
+        {
+            "organisation": {
+                "documents": [{"document_type": OrganisationDocumentType.RFD_CERTIFICATE, "is_expired": False}]
+            }
+        }
     )
 
     assert actual is True

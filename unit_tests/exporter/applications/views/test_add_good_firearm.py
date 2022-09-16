@@ -8,6 +8,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
+from core.constants import OrganisationDocumentType
+
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
@@ -501,7 +503,7 @@ def test_add_good_firearm_with_rfd_document_submission(
     application_doc_request = post_applications_document_matcher.last_request
     assert application_doc_request.json() == {
         "description": "Registered firearm dealer certificate",
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": "rfd_certificate.txt",
         "s3_key": "rfd_certificate.txt.s3_key",
         "safe": True,
@@ -750,9 +752,9 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
         "document_on_organisation": {
             "expiry_date": expiry_date.isoformat(),
             "reference_code": "12345",
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         },
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": file_name,
         "s3_key": file_name,
         "size": 0,
@@ -1259,7 +1261,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5(
 
     assert post_applications_document_matcher.request_history[0].json() == {
         "description": "Registered firearm dealer certificate",
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": "rfd_certificate.txt",
         "s3_key": "rfd_certificate.txt.s3_key",
         "safe": True,
@@ -1382,7 +1384,7 @@ def test_add_good_firearm_with_rfd_document_submission_section_5_with_current_se
     application_doc_request = post_applications_document_matcher.last_request
     assert application_doc_request.json() == {
         "description": "Registered firearm dealer certificate",
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": "rfd_certificate.txt",
         "s3_key": "rfd_certificate.txt.s3_key",
         "safe": True,
