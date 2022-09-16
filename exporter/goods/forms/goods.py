@@ -873,13 +873,11 @@ class ProductDeclaredAtCustomsForm(BaseForm):
 
     def get_layout_fields(self):
         return (
+            "has_declared_at_customs",
             HTML.details(
                 "Help with export declarations",
-                "<p>If your product is considered physical (tangible) it is declared at customs. "
-                "If it is sent digitally, such as through software or email, it is considered "
-                "intangible and does not need to be declared at customs.</p>",
+                render_to_string("goods/forms/common/help_with_export_declarations.html"),
             ),
-            "has_declared_at_customs",
         )
 
 
