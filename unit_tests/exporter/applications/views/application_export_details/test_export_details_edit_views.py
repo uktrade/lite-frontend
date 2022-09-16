@@ -9,7 +9,7 @@ def setup(
     settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
+    settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = True
 
 
 @pytest.fixture
