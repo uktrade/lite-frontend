@@ -7,6 +7,7 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
+from core.constants import OrganisationDocumentType
 
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
@@ -222,7 +223,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         organisation_documents = {
             document["document_type"]: document for document in self.organisation_documents.values()
         }
-        rfd_certificate = organisation_documents.get("rfd-certificate")
+        rfd_certificate = organisation_documents.get(OrganisationDocumentType.RFD_CERTIFICATE)
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
         summary = get_good_on_application_tau_summary(

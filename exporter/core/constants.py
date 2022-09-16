@@ -225,10 +225,6 @@ class PartyDocumentType:
     END_USER_EC3_DOCUMENT = "end_user_ec3_document"
 
 
-class DocumentType:
-    RFD_CERTIFICATE = "rfd-certificate"
-
-
 class ProductSecurityFeatures:
     TITLE = "Does the product include security features to protect information?"
     SECURITY_FEATURE_DETAILS = "Provide details of the information security features"

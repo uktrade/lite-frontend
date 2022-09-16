@@ -2,14 +2,13 @@ import pytest
 import uuid
 
 from pytest_django.asserts import assertNotContains
-from unittest.mock import patch
 
-from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings
 from django.urls import reverse
 
 from core import client
+from core.constants import OrganisationDocumentType
+
 from exporter.applications.views.goods import AddGoodToApplicationFormSteps
 from exporter.goods.forms import (
     AttachFirearmsDealerCertificateForm,
@@ -511,7 +510,7 @@ def test_add_good_to_application_api_submission_with_documents_preexisting(
         "document_on_organisation": {
             "expiry_date": "2030-01-01",
             "reference_code": "12345",
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         },
     }
 
@@ -654,7 +653,7 @@ def test_add_good_to_application_api_submission_with_deferred_serial_numbers_wit
         "document_on_organisation": {
             "expiry_date": "2030-01-01",
             "reference_code": "12345",
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         },
     }
 
@@ -686,7 +685,7 @@ def test_add_good_to_application_api_submission_without_documents_preexisting(
         "document_on_organisation": {
             "expiry_date": "2030-01-01",
             "reference_code": "12345",
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         },
     }
 

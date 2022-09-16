@@ -35,7 +35,7 @@ def _get_document_url(queue_pk, application_pk, document):
 
 def organisation_document_formatter_factory(queue_pk, application_pk):
     def organisation_document_formatter(document):
-        url = _get_document_url(queue_pk, application_pk, document)
+        url = _get_document_url(queue_pk, application_pk, document["document"])
         return document_formatter(document["document"], url)
 
     return organisation_document_formatter

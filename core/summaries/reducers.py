@@ -1,10 +1,11 @@
 from decimal import Decimal
 
 from core.constants import (
+    COMPONENT_DETAILS_MAP,
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
     SerialChoices,
-    COMPONENT_DETAILS_MAP,
 )
 from core.goods.helpers import is_product_category_made_before_1938
 
@@ -139,18 +140,19 @@ def firearms_act_section5_reducer(firearm_details, organisation_documents):
                 ),
             )
         else:
+            section_5_certificate_document = organisation_documents[FirearmsActDocumentType.SECTION_5]
             summary += (
                 (
                     "section-5-certificate-document",
-                    organisation_documents[FirearmsActDocumentType.SECTION_5],
+                    section_5_certificate_document,
                 ),
                 (
                     "section-5-certificate-reference-number",
-                    firearm_details["section_certificate_number"],
+                    section_5_certificate_document["reference_code"],
                 ),
                 (
                     "section-5-certificate-date-of-expiry",
-                    firearm_details["section_certificate_date_of_expiry"],
+                    section_5_certificate_document["expiry_date"],
                 ),
             )
 
@@ -268,10 +270,10 @@ def firearm_reducer(good, is_user_rfd, organisation_documents):
 
 
 def rfd_reducer(is_user_rfd, organisation_documents):
-    if not is_user_rfd or not organisation_documents.get("rfd-certificate"):
+    if not is_user_rfd or not organisation_documents.get(OrganisationDocumentType.RFD_CERTIFICATE):
         return ()
 
-    rfd_certificate_document = organisation_documents["rfd-certificate"]
+    rfd_certificate_document = organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]
 
     summary = (
         (

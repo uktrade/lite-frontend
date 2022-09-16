@@ -1,10 +1,9 @@
 from core.constants import (
     FirearmsActSections,
+    OrganisationDocumentType,
     SerialChoices,
 )
 from core.goods.helpers import is_product_category_made_before_1938 as _is_product_category_made_before_1938
-
-from exporter.core.constants import DocumentType
 from exporter.core.helpers import (
     has_organisation_firearm_act_document as _has_organisation_firearm_act_document,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
@@ -28,7 +27,7 @@ def has_application_rfd_certificate(wizard):
         return False
 
     for additional_document in additional_documents:
-        if additional_document.get("document_type") == DocumentType.RFD_CERTIFICATE:
+        if additional_document.get("document_type") == OrganisationDocumentType.RFD_CERTIFICATE:
             return True
 
     return False

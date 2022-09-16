@@ -175,6 +175,8 @@ def to_date(val):
 
 def date_formatter(format=None):
     def _date_formatter(val):
+        # if not val:
+        #     return None
         return date_format(to_date(val), format)
 
     return _date_formatter
@@ -257,7 +259,6 @@ FIREARM_VALUE_FORMATTERS = {
         }
     ),
     "section-5-certificate-document": organisation_document_formatter,
-    "section-5-certificate-date-of-expiry": date_formatter("j F Y"),
     "section-5-certificate-missing": just("I do not have a section 5 letter of authority"),
     "firearms-act-1968-section": mapping_formatter(
         {

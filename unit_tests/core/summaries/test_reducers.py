@@ -5,6 +5,7 @@ from decimal import Decimal
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
     SerialChoices,
 )
 from core.summaries.reducers import (
@@ -69,15 +70,21 @@ def test_firearm_reducer(is_user_rfd, mocker):
     organisation_documents = {}
     extra_result_values = ()
     if is_user_rfd:
-        organisation_documents["rfd-certificate"] = {
+        organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE] = {
             "document": {},
             "reference_code": "12345",
             "expiry_date": "31 May 2025",
         }
         extra_result_values = (
-            ("rfd-certificate-document", organisation_documents["rfd-certificate"]),
-            ("rfd-certificate-reference-number", organisation_documents["rfd-certificate"]["reference_code"]),
-            ("rfd-certificate-date-of-expiry", organisation_documents["rfd-certificate"]["expiry_date"]),
+            ("rfd-certificate-document", organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]),
+            (
+                "rfd-certificate-reference-number",
+                organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]["reference_code"],
+            ),
+            (
+                "rfd-certificate-date-of-expiry",
+                organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]["expiry_date"],
+            ),
         )
     result = firearm_reducer(good, is_user_rfd, organisation_documents)
     assert result == (
@@ -193,7 +200,7 @@ def test_is_good_controlled_reducer(good, output):
         (
             True,
             {
-                "rfd-certificate": {
+                OrganisationDocumentType.RFD_CERTIFICATE: {
                     "document": {},
                     "reference_code": "12345",
                     "expiry_date": "31 May 2025",
@@ -367,16 +374,23 @@ def test_is_replica_reducer(good, output):
             {
                 "firearms_act_section": "firearms_act_section5",
                 "section_certificate_missing": False,
-                "section_certificate_number": "section-certificate-number",
-                "section_certificate_date_of_expiry": "2030-10-09",
             },
             {
-                "section-five-certificate": "document",
+                "section-five-certificate": {
+                    "reference_code": "section-certificate-number",
+                    "expiry_date": "9 October 2030",
+                },
             },
             (
-                ("section-5-certificate-document", "document"),
+                (
+                    "section-5-certificate-document",
+                    {
+                        "reference_code": "section-certificate-number",
+                        "expiry_date": "9 October 2030",
+                    },
+                ),
                 ("section-5-certificate-reference-number", "section-certificate-number"),
-                ("section-5-certificate-date-of-expiry", "2030-10-09"),
+                ("section-5-certificate-date-of-expiry", "9 October 2030"),
             ),
         ),
     ),

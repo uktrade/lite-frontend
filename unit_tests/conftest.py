@@ -3,6 +3,7 @@ import pytest
 import os
 
 from core import client
+from core.constants import OrganisationDocumentType
 
 
 @pytest.fixture(autouse=True)
@@ -1337,7 +1338,7 @@ def data_organisation():
         "documents": [
             {
                 "id": "b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a",
-                "document_type": "rfd-certificate",
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 "expiry_date": expiry_date.strftime("%d %B %Y"),
                 "reference_code": "RFD123",
                 "is_expired": False,
