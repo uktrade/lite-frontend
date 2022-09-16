@@ -14,8 +14,6 @@ def get_good_on_application_tau_summary(*args, **kwargs):
             "name",
             "is-good-controlled",
             "control-list-entries",
-            "has-product-document",
-            "is-document-sensitive",
             "no-product-document-explanation",
             "product-document",
             "product-document-description",
