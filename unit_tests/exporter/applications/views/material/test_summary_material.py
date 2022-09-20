@@ -37,6 +37,9 @@ def test_material_summary_template_used(
 @pytest.fixture
 def material_summary(good_id):
     return (
+        ("is-firearm-product", "No", "Is it a firearm product?"),
+        ("product-category", "It forms part of a product", "Select the product category"),
+        ("is-material-substance", "Yes", "Is it a material or substance?"),
         (
             "name",
             "p1",
