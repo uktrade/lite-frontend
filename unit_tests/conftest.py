@@ -1967,11 +1967,6 @@ def standard_software_expected_product_summary():
             "Is the document rated above Official-sensitive?",
         ),
         (
-            "design-details",
-            "some design details",
-            "Describe the product and what it is designed to do",
-        ),
-        (
             "product-document",
             "link",
             "Upload a document that shows what your product is designed to do",

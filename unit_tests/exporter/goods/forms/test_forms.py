@@ -1238,30 +1238,3 @@ def test_product_declared_at_customs(data, valid, error_field, error_message):
 
     if not valid:
         assert form.errors[error_field][0] == error_message
-
-
-@pytest.mark.parametrize(
-    "data, valid, error_field, error_message",
-    (
-        ({"design_details": "design details"}, True, None, None),
-        (
-            {"design_details": None},
-            False,
-            "design_details",
-            "Provide details of the product and what it is designed to do",
-        ),
-        (
-            {"design_details": ""},
-            False,
-            "design_details",
-            "Provide details of the product and what it is designed to do",
-        ),
-    ),
-)
-def test_product_design_details(data, valid, error_field, error_message):
-    form = forms.ProductDesignDetailsForm(data=data)
-
-    assert form.is_valid() == valid
-
-    if not valid:
-        assert form.errors[error_field][0] == error_message

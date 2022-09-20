@@ -30,7 +30,6 @@ SOFTWARE_SUMMARY_EDIT_LINKS = {
     "has-product-document": "product_document_availability",
     "no-product-document-explanation": "product_document_availability",
     "is-document-sensitive": "product_document_sensitivity",
-    "design-details": "design_details",
     "product-document": "product_document",
     "product-document-description": "product_document",
     "product-description": "product_description",

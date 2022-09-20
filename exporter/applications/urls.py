@@ -163,7 +163,6 @@ from exporter.applications.views.goods.add_good_software.views.edit import (
     SoftwareEditPVGrading,
     SoftwareEditPVGradingDetails,
     SoftwareEditSecurityFeatures,
-    SoftwareEditDesignDetails,
     SoftwareEditDeclaredAtCustoms,
     SoftwareEditProductDocumentAvailability,
     SoftwareEditProductDocumentSensitivity,
@@ -810,11 +809,6 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/software/edit/declared-at-customs/",
         SoftwareEditDeclaredAtCustoms.as_view(),
         name="software_edit_declared_at_customs",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/software/edit/design-details/",
-        SoftwareEditDesignDetails.as_view(),
-        name="software_edit_design_details",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/software/edit/product-document-availability/",

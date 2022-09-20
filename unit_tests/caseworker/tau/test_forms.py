@@ -426,7 +426,6 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             ("no-product-document-explanation", "to_remove"),
             ("product-document", "to_remove"),
             ("product-document-description", "to_remove"),
-            ("product-description", "to_remove"),
         ),
     )
 

@@ -34,7 +34,7 @@ class AddGoodSoftwarePayloadBuilder(MergingPayloadBuilder):
         AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
-        AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS: get_cleaned_data,
+        AddGoodSoftwareSteps.PRODUCT_DESCRIPTION: get_cleaned_data,
         AddGoodSoftwareSteps.PRODUCT_MILITARY_USE: get_cleaned_data,
     }
 

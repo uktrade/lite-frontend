@@ -58,7 +58,6 @@ from exporter.goods.forms.common import (
 from exporter.goods.forms import (
     ProductSecurityFeaturesForm,
     ProductDeclaredAtCustomsForm,
-    ProductDesignDetailsForm,
 )
 from exporter.goods.services import edit_software
 
@@ -181,15 +180,6 @@ class SoftwareEditDeclaredAtCustoms(BaseSoftwareEditView):
     def get_initial(self):
         return {
             "has_declared_at_customs": self.good["has_declared_at_customs"],
-        }
-
-
-class SoftwareEditDesignDetails(BaseSoftwareEditView):
-    form_class = ProductDesignDetailsForm
-
-    def get_initial(self):
-        return {
-            "design_details": self.good["design_details"],
         }
 
 
