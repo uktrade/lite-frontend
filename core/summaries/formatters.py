@@ -15,6 +15,7 @@ from core.constants import (
     ComponentChoices,
 )
 from exporter.goods.forms.common import ProductMilitaryUseForm
+from exporter.goods.forms.goods import ProductDeclaredAtCustomsForm
 
 
 FIREARM_LABELS = {
@@ -204,6 +205,13 @@ def money_formatter(val):
 
 def integer(val):
     return str(int(val))
+
+
+def choices_formatter(choices):
+    def _choices_formatter(val):
+        return dict(choices)[val]
+
+    return _choices_formatter
 
 
 def model_choices_formatter(model_choice):
@@ -465,7 +473,9 @@ SOFTWARE_VALUE_FORMATTERS = {
     "pv-grading-grading": key_value_formatter,
     "pv-grading-details-date-of-issue": date_formatter("j F Y"),
     "security-features": yesno,
-    "declared-at-customs": yesno,
+    "declared-at-customs": choices_formatter(
+        ProductDeclaredAtCustomsForm.HAS_DECLARED_AT_CUSTOMS_CHOICES,
+    ),
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
