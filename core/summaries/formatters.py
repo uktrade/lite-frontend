@@ -15,6 +15,7 @@ from core.constants import (
     ComponentChoices,
 )
 from exporter.goods.forms.common import ProductMilitaryUseForm
+from exporter.goods.forms.goods import ProductDeclaredAtCustomsForm
 
 
 FIREARM_LABELS = {
@@ -109,6 +110,7 @@ MATERIAL_LABELS = {
 COMPONENT_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "product-category": "Select the product category",
+    "is-material-substance": "Is it a material or substance?",
     "name": "Give the product a descriptive name",
     "is-component": "Is the product a component?",
     "component-type": "What type of component is it?",
@@ -203,6 +205,13 @@ def money_formatter(val):
 
 def integer(val):
     return str(int(val))
+
+
+def choices_formatter(choices):
+    def _choices_formatter(val):
+        return dict(choices)[val]
+
+    return _choices_formatter
 
 
 def model_choices_formatter(model_choice):
@@ -337,13 +346,17 @@ FIREARM_ON_APPLICATION_LABELS = {
 }
 
 
+product_category_formatter = mapping_formatter(
+    {
+        "platform": "It's a complete product",
+        "component": "It forms part of a product",
+    }
+)
+
+
 PLATFORM_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
-    "product-category": mapping_formatter(
-        {
-            "platform": "It's a complete product",
-        }
-    ),
+    "product-category": product_category_formatter,
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("Yes"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
@@ -421,7 +434,7 @@ MATERIAL_ON_APPLICATION_LABELS = {
 
 
 SOFTWARE_LABELS = {
-    "product-type": "Is it a firearm product?",
+    "is-firearm-product": "Is it a firearm product?",
     "non-firearm-category": "Select the product category",
     "name": "Give the product a descriptive name",
     "is-good-controlled": "Do you know the product's control list entry?",
@@ -448,7 +461,7 @@ SOFTWARE_LABELS = {
 }
 
 SOFTWARE_VALUE_FORMATTERS = {
-    "product-type": yesno,
+    "is-firearm-product": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
     "is-pv-graded": mapping_formatter(
@@ -460,7 +473,9 @@ SOFTWARE_VALUE_FORMATTERS = {
     "pv-grading-grading": key_value_formatter,
     "pv-grading-details-date-of-issue": date_formatter("j F Y"),
     "security-features": yesno,
-    "declared-at-customs": yesno,
+    "declared-at-customs": choices_formatter(
+        ProductDeclaredAtCustomsForm.HAS_DECLARED_AT_CUSTOMS_CHOICES,
+    ),
     "has-product-document": yesno,
     "is-document-sensitive": yesno,
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
@@ -487,11 +502,8 @@ SOFTWARE_ON_APPLICATION_LABELS = {
 
 COMPONENT_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
-    "product-category": mapping_formatter(
-        {
-            "component": "Component",
-        }
-    ),
+    "product-category": product_category_formatter,
+    "is-material-substance": just("No, it's a component, accessory or module"),
     "is-component": yesno,
     "component-type": model_choices_formatter(ComponentChoices),
     "is-good-controlled": key_value_formatter,

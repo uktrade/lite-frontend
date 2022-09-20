@@ -61,7 +61,8 @@ def test_component_product_details_context(
     response = authorized_client.get(component_product_details_url)
     assert response.context["summary"] == (
         ("is-firearm-product", "No", "Is it a firearm product?"),
-        ("product-category", "Component", "Select the product category"),
+        ("product-category", "It forms part of a product", "Select the product category"),
+        ("is-material-substance", "No, it's a component, accessory or module", "Is it a material or substance?"),
         ("name", "p1", "Give the product a descriptive name"),
         ("is-component", "Yes", "Is the product a component?"),
         ("component-type", "Modified for hardware", "What type of component is it?"),

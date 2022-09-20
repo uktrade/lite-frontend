@@ -856,11 +856,13 @@ class ProductDeclaredAtCustomsForm(BaseForm):
     class Layout:
         TITLE = ProductDeclaredAtCustoms.TITLE
 
+    HAS_DECLARED_AT_CUSTOMS_CHOICES = (
+        (True, "Yes"),
+        (False, ProductDeclaredAtCustoms.NO),
+    )
+
     has_declared_at_customs = forms.TypedChoiceField(
-        choices=(
-            (True, "Yes"),
-            (False, ProductDeclaredAtCustoms.NO),
-        ),
+        choices=HAS_DECLARED_AT_CUSTOMS_CHOICES,
         label="",
         coerce=coerce_str_to_bool,
         widget=forms.RadioSelect,

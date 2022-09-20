@@ -476,6 +476,10 @@ def component_reducer(good):
             "component",
         ),
         (
+            "is-material-substance",
+            False,
+        ),
+        (
             "name",
             good["name"],
         ),
@@ -546,8 +550,8 @@ def component_on_application_reducer(good_on_application):
 def software_reducer(good):
     summary = (
         (
-            "product-type",
-            "No",
+            "is-firearm-product",
+            False,
         ),
         ("non-firearm-category", "It helps to operate a product"),
         (

@@ -990,6 +990,7 @@ def test_component_reducer(mocker):
     assert result == (
         ("is-firearm-product", False),
         ("product-category", "component"),
+        ("is-material-substance", False),
         ("name", "good-name"),
     )
 

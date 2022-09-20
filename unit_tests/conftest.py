@@ -1608,7 +1608,8 @@ def standard_component_expected_product_summary():
             "No",
             "Is it a firearm product?",
         ),
-        ("product-category", "Component", "Select the product category"),
+        ("product-category", "It forms part of a product", "Select the product category"),
+        ("is-material-substance", "No, it's a component, accessory or module", "Is it a material or substance?"),
         ("name", "p1", "Give the product a descriptive name"),
         ("is-component", "Yes", "Is the product a component?"),
         ("component-type", "Modified for hardware", "What type of component is it?"),
@@ -1878,8 +1879,8 @@ def standard_material_expected_product_on_application_summary():
 def standard_software_expected_product_summary():
     return (
         (
-            "product-type",
-            "Yes",
+            "is-firearm-product",
+            "No",
             "Is it a firearm product?",
         ),
         (
