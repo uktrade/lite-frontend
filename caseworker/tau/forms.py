@@ -35,11 +35,6 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    is_wassenaar = forms.BooleanField(
-        label="This product falls under the WASSENAAR regime",
-        required=False,
-    )
-
     comment = forms.CharField(
         label="Add an assessment note (optional)",
         required=False,
@@ -54,7 +49,6 @@ class TAUEditForm(forms.Form):
         self.helper.layout = Layout(
             "control_list_entries",
             "does_not_have_control_list_entries",
-            "is_wassenaar",
             "report_summary",
             "comment",
             Submit("submit", "Submit"),

@@ -207,7 +207,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["data"] = self.request.POST or {
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
-            "is_wassenaar": "WASSENAAR" in {flag["name"] for flag in good["flags"]},
             "report_summary": good["report_summary"],
             "comment": good["comment"],
         }
@@ -302,7 +301,6 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
             payload = {
                 "control_list_entries": [],
                 "is_good_controlled": None,
-                "is_wassenaar": False,
                 "report_summary": None,
                 "comment": None,
                 "current_object": good["id"],

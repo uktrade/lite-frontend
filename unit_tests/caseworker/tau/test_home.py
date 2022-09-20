@@ -156,7 +156,6 @@ def test_form(
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
         "is_good_controlled": False,
-        "is_wassenaar": False,
     }
 
 

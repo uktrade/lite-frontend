@@ -84,30 +84,6 @@ from caseworker.tau import forms
             True,
             {},
         ),
-        # Set is_wassenaar to False
-        (
-            {
-                "goods": ["test-id"],
-                "report_summary": "test",
-                "does_not_have_control_list_entries": False,
-                "control_list_entries": ["test-rating"],
-                "is_wassenaar": False,
-            },
-            True,
-            {},
-        ),
-        # Set is_wassenaar to False
-        (
-            {
-                "goods": ["test-id"],
-                "report_summary": "test",
-                "does_not_have_control_list_entries": False,
-                "control_list_entries": ["test-rating"],
-                "is_wassenaar": True,
-            },
-            True,
-            {},
-        ),
     ),
 )
 def test_tau_assessment_form(data, valid, errors, rf):
@@ -509,28 +485,6 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
                 "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
-            },
-            True,
-            [],
-        ),
-        # Set is_wassenaar to False
-        (
-            {
-                "report_summary": "test",
-                "does_not_have_control_list_entries": False,
-                "control_list_entries": ["test-rating"],
-                "is_wassenaar": False,
-            },
-            True,
-            [],
-        ),
-        # Set is_wassenaar to True
-        (
-            {
-                "report_summary": "test",
-                "does_not_have_control_list_entries": False,
-                "control_list_entries": ["test-rating"],
-                "is_wassenaar": True,
             },
             True,
             [],
