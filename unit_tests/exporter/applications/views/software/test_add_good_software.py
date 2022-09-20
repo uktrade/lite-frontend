@@ -7,6 +7,7 @@ from exporter.applications.views.goods.add_good_software.views.constants import 
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -17,7 +18,6 @@ from exporter.goods.forms.common import (
 )
 from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
-    ProductDesignDetailsForm,
     ProductSecurityFeaturesForm,
 )
 
@@ -306,11 +306,11 @@ def test_add_good_software_no_pv(
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductDesignDetailsForm)
+    assert isinstance(response.context["form"], ProductDescriptionForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS,
-        {"design_details": "some design details"},
+        AddGoodSoftwareSteps.PRODUCT_DESCRIPTION,
+        {"product_description": "some design details"},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductMilitaryUseForm)
@@ -340,7 +340,7 @@ def test_add_good_software_no_pv(
         "has_declared_at_customs": True,
         "is_document_available": False,
         "no_document_comments": "product not manufactured yet",
-        "design_details": "some design details",
+        "product_description": "some design details",
         "is_military_use": "no",
         "modified_military_use_details": "",
         "no_part_number_comments": "no part number",

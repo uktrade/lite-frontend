@@ -234,8 +234,3 @@ class ProductSecurityFeatures:
 class ProductDeclaredAtCustoms:
     TITLE = "Will the product be declared at customs?"
     NO = "No, the product is sent electronically"
-
-
-class ProductDesignDetails:
-    TITLE = "Describe the product and what it is designed to do"
-    SUBMIT_BUTTON = "Continue"
