@@ -76,7 +76,6 @@ class BaseApplicationEditWizardView(
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
-
         ctx["back_link_url"] = self.get_success_url()
         ctx["title"] = form.Layout.TITLE
         return ctx
@@ -164,3 +163,9 @@ class EditExportDetails(
             initial.update(get_initial_other_security_approval_details(self.application))
 
         return initial
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+        ctx["back_link_url"] = self.get_success_url()
+        ctx["title"] = form.Layout.TITLE
+        return ctx
