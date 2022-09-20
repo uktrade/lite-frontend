@@ -1,14 +1,27 @@
+from datetime import datetime
+
 from django.views.generic import FormView
 from django.urls import reverse
+from django.shortcuts import redirect
 
 from core.auth.views import LoginRequiredMixin
 
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from exporter.applications.services import put_application
+from exporter.core.wizard.views import BaseSessionWizardView
 
-from .forms import F680ReferenceNumberForm
+from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
+from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
 from .mixins import NonF680SecurityClassifiedFlagMixin
+from .payloads import get_other_details_data, get_f1686_data, ExportDetailsStepsPayloadBuilder
+from .constants import ExportDetailsSteps
+from .initial import (
+    get_initial_security_classified_details,
+    get_initial_f680_reference_number,
+    get_initial_other_security_approval_details,
+    get_initial_f1686_details,
+)
 
 
 class BaseApplicationEditView(
@@ -47,7 +60,43 @@ class BaseApplicationEditView(
         return ctx
 
 
-class EditExportDetailsF680ReferenceNumber(BaseApplicationEditView):
+class BaseApplicationEditWizardView(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    BaseSessionWizardView,
+):
+    def get_success_url(self):
+        return reverse(
+            "applications:application_export_details_summary",
+            kwargs={"pk": self.application["id"]},
+        )
+
+    def get_back_link_url(self):
+        return self.get_success_url()
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+        ctx["back_link_url"] = self.get_success_url()
+        ctx["title"] = form.Layout.TITLE
+        return ctx
+
+    def get_payload(self, form_dict):
+        export_details_payload = ExportDetailsStepsPayloadBuilder().build(form_dict)
+        return export_details_payload
+
+    def edit_object(self, request, application_id, payload):
+        put_application(request, application_id, payload)
+
+    def process_forms(self, form_list, form_dict, **kwargs):
+        self.edit_object(self.request, self.application["id"], self.get_payload(form_dict))
+
+    def done(self, form_list, form_dict, **kwargs):
+        self.process_forms(form_list, form_dict, **kwargs)
+
+        return redirect(self.get_success_url())
+
+
+class EditF680ReferenceNumber(BaseApplicationEditView):
     form_class = F680ReferenceNumberForm
 
     def get_initial(self):
@@ -55,3 +104,68 @@ class EditExportDetailsF680ReferenceNumber(BaseApplicationEditView):
 
     def get_edit_payload(self, form):
         return get_cleaned_data(form)
+
+
+class EditSecurityOtherDetails(BaseApplicationEditView):
+    form_class = SecurityOtherDetailsForm
+
+    def get_initial(self):
+        return {"other_security_approval_details": self.application["other_security_approval_details"]}
+
+    def get_edit_payload(self, form):
+        return get_other_details_data(form)
+
+
+class EditF1686Details(BaseApplicationEditView):
+    form_class = F1686DetailsForm
+
+    def get_initial(self):
+        f1686_approval_date = self.application["f1686_approval_date"]
+        if f1686_approval_date:
+            f1686_approval_date = datetime.fromisoformat(self.application["f1686_approval_date"]).date()
+        return {
+            "f1686_contracting_authority": self.application["f1686_contracting_authority"],
+            "f1686_reference_number": self.application["f1686_reference_number"],
+            "f1686_approval_date": f1686_approval_date,
+            "is_f1686_approval_document_available": False,
+        }
+
+    def get_edit_payload(self, form):
+        return get_f1686_data(form)
+
+
+class EditExportDetails(
+    NonF680SecurityClassifiedFlagMixin,
+    BaseApplicationEditWizardView,
+):
+    form_list = [
+        (ExportDetailsSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
+        (ExportDetailsSteps.F680_REFERENCE_NUMBER, F680ReferenceNumberForm),
+        (ExportDetailsSteps.F1686_DETAILS, F1686DetailsForm),
+        (ExportDetailsSteps.SECURITY_OTHER_DETAILS, SecurityOtherDetailsForm),
+    ]
+
+    condition_dict = {
+        ExportDetailsSteps.F680_REFERENCE_NUMBER: is_f680_approval,
+        ExportDetailsSteps.F1686_DETAILS: is_f1686_approval,
+        ExportDetailsSteps.SECURITY_OTHER_DETAILS: is_other_approval,
+    }
+
+    def get_form_initial(self, step):
+        initial = super().get_form_initial(step)
+        if step == ExportDetailsSteps.SECURITY_CLASSIFIED:
+            initial.update(get_initial_security_classified_details(self.application))
+        if step == ExportDetailsSteps.F680_REFERENCE_NUMBER:
+            initial.update(get_initial_f680_reference_number(self.application))
+        if step == ExportDetailsSteps.F1686_DETAILS:
+            initial.update(get_initial_f1686_details(self.application))
+        if step == ExportDetailsSteps.SECURITY_OTHER_DETAILS:
+            initial.update(get_initial_other_security_approval_details(self.application))
+
+        return initial
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+        ctx["back_link_url"] = self.get_success_url()
+        ctx["title"] = form.Layout.TITLE
+        return ctx

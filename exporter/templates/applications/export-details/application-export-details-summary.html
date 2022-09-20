@@ -17,7 +17,7 @@
         {%  else %}
             <dd class="govuk-summary-list__value">{{ application.security_approvals }}</dd>
         {% endif %}
-        <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+        <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_export_details' application.id %}">Change</a>
 	</div>
     {% if "F680" in application.security_approvals %}
         <div class="govuk-summary-list__row">
@@ -31,18 +31,18 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">F1686 Do you have an approval document to upload?</dt>
                 <dd class="govuk-summary-list__value">{{ application.is_f1686_approval_document_available|yesno|capfirst  }}</dd>
-                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"  href="">Change</a>
+                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"  href="{% url 'applications:edit_export_details_f1686_details' application.id %}">Change</a>
             </div>
         {% if not application.is_f1686_approval_document_available %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">F1686 Reference number</dt>
                 <dd class="govuk-summary-list__value">{{ application.f1686_reference_number }}</dd>
-                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_export_details_f1686_details' application.id %}">Change</a>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">F1686 Approval date</dt>
                 <dd class="govuk-summary-list__value">{{ application.f1686_approval_date }}</dd>
-                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+                <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_export_details_f1686_details' application.id %}">Change</a>
             </div>
         {% endif %}
     {% endif %}
@@ -51,7 +51,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Provide details of your approval</dt>
             <dd class="govuk-summary-list__value">{{ application.other_security_approval_details  }}</dd>
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="#name">Change</a>
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state" href="{% url 'applications:edit_export_details_security_other_details' application.id %}">Change</a>
         </div>
     {% endif %}
 </dl>
