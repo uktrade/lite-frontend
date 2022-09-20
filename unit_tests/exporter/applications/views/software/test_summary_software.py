@@ -64,7 +64,6 @@ def test_software_product_summary_context(
         "security-features": "security-features",
         "security-feature-details": "security-features",
         "declared-at-customs": "declared-at-customs",
-        "design-details": "design-details",
         "has-product-document": "product-document-availability",
         "is-document-sensitive": "product-document-sensitivity",
         "product-document": "product-document",

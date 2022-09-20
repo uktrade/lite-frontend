@@ -16,12 +16,6 @@
                     <td class="govuk-table__header">Explain why you are not able to upload a product document</td>
                     <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
                 </tr>
-                {% if good.product_description %}
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Describe the product and what it is designed to do</td>
-                        <td class="govuk-table__cell">{{ good.product_description }}</td>
-                    </tr>
-                {% endif %}
             {% endif %}
         {% endwith %}
         {% for id, value, label in summary %}

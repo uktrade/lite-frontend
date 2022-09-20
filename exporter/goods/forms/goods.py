@@ -17,7 +17,6 @@ from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 from exporter.core.constants import (
     ProductSecurityFeatures,
     ProductDeclaredAtCustoms,
-    ProductDesignDetails,
     FIREARM_AMMUNITION_COMPONENT_TYPES,
 )
 from exporter.core.helpers import (
@@ -877,23 +876,6 @@ class ProductDeclaredAtCustomsForm(BaseForm):
                 render_to_string("goods/forms/common/help_with_export_declarations.html"),
             ),
         )
-
-
-class ProductDesignDetailsForm(BaseForm):
-    class Layout:
-        TITLE = ProductDesignDetails.TITLE
-
-    design_details = forms.CharField(
-        required=True,
-        label="",
-        widget=forms.Textarea,
-        error_messages={
-            "required": "Provide details of the product and what it is designed to do",
-        },
-    )
-
-    def get_layout_fields(self):
-        return ("design_details",)
 
 
 class AddGoodsQuestionsForm(forms.Form):

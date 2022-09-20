@@ -12,6 +12,7 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
+    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -28,7 +29,6 @@ from exporter.goods.forms.common import (
 from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
     ProductSecurityFeaturesForm,
-    ProductDesignDetailsForm,
 )
 from exporter.goods.services import post_software, post_good_documents
 from exporter.applications.services import post_software_good_on_application
@@ -71,15 +71,15 @@ class AddGoodSoftware(
         (AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS, ProductDeclaredAtCustomsForm),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
-        (AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS, ProductDesignDetailsForm),
         (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
+        (AddGoodSoftwareSteps.PRODUCT_DESCRIPTION, ProductDescriptionForm),
         (AddGoodSoftwareSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
         AddGoodSoftwareSteps.PV_GRADING_DETAILS: is_pv_graded,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
         AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
-        AddGoodSoftwareSteps.PRODUCT_DESIGN_DETAILS: ~C(is_product_document_available),
+        AddGoodSoftwareSteps.PRODUCT_DESCRIPTION: ~C(is_product_document_available),
     }
 
     def get_form_kwargs(self, step=None):

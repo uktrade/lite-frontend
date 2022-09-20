@@ -10,7 +10,6 @@ from core.constants import (
 )
 from core.summaries.reducers import (
     declared_at_customs_reducer,
-    design_details_reducer,
     designed_for_military_use_reducer,
     firearm_on_application_reducer,
     firearm_reducer,
@@ -1135,31 +1134,6 @@ def test_security_features_reducer(good, output):
 )
 def test_declared_at_customs_reducer(good, output):
     assert declared_at_customs_reducer(good) == output
-
-
-@pytest.mark.parametrize(
-    "good,output",
-    (
-        (
-            {
-                "design_details": "design details",
-            },
-            (("design-details", "design details"),),
-        ),
-        (
-            {
-                "design_details": None,
-            },
-            (("design-details", None),),
-        ),
-        (
-            {},
-            (("design-details", None),),
-        ),
-    ),
-)
-def test_design_details_reducer(good, output):
-    assert design_details_reducer(good) == output
 
 
 @pytest.mark.parametrize(

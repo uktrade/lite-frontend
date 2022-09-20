@@ -568,7 +568,6 @@ def software_reducer(good):
     summary += has_product_document_reducer(good)
     summary += security_features_reducer(good)
     summary += declared_at_customs_reducer(good)
-    summary += design_details_reducer(good)
     summary += designed_for_military_use_reducer(good)
     return summary
 
@@ -581,13 +580,6 @@ def security_features_reducer(good):
         )
 
     return (("security-features", False),)
-
-
-def design_details_reducer(good):
-    if good.get("design_details"):
-        return (("design-details", good["design_details"]),)
-
-    return (("design-details", None),)
 
 
 def declared_at_customs_reducer(good):

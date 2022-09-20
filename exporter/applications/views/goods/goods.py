@@ -41,6 +41,10 @@ from exporter.applications.services import (
     post_application_document,
     post_good_on_application,
 )
+from exporter.applications.summaries.component import (
+    component_summary,
+    component_product_on_application_summary,
+)
 from exporter.applications.summaries.firearm import (
     firearm_summary,
     firearm_on_application_summary,
@@ -1112,6 +1116,10 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
             SummaryTypes.SOFTWARE: (
                 software_summary,
                 software_product_on_application_summary,
+            ),
+            SummaryTypes.COMPONENT: (
+                component_summary,
+                component_product_on_application_summary,
             ),
         }
 
