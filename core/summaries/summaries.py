@@ -133,7 +133,7 @@ MATERIAL_FIELDS = (
 )
 
 SOFTWARE_FIELDS = (
-    "product-type",
+    "is-firearm-product",
     "non-firearm-category",
     "name",
     "is-good-controlled",
