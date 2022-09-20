@@ -426,7 +426,7 @@ MATERIAL_ON_APPLICATION_LABELS = {
 
 
 SOFTWARE_LABELS = {
-    "product-type": "Is it a firearm product?",
+    "is-firearm-product": "Is it a firearm product?",
     "non-firearm-category": "Select the product category",
     "name": "Give the product a descriptive name",
     "is-good-controlled": "Do you know the product's control list entry?",
@@ -453,7 +453,7 @@ SOFTWARE_LABELS = {
 }
 
 SOFTWARE_VALUE_FORMATTERS = {
-    "product-type": yesno,
+    "is-firearm-product": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
     "is-pv-graded": mapping_formatter(

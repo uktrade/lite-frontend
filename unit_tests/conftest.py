@@ -1879,8 +1879,8 @@ def standard_material_expected_product_on_application_summary():
 def standard_software_expected_product_summary():
     return (
         (
-            "product-type",
-            "Yes",
+            "is-firearm-product",
+            "No",
             "Is it a firearm product?",
         ),
         (

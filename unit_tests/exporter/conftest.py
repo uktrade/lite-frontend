@@ -574,8 +574,8 @@ def component_summary(good_id):
 def software_summary(good_id):
     return (
         (
-            "product-type",
-            "Yes",
+            "is-firearm-product",
+            "No",
             "Is it a firearm product?",
         ),
         (
