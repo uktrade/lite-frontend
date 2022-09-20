@@ -349,6 +349,14 @@ FIREARM_ON_APPLICATION_LABELS = {
 }
 
 
+is_material_substance_formatter = mapping_formatter(
+    {
+        True: "Yes",
+        False: "No, it's a component, accessory or module",
+    }
+)
+
+
 product_category_formatter = mapping_formatter(
     {
         "platform": "It's a complete product",
@@ -401,7 +409,7 @@ PLATFORM_ON_APPLICATION_LABELS = {
 MATERIAL_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "product-category": product_category_formatter,
-    "is-material-substance": yesno,
+    "is-material-substance": is_material_substance_formatter,
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("Yes"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
@@ -510,7 +518,7 @@ SOFTWARE_ON_APPLICATION_LABELS = {
 COMPONENT_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "product-category": product_category_formatter,
-    "is-material-substance": just("No, it's a component, accessory or module"),
+    "is-material-substance": is_material_substance_formatter,
     "is-component": yesno,
     "component-type": model_choices_formatter(ComponentChoices),
     "is-good-controlled": key_value_formatter,
