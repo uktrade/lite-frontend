@@ -471,8 +471,13 @@ def component_summary(good_id):
         ),
         (
             "product-category",
-            "Component",
+            "It forms part of a product",
             "Select the product category",
+        ),
+        (
+            "is-material-substance",
+            "No, it's a component, accessory or module",
+            "Is it a material or substance?",
         ),
         (
             "name",

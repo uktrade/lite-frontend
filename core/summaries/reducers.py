@@ -476,6 +476,10 @@ def component_reducer(good):
             "component",
         ),
         (
+            "is-material-substance",
+            False,
+        ),
+        (
             "name",
             good["name"],
         ),

@@ -164,6 +164,7 @@ SOFTWARE_FIELDS = (
 COMPONENT_FIELDS = (
     "is-firearm-product",
     "product-category",
+    "is-material-substance",
     "name",
     "is-component",
     "component-type",
