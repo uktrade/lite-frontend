@@ -2,6 +2,8 @@ from collections import OrderedDict
 
 from formtools.wizard.views import SessionWizardView
 
+from core.constants import OrganisationDocumentType
+
 from caseworker.cases.forms.review_goods import review_goods_form, ExportControlCharacteristicsForm
 from caseworker.cases.helpers.advice import get_param_goods, flatten_goods_data
 from caseworker.cases.helpers.summaries import get_good_on_application_summary
@@ -235,7 +237,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
 
         organisation_documents = {item["document_type"]: item for item in case.organisation["documents"]}
 
-        rfd_certificate = organisation_documents.get("rfd-certificate")
+        rfd_certificate = organisation_documents.get(OrganisationDocumentType.RFD_CERTIFICATE)
         is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
 
         product_summary = get_good_on_application_summary(

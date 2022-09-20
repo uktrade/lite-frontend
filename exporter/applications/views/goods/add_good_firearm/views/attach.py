@@ -13,6 +13,7 @@ from core.auth.views import LoginRequiredMixin
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
 )
 from core.decorators import expect_status
 
@@ -20,7 +21,6 @@ from exporter.applications.services import (
     post_additional_document,
     post_firearm_good_on_application,
 )
-from exporter.core.constants import DocumentType
 from exporter.core.helpers import (
     get_rfd_certificate,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
@@ -252,7 +252,7 @@ class AttachFirearmToApplication(
                 "s3_key": document["s3_key"],
                 "safe": document["safe"],
                 "size": document["size"],
-                "document_type": DocumentType.RFD_CERTIFICATE,
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 "description": "Registered firearm dealer certificate",
             },
         )

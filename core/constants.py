@@ -66,6 +66,10 @@ class CaseStatusEnum:
         return [getattr(cls, param) for param in dir(cls) if is_all_upper.match(param)]
 
 
+class OrganisationDocumentType:
+    RFD_CERTIFICATE = "rfd-certificate"
+
+
 class FirearmsActDocumentType:
     SECTION_1 = "section-one-certificate"
     SECTION_2 = "section-two-certificate"

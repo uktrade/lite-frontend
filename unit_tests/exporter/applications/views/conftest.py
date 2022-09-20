@@ -5,7 +5,10 @@ import uuid
 from django.urls import reverse
 
 from core import client
-from core.constants import SerialChoices
+from core.constants import (
+    OrganisationDocumentType,
+    SerialChoices,
+)
 
 
 @pytest.fixture
@@ -167,7 +170,7 @@ def rfd_certificate(organisation_id):
             "size": 3,
             "id": str(uuid.uuid4()),
         },
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "is_expired": False,
         "organisation": organisation_id,
         "expiry_date": expiry_date.strftime("%d %B %Y"),
@@ -213,7 +216,7 @@ def application_with_organisation_and_application_rfd_document(data_standard_cas
     }
     case["additional_documents"] = [
         {
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         }
     ]
     matcher = requests_mock.get(url=app_url, json=case)

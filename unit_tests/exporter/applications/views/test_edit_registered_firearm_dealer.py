@@ -5,6 +5,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
+from core.constants import OrganisationDocumentType
+
 from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import convert_api_date_string_to_date, decompose_date
@@ -114,11 +116,11 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
     assert post_applications_document_matcher.request_history[0].json() == {
         "description": "Registered firearm dealer certificate",
         "document_on_organisation": {
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             "expiry_date": rfd_expiry_date.isoformat(),
             "reference_code": "12345",
         },
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": "rfd_certificate.pdf",
         "s3_key": "rfd_certificate.pdf",
         "size": 0,
@@ -238,11 +240,11 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     assert application_doc_request.json() == {
         "description": "Registered firearm dealer certificate",
         "document_on_organisation": {
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             "expiry_date": rfd_expiry_date.isoformat(),
             "reference_code": "12345",
         },
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": "new_rfd_certificate.pdf",
         "s3_key": "new_rfd_certificate.pdf",
         "size": 0,
@@ -332,7 +334,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     assert last_request.json() == {
         "expiry_date": rfd_expiry_date.isoformat(),
         "reference_code": "67890",
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
     }
 
 
