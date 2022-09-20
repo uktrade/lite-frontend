@@ -17,7 +17,6 @@ def get_good_on_application_tau_summary(*args, **kwargs):
             "no-product-document-explanation",
             "product-document",
             "product-document-description",
-            "product-description",
         ],
     )
 
