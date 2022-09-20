@@ -1058,10 +1058,6 @@ urlpatterns = [
         EditF1686Details.as_view(),
         name="edit_export_details_f1686_details",
     ),
-        "<uuid:pk>/edit-export-details-f680-reference-number/",
-        EditExportDetailsF680ReferenceNumber.as_view(),
-        name="edit_export_details_f680_reference_number",
-    ),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),
     path(
