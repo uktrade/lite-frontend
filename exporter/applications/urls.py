@@ -21,7 +21,12 @@ from exporter.applications.views.application_export_details.views import (
     ExportDetails,
     ApplicationExportDetailsSummaryView,
 )
-from exporter.applications.views.application_export_details.edit_views import EditExportDetailsF680ReferenceNumber
+from exporter.applications.views.application_export_details.edit_views import (
+    EditF680ReferenceNumber,
+    EditSecurityOtherDetails,
+    EditF1686Details,
+    EditExportDetails,
+)
 
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from exporter.applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
@@ -1032,9 +1037,24 @@ urlpatterns = [
         name="application_export_details_summary",
     ),
     path(
+        "<uuid:pk>/edit-export-details/",
+        EditExportDetails.as_view(),
+        name="edit_export_details",
+    ),
+    path(
         "<uuid:pk>/edit-export-details-f680-reference-number/",
-        EditExportDetailsF680ReferenceNumber.as_view(),
+        EditF680ReferenceNumber.as_view(),
         name="edit_export_details_f680_reference_number",
+    ),
+    path(
+        "<uuid:pk>/edit-export-details-security-other-details/",
+        EditSecurityOtherDetails.as_view(),
+        name="edit_export_details_security_other_details",
+    ),
+    path(
+        "<uuid:pk>/edit-export-details-f1686-details/",
+        EditF1686Details.as_view(),
+        name="edit_export_details_f1686_details",
     ),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),
