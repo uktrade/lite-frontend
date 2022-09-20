@@ -359,21 +359,20 @@ def test_good_on_application_detail_verified_product(
 
 
 @pytest.mark.parametrize(
-    "quantity,unit",
+    "quantity, unit, expected_value",
     [
-        (256, {"key": "NAR", "value": "items"}),
-        (1, {"key": "NAR", "value": "item"}),
-        (123.45, {"key": "GRM", "value": "Gram"}),
-        (128.64, {"key": "KGM", "value": "Kilogram"}),
-        (1150.32, {"key": "MTK", "value": "Square metre"}),
-        (100.00, {"key": "MTR", "value": "Metre"}),
-        (2500.25, {"key": "LTR", "value": "Litre"}),
-        (123.45, {"key": "MTQ", "value": "Cubic metre"}),
+        (256, {"key": "NAR", "value": "Items"}, "256 items"),
+        (1, {"key": "NAR", "value": "Items"}, "1 item"),
+        (123.45, {"key": "GRM", "value": "Grams"}, "123.45 grams"),
+        (128.64, {"key": "KGM", "value": "Kilograms"}, "128.64 kilograms"),
+        (1150.32, {"key": "MTK", "value": "Square metres"}, "1150.32 square metres"),
+        (100.00, {"key": "MTR", "value": "Metres"}, "100.0 metres"),
+        (2500.25, {"key": "LTR", "value": "Litres"}, "2500.25 litres"),
+        (123.45, {"key": "MTQ", "value": "Cubic metres"}, "123.45 cubic metres"),
     ],
 )
-def test_good_on_application_display_quantity(data_good_on_application, quantity, unit):
+def test_good_on_application_display_quantity(data_good_on_application, quantity, unit, expected_value):
     good_on_application = {**data_good_on_application}
-    good_on_application["good"]["item_category"] = {"key": "group2_firearms", "value": "Firearms"}
     good_on_application["quantity"] = quantity
     good_on_application["unit"] = unit
 
@@ -383,12 +382,10 @@ def test_good_on_application_display_quantity(data_good_on_application, quantity
         "goods": [good_on_application],
     }
 
-    expected_quantity = f"{quantity} {unit['value']}"
-
     html = render_to_string("case/slices/goods.html", context)
     soup = BeautifulSoup(html, "html.parser")
     actual_quantity = soup.find(id="quantity-value").text
-    assert expected_quantity == actual_quantity
+    assert expected_value == actual_quantity
 
 
 @pytest.mark.parametrize(
