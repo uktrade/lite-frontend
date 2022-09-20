@@ -1027,6 +1027,7 @@ def test_material_reducer(mocker):
     assert result == (
         ("is-firearm-product", False),
         ("product-category", "material"),
+        ("is-material-substance", True),
         ("name", "good-name"),
     )
 

@@ -109,6 +109,9 @@ PLATFORM_FIELDS = (
 )
 
 MATERIAL_FIELDS = (
+    "is-firearm-product",
+    "product-category",
+    "is-material-substance",
     "name",
     "is-good-controlled",
     "control-list-entries",

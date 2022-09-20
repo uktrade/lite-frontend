@@ -64,6 +64,9 @@ def test_material_product_details_context(
 
     response = authorized_client.get(material_product_details_url)
     assert response.context["summary"] == (
+        ("is-firearm-product", "No", "Is it a firearm product?"),
+        ("product-category", "It forms part of a product", "Select the product category"),
+        ("is-material-substance", "Yes", "Is it a material or substance?"),
         ("name", "p1", "Give the product a descriptive name"),
         ("is-good-controlled", "Yes", "Do you know the product's control list entry?"),
         ("control-list-entries", "ML1a, ML22b", "Enter the control list entry"),
