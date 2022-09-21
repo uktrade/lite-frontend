@@ -27,7 +27,7 @@ def mock_application_good_documents(data_standard_case, requests_mock):
 def mock_mtcr_entries_get(requests_mock):
     requests_mock.get(
         "/static/regimes/mtcr/entries/",
-        json={"entries": []},
+        json={"entries": [("MTCR1", "mtcr1-value")]},
     )
 
 
@@ -112,6 +112,55 @@ def test_form(
         "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
         "is_good_controlled": False,
+        "regime_entries": [],
+    }
+
+
+@pytest.mark.parametrize(
+    "regimes_form_data, regime_entries",
+    (
+        ({}, []),
+        ({"regimes": ["MTCR"], "mtcr_entries": ["MTCR1"]}, ["MTCR1"]),
+    ),
+)
+def test_form_regime_entries(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+    regimes_form_data,
+    regime_entries,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+    edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+
+    response = authorized_client.post(
+        url,
+        data={
+            "report_summary": "test",
+            "does_not_have_control_list_entries": True,
+            "comment": "test",
+            **regimes_form_data,
+        },
+    )
+
+    # Check response and API payload
+    assert response.status_code == 302
+    assert requests_mock.last_request.json() == {
+        "control_list_entries": [],
+        "report_summary": "test",
+        "comment": "test",
+        "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
+        "is_good_controlled": False,
+        "regime_entries": regime_entries,
     }
 
 

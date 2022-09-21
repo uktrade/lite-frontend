@@ -131,6 +131,13 @@ class TAUMixin(CaseTabsMixin):
         return context
 
 
+def get_regime_entries(form_cleaned_data):
+    if "MTCR" not in form_cleaned_data["regimes"]:
+        return []
+
+    return form_cleaned_data["mtcr_entries"]
+
+
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
 
@@ -183,8 +190,6 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good_ids = data.pop("goods")
-        del data["mtcr_entries"]
-        del data["regimes"]
 
         for good in self.get_goods(good_ids):
             payload = {
@@ -192,7 +197,13 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
                 "is_good_controlled": is_good_controlled,
+                "regime_entries": get_regime_entries(data),
             }
+
+            # These are used to determine the `regime_entries` and aren't needed
+            # when sending to the backend
+            del payload["mtcr_entries"]
+            del payload["regimes"]
 
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
 
@@ -268,15 +279,19 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good = self.get_good()
-        del data["mtcr_entries"]
-        del data["regimes"]
 
         payload = {
             **data,
             "current_object": self.good_id,
             "objects": [good["good"]["id"]],
             "is_good_controlled": is_good_controlled,
+            "regime_entries": get_regime_entries(data),
         }
+
+        # These are used to determine the `regime_entries` and aren't needed
+        # when sending to the backend
+        del payload["mtcr_entries"]
+        del payload["regimes"]
 
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
         return super().form_valid(form)
