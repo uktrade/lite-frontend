@@ -87,7 +87,16 @@ const initAssessmentForm = () => {
     "#control_list_entries"
   );
 
-  const suggestionsEl = document.querySelector(".tau__cle-suggestions");
+  const suggestionsEl = document.createElement("div");
+  suggestionsEl.classList.add("tau__cle-suggestions");
+  const controlListEntriesLabel = document.querySelector(
+    "[for=control_list_entries]"
+  );
+  controlListEntriesLabel.parentNode.insertBefore(
+    suggestionsEl,
+    controlListEntriesLabel.nextSibling
+  );
+
   const cleSuggestions = new CLESuggestions(
     suggestionsEl,
     (selectedSuggestions) => {

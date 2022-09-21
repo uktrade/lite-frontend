@@ -1,7 +1,7 @@
 from django import forms
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit
+from crispy_forms_gds.layout import HTML, Layout, Submit
 
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
@@ -15,8 +15,11 @@ class TAUEditForm(forms.Form):
     MESSAGE_NO_CLC_MUTEX = "This is mutually exclusive with control list entries"
     MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
 
+    SUBMIT_BUTTON_TEXT = "Submit"
+
     control_list_entries = forms.MultipleChoiceField(
-        label="",
+        label="Add a control list entry or end-use control",
+        help_text="Or type for suggestions",
         choices=[],  # set in __init__
         required=False,
         # setting id for javascript to use
@@ -48,10 +51,11 @@ class TAUEditForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "control_list_entries",
+            HTML.p("Or"),
             "does_not_have_control_list_entries",
             "report_summary",
             "comment",
-            Submit("submit", "Submit"),
+            Submit("submit", self.SUBMIT_BUTTON_TEXT),
         )
 
     def clean(self):
@@ -76,8 +80,7 @@ class TAUAssessmentForm(TAUEditForm):
     TODO: Delete ExportControlCharacteristicsForm after this goes live.
     """
 
-    MESSAGE_NO_CLC_MUTEX = "This is mutually exclusive with control list entries"
-    MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
+    SUBMIT_BUTTON_TEXT = "Save and continue"
 
     def __init__(
         self,
@@ -107,10 +110,6 @@ class TAUAssessmentForm(TAUEditForm):
         )
 
         self.helper.form_tag = False
-        self.helper.layout = Layout(
-            "goods",
-            *self.helper.layout.fields,
-        )
 
     def get_goods_choices(self, goods):
         return [
