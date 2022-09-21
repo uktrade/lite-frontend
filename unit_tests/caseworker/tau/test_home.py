@@ -24,6 +24,14 @@ def mock_application_good_documents(data_standard_case, requests_mock):
     )
 
 
+@pytest.fixture(autouse=True)
+def mock_mtcr_entries_get(requests_mock):
+    requests_mock.get(
+        "/static/regimes/mtcr/entries/",
+        json={"entries": []},
+    )
+
+
 @pytest.fixture
 def url(data_standard_case):
     return reverse(

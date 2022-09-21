@@ -91,6 +91,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
         request=rf.get("/"),
         goods={"test-id": {}},
         control_list_entries_choices=[("test-rating", "test-text")],
+        mtcr_entries=[("test-entry", "text-entry-text")],
         queue_pk="queue_pk",
         application_pk="application_pk",
         is_user_rfd=False,
@@ -378,6 +379,7 @@ def test_tau_assessment_form_goods_choices(
         request=request,
         goods=goods,
         control_list_entries_choices=[],
+        mtcr_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
         is_user_rfd=False,
@@ -428,6 +430,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             },
         },
         control_list_entries_choices=[],
+        mtcr_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
         is_user_rfd=False,
@@ -492,6 +495,10 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
     ),
 )
 def test_tau_edit_form(data, valid, errors):
-    form = forms.TAUEditForm(control_list_entries_choices=[("test-rating", "test-text")], data=data)
+    form = forms.TAUEditForm(
+        control_list_entries_choices=[("test-rating", "test-text")],
+        mtcr_entries=[("test-entry", "test-entry-text")],
+        data=data,
+    )
     assert form.is_valid() == valid
     assert list(form.errors.keys()) == errors

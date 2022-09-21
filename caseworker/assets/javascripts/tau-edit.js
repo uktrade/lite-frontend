@@ -1,6 +1,7 @@
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 
 const initAssessmentForm = () => {
   const noControlListCheckboxEl = document.querySelector(
@@ -33,6 +34,9 @@ const initAssessmentForm = () => {
       noSuggestionsTokenField.reset();
     }
   );
+
+  const mtcrEntriesEl = document.querySelector("#mtcr_entries");
+  progressivelyEnhanceMultipleSelectField(mtcrEntriesEl);
 
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent

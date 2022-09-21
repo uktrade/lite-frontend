@@ -14,6 +14,7 @@ from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
+from caseworker.regimes.services import get_mtcr_entries
 from caseworker.users.services import get_gov_user
 
 from .forms import TAUAssessmentForm, TAUEditForm
@@ -87,6 +88,11 @@ class TAUMixin(CaseTabsMixin):
         control_list_entries = get_control_list_entries(self.request, convert_to_options=True)
         return [(item.value, item.key) for item in control_list_entries]
 
+    @cached_property
+    def mtcr_entries(self):
+        entries, _ = get_mtcr_entries(self.request)
+        return entries["entries"]
+
     def is_assessed(self, good):
         """Returns True if a good has been assessed"""
         return (good["is_good_controlled"] is not None) or (good["control_list_entries"] != [])
@@ -139,6 +145,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
 
         form_kwargs["request"] = self.request
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
+        form_kwargs["mtcr_entries"] = self.mtcr_entries
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         form_kwargs["queue_pk"] = self.queue_id
         form_kwargs["application_pk"] = self.case["id"]
@@ -170,16 +177,18 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
                 yield good
 
     def form_valid(self, form):
-        data = form.cleaned_data
+        data = {**form.cleaned_data}
         # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good_ids = data.pop("goods")
+        del data["mtcr_entries"]
+        del data["regimes"]
 
         for good in self.get_goods(good_ids):
             payload = {
-                **form.cleaned_data,
+                **data,
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
                 "is_good_controlled": is_good_controlled,
@@ -202,6 +211,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
+        form_kwargs["mtcr_entries"] = self.mtcr_entries
 
         good = self.get_good()
         form_kwargs["data"] = self.request.POST or {
@@ -252,15 +262,17 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         }
 
     def form_valid(self, form):
-        data = form.cleaned_data
+        data = {**form.cleaned_data}
         # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good = self.get_good()
+        del data["mtcr_entries"]
+        del data["regimes"]
 
         payload = {
-            **form.cleaned_data,
+            **data,
             "current_object": self.good_id,
             "objects": [good["good"]["id"]],
             "is_good_controlled": is_good_controlled,

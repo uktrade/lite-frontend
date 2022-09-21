@@ -1,7 +1,16 @@
 from django import forms
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import HTML, Layout, Submit
+from crispy_forms_gds.layout import (
+    HTML,
+    Layout,
+    Submit,
+)
+
+from core.forms.layouts import (
+    ConditionalCheckboxes,
+    ConditionalCheckboxesQuestion,
+)
 
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
@@ -30,6 +39,7 @@ class TAUEditForm(forms.Form):
         label="Select that this product is not on the control list",
         required=False,
     )
+
     report_summary = forms.CharField(
         label="Add a report summary",
         help_text="Type for suggestions",
@@ -38,22 +48,45 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
+    regimes = forms.MultipleChoiceField(
+        label="Add regimes",
+        choices=(("MTCR", "Missile Technology Control Regime"),),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    mtcr_entries = forms.MultipleChoiceField(
+        label="What is the entry (for example M1A2)? Type for suggestions",
+        choices=[],  # set in __init__
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(attrs={"id": "mtcr_entries"}),
+    )
+
     comment = forms.CharField(
         label="Add an assessment note (optional)",
         required=False,
         widget=forms.Textarea,
     )
 
-    def __init__(self, control_list_entries_choices, document=None, *args, **kwargs):
+    def __init__(self, control_list_entries_choices, mtcr_entries, document=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.document = document
         self.fields["control_list_entries"].choices = control_list_entries_choices
+        self.fields["mtcr_entries"].choices = mtcr_entries
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "control_list_entries",
             HTML.p("Or"),
             "does_not_have_control_list_entries",
             "report_summary",
+            ConditionalCheckboxes(
+                "regimes",
+                ConditionalCheckboxesQuestion(
+                    "Missile Technology Control Regime",
+                    "mtcr_entries",
+                ),
+            ),
             "comment",
             Submit("submit", self.SUBMIT_BUTTON_TEXT),
         )
@@ -87,6 +120,7 @@ class TAUAssessmentForm(TAUEditForm):
         request,
         goods,
         control_list_entries_choices,
+        mtcr_entries,
         queue_pk,
         application_pk,
         is_user_rfd,
@@ -94,7 +128,7 @@ class TAUAssessmentForm(TAUEditForm):
         *args,
         **kwargs,
     ):
-        super().__init__(control_list_entries_choices, *args, **kwargs)
+        super().__init__(control_list_entries_choices, mtcr_entries, *args, **kwargs)
 
         self.request = request
         self.queue_pk = queue_pk
