@@ -118,7 +118,7 @@ class AddGoodMaterial(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:new_good",
+            "applications:is_material_substance",
             kwargs={
                 "pk": self.kwargs["pk"],
             },
