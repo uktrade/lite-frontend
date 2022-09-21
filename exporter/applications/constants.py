@@ -66,5 +66,5 @@ class SecurityClassifiedApprovalsType:
     choices = (
         (F680, "F680"),
         (F1686, "F1686"),
-        (OTHER, "Other"),
+        (OTHER, "Other written approval"),
     )

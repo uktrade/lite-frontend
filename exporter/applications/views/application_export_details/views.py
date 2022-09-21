@@ -66,31 +66,6 @@ class ExportDetails(
 
         return ctx
 
-    def has_f1686_approval_document(self):
-        return self.condition_dict[ExportDetailsSteps.F1686_DETAILS](self)
-
-    def get_f1686_approval_document(self):
-        data = self.get_cleaned_data_for_step(ExportDetailsSteps.F1686_DETAILS)
-        document = data["f1686_approval_document"]
-        payload = {
-            **get_document_data(document),
-            "description": data["description"],
-        }
-        return payload
-
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error with product document when creating component",
-        "Unexpected error adding component",
-    )
-    def post_f1686_approval_document(self, good):
-        document_payload = self.get_f1686_approval_document()
-        return post_additional_document(
-            request=self.request,
-            pk=self.application["id"],
-            json=document_payload,
-        )
-
     def get_payload(self, form_dict):
         export_details_payload = ExportDetailsStepsPayloadBuilder().build(form_dict)
         return export_details_payload
@@ -115,9 +90,7 @@ class ExportDetails(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        _, _ = self.update_application(form_dict)
-        if self.has_f1686_approval_document():
-            pass
+        self.update_application(form_dict)
         return redirect(self.get_success_url())
 
 

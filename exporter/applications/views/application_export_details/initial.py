@@ -9,7 +9,6 @@ def get_initial_f1686_details(application):
         "f1686_contracting_authority": application["f1686_contracting_authority"],
         "f1686_reference_number": application["f1686_reference_number"],
         "f1686_approval_date": f1686_approval_date,
-        "is_f1686_approval_document_available": False,
     }
 
 

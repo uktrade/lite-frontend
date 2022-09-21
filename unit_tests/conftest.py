@@ -772,7 +772,6 @@ def data_standard_case():
                 "security_approvals": None,
                 "f680_reference_number": None,
                 "f1686_contracting_authority": None,
-                "is_f1686_approval_document_available": None,
                 "f1686_reference_number": None,
                 "f1686_approval_date": None,
                 "other_security_approval_details": None,
