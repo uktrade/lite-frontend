@@ -11,8 +11,7 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.applications.services import put_application, post_additional_document
-from exporter.core.helpers import get_document_data
+from exporter.applications.services import put_application
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
