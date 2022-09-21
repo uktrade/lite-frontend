@@ -57,9 +57,10 @@ class SecurityClassifiedDetailsForm(BaseForm):
     def clean(self):
         cleaned_data = super().clean()
         is_mod_security_approved = cleaned_data.get("is_mod_security_approved")
-        mod_security_classified_approvals = cleaned_data.get("security_approvals")
-
-        if is_mod_security_approved and not mod_security_classified_approvals:
+        security_approvals = cleaned_data.get("security_approvals")
+        if not is_mod_security_approved:
+            cleaned_data["security_approvals"] = []
+        if is_mod_security_approved and not security_approvals:
             self.add_error("security_approvals", "Select the type of security approval")
         return cleaned_data
 
