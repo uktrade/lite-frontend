@@ -1,0 +1,33 @@
+{% load l10n %}
+<div class="govuk-checkboxes__item">
+    <input
+        type="checkbox" name="{{ field.html_name }}"
+        class="govuk-checkboxes__input"
+        id="id_{{ field.html_name }}_{{ position }}"
+        value="{{ choice.0|unlocalize }}"
+        {% if choice.0 in field.value or choice.0|stringformat:"s" in field.value or choice.0|stringformat:"s" == field.value|stringformat:"s" %}
+            checked="checked"
+        {% endif %}
+        {% if choice.hint %}
+            aria-describedby="id_{{ field.html_name }}_{{ position }}_hint"
+        {% endif %}
+        data-aria-controls="conditional_{{ field.html_name }}_{{ position }}"
+    >
+
+    <label class="govuk-label govuk-checkboxes__label" for="id_{{ field.html_name }}_{{ position }}">
+        {{ choice.1|unlocalize }}
+    </label>
+    {% if choice.hint %}
+        <span id="id_{{ field.html_name }}_{{ position }}_hint" class="govuk-hint govuk-checkboxes__hint">
+            {{ choice.hint }}
+        </span>
+    {% endif %}
+</div>
+{% if choice.divider %}
+    <div class="govuk-checkboxes__divider">{{ choice.divider }}</div>
+{% endif %}
+{% if conditional_content %}
+    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional_{{ field.html_name }}_{{ position }}">
+        {{ conditional_content|safe }}
+    </div>
+{% endif %}

@@ -11,7 +11,7 @@ from core.constants import (
 )
 from core.forms.layouts import (
     ConditionalCheckbox,
-    ConditionalQuestion,
+    ConditionalRadiosQuestion,
     ConditionalRadios,
 )
 
@@ -124,7 +124,7 @@ class FirearmReplicaForm(BaseForm):
         return (
             ConditionalRadios(
                 "is_replica",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     Field("replica_description", css_class="input-force-default-width"),
                 ),
@@ -296,7 +296,7 @@ class FirearmFirearmAct1968Form(BaseForm):
                 self.SectionChoices.SECTION_1.label,
                 self.SectionChoices.SECTION_2.label,
                 self.SectionChoices.SECTION_5.label,
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     self.SectionChoices.DONT_KNOW.label,
                     "not_covered_explanation",
                 ),
@@ -574,7 +574,7 @@ class FirearmDeactivationDetailsForm(BaseForm):
             ConditionalRadios(
                 "is_deactivated_to_standard",
                 "Yes",
-                ConditionalQuestion("No", "not_deactivated_to_standard_comments"),
+                ConditionalRadiosQuestion("No", "not_deactivated_to_standard_comments"),
             ),
         )
 
@@ -620,14 +620,14 @@ class FirearmSerialIdentificationMarkingsForm(BaseForm):
             ConditionalRadios(
                 "serial_numbers_available",
                 SerialChoices.AVAILABLE.label,
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     SerialChoices.LATER.label,
                     HTML.p(
                         "You must submit the serial numbers before you can export the products.<br/><br/>"
                         "You can check your application progress, view issued licences and add serial numbers from your dashboard."
                     ),
                 ),
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     SerialChoices.NOT_AVAILABLE.label,
                     "no_identification_markings_details",
                 ),

@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 
 from core.constants import SecurityClassifiedApprovalsType
 from core.forms.layouts import (
-    ConditionalQuestion,
+    ConditionalRadiosQuestion,
     ConditionalRadios,
 )
 
@@ -43,7 +43,7 @@ class SecurityClassifiedDetailsForm(BaseForm):
             ConditionalRadios(
                 "is_mod_security_approved",
                 "No",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "security_approvals",
                 ),
