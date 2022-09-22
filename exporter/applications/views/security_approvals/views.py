@@ -16,31 +16,31 @@ from exporter.applications.views.goods.common.mixins import ApplicationMixin
 
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
 
-from .constants import ExportDetailsSteps
+from .constants import SecurityApprovalSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
-from .payloads import ExportDetailsStepsPayloadBuilder
+from .payloads import SecurityApprovalStepsPayloadBuilder
 from .mixins import NonF680SecurityClassifiedFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
-class ExportDetails(
+class SecurityApprovals(
     LoginRequiredMixin,
     ApplicationMixin,
     BaseSessionWizardView,
     NonF680SecurityClassifiedFlagMixin,
 ):
     form_list = [
-        (ExportDetailsSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
-        (ExportDetailsSteps.F680_REFERENCE_NUMBER, F680ReferenceNumberForm),
-        (ExportDetailsSteps.F1686_DETAILS, F1686DetailsForm),
-        (ExportDetailsSteps.SECURITY_OTHER_DETAILS, SecurityOtherDetailsForm),
+        (SecurityApprovalSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
+        (SecurityApprovalSteps.F680_REFERENCE_NUMBER, F680ReferenceNumberForm),
+        (SecurityApprovalSteps.F1686_DETAILS, F1686DetailsForm),
+        (SecurityApprovalSteps.SECURITY_OTHER_DETAILS, SecurityOtherDetailsForm),
     ]
 
     condition_dict = {
-        ExportDetailsSteps.F680_REFERENCE_NUMBER: is_f680_approval,
-        ExportDetailsSteps.F1686_DETAILS: is_f1686_approval,
-        ExportDetailsSteps.SECURITY_OTHER_DETAILS: is_other_approval,
+        SecurityApprovalSteps.F680_REFERENCE_NUMBER: is_f680_approval,
+        SecurityApprovalSteps.F1686_DETAILS: is_f1686_approval,
+        SecurityApprovalSteps.SECURITY_OTHER_DETAILS: is_other_approval,
     }
 
     def dispatch(self, request, **kwargs):
@@ -66,12 +66,12 @@ class ExportDetails(
         return ctx
 
     def get_payload(self, form_dict):
-        export_details_payload = ExportDetailsStepsPayloadBuilder().build(form_dict)
+        export_details_payload = SecurityApprovalStepsPayloadBuilder().build(form_dict)
         return export_details_payload
 
     def get_success_url(self):
         return reverse(
-            "applications:application_export_details_summary",
+            "applications:security_approvals_summary",
             kwargs={"pk": self.application["id"]},
         )
 
@@ -93,11 +93,11 @@ class ExportDetails(
         return redirect(self.get_success_url())
 
 
-class ApplicationExportDetailsSummaryView(LoginRequiredMixin, ApplicationMixin, TemplateView):
-    template_name = "applications/export-details/application-export-details-summary.html"
+class SecurityApprovalsSummaryView(LoginRequiredMixin, ApplicationMixin, TemplateView):
+    template_name = "applications/security-approvals/security-approvals-summary.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["application"] = self.application
-        context["back_link_url"] = reverse("applications:export_details", kwargs={"pk": self.kwargs["pk"]})
+        context["back_link_url"] = reverse("applications:security_approvals", kwargs={"pk": self.kwargs["pk"]})
         return context

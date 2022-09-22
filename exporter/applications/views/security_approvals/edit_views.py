@@ -14,8 +14,8 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
 from .mixins import NonF680SecurityClassifiedFlagMixin
-from .payloads import get_f1686_data, ExportDetailsStepsPayloadBuilder
-from .constants import ExportDetailsSteps
+from .payloads import get_f1686_data, SecurityApprovalStepsPayloadBuilder
+from .constants import SecurityApprovalSteps
 from .initial import (
     get_initial_security_classified_details,
     get_initial_f680_reference_number,
@@ -40,7 +40,7 @@ class BaseApplicationEditView(
 
     def get_success_url(self):
         return reverse(
-            "applications:application_export_details_summary",
+            "applications:security_approvals_summary",
             kwargs={"pk": self.application["id"]},
         )
 
@@ -67,7 +67,7 @@ class BaseApplicationEditWizardView(
 ):
     def get_success_url(self):
         return reverse(
-            "applications:application_export_details_summary",
+            "applications:security_approvals_summary",
             kwargs={"pk": self.application["id"]},
         )
 
@@ -81,7 +81,7 @@ class BaseApplicationEditWizardView(
         return ctx
 
     def get_payload(self, form_dict):
-        export_details_payload = ExportDetailsStepsPayloadBuilder().build(form_dict)
+        export_details_payload = SecurityApprovalStepsPayloadBuilder().build(form_dict)
         return export_details_payload
 
     def edit_object(self, request, application_id, payload):
@@ -133,32 +133,32 @@ class EditF1686Details(BaseApplicationEditView):
         return get_f1686_data(form)
 
 
-class EditExportDetails(
+class EditSecurityApprovalDetails(
     NonF680SecurityClassifiedFlagMixin,
     BaseApplicationEditWizardView,
 ):
     form_list = [
-        (ExportDetailsSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
-        (ExportDetailsSteps.F680_REFERENCE_NUMBER, F680ReferenceNumberForm),
-        (ExportDetailsSteps.F1686_DETAILS, F1686DetailsForm),
-        (ExportDetailsSteps.SECURITY_OTHER_DETAILS, SecurityOtherDetailsForm),
+        (SecurityApprovalSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
+        (SecurityApprovalSteps.F680_REFERENCE_NUMBER, F680ReferenceNumberForm),
+        (SecurityApprovalSteps.F1686_DETAILS, F1686DetailsForm),
+        (SecurityApprovalSteps.SECURITY_OTHER_DETAILS, SecurityOtherDetailsForm),
     ]
 
     condition_dict = {
-        ExportDetailsSteps.F680_REFERENCE_NUMBER: is_f680_approval,
-        ExportDetailsSteps.F1686_DETAILS: is_f1686_approval,
-        ExportDetailsSteps.SECURITY_OTHER_DETAILS: is_other_approval,
+        SecurityApprovalSteps.F680_REFERENCE_NUMBER: is_f680_approval,
+        SecurityApprovalSteps.F1686_DETAILS: is_f1686_approval,
+        SecurityApprovalSteps.SECURITY_OTHER_DETAILS: is_other_approval,
     }
 
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
-        if step == ExportDetailsSteps.SECURITY_CLASSIFIED:
+        if step == SecurityApprovalSteps.SECURITY_CLASSIFIED:
             initial.update(get_initial_security_classified_details(self.application))
-        if step == ExportDetailsSteps.F680_REFERENCE_NUMBER:
+        if step == SecurityApprovalSteps.F680_REFERENCE_NUMBER:
             initial.update(get_initial_f680_reference_number(self.application))
-        if step == ExportDetailsSteps.F1686_DETAILS:
+        if step == SecurityApprovalSteps.F1686_DETAILS:
             initial.update(get_initial_f1686_details(self.application))
-        if step == ExportDetailsSteps.SECURITY_OTHER_DETAILS:
+        if step == SecurityApprovalSteps.SECURITY_OTHER_DETAILS:
             initial.update(get_initial_other_security_approval_details(self.application))
 
         return initial

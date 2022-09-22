@@ -21,7 +21,7 @@
             <dd class="govuk-summary-list__value">{{ application.is_mod_security_approved|yesno|capfirst }}</dd>
             <dd class="govuk-summary-list__actions">
             <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-               href="{% url 'applications:edit_export_details' application.id %}">Change</a>
+               href="{% url 'applications:edit_security_approvals_details' application.id %}">Change</a>
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -29,7 +29,7 @@
             <dd class="govuk-summary-list__value">{{ application.security_approvals }}</dd>
             <dd class="govuk-summary-list__actions">
             <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-               href="{% url 'applications:edit_export_details' application.id %}">Change
+               href="{% url 'applications:edit_security_approvals_details' application.id %}">Change
             </a>
             </dd>
         </div>
@@ -40,7 +40,7 @@
                 <dd class="govuk-summary-list__value">{{ application.f680_reference_number }}</dd>
                 <dd class="govuk-summary-list__actions">
                     <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-                       href="{% url 'applications:edit_export_details_f680_reference_number' application.id %}">Change
+                       href="{% url 'applications:edit_security_approvals_f680_reference_number' application.id %}">Change
                     </a>
                 </dd>
             </div>
@@ -52,7 +52,7 @@
                 <dd class="govuk-summary-list__value">{{ application.f1686_contracting_authority  }}</dd>
                 <dd class="govuk-summary-list__actions">
                     <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-                       href="{% url 'applications:edit_export_details_f1686_details' application.id %}">Change</a>
+                       href="{% url 'applications:edit_security_approvals_f1686_details' application.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -60,7 +60,7 @@
                 <dd class="govuk-summary-list__value">{{ application.f1686_reference_number }}</dd>
                 <dd class="govuk-summary-list__actions">
                     <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-                       href="{% url 'applications:edit_export_details_f1686_details' application.id %}">Change</a>
+                       href="{% url 'applications:edit_security_approvals_f1686_details' application.id %}">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -68,7 +68,7 @@
                 <dd class="govuk-summary-list__value">{{ application.f1686_approval_date|str_date_only }}</dd>
                 <dd class="govuk-summary-list__actions">
                     <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-                       href="{% url 'applications:edit_export_details_f1686_details' application.id %}">Change
+                       href="{% url 'applications:edit_security_approvals_f1686_details' application.id %}">Change
                     </a>
                 </dd>
             </div>
@@ -78,7 +78,7 @@
                     <dd class="govuk-summary-list__value">{{ application.other_security_approval_details  }}</dd>
                     <dd class="govuk-summary-list__actions">
                         <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-                           href="{% url 'applications:edit_export_details_security_other_details' application.id %}">Change
+                           href="{% url 'applications:edit_security_approvals_security_other_details' application.id %}">Change
                         </a>
                     </dd>
                 </div>

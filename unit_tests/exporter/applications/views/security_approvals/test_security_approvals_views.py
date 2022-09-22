@@ -2,8 +2,8 @@ import pytest
 
 from django.urls import reverse
 
-from exporter.applications.views.application_export_details.constants import ExportDetailsSteps
-from exporter.applications.views.application_export_details.forms import (
+from exporter.applications.views.security_approvals.constants import SecurityApprovalSteps
+from exporter.applications.views.security_approvals.forms import (
     F680ReferenceNumberForm,
     F1686DetailsForm,
     SecurityOtherDetailsForm,
@@ -21,10 +21,10 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def application_export_details_url(data_standard_case):
+def application_security_approvals_url(data_standard_case):
     application_id = data_standard_case["case"]["data"]["id"]
     return reverse(
-        "applications:application_export_details",
+        "applications:security_approvals",
         kwargs={
             "pk": application_id,
         },
@@ -32,37 +32,37 @@ def application_export_details_url(data_standard_case):
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, application_export_details_url):
-    return goto_step_factory(application_export_details_url)
+def goto_step(goto_step_factory, application_security_approvals_url):
+    return goto_step_factory(application_security_approvals_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, application_export_details_url):
-    return post_to_step_factory(application_export_details_url)
+def post_to_step(post_to_step_factory, application_security_approvals_url):
+    return post_to_step_factory(application_security_approvals_url)
 
 
-def test_application_export_details_access_denied_without_feature_flag(
+def test_application_security_approvals_access_denied_without_feature_flag(
     settings,
     authorized_client,
-    application_export_details_url,
+    application_security_approvals_url,
 ):
     settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = False
-    response = authorized_client.get(application_export_details_url)
+    response = authorized_client.get(application_security_approvals_url)
     assert response.status_code == 404
 
 
-def test_application_export_details_end_to_end(
+def test_application_security_approvals_end_to_end(
     authorized_client,
     data_standard_case,
-    application_export_details_url,
+    application_security_approvals_url,
     mock_application_get,
     mock_application_put,
     post_to_step,
 ):
-    authorized_client.get(application_export_details_url)
+    authorized_client.get(application_security_approvals_url)
 
     response = post_to_step(
-        ExportDetailsSteps.SECURITY_CLASSIFIED,
+        SecurityApprovalSteps.SECURITY_CLASSIFIED,
         {
             "is_mod_security_approved": True,
             "security_approvals": ["F680", "F1686", "Other"],
@@ -73,7 +73,7 @@ def test_application_export_details_end_to_end(
     assert isinstance(response.context["form"], F680ReferenceNumberForm)
 
     response = post_to_step(
-        ExportDetailsSteps.F680_REFERENCE_NUMBER,
+        SecurityApprovalSteps.F680_REFERENCE_NUMBER,
         {
             "f680_reference_number": "dummy ref",
         },
@@ -83,7 +83,7 @@ def test_application_export_details_end_to_end(
     assert isinstance(response.context["form"], F1686DetailsForm)
 
     response = post_to_step(
-        ExportDetailsSteps.F1686_DETAILS,
+        SecurityApprovalSteps.F1686_DETAILS,
         {
             "f1686_contracting_authority": "dummy contracting authority",
             "f1686_reference_number": "f1686  reference number update",
@@ -97,7 +97,7 @@ def test_application_export_details_end_to_end(
     assert isinstance(response.context["form"], SecurityOtherDetailsForm)
 
     response = post_to_step(
-        ExportDetailsSteps.SECURITY_OTHER_DETAILS,
+        SecurityApprovalSteps.SECURITY_OTHER_DETAILS,
         {
             "other_security_approval_details": "dummy other details",
         },
@@ -119,25 +119,25 @@ def test_application_export_details_end_to_end(
     }
 
     assert response.url == reverse(
-        "applications:application_export_details_summary",
+        "applications:security_approvals_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
         },
     )
 
 
-def test_application_export_details_end_to_end_alternative(
+def test_application_security_approvals_end_to_end_alternative(
     authorized_client,
     data_standard_case,
-    application_export_details_url,
+    application_security_approvals_url,
     mock_application_get,
     mock_application_put,
     post_to_step,
 ):
-    authorized_client.get(application_export_details_url)
+    authorized_client.get(application_security_approvals_url)
 
     response = post_to_step(
-        ExportDetailsSteps.SECURITY_CLASSIFIED,
+        SecurityApprovalSteps.SECURITY_CLASSIFIED,
         {
             "is_mod_security_approved": True,
             "security_approvals": ["F1686", "Other"],
@@ -148,7 +148,7 @@ def test_application_export_details_end_to_end_alternative(
     assert isinstance(response.context["form"], F1686DetailsForm)
 
     response = post_to_step(
-        ExportDetailsSteps.F1686_DETAILS,
+        SecurityApprovalSteps.F1686_DETAILS,
         {
             "f1686_contracting_authority": "dummy contracting authority",
             "f1686_reference_number": "dummy f1686 reference number",
@@ -162,7 +162,7 @@ def test_application_export_details_end_to_end_alternative(
     assert isinstance(response.context["form"], SecurityOtherDetailsForm)
 
     response = post_to_step(
-        ExportDetailsSteps.SECURITY_OTHER_DETAILS,
+        SecurityApprovalSteps.SECURITY_OTHER_DETAILS,
         {
             "other_security_approval_details": "dummy other details",
         },
@@ -183,25 +183,25 @@ def test_application_export_details_end_to_end_alternative(
     }
 
     assert response.url == reverse(
-        "applications:application_export_details_summary",
+        "applications:security_approvals_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
         },
     )
 
 
-def test_application_export_details_short(
+def test_application_security_approvals_short(
     authorized_client,
     data_standard_case,
-    application_export_details_url,
+    application_security_approvals_url,
     mock_application_get,
     mock_application_put,
     post_to_step,
 ):
-    authorized_client.get(application_export_details_url)
+    authorized_client.get(application_security_approvals_url)
 
     response = post_to_step(
-        ExportDetailsSteps.SECURITY_CLASSIFIED,
+        SecurityApprovalSteps.SECURITY_CLASSIFIED,
         {
             "is_mod_security_approved": False,
         },
@@ -217,7 +217,7 @@ def test_application_export_details_short(
         "is_mod_security_approved": False,
     }
     assert response.url == reverse(
-        "applications:application_export_details_summary",
+        "applications:security_approvals_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
         },
