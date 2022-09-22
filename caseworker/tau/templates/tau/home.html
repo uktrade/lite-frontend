@@ -84,7 +84,11 @@
                                         <td class="govuk-table__cell">{{ good.good.name }}</td>
                                         <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
                                         <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
-                                        <td class="govuk-table__cell">{% if good.precedent.wassenaar %}Wassenaar{% endif %}</td>
+                                        <td class="govuk-table__cell">
+                                            {% for regime_entry in good.regime_entries %}
+                                                {{ regime_entry}}<br>
+                                            {% endfor %}
+                                        </td>
                                         <td class="govuk-table__cell">{{ good.report_summary }}</td>
                                         <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
                                         <td class="govuk-table__cell">
