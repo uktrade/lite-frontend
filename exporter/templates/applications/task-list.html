@@ -132,7 +132,7 @@
 					{% else %}
 						{% url 'applications:security_approvals' application.id as security_approvals_url %}
 					{% endif %}
-                        {% include "includes/task-list-item.html" with id='security-approvals' title="Do you have a security approval?" url=security_approvals_url status=security_approvals|task_list_item_status description="" %}
+                        {% include "includes/task-list-item.html" with id='security_approvals' title="Do you have a security approval?" url=security_approvals_url status=security_approvals|task_list_item_status description="" %}
 				{% endif %}
 
 				{# Countries #}
