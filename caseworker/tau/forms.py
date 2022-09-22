@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
@@ -75,21 +76,28 @@ class TAUEditForm(forms.Form):
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.fields["mtcr_entries"].choices = mtcr_entries
         self.helper = FormHelper()
-        self.helper.layout = Layout(
+
+        fields = [
             "control_list_entries",
             HTML.p("Or"),
             "does_not_have_control_list_entries",
             "report_summary",
-            ConditionalCheckboxes(
-                "regimes",
-                ConditionalCheckboxesQuestion(
-                    "Missile Technology Control Regime",
-                    "mtcr_entries",
-                ),
-            ),
+        ]
+        if settings.FEATURE_FLAG_REGIMES:
+            fields += [
+                ConditionalCheckboxes(
+                    "regimes",
+                    ConditionalCheckboxesQuestion(
+                        "Missile Technology Control Regime",
+                        "mtcr_entries",
+                    ),
+                )
+            ]
+        fields += [
             "comment",
             Submit("submit", self.SUBMIT_BUTTON_TEXT),
-        )
+        ]
+        self.helper.layout = Layout(*fields)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -105,10 +113,11 @@ class TAUEditForm(forms.Form):
         if has_some_cle_entries and no_report_summary:
             self.add_error("report_summary", "This field is required")
 
-        is_mtcr_regime = "MTCR" in cleaned_data["regimes"]
-        mtcr_entries = cleaned_data["mtcr_entries"]
-        if is_mtcr_regime and not mtcr_entries:
-            self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
+        if settings.FEATURE_FLAG_REGIMES:
+            is_mtcr_regime = "MTCR" in cleaned_data["regimes"]
+            mtcr_entries = cleaned_data["mtcr_entries"]
+            if is_mtcr_regime and not mtcr_entries:
+                self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
 
         return cleaned_data
 

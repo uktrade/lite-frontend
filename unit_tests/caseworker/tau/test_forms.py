@@ -10,6 +10,11 @@ from core.constants import (
 from caseworker.tau import forms
 
 
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_FLAG_REGIMES = True
+
+
 @pytest.mark.parametrize(
     "data, valid, errors",
     (
