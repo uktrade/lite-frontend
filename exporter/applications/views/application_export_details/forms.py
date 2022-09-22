@@ -140,7 +140,8 @@ class SecurityOtherDetailsForm(BaseForm):
     other_security_approval_details = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 5}),
         label="",
-        help_text="Enter any details you have about the MOD contracting authority, reference numbers, the signatory of the approval, or the Project Security Instruction.",
+        help_text="Enter any details you have about the MOD contracting authority, reference numbers, "
+        "the signatory of the approval, or the Project Security Instruction.",
         error_messages={
             "required": "Enter the details of your written approval",
         },
