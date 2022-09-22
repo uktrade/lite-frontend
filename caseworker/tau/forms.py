@@ -93,16 +93,23 @@ class TAUEditForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        has_none = cleaned_data["does_not_have_control_list_entries"]
-        has_some = bool(cleaned_data.get("control_list_entries"))
-        if has_none and has_some:
-            raise forms.ValidationError({"does_not_have_control_list_entries": self.MESSAGE_NO_CLC_MUTEX})
-        elif not has_none and not has_some:
-            raise forms.ValidationError({"does_not_have_control_list_entries": self.MESSAGE_NO_CLC_REQUIRED})
+
+        has_no_cle_entries = cleaned_data["does_not_have_control_list_entries"]
+        has_some_cle_entries = bool(cleaned_data.get("control_list_entries"))
+        if has_no_cle_entries and has_some_cle_entries:
+            self.add_error("does_not_have_control_list_entries", self.MESSAGE_NO_CLC_MUTEX)
+        elif not has_no_cle_entries and not has_some_cle_entries:
+            self.add_error("does_not_have_control_list_entries", self.MESSAGE_NO_CLC_REQUIRED)
         # report summary is required when there are CLEs
         no_report_summary = cleaned_data.get("report_summary", "") == ""
-        if has_some and no_report_summary:
-            raise forms.ValidationError({"report_summary": "This field is required."})
+        if has_some_cle_entries and no_report_summary:
+            self.add_error("report_summary", "This field is required")
+
+        is_mtcr_regime = "MTCR" in cleaned_data["regimes"]
+        mtcr_entries = cleaned_data["mtcr_entries"]
+        if is_mtcr_regime and not mtcr_entries:
+            self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
+
         return cleaned_data
 
 

@@ -84,6 +84,33 @@ from caseworker.tau import forms
             True,
             {},
         ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["MTCR"],
+            },
+            False,
+            {
+                "mtcr_entries": ["Type an entry for the Missile Technology Control Regime"],
+            },
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["MTCR"],
+                "mtcr_entries": [],
+            },
+            False,
+            {
+                "mtcr_entries": ["Type an entry for the Missile Technology Control Regime"],
+            },
+        ),
     ),
 )
 def test_tau_assessment_form(data, valid, errors, rf):
@@ -451,9 +478,17 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
     "data, valid, errors",
     (
         # Empty form
-        ({}, False, ["does_not_have_control_list_entries"]),
+        (
+            {},
+            False,
+            {
+                "does_not_have_control_list_entries": [
+                    "Select a control list entry or select 'This product does not have a control list entry'"
+                ]
+            },
+        ),
         # Valid form
-        ({"report_summary": "test", "does_not_have_control_list_entries": True}, True, []),
+        ({"report_summary": "test", "does_not_have_control_list_entries": True}, True, {}),
         # Valid form - with comments
         (
             {
@@ -462,25 +497,29 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
                 "comments": "test",
             },
             True,
-            [],
+            {},
         ),
         # Missing report-summary is ok when no CLEs
         (
             {"report_summary": None, "does_not_have_control_list_entries": True},
             True,
-            [],
+            {},
         ),
         # Missing report-summary is not ok when there are CLEs
         (
             {"report_summary": None, "control_list_entries": ["test-rating"]},
             False,
-            ["report_summary"],
+            {"report_summary": ["This field is required"]},
         ),
         # does_not_have_control_list_entries=False and missing control_list_entries
         (
             {"report_summary": "test", "does_not_have_control_list_entries": False},
             False,
-            ["does_not_have_control_list_entries"],
+            {
+                "does_not_have_control_list_entries": [
+                    "Select a control list entry or select 'This product does not have a control list entry'"
+                ]
+            },
         ),
         # does_not_have_control_list_entries=False but with control_list_entries
         (
@@ -490,7 +529,34 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
                 "control_list_entries": ["test-rating"],
             },
             True,
-            [],
+            {},
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["MTCR"],
+            },
+            False,
+            {
+                "mtcr_entries": ["Type an entry for the Missile Technology Control Regime"],
+            },
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["MTCR"],
+                "mtcr_entries": [],
+            },
+            False,
+            {
+                "mtcr_entries": ["Type an entry for the Missile Technology Control Regime"],
+            },
         ),
     ),
 )
@@ -501,4 +567,4 @@ def test_tau_edit_form(data, valid, errors):
         data=data,
     )
     assert form.is_valid() == valid
-    assert list(form.errors.keys()) == errors
+    assert form.errors == errors
