@@ -1,7 +1,6 @@
 import pytest
 
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.applications.views.application_export_details.constants import ExportDetailsSteps
 from exporter.applications.views.application_export_details.forms import (
@@ -87,8 +86,10 @@ def test_application_export_details_end_to_end(
         ExportDetailsSteps.F1686_DETAILS,
         {
             "f1686_contracting_authority": "dummy contracting authority",
-            "is_f1686_approval_document_available": True,
-            "f1686_approval_document": SimpleUploadedFile("data sheet", b"This is a an approval document"),
+            "f1686_reference_number": "f1686  reference number update",
+            "f1686_approval_date_0": "02",
+            "f1686_approval_date_1": "02",
+            "f1686_approval_date_2": "2020",
         },
     )
 
@@ -99,7 +100,6 @@ def test_application_export_details_end_to_end(
         ExportDetailsSteps.SECURITY_OTHER_DETAILS,
         {
             "other_security_approval_details": "dummy other details",
-            "other_security_approval_document": SimpleUploadedFile("data sheet", b"Other approval document"),
         },
     )
 
@@ -113,6 +113,8 @@ def test_application_export_details_end_to_end(
         "is_mod_security_approved": True,
         "f680_reference_number": "dummy ref",
         "f1686_contracting_authority": "dummy contracting authority",
+        "f1686_reference_number": "f1686  reference number update",
+        "f1686_approval_date": "2020-02-02",
         "other_security_approval_details": "dummy other details",
     }
 
@@ -149,7 +151,6 @@ def test_application_export_details_end_to_end_alternative(
         ExportDetailsSteps.F1686_DETAILS,
         {
             "f1686_contracting_authority": "dummy contracting authority",
-            "is_f1686_approval_document_available": False,
             "f1686_reference_number": "dummy f1686 reference number",
             "f1686_approval_date_0": "02",
             "f1686_approval_date_1": "02",

@@ -14,7 +14,7 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
 from .mixins import NonF680SecurityClassifiedFlagMixin
-from .payloads import get_other_details_data, get_f1686_data, ExportDetailsStepsPayloadBuilder
+from .payloads import get_f1686_data, ExportDetailsStepsPayloadBuilder
 from .constants import ExportDetailsSteps
 from .initial import (
     get_initial_security_classified_details,
@@ -113,7 +113,7 @@ class EditSecurityOtherDetails(BaseApplicationEditView):
         return {"other_security_approval_details": self.application["other_security_approval_details"]}
 
     def get_edit_payload(self, form):
-        return get_other_details_data(form)
+        return get_cleaned_data(form)
 
 
 class EditF1686Details(BaseApplicationEditView):
@@ -127,7 +127,6 @@ class EditF1686Details(BaseApplicationEditView):
             "f1686_contracting_authority": self.application["f1686_contracting_authority"],
             "f1686_reference_number": self.application["f1686_reference_number"],
             "f1686_approval_date": f1686_approval_date,
-            "is_f1686_approval_document_available": False,
         }
 
     def get_edit_payload(self, form):

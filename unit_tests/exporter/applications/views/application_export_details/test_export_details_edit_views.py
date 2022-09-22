@@ -2,7 +2,7 @@ from datetime import datetime
 import pytest
 
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
+
 
 from exporter.applications.views.application_export_details.constants import ExportDetailsSteps
 from exporter.applications.views.application_export_details.forms import (
@@ -66,7 +66,6 @@ def post_to_edit_export_details(post_to_step_factory, edit_export_details_url):
         (
             "edit_export_details_f1686_details",
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date_0": "02",
@@ -122,7 +121,6 @@ def test_edit_export_details_post(
                 "f1686_approval_date": "2020-02-02",
             },
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date": datetime.fromisoformat("2020-02-02").date(),
@@ -158,7 +156,6 @@ def test_edit_export_details_true(
         "security_approvals": ["F680", "F1686", "Other"],
         "f680_reference_number": "dummy ref 1",
         "f1686_contracting_authority": "dummy contracting authority 1",
-        "is_f1686_approval_document_available": False,
         "other_security_approval_details": "other security approval details 1",
     }
     application.update(application_data)
@@ -199,17 +196,18 @@ def test_edit_export_details_true(
 
     assert response.context["form"].initial == {
         "f1686_contracting_authority": "dummy contracting authority 1",
-        "is_f1686_approval_document_available": False,
-        "f1686_approval_date": None,
         "f1686_reference_number": None,
+        "f1686_approval_date": None,
     }
 
     response = post_to_edit_export_details(
         ExportDetailsSteps.F1686_DETAILS,
         {
             "f1686_contracting_authority": "dummy contracting authority 2",
-            "is_f1686_approval_document_available": True,
-            "f1686_approval_document": SimpleUploadedFile("data sheet", b"This is a an approval document"),
+            "f1686_reference_number": "f1686  reference number update",
+            "f1686_approval_date_0": "02",
+            "f1686_approval_date_1": "02",
+            "f1686_approval_date_2": "2020",
         },
     )
 
@@ -233,6 +231,8 @@ def test_edit_export_details_true(
         "is_mod_security_approved": True,
         "f680_reference_number": "dummy ref 2",
         "f1686_contracting_authority": "dummy contracting authority 2",
+        "f1686_reference_number": "f1686  reference number update",
+        "f1686_approval_date": "2020-02-02",
         "other_security_approval_details": "other security approval details 2",
     }
 

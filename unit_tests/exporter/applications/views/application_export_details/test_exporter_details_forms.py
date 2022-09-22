@@ -1,7 +1,5 @@
 import pytest
 
-from django.core.files.uploadedfile import SimpleUploadedFile
-
 from exporter.applications.views.application_export_details.forms import (
     SecurityClassifiedDetailsForm,
     F680ReferenceNumberForm,
@@ -16,12 +14,12 @@ from exporter.applications.views.application_export_details.forms import (
         (
             {},
             False,
-            {"is_mod_security_approved": ["Select yes if product's are security required"]},
+            {"is_mod_security_approved": ["Select no if you do not have an MOD security approval"]},
         ),
         (
             {"is_mod_security_approved": True},
             False,
-            {"security_approvals": ["Select at least 1 security approval"]},
+            {"security_approvals": ["Select the type of security approval"]},
         ),
         (
             {"is_mod_security_approved": False},
@@ -47,7 +45,7 @@ def test_security_classified_details(data, is_valid, errors):
         (
             {},
             False,
-            {"f680_reference_number": ["Enter a reference number"]},
+            {"f680_reference_number": [" Enter the F680 reference number"]},
         ),
         (
             {"f680_reference_number": "dummy ref"},
@@ -68,7 +66,7 @@ def test_f680_reference_number(data, is_valid, errors):
         (
             {},
             False,
-            {"other_security_approval_details": ["Enter approval details"]},
+            {"other_security_approval_details": ["Enter the details of your written approval"]},
         ),
         (
             {"other_security_approval_details": "dummy other details"},
@@ -91,44 +89,13 @@ def test_security_other_details(data, is_valid, errors):
             {},
             False,
             {
-                "f1686_contracting_authority": ["Enter a contracting authority"],
-                "is_f1686_approval_document_available": ["Select if you have an approval document"],
-            },
-        ),
-        (
-            {"f1686_contracting_authority": "signed by the joe"},
-            {},
-            False,
-            {
-                "is_f1686_approval_document_available": ["Select if you have an approval document"],
-            },
-        ),
-        (
-            {"is_f1686_approval_document_available": True, "f1686_contracting_authority": "signed by the joe"},
-            {},
-            False,
-            {
-                "f1686_approval_document": ["Select an approval document"],
-            },
-        ),
-        (
-            {"is_f1686_approval_document_available": True, "f1686_contracting_authority": "signed by the joe"},
-            {"f1686_approval_document": SimpleUploadedFile("test", b"test content")},
-            True,
-            {},
-        ),
-        (
-            {"is_f1686_approval_document_available": False, "f1686_contracting_authority": "signed by the joe"},
-            {},
-            False,
-            {
+                "f1686_contracting_authority": ["Enter the contracting authority (or signatory and job role)"],
                 "f1686_approval_date": ["Enter the approval date"],
                 "f1686_reference_number": ["Enter a reference number"],
             },
         ),
         (
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
             },
@@ -140,7 +107,6 @@ def test_security_other_details(data, is_valid, errors):
         ),
         (
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date_0": "20",
@@ -153,7 +119,6 @@ def test_security_other_details(data, is_valid, errors):
         ),
         (
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date_0": "20",
@@ -167,7 +132,6 @@ def test_security_other_details(data, is_valid, errors):
         ),
         (
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date_0": "20",
@@ -182,7 +146,6 @@ def test_security_other_details(data, is_valid, errors):
         ),
         (
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date_0": "30",
@@ -197,7 +160,6 @@ def test_security_other_details(data, is_valid, errors):
         ),
         (
             {
-                "is_f1686_approval_document_available": False,
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date_0": "02",
