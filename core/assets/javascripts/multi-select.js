@@ -1,13 +1,20 @@
 import LiteTokenfield from "./lite-tokenfield";
 
-const progressivelyEnhanceMultipleSelectField = (element) => {
+const defaultGetItem = (option) => {
+  return { id: option.value, name: option.value, classes: [] };
+};
+
+const progressivelyEnhanceMultipleSelectField = (
+  element,
+  getItem = defaultGetItem
+) => {
   element.parentElement.classList.add("tokenfield-container");
 
   var items = [];
   var selected = [];
   for (var i = 0; i < element.options.length; i++) {
     var option = element.options.item(i);
-    var item = { id: option.value, name: option.value, classes: [] };
+    var item = getItem(option);
     if (option.selected) {
       selected.push(item);
     }
