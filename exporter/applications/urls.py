@@ -17,16 +17,16 @@ from exporter.applications.views import (
     route_of_goods,
     export_details,
 )
-from exporter.applications.views.application_export_details.views import (
-    ExportDetails,
-    ApplicationExportDetailsSummaryView,
+from exporter.applications.views.security_approvals.views import (
+    SecurityApprovals,
+    SecurityApprovalsSummaryView,
 )
 
-from exporter.applications.views.application_export_details.edit_views import (
+from exporter.applications.views.security_approvals.edit_views import (
     EditF680ReferenceNumber,
     EditSecurityOtherDetails,
     EditF1686Details,
-    EditExportDetails,
+    EditSecurityApprovalDetails,
 )
 
 
@@ -1021,36 +1021,36 @@ urlpatterns = [
         export_details.ExportDetails.as_view(),
         name="export_details",
     ),
-    # Temporary export details new wizard version
+    # Security Approvals
     path(
-        "<uuid:pk>/application-export-details/",
-        ExportDetails.as_view(),
-        name="application_export_details",
+        "<uuid:pk>/security-approvals/",
+        SecurityApprovals.as_view(),
+        name="security_approvals",
     ),
     path(
-        "<uuid:pk>/application-export-details-summary/",
-        ApplicationExportDetailsSummaryView.as_view(),
-        name="application_export_details_summary",
+        "<uuid:pk>/security-approvals-summary/",
+        SecurityApprovalsSummaryView.as_view(),
+        name="security_approvals_summary",
     ),
     path(
-        "<uuid:pk>/edit-export-details/",
-        EditExportDetails.as_view(),
-        name="edit_export_details",
+        "<uuid:pk>/edit-security-approvals/",
+        EditSecurityApprovalDetails.as_view(),
+        name="edit_security_approvals_details",
     ),
     path(
-        "<uuid:pk>/edit-export-details-f680-reference-number/",
+        "<uuid:pk>/edit-security-approvals-f680-reference-number/",
         EditF680ReferenceNumber.as_view(),
-        name="edit_export_details_f680_reference_number",
+        name="edit_security_approvals_f680_reference_number",
     ),
     path(
-        "<uuid:pk>/edit-export-details-security-other-details/",
+        "<uuid:pk>/edit-security-approvals-security-other-details/",
         EditSecurityOtherDetails.as_view(),
-        name="edit_export_details_security_other_details",
+        name="edit_security_approvals_security_other_details",
     ),
     path(
-        "<uuid:pk>/edit-export-details-f1686-details/",
+        "<uuid:pk>/edit-security-approvals-f1686-details/",
         EditF1686Details.as_view(),
-        name="edit_export_details_f1686_details",
+        name="edit_security_approvals_f1686_details",
     ),
     # Ultimate end users
     path("<uuid:pk>/ultimate-end-users/", ultimate_end_users.UltimateEndUsers.as_view(), name="ultimate_end_users"),

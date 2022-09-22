@@ -125,6 +125,16 @@
 					{% include "includes/task-list-item.html" with id='product-journey' title="Provide product location and journey" url=product_journey_url status=locations|task_list_item_status description=location_description %}
 				{% endif %}
 
+                {# Security Approvals #}
+                {% if application_type|application_type_in_list:"HAS_SECURITY_APPROVAL" and FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED%}
+                    {% if security_approvals %}
+						{% url 'applications:security_approvals_summary' application.id as security_approvals_url %}
+					{% else %}
+						{% url 'applications:security_approvals' application.id as security_approvals_url %}
+					{% endif %}
+                        {% include "includes/task-list-item.html" with id='security-approvals' title="Do you have a security approval?" url=security_approvals_url status=security_approvals|task_list_item_status description="" %}
+				{% endif %}
+
 				{# Countries #}
 				{% if application_type|application_type_in_list:"HAS_COUNTRIES" %}
 					{% if oiel_noneditable_countries %}

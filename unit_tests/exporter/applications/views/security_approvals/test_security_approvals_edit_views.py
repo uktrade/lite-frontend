@@ -4,8 +4,8 @@ import pytest
 from django.urls import reverse
 
 
-from exporter.applications.views.application_export_details.constants import ExportDetailsSteps
-from exporter.applications.views.application_export_details.forms import (
+from exporter.applications.views.security_approvals.constants import SecurityApprovalSteps
+from exporter.applications.views.security_approvals.forms import (
     F680ReferenceNumberForm,
     F1686DetailsForm,
     SecurityOtherDetailsForm,
@@ -24,10 +24,10 @@ def setup(
 
 
 @pytest.fixture
-def application_export_details_summary_url(data_standard_case):
+def application_security_approvals_summary_url(data_standard_case):
     application_id = data_standard_case["case"]["data"]["id"]
     return reverse(
-        "applications:application_export_details_summary",
+        "applications:security_approvals_summary",
         kwargs={
             "pk": application_id,
         },
@@ -35,9 +35,9 @@ def application_export_details_summary_url(data_standard_case):
 
 
 @pytest.fixture
-def edit_export_details_url(application):
+def edit_security_approvals_url(application):
     url = reverse(
-        "applications:edit_export_details",
+        "applications:edit_security_approvals_details",
         kwargs={
             "pk": application["id"],
         },
@@ -46,25 +46,25 @@ def edit_export_details_url(application):
 
 
 @pytest.fixture
-def post_to_edit_export_details(post_to_step_factory, edit_export_details_url):
-    return post_to_step_factory(edit_export_details_url)
+def post_to_edit_security_approvals(post_to_step_factory, edit_security_approvals_url):
+    return post_to_step_factory(edit_security_approvals_url)
 
 
 @pytest.mark.parametrize(
     "url_name, form_data, expected",
     (
         (
-            "edit_export_details_f680_reference_number",
+            "edit_security_approvals_f680_reference_number",
             {"f680_reference_number": "new ref number"},
             {"f680_reference_number": "new ref number"},
         ),
         (
-            "edit_export_details_security_other_details",
+            "edit_security_approvals_security_other_details",
             {"other_security_approval_details": "other details"},
             {"other_security_approval_details": "other details"},
         ),
         (
-            "edit_export_details_f1686_details",
+            "edit_security_approvals_f1686_details",
             {
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
@@ -87,7 +87,7 @@ def test_edit_export_details_post(
     url_name,
     form_data,
     expected,
-    application_export_details_summary_url,
+    application_security_approvals_summary_url,
 ):
     url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"]})
 
@@ -96,7 +96,7 @@ def test_edit_export_details_post(
         data=form_data,
     )
     assert response.status_code == 302
-    assert response.url == application_export_details_summary_url
+    assert response.url == application_security_approvals_summary_url
     assert requests_mock.last_request.json() == expected
 
 
@@ -104,17 +104,17 @@ def test_edit_export_details_post(
     "url_name,application_data,initial",
     (
         (
-            "edit_export_details_f680_reference_number",
+            "edit_security_approvals_f680_reference_number",
             {"f680_reference_number": "new ref number"},
             {"f680_reference_number": "new ref number"},
         ),
         (
-            "edit_export_details_security_other_details",
+            "edit_security_approvals_security_other_details",
             {"other_security_approval_details": "other details"},
             {"other_security_approval_details": "other details"},
         ),
         (
-            "edit_export_details_f1686_details",
+            "edit_security_approvals_f1686_details",
             {
                 "f1686_contracting_authority": "signed by the joe",
                 "f1686_reference_number": "dummy ref",
@@ -128,7 +128,7 @@ def test_edit_export_details_post(
         ),
     ),
 )
-def test_edit_export_details_initial(
+def test_edit_security_approvals_initial(
     authorized_client,
     application,
     url_name,
@@ -144,12 +144,13 @@ def test_edit_export_details_initial(
     assert response.context["form"].initial == initial
 
 
-def test_edit_export_details_true(
+def test_edit_security_approvals_true(
     authorized_client,
-    edit_export_details_url,
-    post_to_edit_export_details,
+    edit_security_approvals_url,
+    post_to_edit_security_approvals,
     mock_application_put,
     application,
+    application_security_approvals_summary_url,
 ):
     application_data = {
         "is_mod_security_approved": True,
@@ -160,7 +161,7 @@ def test_edit_export_details_true(
     }
     application.update(application_data)
 
-    response = authorized_client.get(edit_export_details_url)
+    response = authorized_client.get(edit_security_approvals_url)
     assert response.status_code == 200
 
     assert isinstance(response.context["form"], SecurityClassifiedDetailsForm)
@@ -169,8 +170,8 @@ def test_edit_export_details_true(
         "security_approvals": ["F680", "F1686", "Other"],
     }
 
-    response = post_to_edit_export_details(
-        ExportDetailsSteps.SECURITY_CLASSIFIED,
+    response = post_to_edit_security_approvals(
+        SecurityApprovalSteps.SECURITY_CLASSIFIED,
         {
             "is_mod_security_approved": True,
             "security_approvals": ["F680", "F1686", "Other"],
@@ -183,8 +184,8 @@ def test_edit_export_details_true(
         "f680_reference_number": "dummy ref 1",
     }
 
-    response = post_to_edit_export_details(
-        ExportDetailsSteps.F680_REFERENCE_NUMBER,
+    response = post_to_edit_security_approvals(
+        SecurityApprovalSteps.F680_REFERENCE_NUMBER,
         {
             "f680_reference_number": "dummy ref 2",
         },
@@ -200,8 +201,8 @@ def test_edit_export_details_true(
         "f1686_approval_date": None,
     }
 
-    response = post_to_edit_export_details(
-        ExportDetailsSteps.F1686_DETAILS,
+    response = post_to_edit_security_approvals(
+        SecurityApprovalSteps.F1686_DETAILS,
         {
             "f1686_contracting_authority": "dummy contracting authority 2",
             "f1686_reference_number": "f1686  reference number update",
@@ -216,8 +217,8 @@ def test_edit_export_details_true(
 
     assert response.context["form"].initial == {"other_security_approval_details": "other security approval details 1"}
 
-    response = post_to_edit_export_details(
-        ExportDetailsSteps.SECURITY_OTHER_DETAILS,
+    response = post_to_edit_security_approvals(
+        SecurityApprovalSteps.SECURITY_OTHER_DETAILS,
         {"other_security_approval_details": "other security approval details 2"},
     )
 
@@ -236,9 +237,4 @@ def test_edit_export_details_true(
         "other_security_approval_details": "other security approval details 2",
     }
 
-    assert response.url == reverse(
-        "applications:application_export_details_summary",
-        kwargs={
-            "pk": application["id"],
-        },
-    )
+    assert response.url == application_security_approvals_summary_url

@@ -104,3 +104,16 @@ def get_product_location_and_journey_details(application):
             if application.get(field) is None:
                 return False
     return True
+
+
+def get_security_approval_details(application):
+    """
+    Determines if security approval journey section is complete or not
+    """
+    fields = [
+        "is_mod_security_approved",
+    ]
+    for field in fields:
+        if application.get(field) is None:
+            return False
+    return True

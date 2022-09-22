@@ -1,6 +1,6 @@
 import pytest
 
-from exporter.applications.views.application_export_details.forms import (
+from exporter.applications.views.security_approvals.forms import (
     SecurityClassifiedDetailsForm,
     F680ReferenceNumberForm,
     SecurityOtherDetailsForm,
