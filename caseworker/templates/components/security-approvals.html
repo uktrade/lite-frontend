@@ -29,7 +29,7 @@
             <dt class="govuk-summary-list__key">When was the F1686 approved?</dt>
             <dd class="govuk-summary-list__value">{{ case.data.f1686_approval_date|str_date_only }}</dd>
         </div>
-        {% if "Other" in case.data.security_approvals %}--
+        {% if "Other" in case.data.security_approvals %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Provide details of your written approval</dt>
                 <dd class="govuk-summary-list__value">{{ case.data.other_security_approval_details  }}</dd>
