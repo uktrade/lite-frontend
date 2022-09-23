@@ -10,7 +10,7 @@ from caseworker.tau import views
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
+def setup(mock_queue, mock_case, mock_mtcr_entries_get):
     pass
 
 
@@ -21,14 +21,6 @@ def mock_application_good_documents(data_standard_case, requests_mock):
             rf"/applications/{data_standard_case['case']['id']}/goods/[0-9a-fA-F-]+/documents/",
         ),
         json={"documents": []},
-    )
-
-
-@pytest.fixture(autouse=True)
-def mock_mtcr_entries_get(requests_mock):
-    requests_mock.get(
-        "/static/regimes/mtcr/entries/",
-        json={"entries": [("MTCR1", "mtcr1-value")]},
     )
 
 
@@ -85,7 +77,7 @@ def test_home_content(
         "p2",
         "ML8a,ML9a",
         "No",
-        "",
+        "mtcr-1",
         "scale compelling technologies",
         "test assesment note",
         "Edit",
@@ -172,7 +164,10 @@ def test_form(
     "regimes_form_data, regime_entries",
     (
         ({}, []),
-        ({"regimes": ["MTCR"], "mtcr_entries": ["MTCR1"]}, ["MTCR1"]),
+        (
+            {"regimes": ["MTCR"], "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"]},
+            ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+        ),
     ),
 )
 def test_form_regime_entries(

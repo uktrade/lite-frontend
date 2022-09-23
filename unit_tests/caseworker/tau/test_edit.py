@@ -9,7 +9,7 @@ from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
+def setup(mock_queue, mock_case, mock_mtcr_entries_get):
     pass
 
 
@@ -25,14 +25,6 @@ def mock_application_good_documents(data_standard_case, requests_mock):
             rf"/applications/{data_standard_case['case']['id']}/goods/[0-9a-fA-F-]+/documents/",
         ),
         json={"documents": []},
-    )
-
-
-@pytest.fixture(autouse=True)
-def mock_mtcr_entries_get(requests_mock):
-    requests_mock.get(
-        "/static/regimes/mtcr/entries/",
-        json={"entries": [("MTCR1", "mtcr1-value")]},
     )
 
 
@@ -95,12 +87,28 @@ def test_form(
 
     # Check if the form fields contain sane values
     edit_good = data_standard_case["case"]["data"]["goods"][1]
+
     # Check control list entries
     edit_good_cle = [cle["rating"] for cle in edit_good["control_list_entries"]]
-    form_cle = [cle.attrs["value"] for cle in soup.find("form").find_all("option") if "selected" in cle.attrs]
+    form_cle = [
+        cle.attrs["value"]
+        for cle in soup.find("select", {"id": "control_list_entries"}).find_all("option")
+        if "selected" in cle.attrs
+    ]
     assert edit_good_cle == form_cle
+
+    # Check regimes
+    edit_good_regimes = [cle["pk"] for cle in edit_good["regime_entries"]]
+    form_mtcr_entries = [
+        cle.attrs["value"]
+        for cle in soup.find("select", {"id": "mtcr_entries"}).find_all("option")
+        if "selected" in cle.attrs
+    ]
+    assert edit_good_regimes == form_mtcr_entries
+
     # Check report summary
     assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
+
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
 
@@ -125,7 +133,10 @@ def test_form(
     "regimes_form_data, regime_entries",
     (
         ({}, []),
-        ({"regimes": ["MTCR"], "mtcr_entries": ["MTCR1"]}, ["MTCR1"]),
+        (
+            {"regimes": ["MTCR"], "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"]},
+            ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+        ),
     ),
 )
 def test_form_regime_entries(

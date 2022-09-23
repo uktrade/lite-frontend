@@ -114,8 +114,9 @@ class TAUEditForm(forms.Form):
             self.add_error("report_summary", "This field is required")
 
         if settings.FEATURE_FLAG_REGIMES:
-            is_mtcr_regime = "MTCR" in cleaned_data["regimes"]
-            mtcr_entries = cleaned_data["mtcr_entries"]
+            regimes = cleaned_data.get("regimes", [])
+            is_mtcr_regime = "MTCR" in regimes
+            mtcr_entries = cleaned_data.get("mtcr_entries", [])
             if is_mtcr_regime and not mtcr_entries:
                 self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
 

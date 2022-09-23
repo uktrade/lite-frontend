@@ -91,7 +91,7 @@ class TAUMixin(CaseTabsMixin):
     @cached_property
     def mtcr_entries(self):
         entries, _ = get_mtcr_entries(self.request)
-        return entries["entries"]
+        return [(entry["pk"], entry["name"]) for entry in entries]
 
     def is_assessed(self, good):
         """Returns True if a good has been assessed"""
@@ -219,17 +219,31 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
     def get_success_url(self):
         return reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
+    def get_regime_entries_form_data(self, good):
+        if not good["regime_entries"]:
+            return {
+                "regimes": [],
+                "mtcr_entries": [],
+            }
+
+        return {
+            "regimes": ["MTCR"],
+            "mtcr_entries": [entry["pk"] for entry in good["regime_entries"]],
+        }
+
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["mtcr_entries"] = self.mtcr_entries
 
         good = self.get_good()
+
         form_kwargs["data"] = self.request.POST or {
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
             "report_summary": good["report_summary"],
             "comment": good["comment"],
+            **self.get_regime_entries_form_data(good),
         }
         return form_kwargs
 

@@ -86,7 +86,7 @@
                                         <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
                                         <td class="govuk-table__cell">
                                             {% for regime_entry in good.regime_entries %}
-                                                {{ regime_entry}}<br>
+                                                {{ regime_entry.name }}<br>
                                             {% endfor %}
                                         </td>
                                         <td class="govuk-table__cell">{{ good.report_summary }}</td>
