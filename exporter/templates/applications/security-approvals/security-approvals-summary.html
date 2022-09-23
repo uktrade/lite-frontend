@@ -10,7 +10,7 @@
         <div class="lite-app-bar">
             <div class="lite-app-bar__content">
                 <h1 class="govuk-heading-l">
-                    {% block title %} Security classification details summary {% endblock %}
+                    {% block title %} Security approval summary {% endblock %}
                 </h1>
             </div>
         </div>
@@ -26,7 +26,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">What type of approval do you have?</dt>
-            <dd class="govuk-summary-list__value">{{ application.security_approvals }}</dd>
+            <dd class="govuk-summary-list__value">{{ application.security_approvals|list_to_choice_labels:SecurityClassifiedApprovalsTypes }}</dd>
             <dd class="govuk-summary-list__actions">
             <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
                href="{% url 'applications:edit_security_approvals_details' application.id %}">Change
