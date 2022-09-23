@@ -7,6 +7,17 @@ from exporter.core import constants
 from exporter.core.objects import Application
 
 
+@pytest.fixture()
+def dummy_choice():
+    class FakeType:
+        choices = (
+            ("T1", "label 1"),
+            ("T2", "label 2"),
+        )
+
+    return FakeType
+
+
 @pytest.mark.parametrize(
     "application,expected",
     [
@@ -259,3 +270,16 @@ def test_username(data, expected):
 )
 def test_get_party_type(party_type, expected):
     assert expected == custom_tags.get_party_type(party_type)
+
+
+@pytest.mark.parametrize(
+    "items, expected",
+    [
+        ([], ""),
+        (None, ""),
+        (["T1"], "label 1"),
+        (["T1", "T2"], "label 1, label 2"),
+    ],
+)
+def test_list_to_choice_labels(items, expected, dummy_choice):
+    assert expected == custom_tags.list_to_choice_labels(items, dummy_choice)

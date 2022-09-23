@@ -101,5 +101,5 @@ class SecurityApprovalsSummaryView(LoginRequiredMixin, ApplicationMixin, Templat
         context = super().get_context_data(*args, **kwargs)
         context["application"] = self.application
         context["back_link_url"] = reverse("applications:security_approvals", kwargs={"pk": self.kwargs["pk"]})
-        context["SecurityClassifiedApprovalsTypes"] = SecurityClassifiedApprovalsType
+        context["security_classified_approvals_types"] = SecurityClassifiedApprovalsType
         return context

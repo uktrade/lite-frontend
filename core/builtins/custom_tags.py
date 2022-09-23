@@ -935,3 +935,25 @@ def humanise_list(_list):
         return "".join(_list)
     last = _list.pop()
     return f"{', '.join(_list)} and {last}"
+
+
+@register.filter
+def list_to_choice_labels(items, choices):
+    item_values = []
+    if not items:
+        return ""
+    for choice in choices.choices:
+        if choice[0] in items:
+            item_values.append(choice[1])
+    return ", ".join(item_values)
+
+
+@register.filter
+def list_to_choice_labels(items, choices):
+    item_values = []
+    if not items:
+        return ""
+    for choice in choices.choices:
+        if choice[0] in items:
+            item_values.append(choice[1])
+    return ", ".join(item_values)
