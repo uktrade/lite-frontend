@@ -1,0 +1,39 @@
+<h2 class="govuk-heading-m">Security Approvals</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Do you have an MOD security approval, such as F680 or F1686?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.is_mod_security_approved|yesno|capfirst }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">What type of approval do you have?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.security_approvals|list_to_choice_labels:security_classified_approvals_types }}</dd>
+    </div>
+
+    {% if "F680" in case.data.security_approvals %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">What is the F680 reference number?</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.f680_reference_number }}</dd>
+        </div>
+    {% endif %}
+
+    {% if "F1686" in case.data.security_approvals %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Who is the contracting authority (or signatory and job role) for your F1686 approval?</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.f1686_contracting_authority  }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">What is the F1686 reference number?</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.f1686_reference_number }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">When was the F1686 approved?</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.f1686_approval_date|str_date_only }}</dd>
+        </div>
+        {% if "Other" in case.data.security_approvals %}--
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Provide details of your written approval</dt>
+                <dd class="govuk-summary-list__value">{{ case.data.other_security_approval_details  }}</dd>
+            </div>
+        {% endif %}
+    {% endif %}
+</dl>

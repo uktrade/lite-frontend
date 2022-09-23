@@ -119,3 +119,15 @@ class FirearmsProductType:
     FIREARMS_ACCESSORY = "firearms_accessory"
     SOFTWARE_RELATED_TO_FIREARM = "software_related_to_firearms"
     TECHNOLOGY_RELATED_TO_FIREARM = "technology_related_to_firearms"
+
+
+class SecurityClassifiedApprovalsType:
+    F680 = "F680"
+    F1686 = "F1686"
+    OTHER = "Other"
+
+    choices = (
+        (F680, "F680"),
+        (F1686, "F1686"),
+        (OTHER, "Other written approval"),
+    )

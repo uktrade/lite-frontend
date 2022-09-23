@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import TemplateView
 
-from core.constants import CaseStatusEnum
+from core.constants import CaseStatusEnum, SecurityClassifiedApprovalsType
 
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.objects import Slice, Case
@@ -58,6 +58,7 @@ class Slices:
     DELETED_ENTITIES = Slice("case/slices/deleted-entities.html")
     END_USER_DOCUMENTS = Slice("case/slices/end-user-documents.html")
     LOCATIONS = Slice("components/locations.html")
+    SECURITY_APPROVALS = Slice("components/security-approvals.html")
     F680_DETAILS = Slice("case/slices/f680-details.html", "F680 details")
     EXHIBITION_DETAILS = Slice("case/slices/exhibition-details.html", "Exhibition details")
     END_USE_DETAILS = Slice("case/slices/end-use-details.html", "End use details")
@@ -144,6 +145,7 @@ class CaseView(TemplateView):
             "filters": generate_activity_filters(get_activity_filters(self.request, self.case_id), ApplicationPage),
             "is_terminal": status_props["is_terminal"],
             "is_read_only": status_props["is_read_only"],
+            "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "has_future_next_review_date": future_next_review_date,
             **self.additional_context,
         }

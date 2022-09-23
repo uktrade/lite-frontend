@@ -4,6 +4,7 @@ from crispy_forms_gds.layout import HTML
 from django import forms
 from django.template.loader import render_to_string
 
+from core.constants import SecurityClassifiedApprovalsType
 from core.forms.layouts import (
     ConditionalQuestion,
     ConditionalRadios,
@@ -12,7 +13,6 @@ from core.forms.layouts import (
 from exporter.core.validators import PastDateValidator
 from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.common.forms import BaseForm, coerce_str_to_bool
-from exporter.applications.constants import SecurityClassifiedApprovalsType
 
 
 class SecurityClassifiedDetailsForm(BaseForm):

@@ -56,15 +56,3 @@ class OielLicenceTypes(Enum):
             OielLicenceTypes.DEALER.value,
             OielLicenceTypes.UK_CONTINENTAL_SHELF.value,
         ]
-
-
-class SecurityClassifiedApprovalsType:
-    F680 = "F680"
-    F1686 = "F1686"
-    OTHER = "Other"
-
-    choices = (
-        (F680, "F680"),
-        (F1686, "F1686"),
-        (OTHER, "Other written approval"),
-    )

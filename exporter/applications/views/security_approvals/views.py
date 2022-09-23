@@ -9,6 +9,7 @@ from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
+from core.constants import SecurityClassifiedApprovalsType
 
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.applications.services import put_application
@@ -20,7 +21,6 @@ from .constants import SecurityApprovalSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
 from .payloads import SecurityApprovalStepsPayloadBuilder
 from .mixins import NonF680SecurityClassifiedFlagMixin
-from exporter.applications.constants import SecurityClassifiedApprovalsType
 
 logger = logging.getLogger(__name__)
 
