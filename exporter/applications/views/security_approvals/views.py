@@ -20,6 +20,7 @@ from .constants import SecurityApprovalSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
 from .payloads import SecurityApprovalStepsPayloadBuilder
 from .mixins import NonF680SecurityClassifiedFlagMixin
+from exporter.applications.constants import SecurityClassifiedApprovalsType
 
 logger = logging.getLogger(__name__)
 
@@ -100,4 +101,5 @@ class SecurityApprovalsSummaryView(LoginRequiredMixin, ApplicationMixin, Templat
         context = super().get_context_data(*args, **kwargs)
         context["application"] = self.application
         context["back_link_url"] = reverse("applications:security_approvals", kwargs={"pk": self.kwargs["pk"]})
+        context["security_classified_approvals_types"] = SecurityClassifiedApprovalsType
         return context

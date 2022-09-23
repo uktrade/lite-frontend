@@ -46,6 +46,14 @@ def mock_goods_get(application, requests_mock):
     )
 
 
+@pytest.fixture
+def mock_application_submit(application, requests_mock):
+    return requests_mock.put(
+        f"/applications/{application['id']}/submit/",
+        json={},
+    )
+
+
 def test_application_task_list_status_code(
     authorized_client,
     task_list_url,
@@ -135,3 +143,25 @@ def test_application_task_list_ultimate_end_users_required(
     )
     response = authorized_client.get(task_list_url)
     assert response.context["ultimate_end_users_required"] == ultimate_end_users_required
+
+
+@pytest.mark.parametrize(
+    "feature_enabled",
+    (
+        [True],
+        [False],
+    ),
+)
+def test_application_task_list_post_f680_security_approvals_flag(
+    feature_enabled,
+    authorized_client,
+    task_list_url,
+    mock_application_get,
+    mock_application_submit,
+    settings,
+):
+    settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = feature_enabled
+    authorized_client.post(task_list_url)
+
+    assert mock_application_submit.called_once
+    assert mock_application_submit.last_request.json() == {"check_security_approvals": feature_enabled}
