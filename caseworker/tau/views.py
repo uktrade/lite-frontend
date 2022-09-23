@@ -332,6 +332,7 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
                 "comment": None,
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
+                "regime_entries": [],
             }
             post_review_good(self.request, case_id=pk, data=payload)
         return redirect(reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))
