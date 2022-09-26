@@ -7,6 +7,8 @@ import sentry_sdk
 
 from caseworker.advice import forms, services, constants
 from core import client
+from core.constants import SecurityClassifiedApprovalsType
+
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_denial_reasons
@@ -32,6 +34,14 @@ class CaseContextMixin:
     def denial_reasons_display(self):
         denial_reasons_data = get_denial_reasons(self.request)
         return {denial_reason["id"]: denial_reason["display_value"] for denial_reason in denial_reasons_data}
+
+    @property
+    def security_approvals_classified_display(self):
+        security_approvals = self.case["data"].get("security_approvals")
+        if security_approvals:
+            security_approvals_dict = dict(SecurityClassifiedApprovalsType.choices)
+            return ", ".join([security_approvals_dict[approval] for approval in security_approvals])
+        return ""
 
     @property
     def caseworker_id(self):
@@ -156,6 +166,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, Form
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
             "denial_reasons_display": self.denial_reasons_display,
+            "security_approvals_classified_display": self.security_approvals_classified_display,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:view_my_advice",
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
@@ -280,6 +291,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, TemplateVi
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
+            "security_approvals_classified_display": self.security_approvals_classified_display,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
             **services.get_advice_tab_context(
@@ -301,6 +313,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         context["formset"] = forms.get_formset(self.form_class, len(advice))
         context["advice_to_countersign"] = advice.values()
         context["denial_reasons_display"] = self.denial_reasons_display
+        context["security_approvals_classified_display"] = self.security_approvals_classified_display
         return context
 
     def post(self, request, *args, **kwargs):
@@ -333,6 +346,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
         context["denial_reasons_display"] = self.denial_reasons_display
+        context["security_approvals_classified_display"] = self.security_approvals_classified_display
         context["current_tab"] = "cases:countersign_view"
         return context
 
@@ -395,6 +409,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, team_alias)
         context["advice_to_consolidate"] = advice_to_consolidate.values()
         context["denial_reasons_display"] = self.denial_reasons_display
+        context["security_approvals_classified_display"] = self.security_approvals_classified_display
         return context
 
     def form_valid(self, form):
@@ -495,6 +510,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
             "denial_reasons_display": self.denial_reasons_display,
+            "security_approvals_classified_display": self.security_approvals_classified_display,
         }
 
     def form_valid(self, form):
