@@ -452,7 +452,6 @@ def data_standard_case():
                     "sic_number": "99715",
                     "vat_number": "GB980941362",
                     "registration_number": "37718958",
-                    "security_approvals": ["F680"],
                 },
                 "case_type": {
                     "id": "00000000-0000-0000-0000-000000000004",
@@ -770,7 +769,7 @@ def data_standard_case():
                 "is_shipped_waybill_or_lading": False,
                 "non_waybill_or_lading_route_details": "44",
                 "is_mod_security_approved": None,
-                "security_approvals": None,
+                "security_approvals": ["F680"],
                 "f680_reference_number": None,
                 "f1686_contracting_authority": None,
                 "f1686_reference_number": None,
