@@ -41,6 +41,7 @@ class CaseContextMixin:
         if security_approvals:
             security_approvals_dict = dict(SecurityClassifiedApprovalsType.choices)
             return ", ".join([security_approvals_dict[approval] for approval in security_approvals])
+        return ""
 
     @property
     def caseworker_id(self):
