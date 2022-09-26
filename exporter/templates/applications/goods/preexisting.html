@@ -34,6 +34,8 @@
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">{{good.name}}</a>
 								{% elif good.item_category.key == "group1_platform"  %}
                     				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:platform_detail" good.id %}">{{good.name}}</a>
+								{% elif good.item_category.key == "group3_software"  %}
+                    				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:software_detail" good.id %}">{{good.name}}</a>
 								{% elif good.item_category.key == "group1_materials"  %}
                     				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:material_detail" good.id %}">{{good.name}}</a>
                                 {% else %}
@@ -62,7 +64,11 @@
                                     	<a href="{% url 'applications:attach_platform_to_application' draft_id good.id %}" id="add-platform-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
-                                {% elif good.item_category.key == "group1_materials"  %}
+								{% elif good.item_category.key == "group3_software"  %}
+										<a href="{% url 'applications:attach_software_to_application' draft_id good.id %}" id="add-software-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+								{% elif good.item_category.key == "group1_materials"  %}
                                     	<a href="{% url 'applications:attach_material_to_application' draft_id good.id %}" id="add-material-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
