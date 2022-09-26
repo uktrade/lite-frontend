@@ -452,6 +452,7 @@ def data_standard_case():
                     "sic_number": "99715",
                     "vat_number": "GB980941362",
                     "registration_number": "37718958",
+                    "security_approvals": ["F680"],
                 },
                 "case_type": {
                     "id": "00000000-0000-0000-0000-000000000004",
