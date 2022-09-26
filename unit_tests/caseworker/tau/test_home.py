@@ -10,7 +10,7 @@ from caseworker.tau import views
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_mtcr_entries_get):
+def setup(mock_queue, mock_case, mock_mtcr_entries_get, mock_wassenaar_entries_get):
     pass
 
 
@@ -47,7 +47,7 @@ def gov_user():
 
 
 def get_cells(soup, table_id):
-    return [td.text.strip() for td in soup.find(id=table_id).find_all("td")]
+    return ["\n".join([t.strip() for t in td.text.strip().split("\n")]) for td in soup.find(id=table_id).find_all("td")]
 
 
 def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_precedents_api):
@@ -77,7 +77,7 @@ def test_home_content(
         "p2",
         "ML8a,ML9a",
         "No",
-        "mtcr-1",
+        "mtcr-1\n\nw-1",
         "scale compelling technologies",
         "test assesment note",
         "Edit",
@@ -144,6 +144,7 @@ def test_form(
         "report_summary": "test",
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
+        "regimes": ["NONE"],
     }
 
     response = authorized_client.post(url, data=data)
@@ -163,10 +164,25 @@ def test_form(
 @pytest.mark.parametrize(
     "regimes_form_data, regime_entries",
     (
-        ({}, []),
+        (
+            {"regimes": ["NONE"]},
+            [],
+        ),
         (
             {"regimes": ["MTCR"], "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"]},
             ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+        ),
+        (
+            {"regimes": ["WASSENAAR"], "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"]},
+            ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+        ),
+        (
+            {
+                "regimes": ["WASSENAAR", "MTCR"],
+                "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+                "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+            },
+            ["c760976f-fd14-4356-9f23-f6eaf084475d", "d73d0273-ef94-4951-9c51-c291eba949a0"],
         ),
     ),
 )
