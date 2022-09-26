@@ -219,6 +219,7 @@ class CaseDetail(CaseTabsMixin, CaseView):
             conditional(self.case.data["end_user"], Slices.END_USER_DOCUMENTS),
             conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
+            Slices.SECURITY_APPROVALS,
             Slices.END_USE_DETAILS,
             Slices.SUPPORTING_DOCUMENTS,
             Slices.FREEDOM_OF_INFORMATION,

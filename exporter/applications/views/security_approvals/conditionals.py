@@ -1,5 +1,5 @@
+from core.constants import SecurityClassifiedApprovalsType
 from .constants import SecurityApprovalSteps
-from exporter.applications.constants import SecurityClassifiedApprovalsType
 
 
 def is_f680_approval(wizard):
