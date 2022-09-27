@@ -24,16 +24,17 @@
                href="{% url 'applications:edit_security_approvals_details' application.id %}">Change</a>
             </dd>
         </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">What type of approval do you have?</dt>
-            <dd class="govuk-summary-list__value">{{ application.security_approvals|list_to_choice_labels:security_classified_approvals_types }}</dd>
-            <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-               href="{% url 'applications:edit_security_approvals_details' application.id %}">Change
-            </a>
-            </dd>
-        </div>
-
+        {% if application.is_mod_security_approved %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">What type of approval do you have?</dt>
+                    <dd class="govuk-summary-list__value">{{ application.security_approvals|list_to_choice_labels:security_classified_approvals_types }}</dd>
+                    <dd class="govuk-summary-list__actions">
+                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                       href="{% url 'applications:edit_security_approvals_details' application.id %}">Change
+                    </a>
+                    </dd>
+                </div>
+        {% endif %}
         {% if "F680" in application.security_approvals %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">What is the F680 reference number?</dt>
@@ -47,7 +48,7 @@
         {% endif %}
 
         {% if "F1686" in application.security_approvals %}
-            <div class="govuk-summary-list__row">
+Honoursx            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Who is the contracting authority (or signatory and job role) for your F1686 approval?</dt>
                 <dd class="govuk-summary-list__value">{{ application.f1686_contracting_authority  }}</dd>
                 <dd class="govuk-summary-list__actions">
@@ -72,24 +73,21 @@
                     </a>
                 </dd>
             </div>
-            {% if "Other" in application.security_approvals %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Provide details of your written approval</dt>
-                    <dd class="govuk-summary-list__value">{{ application.other_security_approval_details  }}</dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-                           href="{% url 'applications:edit_security_approvals_security_other_details' application.id %}">Change
-                        </a>
-                    </dd>
-                </div>
-            {% endif %}
+        {% endif %}
+        {% if "Other" in application.security_approvals %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Provide details of your written approval</dt>
+                <dd class="govuk-summary-list__value">{{ application.other_security_approval_details  }}</dd>
+                <dd class="govuk-summary-list__actions">
+                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                       href="{% url 'applications:edit_security_approvals_security_other_details' application.id %}">Change
+                    </a>
+                </dd>
+            </div>
         {% endif %}
     </dl>
     </div>
-
 </div>
-
-
     <div class="govuk-button-group">
 	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Continue</a>
 </div>
