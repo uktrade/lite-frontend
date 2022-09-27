@@ -220,7 +220,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         return reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
     def get_regime_entries_form_data(self, good):
-        if not good["regime_entries"]:
+        if not good.get("regime_entries"):
             return {
                 "regimes": [],
                 "mtcr_entries": [],
