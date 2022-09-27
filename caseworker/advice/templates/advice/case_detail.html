@@ -109,7 +109,11 @@
               Security approvals
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ security_approvals_classified_display }}
+            {% if security_approvals_classified_display %}
+                {{ security_approvals_classified_display }}
+            {% else %}
+                None
+            {% endif %}
             </dd>
           </div>
           <div class="govuk-summary-list__row">
