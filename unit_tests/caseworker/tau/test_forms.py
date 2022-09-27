@@ -93,6 +93,16 @@ def default_feature_flags(settings):
             {
                 "goods": ["test-id"],
                 "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+                "control_list_entries": ["test-rating"],
+            },
+            False,
+            {"does_not_have_control_list_entries": ["This is mutually exclusive with control list entries"]},
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["MTCR"],
@@ -535,6 +545,16 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             },
             True,
             {},
+        ),
+        # Marked as not have CLEs but has CLEs
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+                "control_list_entries": ["test-rating"],
+            },
+            False,
+            {"does_not_have_control_list_entries": ["This is mutually exclusive with control list entries"]},
         ),
         (
             {
