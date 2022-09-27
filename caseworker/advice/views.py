@@ -166,9 +166,9 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, Form
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
             "denial_reasons_display": self.denial_reasons_display,
-            "security_approvals_classified_display": self.security_approvals_classified_display,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:view_my_advice",
+            "security_approvals_classified_display": self.security_approvals_classified_display,
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
