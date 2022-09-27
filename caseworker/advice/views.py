@@ -44,14 +44,6 @@ class CaseContextMixin:
         return ""
 
     @property
-    def security_approvals_classified_display(self):
-        security_approvals = self.case["data"].get("security_approvals")
-        if security_approvals:
-            security_approvals_dict = dict(SecurityClassifiedApprovalsType.choices)
-            return ", ".join([security_approvals_dict[approval] for approval in security_approvals])
-        return ""
-
-    @property
     def caseworker_id(self):
         return str(self.request.session["lite_api_user_id"])
 
