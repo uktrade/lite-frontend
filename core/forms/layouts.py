@@ -22,9 +22,7 @@ def summary_list(items):
     return HTML(snippet)
 
 
-class ConditionalQuestion(TemplateNameMixin):
-    template = "%s/layout/conditional_question.html"
-
+class BaseConditionalQuestion(TemplateNameMixin):
     def __init__(self, value, *fields):
         self.value = value
         self.fields = list(fields)
@@ -48,9 +46,7 @@ class ConditionalQuestion(TemplateNameMixin):
         return render_to_string(template, context.flatten())
 
 
-class ConditionalRadios(TemplateNameMixin):
-    template = "%s/layout/conditional_radios.html"
-
+class BaseConditional(TemplateNameMixin):
     def __init__(self, field, *choices):
         if not isinstance(field, str):
             raise TypeError(f"{self.__class__.__name__} only accepts field as a string parameter")
@@ -61,10 +57,10 @@ class ConditionalRadios(TemplateNameMixin):
     def render_choices(self, bound_field, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         to_render = []
         for value in self.choices:
-            if not isinstance(value, (str, ConditionalQuestion)):
-                raise TypeError("Only accepts values of type str or ConditionalQuestions")
+            if not isinstance(value, (str, self.question_class)):
+                raise TypeError(f"Only accepts values of type str or {self.question_class.__name__}")
             if isinstance(value, str):
-                value = ConditionalQuestion(value)
+                value = self.question_class(value)
             to_render.append(value)
 
         return "".join([t.render(bound_field, form, form_style, context, template_pack, **kwargs) for t in to_render])
@@ -79,6 +75,24 @@ class ConditionalRadios(TemplateNameMixin):
         )
 
         return render_to_string(template, context.flatten())
+
+
+class ConditionalRadiosQuestion(BaseConditionalQuestion):
+    template = "%s/layout/conditional_radios_question.html"
+
+
+class ConditionalRadios(BaseConditional):
+    question_class = ConditionalRadiosQuestion
+    template = "%s/layout/conditional_radios.html"
+
+
+class ConditionalCheckboxesQuestion(BaseConditionalQuestion):
+    template = "%s/layout/conditional_checkboxes_question.html"
+
+
+class ConditionalCheckboxes(BaseConditional):
+    question_class = ConditionalCheckboxesQuestion
+    template = "%s/layout/conditional_checkboxes.html"
 
 
 class ConditionalCheckbox(TemplateNameMixin):

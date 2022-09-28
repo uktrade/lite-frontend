@@ -10,7 +10,7 @@ from caseworker.tau import views
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
+def setup(mock_queue, mock_case, mock_mtcr_entries_get):
     pass
 
 
@@ -77,7 +77,7 @@ def test_home_content(
         "p2",
         "ML8a,ML9a",
         "No",
-        "",
+        "mtcr-1",
         "scale compelling technologies",
         "test assesment note",
         "Edit",
@@ -156,7 +156,56 @@ def test_form(
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
         "is_good_controlled": False,
-        "is_wassenaar": False,
+        "regime_entries": [],
+    }
+
+
+@pytest.mark.parametrize(
+    "regimes_form_data, regime_entries",
+    (
+        ({}, []),
+        (
+            {"regimes": ["MTCR"], "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"]},
+            ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+        ),
+    ),
+)
+def test_form_regime_entries(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_control_list_entries,
+    mock_precedents_api,
+    regimes_form_data,
+    regime_entries,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+
+    data = {
+        "report_summary": "test",
+        "goods": [good["id"]],
+        "does_not_have_control_list_entries": True,
+        **regimes_form_data,
+    }
+
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+
+    assert requests_mock.last_request.json() == {
+        "control_list_entries": [],
+        "report_summary": "test",
+        "comment": "",
+        "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
+        "is_good_controlled": False,
+        "regime_entries": regime_entries,
     }
 
 
