@@ -154,7 +154,7 @@ def test_edit_security_approvals_true(
 ):
     application_data = {
         "is_mod_security_approved": True,
-        "security_approvals": ["F680", "F1686", "Other"],
+        "security_approvals": ["F680"],
         "f680_reference_number": "dummy ref 1",
         "f1686_contracting_authority": "dummy contracting authority 1",
         "other_security_approval_details": "other security approval details 1",
@@ -167,7 +167,7 @@ def test_edit_security_approvals_true(
     assert isinstance(response.context["form"], SecurityClassifiedDetailsForm)
     assert response.context["form"].initial == {
         "is_mod_security_approved": True,
-        "security_approvals": ["F680", "F1686", "Other"],
+        "security_approvals": ["F680"],
     }
 
     response = post_to_edit_security_approvals(
@@ -175,19 +175,6 @@ def test_edit_security_approvals_true(
         {
             "is_mod_security_approved": True,
             "security_approvals": ["F680", "F1686", "Other"],
-        },
-    )
-    assert response.status_code == 200
-
-    assert isinstance(response.context["form"], F680ReferenceNumberForm)
-    assert response.context["form"].initial == {
-        "f680_reference_number": "dummy ref 1",
-    }
-
-    response = post_to_edit_security_approvals(
-        SecurityApprovalSteps.F680_REFERENCE_NUMBER,
-        {
-            "f680_reference_number": "dummy ref 2",
         },
     )
 
@@ -230,7 +217,6 @@ def test_edit_security_approvals_true(
     assert last_request.json() == {
         "security_approvals": ["F680", "F1686", "Other"],
         "is_mod_security_approved": True,
-        "f680_reference_number": "dummy ref 2",
         "f1686_contracting_authority": "dummy contracting authority 2",
         "f1686_reference_number": "f1686  reference number update",
         "f1686_approval_date": "2020-02-02",
@@ -238,3 +224,60 @@ def test_edit_security_approvals_true(
     }
 
     assert response.url == application_security_approvals_summary_url
+
+
+@pytest.mark.parametrize(
+    "application_security_approvals, edit_value_security_approvals, expected_form",
+    (
+        (
+            ["F680"],
+            ["F680", "F1686"],
+            F1686DetailsForm,
+        ),
+        (
+            ["F1686"],
+            ["F680", "F1686"],
+            F680ReferenceNumberForm,
+        ),
+        (
+            ["F680"],
+            ["F680", "Other"],
+            SecurityOtherDetailsForm,
+        ),
+        (
+            ["F680", "Other"],
+            ["F680", "F1686", "Other"],
+            F1686DetailsForm,
+        ),
+    ),
+)
+def test_edit_security_approvals_conditions(
+    authorized_client,
+    edit_security_approvals_url,
+    post_to_edit_security_approvals,
+    mock_application_put,
+    application,
+    application_security_approvals_summary_url,
+    application_security_approvals,
+    edit_value_security_approvals,
+    expected_form,
+):
+    application_data = {
+        "is_mod_security_approved": True,
+        "security_approvals": application_security_approvals,
+    }
+    application.update(application_data)
+
+    authorized_client.get(edit_security_approvals_url)
+
+    response = post_to_edit_security_approvals(
+        SecurityApprovalSteps.SECURITY_CLASSIFIED,
+        {
+            "is_mod_security_approved": True,
+            "security_approvals": edit_value_security_approvals,
+        },
+    )
+
+    assert response.status_code == 200
+
+    assert isinstance(response.context["form"], expected_form)

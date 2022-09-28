@@ -15,3 +15,28 @@ def is_f1686_approval(wizard):
 def is_other_approval(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(SecurityApprovalSteps.SECURITY_CLASSIFIED)
     return SecurityClassifiedApprovalsType.OTHER in cleaned_data.get("security_approvals", [])
+
+
+def is_f680_approval_changed_and_selected(wizard):
+
+    cleaned_data = wizard.get_cleaned_data_for_step(SecurityApprovalSteps.SECURITY_CLASSIFIED)
+    return (
+        SecurityClassifiedApprovalsType.F680 in cleaned_data.get("security_approvals", [])
+        and SecurityClassifiedApprovalsType.F680 not in wizard.application.security_approvals
+    )
+
+
+def is_f1686_approval_changed_and_selected(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(SecurityApprovalSteps.SECURITY_CLASSIFIED)
+    return (
+        SecurityClassifiedApprovalsType.F1686 in cleaned_data.get("security_approvals", [])
+        and SecurityClassifiedApprovalsType.F1686 not in wizard.application.security_approvals
+    )
+
+
+def is_other_approval_changed_and_selected(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(SecurityApprovalSteps.SECURITY_CLASSIFIED)
+    return (
+        SecurityClassifiedApprovalsType.OTHER in cleaned_data.get("security_approvals", [])
+        and SecurityClassifiedApprovalsType.OTHER not in wizard.application.security_approvals
+    )

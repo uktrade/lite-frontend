@@ -12,7 +12,11 @@ from exporter.applications.services import put_application
 from exporter.core.wizard.views import BaseSessionWizardView
 
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
-from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
+from .conditionals import (
+    is_f680_approval_changed_and_selected,
+    is_f1686_approval_changed_and_selected,
+    is_other_approval_changed_and_selected,
+)
 from .mixins import NonF680SecurityClassifiedFlagMixin
 from .payloads import get_f1686_data, SecurityApprovalStepsPayloadBuilder
 from .constants import SecurityApprovalSteps
@@ -145,9 +149,9 @@ class EditSecurityApprovalDetails(
     ]
 
     condition_dict = {
-        SecurityApprovalSteps.F680_REFERENCE_NUMBER: is_f680_approval,
-        SecurityApprovalSteps.F1686_DETAILS: is_f1686_approval,
-        SecurityApprovalSteps.SECURITY_OTHER_DETAILS: is_other_approval,
+        SecurityApprovalSteps.F680_REFERENCE_NUMBER: is_f680_approval_changed_and_selected,
+        SecurityApprovalSteps.F1686_DETAILS: is_f1686_approval_changed_and_selected,
+        SecurityApprovalSteps.SECURITY_OTHER_DETAILS: is_other_approval_changed_and_selected,
     }
 
     def get_form_initial(self, step):
