@@ -1,5 +1,7 @@
 import os
 
+from http import HTTPStatus
+
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
@@ -8,12 +10,14 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
+from core.decorators import expect_status
 
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
+from caseworker.regimes.services import get_mtcr_entries
 from caseworker.users.services import get_gov_user
 
 from .forms import TAUAssessmentForm, TAUEditForm
@@ -87,6 +91,19 @@ class TAUMixin(CaseTabsMixin):
         control_list_entries = get_control_list_entries(self.request, convert_to_options=True)
         return [(item.value, item.key) for item in control_list_entries]
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error loading MTCR entries for assessment",
+        "Unexpected error loading assessment details",
+    )
+    def get_mtcr_entries(self):
+        return get_mtcr_entries(self.request)
+
+    @cached_property
+    def mtcr_entries(self):
+        entries, _ = self.get_mtcr_entries()
+        return [(entry["pk"], entry["name"]) for entry in entries]
+
     def is_assessed(self, good):
         """Returns True if a good has been assessed"""
         return (good["is_good_controlled"] is not None) or (good["control_list_entries"] != [])
@@ -125,6 +142,13 @@ class TAUMixin(CaseTabsMixin):
         return context
 
 
+def get_regime_entries(form_cleaned_data):
+    if "MTCR" not in form_cleaned_data["regimes"]:
+        return []
+
+    return form_cleaned_data["mtcr_entries"]
+
+
 class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
 
@@ -139,6 +163,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
 
         form_kwargs["request"] = self.request
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
+        form_kwargs["mtcr_entries"] = self.mtcr_entries
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         form_kwargs["queue_pk"] = self.queue_id
         form_kwargs["application_pk"] = self.case["id"]
@@ -170,7 +195,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
                 yield good
 
     def form_valid(self, form):
-        data = form.cleaned_data
+        data = {**form.cleaned_data}
         # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
@@ -179,11 +204,17 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
 
         for good in self.get_goods(good_ids):
             payload = {
-                **form.cleaned_data,
+                **data,
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
                 "is_good_controlled": is_good_controlled,
+                "regime_entries": get_regime_entries(data),
             }
+
+            # These are used to determine the `regime_entries` and aren't needed
+            # when sending to the backend
+            del payload["mtcr_entries"]
+            del payload["regimes"]
 
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
 
@@ -199,17 +230,31 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
     def get_success_url(self):
         return reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
+    def get_regime_entries_form_data(self, good):
+        if not good.get("regime_entries"):
+            return {
+                "regimes": [],
+                "mtcr_entries": [],
+            }
+
+        return {
+            "regimes": ["MTCR"],
+            "mtcr_entries": [entry["pk"] for entry in good["regime_entries"]],
+        }
+
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
+        form_kwargs["mtcr_entries"] = self.mtcr_entries
 
         good = self.get_good()
+
         form_kwargs["data"] = self.request.POST or {
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
-            "is_wassenaar": "WASSENAAR" in {flag["name"] for flag in good["flags"]},
             "report_summary": good["report_summary"],
             "comment": good["comment"],
+            **self.get_regime_entries_form_data(good),
         }
         return form_kwargs
 
@@ -253,7 +298,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         }
 
     def form_valid(self, form):
-        data = form.cleaned_data
+        data = {**form.cleaned_data}
         # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
@@ -261,11 +306,17 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         good = self.get_good()
 
         payload = {
-            **form.cleaned_data,
+            **data,
             "current_object": self.good_id,
             "objects": [good["good"]["id"]],
             "is_good_controlled": is_good_controlled,
+            "regime_entries": get_regime_entries(data),
         }
+
+        # These are used to determine the `regime_entries` and aren't needed
+        # when sending to the backend
+        del payload["mtcr_entries"]
+        del payload["regimes"]
 
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
         return super().form_valid(form)
@@ -302,11 +353,11 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
             payload = {
                 "control_list_entries": [],
                 "is_good_controlled": None,
-                "is_wassenaar": False,
                 "report_summary": None,
                 "comment": None,
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
+                "regime_entries": [],
             }
             post_review_good(self.request, case_id=pk, data=payload)
         return redirect(reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))

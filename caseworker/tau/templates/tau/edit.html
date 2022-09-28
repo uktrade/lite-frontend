@@ -20,20 +20,7 @@
                 <form id="tau-form" method="POST">
                     {% csrf_token %}
                     <h1 class="govuk-heading-m tau__headline">Assessing {{good.good.name}}</h1>
-                    <label for="control_list_entries" class="govuk-label">Add a control list entry or end-use control</label>
-                    <div class="tau__cle-suggestion-buttons">
-                        <div class="tau__cle-suggestions"></div>
-                    </div>
-                    <div class="govuk-hint">Or type for suggestions</div>
-                    {% for field in form %}
-                        {% if field.name == "does_not_have_control_list_entries" %}
-                            <p class="govuk-body-m">Or</p>
-                        {% endif %}
-                        {{ field | as_crispy_field }}
-                    {% endfor %}
-                    <div class="form-actions">
-                        <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit">
-                    </div>
+                    {% crispy form %}
                 </form>
             </div>
         </div>

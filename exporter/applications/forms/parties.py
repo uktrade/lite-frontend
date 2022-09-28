@@ -4,7 +4,7 @@ from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
 from django.urls import reverse_lazy
 
-from core.forms.layouts import ConditionalRadios, ConditionalQuestion
+from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
@@ -194,7 +194,7 @@ class PartySubTypeSelectForm(forms.Form):
                 PartyForm.Options.GOVERNMENT,
                 PartyForm.Options.COMMERCIAL,
                 PartyForm.Options.INDIVIDUAL,
-                ConditionalQuestion(PartyForm.Options.OTHER, "sub_type_other"),
+                ConditionalRadiosQuestion(PartyForm.Options.OTHER, "sub_type_other"),
             ),
             Submit("submit", "Continue"),
         )
@@ -330,7 +330,7 @@ class PartyDocumentsForm(forms.Form):
             ConditionalRadios(
                 "end_user_document_available",
                 "Yes",
-                ConditionalQuestion("No", "end_user_document_missing_reason"),
+                ConditionalRadiosQuestion("No", "end_user_document_missing_reason"),
             ),
             Submit("submit", "Continue"),
         )

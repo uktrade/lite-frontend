@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from core.forms.layouts import (
-    ConditionalQuestion,
+    ConditionalRadiosQuestion,
     ConditionalRadios,
     ConditionalCheckbox,
     Prefixed,
@@ -86,11 +86,11 @@ class ProductControlListEntryForm(BaseForm):
         return (
             ConditionalRadios(
                 "is_good_controlled",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "control_list_entries",
                 ),
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "No",
                     HTML.p(
                         "The product will be assessed and given a control list entry. "
@@ -301,7 +301,7 @@ class ProductDocumentAvailabilityForm(BaseForm):
             ConditionalRadios(
                 "is_document_available",
                 "Yes",
-                ConditionalQuestion("No", "no_document_comments"),
+                ConditionalRadiosQuestion("No", "no_document_comments"),
             ),
         )
 
@@ -342,7 +342,7 @@ class ProductDocumentSensitivityForm(BaseForm):
         return (
             ConditionalRadios(
                 "is_document_sensitive",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     HTML.p(render_to_string("goods/forms/common/product_document_contact_ecju.html")),
                 ),
@@ -458,7 +458,7 @@ class ProductOnwardAlteredProcessedForm(BaseForm):
         return (
             ConditionalRadios(
                 "is_onward_altered_processed",
-                ConditionalQuestion("Yes", "is_onward_altered_processed_comments"),
+                ConditionalRadiosQuestion("Yes", "is_onward_altered_processed_comments"),
                 "No, it will be onward exported in its original state",
             ),
             HTML.details(
@@ -510,7 +510,7 @@ class ProductOnwardIncorporatedForm(BaseForm):
             HTML.p("For example, will it be integrated into a higher system, platform or software?"),
             ConditionalRadios(
                 "is_onward_incorporated",
-                ConditionalQuestion("Yes", "is_onward_incorporated_comments"),
+                ConditionalRadiosQuestion("Yes", "is_onward_incorporated_comments"),
                 "No",
             ),
         )
@@ -643,7 +643,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
         return (
             ConditionalRadios(
                 "uses_information_security",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "information_security_details",
                 ),
@@ -696,7 +696,7 @@ class ProductMilitaryUseForm(BaseForm):
             ConditionalRadios(
                 "is_military_use",
                 self.IsMilitaryUseChoices.YES_DESIGNED.label,
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     self.IsMilitaryUseChoices.YES_MODIFIED.label,
                     "modified_military_use_details",
                 ),
