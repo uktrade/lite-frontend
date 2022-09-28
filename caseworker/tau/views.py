@@ -1,5 +1,7 @@
 import os
 
+from http import HTTPStatus
+
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
@@ -8,6 +10,7 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
+from core.decorators import expect_status
 
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
@@ -88,9 +91,17 @@ class TAUMixin(CaseTabsMixin):
         control_list_entries = get_control_list_entries(self.request, convert_to_options=True)
         return [(item.value, item.key) for item in control_list_entries]
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error loading MTCR entries for assessment",
+        "Unexpected error loading assessment details",
+    )
+    def get_mtcr_entries(self):
+        return get_mtcr_entries(self.request)
+
     @cached_property
     def mtcr_entries(self):
-        entries, _ = get_mtcr_entries(self.request)
+        entries, _ = self.get_mtcr_entries()
         return [(entry["pk"], entry["name"]) for entry in entries]
 
     def is_assessed(self, good):
