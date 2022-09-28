@@ -110,6 +110,10 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         else:
             return reverse("cases:refuse_all", kwargs=self.kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
+
 
 class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     """
