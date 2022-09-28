@@ -1,6 +1,6 @@
 import "url-search-params-polyfill";
 import "fetch-polyfill";
-import Tokenfield from "./lite-tokenfield.js";
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 
 export default function initAddGood() {
   var plural = [];
@@ -81,36 +81,5 @@ export default function initAddGood() {
     );
 
     progressivelyEnhanceMultipleSelectField(controlListEntriesField);
-
-    function progressivelyEnhanceMultipleSelectField(element) {
-      element.parentElement.classList.add("tokenfield-container");
-
-      var items = [];
-      var selected = [];
-      for (var i = 0; i < element.options.length; i++) {
-        var option = element.options.item(i);
-        var item = { id: option.value, name: option.value, classes: [] };
-        if (option.selected) {
-          selected.push(item);
-        }
-        items.push(item);
-      }
-      var tokenField = new Tokenfield({
-        el: element,
-        items: items,
-        newItems: false,
-        addItemOnBlur: true,
-        filterSetItems: false,
-        addItemsOnPaste: true,
-        minChars: 1,
-        itemName: element.name,
-        setItems: selected,
-        keepItemsOrder: false,
-      });
-      tokenField._renderItems();
-      tokenField._html.container.id = element.id;
-      element.remove();
-      return tokenField;
-    }
   })();
 }

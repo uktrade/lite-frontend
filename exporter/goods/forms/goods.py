@@ -11,7 +11,7 @@ from django.db import models
 
 from core.builtins.custom_tags import default_na, linkify
 from core.constants import ProductCategories
-from core.forms.layouts import ConditionalQuestion, ConditionalRadios, summary_list
+from core.forms.layouts import ConditionalRadiosQuestion, ConditionalRadios, summary_list
 
 from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 from exporter.core.constants import (
@@ -491,7 +491,7 @@ class IdentificationMarkingsForm(forms.Form):
                 "serial_numbers_available",
                 CreateGoodForm.FirearmGood.IdentificationMarkings.YES_NOW,
                 CreateGoodForm.FirearmGood.IdentificationMarkings.YES_LATER,
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     CreateGoodForm.FirearmGood.IdentificationMarkings.NO,
                     "no_identification_markings_details",
                 ),
@@ -637,7 +637,7 @@ class ProductMilitaryUseForm(forms.Form):
             ConditionalRadios(
                 "is_military_use",
                 CreateGoodForm.MilitaryUse.YES_DESIGNED,
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     CreateGoodForm.MilitaryUse.YES_MODIFIED,
                     "modified_military_use_details",
                 ),
@@ -684,7 +684,7 @@ class ProductUsesInformationSecurityForm(forms.Form):
             HTML.h1(self.title),
             ConditionalRadios(
                 "uses_information_security",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "information_security_details",
                 ),
@@ -821,7 +821,7 @@ class ProductSecurityFeaturesForm(BaseForm):
         return (
             ConditionalRadios(
                 "has_security_features",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "security_feature_details",
                 ),
@@ -952,7 +952,7 @@ class AddGoodsQuestionsForm(forms.Form):
             "part_number",
             ConditionalRadios(
                 "is_good_controlled",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     CreateGoodForm.IsControlled.YES,
                     "control_list_entries",
                 ),
@@ -1110,7 +1110,7 @@ class FirearmsReplicaForm(forms.Form):
             HTML.h1(self.title),
             ConditionalRadios(
                 "is_replica",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "replica_description",
                 ),
@@ -1303,7 +1303,7 @@ class FirearmsActConfirmationForm(forms.Form):
             if self.is_rfd
             else ConditionalRadios(
                 "is_covered_by_firearm_act_section_one_two_or_five",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
                     "firearms_act_section",
                 ),
@@ -1418,15 +1418,15 @@ class ProductComponentForm(forms.Form):
             HTML.h1(self.title),
             ConditionalRadios(
                 "is_component",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     CreateGoodForm.ProductComponent.YES_DESIGNED,
                     "designed_details",
                 ),
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     CreateGoodForm.ProductComponent.YES_MODIFIED,
                     "modified_details",
                 ),
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     CreateGoodForm.ProductComponent.YES_GENERAL_PURPOSE,
                     "general_details",
                 ),
@@ -1566,16 +1566,16 @@ class FirearmsUnitQuantityValueForm(forms.Form):
             Field.radios("is_good_incorporated", inline=True),
             ConditionalRadios(
                 "is_deactivated",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "date_of_deactivation",
                     ConditionalRadios(
                         "is_deactivated_to_standard",
-                        ConditionalQuestion(
+                        ConditionalRadiosQuestion(
                             "Yes",
                             "deactivation_standard",
                         ),
-                        ConditionalQuestion(
+                        ConditionalRadiosQuestion(
                             "No",
                             "deactivation_standard_other",
                         ),
@@ -1586,7 +1586,7 @@ class FirearmsUnitQuantityValueForm(forms.Form):
             ConditionalRadios(
                 "has_proof_mark",
                 "Yes",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "No",
                     "no_proof_mark_details",
                 ),
@@ -1725,16 +1725,16 @@ class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
             Field.radios("is_good_incorporated", inline=True),
             ConditionalRadios(
                 "is_deactivated",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "date_of_deactivation",
                     ConditionalRadios(
                         "is_deactivated_to_standard",
-                        ConditionalQuestion(
+                        ConditionalRadiosQuestion(
                             "Yes",
                             "deactivation_standard",
                         ),
-                        ConditionalQuestion(
+                        ConditionalRadiosQuestion(
                             "No",
                             "deactivation_standard_other",
                         ),
@@ -1744,12 +1744,12 @@ class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
             ),
             ConditionalRadios(
                 "is_gun_barrel",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     ConditionalRadios(
                         "has_proof_mark",
                         "Yes",
-                        ConditionalQuestion(
+                        ConditionalRadiosQuestion(
                             "No",
                             "no_proof_mark_details",
                         ),
@@ -1865,16 +1865,16 @@ class ComponentOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
             Field.radios("is_good_incorporated", inline=True),
             ConditionalRadios(
                 "is_deactivated",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     "Yes",
                     "date_of_deactivation",
                     ConditionalRadios(
                         "is_deactivated_to_standard",
-                        ConditionalQuestion(
+                        ConditionalRadiosQuestion(
                             "Yes",
                             "deactivation_standard",
                         ),
-                        ConditionalQuestion(
+                        ConditionalRadiosQuestion(
                             "No",
                             "deactivation_standard_other",
                         ),
@@ -2038,15 +2038,15 @@ class ProductComponentDetailsForm(BaseForm):
         return (
             ConditionalRadios(
                 "component_type",
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     ComponentChoices.DESIGNED.label,
                     "designed_details",
                 ),
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     ComponentChoices.MODIFIED.label,
                     "modified_details",
                 ),
-                ConditionalQuestion(
+                ConditionalRadiosQuestion(
                     ComponentChoices.GENERAL.label,
                     "general_details",
                 ),
