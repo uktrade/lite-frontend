@@ -52,7 +52,7 @@ class ExportControlCharacteristicsForm(forms.Form):
     control_list_entries = forms.MultipleChoiceField(
         label="What is the correct control list entry for this product?",
         help_text="Type to get suggestions. For example ML1a.",
-        choices=[],  # set in __init__
+        choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),

@@ -9,7 +9,7 @@ from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_mtcr_entries_get):
+def setup(mock_queue, mock_case, mock_wassenaar_entries_get, mock_mtcr_entries_get):
     pass
 
 
@@ -98,13 +98,30 @@ def test_form(
     assert edit_good_cle == form_cle
 
     # Check regimes
-    edit_good_regimes = [cle["pk"] for cle in edit_good["regime_entries"]]
-    form_mtcr_entries = [
-        cle.attrs["value"]
-        for cle in soup.find("select", {"id": "mtcr_entries"}).find_all("option")
-        if "selected" in cle.attrs
+    form_regimes = [
+        regime.attrs["value"] for regime in soup.find_all("input", {"name": "regimes"}) if "checked" in regime.attrs
     ]
-    assert edit_good_regimes == form_mtcr_entries
+    assert form_regimes == ["WASSENAAR", "MTCR"]
+
+    edit_mtcr_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "MTCR"
+    ]
+    form_mtcr_entries = [
+        regime_entry.attrs["value"]
+        for regime_entry in soup.find("select", {"id": "mtcr_entries"}).find_all("option")
+        if "selected" in regime_entry.attrs
+    ]
+    assert edit_mtcr_good_regimes == form_mtcr_entries
+
+    edit_wassenaar_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "WASSENAAR"
+    ]
+    form_wassenaar_entries = [
+        regime_entry.attrs["value"]
+        for regime_entry in soup.find_all("input", {"name": "wassenaar_entries"})
+        if "checked" in regime_entry.attrs
+    ]
+    assert edit_wassenaar_good_regimes == form_wassenaar_entries
 
     # Check report summary
     assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
@@ -113,7 +130,13 @@ def test_form(
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
 
     response = authorized_client.post(
-        url, data={"report_summary": "test", "does_not_have_control_list_entries": True, "comment": "test"}
+        url,
+        data={
+            "report_summary": "test",
+            "does_not_have_control_list_entries": True,
+            "comment": "test",
+            "regimes": ["NONE"],
+        },
     )
 
     # Check response and API payload
@@ -180,7 +203,13 @@ def test_form_no_regime_entries(
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
 
     response = authorized_client.post(
-        url, data={"report_summary": "test", "does_not_have_control_list_entries": True, "comment": "test"}
+        url,
+        data={
+            "report_summary": "test",
+            "does_not_have_control_list_entries": True,
+            "comment": "test",
+            "regimes": ["NONE"],
+        },
     )
 
     # Check response and API payload
@@ -199,10 +228,25 @@ def test_form_no_regime_entries(
 @pytest.mark.parametrize(
     "regimes_form_data, regime_entries",
     (
-        ({}, []),
+        (
+            {"regimes": ["NONE"]},
+            [],
+        ),
         (
             {"regimes": ["MTCR"], "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"]},
             ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+        ),
+        (
+            {"regimes": ["WASSENAAR"], "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"]},
+            ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+        ),
+        (
+            {
+                "regimes": ["WASSENAAR", "MTCR"],
+                "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+                "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+            },
+            ["c760976f-fd14-4356-9f23-f6eaf084475d", "d73d0273-ef94-4951-9c51-c291eba949a0"],
         ),
     ),
 )
@@ -235,7 +279,7 @@ def test_form_regime_entries(
     )
 
     # Check response and API payload
-    assert response.status_code == 302
+    assert response.status_code == 302, response.context["form"].errors
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
         "report_summary": "test",

@@ -23,10 +23,11 @@ def default_feature_flags(settings):
             {},
             False,
             {
-                "goods": ["Select the products that you want to assess"],
                 "does_not_have_control_list_entries": [
                     "Select a control list entry or select 'This product does not have a control list entry'"
                 ],
+                "goods": ["Select the products that you want to assess"],
+                "regimes": ["Add a regime, or select none"],
             },
         ),
         # Valid form
@@ -35,6 +36,7 @@ def default_feature_flags(settings):
                 "goods": ["test-id"],
                 "report_summary": "test",
                 "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
             },
             True,
             {},
@@ -45,6 +47,7 @@ def default_feature_flags(settings):
                 "goods": ["test-id"],
                 "report_summary": "test",
                 "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
                 "comments": "test",
             },
             True,
@@ -52,25 +55,45 @@ def default_feature_flags(settings):
         ),
         # Invalid good-id
         (
-            {"goods": ["test-id-not"], "report_summary": "test", "does_not_have_control_list_entries": True},
+            {
+                "goods": ["test-id-not"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
+            },
             False,
             {"goods": ["Select a valid choice. test-id-not is not one of the available choices."]},
         ),
         # Missing goods
         (
-            {"goods": [], "report_summary": "test", "does_not_have_control_list_entries": True},
+            {
+                "goods": [],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
+            },
             False,
             {"goods": ["Select the products that you want to assess"]},
         ),
-        # Missing report-summart
+        # Missing report-summary
         (
-            {"goods": ["test-id"], "report_summary": None, "does_not_have_control_list_entries": True},
+            {
+                "goods": ["test-id"],
+                "report_summary": None,
+                "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
+            },
             True,
             {},
         ),
         # does_not_have_control_list_entries=False and missing control_list_entries
         (
-            {"goods": ["test-id"], "report_summary": "test", "does_not_have_control_list_entries": False},
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "regimes": ["NONE"],
+            },
             False,
             {
                 "does_not_have_control_list_entries": [
@@ -85,6 +108,7 @@ def default_feature_flags(settings):
                 "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
+                "regimes": ["NONE"],
             },
             True,
             {},
@@ -95,9 +119,46 @@ def default_feature_flags(settings):
                 "report_summary": "test",
                 "does_not_have_control_list_entries": True,
                 "control_list_entries": ["test-rating"],
+                "regimes": ["NONE"],
             },
             False,
             {"does_not_have_control_list_entries": ["This is mutually exclusive with control list entries"]},
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["NONE", "MTCR"],
+            },
+            False,
+            {
+                "regimes": ["Add a regime, or select none"],
+            },
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["WASSENAAR"],
+            },
+            False,
+            {"wassenaar_entries": ["Select a Wassenaar Arrangement subsection"]},
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["WASSENAAR"],
+                "wassenaar_entries": [],
+            },
+            False,
+            {"wassenaar_entries": ["Select a Wassenaar Arrangement subsection"]},
         ),
         (
             {
@@ -133,14 +194,15 @@ def test_tau_assessment_form(data, valid, errors, rf):
         request=rf.get("/"),
         goods={"test-id": {}},
         control_list_entries_choices=[("test-rating", "test-text")],
-        mtcr_entries=[("test-entry", "text-entry-text")],
+        wassenaar_entries=[("test-wassenaar-entry", "text-wassenaar-entry-value")],
+        mtcr_entries=[("test-mtcr-entry", "text-mtcr-entry-value")],
         queue_pk="queue_pk",
         application_pk="application_pk",
         is_user_rfd=False,
         organisation_documents={},
         data=data,
     )
-    assert form.is_valid() == valid
+    assert form.is_valid() == valid, f"Has errors {dict(form.errors)}"
     assert form.errors == errors
 
 
@@ -421,6 +483,7 @@ def test_tau_assessment_form_goods_choices(
         request=request,
         goods=goods,
         control_list_entries_choices=[],
+        wassenaar_entries=[],
         mtcr_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
@@ -472,6 +535,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             },
         },
         control_list_entries_choices=[],
+        wassenaar_entries=[],
         mtcr_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
@@ -499,36 +563,48 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             {
                 "does_not_have_control_list_entries": [
                     "Select a control list entry or select 'This product does not have a control list entry'"
-                ]
+                ],
+                "regimes": ["Add a regime, or select none"],
             },
         ),
         # Valid form
-        ({"report_summary": "test", "does_not_have_control_list_entries": True}, True, {}),
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
+            },
+            True,
+            {},
+        ),
         # Valid form - with comments
         (
             {
                 "report_summary": "test",
                 "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
                 "comments": "test",
             },
             True,
             {},
         ),
-        # Missing report-summary is ok when no CLEs
+        # Missing report-summary
         (
-            {"report_summary": None, "does_not_have_control_list_entries": True},
+            {
+                "report_summary": None,
+                "does_not_have_control_list_entries": True,
+                "regimes": ["NONE"],
+            },
             True,
             {},
         ),
-        # Missing report-summary is not ok when there are CLEs
-        (
-            {"report_summary": None, "control_list_entries": ["test-rating"]},
-            False,
-            {"report_summary": ["This field is required"]},
-        ),
         # does_not_have_control_list_entries=False and missing control_list_entries
         (
-            {"report_summary": "test", "does_not_have_control_list_entries": False},
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "regimes": ["NONE"],
+            },
             False,
             {
                 "does_not_have_control_list_entries": [
@@ -542,6 +618,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
                 "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
+                "regimes": ["NONE"],
             },
             True,
             {},
@@ -552,13 +629,46 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
                 "report_summary": "test",
                 "does_not_have_control_list_entries": True,
                 "control_list_entries": ["test-rating"],
+                "regimes": ["NONE"],
             },
             False,
             {"does_not_have_control_list_entries": ["This is mutually exclusive with control list entries"]},
         ),
         (
             {
-                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["NONE", "MTCR"],
+            },
+            False,
+            {
+                "regimes": ["Add a regime, or select none"],
+            },
+        ),
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["WASSENAAR"],
+            },
+            False,
+            {"wassenaar_entries": ["Select a Wassenaar Arrangement subsection"]},
+        ),
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["WASSENAAR"],
+                "wassenaar_entries": [],
+            },
+            False,
+            {"wassenaar_entries": ["Select a Wassenaar Arrangement subsection"]},
+        ),
+        (
+            {
                 "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
@@ -571,7 +681,6 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         ),
         (
             {
-                "goods": ["test-id"],
                 "report_summary": "test",
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
@@ -588,7 +697,8 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
 def test_tau_edit_form(data, valid, errors):
     form = forms.TAUEditForm(
         control_list_entries_choices=[("test-rating", "test-text")],
-        mtcr_entries=[("test-entry", "test-entry-text")],
+        wassenaar_entries=[("test-wassenaar-entry", "test-wassenaar-entry-text")],
+        mtcr_entries=[("test-mtcr-entry", "test-mtcr-entry-text")],
         data=data,
     )
     assert form.is_valid() == valid

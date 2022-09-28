@@ -69,7 +69,7 @@ class ProductControlListEntryForm(BaseForm):
     )
 
     control_list_entries = forms.MultipleChoiceField(
-        choices=[],  # set in __init__
+        choices=(),  # set in __init__
         label="Enter the control list entry (type to get suggestions)",
         required=False,
         # setting id for javascript to use

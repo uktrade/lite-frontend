@@ -30,7 +30,7 @@ class TAUEditForm(forms.Form):
     control_list_entries = forms.MultipleChoiceField(
         label="Add a control list entry or end-use control",
         help_text="Or type for suggestions",
-        choices=[],  # set in __init__
+        choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
@@ -51,14 +51,27 @@ class TAUEditForm(forms.Form):
 
     regimes = forms.MultipleChoiceField(
         label="Add regimes",
-        choices=(("MTCR", "Missile Technology Control Regime"),),
-        required=False,
+        choices=(
+            ("WASSENAAR", "Wassenaar Arrangement"),
+            ("MTCR", "Missile Technology Control Regime"),
+            ("NONE", "None"),
+        ),
+        error_messages={
+            "required": "Add a regime, or select none",
+        },
         widget=forms.CheckboxSelectMultiple,
+    )
+
+    wassenaar_entries = forms.ChoiceField(
+        label="Choose the highest applicable sensitivity level",
+        choices=(),  # set in __init__
+        required=False,
+        widget=forms.RadioSelect,
     )
 
     mtcr_entries = forms.MultipleChoiceField(
         label="What is the entry (for example M1A2)? Type for suggestions",
-        choices=[],  # set in __init__
+        choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"id": "mtcr_entries"}),
@@ -70,10 +83,11 @@ class TAUEditForm(forms.Form):
         widget=forms.Textarea,
     )
 
-    def __init__(self, control_list_entries_choices, mtcr_entries, document=None, *args, **kwargs):
+    def __init__(self, control_list_entries_choices, wassenaar_entries, mtcr_entries, document=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.document = document
         self.fields["control_list_entries"].choices = control_list_entries_choices
+        self.fields["wassenaar_entries"].choices = wassenaar_entries
         self.fields["mtcr_entries"].choices = mtcr_entries
         self.helper = FormHelper()
 
@@ -88,9 +102,14 @@ class TAUEditForm(forms.Form):
                 ConditionalCheckboxes(
                     "regimes",
                     ConditionalCheckboxesQuestion(
+                        "Wassenaar Arrangement",
+                        "wassenaar_entries",
+                    ),
+                    ConditionalCheckboxesQuestion(
                         "Missile Technology Control Regime",
                         "mtcr_entries",
                     ),
+                    "None",
                 )
             ]
         fields += [
@@ -115,10 +134,21 @@ class TAUEditForm(forms.Form):
 
         if settings.FEATURE_FLAG_REGIMES:
             regimes = cleaned_data.get("regimes", [])
-            is_mtcr_regime = "MTCR" in regimes
-            mtcr_entries = cleaned_data.get("mtcr_entries", [])
-            if is_mtcr_regime and not mtcr_entries:
-                self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
+
+            has_selected_none = "NONE" in regimes
+            only_selected_none = regimes == ["NONE"]
+            if has_selected_none and not only_selected_none:
+                self.add_error("regimes", "Add a regime, or select none")
+            else:
+                is_wassenaar_regime = "WASSENAAR" in regimes
+                wassenaar_entries = cleaned_data.get("wassenaar_entries")
+                if is_wassenaar_regime and not wassenaar_entries:
+                    self.add_error("wassenaar_entries", "Select a Wassenaar Arrangement subsection")
+
+                is_mtcr_regime = "MTCR" in regimes
+                mtcr_entries = cleaned_data.get("mtcr_entries", [])
+                if is_mtcr_regime and not mtcr_entries:
+                    self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
 
         return cleaned_data
 
@@ -137,6 +167,7 @@ class TAUAssessmentForm(TAUEditForm):
         request,
         goods,
         control_list_entries_choices,
+        wassenaar_entries,
         mtcr_entries,
         queue_pk,
         application_pk,
@@ -145,7 +176,7 @@ class TAUAssessmentForm(TAUEditForm):
         *args,
         **kwargs,
     ):
-        super().__init__(control_list_entries_choices, mtcr_entries, *args, **kwargs)
+        super().__init__(control_list_entries_choices, wassenaar_entries, mtcr_entries, *args, **kwargs)
 
         self.request = request
         self.queue_pk = queue_pk
