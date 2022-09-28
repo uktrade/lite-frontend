@@ -30,7 +30,7 @@ class TAUEditForm(forms.Form):
     control_list_entries = forms.MultipleChoiceField(
         label="Add a control list entry or end-use control",
         help_text="Or type for suggestions",
-        choices=[],  # set in __init__
+        choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
@@ -64,14 +64,14 @@ class TAUEditForm(forms.Form):
 
     wassenaar_entries = forms.ChoiceField(
         label="Choose the highest applicable sensitivity level",
-        choices=[],  # set in __init__
+        choices=(),  # set in __init__
         required=False,
         widget=forms.RadioSelect,
     )
 
     mtcr_entries = forms.MultipleChoiceField(
         label="What is the entry (for example M1A2)? Type for suggestions",
-        choices=[],  # set in __init__
+        choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"id": "mtcr_entries"}),
