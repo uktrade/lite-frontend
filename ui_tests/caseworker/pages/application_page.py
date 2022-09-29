@@ -95,7 +95,9 @@ class ApplicationPage(BasePage):
 
     def click_post_note_btn(self):
         WebDriverWait(self.driver, 30).until(
-            expected_conditions.presence_of_element_located((By.ID, self.BUTTON_POST_NOTE_ID))
+            expected_conditions.presence_of_element_located(
+                (By.CSS_SELECTOR, f"#{self.BUTTON_POST_NOTE_ID}:not([disabled])")
+            )
         )
 
         self.driver.find_element(by=By.ID, value=self.BUTTON_POST_NOTE_ID).click()
