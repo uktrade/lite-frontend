@@ -135,6 +135,10 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
+
 
 class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/refusal_advice.html"
@@ -153,6 +157,10 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_success_url(self):
 
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
 class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, FormView):
@@ -247,6 +255,7 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["security_approvals_classified_display"] = self.security_approvals_classified_display
         context["edit"] = True
         return context
 
@@ -262,6 +271,11 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_success_url(self):
         return reverse("cases:select_advice", kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["security_approvals_classified_display"] = self.security_approvals_classified_display
+        return context
 
 
 class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, TemplateView):
@@ -350,7 +364,6 @@ class ViewCountersignedAdvice(AdviceDetailView):
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
         context["denial_reasons_display"] = self.denial_reasons_display
-        context["security_approvals_classified_display"] = self.security_approvals_classified_display
         context["current_tab"] = "cases:countersign_view"
         return context
 
@@ -514,7 +527,6 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
             "denial_reasons_display": self.denial_reasons_display,
-            "security_approvals_classified_display": self.security_approvals_classified_display,
         }
 
     def form_valid(self, form):
