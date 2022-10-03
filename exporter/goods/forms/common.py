@@ -578,13 +578,16 @@ class ProductUnitQuantityAndValueForm(BaseForm):
         label="Unit of measurement",
     )
 
-    quantity = forms.IntegerField(
+    quantity = forms.DecimalField(
+        decimal_places=3,
         error_messages={
-            "invalid": "Quantity must be a number, like 16",
+            "invalid": "Quantity must be a number, like 16.32",
             "required": "Enter the quantity",
-            "min_value": "Quantity cannot be 0",
+            "max_decimal_places": "Quantity must be less than 4 decimal places, like 123.456 or 156",
+            "min_value": "Quantity must be 0.01 or more",
         },
-        min_value=1,
+        label="Quantity",
+        min_value=Decimal("0.01"),
         widget=forms.TextInput,
     )
     value = forms.DecimalField(

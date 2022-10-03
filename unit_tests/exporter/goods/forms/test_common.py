@@ -391,12 +391,12 @@ def test_product_quantity_and_value_form_validation(data, is_valid, errors):
         (
             {"unit": "TON", "quantity": "not a number", "value": "100.00"},
             False,
-            {"quantity": ["Quantity must be a number, like 16"]},
+            {"quantity": ["Quantity must be a number, like 16.32"]},
         ),
         (
-            {"unit": "TON", "quantity": "1.5", "value": "100.00"},
+            {"unit": "TON", "quantity": "1.1234", "value": "100.00"},
             False,
-            {"quantity": ["Quantity must be a number, like 16"]},
+            {"quantity": ["Quantity must be a number, like 16.32"]},
         ),
         (
             {"unit": "TON", "quantity": "0", "value": "100.00"},
@@ -416,6 +416,11 @@ def test_product_quantity_and_value_form_validation(data, is_valid, errors):
         ),
         (
             {"unit": "TON", "quantity": "1", "value": "16"},
+            True,
+            {},
+        ),
+        (
+            {"unit": "TON", "quantity": "1.654", "value": "16"},
             True,
             {},
         ),
