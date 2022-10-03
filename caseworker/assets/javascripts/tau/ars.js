@@ -26,8 +26,7 @@ const initARS = () => {
         }
         return `
           <div class="govuk-body govuk-!-margin-bottom-0">
-            <div class="govuk-!-font-weight-bold">${suggestion.name}</div>
-            <div>${suggestion.text}</div>
+            ${suggestion.name}
           </div>
         `;
       },
