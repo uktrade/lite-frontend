@@ -128,7 +128,7 @@ def test_add_material_to_application_end_to_end(
         "is_onward_incorporated_comments": "incorporated comments",
         "good_id": expected_good_data["id"],
         "is_good_incorporated": False,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "TON",
         "value": "16.32",
     }

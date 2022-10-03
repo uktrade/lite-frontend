@@ -431,7 +431,7 @@ MATERIAL_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
-    "quantity": integer,
+    "quantity": money_formatter,
     "total-value": money_formatter,
 }
 

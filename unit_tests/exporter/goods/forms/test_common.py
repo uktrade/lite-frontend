@@ -396,12 +396,12 @@ def test_product_quantity_and_value_form_validation(data, is_valid, errors):
         (
             {"unit": "TON", "quantity": "1.1234", "value": "100.00"},
             False,
-            {"quantity": ["Quantity must be a number, like 16.32"]},
+            {"quantity": ["Quantity must be less than 4 decimal places, like 123.456 or 156"]},
         ),
         (
             {"unit": "TON", "quantity": "0", "value": "100.00"},
             False,
-            {"quantity": ["Quantity cannot be 0"]},
+            {"quantity": ["Quantity must be 0.001 or more"]},
         ),
         (
             {"unit": "TON", "quantity": "1", "value": "not a number"},

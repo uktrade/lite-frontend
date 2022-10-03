@@ -584,10 +584,10 @@ class ProductUnitQuantityAndValueForm(BaseForm):
             "invalid": "Quantity must be a number, like 16.32",
             "required": "Enter the quantity",
             "max_decimal_places": "Quantity must be less than 4 decimal places, like 123.456 or 156",
-            "min_value": "Quantity must be 0.01 or more",
+            "min_value": "Quantity must be 0.001 or more",
         },
         label="Quantity",
-        min_value=Decimal("0.01"),
+        min_value=Decimal("0.001"),
         widget=forms.TextInput,
     )
     value = forms.DecimalField(

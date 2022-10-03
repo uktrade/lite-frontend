@@ -33,7 +33,7 @@ def apply_for_standard_application(api_test_client, context):
         },
         good={
             "good_id": "",
-            "quantity": 1234,
+            "quantity": "1234",
             "unit": "MTR",
             "value": context.good_value,
             "is_good_incorporated": True,
@@ -316,7 +316,7 @@ def apply_for_standard_trade_control_application(api_test_client, context):
         },
         good={
             "good_id": "",
-            "quantity": 1234,
+            "quantity": "1234",
             "unit": "MTR",
             "value": context.good_value,
             "is_good_incorporated": True,
@@ -447,7 +447,7 @@ def apply_for_standard_transhipment_application(api_test_client, context):
         },
         good={
             "good_id": "",
-            "quantity": 1234,
+            "quantity": "1234",
             "unit": "MTR",
             "value": context.good_value,
             "is_good_incorporated": True,

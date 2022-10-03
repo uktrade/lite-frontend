@@ -12,7 +12,7 @@ from exporter.applications.views.goods.common.payloads import (
 def get_quantity_and_value_payload(form):
     return {
         "unit": "NAR",
-        "quantity": form.cleaned_data["number_of_items"],
+        "quantity": str(form.cleaned_data["number_of_items"]),
         "value": str(form.cleaned_data["value"]),
     }
 

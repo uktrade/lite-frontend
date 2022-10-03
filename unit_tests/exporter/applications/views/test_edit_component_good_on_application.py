@@ -289,7 +289,7 @@ def test_edit_quantity_value(
     assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
-        "quantity": 20,
+        "quantity": "20",
         "unit": "NAR",
         "value": "20.22",
     }
