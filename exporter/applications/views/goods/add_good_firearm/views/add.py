@@ -18,6 +18,7 @@ from exporter.applications.services import (
     post_additional_document,
     post_firearm_good_on_application,
 )
+from exporter.applications.views.goods.common.actions import ProductDocumentAction
 from exporter.core.helpers import (
     get_document_data,
     get_rfd_certificate,
@@ -58,13 +59,13 @@ from exporter.goods.forms.firearms import (
     FirearmSerialIdentificationMarkingsForm,
     FirearmSerialNumbersForm,
 )
-from exporter.goods.services import (
-    post_firearm,
-    post_good_documents,
-)
+from exporter.goods.services import post_firearm
 from exporter.organisation.services import delete_document_on_organisation
 
-from .actions import GoodOnApplicationFirearmActCertificateAction, OrganisationFirearmActCertificateAction
+from .actions import (
+    GoodOnApplicationFirearmActCertificateAction,
+    OrganisationFirearmActCertificateAction,
+)
 from .conditionals import (
     has_application_rfd_certificate,
     has_organisation_firearm_act_document,
@@ -216,18 +217,6 @@ class AddGoodFirearm(
         }
         return rfd_certificate_payload
 
-    def has_product_documentation(self):
-        return self.condition_dict[AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD](self)
-
-    def get_product_document_payload(self):
-        data = self.get_cleaned_data_for_step(AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD)
-        document = data["product_document"]
-        payload = {
-            **get_document_data(document),
-            "description": data["description"],
-        }
-        return payload
-
     def get_success_url(self):
         return reverse(
             "applications:firearm_product_summary",
@@ -312,19 +301,6 @@ class AddGoodFirearm(
             json=rfd_certificate_payload,
         )
 
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error with product document when creating firearm",
-        "Unexpected error adding firearm",
-    )
-    def post_product_documentation(self, good):
-        document_payload = self.get_product_document_payload()
-        return post_good_documents(
-            request=self.request,
-            pk=good["id"],
-            json=document_payload,
-        )
-
     def done(self, form_list, form_dict, **kwargs):
         good, _ = self.post_firearm(form_dict)
         self.good = good["good"]
@@ -345,8 +321,7 @@ class AddGoodFirearm(
             self.get_cleaned_data_for_step(AddGoodFirearmSteps.ATTACH_SECTION_5_LETTER_OF_AUTHORITY),
         ).run()
 
-        if self.has_product_documentation():
-            self.post_product_documentation(self.good)
+        ProductDocumentAction(self).run()
 
         return redirect(self.get_success_url())
 

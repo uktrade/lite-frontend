@@ -8,8 +8,8 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
+from exporter.applications.views.goods.common.actions import ProductDocumentAction
 from exporter.core.wizard.views import BaseSessionWizardView
-from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductDescriptionForm,
@@ -30,7 +30,7 @@ from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
     ProductSecurityFeaturesForm,
 )
-from exporter.goods.services import post_software, post_good_documents
+from exporter.goods.services import post_software
 from exporter.applications.services import post_software_good_on_application
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from exporter.applications.views.goods.common.conditionals import (
@@ -92,32 +92,6 @@ class AddGoodSoftware(
             kwargs["request"] = self.request
         return kwargs
 
-    def has_product_documentation(self):
-        data = self.get_cleaned_data_for_step(AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD)
-        return data.get("product_document", None)
-
-    def get_product_document_payload(self):
-        data = self.get_cleaned_data_for_step(AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD)
-        document = data.get("product_document", None)
-        payload = {
-            **get_document_data(document),
-            "description": data["description"],
-        }
-        return payload
-
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error with product document when creating software",
-        "Unexpected error adding software",
-    )
-    def post_product_documentation(self, good):
-        document_payload = self.get_product_document_payload()
-        return post_good_documents(
-            request=self.request,
-            pk=good["id"],
-            json=document_payload,
-        )
-
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
 
@@ -157,8 +131,8 @@ class AddGoodSoftware(
     def done(self, form_list, form_dict, **kwargs):
         good, _ = self.post_software(form_dict)
         self.good = good["good"]
-        if self.has_product_documentation():
-            self.post_product_documentation(self.good)
+
+        ProductDocumentAction(self).run()
 
         return redirect(self.get_success_url())
 

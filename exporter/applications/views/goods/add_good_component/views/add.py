@@ -8,6 +8,7 @@ from django.urls import reverse
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
+from exporter.applications.views.goods.common.actions import ProductDocumentAction
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
@@ -96,9 +97,6 @@ class AddGoodComponent(
 
         return kwargs
 
-    def has_product_documentation(self):
-        return self.condition_dict[AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD](self)
-
     def get_product_document_payload(self):
         data = self.get_cleaned_data_for_step(AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD)
         document = data["product_document"]
@@ -160,8 +158,8 @@ class AddGoodComponent(
     def done(self, form_list, form_dict, **kwargs):
         good, _ = self.post_component(form_dict)
         self.good = good["good"]
-        if self.has_product_documentation():
-            self.post_product_documentation(self.good)
+
+        ProductDocumentAction(self).run()
 
         return redirect(self.get_success_url())
 
