@@ -32,6 +32,7 @@ const initARS = () => {
       },
     },
     defaultValue: input.value,
+    showNoOptionsFound: false,
   });
 };
 
