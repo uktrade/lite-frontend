@@ -617,6 +617,19 @@ class ProductUnitQuantityAndValueForm(BaseForm):
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
         )
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        unit = cleaned_data.get("unit")
+        quantity = str(cleaned_data.get("quantity"))
+
+        if unit == "NAR" and not quantity.isnumeric():
+            self.add_error(
+                "quantity", "Items must be a number, like 16"
+            )
+
+        return cleaned_data
+
 
 class ProductUsesInformationSecurityForm(BaseForm):
     class Layout:

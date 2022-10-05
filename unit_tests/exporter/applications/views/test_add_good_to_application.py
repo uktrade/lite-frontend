@@ -498,7 +498,7 @@ def test_add_good_to_application_api_submission_with_documents_preexisting(
             "deactivation_standard_other": "",
             "is_deactivated_to_standard": "",
         },
-        "quantity": "3",
+        "quantity": 3,
         "unit": "NAR",
     }
 
@@ -641,7 +641,7 @@ def test_add_good_to_application_api_submission_with_deferred_serial_numbers_wit
             "deactivation_standard_other": "",
             "is_deactivated_to_standard": "",
         },
-        "quantity": "3",
+        "quantity": 3,
         "unit": "NAR",
     }
 

@@ -429,6 +429,16 @@ def test_product_quantity_and_value_form_validation(data, is_valid, errors):
             True,
             {},
         ),
+        (
+            {"unit": "NAR", "quantity": "1", "value": "16.32"},
+            True,
+            {},
+        ),
+        (
+            {"unit": "NAR", "quantity": "1.4", "value": "16.32"},
+            False,
+            {"quantity": ["Items must be a number, like 16"]},
+        ),
     ),
 )
 def test_product_unit_quantity_and_value_form_validation(data, is_valid, errors, request_with_session, get_units_mock):

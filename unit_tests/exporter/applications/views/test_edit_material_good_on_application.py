@@ -276,7 +276,7 @@ def test_edit_quantity_value(
     assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
     assert response.context["form"].initial == {
         "unit": "GRM",
-        "quantity": "3",
+        "quantity": 3.0,
         "value": "16.32",
     }
 
