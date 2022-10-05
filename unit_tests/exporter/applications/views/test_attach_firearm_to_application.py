@@ -287,7 +287,7 @@ def test_attach_firearm_to_application_end_to_end_no_category_no_firearm_certifi
         },
         "good_id": good_no_category["good"]["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
@@ -435,7 +435,7 @@ def test_attach_firearm_to_application_end_to_end_rfd_valid(
         },
         "good_id": good["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
@@ -647,7 +647,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
         },
         "good_id": good_no_category["good"]["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
@@ -834,7 +834,7 @@ def test_attach_firearm_to_application_end_to_end_section_5_good_with_section_5_
         },
         "good_id": good["good"]["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
@@ -1020,7 +1020,7 @@ def test_attach_firearm_to_application_end_to_end_section_5_good_without_section
         },
         "good_id": good["good"]["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
@@ -1199,7 +1199,7 @@ def test_attach_firearm_to_application_end_to_end_section_5_good_without_section
         },
         "good_id": good["good"]["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }

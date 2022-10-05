@@ -578,13 +578,16 @@ class ProductUnitQuantityAndValueForm(BaseForm):
         label="Unit of measurement",
     )
 
-    quantity = forms.IntegerField(
+    quantity = forms.DecimalField(
+        decimal_places=3,
         error_messages={
-            "invalid": "Quantity must be a number, like 16",
+            "invalid": "Quantity must be a number, like 16.32",
             "required": "Enter the quantity",
-            "min_value": "Quantity cannot be 0",
+            "max_decimal_places": "Quantity must be less than 4 decimal places, like 123.456 or 156",
+            "min_value": "Quantity must be 0.001 or more",
         },
-        min_value=1,
+        label="Quantity",
+        min_value=Decimal("0.001"),
         widget=forms.TextInput,
     )
     value = forms.DecimalField(
@@ -613,6 +616,17 @@ class ProductUnitQuantityAndValueForm(BaseForm):
             Field("quantity", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        unit = cleaned_data.get("unit")
+        quantity = str(cleaned_data.get("quantity"))
+
+        if unit == "NAR" and not quantity.isnumeric():
+            self.add_error("quantity", "Items must be a number, like 16")
+
+        return cleaned_data
 
 
 class ProductUsesInformationSecurityForm(BaseForm):

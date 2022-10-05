@@ -74,6 +74,6 @@ def get_quantity_and_value_initial_data(good_on_application):
 def get_unit_quantity_and_value_initial_data(good_on_application):
     return {
         "unit": good_on_application["unit"]["key"],
-        "quantity": int(good_on_application["quantity"]),
+        "quantity": good_on_application["quantity"],
         "value": good_on_application["value"],
     }

@@ -276,7 +276,7 @@ def test_edit_quantity_value(
     assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
     assert response.context["form"].initial == {
         "unit": "GRM",
-        "quantity": 3,
+        "quantity": 3.0,
         "value": "16.32",
     }
 
@@ -284,7 +284,7 @@ def test_edit_quantity_value(
         edit_unit_quantity_value_url,
         data={
             "unit": "TON",
-            "quantity": 20,
+            "quantity": "20",
             "value": "20.22",
         },
     )
@@ -293,6 +293,6 @@ def test_edit_quantity_value(
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "unit": "TON",
-        "quantity": 20,
+        "quantity": "20",
         "value": "20.22",
     }

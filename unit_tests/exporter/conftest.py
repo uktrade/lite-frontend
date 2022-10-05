@@ -678,4 +678,6 @@ def software_summary(good_id):
 
 @pytest.fixture
 def get_units_mock(requests_mock):
-    requests_mock.get("/static/units/", json={"units": {"TON": "Tonne(s)", "KGM": "Kilogram(s)", "GRM": "Gram(s)"}})
+    requests_mock.get(
+        "/static/units/", json={"units": {"NAR": "Items", "TON": "Tonne(s)", "KGM": "Kilogram(s)", "GRM": "Gram(s)"}}
+    )

@@ -292,7 +292,7 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
         },
         "good_id": expected_good_data["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
@@ -490,7 +490,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
         },
         "good_id": expected_good_data["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
@@ -651,7 +651,7 @@ def test_firearm_category_made_before_1938_end_to_end(
         },
         "good_id": expected_good_data["id"],
         "is_good_incorporated": True,
-        "quantity": 2,
+        "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
     }
