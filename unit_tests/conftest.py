@@ -1920,7 +1920,7 @@ def standard_material_expected_product_on_application_summary():
         ),
         (
             "quantity",
-            "444",
+            444.0,
             "Quantity",
         ),
         (
