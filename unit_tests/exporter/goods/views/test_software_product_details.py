@@ -66,6 +66,7 @@ def test_software_product_details_context(
         ("name", "p1", "Give the product a descriptive name"),
         ("is-good-controlled", "Yes", "Do you know the product's control list entry?"),
         ("control-list-entries", "ML1a, ML22b", "Enter the control list entry"),
+        ("part-number", "44", "Enter the part number"),
         ("is-pv-graded", "Yes", "Does the product have a government security grading or classification?"),
         ("pv-grading-prefix", "NATO", "Enter a prefix (optional)"),
         ("pv-grading-grading", "Official", "What is the security grading or classification?"),
