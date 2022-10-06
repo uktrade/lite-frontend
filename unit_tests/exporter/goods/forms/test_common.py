@@ -437,7 +437,7 @@ def test_product_quantity_and_value_form_validation(data, is_valid, errors):
         (
             {"unit": "NAR", "quantity": "1.4", "value": "16.32"},
             False,
-            {"quantity": ["Items must be a number, like 16"]},
+            {"quantity": ["Items must be a whole number, like 16"]},
         ),
     ),
 )

@@ -624,7 +624,7 @@ class ProductUnitQuantityAndValueForm(BaseForm):
         quantity = str(cleaned_data.get("quantity"))
 
         if unit == "NAR" and not quantity.isnumeric():
-            self.add_error("quantity", "Items must be a number, like 16")
+            self.add_error("quantity", "Items must be a whole number, like 16")
 
         return cleaned_data
 
