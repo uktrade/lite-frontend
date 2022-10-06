@@ -2,6 +2,7 @@ import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
 import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
+import initARS from "./tau/ars";
 
 const initAssessmentForm = () => {
   const noControlListCheckboxEl = document.querySelector(
@@ -47,3 +48,4 @@ const initAssessmentForm = () => {
 };
 
 initAssessmentForm();
+initARS();

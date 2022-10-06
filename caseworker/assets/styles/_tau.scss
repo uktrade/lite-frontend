@@ -85,4 +85,14 @@
   .control-list__edit {
     margin-bottom: 15px;
   }
+
+  .lite-autocomplete {
+    &__input, &__menu {
+      max-width: none;
+    }
+  }
+
+  .tokenfield {
+    max-width: none;
+  }
 }
