@@ -56,7 +56,7 @@
                             {{ good_on_application.good.item_category.value }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ good_on_application.quantity|floatformat }}
+							{{ good_on_application.quantity|floatformat:3 }}
 						</td>
 						<td class="govuk-table__cell">
 							£{{ good_on_application.value|intcomma }}
