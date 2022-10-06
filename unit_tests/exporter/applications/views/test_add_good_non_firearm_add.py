@@ -8,7 +8,7 @@ from django.urls import reverse
 def setup(settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_TECHNOLOGY_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
@@ -55,7 +55,7 @@ def test_non_firearm_category(authorized_client, application_pk):
     "data, redirect_url",
     (
         ("PLATFORM", "new_good_platform"),
-        ("SOFTWARE", "new_good_software"),
+        ("TECHNOLOGY", "new_good_technology"),
         ("MATERIAL_CATEGORY", "is_material_substance"),
     ),
 )

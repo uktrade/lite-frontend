@@ -370,7 +370,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
         ),
         (
             {
-                "software": {
+                "technology": {
                     "good": {
                         "id": "12345",
                         "item_category": {
@@ -381,7 +381,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
             },
             [
                 (
-                    "software",
+                    "technology",
                     {
                         "good_on_application": {
                             "good": {
@@ -390,8 +390,8 @@ def test_tau_assessment_form(data, valid, errors, rf):
                             }
                         },
                         "summary": (
-                            ("software-summary",),
-                            ("software-product-on-application-summary",),
+                            ("technology-summary",),
+                            ("technology-product-on-application-summary",),
                         ),
                     },
                 ),
@@ -454,10 +454,10 @@ def test_tau_assessment_form_goods_choices(
         return_value=(("material-product-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.cases.helpers.summaries.software_summary", return_value=(("software-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.technology_summary", return_value=(("technology-summary",),))
     mocker.patch(
-        "caseworker.cases.helpers.summaries.software_product_on_application_summary",
-        return_value=(("software-product-on-application-summary",),),
+        "caseworker.cases.helpers.summaries.technology_product_on_application_summary",
+        return_value=(("technology-product-on-application-summary",),),
     )
 
     mocker.patch("caseworker.cases.helpers.summaries.component_summary", return_value=(("component-summary",),))

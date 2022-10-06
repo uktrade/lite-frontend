@@ -15,10 +15,10 @@ from core.summaries.formatters import (
     PLATFORM_VALUE_FORMATTERS,
     PLATFORM_ON_APPLICATION_FORMATTERS,
     PLATFORM_ON_APPLICATION_LABELS,
-    SOFTWARE_LABELS,
-    SOFTWARE_VALUE_FORMATTERS,
-    SOFTWARE_ON_APPLICATION_FORMATTERS,
-    SOFTWARE_ON_APPLICATION_LABELS,
+    TECHNOLOGY_LABELS,
+    TECHNOLOGY_VALUE_FORMATTERS,
+    TECHNOLOGY_ON_APPLICATION_FORMATTERS,
+    TECHNOLOGY_ON_APPLICATION_LABELS,
     MATERIAL_LABELS,
     MATERIAL_VALUE_FORMATTERS,
     MATERIAL_ON_APPLICATION_FORMATTERS,
@@ -33,8 +33,8 @@ from core.summaries.reducers import (
     firearm_reducer,
     platform_on_application_reducer,
     platform_reducer,
-    software_on_application_reducer,
-    software_reducer,
+    technology_on_application_reducer,
+    technology_reducer,
     material_reducer,
     material_on_application_reducer,
     component_on_application_reducer,
@@ -135,7 +135,7 @@ MATERIAL_FIELDS = (
     "military-use-details",
 )
 
-SOFTWARE_FIELDS = (
+TECHNOLOGY_FIELDS = (
     "is-firearm-product",
     "non-firearm-category",
     "name",
@@ -362,7 +362,7 @@ def material_product_on_application_summary(good_on_application, additional_form
     return summary
 
 
-SOFTWARE_ON_APPLICATION_FIELDS = (
+TECHNOLOGY_ON_APPLICATION_FIELDS = (
     "is-onward-exported",
     "is-altered",
     "is-altered-comments",
@@ -373,35 +373,34 @@ SOFTWARE_ON_APPLICATION_FIELDS = (
 )
 
 
-def software_summary(good, additional_formatters=None):
+def technology_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = software_reducer(good)
+    summary = technology_reducer(good)
     formatters = {
-        **SOFTWARE_VALUE_FORMATTERS,
+        **TECHNOLOGY_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, SOFTWARE_FIELDS)
+    summary = pick_fields(summary, TECHNOLOGY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, SOFTWARE_LABELS)
+    summary = add_labels(summary, TECHNOLOGY_LABELS)
 
     return summary
 
 
-def software_product_on_application_summary(good_on_application, additional_formatters=None):
+def technology_product_on_application_summary(good_on_application, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
-
-    summary = software_on_application_reducer(good_on_application)
+    summary = technology_on_application_reducer(good_on_application)
     formatters = {
-        **SOFTWARE_ON_APPLICATION_FORMATTERS,
+        **TECHNOLOGY_ON_APPLICATION_FORMATTERS,
         **additional_formatters,
     }
 
-    summary = pick_fields(summary, SOFTWARE_ON_APPLICATION_FIELDS)
+    summary = pick_fields(summary, TECHNOLOGY_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, SOFTWARE_ON_APPLICATION_LABELS)
+    summary = add_labels(summary, TECHNOLOGY_ON_APPLICATION_LABELS)
 
     return summary
 
@@ -457,7 +456,7 @@ class SummaryTypes:
     FIREARM = "FIREARM"
     PLATFORM = "PLATFORM"
     MATERIAL = "MATERIAL"
-    SOFTWARE = "SOFTWARE"
+    TECHNOLOGY = "TECHNOLOGY"
     COMPONENT = "COMPONENT"
 
 
@@ -477,7 +476,7 @@ def get_summary_type_for_good(good):
     summary_map = {
         ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
-        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
+        ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
         ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
     }
 
@@ -507,7 +506,7 @@ def get_summary_type_for_good_on_application(good_on_application):
     summary_map = {
         ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
-        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
+        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.TECHNOLOGY,
         ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
     }
 

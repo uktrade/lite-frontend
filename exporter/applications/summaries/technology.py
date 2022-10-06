@@ -5,12 +5,12 @@ from core.summaries.formatters import (
     document_formatter,
 )
 from core.summaries.summaries import (
-    software_summary as core_software_summary,
-    software_product_on_application_summary as core_software_product_on_application_summary,
+    technology_summary as core_technology_summary,
+    technology_product_on_application_summary as core_technology_product_on_application_summary,
 )
 
 
-SOFTWARE_SUMMARY_EDIT_LINKS = {
+TECHNOLOGY_SUMMARY_EDIT_LINKS = {
     "name": "name",
     "is-good-controlled": "control_list_entries",
     "control-list-entries": "control_list_entries",
@@ -38,10 +38,10 @@ SOFTWARE_SUMMARY_EDIT_LINKS = {
 }
 
 
-def get_software_summary_edit_link_factory(application, good):
+def get_technology_summary_edit_link_factory(application, good):
     def get_edit_link(name):
         return reverse(
-            f"applications:software_edit_{name}",
+            f"applications:technology_edit_{name}",
             kwargs={
                 "pk": application["id"],
                 "good_pk": good["id"],
@@ -51,13 +51,13 @@ def get_software_summary_edit_link_factory(application, good):
     return get_edit_link
 
 
-def add_software_summary_edit_links(summary, edit_links, application, good):
-    get_edit_link = get_software_summary_edit_link_factory(application, good)
+def add_technology_summary_edit_links(summary, edit_links, application, good):
+    get_edit_link = get_technology_summary_edit_link_factory(application, good)
 
     return add_edit_links(summary, edit_links, get_edit_link)
 
 
-def software_summary(good, *args, **kwargs):
+def technology_summary(good, *args, **kwargs):
     def goods_document_formatter(document):
         url = reverse(
             "goods:document",
@@ -69,7 +69,7 @@ def software_summary(good, *args, **kwargs):
 
         return document_formatter(document, url)
 
-    return core_software_summary(
+    return core_technology_summary(
         good,
         {
             "product-document": goods_document_formatter,
@@ -77,11 +77,11 @@ def software_summary(good, *args, **kwargs):
     )
 
 
-def software_product_on_application_summary(good_on_application, *args, **kwargs):
-    return core_software_product_on_application_summary(good_on_application)
+def technology_product_on_application_summary(good_on_application, *args, **kwargs):
+    return core_technology_product_on_application_summary(good_on_application)
 
 
-SOFTWARE_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
+TECHNOLOGY_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
     "is-onward-exported": "onward_exported",
     "is-altered": "onward_altered",
     "is-altered-comments": "onward_altered",
@@ -92,10 +92,10 @@ SOFTWARE_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
 }
 
 
-def get_software_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
+def get_technology_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
     def get_edit_link(name):
         return reverse(
-            f"applications:software_on_application_summary_edit_{name}",
+            f"applications:technology_on_application_summary_edit_{name}",
             kwargs={
                 "pk": application["id"],
                 "good_on_application_pk": good_on_application["id"],
@@ -106,14 +106,14 @@ def get_software_on_application_summary_edit_link_factory(application, good_on_a
     return get_edit_link
 
 
-def add_software_on_application_summary_edit_links(
+def add_technology_on_application_summary_edit_links(
     summary,
     edit_links,
     application,
     good_on_application,
     summary_type,
 ):
-    get_edit_link = get_software_on_application_summary_edit_link_factory(
+    get_edit_link = get_technology_on_application_summary_edit_link_factory(
         application,
         good_on_application,
         summary_type,

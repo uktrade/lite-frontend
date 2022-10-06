@@ -131,8 +131,8 @@ def test_good_detail_summary_check_your_answers_view_template_used(
                 },
             },
             (
-                ("id-summary", "summary", "software_summary"),
-                ("id-application-summary", "application-summary", "software_product_on_application_summary"),
+                ("id-summary", "summary", "technology_summary"),
+                ("id-application-summary", "application-summary", "technology_product_on_application_summary"),
             ),
         ),
         (
@@ -195,12 +195,12 @@ def test_good_detail_summary_check_your_answers_context(
     )
 
     mocker.patch(
-        "exporter.applications.views.goods.goods.software_summary",
-        return_value=(("id-summary", "summary", "software_summary"),),
+        "exporter.applications.views.goods.goods.technology_summary",
+        return_value=(("id-summary", "summary", "technology_summary"),),
     )
     mocker.patch(
-        "exporter.applications.views.goods.goods.software_product_on_application_summary",
-        return_value=(("id-application-summary", "application-summary", "software_product_on_application_summary"),),
+        "exporter.applications.views.goods.goods.technology_product_on_application_summary",
+        return_value=(("id-application-summary", "application-summary", "technology_product_on_application_summary"),),
     )
 
     response = authorized_client.get(good_detail_summary_check_your_answers_url)

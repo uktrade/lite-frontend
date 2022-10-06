@@ -44,7 +44,7 @@ def test_firearm_on_application_summary(data_standard_case, standard_firearm_exp
         ),
         (
             {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE}},
-            SummaryTypes.SOFTWARE,
+            SummaryTypes.TECHNOLOGY,
         ),
         (
             {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT}},

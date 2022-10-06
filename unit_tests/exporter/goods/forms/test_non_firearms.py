@@ -12,7 +12,7 @@ from exporter.goods.forms import (
 def setup(settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_TECHNOLOGY_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
     settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
@@ -21,7 +21,7 @@ def setup(settings):
 def disable_non_firearms(settings):
     settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
     settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = False
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = False
+    settings.FEATURE_FLAG_NON_FIREARMS_TECHNOLOGY_ENABLED = False
     settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = False
     settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = False
 
@@ -62,7 +62,7 @@ def test_non_firearm_category_form(data, is_valid, errors):
         ("FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED", "PLATFORM"),
         ("FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED", "MATERIAL_CATEGORY"),
         ("FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED", "MATERIAL_CATEGORY"),
-        ("FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED", "SOFTWARE"),
+        ("FEATURE_FLAG_NON_FIREARMS_TECHNOLOGY_ENABLED", "TECHNOLOGY"),
     ),
 )
 def test_non_firearm_category_form_ff_enabled(settings, disable_non_firearms, feature, choice):

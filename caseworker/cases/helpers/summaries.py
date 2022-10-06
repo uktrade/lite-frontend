@@ -12,8 +12,8 @@ from core.summaries.summaries import (
     NoSummaryForType,
     platform_summary as core_platform_summary,
     platform_product_on_application_summary as core_platform_product_on_application_summary,
-    software_summary as core_software_summary,
-    software_product_on_application_summary as core_software_product_on_application_summary,
+    technology_summary as core_technology_summary,
+    technology_product_on_application_summary as core_technology_product_on_application_summary,
     component_summary as core_component_summary,
     component_product_on_application_summary as core_component_summary_on_application_summary,
     SummaryTypes,
@@ -116,9 +116,9 @@ def material_product_on_application_summary(good_on_application, *args, **kwargs
     return core_material_product_on_application_summary(good_on_application)
 
 
-def software_summary(good, queue_pk, application_pk, *args, **kwargs):
+def technology_summary(good, queue_pk, application_pk, *args, **kwargs):
     product_document_formatter = product_document_formatter_factory(queue_pk, application_pk)
-    return core_software_summary(
+    return core_technology_summary(
         good,
         {
             "product-document": product_document_formatter,
@@ -143,8 +143,8 @@ def component_summary(good, queue_pk, application_pk, *args, **kwargs):
     )
 
 
-def software_product_on_application_summary(good_on_application, *args, **kwargs):
-    return core_software_product_on_application_summary(good_on_application)
+def technology_product_on_application_summary(good_on_application, *args, **kwargs):
+    return core_technology_product_on_application_summary(good_on_application)
 
 
 def get_good_on_application_summary(
@@ -173,9 +173,9 @@ def get_good_on_application_summary(
             material_summary,
             material_product_on_application_summary,
         ),
-        SummaryTypes.SOFTWARE: (
-            software_summary,
-            software_product_on_application_summary,
+        SummaryTypes.TECHNOLOGY: (
+            technology_summary,
+            technology_product_on_application_summary,
         ),
         SummaryTypes.COMPONENT: (
             component_summary,

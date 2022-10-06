@@ -1932,7 +1932,7 @@ def standard_material_expected_product_on_application_summary():
 
 
 @pytest.fixture
-def standard_software_expected_product_summary():
+def standard_technology_expected_product_summary():
     return (
         (
             "is-firearm-product",
@@ -2038,7 +2038,7 @@ def standard_software_expected_product_summary():
 
 
 @pytest.fixture
-def standard_software_expected_product_on_application_summary():
+def standard_technology_expected_product_on_application_summary():
     return (
         (
             "is-onward-exported",

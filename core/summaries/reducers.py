@@ -551,7 +551,7 @@ def component_on_application_reducer(good_on_application):
     return summary
 
 
-def software_reducer(good):
+def technology_reducer(good):
     summary = (
         (
             "is-firearm-product",
@@ -599,7 +599,7 @@ def designed_for_military_use_reducer(good):
     return summary
 
 
-def software_on_application_reducer(good_on_application):
+def technology_on_application_reducer(good_on_application):
     summary = (
         ("number-of-items", good_on_application["quantity"]),
         ("total-value", Decimal(good_on_application["value"])),

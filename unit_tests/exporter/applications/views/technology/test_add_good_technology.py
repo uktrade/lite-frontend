@@ -3,7 +3,7 @@ import pytest
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from exporter.applications.views.goods.add_good_software.views.constants import AddGoodSoftwareSteps
+from exporter.applications.views.goods.add_good_technology.views.constants import AddGoodTechnologySteps
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
@@ -28,10 +28,10 @@ def setup(no_op_storage):
 
 
 @pytest.fixture
-def new_good_software_url(data_standard_case):
+def new_good_technology_url(data_standard_case):
     application_id = data_standard_case["case"]["data"]["id"]
     return reverse(
-        "applications:new_good_software",
+        "applications:new_good_technology",
         kwargs={
             "pk": application_id,
         },
@@ -40,7 +40,7 @@ def new_good_software_url(data_standard_case):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_TECHNOLOGY_ENABLED = True
 
 
 @pytest.fixture
@@ -67,30 +67,30 @@ def post_good_document_matcher(requests_mock, good_id):
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, new_good_software_url):
-    return goto_step_factory(new_good_software_url)
+def goto_step(goto_step_factory, new_good_technology_url):
+    return goto_step_factory(new_good_technology_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, new_good_software_url):
-    return post_to_step_factory(new_good_software_url)
+def post_to_step(post_to_step_factory, new_good_technology_url):
+    return post_to_step_factory(new_good_technology_url)
 
 
-def test_add_good_software_access_denied_without_feature_flag(
+def test_add_good_technology_access_denied_without_feature_flag(
     settings,
     authorized_client,
-    new_good_software_url,
+    new_good_technology_url,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = False
-    response = authorized_client.get(new_good_software_url)
+    settings.FEATURE_FLAG_NON_FIREARMS_TECHNOLOGY_ENABLED = False
+    response = authorized_client.get(new_good_technology_url)
     assert response.status_code == 404
 
 
-def test_add_good_software_end_to_end(
+def test_add_good_technology_end_to_end(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_software_url,
+    new_good_technology_url,
     mock_application_get,
     control_list_entries,
     pv_gradings,
@@ -98,18 +98,18 @@ def test_add_good_software_end_to_end(
     post_goods_matcher,
     post_good_document_matcher,
 ):
-    authorized_client.get(new_good_software_url)
+    authorized_client.get(new_good_technology_url)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.NAME,
-        {"name": "software 1"},
+        AddGoodTechnologySteps.NAME,
+        {"name": "technology 1"},
     )
 
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductControlListEntryForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        AddGoodTechnologySteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": True,
             "control_list_entries": [
@@ -123,7 +123,7 @@ def test_add_good_software_end_to_end(
     assert isinstance(response.context["form"], ProductPartNumberForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PART_NUMBER,
+        AddGoodTechnologySteps.PART_NUMBER,
         {
             "part_number_missing": False,
             "part_number": "abc12345",
@@ -134,14 +134,14 @@ def test_add_good_software_end_to_end(
     assert isinstance(response.context["form"], ProductPVGradingForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PV_GRADING,
+        AddGoodTechnologySteps.PV_GRADING,
         {"is_pv_graded": True},
     )
 
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductPVGradingDetailsForm)
     response = post_to_step(
-        AddGoodSoftwareSteps.PV_GRADING_DETAILS,
+        AddGoodTechnologySteps.PV_GRADING_DETAILS,
         {
             "prefix": "NATO",
             "grading": "official",
@@ -157,7 +157,7 @@ def test_add_good_software_end_to_end(
     assert isinstance(response.context["form"], ProductSecurityFeaturesForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.SECURITY_FEATURES,
+        AddGoodTechnologySteps.SECURITY_FEATURES,
         {"has_security_features": True, "security_feature_details": "security features"},
     )
 
@@ -165,7 +165,7 @@ def test_add_good_software_end_to_end(
     assert isinstance(response.context["form"], ProductDeclaredAtCustomsForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS,
+        AddGoodTechnologySteps.PRODUCT_DECLARED_AT_CUSTOMS,
         {"has_declared_at_customs": True},
     )
 
@@ -173,21 +173,21 @@ def test_add_good_software_end_to_end(
     assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodTechnologySteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": True},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDocumentSensitivityForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodTechnologySteps.PRODUCT_DOCUMENT_SENSITIVITY,
         {"is_document_sensitive": False},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDocumentUploadForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD,
+        AddGoodTechnologySteps.PRODUCT_DOCUMENT_UPLOAD,
         {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
     )
 
@@ -195,13 +195,13 @@ def test_add_good_software_end_to_end(
     assert isinstance(response.context["form"], ProductMilitaryUseForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_MILITARY_USE,
+        AddGoodTechnologySteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "yes_modified", "modified_military_use_details": "extra power"},
     )
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:software_product_summary",
+        "applications:technology_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -212,7 +212,7 @@ def test_add_good_software_end_to_end(
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
         "item_category": "group3_software",
-        "name": "software 1",
+        "name": "technology 1",
         "is_good_controlled": True,
         "control_list_entries": ["ML1", "ML1a"],
         "is_pv_graded": "yes",
@@ -242,27 +242,27 @@ def test_add_good_software_end_to_end(
     ]
 
 
-def test_add_good_software_no_pv(
+def test_add_good_technology_no_pv(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_software_url,
+    new_good_technology_url,
     mock_application_get,
     control_list_entries,
     post_to_step,
     post_goods_matcher,
 ):
-    authorized_client.get(new_good_software_url)
+    authorized_client.get(new_good_technology_url)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.NAME,
+        AddGoodTechnologySteps.NAME,
         {"name": "product_1"},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductControlListEntryForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        AddGoodTechnologySteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": False,
         },
@@ -271,7 +271,7 @@ def test_add_good_software_no_pv(
     assert isinstance(response.context["form"], ProductPartNumberForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PART_NUMBER,
+        AddGoodTechnologySteps.PART_NUMBER,
         {
             "part_number_missing": True,
             "no_part_number_comments": "no part number",
@@ -281,47 +281,47 @@ def test_add_good_software_no_pv(
     assert isinstance(response.context["form"], ProductPVGradingForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PV_GRADING,
+        AddGoodTechnologySteps.PV_GRADING,
         {"is_pv_graded": False},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductSecurityFeaturesForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.SECURITY_FEATURES,
+        AddGoodTechnologySteps.SECURITY_FEATURES,
         {"has_security_features": True, "security_feature_details": "security features"},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDeclaredAtCustomsForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS,
+        AddGoodTechnologySteps.PRODUCT_DECLARED_AT_CUSTOMS,
         {"has_declared_at_customs": True},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodTechnologySteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDescriptionForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_DESCRIPTION,
+        AddGoodTechnologySteps.PRODUCT_DESCRIPTION,
         {"product_description": "some design details"},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductMilitaryUseForm)
 
     response = post_to_step(
-        AddGoodSoftwareSteps.PRODUCT_MILITARY_USE,
+        AddGoodTechnologySteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "no"},
     )
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:software_product_summary",
+        "applications:technology_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
