@@ -125,22 +125,6 @@ def test_goods_check_document_sensitivity_form():
 @pytest.mark.parametrize(
     "data, valid",
     (
-        ({"item_category": "group2_firearms"}, True),
-        ({"instructions_to_exporter": ""}, False),
-    ),
-)
-def test_product_category_form(data, valid):
-    form = forms.ProductCategoryForm(data=data)
-
-    assert form.is_valid() == valid
-
-    if not valid:
-        assert form.errors["item_category"][0] == "Select a product category"
-
-
-@pytest.mark.parametrize(
-    "data, valid",
-    (
         ({"type": "firearms"}, True),
         ({"type": ""}, False),
     ),

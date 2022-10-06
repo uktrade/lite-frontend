@@ -4,15 +4,11 @@ from dateutil.parser import parse
 from html import escape
 from typing import List
 
-from django.conf import settings
 from django.template.defaultfilters import safe
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
-from core.constants import (
-    OrganisationDocumentType,
-    ProductCategories,
-)
+from core.constants import OrganisationDocumentType
 
 from exporter.core import decorators
 from exporter.core import constants
@@ -151,18 +147,6 @@ def get_firearms_subcategory(type):
     is_firearms_accessory = type == constants.FIREARMS_ACCESSORY
     is_firearms_software_or_tech = type in constants.FIREARMS_SOFTWARE_TECH
     return is_firearm, is_firearm_ammunition_or_component, is_firearms_accessory, is_firearms_software_or_tech
-
-
-def is_category_firearms(wizard):
-    product_category_cleaned_data = wizard.get_cleaned_data_for_step(AddGoodFormSteps.PRODUCT_CATEGORY)
-    if not product_category_cleaned_data:
-        return True
-
-    item_category = product_category_cleaned_data["item_category"]
-    return (
-        item_category == ProductCategories.PRODUCT_CATEGORY_FIREARM
-        or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
-    )
 
 
 def is_product_type(product_type):
