@@ -37,9 +37,11 @@ const initAssessmentForm = () => {
   );
 
   const mtcrEntriesEl = document.querySelector("#mtcr_entries");
-  progressivelyEnhanceMultipleSelectField(mtcrEntriesEl, (option) => {
-    return { id: option.value, name: option.label, classes: [] };
-  });
+  if (mtcrEntriesEl) {
+    progressivelyEnhanceMultipleSelectField(mtcrEntriesEl, (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    });
+  }
 
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent
