@@ -1960,6 +1960,11 @@ def standard_software_expected_product_summary():
             "Enter the control list entry",
         ),
         (
+            "part-number",
+            "44",
+            "Enter the part number",
+        ),
+        (
             "is-pv-graded",
             "Yes",
             "Does the product have a government security grading or classification?",

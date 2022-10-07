@@ -599,6 +599,11 @@ def software_summary(good_id):
             "Enter the control list entry",
         ),
         (
+            "part-number",
+            "44",
+            "Enter the part number",
+        ),
+        (
             "is-pv-graded",
             "Yes",
             "Does the product have a government security grading or classification?",

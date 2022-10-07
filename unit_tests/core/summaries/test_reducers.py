@@ -31,6 +31,7 @@ from core.summaries.reducers import (
     rfd_reducer,
     security_features_reducer,
     serial_numbers_reducer,
+    software_reducer,
     uses_information_security_reducer,
     year_of_manufacture_reducer,
     component_reducer,
@@ -1034,6 +1035,50 @@ def test_material_reducer(mocker):
     mock_is_pv_graded_reducer.assert_called_with(good)
     mock_has_product_document_reducer.assert_called_with(good)
     mock_part_number_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
+
+
+def test_software_reducer(mocker):
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
+    mock_security_features_reducer = mocker.patch(
+        "core.summaries.reducers.security_features_reducer",
+        return_value=(),
+    )
+    mock_declared_at_customs_reducer = mocker.patch(
+        "core.summaries.reducers.declared_at_customs_reducer",
+        return_value=(),
+    )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = software_reducer(good)
+    assert result == (
+        ("is-firearm-product", False),
+        ("non-firearm-category", "It helps to operate a product"),
+        ("name", "good-name"),
+    )
+
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
+    mock_security_features_reducer.assert_called_with(good)
+    mock_declared_at_customs_reducer.assert_called_with(good)
     mock_designed_for_military_use_reducer.assert_called_with(good)
 
 
