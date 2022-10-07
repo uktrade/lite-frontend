@@ -207,6 +207,127 @@ def test_tau_assessment_form(data, valid, errors, rf):
 
 
 @pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        # Empty form
+        (
+            {},
+            False,
+            {
+                "does_not_have_control_list_entries": [
+                    "Select a control list entry or select 'This product does not have a control list entry'"
+                ],
+                "goods": ["Select the products that you want to assess"],
+            },
+        ),
+        # Valid form
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+            },
+            True,
+            {},
+        ),
+        # Valid form - with comments
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+                "comments": "test",
+            },
+            True,
+            {},
+        ),
+        # Invalid good-id
+        (
+            {
+                "goods": ["test-id-not"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+            },
+            False,
+            {"goods": ["Select a valid choice. test-id-not is not one of the available choices."]},
+        ),
+        # Missing goods
+        (
+            {
+                "goods": [],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+            },
+            False,
+            {"goods": ["Select the products that you want to assess"]},
+        ),
+        # Missing report-summary
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": None,
+                "does_not_have_control_list_entries": True,
+            },
+            True,
+            {},
+        ),
+        # does_not_have_control_list_entries=False and missing control_list_entries
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+            },
+            False,
+            {
+                "does_not_have_control_list_entries": [
+                    "Select a control list entry or select 'This product does not have a control list entry'"
+                ]
+            },
+        ),
+        # does_not_have_control_list_entries=False but with control_list_entries
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": True,
+                "control_list_entries": ["test-rating"],
+            },
+            False,
+            {"does_not_have_control_list_entries": ["This is mutually exclusive with control list entries"]},
+        ),
+    ),
+)
+def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, settings):
+    settings.FEATURE_FLAG_REGIMES = False
+
+    form = forms.TAUAssessmentForm(
+        request=rf.get("/"),
+        goods={"test-id": {}},
+        control_list_entries_choices=[("test-rating", "test-text")],
+        wassenaar_entries=[("test-wassenaar-entry", "text-wassenaar-entry-value")],
+        mtcr_entries=[("test-mtcr-entry", "text-mtcr-entry-value")],
+        queue_pk="queue_pk",
+        application_pk="application_pk",
+        is_user_rfd=False,
+        organisation_documents={},
+        data=data,
+    )
+    assert form.is_valid() == valid, f"Has errors {dict(form.errors)}"
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
     "goods, choices",
     (
         (
