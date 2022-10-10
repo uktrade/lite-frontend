@@ -17,7 +17,6 @@ from exporter.applications.views.goods.common.conditionals import (
 )
 from exporter.applications.views.goods.common.edit import (
     BaseEditControlListEntry,
-    BaseEditName,
     BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
@@ -37,6 +36,7 @@ from exporter.applications.views.goods.common.initial import (
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
+    GoodMixin,
     GoodOnApplicationMixin,
 )
 from exporter.applications.views.goods.common.payloads import (
@@ -45,7 +45,11 @@ from exporter.applications.views.goods.common.payloads import (
     get_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.applications.views.goods.common.steps import ProductNameStep
+from exporter.core.wizard.views import (
+    BaseSessionWizardView,
+    StepEditView,
+)
 from exporter.goods.forms.common import (
     ProductMilitaryUseForm,
     ProductOnwardAlteredProcessedForm,
@@ -82,8 +86,38 @@ class BaseCompleteItemEditView(BaseEditView):
         return get_cleaned_data(form)
 
 
-class CompleteItemEditName(BaseEditName, BaseCompleteItemEditView):
-    pass
+class CompleteItemSummaryMixin:
+    def get_success_url(self):
+        return reverse("applications:complete_item_product_summary", kwargs=self.kwargs)
+
+
+class EditCompleteItem:
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing complete item",
+        "Unexpected error editing complete item",
+    )
+    def edit_complete_item(self, request, good_id, form):
+        payload = get_cleaned_data(form)
+        return edit_complete_item(request, good_id, payload)
+
+    def run(self, view, form):
+        self.edit_complete_item(
+            view.request,
+            view.good["id"],
+            form,
+        )
+
+
+class CompleteItemEditName(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    CompleteItemSummaryMixin,
+    StepEditView,
+):
+    actions = (EditCompleteItem(),)
+    step = ProductNameStep()
 
 
 class CompleteItemEditControlListEntry(BaseEditControlListEntry, BaseCompleteItemEditView):
