@@ -2,15 +2,23 @@
     <tbody class="govuk-table__body">
         {% with good=good.good %}
             {% if good.is_document_available %}
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" colspan="2">
-                        {% for document in good.documents %}
+                {% for document in good.documents %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell" colspan="2">
                             <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">
                                 Product document ({{ document.type }}, opens in new tab)
                             </a>
-                        {% endfor %}
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                    {% if document.description %}
+                        <tr>
+                            <td class="govuk-table__header">Description (optional)</td>
+                            <td class="govuk-table__cell">
+                                {{ document.description }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
             {% else %}
                 <tr class="govuk-table__row">
                     <td class="govuk-table__header">Explain why you are not able to upload a product document</td>
