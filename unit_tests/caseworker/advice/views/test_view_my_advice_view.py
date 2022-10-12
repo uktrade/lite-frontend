@@ -38,7 +38,7 @@ def advice(current_user):
             "text": "meets the criteria",
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": {"key": "proviso", "value": "Proviso"},
-            "ultimate_end_user": None,
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "user": current_user,
         }
         for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
@@ -99,6 +99,10 @@ def test_view_approve_advice_with_conditions_notes_and_nlr_products(
         "Third party",
         "Third party",
         "All",
+        "United Kingdom",
+        "Ultimate End-user",
+        "Ultimate End-user",
+        "All",
     ] * 2
 
 
@@ -141,6 +145,11 @@ def test_view_refusal_advice_not_including_nlr_products(
         "United Kingdom",
         "Third party",
         "Third party",
+        "All",
+        "five a, five b",
+        "United Kingdom",
+        "Ultimate End-user",
+        "Ultimate End-user",
         "All",
         "five a, five b",
     ] * 2
