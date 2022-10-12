@@ -89,6 +89,9 @@ class TAUEditForm(forms.Form):
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.fields["wassenaar_entries"].choices = wassenaar_entries
         self.fields["mtcr_entries"].choices = mtcr_entries
+        if not settings.FEATURE_FLAG_REGIMES:
+            self.fields["regimes"].required = False
+
         self.helper = FormHelper()
 
         fields = [
