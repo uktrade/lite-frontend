@@ -148,7 +148,9 @@
                 {% if case.data.denial_matches %}
                   {% for denial in case.data.denial_matches %}
                     <p>
-                      {{ denial.denial.reference }}
+                      <a href="{% url 'external_data:denial-detail' pk=denial.denial.id %}?queue_id={{queue.id}}&case_id={{case.id}}">
+                        {{ denial.denial.reference }}
+                      </a>
                       <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
                         {% if denial.category == "exact" %}
                           EXACT MATCH
