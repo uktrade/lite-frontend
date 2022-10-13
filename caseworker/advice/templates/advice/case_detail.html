@@ -146,7 +146,19 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 {% if case.data.denial_matches %}
-                    {{ case.data.denial_matches | join:', ' }}
+                  {% for denial in case.data.denial_matches %}
+                    <p>
+                      {{ denial.denial.reference }}
+                      <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
+                        {% if denial.category == "exact" %}
+                          EXACT MATCH
+                        {% elif denial.category == "partial" %}
+                          PARTIAL MATCH
+                        {% endif %}
+                      </span>
+
+                    </p>
+                  {% endfor %}
                 {% else %}
                     None
                 {% endif %}
