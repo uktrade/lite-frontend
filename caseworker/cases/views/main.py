@@ -613,13 +613,37 @@ class Denials(LoginRequiredMixin, TemplateView):
         case = get_case(self.request, self.kwargs["pk"])
 
         search = []
-        for key in self.request.GET.keys():
-            if key in case.data:
-                search.append(case.data[key]["name"])
-                search.append(case.data[key]["address"])
+        filter = {
+            "country": set(),
+        }
+        parties_to_search = []
+        for party_type in self.request.GET.keys():
+            if party_type in ["end_user", "consignee"]:
+                parties_to_search.append(case.data[party_type])
+
+            if party_type == "ultimate_end_user":
+                selected_ultimate_end_user_ids = self.request.GET.getlist(party_type)
+                parties_to_search.extend(
+                    [
+                        entity
+                        for entity in case.data["ultimate_end_users"]
+                        if entity["id"] in selected_ultimate_end_user_ids
+                    ]
+                )
+
+            if party_type == "third_party":
+                selected_third_party_ids = self.request.GET.getlist(party_type)
+                parties_to_search.extend(
+                    [entity for entity in case.data["third_parties"] if entity["id"] in selected_third_party_ids]
+                )
+
+        for party in parties_to_search:
+            search.append(party["name"])
+            search.append(party["address"])
+            filter["country"].add(party["country"]["name"])
 
         if search:
-            response = search_denials(request=self.request, search=search)
+            response = search_denials(request=self.request, search=search, filter=filter)
             results = [item["_source"] for item in response.json()["hits"]["hits"]]
         else:
             results = []

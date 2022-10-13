@@ -1,8 +1,26 @@
-import uuid
+import pytest
 
 from django.urls import reverse
 
 from core import client
+
+
+@pytest.fixture(autouse=True)
+def setup(requests_mock, mock_queue, mock_standard_case, mock_party_denial_search_results):
+    yield
+
+
+def test_view_matching_denials(authorized_client, queue_pk, data_standard_case):
+    url = reverse("cases:denials", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+    consignee_id = data_standard_case["case"]["data"]["consignee"]["id"]
+    ultimate_end_user_id = data_standard_case["case"]["data"]["ultimate_end_users"][0]["id"]
+    third_party_id = data_standard_case["case"]["data"]["third_parties"][0]["id"]
+
+    response = authorized_client.get(
+        f"{url}?end_user={end_user_id}&consignee={consignee_id}&ultimate_end_user={ultimate_end_user_id}&third_party={third_party_id}"
+    )
+    assert response.status_code == 200
 
 
 def test_matching_denials(authorized_client, requests_mock, mock_case, queue_pk, open_case_pk):
