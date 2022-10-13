@@ -40,6 +40,7 @@
                                         title="Select all/Deselect all"></button>
                                 </th>
                                 <th scope="col" class="govuk-table__header">Reference</th>
+                                <th scope="col" class="govuk-table__header">Regime reference</th>
                                 <th scope="col" class="govuk-table__header">Name</th>
                                 <th scope="col" class="govuk-table__header">Address</th>
                                 <th scope="col" class="govuk-table__header">Country</th>
@@ -63,6 +64,7 @@
                                     <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.reference }}</a>
                                 </td>
                                 <td class="govuk-table__cell">{{ denial.name }}</td>
+                                <td class="govuk-table__cell">{{ denial.regime_reg_ref }}</td>
                                 <td class="govuk-table__cell">{{ denial.address }}</td>
                                 <td class="govuk-table__cell">{{ denial.country }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
