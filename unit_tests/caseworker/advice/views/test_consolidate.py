@@ -495,6 +495,16 @@ def test_consolidate_review_approve(requests_mock, authorized_client, data_stand
             "denial_reasons": [],
         },
         {
+            "denial_reasons": [],
+            "footnote": "",
+            "footnote_required": False,
+            "note": "",
+            "proviso": "",
+            "text": "test",
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+            "type": "approve",
+        },
+        {
             "type": "approve",
             "text": "test",
             "proviso": "",
@@ -548,6 +558,13 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
             "denial_reasons": ["1"],
             "footnote_required": False,
             "text": "test",
+            "type": "refuse",
+        },
+        {
+            "denial_reasons": ["1"],
+            "footnote_required": False,
+            "text": "test",
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "type": "refuse",
         },
         {

@@ -359,6 +359,12 @@ def mock_post_refusal_advice(requests_mock, standard_case_pk):
 
 
 @pytest.fixture
+def mock_party_denial_search_results(requests_mock):
+    url = client._build_absolute_uri(f"/external-data/denial-search/")
+    yield requests_mock.get(url=url, json={"hits": {"hits": []}})
+
+
+@pytest.fixture
 def current_user():
     return {
         "email": "test.user@example.com",

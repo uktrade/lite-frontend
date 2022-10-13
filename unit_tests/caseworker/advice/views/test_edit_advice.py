@@ -61,6 +61,16 @@ def test_edit_approve_advice_post(authorized_client, requests_mock, data_standar
             "type": "approve",
         },
         {
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+            "denial_reasons": [],
+            "footnote": "",
+            "footnote_required": False,
+            "note": "no specific instructions",
+            "proviso": "",
+            "text": "meets the requirements updated",
+            "type": "approve",
+        },
+        {
             "denial_reasons": [],
             "footnote": "",
             "footnote_required": False,
@@ -137,6 +147,13 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "text": "doesn't meet the requirement",
             "type": "refuse",
+        },
+        {
+            "type": "refuse",
+            "text": "doesn't meet the requirement",
+            "footnote_required": False,
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+            "denial_reasons": ["3", "4", "5", "5a", "5b"],
         },
         {
             "denial_reasons": ["3", "4", "5", "5a", "5b"],

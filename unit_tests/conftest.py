@@ -515,7 +515,28 @@ def data_standard_case():
                     "clearance_level": None,
                     "descriptors": None,
                 },
-                "ultimate_end_users": [],
+                "ultimate_end_users": [
+                    {
+                        "id": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+                        "name": "Ultimate End-user",
+                        "address": "44",
+                        "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True},
+                        "website": "",
+                        "type": "ultimate_end_user",
+                        "type_display_value": "Ultimate End-user",
+                        "organisation": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",
+                        "document": None,
+                        "sub_type": {"key": "individual", "value": "Individual"},
+                        "sub_type_other": None,
+                        "role": {"key": "consultant", "value": "Consultant"},
+                        "role_other": None,
+                        "flags": [],
+                        "copy_of": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+                        "deleted_at": None,
+                        "clearance_level": None,
+                        "descriptors": None,
+                    }
+                ],
                 "third_parties": [
                     {
                         "id": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
