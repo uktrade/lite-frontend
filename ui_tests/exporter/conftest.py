@@ -818,6 +818,16 @@ def select_product_type(driver, product_type):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select "{answer}" for it being a firearm product'))  # noqa
+def select_is_firearm(driver, answer, settings):  # noqa
+    if not settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
+        return
+
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_is_firearm(answer)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select "{firearm_category}" for firearm category'))  # noqa
 def select_firearm_category(driver, firearm_category):  # noqa
     good_details_page = AddGoodDetails(driver)
