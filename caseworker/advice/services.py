@@ -6,6 +6,7 @@ from core import client
 
 # Queues
 FCDO_CASES_TO_REVIEW_QUEUE = "FCDO_CASES_TO_REVIEW"
+FCDO_CPACC_CASES_TO_REVIEW_QUEUE = "FCDO_CPACC_CASES_TO_REVIEW"
 FCDO_COUNTERSIGNING_QUEUE = "FCDO_COUNTER_SIGNING"
 MOD_CASES_TO_REVIEW_QUEUES = [
     "MOD_CASES_TO_REVIEW",
@@ -13,9 +14,9 @@ MOD_CASES_TO_REVIEW_QUEUES = [
 ]
 MOD_CONSOLIDATE_QUEUES = [
     "MOD_DI_CASES_TO_REVIEW",
+    "MOD_DI_DIRECT_CASES_TO_REVIEW",
     "MOD_DSR_CASES_TO_REVIEW",
     "MOD_DSTL_CASES_TO_REVIEW",
-    "MOD_WECA_CASES_TO_REVIEW",  # TODO: Remove this after https://uktrade.atlassian.net/browse/LTD-2730 released
     "MOD_CAPPROT_CASES_TO_REVIEW",
     "MOD_ECJU_REVIEW_AND_COMBINE",
 ]
@@ -29,7 +30,6 @@ MOD_CONSOLIDATE_TEAMS = [
     "MOD_DI",
     "MOD_DSR",
     "MOD_DSTL",
-    "MOD_WECA",  # TODO: Remove this after https://uktrade.atlassian.net/browse/LTD-2730 released
     "MOD_CAPPROT",
 ]
 LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
@@ -321,7 +321,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
     }
 
     if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS):
-        if queue_alias in (FCDO_CASES_TO_REVIEW_QUEUE, *MOD_CONSOLIDATE_QUEUES):
+        if queue_alias in (FCDO_CASES_TO_REVIEW_QUEUE, FCDO_CPACC_CASES_TO_REVIEW_QUEUE, *MOD_CONSOLIDATE_QUEUES):
             existing_advice = get_my_advice(case.advice, caseworker["id"])
 
             if not existing_advice:
