@@ -13,6 +13,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to receiving a letter
     And I click on "Tell us about the products"
     And I click on "Add a new product"
+    And I select "Yes" for it being a firearm product
     And I select product type "Firearm"
     And I select "Non automatic shotgun" for firearm category
     And I enter "name" as descriptive name
@@ -143,6 +144,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to receiving a letter
     And I click on "Tell us about the products"
     And I click on "Add a new product"
+    And I select "Yes" for it being a firearm product
     And I select product type "Firearm"
     And I select "Non automatic shotgun" for firearm category
     And I enter "name" as descriptive name
