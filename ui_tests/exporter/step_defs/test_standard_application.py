@@ -24,6 +24,7 @@ from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
 from ui_tests.exporter.pages.external_locations_page import ExternalLocationsPage
 from ui_tests.exporter.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
 from ui_tests.exporter.pages.preexisting_locations_page import PreexistingLocationsPage
+from ui_tests.exporter.pages.security_approval_page import SecurityApprovalPage
 from ui_tests.exporter.pages.shared import Shared
 from ui_tests.exporter.pages.standard_application.good_details import StandardApplicationGoodDetails
 from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
@@ -504,6 +505,13 @@ def check_product_document_available(driver, choice):
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select "{choice}" to if you are exporting classified products'))
+def select_exporting_classified_product(driver, choice):
+    good_details_page = SecurityApprovalPage(driver)
+    good_details_page.set_exporting_classified_product(choice)
+    functions.click_submit(driver)
+
+
 @then("my answers are played back to me")
 def answers_played_back_to_me():
     pass
@@ -569,6 +577,13 @@ def check_party(driver, transit_status):
     label = "Who are the products going to?"
     answers_page = CheckYourAnswers(driver)
     assert transit_status == answers_page.get_row_value(label)
+
+
+@then(parsers.parse('I see "{security_appoval_answer}" as security approval'))
+def check_security_approval(driver, security_appoval_answer):
+    label = "Do you have an MOD security approval, such as F680 or F1686?"
+    answers_page = CheckYourAnswers(driver)
+    assert security_appoval_answer == answers_page.get_row_value(label)
 
 
 @then(parsers.parse('I see "{product_name}" as name'))
