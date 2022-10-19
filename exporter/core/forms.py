@@ -15,7 +15,6 @@ from lite_forms.components import (
     Form,
     FormGroup,
     TextInput,
-    Label,
     List,
     HiddenField,
 )
