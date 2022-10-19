@@ -23,7 +23,6 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             profile,
             get_client_ip(self.request),
         )
-        profile["no_profile_login"] = True
         return authenticate_exporter_user(self.request, profile)
 
     def handle_failure(self, data, status_code):
