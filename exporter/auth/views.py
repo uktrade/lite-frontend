@@ -23,8 +23,7 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             profile,
             get_client_ip(self.request),
         )
-        if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
-            profile["no_profile_login"] = True
+        profile["no_profile_login"] = True
         return authenticate_exporter_user(self.request, profile)
 
     def handle_failure(self, data, status_code):
@@ -32,10 +31,7 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             return error_page(self.request, data["errors"])
         elif status_code == 401:
             # No user in lite DB we need to capture their name
-            if (
-                not (self.request.session.get("first_name") or self.request.session.get("second_name"))
-                and settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED
-            ):
+            if not (self.request.session.get("first_name") or self.request.session.get("second_name")):
                 return redirect(reverse("core:register_name"))
             else:
                 return redirect("core:register_an_organisation_triage")
@@ -49,11 +45,10 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
         self.request.session["user_token"] = data["token"]
         self.request.session["lite_api_user_id"] = data["lite_api_user_id"]
         self.request.session["email"] = self.user_profile["email"]
-        if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
-            if not (data["first_name"] and data["last_name"]):
-                # We have a registered user with no first_name and last_name
-                # Once all Great users have transferred to new gov.uk this can be removed.
-                return redirect(reverse("core:register_name"))
+        if not (data["first_name"] and data["last_name"]):
+            # We have a registered user with no first_name and last_name
+            # Once all Great users have transferred to new gov.uk this can be removed.
+            return redirect(reverse("core:register_name"))
         self.request.session["first_name"] = data["first_name"]
         self.request.session["last_name"] = data["last_name"]
         return redirect(self.get_success_url())
@@ -81,10 +76,9 @@ class AuthCallbackView(auth_views.AbstractAuthCallbackView, View):
             get_client_ip(self.request),
         )
 
-        if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
-            request.authbroker_client.token_endpoint_auth_method = PrivateKeyJWT(
-                token_endpoint=settings.AUTHBROKER_TOKEN_URL
-            )
+        request.authbroker_client.token_endpoint_auth_method = PrivateKeyJWT(
+            token_endpoint=settings.AUTHBROKER_TOKEN_URL
+        )
 
         return request.authbroker_client.fetch_token(
             url=settings.AUTHBROKER_TOKEN_URL,
