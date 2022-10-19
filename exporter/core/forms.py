@@ -15,7 +15,6 @@ from lite_forms.components import (
     Form,
     FormGroup,
     TextInput,
-    List,
     HiddenField,
 )
 from lite_forms.helpers import conditional
