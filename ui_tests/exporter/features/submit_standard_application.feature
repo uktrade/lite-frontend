@@ -88,6 +88,9 @@ Feature: I want to indicate the standard licence I want
     And I select "yes" to shipping air waybill or lading
     And I select "directly to the end-user" to who products are going
     And I click on "Submit"
+    And I click on "Do you have a security approval?"
+    And I select "No" to if you are exporting classified products
+    And I click continue link
     And I click on "End user"
     And I select "no" to reusing an existing party
     And I select "commercial organisation" as the type of end user
@@ -107,6 +110,7 @@ Feature: I want to indicate the standard licence I want
     And I see "Yes" as product permanently exported
     And I see "Yes" as way bill
     And I see "Direct to end user" as who are the products going to
+    And I see "No" as security approval
     And I see "name" as name
     And I see "N/A" as part number
     And I see "ML1a" as control list entry
@@ -215,6 +219,9 @@ Feature: I want to indicate the standard licence I want
     And I select "yes" to shipping air waybill or lading
     And I select "directly to the end-user" to who products are going
     And I click on "Submit"
+    And I click on "Do you have a security approval?"
+    And I select "No" to if you are exporting classified products
+    And I click continue link
     And I click on "End user"
     And I select "no" to reusing an existing party
     And I select "commercial organisation" as the type of end user
@@ -234,6 +241,7 @@ Feature: I want to indicate the standard licence I want
     And I see "Yes" as product permanently exported
     And I see "Yes" as way bill
     And I see "Direct to end user" as who are the products going to
+    And I see "No" as security approval
     And I see "name" as name
     And I see "N/A" as part number
     And I see "ML1a" as control list entry

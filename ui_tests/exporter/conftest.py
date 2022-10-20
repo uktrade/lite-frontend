@@ -419,6 +419,11 @@ def i_click_submit_button(driver):  # noqa
     functions.click_submit(driver)
 
 
+@when("I click continue link")  # noqa
+def i_click_continue_link(driver):  # noqa
+    functions.click_continue_link(driver)
+
+
 @when("I click the back link")  # noqa
 def click_back_link(driver):  # noqa
     functions.click_back_link(driver)
