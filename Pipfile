@@ -73,6 +73,7 @@ deepmerge = "*"
 phonenumbers = "~=8.12"
 django-ipware = "~=3.0.7"
 setuptools = "~=63.4.1"
+pyopenssl = "~=22.0.0"
 
 [requires]
 python_version = "3.7"
