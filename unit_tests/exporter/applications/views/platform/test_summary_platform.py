@@ -48,7 +48,7 @@ def test_platform_product_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/platform/edit/{name}/'
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/platform/{good_id}/edit/{name}/'
 
     url_map = {
         "name": "name",
