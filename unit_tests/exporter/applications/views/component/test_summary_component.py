@@ -48,7 +48,7 @@ def test_component_product_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/component/edit/{name}/'
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/component/{good_id}/edit/{name}/'
 
     url_map = {
         "name": "name",
