@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from exporter.applications.views import (
     goods,
@@ -49,42 +49,6 @@ from exporter.goods.views import (
     EditFirearmActCertificateDetails,
     EditYearOfManufactureView,
     UpdateSerialNumbersView,
-)
-from exporter.applications.views.goods.add_good_firearm.views.add import AddGoodFirearm, AddGoodFirearmToApplication
-from exporter.applications.views.goods.add_good_firearm.views.attach import AttachFirearmToApplication
-from exporter.applications.views.goods.add_good_firearm.views.edit import (
-    FirearmEditCalibre,
-    FirearmEditCategory,
-    FirearmEditControlListEntry,
-    FirearmEditFirearmsAct1968,
-    FirearmEditLetterOfAuthority,
-    FirearmEditSection5FirearmsAct1968,
-    FirearmEditName,
-    FirearmEditReplica,
-    FirearmEditProductDescriptionView,
-    FirearmEditProductDocumentView,
-    FirearmEditProductDocumentSensitivity,
-    FirearmEditProductDocumentAvailability,
-    FirearmEditPVGrading,
-    FirearmEditPVGradingDetails,
-    FirearmEditRegisteredFirearmsDealer,
-    FirearmProductOnApplicationSummaryEditFirearmCertificate,
-    FirearmProductOnApplicationSummaryEditIsDeactivated,
-    FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard,
-    FirearmProductOnApplicationSummaryEditMadeBefore1938,
-    FirearmProductOnApplicationSummaryEditOnwardAltered,
-    FirearmProductOnApplicationSummaryEditOnwardExported,
-    FirearmProductOnApplicationSummaryEditOnwardIncorporated,
-    FirearmProductOnApplicationSummaryEditQuantityValue,
-    FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings,
-    FirearmProductOnApplicationSummaryEditSerialNumbers,
-    FirearmProductOnApplicationSummaryEditShotgunCertificate,
-    FirearmProductOnApplicationSummaryEditYearOfManufacture,
-)
-from exporter.applications.views.goods.add_good_firearm.views.summary import (
-    FirearmAttachProductOnApplicationSummary,
-    FirearmProductSummary,
-    FirearmProductOnApplicationSummary,
 )
 
 from exporter.applications.views.goods.add_good_platform.views.add import AddGoodPlatform, AddGoodPlatformToApplication
@@ -205,12 +169,7 @@ urlpatterns = [
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
-    path("<uuid:pk>/goods/add-new/firearm/", AddGoodFirearm.as_view(), name="new_good_firearm"),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/add-new/firearm-to-application/",
-        AddGoodFirearmToApplication.as_view(),
-        name="new_good_firearm_to_application",
-    ),
+    path("<uuid:pk>/goods/firearm/", include("exporter.applications.views.goods.add_good_firearm.urls")),
     path(
         "<uuid:pk>/goods/add-firearms-certificate/",
         goods.AttachFirearmActSectionDocument.as_view(),
@@ -220,77 +179,6 @@ urlpatterns = [
         "<uuid:pk>/goods/<uuid:good_pk>/add-firearms-certificate/",
         goods.AttachFirearmActSectionDocument.as_view(),
         name="attach-firearms-certificate-existing-good",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/category/",
-        FirearmEditCategory.as_view(),
-        name="firearm_edit_category",
-    ),
-    path("<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/name/", FirearmEditName.as_view(), name="firearm_edit_name"),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/control-list-entries/",
-        FirearmEditControlListEntry.as_view(),
-        name="firearm_edit_control_list_entries",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/calibre/",
-        FirearmEditCalibre.as_view(),
-        name="firearm_edit_calibre",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/replica/",
-        FirearmEditReplica.as_view(),
-        name="firearm_edit_replica",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/pv-grading/",
-        FirearmEditPVGrading.as_view(),
-        name="firearm_edit_pv_grading",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/pv-grading-details/",
-        FirearmEditPVGradingDetails.as_view(),
-        name="firearm_edit_pv_grading_details",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-document-availability/",
-        FirearmEditProductDocumentAvailability.as_view(),
-        name="firearm_edit_product_document_availability",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-document-sensitivity/",
-        FirearmEditProductDocumentSensitivity.as_view(),
-        name="firearm_edit_product_document_sensitivity",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-document/",
-        FirearmEditProductDocumentView.as_view(),
-        name="firearm_edit_product_document",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/product-description/",
-        FirearmEditProductDescriptionView.as_view(),
-        name="firearm_edit_product_description",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/registered-firearms-dealer/",
-        FirearmEditRegisteredFirearmsDealer.as_view(),
-        name="firearm_edit_registered_firearms_dealer",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/section-5-firearms-act-1968/",
-        FirearmEditSection5FirearmsAct1968.as_view(),
-        name="firearm_edit_section_5_firearms_act_1968",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/letter-of-authority/",
-        FirearmEditLetterOfAuthority.as_view(),
-        name="firearm_edit_letter_of_authority",
-    ),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/firearm/edit/firearms-act-1968/",
-        FirearmEditFirearmsAct1968.as_view(),
-        name="firearm_edit_firearms_act_1968",
     ),
     path(
         "<uuid:pk>/goods/<uuid:good_pk>/edit-software-technology/",
@@ -350,81 +238,6 @@ urlpatterns = [
         AddGoodsSummary.as_view(),
         name="add_good_summary",
     ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_pk>/product-summary/",
-        FirearmProductSummary.as_view(),
-        name="firearm_product_summary",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/product-on-application-summary/",
-        FirearmProductOnApplicationSummary.as_view(),
-        name="product_on_application_summary",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/attach-product-on-application-summary/",
-        FirearmAttachProductOnApplicationSummary.as_view(),
-        name="attach_product_on_application_summary",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/firearm-certificate/",
-        FirearmProductOnApplicationSummaryEditFirearmCertificate.as_view(),
-        name="product_on_application_summary_edit_firearm_certificate",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/shotgun-certificate/",
-        FirearmProductOnApplicationSummaryEditShotgunCertificate.as_view(),
-        name="product_on_application_summary_edit_shotgun_certificate",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/made-before-1938/",
-        FirearmProductOnApplicationSummaryEditMadeBefore1938.as_view(),
-        name="product_on_application_summary_edit_made_before_1938",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/year-of-manufacture/",
-        FirearmProductOnApplicationSummaryEditYearOfManufacture.as_view(),
-        name="product_on_application_summary_edit_year_of_manufacture",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-exported/",
-        FirearmProductOnApplicationSummaryEditOnwardExported.as_view(),
-        name="product_on_application_summary_edit_onward_exported",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
-        FirearmProductOnApplicationSummaryEditOnwardAltered.as_view(),
-        name="product_on_application_summary_edit_onward_altered",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
-        FirearmProductOnApplicationSummaryEditOnwardIncorporated.as_view(),
-        name="product_on_application_summary_edit_onward_incorporated",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/is-deactivated/",
-        FirearmProductOnApplicationSummaryEditIsDeactivated.as_view(),
-        name="product_on_application_summary_edit_is_deactivated",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/is-deactivated-to-standard/",
-        FirearmProductOnApplicationSummaryEditIsDeactivatedToStandard.as_view(),
-        name="product_on_application_summary_edit_is_deactivated_to_standard",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
-        FirearmProductOnApplicationSummaryEditQuantityValue.as_view(),
-        name="product_on_application_summary_edit_quantity_value",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/serial-identification-markings/",
-        FirearmProductOnApplicationSummaryEditSerialIdentificationMarkings.as_view(),
-        name="product_on_application_summary_edit_serial_identification_markings",
-    ),
-    path(
-        "<uuid:pk>/goods/firearm/<uuid:good_on_application_pk>/<str:summary_type>/edit/serial-numbers/",
-        FirearmProductOnApplicationSummaryEditSerialNumbers.as_view(),
-        name="product_on_application_summary_edit_serial_numbers",
-    ),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-good/", EditGood.as_view(), name="edit_good"),
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/edit-grading/", EditGrading.as_view(), name="edit_grading"),
     path(
@@ -440,11 +253,6 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-new/<uuid:good_pk>/attach/", goods.AttachDocument.as_view(), name="attach_documents"),
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
     path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application"),
-    path(
-        "<uuid:pk>/goods/<uuid:good_pk>/add/firearm/",
-        AttachFirearmToApplication.as_view(),
-        name="attach_firearm_to_application",
-    ),
     path(
         "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/remove/",
         goods.RemovePreexistingGood.as_view(),

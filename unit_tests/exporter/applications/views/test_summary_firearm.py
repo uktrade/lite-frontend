@@ -153,7 +153,7 @@ def test_firearm_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/firearm/edit/{name}/'
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/firearm/{good_id}/edit/{name}/'
 
     url_map = {
         "firearm-category": "category",
