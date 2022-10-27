@@ -77,11 +77,11 @@ urlpatterns = [
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
-    path("<uuid:pk>/goods/component/", include("exporter.applications.views.goods.add_good_component.urls")),
+    path("<uuid:pk>/goods/component-accessory/", include("exporter.applications.views.goods.add_good_component.urls")),
     path("<uuid:pk>/goods/firearm/", include("exporter.applications.views.goods.add_good_firearm.urls")),
     path("<uuid:pk>/goods/material/", include("exporter.applications.views.goods.add_good_material.urls")),
-    path("<uuid:pk>/goods/platform/", include("exporter.applications.views.goods.add_good_platform.urls")),
-    path("<uuid:pk>/goods/software/", include("exporter.applications.views.goods.add_good_software.urls")),
+    path("<uuid:pk>/goods/complete-item/", include("exporter.applications.views.goods.add_good_platform.urls")),
+    path("<uuid:pk>/goods/technology/", include("exporter.applications.views.goods.add_good_software.urls")),
     path(
         "<uuid:pk>/goods/add-firearms-certificate/",
         goods.AttachFirearmActSectionDocument.as_view(),
