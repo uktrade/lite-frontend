@@ -3,19 +3,21 @@ import pytest
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from exporter.applications.views.goods.add_good_material.views.constants import AddGoodMaterialSteps
+from exporter.applications.views.goods.component.views.constants import AddGoodComponentSteps
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
-    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductPVGradingDetailsForm,
-    ProductPVGradingForm,
-    ProductPartNumberForm,
     ProductMilitaryUseForm,
+    ProductPVGradingForm,
+    ProductPVGradingDetailsForm,
+    ProductPartNumberForm,
+    ProductUsesInformationSecurityForm,
 )
+
+from exporter.goods.forms.goods import ProductComponentDetailsForm, ProductIsComponentForm
 
 
 @pytest.fixture(autouse=True)
@@ -24,10 +26,10 @@ def setup(no_op_storage):
 
 
 @pytest.fixture
-def new_good_material_url(data_standard_case):
+def new_good_component_url(data_standard_case):
     application_id = data_standard_case["case"]["data"]["id"]
     return reverse(
-        "applications:new_good_material",
+        "applications:new_good_component",
         kwargs={
             "pk": application_id,
         },
@@ -36,7 +38,7 @@ def new_good_material_url(data_standard_case):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
 
 
 @pytest.fixture
@@ -63,30 +65,30 @@ def post_good_document_matcher(requests_mock, good_id):
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, new_good_material_url):
-    return goto_step_factory(new_good_material_url)
+def goto_step(goto_step_factory, new_good_component_url):
+    return goto_step_factory(new_good_component_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, new_good_material_url):
-    return post_to_step_factory(new_good_material_url)
+def post_to_step(post_to_step_factory, new_good_component_url):
+    return post_to_step_factory(new_good_component_url)
 
 
-def test_add_good_material_access_denied_without_feature_flag(
+def test_add_good_component_access_denied_without_feature_flag(
     settings,
     authorized_client,
-    new_good_material_url,
+    new_good_component_url,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = False
-    response = authorized_client.get(new_good_material_url)
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = False
+    response = authorized_client.get(new_good_component_url)
     assert response.status_code == 404
 
 
-def test_add_good_material_end_to_end(
+def test_add_good_component_end_to_end(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_material_url,
+    new_good_component_url,
     mock_application_get,
     control_list_entries,
     pv_gradings,
@@ -94,18 +96,33 @@ def test_add_good_material_end_to_end(
     post_goods_matcher,
     post_good_document_matcher,
 ):
-    authorized_client.get(new_good_material_url)
+    authorized_client.get(new_good_component_url)
+    response = post_to_step(
+        AddGoodComponentSteps.NAME,
+        {"name": "product_1"},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductIsComponentForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.NAME,
-        {"name": "product_1"},
+        AddGoodComponentSteps.IS_COMPONENT,
+        {"is_component": True},
+    )
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductComponentDetailsForm)
+
+    response = post_to_step(
+        AddGoodComponentSteps.COMPONENT_DETAILS,
+        {"component_type": "yes_modified", "modified_details": "modified with new chip"},
     )
 
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductControlListEntryForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        AddGoodComponentSteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": True,
             "control_list_entries": [
@@ -119,7 +136,7 @@ def test_add_good_material_end_to_end(
     assert isinstance(response.context["form"], ProductPartNumberForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.PART_NUMBER,
+        AddGoodComponentSteps.PART_NUMBER,
         {
             "part_number_missing": False,
             "part_number": "abc12345",
@@ -130,14 +147,14 @@ def test_add_good_material_end_to_end(
     assert isinstance(response.context["form"], ProductPVGradingForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.PV_GRADING,
+        AddGoodComponentSteps.PV_GRADING,
         {"is_pv_graded": True},
     )
 
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductPVGradingDetailsForm)
     response = post_to_step(
-        AddGoodMaterialSteps.PV_GRADING_DETAILS,
+        AddGoodComponentSteps.PV_GRADING_DETAILS,
         {
             "prefix": "NATO",
             "grading": "official",
@@ -150,24 +167,32 @@ def test_add_good_material_end_to_end(
     )
 
     assert response.status_code == 200
+    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
+
+    response = post_to_step(
+        AddGoodComponentSteps.PRODUCT_USES_INFORMATION_SECURITY,
+        {"uses_information_security": True, "information_security_details": "secure encrypt"},
+    )
+
+    assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDocumentAvailabilityForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         {"is_document_available": True},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDocumentSensitivityForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         {"is_document_sensitive": False},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDocumentUploadForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.PRODUCT_DOCUMENT_UPLOAD,
+        AddGoodComponentSteps.PRODUCT_DOCUMENT_UPLOAD,
         {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
     )
 
@@ -175,13 +200,13 @@ def test_add_good_material_end_to_end(
     assert isinstance(response.context["form"], ProductMilitaryUseForm)
 
     response = post_to_step(
-        AddGoodMaterialSteps.PRODUCT_MILITARY_USE,
+        AddGoodComponentSteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "yes_modified", "modified_military_use_details": "extra power"},
     )
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:material_product_summary",
+        "applications:component_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -191,7 +216,6 @@ def test_add_good_material_end_to_end(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
-        "item_category": "group1_materials",
         "name": "product_1",
         "is_good_controlled": True,
         "control_list_entries": ["ML1", "ML1a"],
@@ -204,71 +228,90 @@ def test_add_good_material_end_to_end(
             "reference": "GR123",
             "date_of_issue": "2020-02-20",
         },
+        "uses_information_security": True,
+        "information_security_details": "secure encrypt",
         "is_document_available": True,
         "no_document_comments": "",
         "is_document_sensitive": False,
         "is_military_use": "yes_modified",
         "modified_military_use_details": "extra power",
+        "item_category": "group1_components",
         "part_number": "abc12345",
         "no_part_number_comments": "",
+        "is_component": "yes_modified",
+        "modified_details": "modified with new chip",
     }
-
     assert post_good_document_matcher.called_once
     assert post_good_document_matcher.last_request.json() == [
         {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}
     ]
 
 
-def test_add_good_material_no_pv(
+def test_add_good_component_short_end_to_end(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_material_url,
+    new_good_component_url,
     mock_application_get,
     control_list_entries,
     post_to_step,
     post_goods_matcher,
 ):
-    authorized_client.get(new_good_material_url)
+    authorized_client.get(new_good_component_url)
 
     post_to_step(
-        AddGoodMaterialSteps.NAME,
+        AddGoodComponentSteps.NAME,
         {"name": "product_1"},
     )
 
     post_to_step(
-        AddGoodMaterialSteps.PRODUCT_CONTROL_LIST_ENTRY,
+        AddGoodComponentSteps.IS_COMPONENT,
+        {"is_component": False},
+    )
+
+    post_to_step(
+        AddGoodComponentSteps.PRODUCT_CONTROL_LIST_ENTRY,
         {
             "is_good_controlled": False,
         },
     )
+
     post_to_step(
-        AddGoodMaterialSteps.PART_NUMBER,
+        AddGoodComponentSteps.PART_NUMBER,
         {
             "part_number_missing": True,
             "no_part_number_comments": "no part number",
         },
     )
+
     post_to_step(
-        AddGoodMaterialSteps.PV_GRADING,
+        AddGoodComponentSteps.PV_GRADING,
         {"is_pv_graded": False},
     )
     post_to_step(
-        AddGoodMaterialSteps.PRODUCT_DOCUMENT_AVAILABILITY,
-        {"is_document_available": False, "no_document_comments": "product not manufactured yet"},
+        AddGoodComponentSteps.PRODUCT_USES_INFORMATION_SECURITY,
+        {
+            "uses_information_security": False,
+        },
     )
     post_to_step(
-        AddGoodMaterialSteps.PRODUCT_DESCRIPTION,
+        AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        {
+            "is_document_available": False,
+            "no_document_comments": "no available",
+        },
+    )
+    post_to_step(
+        AddGoodComponentSteps.PRODUCT_DESCRIPTION,
         {"product_description": "This is the product description"},
     )
     response = post_to_step(
-        AddGoodMaterialSteps.PRODUCT_MILITARY_USE,
+        AddGoodComponentSteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "no"},
     )
-
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:material_product_summary",
+        "applications:component_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -278,16 +321,19 @@ def test_add_good_material_no_pv(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
-        "item_category": "group1_materials",
         "name": "product_1",
         "is_good_controlled": False,
         "control_list_entries": [],
-        "is_pv_graded": "no",
-        "is_document_available": False,
-        "no_document_comments": "product not manufactured yet",
-        "is_military_use": "no",
-        "modified_military_use_details": "",
-        "no_part_number_comments": "no part number",
         "part_number": "",
+        "no_part_number_comments": "no part number",
+        "is_pv_graded": "no",
+        "uses_information_security": False,
+        "information_security_details": "",
+        "is_document_available": False,
+        "no_document_comments": "no available",
+        "is_military_use": "no",
         "product_description": "This is the product description",
+        "modified_military_use_details": "",
+        "item_category": "group1_components",
+        "is_component": "no",
     }

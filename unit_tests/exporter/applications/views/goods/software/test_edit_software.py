@@ -2,7 +2,7 @@ import pytest
 
 from django.urls import reverse
 
-from exporter.applications.views.goods.add_good_software.views.constants import AddGoodSoftwareSteps
+from exporter.applications.views.goods.software.views.constants import AddGoodSoftwareSteps
 
 
 @pytest.fixture(autouse=True)

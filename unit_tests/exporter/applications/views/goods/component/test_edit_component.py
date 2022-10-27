@@ -3,7 +3,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from exporter.applications.views.goods.add_good_component.views.constants import AddGoodComponentSteps
+from exporter.applications.views.goods.component.views.constants import AddGoodComponentSteps
 from exporter.goods.forms.common import ProductDescriptionForm
 from exporter.goods.forms.goods import ProductComponentDetailsForm
 

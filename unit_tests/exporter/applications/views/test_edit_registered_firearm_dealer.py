@@ -7,7 +7,7 @@ from django.urls import reverse
 from core import client
 from core.constants import OrganisationDocumentType
 
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
+from exporter.applications.views.goods.firearm.views.constants import AddGoodFirearmSteps
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import convert_api_date_string_to_date, decompose_date
 from exporter.goods.forms.firearms import (

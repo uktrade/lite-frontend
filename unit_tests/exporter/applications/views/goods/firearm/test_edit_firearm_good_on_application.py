@@ -5,8 +5,8 @@ import uuid
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
-from exporter.applications.views.goods.add_good_firearm.views.edit import SummaryTypeMixin
+from exporter.applications.views.goods.firearm.views.constants import AddGoodFirearmToApplicationSteps
+from exporter.applications.views.goods.firearm.views.edit import SummaryTypeMixin
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import decompose_date
 from exporter.goods.forms.common import (
