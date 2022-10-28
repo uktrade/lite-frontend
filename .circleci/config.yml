@@ -28,7 +28,7 @@ common_env_vars: &common_env_vars
 ###############################################################################
 
 image_python: &image_python
-  image: circleci/python:3.7
+  image: cimg/python:3.7.14
 
 image_python_browsers: &image_python_browsers
   image: circleci/python:3.7-browsers
@@ -134,7 +134,7 @@ jobs:
       - <<: *image_redis
     environment:
       <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: example.caseworker.env
+      PIPENV_DOTENV_LOCATION: tests.caseworker.env
       PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
@@ -149,7 +149,7 @@ jobs:
       - <<: *image_redis
     environment:
       <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: example.exporter.env
+      PIPENV_DOTENV_LOCATION: tests.exporter.env
       PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
@@ -164,7 +164,7 @@ jobs:
       - <<: *image_redis
     environment:
       <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: example.exporter.env
+      PIPENV_DOTENV_LOCATION: tests.exporter.env
       PYTEST_ADDOPTS: unit_tests/core --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
