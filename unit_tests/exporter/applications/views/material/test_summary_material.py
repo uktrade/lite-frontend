@@ -137,7 +137,7 @@ def test_material_product_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/material/edit/{name}/'
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/material/{good_id}/edit/{name}/'
 
     url_map = {
         "name": "name",

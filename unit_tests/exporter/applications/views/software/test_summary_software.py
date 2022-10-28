@@ -47,7 +47,7 @@ def test_software_product_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/software/edit/{name}/'
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/technology/{good_id}/edit/{name}/'
 
     url_map = {
         "name": "name",
@@ -129,7 +129,7 @@ def test_software_on_application_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f"/applications/{application['id']}/goods/software/{good_on_application['id']}/software-on-application-summary/edit/{name}/"
+        return f"/applications/{application['id']}/goods/technology/{good_on_application['id']}/software-on-application-summary/edit/{name}/"
 
     url_map = {
         "is-onward-exported": "onward-exported",

@@ -48,7 +48,7 @@ def test_platform_product_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f'/applications/{data_standard_case["case"]["id"]}/goods/{good_id}/platform/edit/{name}/'
+        return f'/applications/{data_standard_case["case"]["id"]}/goods/complete-item/{good_id}/edit/{name}/'
 
     url_map = {
         "name": "name",
@@ -129,7 +129,7 @@ def test_platform_on_application_summary_context(
     def _get_test_url(name):
         if not name:
             return None
-        return f"/applications/{application['id']}/goods/platform/{good_on_application['id']}/platform-on-application-summary/edit/{name}/"
+        return f"/applications/{application['id']}/goods/complete-item/{good_on_application['id']}/platform-on-application-summary/edit/{name}/"
 
     url_map = {
         "is-onward-exported": "onward-exported",
