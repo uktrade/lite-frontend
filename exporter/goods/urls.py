@@ -2,7 +2,7 @@ from django.conf import settings
 from django.urls import path
 
 from exporter.goods import views
-from exporter.goods.component.views import ComponentProductDetails
+from exporter.goods.component_accessory.views import ComponentProductDetails
 from exporter.goods.firearms.views import FirearmProductDetails
 from exporter.goods.materials.views import MaterialProductDetails
 from exporter.goods.platform.views import PlatformProductDetails

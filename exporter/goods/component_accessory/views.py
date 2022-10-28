@@ -1,6 +1,6 @@
 from core.summaries.summaries import SummaryTypes
 
-from exporter.applications.summaries.component import component_summary
+from exporter.applications.summaries.component_accessory import component_summary
 
 from ..common.base import BaseProductDetails
 

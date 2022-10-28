@@ -41,7 +41,7 @@ from exporter.applications.services import (
     post_application_document,
     post_good_on_application,
 )
-from exporter.applications.summaries.component import (
+from exporter.applications.summaries.component_accessory import (
     component_summary,
     component_product_on_application_summary,
 )

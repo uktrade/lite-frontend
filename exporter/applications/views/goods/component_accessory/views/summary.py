@@ -8,7 +8,7 @@ from exporter.applications.views.goods.common.mixins import (
     GoodMixin,
     GoodOnApplicationMixin,
 )
-from exporter.applications.summaries.component import (
+from exporter.applications.summaries.component_accessory import (
     add_component_summary_edit_links,
     add_component_on_application_summary_edit_links,
     COMPONENT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
@@ -27,7 +27,7 @@ class BaseComponentOnApplicationSummary(
     GoodOnApplicationMixin,
     TemplateView,
 ):
-    template_name = "applications/goods/component/product-on-application-summary.html"
+    template_name = "applications/goods/component_accessory/product-on-application-summary.html"
 
     @cached_property
     def organisation_documents(self):
@@ -75,7 +75,7 @@ class ComponentProductSummary(
     GoodMixin,
     TemplateView,
 ):
-    template_name = "applications/goods/component/product-summary.html"
+    template_name = "applications/goods/component_accessory/product-summary.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

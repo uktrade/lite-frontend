@@ -77,7 +77,7 @@ urlpatterns = [
     # Goods
     path("<uuid:pk>/goods/", goods.ApplicationGoodsList.as_view(), name="goods"),
     path("<uuid:pk>/goods/add-new/", goods.AddGood.as_view(), name="new_good"),
-    path("<uuid:pk>/goods/component-accessory/", include("exporter.applications.views.goods.component.urls")),
+    path("<uuid:pk>/goods/component-accessory/", include("exporter.applications.views.goods.component_accessory.urls")),
     path("<uuid:pk>/goods/firearm/", include("exporter.applications.views.goods.firearm.urls")),
     path("<uuid:pk>/goods/material/", include("exporter.applications.views.goods.material.urls")),
     path("<uuid:pk>/goods/complete-item/", include("exporter.applications.views.goods.platform.urls")),

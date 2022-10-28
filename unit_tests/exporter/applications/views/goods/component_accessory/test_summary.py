@@ -1,7 +1,6 @@
 import pytest
 
 from pytest_django.asserts import assertTemplateUsed
-from django.urls import reverse
 
 
 @pytest.fixture(autouse=True)
@@ -31,7 +30,7 @@ def test_component_summary_template_used(
     component_product_summary_url,
 ):
     response = authorized_client.get(component_product_summary_url)
-    assertTemplateUsed(response, "applications/goods/component/product-summary.html")
+    assertTemplateUsed(response, "applications/goods/component_accessory/product-summary.html")
 
 
 def test_component_product_summary_context(
@@ -93,6 +92,21 @@ def test_component_product_on_application_summary_response_status_code(
 
     response = authorized_client.get(component_on_application_summary_url)
     assert response.status_code == 200
+
+
+def test_component_product_on_application_summary_template_used(
+    authorized_client,
+    component_on_application_summary_url,
+    mock_application_get,
+    mock_good_get,
+    mock_good_on_application_get,
+    application,
+    good_id,
+    requests_mock,
+):
+
+    response = authorized_client.get(component_on_application_summary_url)
+    assertTemplateUsed(response, "applications/goods/component_accessory/product-on-application-summary.html")
 
 
 @pytest.fixture
