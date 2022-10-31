@@ -3,8 +3,8 @@ import pytest
 from django.urls import reverse
 
 from core import client
-from exporter.applications.views.goods.add_good_platform.views.constants import AddGoodPlatformToApplicationSteps
-from exporter.applications.views.goods.add_good_platform.views.edit import SummaryTypeMixin
+from exporter.applications.views.goods.software.views.constants import AddGoodSoftwareToApplicationSteps
+from exporter.applications.views.goods.software.views.edit import SummaryTypeMixin
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
@@ -27,13 +27,13 @@ def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
 
 
 @pytest.fixture
 def edit_onward_exported_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:platform_on_application_summary_edit_onward_exported",
+        "applications:software_on_application_summary_edit_onward_exported",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -69,7 +69,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED,
         data={"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -81,7 +81,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         data={
             "is_onward_altered_processed": True,
             "is_onward_altered_processed_comments": "Altering",
@@ -96,7 +96,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED,
         data={
             "is_onward_incorporated": True,
             "is_onward_incorporated_comments": "Incorporated",
@@ -137,7 +137,7 @@ def test_edit_onward_exported_false(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED,
         data={"is_onward_exported": False},
     )
     assert response.status_code == 302
@@ -152,7 +152,7 @@ def test_edit_onward_exported_false(
 @pytest.fixture
 def edit_onward_altered_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:platform_on_application_summary_edit_onward_altered",
+        "applications:software_on_application_summary_edit_onward_altered",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -200,7 +200,7 @@ def test_edit_onward_altered_processed(
 @pytest.fixture
 def edit_onward_incorporated_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:platform_on_application_summary_edit_onward_incorporated",
+        "applications:software_on_application_summary_edit_onward_incorporated",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -249,7 +249,7 @@ def test_edit_onward_incorporated(
 @pytest.fixture
 def edit_quantity_value_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:platform_on_application_summary_edit_quantity_value",
+        "applications:software_on_application_summary_edit_quantity_value",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],

@@ -12,7 +12,7 @@ from core.constants import OrganisationDocumentType
 
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import decompose_date
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
+from exporter.applications.views.goods.firearm.views.constants import AddGoodFirearmSteps
 from exporter.goods.forms.common import (
     ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
