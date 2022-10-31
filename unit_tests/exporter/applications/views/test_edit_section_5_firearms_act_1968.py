@@ -4,7 +4,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
+from exporter.applications.views.goods.firearm.views.constants import AddGoodFirearmSteps
 from exporter.core.helpers import decompose_date
 from exporter.goods.forms.firearms import (
     FirearmAttachSection5LetterOfAuthorityForm,
