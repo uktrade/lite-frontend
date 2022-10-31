@@ -336,12 +336,12 @@ def edit_material(request, pk, json):
     return response.json(), response.status_code
 
 
-def post_software(request, json):
-    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_SOFTWARE
+def post_technology(request, json):
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
 
-def edit_software(request, pk, json):
+def edit_technolgy(request, pk, json):
     response = client.put(request, f"/goods/{pk}", json)
     return response.json(), response.status_code

@@ -447,7 +447,7 @@ MATERIAL_ON_APPLICATION_LABELS = {
 }
 
 
-SOFTWARE_LABELS = {
+TECHNOLOGY_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "non-firearm-category": "Select the product category",
     "name": "Give the product a descriptive name",
@@ -474,7 +474,7 @@ SOFTWARE_LABELS = {
     "military-use-details": "Provide details of the modifications",
 }
 
-SOFTWARE_VALUE_FORMATTERS = {
+TECHNOLOGY_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
@@ -495,7 +495,7 @@ SOFTWARE_VALUE_FORMATTERS = {
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
-SOFTWARE_ON_APPLICATION_FORMATTERS = {
+TECHNOLOGY_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
@@ -503,7 +503,7 @@ SOFTWARE_ON_APPLICATION_FORMATTERS = {
     "number-of-items": integer,
 }
 
-SOFTWARE_ON_APPLICATION_LABELS = {
+TECHNOLOGY_ON_APPLICATION_LABELS = {
     "is-onward-exported": "Will the product be onward exported to any additional countries?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",

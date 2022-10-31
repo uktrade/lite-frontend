@@ -25,23 +25,23 @@ def good_on_application(data_standard_case):
     "url_name, form_data, expected",
     (
         (
-            "software_edit_name",
+            "technology_edit_name",
             {"name": "new good"},
             {"name": "new good"},
         ),
         (
-            "software_edit_control_list_entries",
+            "technology_edit_control_list_entries",
             {"is_good_controlled": False},
             {"is_good_controlled": False, "control_list_entries": []},
         ),
         (
-            "software_edit_control_list_entries",
+            "technology_edit_control_list_entries",
             {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
             {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
         ),
     ),
 )
-def test_edit_software_post(
+def test_edit_technology_post(
     authorized_client,
     requests_mock,
     application,
@@ -49,7 +49,7 @@ def test_edit_software_post(
     url_name,
     form_data,
     expected,
-    software_product_summary_url,
+    technology_product_summary_url,
 ):
     url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"], "good_pk": good_on_application["id"]})
 
@@ -59,7 +59,7 @@ def test_edit_software_post(
     )
 
     assert response.status_code == 302
-    assert response.url == software_product_summary_url
+    assert response.url == technology_product_summary_url
     assert requests_mock.last_request.json() == expected
 
 
@@ -67,18 +67,18 @@ def test_edit_software_post(
     "url_name,good_on_application_data,initial",
     (
         (
-            "software_edit_name",
+            "technology_edit_name",
             {},
             {"name": "p1"},
         ),
         (
-            "software_edit_control_list_entries",
+            "technology_edit_control_list_entries",
             {},
             {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},
         ),
     ),
 )
-def test_edit_software_initial(
+def test_edit_technology_initial(
     authorized_client,
     application,
     good_on_application,
@@ -98,7 +98,7 @@ def test_edit_software_initial(
 @pytest.fixture(autouse=True)
 def edit_pv_grading_url(application, good_on_application):
     return reverse(
-        "applications:software_edit_pv_grading",
+        "applications:technology_edit_pv_grading",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -118,7 +118,7 @@ def test_edit_pv_grading(
     pv_gradings,
     goto_step_pv_grading,
     post_to_step_pv_grading,
-    software_product_summary_url,
+    technology_product_summary_url,
 ):
     response = goto_step_pv_grading(AddGoodSoftwareSteps.PV_GRADING)
     assert response.status_code == 200
@@ -144,7 +144,7 @@ def test_edit_pv_grading(
     )
 
     assert response.status_code == 302
-    assert response.url == software_product_summary_url
+    assert response.url == technology_product_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {
@@ -164,10 +164,10 @@ def test_edit_pv_grading_details(
     good_on_application,
     requests_mock,
     pv_gradings,
-    software_product_summary_url,
+    technology_product_summary_url,
 ):
     url = reverse(
-        "applications:software_edit_pv_grading_details",
+        "applications:technology_edit_pv_grading_details",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -185,7 +185,7 @@ def test_edit_pv_grading_details(
     )
 
     assert response.status_code == 302
-    assert response.url == software_product_summary_url
+    assert response.url == technology_product_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {

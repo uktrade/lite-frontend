@@ -105,7 +105,7 @@ class ProductCategories:
     PRODUCT_CATEGORY_FIREARM = "group2_firearms"
     PRODUCT_CATEGORY_PLATFORM = "group1_platform"
     PRODUCT_CATEGORY_COMPONENT = "group1_components"
-    PRODUCT_CATEGORY_SOFTWARE = "group3_software"
+    PRODUCT_CATEGORY_TECHNOLOGY = "group3_technology"
     PRODUCT_CATEGORY_MATERIAL = "group1_materials"
     PRODUCT_CATEGORY_DEVICE = "group1_device"
     PRODUCT_CATEGORY_TECHNOLOGY = "group3_technology"

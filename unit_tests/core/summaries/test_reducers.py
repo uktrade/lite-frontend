@@ -31,7 +31,7 @@ from core.summaries.reducers import (
     rfd_reducer,
     security_features_reducer,
     serial_numbers_reducer,
-    software_reducer,
+    technology_reducer,
     uses_information_security_reducer,
     year_of_manufacture_reducer,
     component_reducer,
@@ -1038,7 +1038,7 @@ def test_material_reducer(mocker):
     mock_designed_for_military_use_reducer.assert_called_with(good)
 
 
-def test_software_reducer(mocker):
+def test_technology_reducer(mocker):
     mock_is_good_controlled_reducer = mocker.patch(
         "core.summaries.reducers.is_good_controlled_reducer", return_value=()
     )
@@ -1066,7 +1066,7 @@ def test_software_reducer(mocker):
     good = {
         "name": "good-name",
     }
-    result = software_reducer(good)
+    result = technology_reducer(good)
     assert result == (
         ("is-firearm-product", False),
         ("non-firearm-category", "It helps to operate a product"),

@@ -9,12 +9,12 @@ from exporter.applications.views.goods.common.mixins import (
     GoodOnApplicationMixin,
 )
 from exporter.applications.summaries.software import (
-    add_software_summary_edit_links,
-    add_software_on_application_summary_edit_links,
-    software_summary,
-    SOFTWARE_ON_APPLICATION_SUMMARY_EDIT_LINKS,
-    SOFTWARE_SUMMARY_EDIT_LINKS,
-    software_product_on_application_summary,
+    add_technology_summary_edit_links,
+    add_technology_on_application_summary_edit_links,
+    technology_summary,
+    TECHNOLOGY_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+    TECHNOLOGY_SUMMARY_EDIT_LINKS,
+    technology_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
 from .mixins import NonFirearmsSoftwareFlagMixin
@@ -33,19 +33,19 @@ class BaseSoftwareOnApplicationSummary(
     def organisation_documents(self):
         return get_organisation_documents(self.application)
 
-    def get_software_summary(self):
-        product_summary = software_summary(
+    def get_technology_summary(self):
+        product_summary = technology_summary(
             self.good,
         )
         return product_summary
 
-    def get_software_on_application_summary(self):
-        product_on_application_summary = software_product_on_application_summary(
+    def get_technology_on_application_summary(self):
+        product_on_application_summary = technology_product_on_application_summary(
             self.good_on_application,
         )
-        product_on_application_summary = add_software_on_application_summary_edit_links(
+        product_on_application_summary = add_technology_on_application_summary_edit_links(
             product_on_application_summary,
-            SOFTWARE_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            TECHNOLOGY_ON_APPLICATION_SUMMARY_EDIT_LINKS,
             self.application,
             self.good_on_application,
             self.summary_type,
@@ -60,13 +60,13 @@ class BaseSoftwareOnApplicationSummary(
             "application": self.application,
             "good": self.good,
             "good_on_application": self.good_on_application,
-            "product_summary": self.get_software_summary(),
-            "product_on_application_summary": self.get_software_on_application_summary(),
+            "product_summary": self.get_technology_summary(),
+            "product_on_application_summary": self.get_technology_on_application_summary(),
         }
 
 
 class SoftwareProductOnApplicationSummary(BaseSoftwareOnApplicationSummary):
-    summary_type = "software-on-application-summary"
+    summary_type = "technology-on-application-summary"
 
 
 class SoftwareProductSummary(
@@ -83,10 +83,10 @@ class SoftwareProductSummary(
         context["application_id"] = self.application["id"]
         context["good"] = self.good
 
-        summary = software_summary(self.good)
-        summary = add_software_summary_edit_links(
+        summary = technology_summary(self.good)
+        summary = add_technology_summary_edit_links(
             summary,
-            SOFTWARE_SUMMARY_EDIT_LINKS,
+            TECHNOLOGY_SUMMARY_EDIT_LINKS,
             self.application,
             self.good,
         )

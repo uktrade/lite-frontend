@@ -55,7 +55,7 @@ def test_non_firearm_category(authorized_client, application_pk):
     "data, redirect_url",
     (
         ("PLATFORM", "new_good_platform"),
-        ("SOFTWARE", "new_good_software"),
+        ("TECHNOLOGY", "new_good_technology"),
         ("MATERIAL_CATEGORY", "is_material_substance"),
     ),
 )

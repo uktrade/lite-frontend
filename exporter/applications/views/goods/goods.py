@@ -58,8 +58,8 @@ from exporter.applications.summaries.platform import (
     platform_product_on_application_summary,
 )
 from exporter.applications.summaries.software import (
-    software_summary,
-    software_product_on_application_summary,
+    technology_summary,
+    technology_product_on_application_summary,
 )
 from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps
@@ -290,8 +290,8 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
     def form_valid(self, form):
         category = form.cleaned_data["no_firearm_category"]
         redirect_url = reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
-        if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.SOFTWARE.value:
-            redirect_url = reverse("applications:new_good_software", kwargs={"pk": self.kwargs["pk"]})
+        if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.TECHNOLOGY.value:
+            redirect_url = reverse("applications:new_good_technology", kwargs={"pk": self.kwargs["pk"]})
         elif category == NonFirearmCategoryForm.NonFirearmCategoryChoices.MATERIAL_CATEGORY.value:
             redirect_url = reverse("applications:is_material_substance", kwargs={"pk": self.kwargs["pk"]})
         return redirect(redirect_url)
@@ -1104,9 +1104,9 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
                 material_summary,
                 material_product_on_application_summary,
             ),
-            SummaryTypes.SOFTWARE: (
-                software_summary,
-                software_product_on_application_summary,
+            SummaryTypes.TECHNOLOGY: (
+                technology_summary,
+                technology_product_on_application_summary,
             ),
             SummaryTypes.COMPONENT: (
                 component_summary,

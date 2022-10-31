@@ -571,7 +571,7 @@ def component_summary(good_id):
 
 
 @pytest.fixture
-def software_summary(good_id):
+def technology_summary(good_id):
     return (
         (
             "is-firearm-product",

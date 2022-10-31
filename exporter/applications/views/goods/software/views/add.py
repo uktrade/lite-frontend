@@ -30,8 +30,8 @@ from exporter.goods.forms.goods import (
     ProductDeclaredAtCustomsForm,
     ProductSecurityFeaturesForm,
 )
-from exporter.goods.services import post_software
-from exporter.applications.services import post_software_good_on_application
+from exporter.goods.services import post_technology
+from exporter.applications.services import post_technology_good_on_application
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin
 from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
@@ -111,7 +111,7 @@ class AddGoodSoftware(
 
     def get_success_url(self):
         return reverse(
-            "applications:software_product_summary",
+            "applications:technology_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -120,16 +120,16 @@ class AddGoodSoftware(
         "Error creating complete product",
         "Unexpected error adding complete product",
     )
-    def post_software(self, form_dict):
+    def post_technology(self, form_dict):
         payload = self.get_payload(form_dict)
 
-        return post_software(
+        return post_technology(
             self.request,
             payload,
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        good, _ = self.post_software(form_dict)
+        good, _ = self.post_technology(form_dict)
         self.good = good["good"]
 
         ProductDocumentAction(self).run()
@@ -162,7 +162,7 @@ class AddGoodSoftwareToApplication(
 
     def get_success_url(self):
         return reverse(
-            "applications:software_on_application_summary",
+            "applications:technology_on_application_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_on_application_pk": self.good_on_application["id"],
@@ -175,12 +175,12 @@ class AddGoodSoftwareToApplication(
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error adding software to application",
-        "Unexpected error adding software to application",
+        "Error adding technology to application",
+        "Unexpected error adding technology to application",
     )
-    def post_software_to_application(self, form_dict):
+    def post_technology_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
-        return post_software_good_on_application(
+        return post_technology_good_on_application(
             self.request,
             self.application["id"],
             self.good["id"],
@@ -191,7 +191,7 @@ class AddGoodSoftwareToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:software_product_summary",
+            "applications:technology_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],
@@ -202,7 +202,7 @@ class AddGoodSoftwareToApplication(
         return ctx
 
     def done(self, form_list, form_dict, **kwargs):
-        good_on_application, _ = self.post_software_to_application(form_dict)
+        good_on_application, _ = self.post_technology_to_application(form_dict)
         good_on_application = good_on_application["good"]
         self.good_on_application = good_on_application
 

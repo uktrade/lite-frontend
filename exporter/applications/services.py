@@ -160,7 +160,7 @@ def post_platform_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
-def post_software_good_on_application(request, pk, good_id, json):
+def post_technology_good_on_application(request, pk, good_id, json):
     json = {
         "good_id": good_id,
         "is_good_incorporated": False,
