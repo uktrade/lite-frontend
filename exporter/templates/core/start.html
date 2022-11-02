@@ -44,24 +44,8 @@
 			{% lcs 'core.StartPage.NOTICE' as notice %}
 			{{ notice|markdown }}
 		</div>
-		{% if FEATURE_FLAG_GOVUK_SIGNIN_ENABLED %}
-			<a class="govuk-button govuk-button--start" id="button-sign-in" href="{% url 'auth:login' %}">
-				{% lcs 'core.StartPage.SIGN_IN_BUTTON' %}
-			</a>
-		{% else %}
-			<div class="app-start-page__register-container govuk-!-margin-bottom-2">
-		<a id="button-sign-in" href="{% url 'auth:login' %}" role="button" draggable="false" class="app-start-page__great-button" data-module="govuk-button">
-			{% svg 'union-jack' %}
-			Sign in with
-			<span>GREAT</span>
+		<a class="govuk-button govuk-button--start" id="button-sign-in" href="{% url 'auth:login' %}">
+			{% lcs 'core.StartPage.SIGN_IN_BUTTON' %}
 		</a>
-
-		<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-left-3">
-			{% lcs 'core.StartPage.OR' %}
-			<a id="link-register" href="{{ AUTHBROKER_URL }}/profile/enrol/" class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-2">{% lcs 'core.StartPage.REGISTER_ACCOUNT_LINK' %}</a>
-		</p>
-	</div>
-		{% endif %}
-
 	</div>
 {% endblock %}
