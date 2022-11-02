@@ -2,10 +2,12 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
+from django.core.validators import MaxLengthValidator
 from django.urls import reverse_lazy
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
+from exporter.applications.forms.validators import validate_name
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
@@ -210,7 +212,11 @@ class PartySubTypeSelectForm(forms.Form):
 
 class PartyNameForm(forms.Form):
     title = "End user name"
-    name = forms.CharField(label="", error_messages={"required": "Enter a name"})
+    name = forms.CharField(
+        label="",
+        error_messages={"required": "Enter a name"},
+        validators=[validate_name]
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
