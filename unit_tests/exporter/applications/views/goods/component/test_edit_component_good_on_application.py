@@ -3,8 +3,8 @@ import pytest
 from django.urls import reverse
 
 from core import client
-from exporter.applications.views.goods.add_good_component.views.constants import AddGoodComponentToApplicationSteps
-from exporter.applications.views.goods.add_good_component.views.edit import SummaryTypeMixin
+from exporter.applications.views.goods.component.views.constants import AddGoodComponentToApplicationSteps
+from exporter.applications.views.goods.component.views.edit import SummaryTypeMixin
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,

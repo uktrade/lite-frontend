@@ -6,11 +6,11 @@ from django.urls import reverse
 from core import client
 from pytest_django.asserts import assertInHTML
 
-from exporter.applications.views.goods.add_good_material.views.constants import AddGoodMaterialToApplicationSteps
+from exporter.applications.views.goods.component.views.constants import AddGoodComponentToApplicationSteps
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardIncorporatedForm,
-    ProductUnitQuantityAndValueForm,
+    ProductQuantityAndValueForm,
 )
 
 
@@ -20,10 +20,10 @@ def setup(mock_application_get, mock_good_get, no_op_storage):
 
 
 @pytest.fixture
-def new_material_to_application_url(application):
+def new_component_to_application_url(application):
     good = application["goods"][0]["good"]
     return reverse(
-        "applications:new_good_material_to_application",
+        "applications:new_good_component_to_application",
         kwargs={
             "pk": application["id"],
             "good_pk": good["id"],
@@ -39,17 +39,17 @@ def expected_good_data(application):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, new_material_to_application_url):
-    return goto_step_factory(new_material_to_application_url)
+def goto_step(goto_step_factory, new_component_to_application_url):
+    return goto_step_factory(new_component_to_application_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, new_material_to_application_url):
-    return post_to_step_factory(new_material_to_application_url)
+def post_to_step(post_to_step_factory, new_component_to_application_url):
+    return post_to_step_factory(new_component_to_application_url)
 
 
 @pytest.fixture(autouse=True)
@@ -60,18 +60,18 @@ def mock_get_document(requests_mock, expected_good_data):
     )
 
 
-def test_add_material_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step, get_units_mock):
-    goto_step(AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED)
+def test_add_component_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
+    goto_step(AddGoodComponentToApplicationSteps.ONWARD_EXPORTED)
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodComponentToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": False},
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
 
-def test_add_material_to_application_end_to_end(
+def test_add_component_to_application_end_to_end(
     requests_mock,
     expected_good_data,
     mock_good_on_application_post,
@@ -79,11 +79,10 @@ def test_add_material_to_application_end_to_end(
     good_on_application,
     goto_step,
     post_to_step,
-    get_units_mock,
 ):
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodComponentToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -91,7 +90,7 @@ def test_add_material_to_application_end_to_end(
     assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
     assert response.status_code == 200
@@ -99,21 +98,21 @@ def test_add_material_to_application_end_to_end(
     assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.UNIT_QUANTITY_AND_VALUE,
-        {"unit": "TON", "quantity": "2", "value": "16.32"},
+        AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE,
+        {"number_of_items": "2", "value": "16.32"},
     )
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:material_on_application_summary",
+        "applications:component_on_application_summary",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["good"]["id"],
@@ -129,12 +128,12 @@ def test_add_material_to_application_end_to_end(
         "good_id": expected_good_data["id"],
         "is_good_incorporated": False,
         "quantity": "2",
-        "unit": "TON",
+        "unit": "NAR",
         "value": "16.32",
     }
 
 
-def test_add_material_to_application_end_to_end_handles_service_error(
+def test_add_component_to_application_end_to_end_handles_service_error(
     requests_mock,
     expected_good_data,
     application,
@@ -143,14 +142,13 @@ def test_add_material_to_application_end_to_end_handles_service_error(
     post_to_step,
     data_standard_case,
     caplog,
-    get_units_mock,
 ):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
     requests_mock.post(url=url, json={"errors": ["Failed to post"]}, status_code=400)
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodComponentToApplicationSteps.ONWARD_EXPORTED,
         {"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -158,7 +156,7 @@ def test_add_material_to_application_end_to_end_handles_service_error(
     assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
     )
     assert response.status_code == 200
@@ -166,21 +164,21 @@ def test_add_material_to_application_end_to_end_handles_service_error(
     assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodComponentToApplicationSteps.ONWARD_INCORPORATED,
         {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
     )
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
     response = post_to_step(
-        AddGoodMaterialToApplicationSteps.UNIT_QUANTITY_AND_VALUE,
-        {"unit": "TON", "quantity": "2", "value": "16.32"},
+        AddGoodComponentToApplicationSteps.QUANTITY_AND_VALUE,
+        {"number_of_items": "2", "value": "16.32"},
     )
 
     assert response.status_code == 200
-    assertInHTML("Unexpected error adding material to application", str(response.content))
+    assertInHTML("Unexpected error adding component to application", str(response.content))
     assert len(caplog.records) == 1
     log = caplog.records[0]
-    assert log.message == "Error adding material to application - response was: 400 - {'errors': ['Failed to post']}"
+    assert log.message == "Error adding component to application - response was: 400 - {'errors': ['Failed to post']}"
     assert log.levelno == logging.ERROR

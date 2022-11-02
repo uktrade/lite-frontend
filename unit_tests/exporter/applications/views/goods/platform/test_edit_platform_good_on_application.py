@@ -3,13 +3,13 @@ import pytest
 from django.urls import reverse
 
 from core import client
-from exporter.applications.views.goods.add_good_material.views.constants import AddGoodMaterialToApplicationSteps
-from exporter.applications.views.goods.add_good_material.views.edit import SummaryTypeMixin
+from exporter.applications.views.goods.platform.views.constants import AddGoodPlatformToApplicationSteps
+from exporter.applications.views.goods.platform.views.edit import SummaryTypeMixin
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
-    ProductUnitQuantityAndValueForm,
+    ProductQuantityAndValueForm,
 )
 
 
@@ -27,13 +27,13 @@ def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
 
 @pytest.fixture(autouse=True)
 def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
+    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture
 def edit_onward_exported_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:material_on_application_summary_edit_onward_exported",
+        "applications:platform_on_application_summary_edit_onward_exported",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -69,7 +69,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED,
         data={"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -81,7 +81,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodMaterialToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         data={
             "is_onward_altered_processed": True,
             "is_onward_altered_processed_comments": "Altering",
@@ -96,7 +96,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodMaterialToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED,
         data={
             "is_onward_incorporated": True,
             "is_onward_incorporated_comments": "Incorporated",
@@ -137,7 +137,7 @@ def test_edit_onward_exported_false(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodMaterialToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED,
         data={"is_onward_exported": False},
     )
     assert response.status_code == 302
@@ -152,7 +152,7 @@ def test_edit_onward_exported_false(
 @pytest.fixture
 def edit_onward_altered_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:material_on_application_summary_edit_onward_altered",
+        "applications:platform_on_application_summary_edit_onward_altered",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -200,7 +200,7 @@ def test_edit_onward_altered_processed(
 @pytest.fixture
 def edit_onward_incorporated_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:material_on_application_summary_edit_onward_incorporated",
+        "applications:platform_on_application_summary_edit_onward_incorporated",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -247,9 +247,9 @@ def test_edit_onward_incorporated(
 
 
 @pytest.fixture
-def edit_unit_quantity_value_url(application, good_on_application, summary_type):
+def edit_quantity_value_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:material_on_application_summary_edit_unit_quantity_value",
+        "applications:platform_on_application_summary_edit_quantity_value",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -265,26 +265,23 @@ def edit_unit_quantity_value_url(application, good_on_application, summary_type)
 )
 def test_edit_quantity_value(
     authorized_client,
-    edit_unit_quantity_value_url,
+    edit_quantity_value_url,
     product_on_application_summary_url_factory,
     mock_good_on_application_put,
     summary_type,
-    get_units_mock,
 ):
-    response = authorized_client.get(edit_unit_quantity_value_url)
+    response = authorized_client.get(edit_quantity_value_url)
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductUnitQuantityAndValueForm)
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
     assert response.context["form"].initial == {
-        "unit": "GRM",
-        "quantity": 3.0,
+        "number_of_items": 3,
         "value": "16.32",
     }
 
     response = authorized_client.post(
-        edit_unit_quantity_value_url,
+        edit_quantity_value_url,
         data={
-            "unit": "TON",
-            "quantity": "20",
+            "number_of_items": 20,
             "value": "20.22",
         },
     )
@@ -292,7 +289,7 @@ def test_edit_quantity_value(
     assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
-        "unit": "TON",
         "quantity": "20",
+        "unit": "NAR",
         "value": "20.22",
     }

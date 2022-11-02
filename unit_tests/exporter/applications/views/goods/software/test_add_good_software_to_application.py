@@ -6,7 +6,7 @@ from django.urls import reverse
 from core import client
 from pytest_django.asserts import assertInHTML
 
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmToApplicationSteps
+from exporter.applications.views.goods.firearm.views.constants import AddGoodFirearmToApplicationSteps
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardIncorporatedForm,

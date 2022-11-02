@@ -4,11 +4,10 @@ from crispy_forms_gds.layout import Submit, Layout, HTML
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.conf import settings
 from django.forms.widgets import ClearableFileInput
 
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.core import StartPage, RegisterAnOrganisation
+from lite_content.lite_exporter_frontend.core import RegisterAnOrganisation
 from lite_forms.common import address_questions, foreign_address_questions
 from lite_forms.components import (
     RadioButtons,
@@ -16,14 +15,9 @@ from lite_forms.components import (
     Form,
     FormGroup,
     TextInput,
-    Breadcrumbs,
-    BackLink,
-    Label,
-    List,
     HiddenField,
 )
 from lite_forms.helpers import conditional
-from lite_forms.styles import ButtonStyle
 
 from exporter.core.services import get_countries
 
@@ -31,27 +25,8 @@ from exporter.core.services import get_countries
 def register_triage():
     from exporter.core.views import RegisterAnOrganisationTriage
 
-    landing_form = (
-        Form(
-            title=RegisterAnOrganisation.Landing.TITLE,
-            questions=[
-                Label(RegisterAnOrganisation.Landing.DESCRIPTION),
-                Label(RegisterAnOrganisation.Landing.DESCRIPTION_2),
-                Label(RegisterAnOrganisation.Landing.SUMMARY_LIST_HEADER),
-                List(StartPage.BULLET_POINTS, type=List.ListType.BULLETED),
-                Label(StartPage.NOTICE, classes=["govuk-inset-text"]),
-            ],
-            default_button_name=RegisterAnOrganisation.Landing.BUTTON,
-            default_button_style=ButtonStyle.START,
-            back_link=Breadcrumbs([*[BackLink(x[0], x[1]) for x in StartPage.BREADCRUMBS], BackLink("LITE", None)]),
-        )
-        if not settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED
-        else None
-    )
-
     return FormGroup(
         [
-            landing_form,
             Form(
                 title=RegisterAnOrganisation.CommercialOrIndividual.TITLE,
                 description=RegisterAnOrganisation.CommercialOrIndividual.DESCRIPTION,

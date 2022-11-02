@@ -48,10 +48,7 @@ class Home(TemplateView):
 
     def get(self, request, **kwargs):
         if not request.authbroker_client.token:
-            template_name = (
-                "core/start-gov-uk.html" if settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED else "core/start.html"
-            )
-            return render(request, template_name)
+            return render(request, "core/start-gov-uk.html")
         try:
             user = get_user(request)
             user_permissions = user["role"]["permissions"]
@@ -93,9 +90,6 @@ class RegisterAnOrganisationTriage(MultiFormView):
         else:
             profile = get_profile(request.authbroker_client)
             request.session["email"] = profile["email"]
-            if not settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED:
-                request.session["first_name"] = profile.get("user_profile", {}).get("first_name")
-                request.session["last_name"] = profile.get("user_profile", {}).get("last_name")
         if "user_token" in request.session and get_user(request)["organisations"]:
             raise Http404
 
