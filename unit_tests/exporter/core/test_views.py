@@ -1,5 +1,7 @@
 from django.urls import reverse
 from django.conf import settings
+from pytest_django.asserts import assertTemplateUsed
+
 from core import client
 
 
@@ -43,3 +45,10 @@ def test_register_name_redirects_name_known(authorized_client):
     assert session["first_name"]
     assert session["last_name"]
     assert response.url == settings.LOGIN_URL
+
+
+def test_home__no_logged_in_user_redirects_start_page(client):
+    url = reverse("core:home")
+    response = client.get(url)
+    assert response.status_code == 200
+    assertTemplateUsed(response, "core/start-gov-uk.html")
