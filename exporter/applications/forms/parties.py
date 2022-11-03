@@ -2,7 +2,6 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
-from django.core.validators import MaxLengthValidator
 from django.urls import reverse_lazy
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
