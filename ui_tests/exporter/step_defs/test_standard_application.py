@@ -24,6 +24,7 @@ from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
 from ui_tests.exporter.pages.external_locations_page import ExternalLocationsPage
 from ui_tests.exporter.pages.generic_application.ultimate_end_users import GenericApplicationUltimateEndUsers
 from ui_tests.exporter.pages.preexisting_locations_page import PreexistingLocationsPage
+from ui_tests.exporter.pages.security_approval_page import SecurityApprovalPage
 from ui_tests.exporter.pages.shared import Shared
 from ui_tests.exporter.pages.standard_application.good_details import StandardApplicationGoodDetails
 from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
@@ -476,6 +477,13 @@ def select_product_document_available(driver, reason):
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I enter "{product_description}" to product description'))
+def enter_product_description(driver, product_description):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_product_description(product_description)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select "{choice}" to document available question'))
 def check_product_document_available(driver, choice):
     good_details_page = AddGoodDetails(driver)
@@ -494,6 +502,13 @@ def check_product_document_available(driver, choice):
 def check_product_document_available(driver, choice):
     good_details_page = AddGoodDetails(driver)
     good_details_page.set_registered_firearms_dealer(choice)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I select "{choice}" to if you are exporting classified products'))
+def select_exporting_classified_product(driver, choice):
+    good_details_page = SecurityApprovalPage(driver)
+    good_details_page.set_exporting_classified_product(choice)
     functions.click_submit(driver)
 
 
@@ -564,6 +579,13 @@ def check_party(driver, transit_status):
     assert transit_status == answers_page.get_row_value(label)
 
 
+@then(parsers.parse('I see "{security_appoval_answer}" as security approval'))
+def check_security_approval(driver, security_appoval_answer):
+    label = "Do you have an MOD security approval, such as F680 or F1686?"
+    answers_page = CheckYourAnswers(driver)
+    assert security_appoval_answer == answers_page.get_row_value(label)
+
+
 @then(parsers.parse('I see "{product_name}" as name'))
 def check_product_name(driver, product_name):
     answers_page = CheckYourAnswers(driver)
@@ -576,22 +598,10 @@ def check_product_part_number(driver, part_number):
     assert part_number == answers_page.get_product_field_value("Part number")
 
 
-@then(parsers.parse('I see "{controlled}" as controlled'))
-def check_product_controlled_status(driver, controlled):
-    answers_page = CheckYourAnswers(driver)
-    assert controlled == answers_page.get_product_field_value("Controlled")
-
-
 @then(parsers.parse('I see "{clc_entry}" as control list entry'))
 def check_product_clc_entry(driver, clc_entry):
     answers_page = CheckYourAnswers(driver)
     assert clc_entry == answers_page.get_product_field_value("Control list entries")
-
-
-@then(parsers.parse('I see "{incorporated}" as incorporated'))
-def check_product_incorporation(driver, incorporated):
-    answers_page = CheckYourAnswers(driver)
-    assert incorporated == answers_page.get_product_field_value("Incorporated")
 
 
 @then(parsers.parse('I see "{quantity}" as quantity'))
@@ -793,13 +803,13 @@ def verify_is_rfd(driver, is_rfd):
 
 @then(parsers.parse('I see "{firearms_act}" as firearms act'))
 def verify_firearms_act(driver, firearms_act):
-    value, _ = get_summary_value(driver, "firearms-act").split("\n")
+    value = get_summary_value(driver, "firearms-act-1968-section")
     assert value == firearms_act
 
 
 @then(parsers.parse('I see "{firearms_act_explanation}" as firearms act explanation'))
 def verify_firearms_act_explanation(driver, firearms_act_explanation):
-    _, value = get_summary_value(driver, "firearms-act").split("\n")
+    value = get_summary_value(driver, "is-covered-by-firearm-act-section-one-two-or-five-explanation")
     assert value == firearms_act_explanation
 
 

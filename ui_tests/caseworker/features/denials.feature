@@ -4,6 +4,7 @@ Feature: I want to check denial matches
   I want to example download denial data in CSV format and update it
   So that I can upload it and check end-user denial matches
 
+  @skip
   Scenario: Check end-user denial matches against uploaded CSV data
     # Denial upload
     Given I sign in to SSO or am signed into SSO

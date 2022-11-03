@@ -17,7 +17,7 @@ import "./snackbar-hide.js";
 import initMenuTooltips from "./menu-tooltips.js";
 import initQueuesMenu from "./queues-menu.js";
 import initFlagListExpanders from "./flag-expanders.js";
-import initReviewGood from "./review-good.js";
+import initCLEEntries from "./cle-entries.js";
 import initDestinationsList from "./show-hide-destinations.js";
 import { initCaseNotes } from "./case-notes";
 
@@ -34,7 +34,7 @@ $(document).ready(function () {
   initMenuTooltips();
   initQueuesMenu();
   initFlagListExpanders();
-  initReviewGood();
+  initCLEEntries();
   initCookierBanner("app-cookie-banner", "js-accept-cookie");
   initDestinationsList();
   initCaseNotes();

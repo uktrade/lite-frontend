@@ -4,6 +4,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from django.conf import settings
 
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -137,8 +138,8 @@ class ApplicationTaskList(LoginRequiredMixin, TemplateView):
     def post(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, str(kwargs["pk"]))
-
-        data, status_code = submit_application(request, application_id)
+        payload = {"check_security_approvals": settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED}
+        data, status_code = submit_application(request, application_id, payload)
 
         if status_code != HTTPStatus.OK:
             return get_application_task_list(request, application, errors=data.get("errors"))

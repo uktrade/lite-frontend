@@ -1,6 +1,6 @@
 import "url-search-params-polyfill";
 import "fetch-polyfill";
-import Tokenfield from "./lite-tokenfield.js";
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 
 export default function initAddGood() {
   var plural = [];
@@ -30,31 +30,6 @@ export default function initAddGood() {
           option.text(option.text() + "s");
         }
       }
-    }
-  });
-
-  $("[data-unit-toggle]").on("input", function () {
-    const self = $(this);
-    const config = self.data("unit-toggle");
-    const quantity_for = config.quantity_id;
-    const quantity_label = $("label[for=" + quantity_for + "]");
-    const value_for = config.value_id;
-    const value_label = $("label[for=" + value_for + "]");
-    const optional_value = config.optional_value;
-
-    // if Intangible is selected, add (optional) to the quantity and value titles
-    if (self.val() === optional_value) {
-      if (!quantity_label.children().is("span")) {
-        quantity_label.append(
-          '<span class="lite-form-optional">(optional)</span>'
-        );
-        value_label.append(
-          '<span class="lite-form-optional">(optional)</span>'
-        );
-      }
-    } else {
-      quantity_label.children().remove();
-      value_label.children().remove();
     }
   });
 
@@ -106,36 +81,5 @@ export default function initAddGood() {
     );
 
     progressivelyEnhanceMultipleSelectField(controlListEntriesField);
-
-    function progressivelyEnhanceMultipleSelectField(element) {
-      element.parentElement.classList.add("tokenfield-container");
-
-      var items = [];
-      var selected = [];
-      for (var i = 0; i < element.options.length; i++) {
-        var option = element.options.item(i);
-        var item = { id: option.value, name: option.value, classes: [] };
-        if (option.selected) {
-          selected.push(item);
-        }
-        items.push(item);
-      }
-      var tokenField = new Tokenfield({
-        el: element,
-        items: items,
-        newItems: false,
-        addItemOnBlur: true,
-        filterSetItems: false,
-        addItemsOnPaste: true,
-        minChars: 1,
-        itemName: element.name,
-        setItems: selected,
-        keepItemsOrder: false,
-      });
-      tokenField._renderItems();
-      tokenField._html.container.id = element.id;
-      element.remove();
-      return tokenField;
-    }
   })();
 }

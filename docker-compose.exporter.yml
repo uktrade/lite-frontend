@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile.e2e
     environment:
       # Below values can be found in vault
-      FEATURE_FLAG_GOVUK_SIGNIN_ENABLED: "True"
       AUTHBROKER_URL: ${EXPORTER_AUTHBROKER_URL}
       AUTHBROKER_CLIENT_ID: ${EXPORTER_AUTHBROKER_CLIENT_ID}
       AUTHBROKER_CLIENT_SECRET: ${EXPORTER_AUTHBROKER_CLIENT_SECRET}
@@ -34,6 +33,7 @@ services:
       - 8300:8300
     volumes:
       - ./playwright_videos:/app/playwright_videos
+      - ./ui_tests/screenshots:/app/ui_tests/screenshots
     entrypoint: ["/bin/sh","-c"]
     command:
     - |

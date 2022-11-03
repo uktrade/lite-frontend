@@ -69,7 +69,9 @@ def test_advice_view_heading_ogd_advice(
 
 
 @mock.patch("caseworker.advice.views.get_gov_user")
-def test_fco_cannot_advice_when_all_dests_covered(mock_get_gov_user, authorized_client, data_queue, data_standard_case):
+def test_fcdo_cannot_advice_when_all_destinations_covered(
+    mock_get_gov_user, authorized_client, data_queue, data_standard_case
+):
     url = reverse("cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     mock_get_gov_user.return_value = (
         {
@@ -85,10 +87,11 @@ def test_fco_cannot_advice_when_all_dests_covered(mock_get_gov_user, authorized_
         {
             "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "user": {
                 "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM},
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCDO", "alias": services.FCDO_TEAM},
             },
             "type": {"value": "Approve"},
         },

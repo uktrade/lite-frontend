@@ -16,14 +16,11 @@
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			{% if not feature_flag_product_2_0 %}
-				{% govuk_link_button text='goods.GoodsList.CREATE_GOOD' url='goods:add' id='add-a-good' %}
-			{% endif %}
 		</div>
 	</div>
 
 	{% include 'filters.html' %}
-	
+
 	{% if not filtered and not goods.count %}
 		{% include "includes/notice.html" with text='goods.GoodsList.Count.ORGANISATION_ZERO' %}
 	{% elif not goods.count %}
@@ -85,9 +82,17 @@
 							{{ good.status.value }}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
-							{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
+							{% if good.firearm_details.type.key == "firearms" %}
 								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">View</a>
-							{% else %}
+                            {% elif good.item_category.key == "group1_platform"  %}
+                    		    <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:platform_detail" good.id %}">View</a>
+							{% elif good.item_category.key == "group1_components" %}
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:component_detail" good.id %}">View</a>
+							{% elif good.item_category.key == "group3_software" %}
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:software_detail" good.id %}">View</a>
+							{% elif good.item_category.key == "group1_materials" %}
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:material_detail" good.id %}">View</a>
+                            {% else %}
 								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
 							{% endif %}
 						</td>

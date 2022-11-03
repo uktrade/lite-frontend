@@ -5,7 +5,10 @@ import uuid
 from django.urls import reverse
 
 from core import client
-from core.constants import SerialChoices
+from core.constants import (
+    OrganisationDocumentType,
+    SerialChoices,
+)
 
 
 @pytest.fixture
@@ -21,6 +24,13 @@ def mock_application_get(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def mock_application_put(requests_mock, data_standard_case):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/applications/{application["id"]}/')
+    return requests_mock.put(url=url, json=application)
+
+
+@pytest.fixture
 def mock_good_get(requests_mock, data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]
     good["good"].update(
@@ -31,7 +41,7 @@ def mock_good_get(requests_mock, data_standard_case):
     )
     good["good"]["firearm_details"].update(
         {
-            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
             "is_covered_by_firearm_act_section_one_two_or_five_explanation": "No firearm act section",
         }
     )
@@ -53,8 +63,16 @@ def good_on_application(data_standard_case):
     return {
         "id": str(uuid.uuid4()),
         "good": good["good"],
-        "quantity": 3,
+        "quantity": 3.0,
         "value": "16.32",
+        "unit": {"key": "GRM", "value": "Gram(s)"},
+        "is_onward_exported": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "I will alter it real good",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "I will onward incorporate",
+        "is_component": {"value": "This is a modified component", "key": "yes_modified"},
+        "modified_details": "modified component",
         "firearm_details": {
             "section_certificate_date_of_expiry": "2030-12-12",
             "section_certificate_number": "12345",
@@ -74,7 +92,7 @@ def good_on_application(data_standard_case):
             "serial_numbers_available": SerialChoices.NOT_AVAILABLE,
             "no_identification_markings_details": "No markings",
             "serial_numbers": ["111", "222", "333"],
-            "number_of_items": 3,
+            "number_of_items": 3.0,
         },
     }
 
@@ -90,6 +108,12 @@ def mock_good_on_application_post(requests_mock, data_standard_case, good_on_app
 def mock_good_on_application_get(requests_mock, good_on_application):
     url = client._build_absolute_uri(f'/applications/good-on-application/{good_on_application["id"]}')
     return requests_mock.get(url=url, json=good_on_application, status_code=200)
+
+
+@pytest.fixture
+def mock_good_on_application_put(requests_mock, good_on_application):
+    url = f"/applications/good-on-application/{good_on_application['id']}/"
+    return requests_mock.put(url, json={})
 
 
 @pytest.fixture
@@ -146,7 +170,7 @@ def rfd_certificate(organisation_id):
             "size": 3,
             "id": str(uuid.uuid4()),
         },
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "is_expired": False,
         "organisation": organisation_id,
         "expiry_date": expiry_date.strftime("%d %B %Y"),
@@ -192,7 +216,7 @@ def application_with_organisation_and_application_rfd_document(data_standard_cas
     }
     case["additional_documents"] = [
         {
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         }
     ]
     matcher = requests_mock.get(url=app_url, json=case)
@@ -205,9 +229,53 @@ def application_without_rfd_document(application):
 
 
 @pytest.fixture
-def product_summary_url(data_standard_case, good_id):
+def firearm_product_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:product_summary",
+        "applications:firearm_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+
+@pytest.fixture
+def platform_product_summary_url(data_standard_case, good_id):
+    return reverse(
+        "applications:platform_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+
+@pytest.fixture
+def component_product_summary_url(data_standard_case, good_id):
+    return reverse(
+        "applications:component_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+
+@pytest.fixture
+def material_product_summary_url(data_standard_case, good_id):
+    return reverse(
+        "applications:material_product_summary",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+            "good_pk": good_id,
+        },
+    )
+
+
+@pytest.fixture
+def software_product_summary_url(data_standard_case, good_id):
+    return reverse(
+        "applications:software_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -252,3 +320,90 @@ def application_with_rfd_and_section_5_document(data_standard_case, requests_moc
     }
     matcher = requests_mock.get(url=app_url, json=case)
     return matcher
+
+
+@pytest.fixture
+def control_list_entries(requests_mock):
+    clc_url = client._build_absolute_uri("/static/control-list-entries/")
+    matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
+    return matcher
+
+
+@pytest.fixture
+def platform_on_application_summary_url_factory(application, good_on_application):
+    def platform_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return platform_on_application_summary_url
+
+
+@pytest.fixture
+def platform_on_application_summary_url(platform_on_application_summary_url_factory):
+    return platform_on_application_summary_url_factory("platform-on-application-summary")
+
+
+@pytest.fixture
+def component_on_application_summary_url_factory(application, good_on_application):
+    def component_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return component_on_application_summary_url
+
+
+@pytest.fixture
+def component_on_application_summary_url(component_on_application_summary_url_factory):
+    return component_on_application_summary_url_factory("component-on-application-summary")
+
+
+@pytest.fixture
+def material_on_application_summary_url_factory(application, good_on_application):
+    def material_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return material_on_application_summary_url
+
+
+@pytest.fixture
+def material_on_application_summary_url(material_on_application_summary_url_factory):
+    return material_on_application_summary_url_factory("material-on-application-summary")
+
+
+@pytest.fixture
+def software_on_application_summary_url_factory(application, good_on_application):
+    def software_on_application_summary_url(summary_type):
+        url = reverse(
+            f"applications:{summary_type.replace('-', '_')}",
+            kwargs={
+                "pk": application["id"],
+                "good_on_application_pk": good_on_application["id"],
+            },
+        )
+        return url
+
+    return software_on_application_summary_url
+
+
+@pytest.fixture
+def software_on_application_summary_url(software_on_application_summary_url_factory):
+    return software_on_application_summary_url_factory("software-on-application-summary")

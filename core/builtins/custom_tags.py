@@ -13,7 +13,6 @@ from dateutil.relativedelta import relativedelta
 
 from django import template
 from django.conf import settings
-from django.contrib.humanize.templatetags.humanize import intcomma
 from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import localtime
 from django.utils.html import escape
@@ -28,8 +27,6 @@ from exporter.core.constants import (
     NOT_STARTED,
     DONE,
     IN_PROGRESS,
-    PRODUCT_CATEGORY_FIREARM,
-    FIREARM_AMMUNITION_COMPONENT_TYPES,
 )
 from exporter.applications.constants import F680
 
@@ -683,33 +680,20 @@ def format_quantity_units(quantity):
 
 
 @register.filter
-def pluralise_quantity(good_on_app):
+def pluralise_quantity(good_on_application):
     """
     Pluralise goods quantity
     """
-    quantity = good_on_app.get("quantity", 0)
-    unit = good_on_app.get("unit", {}).get("key")
+    quantity = good_on_application.get("quantity")
+    unit = good_on_application.get("unit")
 
-    if good_on_app.get("good", {}).get("item_category", {}).get("key") == PRODUCT_CATEGORY_FIREARM:
-        if (
-            good_on_app.get("firearm_details") is not None
-            and good_on_app["firearm_details"]["type"]["key"] in FIREARM_AMMUNITION_COMPONENT_TYPES
-        ):
-            # because these are number of articles
-            return format_quantity_units(quantity)
-        elif unit:
-            if unit == "NAR":
-                return format_quantity_units(quantity)
-            return f"{quantity} {good_on_app['unit']['value']}"
-        else:
-            return f"{quantity} items"
-    else:
-        if unit and unit != "NAR":
-            quantity_str = f"{intcomma(quantity)} {units_pluralise(unit, intcomma(quantity))}"
-        else:
-            quantity_str = f"{format_quantity_units(quantity)}"
+    if unit["key"] == "NAR":
+        quantity = int(quantity)
 
-    return quantity_str
+    friendly_unit_value = unit["value"] if quantity != 1 else unit["value"][:-1]
+    friendly_unit_value = friendly_unit_value.lower()
+
+    return f"{quantity} {friendly_unit_value}"
 
 
 @register.filter(name="times")
@@ -951,3 +935,14 @@ def humanise_list(_list):
         return "".join(_list)
     last = _list.pop()
     return f"{', '.join(_list)} and {last}"
+
+
+@register.filter
+def list_to_choice_labels(items, choices):
+    item_values = []
+    if not items:
+        return ""
+    for choice in choices.choices:
+        if choice[0] in items:
+            item_values.append(choice[1])
+    return ", ".join(item_values)

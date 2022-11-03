@@ -36,6 +36,14 @@
                 <td class="govuk-table__cell">{{ denial.reference }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Regime reference</th>
+                <td class="govuk-table__cell">{{ denial.regime_reg_ref }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Entity type</th>
+                <td class="govuk-table__cell">{{ denial.entity_type }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Name</th>
                 <td class="govuk-table__cell">{{ denial.name }}</td>
             </tr>
@@ -48,8 +56,8 @@
                 <td class="govuk-table__cell">{{ denial.notifying_government }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
-                <th scope="row" class="govuk-table__header">Final Destination</th>
-                <td class="govuk-table__cell">{{ denial.final_destination }}</td>
+                <th scope="row" class="govuk-table__header">Country</th>
+                <td class="govuk-table__cell">{{ denial.country }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Item List Codes</th>
@@ -64,19 +72,9 @@
                 <td class="govuk-table__cell">{{ denial.end_use }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
-                <th scope="row" class="govuk-table__header">Consignee name</th>
-                <td class="govuk-table__cell">{{ denial.consignee_name }}</td>
-            </tr>
-            <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Revoked</th>
                 <td class="govuk-table__cell">{{ denial.is_revoked|yesno }}{% if denial.is_revoked %}, {{ denial.is_revoked_comment }}{% endif %}</td>
             </tr>
-            {% for key, value in denial.data.items %}
-                <tr class="govuk-table__row app-table__row">
-                    <th scope="row" class="govuk-table__header">{{ key }}</th>
-                    <td class="govuk-table__cell">{{ value }}</td>
-                </tr>
-            {% endfor %}
         </tbody>
     </table>
 

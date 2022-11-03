@@ -7,6 +7,17 @@ from exporter.core import constants
 from exporter.core.objects import Application
 
 
+@pytest.fixture()
+def dummy_choice():
+    class FakeType:
+        choices = (
+            ("T1", "label 1"),
+            ("T2", "label 2"),
+        )
+
+    return FakeType
+
+
 @pytest.mark.parametrize(
     "application,expected",
     [
@@ -110,53 +121,22 @@ def test_get_end_use_details_status(application, expected):
 @pytest.mark.parametrize(
     "good_on_app,quantity_display",
     [
-        ({"quantity": 0, "unit": {"key": "NAR"}}, "0 items"),
-        ({"quantity": 1, "unit": {"key": "NAR"}}, "1 item"),
-        ({"quantity": 0, "unit": {"key": "MTG"}}, "0 MTG"),
-        ({"quantity": 1, "unit": {"key": "MTG"}}, "1 MTG"),
-        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": None}, "0 items"),
-        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 0}, "0 items"),
-        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 1}, "1 item"),
-        ({"firearm_details": {"type": {"key": "firearms"}}, "quantity": 5}, "5 items"),
-        ({"firearm_details": {"type": {"key": "ammunition"}}, "quantity": 1}, "1 item"),
-        ({"firearm_details": {"type": {"key": "components_for_firearms"}}, "quantity": 5}, "5 items"),
-        (
-            {
-                "firearm_details": {"type": {"key": "software_related_to_firearms"}},
-                "quantity": 1,
-                "unit": {"key": "NAR", "value": "Number of articles"},
-            },
-            "1 item",
-        ),
-        (
-            {
-                "firearm_details": {"type": {"key": "software_related_to_firearms"}},
-                "quantity": 9,
-                "unit": {"key": "NAR", "value": "Number of articles"},
-            },
-            "9 items",
-        ),
-        (
-            {
-                "firearm_details": {"type": {"key": "firearms_accessory"}},
-                "quantity": 9.0,
-                "unit": {"key": "KGM", "value": "Kilogram(s)"},
-            },
-            "9.0 Kilogram(s)",
-        ),
-        (
-            {
-                "firearm_details": {"type": {"key": "firearms_accessory"}},
-                "quantity": 9,
-                "unit": {"key": "ITG", "value": "Intangible"},
-            },
-            "9 Intangible",
-        ),
+        ({"quantity": 0, "unit": {"key": "NAR", "value": "Items"}}, "0 items"),
+        ({"quantity": 1, "unit": {"key": "NAR", "value": "Items"}}, "1 item"),
+        ({"quantity": 2, "unit": {"key": "NAR", "value": "Items"}}, "2 items"),
+        ({"quantity": 0.0, "unit": {"key": "NAR", "value": "Items"}}, "0 items"),
+        ({"quantity": 1.0, "unit": {"key": "NAR", "value": "Items"}}, "1 item"),
+        ({"quantity": 2.0, "unit": {"key": "NAR", "value": "Items"}}, "2 items"),
+        ({"quantity": 0, "unit": {"key": "TON", "value": "Tonnes"}}, "0 tonnes"),
+        ({"quantity": 1, "unit": {"key": "TON", "value": "Tonnes"}}, "1 tonne"),
+        ({"quantity": 2, "unit": {"key": "TON", "value": "Tonnes"}}, "2 tonnes"),
+        ({"quantity": 0.0, "unit": {"key": "TON", "value": "Tonnes"}}, "0.0 tonnes"),
+        ({"quantity": 1.0, "unit": {"key": "TON", "value": "Tonnes"}}, "1.0 tonne"),
+        ({"quantity": 1.5, "unit": {"key": "TON", "value": "Tonnes"}}, "1.5 tonnes"),
+        ({"quantity": 2.0, "unit": {"key": "TON", "value": "Tonnes"}}, "2.0 tonnes"),
     ],
 )
 def test_pluralise_quantity(good_on_app, quantity_display):
-    if "firearm_details" in good_on_app:
-        good_on_app["good"] = {"item_category": {"key": "group2_firearms"}}
     actual = custom_tags.pluralise_quantity(good_on_app)
     assert actual == quantity_display
 
@@ -290,3 +270,16 @@ def test_username(data, expected):
 )
 def test_get_party_type(party_type, expected):
     assert expected == custom_tags.get_party_type(party_type)
+
+
+@pytest.mark.parametrize(
+    "items, expected",
+    [
+        ([], ""),
+        (None, ""),
+        (["T1"], "label 1"),
+        (["T1", "T2"], "label 1, label 2"),
+    ],
+)
+def test_list_to_choice_labels(items, expected, dummy_choice):
+    assert expected == custom_tags.list_to_choice_labels(items, dummy_choice)

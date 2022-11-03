@@ -16,10 +16,10 @@
     {% if goods %}
         {% for good_on_application, product_summary in goods %}
             <h2 class="govuk-heading-m"> {% lcs 'goods.GoodsDetailSummary.HEADING' %} {{ forloop.counter }} </h2>
-            {% if feature_flag_product_2_0 and good_on_application.firearm_details.type.key == "firearms" %}
-                {% include "applications/goods/_firearm-details-summary.html" %}
-            {% else %}
+            {% if product_summary %}
                 {% include "applications/goods/_goods-details-summary.html" %}
+            {% else %}
+                {% include "applications/goods/_static-goods-details-summary.html" %}
             {% endif %}
         {% endfor %}
     {% endif %}

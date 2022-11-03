@@ -17,6 +17,7 @@ $govuk-image-url-function: 'get_govuk_image_asset_url';
 $govuk-font-url-function: 'get_govuk_font_asset_url';
 
 @import "node_modules/govuk-frontend/govuk/all";
+@import "node_modules/accessible-autocomplete/src/autocomplete";
 @import "core/assets/styles/all";
 @import 'caseworker/assets/styles/lightpick';
 

@@ -1,7 +1,9 @@
 import pytest
 
 from core.summaries.utils import (
+    get_field,
     pick_fields,
+    pluck_field,
     remove_fields,
 )
 
@@ -75,3 +77,50 @@ def test_pick_fields(summary, fields, output):
 )
 def test_remove_fields(summary, fields, output):
     assert remove_fields(summary, fields) == output
+
+
+def test_get_field():
+    summary = (
+        ("to-get", "value"),
+        ("different", "another"),
+    )
+
+    got_field = get_field(summary, "to-get")
+
+    assert got_field == ("to-get", "value")
+
+
+def test_get_field_non_existent_field():
+    summary = (("different", "another"),)
+    with pytest.raises(KeyError):
+        get_field(summary, "to-get")
+
+
+def test_pluck_field():
+    summary = (
+        ("to-pluck", "value"),
+        ("left-alone", "another"),
+    )
+    plucked, altered_summary = pluck_field(summary, "to-pluck")
+
+    assert plucked == ("to-pluck", "value")
+    assert summary == (
+        ("to-pluck", "value"),
+        ("left-alone", "another"),
+    )
+    assert altered_summary == (("left-alone", "another"),)
+
+
+def test_pluck_non_existent_field():
+    summary = (
+        ("to-pluck", "value"),
+        ("left-alone", "another"),
+    )
+
+    with pytest.raises(KeyError):
+        pluck_field(summary, "unknown-key")
+
+    assert summary == (
+        ("to-pluck", "value"),
+        ("left-alone", "another"),
+    )

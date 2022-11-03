@@ -1,14 +1,27 @@
-from bs4 import BeautifulSoup
-from django.urls import reverse
 import pytest
+import re
+
+from bs4 import BeautifulSoup
+
+from django.urls import reverse
 
 from core import client
 from caseworker.tau import views
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
-    yield
+def setup(mock_queue, mock_case, mock_mtcr_entries_get, mock_wassenaar_entries_get):
+    pass
+
+
+@pytest.fixture(autouse=True)
+def mock_application_good_documents(data_standard_case, requests_mock):
+    requests_mock.get(
+        re.compile(
+            rf"/applications/{data_standard_case['case']['id']}/goods/[0-9a-fA-F-]+/documents/",
+        ),
+        json={"documents": []},
+    )
 
 
 @pytest.fixture
@@ -34,73 +47,13 @@ def gov_user():
 
 
 def get_cells(soup, table_id):
-    return [td.text.strip() for td in soup.find(id=table_id).find_all("td")]
+    return ["\n".join([t.strip() for t in td.text.strip().split("\n")]) for td in soup.find(id=table_id).find_all("td")]
 
 
 def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_precedents_api):
     """GET /tau should return 200 with an authorised client"""
     response = authorized_client.get(url)
     assert response.status_code == 200
-
-
-@pytest.mark.skip("The /tau view doesn't return case details anymore but it might in the future")
-def test_case_info(authorized_client, url, mock_control_list_entries, mock_precedents_api):
-    """GET /tau would return a case info panel"""
-    response = authorized_client.get(url)
-    assert response.status_code == 200
-
-    # Test elements of case info panel
-    soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find(id="products-title").text == "Assessing 2 products"
-    assert soup.find(id="case-details-title").text == "Case details"
-    assert soup.find(id="products-section-title").text == "2 products"
-    assert soup.find(id="destinations-section-title").text == "3 destinations"
-
-    assert get_cells(soup, "table-products-1") == [
-        "Select the type of firearm product",
-        "",
-        "Part number (optional)",
-        "44",
-        "Does the product have a government security grading or classification?",
-        "No",
-        "Is the product for military use?",
-        "No",
-        "Will the product be onward exported to any additional countries?",
-        "No",
-        "Quantity",
-        "444",
-        "Total value",
-        "£888.00",
-    ]
-    assert get_cells(soup, "table-products-2") == [
-        "Select the type of firearm product",
-        "",
-        "Part number (optional)",
-        "44",
-        "Does the product have a government security grading or classification?",
-        "No",
-        "Is the product for military use?",
-        "No",
-        "Will the product be onward exported to any additional countries?",
-        "No",
-        "Quantity",
-        "444",
-        "Total value",
-        "£888.00",
-    ]
-    assert get_cells(soup, "table-products-summary") == ["", ""]
-    assert get_cells(soup, "table-destinations") == [
-        "United Kingdom",
-        "end_user",
-        "End User",
-        "Abu Dhabi",
-        "Consignee",
-        "Consignee",
-        "United Kingdom",
-        "Third party",
-        "Third party",
-    ]
-    assert get_cells(soup, "table-end-use") == ["44"]
 
 
 def test_home_content(
@@ -124,7 +77,7 @@ def test_home_content(
         "p2",
         "ML8a,ML9a",
         "No",
-        "",
+        "mtcr-1\n\nw-1",
         "scale compelling technologies",
         "test assesment note",
         "Edit",
@@ -141,48 +94,6 @@ def test_home_content(
         },
     )
     assert edit_url == soup.find(id="assessed-products").find("tbody").find("a").attrs["href"]
-
-    # Test if the unassessed products table is sane
-    assert get_cells(soup, "table-products-1") == [
-        "Product document (PDF, opens in new tab)",
-        "",
-        "Select the type of firearm product",
-        "Firearms",
-        "Part number (optional)",
-        "44",
-        "Does the product have a government security grading or classification?",
-        "Yes",
-        "Enter a prefix (optional)",
-        "NATO",
-        "What is the security grading or classification?",
-        "Official",
-        "Enter a suffix (optional)",
-        "SUFFIX",
-        "Name and address of the issuing authority",
-        "Government entity",
-        "Reference",
-        "GR123",
-        "Date of issue",
-        "20 February 2020",
-        "What is the calibre of the product?",
-        "0.25",
-        "Is the product a replica firearm?",
-        "No",
-        "What year was it made?",
-        "1930",
-        "Will the product be incorporated into another item before it is onward exported?",
-        "No",
-        "Has the product been deactivated?",
-        "No",
-        "Number of items",
-        "2",
-        "Total value",
-        "£444.00",
-        "Will each product have a serial number or other identification marking?",
-        "Yes, I can add serial numbers now",
-        "Enter serial numbers or other identification markings",
-        "View serial numbers\n            \n\n\n            \n                1. 12345   \n            \n                2. ABC-123",
-    ]
 
     # The precedent for the unassessed product
 
@@ -204,7 +115,12 @@ def test_tau_home_noauth(client, url):
 
 
 def test_form(
-    authorized_client, url, data_standard_case, requests_mock, mock_control_list_entries, mock_precedents_api
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_control_list_entries,
+    mock_precedents_api,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
@@ -228,6 +144,7 @@ def test_form(
         "report_summary": "test",
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
+        "regimes": ["NONE"],
     }
 
     response = authorized_client.post(url, data=data)
@@ -240,7 +157,71 @@ def test_form(
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
         "is_good_controlled": False,
-        "is_wassenaar": False,
+        "regime_entries": [],
+    }
+
+
+@pytest.mark.parametrize(
+    "regimes_form_data, regime_entries",
+    (
+        (
+            {"regimes": ["NONE"]},
+            [],
+        ),
+        (
+            {"regimes": ["MTCR"], "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"]},
+            ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+        ),
+        (
+            {"regimes": ["WASSENAAR"], "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"]},
+            ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+        ),
+        (
+            {
+                "regimes": ["WASSENAAR", "MTCR"],
+                "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+                "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+            },
+            ["c760976f-fd14-4356-9f23-f6eaf084475d", "d73d0273-ef94-4951-9c51-c291eba949a0"],
+        ),
+    ),
+)
+def test_form_regime_entries(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_control_list_entries,
+    mock_precedents_api,
+    regimes_form_data,
+    regime_entries,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+
+    data = {
+        "report_summary": "test",
+        "goods": [good["id"]],
+        "does_not_have_control_list_entries": True,
+        **regimes_form_data,
+    }
+
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+
+    assert requests_mock.last_request.json() == {
+        "control_list_entries": [],
+        "report_summary": "test",
+        "comment": "",
+        "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
+        "is_good_controlled": False,
+        "regime_entries": regime_entries,
     }
 
 

@@ -10,7 +10,7 @@
 	<h1 class="govuk-heading-l">{% block title %}{% lcs 'goods.AddPreexistingGoodToApplicationForm.TITLE' %}{% endblock %}</h1>
 
 	{% if data or name or control_code %}
-	
+
 		{% include 'filters.html' %}
 
 		{% if data %}
@@ -30,19 +30,25 @@
 					{% for good in data.results %}
 						<tr class="govuk-table__row">
 							<td class="govuk-table__cell" id="good-name">
-								{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
+								{% if good.firearm_details.type.key == "firearms" %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">{{good.name}}</a>
-								{% else %}
+								{% elif good.item_category.key == "group1_platform"  %}
+                    				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:platform_detail" good.id %}">{{good.name}}</a>
+								{% elif good.item_category.key == "group3_software"  %}
+                    				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:software_detail" good.id %}">{{good.name}}</a>
+								{% elif good.item_category.key == "group1_materials"  %}
+                    				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:material_detail" good.id %}">{{good.name}}</a>
+                                {% else %}
 									{% url "goods:good" good.id as good_url %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{{good_url}}?is_preexisting=true&application_id={{application.id}}">{{good.name}}</a>
 								{% endif %}
 								{% if good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 							</td>
 							<td class="govuk-table__cell" id="good-part-number">
-								Firearms
+								{{ good.item_category.value }}
 							</td>
 							<td class="govuk-table__cell" id="good-control_code">
-								{% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
+								{% include 'includes/verified-control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
 							</td>
 							{% if feature_flag_firearms_enabled %}
 							<td class="govuk-table__cell lite-!-text-align-right">
@@ -50,8 +56,24 @@
 							</td>
 							{% endif %}
 							<td class="govuk-table__cell lite-!-text-align-right">
-								{% if feature_flag_product_2_0 and good.firearm_details.type.key == "firearms" %}
+								{% if good.firearm_details.type.key == "firearms" %}
 									<a href="{% url 'applications:attach_firearm_to_application' draft_id good.id %}" id="add-firearm-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+                                {% elif good.item_category.key == "group1_platform"  %}
+                                    	<a href="{% url 'applications:attach_platform_to_application' draft_id good.id %}" id="add-platform-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+								{% elif good.item_category.key == "group3_software"  %}
+										<a href="{% url 'applications:attach_software_to_application' draft_id good.id %}" id="add-software-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+								{% elif good.item_category.key == "group1_materials"  %}
+                                    	<a href="{% url 'applications:attach_material_to_application' draft_id good.id %}" id="add-material-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
+									</a>
+								{% elif good.item_category.key == "group1_components"  %}
+                                    	<a href="{% url 'applications:attach_component_to_application' draft_id good.id %}" id="add-component-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
 								{% else %}

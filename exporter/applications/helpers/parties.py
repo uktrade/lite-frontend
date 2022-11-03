@@ -1,4 +1,4 @@
-from exporter.core.constants import FirearmsProductType
+from core.constants import FirearmsProductType
 
 
 def party_requires_ec3_document(application):

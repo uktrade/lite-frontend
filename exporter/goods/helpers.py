@@ -8,7 +8,9 @@ from core.constants import (
 
 from lite_forms.components import Summary
 
-from exporter.core.constants import PRODUCT_CATEGORY_FIREARM, FIREARM_AMMUNITION_COMPONENT_TYPES
+from core.constants import ProductCategories
+
+from exporter.core.constants import FIREARM_AMMUNITION_COMPONENT_TYPES
 from exporter.core.helpers import convert_control_list_entries
 
 
@@ -22,7 +24,7 @@ def good_summary(good):
         "Part number": default_na(good["part_number"]),
     }
 
-    if good["item_category"]["key"] == PRODUCT_CATEGORY_FIREARM:
+    if good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_FIREARM:
         firearm_type = good["firearm_details"]["type"]["key"]
 
         if firearm_type in FIREARM_AMMUNITION_COMPONENT_TYPES:

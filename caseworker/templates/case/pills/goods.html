@@ -5,11 +5,7 @@
 	{% for good in case.goods %}
 		<li class="govuk-!-margin-bottom-3">
 			<span data-max-length="100">
-				{% if good.description %}
-					{{ good.description }}
-				{% else %}
-					{{ good.good.description }}
-				{% endif %}
+				{{ good.good.name }}
 			</span>
 		</li>
 	{% endfor %}

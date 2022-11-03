@@ -58,13 +58,13 @@
       text-decoration: underline;
       cursor: pointer;
       color: $base-blue;
+
+      &::before,
+      &::after {
+        display: none;
+      }
     }
 
-    .govuk-checkboxes__label::before,
-    ::after {
-      position: absolute;
-      left: 10000px;
-    }
     .govuk-checkboxes__item {
       padding-left: 0;
     }
@@ -84,5 +84,15 @@
   }
   .control-list__edit {
     margin-bottom: 15px;
+  }
+
+  .lite-autocomplete {
+    &__input, &__menu {
+      max-width: none;
+    }
+  }
+
+  .tokenfield {
+    max-width: none;
   }
 }

@@ -2,6 +2,7 @@ from _decimal import Decimal
 
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.conf import settings
 
 from exporter.applications.helpers.countries import ContractTypes
 from exporter.applications.helpers.parties import party_requires_ec3_document
@@ -18,7 +19,7 @@ from exporter.core.constants import (
     APPLICATION_TYPE_STRINGS,
     PartyDocumentType,
 )
-from core.constants import GoodsTypeCategory
+from core.constants import GoodsTypeCategory, SecurityClassifiedApprovalsType
 from core.builtins.custom_tags import (
     default_na,
     friendly_boolean,
@@ -28,6 +29,7 @@ from core.builtins.custom_tags import (
     verbose_goods_starting_point,
     str_date_only,
     sentence_case,
+    list_to_choice_labels,
 )
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
 from exporter.goods.helpers import requires_serial_numbers
@@ -114,6 +116,11 @@ def _convert_standard_application(application, editable=False, is_summary=False)
         strings.THIRD_PARTIES: [convert_party(item, application, editable) for item in application["third_parties"]],
         strings.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(application["additional_documents"], pk),
     }
+
+    if settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED:
+        security_approvals = {"Do you have a security approval?": _get_security_approvals(application)}
+        converted = {**security_approvals, **converted}
+
     if old_locations:
         converted[strings.ROUTE_OF_GOODS] = _get_route_of_goods(application)
         converted[strings.GOODS_LOCATIONS] = _convert_goods_locations(application["goods_locations"])
@@ -122,9 +129,11 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     else:
         product_location = {"Product location and journey": _get_product_location_and_journey(application)}
         converted = {**product_location, **converted}
+
     if has_incorporated_goods(application):
         ultimate_end_users = [convert_party(item, application, editable) for item in application["ultimate_end_users"]]
         converted[strings.ULTIMATE_END_USERS] = ultimate_end_users
+
     return converted
 
 
@@ -239,12 +248,6 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
 
     requires_actions_column = any(requires_actions(application, g) for g in goods_on_application)
     for good_on_application in goods_on_application:
-        # TAU's review is saved at "good on application" level, while exporter's answer is at good level.
-        if good_on_application["good"]["is_good_controlled"] is None:
-            is_controlled = "N/A"
-        else:
-            is_controlled = good_on_application["good"]["is_good_controlled"]["value"]
-
         control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
 
         if good_on_application["good"].get("name"):
@@ -255,13 +258,11 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
         item = {
             "Name": name,
             "Part number": default_na(good_on_application["good"]["part_number"]),
-            "Controlled": mark_safe(is_controlled),  # nosec
             "Control list entries": mark_safe(control_list_entries),  # nosec
         }
         if is_exhibition:
             item["Product type"] = good_on_application["other_item_type"] or good_on_application["item_type"]
         else:
-            item["Incorporated"] = friendly_boolean(good_on_application["is_good_incorporated"])
             item["Quantity"] = pluralise_quantity(good_on_application)
             item["Value"] = f"£{good_on_application['value']}"
         if requires_actions(application, good_on_application):
@@ -324,6 +325,30 @@ def _get_product_location_and_journey(application):
 
     locations_details["Who are the products going to?"] = sentence_case(application.goods_recipients)
     return locations_details
+
+
+def _get_security_approvals(application):
+    security_details = {
+        "Do you have an MOD security approval, such as F680 or F1686?": friendly_boolean(
+            application.is_mod_security_approved
+        )
+    }
+
+    if application.is_mod_security_approved:
+        security_details["What type of approval do you have?"] = list_to_choice_labels(
+            application.security_approvals, SecurityClassifiedApprovalsType
+        )
+        if SecurityClassifiedApprovalsType.F680 in application.security_approvals:
+            security_details["What is the F680 reference number?"] = application.f680_reference_number
+
+        if SecurityClassifiedApprovalsType.F1686 in application.security_approvals:
+            security_details["What is the F1686 reference number?"] = application.f1686_reference_number
+            security_details["When was the F1686 approved?"] = str_date_only(application.f1686_approval_date)
+
+        if SecurityClassifiedApprovalsType.OTHER in application.security_approvals:
+            security_details["Provide details of your written approval"] = application.other_security_approval_details
+
+    return security_details
 
 
 def _convert_goods_types(goods_types):

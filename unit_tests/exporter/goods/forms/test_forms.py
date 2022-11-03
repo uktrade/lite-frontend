@@ -1147,7 +1147,6 @@ def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid,
             True,
             {},
         ),
-        ({"is_good_incorporated": True, "unit": "ITG"}, True, {}),
     ),
 )
 def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
@@ -1165,17 +1164,77 @@ def test_unit_quantity_value_form(rf, client, mock_units, data, valid, errors):
     form = forms.UnitQuantityValueForm(data=data, good=good, number_of_items=5, request=request)
     assert form.fields["unit"].choices == [
         ("", "Select"),
-        ("GRM", "Gram(s)"),
-        ("KGM", "Kilogram(s)"),
-        ("NAR", "Number of articles"),
-        ("MTK", "Square metre(s)"),
-        ("MTR", "Metre(s)"),
-        ("LTR", "Litre(s)"),
-        ("MTQ", "Cubic metre(s)"),
-        ("ITG", "Intangible"),
+        ("GRM", "Gram"),
+        ("KGM", "Kilogram"),
+        ("NAR", "Items"),
+        ("MTK", "Square metre"),
+        ("MTR", "Metre"),
+        ("LTR", "Litre"),
+        ("MTQ", "Cubic metre"),
     ]
 
     assert form.is_valid() == valid
 
     if not valid:
         assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, error_field, error_message",
+    (
+        ({"has_security_features": "True", "security_feature_details": "test desc"}, True, None, None),
+        (
+            {"has_security_features": None},
+            False,
+            "has_security_features",
+            "Select yes if the product include security features to protect information",
+        ),
+        (
+            {"has_security_features": ""},
+            False,
+            "has_security_features",
+            "Select yes if the product include security features to protect information",
+        ),
+        (
+            {"has_security_features": "True", "security_feature_details": ""},
+            False,
+            "security_feature_details",
+            "Enter the details of security features",
+        ),
+    ),
+)
+def test_security_features_form(data, valid, error_field, error_message):
+    form = forms.ProductSecurityFeaturesForm(data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors[error_field][0] == error_message
+
+
+@pytest.mark.parametrize(
+    "data, valid, error_field, error_message",
+    (
+        ({"has_declared_at_customs": "True"}, True, None, None),
+        (
+            {"has_declared_at_customs": None},
+            False,
+            "has_declared_at_customs",
+            "Select yes if the product will be declared at customs",
+        ),
+        (
+            {"has_declared_at_customs": ""},
+            False,
+            "has_declared_at_customs",
+            "Select yes if the product will be declared at customs",
+        ),
+        ({"has_declared_at_customs": "False"}, True, None, None),
+    ),
+)
+def test_product_declared_at_customs(data, valid, error_field, error_message):
+    form = forms.ProductDeclaredAtCustomsForm(data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors[error_field][0] == error_message

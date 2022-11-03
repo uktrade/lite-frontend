@@ -353,3 +353,15 @@ class AddGoodDetails(BasePage):
             value=f"//input[@type='radio' and contains(@id, 'serial_numbers_available_{index}')]",
         )
         element.click()
+
+    def enter_product_description(self, product_description):
+        element = self.driver.find_element(by=By.XPATH, value=f"//textarea[contains(@id, 'product_description')]")
+        element.send_keys(product_description)
+
+    def select_is_firearm(self, answer):
+        value_map = {"Yes": "True", "No": "False"}
+        element = self.driver.find_element(
+            by=By.XPATH,
+            value=f"//input[@type='radio' and @name='is_firearm_product' and @value='{value_map[answer]}']",
+        )
+        element.click()

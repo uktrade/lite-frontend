@@ -419,6 +419,11 @@ def i_click_submit_button(driver):  # noqa
     functions.click_submit(driver)
 
 
+@when("I click continue link")  # noqa
+def i_click_continue_link(driver):  # noqa
+    functions.click_continue_link(driver)
+
+
 @when("I click the back link")  # noqa
 def click_back_link(driver):  # noqa
     functions.click_back_link(driver)
@@ -818,6 +823,16 @@ def select_product_type(driver, product_type):  # noqa
     functions.click_submit(driver)
 
 
+@when(parsers.parse('I select "{answer}" for it being a firearm product'))  # noqa
+def select_is_firearm(driver, answer, settings):  # noqa
+    if not settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
+        return
+
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.select_is_firearm(answer)
+    functions.click_submit(driver)
+
+
 @when(parsers.parse('I select "{firearm_category}" for firearm category'))  # noqa
 def select_firearm_category(driver, firearm_category):  # noqa
     good_details_page = AddGoodDetails(driver)
@@ -866,6 +881,13 @@ def select_has_product_documentation(driver, has_product_documentation, explanat
     has_selected_product_documentation = good_details_page.select_has_product_documentation(has_product_documentation)
     if not has_selected_product_documentation:
         good_details_page.enter_has_product_documentation_explanation(explanation)
+    functions.click_submit(driver)
+
+
+@when(parsers.parse('I enter "{product_description}" to product description'))
+def enter_product_description(driver, product_description):  # noqa
+    good_details_page = AddGoodDetails(driver)
+    good_details_page.enter_product_description(product_description)
     functions.click_submit(driver)
 
 

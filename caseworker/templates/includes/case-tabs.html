@@ -1,30 +1,24 @@
-<div id="tab-bar" class="app-case-tab-bar">
-    <div class="govuk-width-container lite-tabs__container">
-        <div class="lite-tabs ">
-            <a id="tab-details" href="{% url 'cases:case' queue.id case.id 'details' %}" class="lite-tabs__tab{% if selected_tab == "details" %} lite-tabs__tab--selected{% endif %}">
-                Details
+<div class="lite-tabs {% for tab in tabs %}{% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__container--fade{% endif %}{% endfor %}{% endfor %}">
+    {% for tab in tabs %}
+        {% if tab.url %}
+            <a id="{{ tab.id }}" href="{% if tab.has_template %}{% url 'cases:case' queue.id case.id tab.url %}{% else %}{% url tab.url queue.id case.id %}{% endif %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
+                {{ tab.name }}
+                {% if tab.count %}
+                    <span class="lite-tabs__tab-notification" aria-hidden="true">{{ tab.count }}</span>
+                    <strong class="govuk-visually-hidden lite-tabs__tab-notification">(Requires attention {{ tab.count }} items)</strong>
+                {% endif %}
             </a>
-            <a id="tab-licences" href="{% url 'cases:case' queue.id case.id 'licences' %}" class="lite-tabs__tab{% if selected_tab == "licenses" %} lite-tabs__tab--selected{% endif %}">
-                Licences
+        {% else %}
+            <a id="{{ tab.id }}" class="lite-tabs__tab-parent {% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__tab-parent--selected{% endif %}{% endfor %}">
+                {{ tab.name }}
             </a>
-            <a id="tab-additional-contacts" href="{% url 'cases:case' queue.id case.id 'contacts' %}" class="lite-tabs__tab{% if selected_tab == "additional-contacts" %} lite-tabs__tab--selected{% endif %}">
-                Contacts
-            </a>
-            <a id="tab-ecju-queries" href="{% url 'cases:case' queue.id case.id 'ecju-queries' %}" class="lite-tabs__tab{% if selected_tab == "ecju-queries" %} lite-tabs__tab--selected{% endif %}">
-                Queries
-            </a>
-            <a id="tab-documents" href="{% url 'cases:case' queue.id case.id 'documents' %}" class="lite-tabs__tab{% if selected_tab == "documents" %} lite-tabs__tab--selected{% endif %}">
-                Documents
-            </a>
-            <a id="tab-activities" href="{% url 'cases:activities:notes-and-timeline' queue.id case.id %}" class="lite-tabs__tab{% if selected_tab == "activities" %} lite-tabs__tab--selected{% endif %}">
-                Notes and timeline
-            </a>
-            <a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab{% if selected_tab == "advice" %} lite-tabs__tab--selected{% endif %}">
-                Recommendations and decision
-            </a>
-            <a id="tab-assessment" href="{% url 'cases:tau:home' queue.id case.id %}" class="lite-tabs__tab{% if selected_tab == "assessment" %} lite-tabs__tab--selected{% endif %}">
-                Product Assessment
-            </a>
-        </div>
-    </div>
+            <div class="lite-tabs__tab-group {% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__tab-group--visible{% endif %}{% endfor %}" id="{{ tab.id }}-children">
+                {% for tab in tab.children %}
+                    <a id="{{ tab.id }}" href="{% url 'cases:case' queue.id case.id tab.url %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
+                        {{ tab.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
 </div>

@@ -1,19 +1,29 @@
 import logging
+
 from datetime import datetime
 from http import HTTPStatus
 
+from django.http import Http404
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+
 from formtools.wizard.storage.session import SessionStorage
 
 from core.auth.views import LoginRequiredMixin
-from core.constants import FirearmsActDocumentType, FirearmsActSections
-from core.helpers import (
-    convert_dict_to_query_params,
-    is_good_on_application_product_type,
+from core.constants import (
+    FirearmsActDocumentType,
+    FirearmsActSections,
+    OrganisationDocumentType,
+    ProductCategories,
+)
+from core.helpers import convert_dict_to_query_params
+from core.summaries.summaries import (
+    get_summary_type_for_good_on_application,
+    NoSummaryForType,
+    SummaryTypes,
 )
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.helpers.date_fields import format_date
@@ -31,15 +41,28 @@ from exporter.applications.services import (
     post_application_document,
     post_good_on_application,
 )
-from exporter.applications.summaries import (
-    firearm_product_summary,
-    firearm_product_on_application_summary,
+from exporter.applications.summaries.component import (
+    component_summary,
+    component_product_on_application_summary,
+)
+from exporter.applications.summaries.firearm import (
+    firearm_summary,
+    firearm_on_application_summary,
+)
+from exporter.applications.summaries.material import (
+    material_summary,
+    material_product_on_application_summary,
+)
+from exporter.applications.summaries.platform import (
+    platform_summary,
+    platform_product_on_application_summary,
+)
+from exporter.applications.summaries.software import (
+    software_summary,
+    software_product_on_application_summary,
 )
 from exporter.core import constants
-from exporter.core.constants import (
-    AddGoodFormSteps,
-    FirearmsProductType,
-)
+from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
     is_category_firearms,
@@ -83,6 +106,9 @@ from exporter.goods.forms import (
     document_grading_form,
     has_valid_section_five_certificate,
     upload_firearms_act_certificate_form,
+    IsFirearmForm,
+    NonFirearmCategoryForm,
+    IsMaterialSubstanceCategoryForm,
 )
 from exporter.goods.services import (
     get_good,
@@ -97,6 +123,10 @@ from exporter.goods.services import (
 from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
+
+
+from .common.mixins import NonFirearmsFlagMixin
+
 
 log = logging.getLogger(__name__)
 
@@ -139,6 +169,7 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
             exhibition=is_exhibition,
             goods_value=None if is_exhibition else get_total_goods_value(goods),
             includes_firearms=includes_firearms,
+            feature_flag_non_firearms_enabled=settings.FEATURE_FLAG_NON_FIREARMS_ENABLED,
             **kwargs,
         )
 
@@ -185,7 +216,6 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
             "feature_flag_firearms_enabled": settings.FEATURE_FLAG_FIREARMS_ENABLED,
-            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
 
         return render(request, "applications/goods/preexisting.html", context)
@@ -205,7 +235,7 @@ class RegisteredFirearmDealersMixin:
             "document_on_organisation": {
                 "expiry_date": format_date(self.request.POST, "expiry_date_"),
                 "reference_code": self.request.POST["reference_code"],
-                "document_type": constants.DocumentType.RFD_CERTIFICATE,
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             },
         }
 
@@ -235,6 +265,67 @@ class SkipResetSessionStorage(SessionStorage):
         """
         if not self.request.session.pop("skip_reset", None):
             super().reset()
+
+
+class IsGoodFirearm(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
+    template_name = "core/form.html"
+    form_class = IsFirearmForm
+
+    def form_valid(self, form):
+        if form.cleaned_data["is_firearm_product"]:
+            return redirect("applications:new_good", pk=self.kwargs["pk"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:non_firearm_category", kwargs={"pk": self.kwargs["pk"]})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+
+class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
+    template_name = "core/form.html"
+    form_class = NonFirearmCategoryForm
+
+    def form_valid(self, form):
+        category = form.cleaned_data["no_firearm_category"]
+        redirect_url = reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
+        if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.SOFTWARE.value:
+            redirect_url = reverse("applications:new_good_software", kwargs={"pk": self.kwargs["pk"]})
+        elif category == NonFirearmCategoryForm.NonFirearmCategoryChoices.MATERIAL_CATEGORY.value:
+            redirect_url = reverse("applications:is_material_substance", kwargs={"pk": self.kwargs["pk"]})
+        return redirect(redirect_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("applications:is_good_firearm", kwargs={"pk": self.kwargs["pk"]})
+        return context
+
+
+class IsMaterialSubstanceCategory(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = IsMaterialSubstanceCategoryForm
+
+    def dispatch(self, request, **kwargs):
+        if not (
+            settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED
+        ):
+            raise Http404
+        return super().dispatch(request, **kwargs)
+
+    def form_valid(self, form):
+        is_material_substance = form.cleaned_data["is_material_substance"]
+        redirect_url = reverse("applications:new_good_component", kwargs={"pk": self.kwargs["pk"]})
+        if is_material_substance:
+            redirect_url = reverse("applications:new_good_material", kwargs={"pk": self.kwargs["pk"]})
+        return redirect(redirect_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("applications:non_firearm_category", kwargs={"pk": self.kwargs["pk"]})
+        return context
 
 
 class AddGood(LoginRequiredMixin, BaseSessionWizardView):
@@ -313,6 +404,8 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
         # The back_link_url is used for the first form in the sequence. For subsequent forms,
         # the wizard automatically generates the back link to the previous form.
         context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        if settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
+            context["back_link_url"] = reverse("applications:is_good_firearm", kwargs={"pk": self.kwargs["pk"]})
         return context
 
     def get_form_kwargs(self, step=None):
@@ -344,7 +437,7 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
         return kwargs
 
     def render_next_step(self, form, **kwargs):
-        if settings.FEATURE_FLAG_PRODUCT_2_0 and self.steps.current == AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE:
+        if self.steps.current == AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE:
             if form.cleaned_data["type"] == "firearms":
                 return redirect("applications:new_good_firearm", pk=self.kwargs["pk"])
         return super().render_next_step(form, **kwargs)
@@ -381,7 +474,7 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
                 "document_on_organisation": {
                     "expiry_date": format_date(all_data, "expiry_date_"),
                     "reference_code": all_data["reference_code"],
-                    "document_type": constants.DocumentType.RFD_CERTIFICATE,
+                    "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 },
             }
 
@@ -732,20 +825,20 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
             C(is_preexisting(True)) & C(is_product_type("firearm"))
         ),
         AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES))
             & C(is_firearm_type_not_in([constants.FIREARM_COMPONENT, "components_for_ammunition"]))
         ),
         AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_in([constants.FIREARM_COMPONENT]))
         ),
         AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_in(["components_for_ammunition"]))
         ),
         AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE: (
-            C(is_product_category(constants.PRODUCT_CATEGORY_FIREARM))
+            C(is_product_category(ProductCategories.PRODUCT_CATEGORY_FIREARM))
             & C(is_firearm_type_not_in(constants.FIREARM_AMMUNITION_COMPONENT_TYPES))
         ),
         AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER: C(is_preexisting(True)) & C(show_rfd_question),
@@ -883,7 +976,7 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
                 "document_on_organisation": {
                     "expiry_date": format_date(all_data, "expiry_date_"),
                     "reference_code": all_data["reference_code"],
-                    "document_type": constants.DocumentType.RFD_CERTIFICATE,
+                    "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 },
             }
 
@@ -984,10 +1077,10 @@ class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
 class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
     template_name = "applications/goods/goods-detail-summary.html"
 
-    def get_good_on_application_documents(self, good_on_application):
+    def get_good_on_application_documents(self, application, good_on_application):
         application_documents, _ = get_application_documents(
             self.request,
-            good_on_application["application"],
+            application["id"],
             good_on_application["good"]["id"],
             include_unsafe=True,
         )
@@ -1001,16 +1094,47 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
 
         return good_on_application_documents
 
-    def get_product_summary(self, good_on_application, is_user_rfd, organisation_documents):
-        product_summary = firearm_product_summary(
+    def get_product_summary(self, application, good_on_application, is_user_rfd, organisation_documents):
+        try:
+            summary_type = get_summary_type_for_good_on_application(good_on_application)
+        except NoSummaryForType:
+            return None
+
+        summary_type_map = {
+            SummaryTypes.FIREARM: (
+                firearm_summary,
+                firearm_on_application_summary,
+            ),
+            SummaryTypes.PLATFORM: (
+                platform_summary,
+                platform_product_on_application_summary,
+            ),
+            SummaryTypes.MATERIAL: (
+                material_summary,
+                material_product_on_application_summary,
+            ),
+            SummaryTypes.SOFTWARE: (
+                software_summary,
+                software_product_on_application_summary,
+            ),
+            SummaryTypes.COMPONENT: (
+                component_summary,
+                component_product_on_application_summary,
+            ),
+        }
+
+        _product_summary, _product_on_application_summary = summary_type_map[summary_type]
+
+        product_summary = _product_summary(
             good_on_application["good"],
             is_user_rfd,
             organisation_documents,
         )
-        product_on_application_summary = firearm_product_on_application_summary(
+        product_on_application_summary = _product_on_application_summary(
             good_on_application,
-            self.get_good_on_application_documents(good_on_application),
+            self.get_good_on_application_documents(application, good_on_application),
         )
+
         return product_summary + product_on_application_summary
 
     def get_context_data(self, **kwargs):
@@ -1026,10 +1150,9 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
 
         goods = []
         for good_on_application in application["goods"]:
-            if is_good_on_application_product_type(good_on_application, FirearmsProductType.FIREARMS):
-                product_summary = self.get_product_summary(good_on_application, is_user_rfd, organisation_documents)
-            else:
-                product_summary = None
+            product_summary = self.get_product_summary(
+                application, good_on_application, is_user_rfd, organisation_documents
+            )
             goods.append((good_on_application, product_summary))
 
         return {
@@ -1038,7 +1161,6 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
             "is_user_rfd": is_user_rfd,
             "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
-            "feature_flag_product_2_0": settings.FEATURE_FLAG_PRODUCT_2_0,
         }
 
 

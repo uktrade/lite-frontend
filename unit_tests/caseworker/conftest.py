@@ -4,6 +4,7 @@ from urllib import parse
 
 import pytest
 from dotenv import load_dotenv
+from django.conf import settings
 from django.test import Client
 
 from core import client
@@ -12,7 +13,6 @@ from caseworker.advice.services import LICENSING_UNIT_TEAM
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
-gov_uk_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
 
 
 DEFAULT_ENVFILE = "caseworker.env"
@@ -24,6 +24,11 @@ def pytest_configure(config):
     """
     if not os.environ.get("PIPENV_DOTENV_LOCATION"):
         load_dotenv(dotenv_path=DEFAULT_ENVFILE, override=True)
+
+
+@pytest.fixture
+def gov_uk_user_id():
+    return "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
 
 
 @pytest.fixture
@@ -49,7 +54,7 @@ def data_case_types():
 
 
 @pytest.fixture
-def data_cases_search(data_open_case, data_standard_case, mock_case_statuses, data_case_types):
+def data_cases_search(data_open_case, data_standard_case, mock_case_statuses, data_case_types, gov_uk_user_id):
     return {
         "count": 2,
         "results": {
@@ -201,12 +206,12 @@ def mock_status_properties(requests_mock):
 
 
 @pytest.fixture
-def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses):
+def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses, gov_uk_user_id):
     url = client._build_absolute_uri("/gov-users/")
     data = {
         "user": {
             "id": gov_uk_user_id,
-            "email": "foo@example.com",
+            "email": "govuser@example.com",
             "first_name": "Foo",
             "last_name": "Bar",
             "status": "Active",
@@ -261,7 +266,7 @@ def mock_gov_fcdo_user(requests_mock, mock_notifications, mock_case_statuses, mo
 
 
 @pytest.fixture
-def mock_gov_tau_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+def mock_gov_tau_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id):
     mock_gov_user["user"]["team"] = {
         "id": "521154de-f39e-45bf-9922-baaaaaa",
         "name": "TAU",
@@ -274,7 +279,7 @@ def mock_gov_tau_user(requests_mock, mock_notifications, mock_case_statuses, moc
 
 
 @pytest.fixture
-def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id):
     mock_gov_user["user"]["team"] = {
         "id": "521154de-f39e-45bf-9922-baaaaaa",
         "name": "Licencing Unit",
@@ -351,6 +356,12 @@ def mock_denial_reasons(requests_mock):
 def mock_post_refusal_advice(requests_mock, standard_case_pk):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/user-advice/")
     yield requests_mock.post(url=url, json={})
+
+
+@pytest.fixture
+def mock_party_denial_search_results(requests_mock):
+    url = client._build_absolute_uri(f"/external-data/denial-search/")
+    yield requests_mock.get(url=url, json={"hits": {"hits": []}})
 
 
 @pytest.fixture
@@ -1130,6 +1141,84 @@ def mock_product_more_like_this(requests_mock, data_search):
 def mock_put_flags(requests_mock, stub_response):
     url = client._build_absolute_uri("/flags/assign/")
     yield requests_mock.put(url=url, json=stub_response), 200
+
+
+@pytest.fixture
+def mock_flagging_rules(requests_mock):
+    url = client._build_absolute_uri(f"/flags/rules/?page=1")
+    yield requests_mock.get(url=url, json={"results": []})
+
+
+@pytest.fixture
+def mock_flag_get(requests_mock, request):
+    url = client._build_absolute_uri("/flags/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={})
+
+
+@pytest.fixture
+def mock_flagging_rule_get(requests_mock):
+    url = client._build_absolute_uri("/flags/rules/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={"flag": {"level": "Destination", "matching_values": []}})
+
+
+@pytest.fixture
+def mock_routing_rules(requests_mock):
+    url = client._build_absolute_uri(f"/routing-rules/?page=1")
+    yield requests_mock.get(url=url, json={"results": []})
+
+
+@pytest.fixture
+def mock_routing_rule_get(requests_mock, mock_gov_user):
+    url = client._build_absolute_uri("/routing-rules/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={"team": mock_gov_user["user"]["team"]["id"]})
+
+
+@pytest.fixture
+def mock_team_queues_get(requests_mock, mock_gov_user):
+    team_id = mock_gov_user["user"]["team"]["id"]
+    url = client._build_absolute_uri(f"/teams/{team_id}/queues/")
+    yield requests_mock.get(url=url, json={})
+
+
+@pytest.fixture
+def mock_users_by_team_get(requests_mock, mock_gov_user):
+    team_id = mock_gov_user["user"]["team"]["id"]
+    url = client._build_absolute_uri(f"/teams/{team_id}/users/")
+    yield requests_mock.get(url=url, json={"users": []})
+
+
+@pytest.fixture
+def mock_case_types_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/case-types/")
+    yield requests_mock.get(url=url, json={"case_types": []})
+
+
+@pytest.fixture
+def mock_team_get(requests_mock, request):
+    url = client._build_absolute_uri("/teams/e9f8711e-b383-47e5-b160-153f27771234/")
+    yield requests_mock.get(url=url, json={"team": {"name": "lite-internal", "is_ogd": False, "part_of_ecju": True}})
+
+
+@pytest.fixture()
+def reset_config_users_list():
+    settings.CONFIG_ADMIN_USERS_LIST = []
+
+
+@pytest.fixture()
+def specify_config_users_list():
+    settings.CONFIG_ADMIN_USERS_LIST = ["govuser@example.com"]
+
+
+@pytest.fixture
+def mock_queues_list(requests_mock):
+    url = client._build_absolute_uri(f"/queues/")
+    yield requests_mock.get(url=url, json=[])
+
+
+@pytest.fixture
+def mock_users_team_queues_list(requests_mock, gov_uk_user_id):
+    url = client._build_absolute_uri(f"/users/{gov_uk_user_id}/team-queues/")
+    yield requests_mock.get(url=url, json={"queues": []})
 
 
 @pytest.fixture(autouse=True)

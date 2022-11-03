@@ -66,6 +66,10 @@ class CaseStatusEnum:
         return [getattr(cls, param) for param in dir(cls) if is_all_upper.match(param)]
 
 
+class OrganisationDocumentType:
+    RFD_CERTIFICATE = "rfd-certificate"
+
+
 class FirearmsActDocumentType:
     SECTION_1 = "section-one-certificate"
     SECTION_2 = "section-two-certificate"
@@ -82,3 +86,48 @@ class SerialChoices(models.TextChoices):
     AVAILABLE = "AVAILABLE", "Yes, I can add serial numbers now"
     LATER = "LATER", "Yes, I can add serial numbers later"
     NOT_AVAILABLE = "NOT_AVAILABLE", "No"
+
+
+class ComponentChoices(models.TextChoices):
+    DESIGNED = "yes_designed", "Specially designed for hardware"
+    MODIFIED = "yes_modified", "Modified for hardware"
+    GENERAL = "yes_general", "General-purpose component"
+
+
+COMPONENT_DETAILS_MAP = {
+    ComponentChoices.DESIGNED: "designed_details",
+    ComponentChoices.MODIFIED: "modified_details",
+    ComponentChoices.GENERAL: "general_details",
+}
+
+
+class ProductCategories:
+    PRODUCT_CATEGORY_FIREARM = "group2_firearms"
+    PRODUCT_CATEGORY_PLATFORM = "group1_platform"
+    PRODUCT_CATEGORY_COMPONENT = "group1_components"
+    PRODUCT_CATEGORY_SOFTWARE = "group3_software"
+    PRODUCT_CATEGORY_MATERIAL = "group1_materials"
+    PRODUCT_CATEGORY_DEVICE = "group1_device"
+    PRODUCT_CATEGORY_TECHNOLOGY = "group3_technology"
+
+
+class FirearmsProductType:
+    FIREARMS = "firearms"
+    COMPONENTS_FOR_FIREARMS = "components_for_firearms"
+    AMMUNITION = "ammunition"
+    COMPONENTS_FOR_AMMUNITION = "components_for_ammunition"
+    FIREARMS_ACCESSORY = "firearms_accessory"
+    SOFTWARE_RELATED_TO_FIREARM = "software_related_to_firearms"
+    TECHNOLOGY_RELATED_TO_FIREARM = "technology_related_to_firearms"
+
+
+class SecurityClassifiedApprovalsType:
+    F680 = "F680"
+    F1686 = "F1686"
+    OTHER = "Other"
+
+    choices = (
+        (F680, "F680"),
+        (F1686, "F1686"),
+        (OTHER, "Other written approval"),
+    )

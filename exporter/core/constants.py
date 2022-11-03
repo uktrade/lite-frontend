@@ -57,6 +57,7 @@ CASE_SECTIONS = {
     "HAS_NOTES": [STANDARD, OPEN, EXHIBITION, F680, GIFTING],
     "HAS_END_USE_DETAILS": [STANDARD, OPEN, F680],
     "END_USERS_OPTIONAL": [F680, OPEN],
+    "HAS_SECURITY_APPROVAL": [STANDARD],
 }
 
 PERMANENT = "permanent"
@@ -106,17 +107,6 @@ class LocationType:
     LAND_BASED = "land_based"
 
 
-class FirearmsProductType:
-    FIREARMS = "firearms"
-    COMPONENTS_FOR_FIREARMS = "components_for_firearms"
-    AMMUNITION = "ammunition"
-    COMPONENTS_FOR_AMMUNITION = "components_for_ammunition"
-    FIREARMS_ACCESSORY = "firearms_accessory"
-    SOFTWARE_RELATED_TO_FIREARM = "software_related_to_firearms"
-    TECHNOLOGY_RELATED_TO_FIREARM = "technology_related_to_firearms"
-
-
-PRODUCT_CATEGORY_FIREARM = "group2_firearms"
 FIREARMS = "firearms"
 FIREARMS_ACCESSORY = "firearms_accessory"
 FIREARM_COMPONENT = "components_for_firearms"
@@ -244,3 +234,14 @@ class OrganisationStatus:
     DRAFT = "draft"
     REVIEW = "in_review"
     ACTIVE = "active"
+
+
+class ProductSecurityFeatures:
+    TITLE = "Does the product include security features to protect information?"
+    SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
+    NO = "No"
+
+
+class ProductDeclaredAtCustoms:
+    TITLE = "Will the product be declared at customs?"
+    NO = "No, the product is sent electronically"

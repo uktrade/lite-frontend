@@ -5,12 +5,15 @@ import uuid
 from django.db import models
 
 from core.summaries.formatters import (
+    add_edit_links,
     add_labels,
+    choices_formatter,
     comma_separated_list,
     date_formatter,
     document_formatter,
     format_values,
     identity,
+    integer,
     just,
     key_value_formatter,
     mapping_formatter,
@@ -276,6 +279,30 @@ def test_document_formatter(document, output):
     assert document_formatter(document, url) == output.format(url=url)
 
 
+@pytest.mark.parametrize(
+    "document,output",
+    (
+        (
+            {
+                "safe": True,
+                "name": "document name",
+            },
+            '<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">overridden text</a>',
+        ),
+        (
+            {
+                "safe": False,
+                "name": "document name",
+            },
+            "document name",
+        ),
+    ),
+)
+def test_document_formatter_overriden_name(document, output):
+    url = "http://example.com/test"
+    assert document_formatter(document, url, "overridden text") == output.format(url=url)
+
+
 def test_just():
     formatter = just("This value")
     assert formatter("something else") == "This value"
@@ -302,28 +329,110 @@ class TextChoice(models.TextChoices):
     C = "C", "This is c"
 
 
+class DifferingNameAndValueTextChoice(models.TextChoices):
+    FOO = "different", "foo"
+    BAR = "another", "bar"
+
+
 @pytest.mark.parametrize(
-    "input,output",
+    "choices, input, output",
     (
         (
+            (
+                (True, "This is the true value"),
+                (False, "This is the false value"),
+            ),
+            True,
+            "This is the true value",
+        ),
+        (
+            (
+                (True, "This is the true value"),
+                (False, "This is the false value"),
+            ),
+            False,
+            "This is the false value",
+        ),
+        (
+            (
+                ("foo", "This is the foo value"),
+                ("bar", "This is the bar value"),
+                ("baz", "This is the foo value"),
+            ),
+            "foo",
+            "This is the foo value",
+        ),
+    ),
+)
+def test_choices_formatter(choices, input, output):
+    formatter = choices_formatter(choices)
+    assert formatter(input) == output
+
+
+@pytest.mark.parametrize(
+    "enum_type,input,output",
+    (
+        (
+            TextChoice,
             TextChoice.A,
             TextChoice.A.label,
         ),
         (
+            TextChoice,
             TextChoice.B,
             TextChoice.B.label,
         ),
         (
+            TextChoice,
             TextChoice.C,
             TextChoice.C.label,
         ),
+        (
+            DifferingNameAndValueTextChoice,
+            DifferingNameAndValueTextChoice.FOO,
+            DifferingNameAndValueTextChoice.FOO.label,
+        ),
+        (
+            DifferingNameAndValueTextChoice,
+            DifferingNameAndValueTextChoice.BAR,
+            DifferingNameAndValueTextChoice.BAR.label,
+        ),
     ),
 )
-def test_model_choices_formatter(input, output):
-    formatter = model_choices_formatter(TextChoice)
+def test_model_choices_formatter(enum_type, input, output):
+    formatter = model_choices_formatter(enum_type)
     assert formatter(input) == output
 
 
 def test_template_formatter():
     formatter = template_formatter("tests/template-formatter.html", lambda val: {"key": val})
     assert formatter("value") == "<p>value</p>\n"
+
+
+@pytest.mark.parametrize(
+    "input,output",
+    (
+        ("1", "1"),
+        (1.0, "1"),
+        (1, "1"),
+        (1.5, "1"),
+    ),
+)
+def test_integer(input, output):
+    assert integer(input) == output
+
+
+def test_add_edit_links():
+    summary = (
+        ("has-edit-link", "foo", "bar"),
+        ("no-edit-link", "foo", "bar"),
+    )
+    edit_links = {
+        "has-edit-link": "has_edit_link",
+    }
+    get_edit_link = lambda link: f"http://example.com/{link}/"
+
+    assert add_edit_links(summary, edit_links, get_edit_link) == (
+        ("has-edit-link", "foo", "bar", "http://example.com/has_edit_link/"),
+        ("no-edit-link", "foo", "bar", None),
+    )

@@ -13,6 +13,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to receiving a letter
     And I click on "Tell us about the products"
     And I click on "Add a new product"
+    And I select "Yes" for it being a firearm product
     And I select product type "Firearm"
     And I select "Non automatic shotgun" for firearm category
     And I enter "name" as descriptive name
@@ -23,6 +24,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to registered firearms dealer
     And I select "Don't know" to firearms act 1968 section and enter "Explanation"
     And I select "no" to product document and enter "reason"
+    And I enter "Product description" to product description
     Then I see the product saved summary
     And I see "Firearm" as the type of firearm product
     And I see "Non automatic shotgun" as the firearm category
@@ -33,6 +35,8 @@ Feature: I want to indicate the standard licence I want
     And I see ".22" as the calibre of the product
     And I see "No" as the replica firearm
     And I see "No" as RFD
+    And I see "Don't know" as firearms act
+    And I see "Explanation" as firearms act explanation
     And I see "No" as product document
     And I see "reason" as product document reason
     When I click continue on application
@@ -84,6 +88,9 @@ Feature: I want to indicate the standard licence I want
     And I select "yes" to shipping air waybill or lading
     And I select "directly to the end-user" to who products are going
     And I click on "Submit"
+    And I click on "Do you have a security approval?"
+    And I select "No" to if you are exporting classified products
+    And I click continue link
     And I click on "End user"
     And I select "no" to reusing an existing party
     And I select "commercial organisation" as the type of end user
@@ -103,11 +110,10 @@ Feature: I want to indicate the standard licence I want
     And I see "Yes" as product permanently exported
     And I see "Yes" as way bill
     And I see "Direct to end user" as who are the products going to
+    And I see "No" as security approval
     And I see "name" as name
     And I see "N/A" as part number
-    And I see "Yes" as controlled
     And I see "ML1a" as control list entry
-    And I see "No" as incorporated
     And I see "3 items" as quantity
     And I see "£12.12" as value
     And I see "end use details" as intended end use
@@ -142,6 +148,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to receiving a letter
     And I click on "Tell us about the products"
     And I click on "Add a new product"
+    And I select "Yes" for it being a firearm product
     And I select product type "Firearm"
     And I select "Non automatic shotgun" for firearm category
     And I enter "name" as descriptive name
@@ -152,6 +159,7 @@ Feature: I want to indicate the standard licence I want
     And I select "no" to registered firearms dealer
     And I select "Don't know" to firearms act 1968 section and enter "Explanation"
     And I select "no" to product document and enter "reason"
+    And I enter "Product description" to product description
     Then I see the product saved summary
     And I see "Firearm" as the type of firearm product
     And I see "Non automatic shotgun" as the firearm category
@@ -211,6 +219,9 @@ Feature: I want to indicate the standard licence I want
     And I select "yes" to shipping air waybill or lading
     And I select "directly to the end-user" to who products are going
     And I click on "Submit"
+    And I click on "Do you have a security approval?"
+    And I select "No" to if you are exporting classified products
+    And I click continue link
     And I click on "End user"
     And I select "no" to reusing an existing party
     And I select "commercial organisation" as the type of end user
@@ -230,11 +241,10 @@ Feature: I want to indicate the standard licence I want
     And I see "Yes" as product permanently exported
     And I see "Yes" as way bill
     And I see "Direct to end user" as who are the products going to
+    And I see "No" as security approval
     And I see "name" as name
     And I see "N/A" as part number
-    And I see "Yes" as controlled
     And I see "ML1a" as control list entry
-    And I see "No" as incorporated
     And I see "4 items" as quantity
     And I see "£12.12" as value
     And I see "end use details" as intended end use

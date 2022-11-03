@@ -1,13 +1,31 @@
-from bs4 import BeautifulSoup
-from django.urls import reverse
 import pytest
-from http import HTTPStatus
+import re
+
+from bs4 import BeautifulSoup
+
+from django.urls import reverse
+
 from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
-    yield
+def setup(mock_queue, mock_case, mock_wassenaar_entries_get, mock_mtcr_entries_get):
+    pass
+
+
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_FLAG_REGIMES = True
+
+
+@pytest.fixture(autouse=True)
+def mock_application_good_documents(data_standard_case, requests_mock):
+    requests_mock.get(
+        re.compile(
+            rf"/applications/{data_standard_case['case']['id']}/goods/[0-9a-fA-F-]+/documents/",
+        ),
+        json={"documents": []},
+    )
 
 
 @pytest.fixture
@@ -69,17 +87,56 @@ def test_form(
 
     # Check if the form fields contain sane values
     edit_good = data_standard_case["case"]["data"]["goods"][1]
+
     # Check control list entries
     edit_good_cle = [cle["rating"] for cle in edit_good["control_list_entries"]]
-    form_cle = [cle.attrs["value"] for cle in soup.find("form").find_all("option") if "selected" in cle.attrs]
+    form_cle = [
+        cle.attrs["value"]
+        for cle in soup.find("select", {"id": "control_list_entries"}).find_all("option")
+        if "selected" in cle.attrs
+    ]
     assert edit_good_cle == form_cle
+
+    # Check regimes
+    form_regimes = [
+        regime.attrs["value"] for regime in soup.find_all("input", {"name": "regimes"}) if "checked" in regime.attrs
+    ]
+    assert form_regimes == ["WASSENAAR", "MTCR"]
+
+    edit_mtcr_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "MTCR"
+    ]
+    form_mtcr_entries = [
+        regime_entry.attrs["value"]
+        for regime_entry in soup.find("select", {"id": "mtcr_entries"}).find_all("option")
+        if "selected" in regime_entry.attrs
+    ]
+    assert edit_mtcr_good_regimes == form_mtcr_entries
+
+    edit_wassenaar_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "WASSENAAR"
+    ]
+    form_wassenaar_entries = [
+        regime_entry.attrs["value"]
+        for regime_entry in soup.find_all("input", {"name": "wassenaar_entries"})
+        if "checked" in regime_entry.attrs
+    ]
+    assert edit_wassenaar_good_regimes == form_wassenaar_entries
+
     # Check report summary
     assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
+
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
 
     response = authorized_client.post(
-        url, data={"report_summary": "test", "does_not_have_control_list_entries": True, "comment": "test"}
+        url,
+        data={
+            "report_summary": "test",
+            "does_not_have_control_list_entries": True,
+            "comment": "test",
+            "regimes": ["NONE"],
+        },
     )
 
     # Check response and API payload
@@ -91,7 +148,146 @@ def test_form(
         "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
         "is_good_controlled": False,
-        "is_wassenaar": False,
+        "regime_entries": [],
+    }
+
+
+def test_form_no_regime_entries(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+):
+    """
+    Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
+    """
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    del good["regime_entries"]
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+    edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+    del edit_good["regime_entries"]
+    # Get the edit form
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # Check if the form fields contain sane values
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+
+    # Check control list entries
+    edit_good_cle = [cle["rating"] for cle in edit_good["control_list_entries"]]
+    form_cle = [
+        cle.attrs["value"]
+        for cle in soup.find("select", {"id": "control_list_entries"}).find_all("option")
+        if "selected" in cle.attrs
+    ]
+    assert edit_good_cle == form_cle
+
+    # Check regimes
+    form_mtcr_entries = [
+        cle.attrs["value"]
+        for cle in soup.find("select", {"id": "mtcr_entries"}).find_all("option")
+        if "selected" in cle.attrs
+    ]
+    assert [] == form_mtcr_entries
+
+    # Check report summary
+    assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
+
+    # Check comments
+    assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
+
+    response = authorized_client.post(
+        url,
+        data={
+            "report_summary": "test",
+            "does_not_have_control_list_entries": True,
+            "comment": "test",
+            "regimes": ["NONE"],
+        },
+    )
+
+    # Check response and API payload
+    assert response.status_code == 302
+    assert requests_mock.last_request.json() == {
+        "control_list_entries": [],
+        "report_summary": "test",
+        "comment": "test",
+        "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
+        "is_good_controlled": False,
+        "regime_entries": [],
+    }
+
+
+@pytest.mark.parametrize(
+    "regimes_form_data, regime_entries",
+    (
+        (
+            {"regimes": ["NONE"]},
+            [],
+        ),
+        (
+            {"regimes": ["MTCR"], "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"]},
+            ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+        ),
+        (
+            {"regimes": ["WASSENAAR"], "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"]},
+            ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+        ),
+        (
+            {
+                "regimes": ["WASSENAAR", "MTCR"],
+                "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
+                "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+            },
+            ["c760976f-fd14-4356-9f23-f6eaf084475d", "d73d0273-ef94-4951-9c51-c291eba949a0"],
+        ),
+    ),
+)
+def test_form_regime_entries(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+    regimes_form_data,
+    regime_entries,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+    edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+
+    response = authorized_client.post(
+        url,
+        data={
+            "report_summary": "test",
+            "does_not_have_control_list_entries": True,
+            "comment": "test",
+            **regimes_form_data,
+        },
+    )
+
+    # Check response and API payload
+    assert response.status_code == 302, response.context["form"].errors
+    assert requests_mock.last_request.json() == {
+        "control_list_entries": [],
+        "report_summary": "test",
+        "comment": "test",
+        "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
+        "is_good_controlled": False,
+        "regime_entries": regime_entries,
     }
 
 

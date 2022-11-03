@@ -5,7 +5,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
-from exporter.applications.views.goods.add_good_firearm.views.constants import AddGoodFirearmSteps
+from core.constants import OrganisationDocumentType
+
+from exporter.applications.views.goods.firearm.views.constants import AddGoodFirearmSteps
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import convert_api_date_string_to_date, decompose_date
 from exporter.goods.forms.firearms import (
@@ -18,8 +20,8 @@ from exporter.goods.forms.firearms import (
 
 
 @pytest.fixture(autouse=True)
-def setup(settings, no_op_storage):
-    settings.FEATURE_FLAG_PRODUCT_2_0 = True
+def setup(no_op_storage):
+    pass
 
 
 @pytest.fixture
@@ -49,7 +51,7 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
     mock_application_get,
     mock_good_get,
     mock_good_put,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     post_to_step,
     good_id,
@@ -96,7 +98,7 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
             "firearms_act_section": "firearms_act_section5",
@@ -114,11 +116,11 @@ def test_edit_registered_firearms_dealer_not_rfd_to_rfd(
     assert post_applications_document_matcher.request_history[0].json() == {
         "description": "Registered firearm dealer certificate",
         "document_on_organisation": {
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             "expiry_date": rfd_expiry_date.isoformat(),
             "reference_code": "12345",
         },
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": "rfd_certificate.pdf",
         "s3_key": "rfd_certificate.pdf",
         "size": 0,
@@ -142,7 +144,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     data_standard_case,
     application_with_rfd_and_section_5_document,
     mock_good_put,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     goto_step,
     post_to_step,
@@ -151,6 +153,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     good_id,
 ):
     good = data_standard_case["case"]["data"]["goods"][0]
+    good["good"]["firearm_details"].pop("is_covered_by_firearm_act_section_one_two_or_five")
     good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}
     url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
     requests_mock.get(url=url, json=good)
@@ -205,7 +208,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {"is_covered_by_section_5": "no"}
+    assert form.initial == {}
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
@@ -215,7 +218,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
     section_certificate_date_of_expiry = convert_api_date_string_to_date(section_5_document["expiry_date"]).isoformat()
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
@@ -237,11 +240,11 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_and_new
     assert application_doc_request.json() == {
         "description": "Registered firearm dealer certificate",
         "document_on_organisation": {
-            "document_type": "rfd-certificate",
+            "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             "expiry_date": rfd_expiry_date.isoformat(),
             "reference_code": "12345",
         },
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
         "name": "new_rfd_certificate.pdf",
         "s3_key": "new_rfd_certificate.pdf",
         "size": 0,
@@ -252,7 +255,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     data_standard_case,
     application_with_rfd_and_section_5_document,
     mock_good_put,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     goto_step,
     post_to_step,
@@ -302,9 +305,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     )
     form = response.context["form"]
     assert isinstance(form, FirearmSection5Form)
-    assert form.initial == {
-        "is_covered_by_section_5": "no",
-    }
+    assert form.initial == {}
 
     response = post_to_step(
         AddGoodFirearmSteps.IS_COVERED_BY_SECTION_5,
@@ -314,7 +315,7 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
     section_certificate_date_of_expiry = convert_api_date_string_to_date(section_5_document["expiry_date"]).isoformat()
     assert mock_good_put.last_request.json() == {
         "firearm_details": {
@@ -333,21 +334,26 @@ def test_edit_registered_firearms_dealer_rfd_to_rfd_with_updated_details_keeping
     assert last_request.json() == {
         "expiry_date": rfd_expiry_date.isoformat(),
         "reference_code": "67890",
-        "document_type": "rfd-certificate",
+        "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
     }
 
 
 def test_edit_registered_firearms_dealer_rfd_to_not_rfd(
     data_standard_case,
     application_with_organisation_and_application_rfd_document,
-    mock_good_get,
     mock_good_put,
-    product_summary_url,
+    firearm_product_summary_url,
     requests_mock,
     post_to_step,
     good_id,
     rfd_certificate,
 ):
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["good"]["firearm_details"].pop("is_covered_by_firearm_act_section_one_two_or_five")
+    good["good"]["is_pv_graded"] = {"key": "no", "value": "No"}
+    url = client._build_absolute_uri(f'/goods/{good["good"]["id"]}/')
+    requests_mock.get(url=url, json=good)
+
     delete_rfd_organisation_document_matcher = requests_mock.delete(
         f"/organisations/{rfd_certificate['organisation']}/document/{rfd_certificate['id']}/",
         status_code=204,
@@ -377,7 +383,7 @@ def test_edit_registered_firearms_dealer_rfd_to_not_rfd(
     )
 
     assert response.status_code == 302
-    assert response.url == product_summary_url
+    assert response.url == firearm_product_summary_url
 
     assert delete_rfd_organisation_document_matcher.called_once
     assert delete_rfd_application_document_matcher.called_once

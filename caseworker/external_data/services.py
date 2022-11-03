@@ -11,8 +11,8 @@ def upload_denials(request, data):
     )
 
 
-def search_denials(request, search):
-    data = {"search": search}
+def search_denials(request, search, filter):
+    data = {"search": search, **filter}
     querystring = urlencode(data, doseq=True)
     return client.get(request=request, appended_address=f"/external-data/denial-search/?{querystring}")
 

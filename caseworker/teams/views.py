@@ -1,10 +1,14 @@
+from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, RedirectView, FormView
 
 from caseworker.core.constants import Permission
+from caseworker.core.helpers import is_user_config_admin
 from caseworker.core.services import get_user_permissions
+from caseworker.core.views import handler403
 from lite_content.lite_internal_frontend.teams import TeamsPage
 from lite_forms.views import SingleFormView
 from caseworker.teams.forms import add_team_form, EditTeamForm
@@ -17,9 +21,11 @@ from core.auth.views import LoginRequiredMixin
 class TeamsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         data = get_teams(request)
+        user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
 
         context = {
             "data": data,
+            "can_change_config": user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST,
         }
         return render(request, "teams/index.html", context)
 
@@ -46,6 +52,12 @@ class TeamDetail(LoginRequiredMixin, TemplateView):
 
 
 class AddTeam(LoginRequiredMixin, SingleFormView):
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
+
     def init(self, request, **kwargs):
         self.form = add_team_form()
         self.action = post_teams
@@ -59,6 +71,12 @@ class EditTeam(LoginRequiredMixin, FormView):
     template_name = "teams/team-edit.html"
     form_class = EditTeamForm
     success_url = reverse_lazy("teams:teams")
+
+    def dispatch(self, request, *args, **kwargs):
+        if not is_user_config_admin(request):
+            return handler403(request, HttpResponseForbidden)
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_initial(self):
         self.object_pk = self.kwargs["pk"]

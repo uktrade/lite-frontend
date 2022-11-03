@@ -104,6 +104,18 @@
               {{ display_pv_grading|yesno|capfirst }}
             </dd>
           </div>
+           <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Security approvals
+            </dt>
+            <dd class="govuk-summary-list__value">
+            {% if security_approvals_classified_display %}
+                {{ security_approvals_classified_display }}
+            {% else %}
+                None
+            {% endif %}
+            </dd>
+          </div>
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Total value
@@ -134,7 +146,21 @@
             </dt>
             <dd class="govuk-summary-list__value">
                 {% if case.data.denial_matches %}
-                    {{ case.data.denial_matches | join:', ' }}
+                  {% for denial in case.data.denial_matches %}
+                    <p>
+                      <a href="{% url 'external_data:denial-detail' pk=denial.denial.id %}?queue_id={{queue.id}}&case_id={{case.id}}">
+                        {{ denial.denial.reference }}
+                      </a>
+                      <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
+                        {% if denial.category == "exact" %}
+                          EXACT MATCH
+                        {% elif denial.category == "partial" %}
+                          PARTIAL MATCH
+                        {% endif %}
+                      </span>
+
+                    </p>
+                  {% endfor %}
                 {% else %}
                     None
                 {% endif %}

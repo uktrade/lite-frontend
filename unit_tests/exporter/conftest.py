@@ -31,7 +31,6 @@ def pytest_configure(config):
 def default_feature_flags(settings):
     settings.FEATURE_FLAG_PRODUCT_2_0 = False
     settings.FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = True
-    settings.FEATURE_FLAG_GOVUK_SIGNIN_ENABLED = True
 
 
 @pytest.fixture(autouse=True)
@@ -259,14 +258,13 @@ def mock_units(requests_mock):
     url = client._build_absolute_uri("/static/units/")
     data = {
         "units": {
-            "GRM": "Gram(s)",
-            "KGM": "Kilogram(s)",
-            "NAR": "Number of articles",
-            "MTK": "Square metre(s)",
-            "MTR": "Metre(s)",
-            "LTR": "Litre(s)",
-            "MTQ": "Cubic metre(s)",
-            "ITG": "Intangible",
+            "GRM": "Gram",
+            "KGM": "Kilogram",
+            "NAR": "Items",
+            "MTK": "Square metre",
+            "MTR": "Metre",
+            "LTR": "Litre",
+            "MTQ": "Cubic metre",
         }
     }
 
@@ -381,3 +379,331 @@ def post_to_step_factory(authorized_client):
 def good_id(data_standard_case):
     good = data_standard_case["case"]["data"]["goods"][0]["good"]
     return good["id"]
+
+
+@pytest.fixture
+def platform_summary(good_id):
+    return (
+        (
+            "is-firearm-product",
+            "No",
+            "Is it a firearm product?",
+        ),
+        (
+            "product-category",
+            "It's a complete product",
+            "Select the product category",
+        ),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "uses-information-security",
+            "No",
+            "Does the product include security features to protect information?",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def component_summary(good_id):
+    return (
+        (
+            "is-firearm-product",
+            "No",
+            "Is it a firearm product?",
+        ),
+        (
+            "product-category",
+            "It forms part of a product",
+            "Select the product category",
+        ),
+        (
+            "is-material-substance",
+            "No, it's a component, accessory or module",
+            "Is it a material or substance?",
+        ),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        ("is-component", "Yes", "Is the product a component?"),
+        ("component-type", "Modified for hardware", "What type of component is it?"),
+        ("modified-details", "modified details", "Provide details of the modifications and the specific hardware"),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "uses-information-security",
+            "No",
+            "Does the product include security features to protect information?",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def software_summary(good_id):
+    return (
+        (
+            "is-firearm-product",
+            "No",
+            "Is it a firearm product?",
+        ),
+        (
+            "non-firearm-category",
+            "It helps to operate a product",
+            "Select the product category",
+        ),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Enter the part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "security-features",
+            "Yes",
+            "Does the product include security features to protect information?",
+        ),
+        (
+            "security-feature-details",
+            "security features",
+            "Provide details of the information security features",
+        ),
+        (
+            "declared-at-customs",
+            "Yes",
+            "Will the product be declared at customs?",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def get_units_mock(requests_mock):
+    requests_mock.get(
+        "/static/units/", json={"units": {"NAR": "Items", "TON": "Tonne(s)", "KGM": "Kilogram(s)", "GRM": "Gram(s)"}}
+    )

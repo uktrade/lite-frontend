@@ -21,8 +21,12 @@
 
 	{% if application.status.key in 'applicant_editing,draft' %}
 		<div>
-			<a id="button-add-new-good" href="{% url 'applications:new_good' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
-			<a id="button-add-preexisting-good" href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
+            {% if feature_flag_non_firearms_enabled %}
+			    <a id="button-add-new-good" href="{% url 'applications:is_good_firearm' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
+			{% else %}
+                <a id="button-add-new-good" href="{% url 'applications:new_good' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
+            {% endif %}
+                <a id="button-add-preexisting-good" href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
 		</div>
 	{% endif %}
 
@@ -49,10 +53,10 @@
 							{% if good_on_application.good.status.key == 'verified' %}<span class="app-verified__symbol">{% svg 'verified' %}</span><span class="govuk-visually-hidden"> (Verified product)</span>{% endif %}
 						</th>
 						<td class="govuk-table__cell">
-							Firearm
+                            {{ good_on_application.good.item_category.value }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ good_on_application.quantity|floatformat }}
+							{{ good_on_application.quantity|floatformat:3 }}
 						</td>
 						<td class="govuk-table__cell">
 							£{{ good_on_application.value|intcomma }}

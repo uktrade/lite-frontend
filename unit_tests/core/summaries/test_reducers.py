@@ -1,29 +1,41 @@
 import pytest
-import uuid
 
 from decimal import Decimal
 
 from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
     SerialChoices,
 )
 from core.summaries.reducers import (
+    declared_at_customs_reducer,
+    designed_for_military_use_reducer,
     firearm_on_application_reducer,
     firearm_reducer,
     firearms_act_reducer,
     firearms_act_section1_reducer,
     firearms_act_section2_reducer,
     firearms_act_section5_reducer,
+    part_number_reducer,
     has_product_document_reducer,
     is_deactivated_reducer,
     is_good_controlled_reducer,
     is_onward_exported_reducer,
     is_pv_graded_reducer,
     is_replica_reducer,
+    platform_reducer,
+    platform_on_application_reducer,
+    material_reducer,
+    material_on_application_reducer,
     rfd_reducer,
+    security_features_reducer,
     serial_numbers_reducer,
+    software_reducer,
+    uses_information_security_reducer,
     year_of_manufacture_reducer,
+    component_reducer,
+    component_on_application_reducer,
 )
 
 
@@ -58,15 +70,21 @@ def test_firearm_reducer(is_user_rfd, mocker):
     organisation_documents = {}
     extra_result_values = ()
     if is_user_rfd:
-        organisation_documents["rfd-certificate"] = {
+        organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE] = {
             "document": {},
             "reference_code": "12345",
             "expiry_date": "31 May 2025",
         }
         extra_result_values = (
-            ("rfd-certificate-document", organisation_documents["rfd-certificate"]),
-            ("rfd-certificate-reference-number", organisation_documents["rfd-certificate"]["reference_code"]),
-            ("rfd-certificate-date-of-expiry", organisation_documents["rfd-certificate"]["expiry_date"]),
+            ("rfd-certificate-document", organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]),
+            (
+                "rfd-certificate-reference-number",
+                organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]["reference_code"],
+            ),
+            (
+                "rfd-certificate-date-of-expiry",
+                organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]["expiry_date"],
+            ),
         )
     result = firearm_reducer(good, is_user_rfd, organisation_documents)
     assert result == (
@@ -182,7 +200,7 @@ def test_is_good_controlled_reducer(good, output):
         (
             True,
             {
-                "rfd-certificate": {
+                OrganisationDocumentType.RFD_CERTIFICATE: {
                     "document": {},
                     "reference_code": "12345",
                     "expiry_date": "31 May 2025",
@@ -356,16 +374,23 @@ def test_is_replica_reducer(good, output):
             {
                 "firearms_act_section": "firearms_act_section5",
                 "section_certificate_missing": False,
-                "section_certificate_number": "section-certificate-number",
-                "section_certificate_date_of_expiry": "2030-10-09",
             },
             {
-                "section-five-certificate": "document",
+                "section-five-certificate": {
+                    "reference_code": "section-certificate-number",
+                    "expiry_date": "9 October 2030",
+                },
             },
             (
-                ("section-5-certificate-document", "document"),
+                (
+                    "section-5-certificate-document",
+                    {
+                        "reference_code": "section-certificate-number",
+                        "expiry_date": "9 October 2030",
+                    },
+                ),
                 ("section-5-certificate-reference-number", "section-certificate-number"),
-                ("section-5-certificate-date-of-expiry", "2030-10-09"),
+                ("section-5-certificate-date-of-expiry", "9 October 2030"),
             ),
         ),
     ),
@@ -402,13 +427,16 @@ def test_firearms_act_section5_reducer(firearm_details, organisation_documents, 
         ),
         (
             {
-                "is_covered_by_firearm_act_section_one_two_or_five": "No",
+                "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
                 "is_covered_by_firearm_act_section_one_two_or_five_explanation": "explanation",
             },
             False,
             ["document"],
             False,
-            (("is-covered-by-firearm-act-section-one-two-or-five-explanation", "explanation"),),
+            (
+                ("firearms-act-1968-section", "Don't know"),
+                ("is-covered-by-firearm-act-section-one-two-or-five-explanation", "explanation"),
+            ),
         ),
         (
             {
@@ -472,6 +500,18 @@ def test_firearms_act_reducer(
             (
                 ("has-product-document", False),
                 ("no-product-document-explanation", "No document comments"),
+            ),
+        ),
+        (
+            {
+                "is_document_available": False,
+                "no_document_comments": "No document comments",
+                "product_description": "Product description",
+            },
+            (
+                ("has-product-document", False),
+                ("no-product-document-explanation", "No document comments"),
+                ("product-description", "Product description"),
             ),
         ),
     ),
@@ -541,6 +581,65 @@ def test_firearm_on_application_reducer(mocker):
     )
     mock_serial_numbers_reducer.assert_called_with(
         good_on_application["firearm_details"],
+    )
+
+
+def test_platform_on_application_reducer(mocker):
+
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(),
+    )
+    good_on_application = {
+        "quantity": "6",
+        "value": "14.44",
+    }
+    assert platform_on_application_reducer(good_on_application) == (
+        ("number-of-items", "6"),
+        ("total-value", Decimal("14.44")),
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application,
+    )
+
+
+def test_component_on_application_reducer(mocker):
+
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(),
+    )
+    good_on_application = {
+        "quantity": "6",
+        "value": "14.44",
+    }
+    assert component_on_application_reducer(good_on_application) == (
+        ("number-of-items", "6"),
+        ("total-value", Decimal("14.44")),
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application,
+    )
+
+
+def test_material_on_application_reducer(mocker):
+
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(),
+    )
+    good_on_application = {
+        "unit": {"key": "GRM", "value": "Gram(s)"},
+        "quantity": "6",
+        "value": "14.44",
+    }
+    assert material_on_application_reducer(good_on_application) == (
+        ("unit", "Gram(s)"),
+        ("quantity", "6"),
+        ("total-value", Decimal("14.44")),
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application,
     )
 
 
@@ -820,3 +919,303 @@ def test_is_deactivated_reducer(firearm_details, output):
 )
 def test_serial_numbers_reducer(firearm_details, output):
     assert serial_numbers_reducer(firearm_details) == output
+
+
+def test_platform_reducer(mocker):
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_uses_information_security_reducer = mocker.patch(
+        "core.summaries.reducers.uses_information_security_reducer", return_value=()
+    )
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = platform_reducer(good)
+    assert result == (
+        ("is-firearm-product", False),
+        ("product-category", "platform"),
+        ("name", "good-name"),
+    )
+
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
+    mock_uses_information_security_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
+
+
+def test_component_reducer(mocker):
+    mock_component_details_reducer = mocker.patch(
+        "core.summaries.reducers.component_details_reducer",
+        return_value=(),
+    )
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_uses_information_security_reducer = mocker.patch(
+        "core.summaries.reducers.uses_information_security_reducer", return_value=()
+    )
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = component_reducer(good)
+    assert result == (
+        ("is-firearm-product", False),
+        ("product-category", "component"),
+        ("is-material-substance", False),
+        ("name", "good-name"),
+    )
+
+    mock_component_details_reducer.assert_called_with(good)
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
+    mock_uses_information_security_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
+
+
+def test_material_reducer(mocker):
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = material_reducer(good)
+    assert result == (
+        ("is-firearm-product", False),
+        ("product-category", "material"),
+        ("is-material-substance", True),
+        ("name", "good-name"),
+    )
+
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
+
+
+def test_software_reducer(mocker):
+    mock_is_good_controlled_reducer = mocker.patch(
+        "core.summaries.reducers.is_good_controlled_reducer", return_value=()
+    )
+    mock_is_pv_graded_reducer = mocker.patch("core.summaries.reducers.is_pv_graded_reducer", return_value=())
+    mock_has_product_document_reducer = mocker.patch(
+        "core.summaries.reducers.has_product_document_reducer", return_value=()
+    )
+    mock_part_number_reducer = mocker.patch(
+        "core.summaries.reducers.part_number_reducer",
+        return_value=(),
+    )
+    mock_security_features_reducer = mocker.patch(
+        "core.summaries.reducers.security_features_reducer",
+        return_value=(),
+    )
+    mock_declared_at_customs_reducer = mocker.patch(
+        "core.summaries.reducers.declared_at_customs_reducer",
+        return_value=(),
+    )
+    mock_designed_for_military_use_reducer = mocker.patch(
+        "core.summaries.reducers.designed_for_military_use_reducer",
+        return_value=(),
+    )
+
+    good = {
+        "name": "good-name",
+    }
+    result = software_reducer(good)
+    assert result == (
+        ("is-firearm-product", False),
+        ("non-firearm-category", "It helps to operate a product"),
+        ("name", "good-name"),
+    )
+
+    mock_is_good_controlled_reducer.assert_called_with(good)
+    mock_is_pv_graded_reducer.assert_called_with(good)
+    mock_has_product_document_reducer.assert_called_with(good)
+    mock_part_number_reducer.assert_called_with(good)
+    mock_security_features_reducer.assert_called_with(good)
+    mock_declared_at_customs_reducer.assert_called_with(good)
+    mock_designed_for_military_use_reducer.assert_called_with(good)
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "uses_information_security": True,
+                "information_security_details": "Information security details",
+            },
+            (
+                ("uses-information-security", True),
+                ("uses-information-security-details", "Information security details"),
+            ),
+        ),
+        (
+            {
+                "uses_information_security": False,
+            },
+            (("uses-information-security", False),),
+        ),
+    ),
+)
+def test_uses_information_security_reducer(good, output):
+    assert uses_information_security_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {"part_number": "231231"},
+            (("part-number", "231231"),),
+        ),
+        (
+            {"part_number": "", "no_part_number_comments": "No part number"},
+            (
+                ("has-part-number", False),
+                ("no-part-number-comments", "No part number"),
+            ),
+        ),
+    ),
+)
+def test_part_number_reducer(good, output):
+    assert part_number_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "has_security_features": True,
+                "security_feature_details": "security features",
+            },
+            (
+                ("security-features", True),
+                ("security-feature-details", "security features"),
+            ),
+        ),
+        (
+            {
+                "has_security_features": False,
+            },
+            (("security-features", False),),
+        ),
+        (
+            {},
+            (("security-features", False),),
+        ),
+    ),
+)
+def test_security_features_reducer(good, output):
+    assert security_features_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "has_declared_at_customs": True,
+            },
+            (("declared-at-customs", True),),
+        ),
+        (
+            {
+                "has_declared_at_customs": False,
+            },
+            (("declared-at-customs", False),),
+        ),
+        (
+            {},
+            (("declared-at-customs", False),),
+        ),
+    ),
+)
+def test_declared_at_customs_reducer(good, output):
+    assert declared_at_customs_reducer(good) == output
+
+
+@pytest.mark.parametrize(
+    "good,output",
+    (
+        (
+            {
+                "is_military_use": {
+                    "key": "yes_designed",
+                    "value": "Yes, specially designed for military use",
+                },
+            },
+            (("military-use", "yes_designed"),),
+        ),
+        (
+            {
+                "is_military_use": {
+                    "key": "yes_modified",
+                    "value": "Yes, modified for military use",
+                },
+                "modified_military_use_details": "modified military use details",
+            },
+            (
+                ("military-use", "yes_modified"),
+                ("military-use-details", "modified military use details"),
+            ),
+        ),
+        (
+            {
+                "is_military_use": {
+                    "key": "no",
+                    "value": "No",
+                },
+            },
+            (("military-use", "no"),),
+        ),
+    ),
+)
+def test_designed_for_military_use_reducer(good, output):
+    assert designed_for_military_use_reducer(good) == output

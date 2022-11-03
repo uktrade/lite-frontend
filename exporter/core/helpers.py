@@ -9,6 +9,11 @@ from django.template.defaultfilters import safe
 from django.templatetags.tz import localtime
 from django.utils.safestring import mark_safe
 
+from core.constants import (
+    OrganisationDocumentType,
+    ProductCategories,
+)
+
 from exporter.core import decorators
 from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps, SetPartyFormSteps
@@ -154,7 +159,10 @@ def is_category_firearms(wizard):
         return True
 
     item_category = product_category_cleaned_data["item_category"]
-    return item_category == constants.PRODUCT_CATEGORY_FIREARM or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
+    return (
+        item_category == ProductCategories.PRODUCT_CATEGORY_FIREARM
+        or settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS
+    )
 
 
 def is_product_type(product_type):
@@ -245,7 +253,7 @@ def get_organisation_documents(application):
 
 def get_rfd_certificate(application):
     documents = get_organisation_documents(application)
-    return documents.get(constants.DocumentType.RFD_CERTIFICATE)
+    return documents.get(OrganisationDocumentType.RFD_CERTIFICATE)
 
 
 def is_end_user_document_available(wizard):
@@ -299,7 +307,7 @@ def get_user_organisation_documents(organisation):
 
 def get_organisation_rfd_certificate(organisation):
     documents = get_user_organisation_documents(organisation)
-    return documents.get(constants.DocumentType.RFD_CERTIFICATE)
+    return documents.get(OrganisationDocumentType.RFD_CERTIFICATE)
 
 
 def has_valid_organisation_rfd_certificate(organisation):

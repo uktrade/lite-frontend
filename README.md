@@ -152,6 +152,14 @@ make run_all_tests
 - DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
   in Vault
 
+Exporter UI Tests also requires the following :
+
+- GOVUK_BASIC_AUTH_USER_NAME - In vault used for GOV.UK basic authentication in test envs  
+- GOVUK_BASIC_AUTH_USER_PASSWORD - In vault used for GOV.UK basic authentication in test envs
+- EXPORTER_TEST_SSO_EMAIL - In vault this is a default account setup for testing
+- EXPORTER_TEST_SSO_PASSWORD - In vault this is a default account setup for testing
+- EXPORTER_TEST_SSO_NAME=LITE Testing
+
 Before running the UI tests, make sure you have the following services running with corresponding ports:
 
 - lite-api (port=**8100**)

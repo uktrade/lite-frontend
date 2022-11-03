@@ -5,8 +5,15 @@ from django.urls import reverse
 from rest_framework.reverse import reverse_lazy
 from exporter.organisation.members.services import get_user
 from .constants import OrganisationStatus
+from django.conf import settings
+
+from lite_forms.generators import error_page
+
+from core.exceptions import ServiceError
+
 
 logger = logging.getLogger(__name__)
+
 
 ignore_paths = [
     reverse_lazy("core:register_draft_confirm"),
@@ -40,5 +47,27 @@ class OrganisationRedirectMiddleWare:
         organisations = get_user(request, params={status: True})["organisations"]
         if not organisations:
             return False
-
         return any(org["status"]["key"] == status for org in organisations)
+
+
+class ServiceErrorHandler:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
+
+    def process_exception(self, request, exception):
+        if not isinstance(exception, ServiceError):
+            return None
+
+        logger.error(
+            exception.log_message,
+            exception.status_code,
+            exception.response,
+            exc_info=True,
+        )
+        if settings.DEBUG:
+            raise exception
+        return error_page(request, exception.user_message)

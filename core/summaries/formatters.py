@@ -12,7 +12,10 @@ from django.utils.safestring import mark_safe
 from core.constants import (
     FirearmsActSections,
     SerialChoices,
+    ComponentChoices,
 )
+from exporter.goods.forms.common import ProductMilitaryUseForm
+from exporter.goods.forms.goods import ProductDeclaredAtCustomsForm
 
 
 FIREARM_LABELS = {
@@ -40,6 +43,7 @@ FIREARM_LABELS = {
     "is-covered-by-firearm-act-section-one-two-or-five-explanation": "Explain",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
     "is-document-sensitive": "Is the document rated above Official-sensitive?",
     "product-document": "Upload a document that shows what your product is designed to do",
     "product-document-description": "Description (optional)",
@@ -49,6 +53,95 @@ FIREARM_LABELS = {
     "section-5-certificate-date-of-expiry": "Certificate date of expiry",
     "section-5-certificate-missing": "Upload your section 5 letter of authority",
     "section-5-certificate-missing-reason": "Explain why you do not have a section 5 letter of authority",
+}
+
+PLATFORM_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "product-category": "Select the product category",
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "uses-information-security": "Does the product include security features to protect information?",
+    "uses-information-security-details": "Provide details of the information security features",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
+}
+
+MATERIAL_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "product-category": "Select the product category",
+    "is-material-substance": "Is it a material or substance?",
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
+}
+
+COMPONENT_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "product-category": "Select the product category",
+    "is-material-substance": "Is it a material or substance?",
+    "name": "Give the product a descriptive name",
+    "is-component": "Is the product a component?",
+    "component-type": "What type of component is it?",
+    "designed-details": "Provide details of the specific hardware",
+    "modified-details": "Provide details of the modifications and the specific hardware",
+    "general-details": "Provide details of the intended general-purpose use",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "uses-information-security": "Does the product include security features to protect information?",
+    "uses-information-security-details": "Provide details of the information security features",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
 }
 
 
@@ -87,6 +180,8 @@ def to_date(val):
 
 def date_formatter(format=None):
     def _date_formatter(val):
+        # if not val:
+        #     return None
         return date_format(to_date(val), format)
 
     return _date_formatter
@@ -111,9 +206,20 @@ def money_formatter(val):
     return f"£{val:.2f}"
 
 
+def integer(val):
+    return str(int(val))
+
+
+def choices_formatter(choices):
+    def _choices_formatter(val):
+        return dict(choices)[val]
+
+    return _choices_formatter
+
+
 def model_choices_formatter(model_choice):
     def _model_choices_formatter(val):
-        return model_choice[val].label
+        return dict(model_choice.choices)[val]
 
     return _model_choices_formatter
 
@@ -165,13 +271,13 @@ FIREARM_VALUE_FORMATTERS = {
         }
     ),
     "section-5-certificate-document": organisation_document_formatter,
-    "section-5-certificate-date-of-expiry": date_formatter("j F Y"),
     "section-5-certificate-missing": just("I do not have a section 5 letter of authority"),
     "firearms-act-1968-section": mapping_formatter(
         {
             FirearmsActSections.SECTION_1: "Section 1",
             FirearmsActSections.SECTION_2: "Section 2",
             FirearmsActSections.SECTION_5: "Section 5",
+            "Unsure": "Don't know",
         }
     ),
 }
@@ -186,11 +292,11 @@ def format_values(summary, formatters):
     return formatted_values_summary
 
 
-def document_formatter(document, url):
+def document_formatter(document, url, link_text=None):
     if not document["safe"]:
         return document["name"]
 
-    name = escape(document["name"])
+    name = link_text or escape(document["name"])
 
     return mark_safe(  # nosec
         f'<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">{name}</a>'
@@ -241,3 +347,231 @@ FIREARM_ON_APPLICATION_LABELS = {
     "no-identification-markings-details": "Explain why the product has not been marked",
     "serial-numbers": "Enter serial numbers or other identification markings",
 }
+
+
+is_material_substance_formatter = mapping_formatter(
+    {
+        True: "Yes",
+        False: "No, it's a component, accessory or module",
+    }
+)
+
+
+product_category_formatter = mapping_formatter(
+    {
+        "platform": "It's a complete product",
+        "material": "It forms part of a product",
+        "component": "It forms part of a product",
+    },
+)
+
+
+PLATFORM_VALUE_FORMATTERS = {
+    "is-firearm-product": yesno,
+    "product-category": product_category_formatter,
+    "is-good-controlled": key_value_formatter,
+    "has-part-number": just("Yes"),
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "uses-information-security": yesno,
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
+}
+
+PLATFORM_ON_APPLICATION_FORMATTERS = {
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "number-of-items": integer,
+    "total-value": money_formatter,
+}
+
+PLATFORM_ON_APPLICATION_LABELS = {
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+}
+
+
+MATERIAL_VALUE_FORMATTERS = {
+    "is-firearm-product": yesno,
+    "product-category": product_category_formatter,
+    "is-material-substance": is_material_substance_formatter,
+    "is-good-controlled": key_value_formatter,
+    "has-part-number": just("Yes"),
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "uses-information-security": yesno,
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
+}
+
+MATERIAL_ON_APPLICATION_FORMATTERS = {
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "total-value": money_formatter,
+}
+
+MATERIAL_ON_APPLICATION_LABELS = {
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "unit": "Unit of measurement",
+    "quantity": "Quantity",
+    "total-value": "Total value",
+}
+
+
+SOFTWARE_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "non-firearm-category": "Select the product category",
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Enter the part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "security-features": "Does the product include security features to protect information?",
+    "security-feature-details": "Provide details of the information security features",
+    "declared-at-customs": "Will the product be declared at customs?",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
+}
+
+SOFTWARE_VALUE_FORMATTERS = {
+    "is-firearm-product": yesno,
+    "is-good-controlled": key_value_formatter,
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "security-features": yesno,
+    "declared-at-customs": choices_formatter(
+        ProductDeclaredAtCustomsForm.HAS_DECLARED_AT_CUSTOMS_CHOICES,
+    ),
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
+}
+
+SOFTWARE_ON_APPLICATION_FORMATTERS = {
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "total-value": money_formatter,
+    "number-of-items": integer,
+}
+
+SOFTWARE_ON_APPLICATION_LABELS = {
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+}
+
+COMPONENT_VALUE_FORMATTERS = {
+    "is-firearm-product": yesno,
+    "product-category": product_category_formatter,
+    "is-material-substance": is_material_substance_formatter,
+    "is-component": yesno,
+    "component-type": model_choices_formatter(ComponentChoices),
+    "is-good-controlled": key_value_formatter,
+    "has-part-number": just("I do not have a part number"),
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "uses-information-security": yesno,
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
+}
+
+COMPONENT_ON_APPLICATION_FORMATTERS = {
+    "is-onward-exported": yesno,
+    "is-altered": yesno,
+    "is-incorporated": yesno,
+    "number-of-items": integer,
+    "total-value": money_formatter,
+}
+
+COMPONENT_ON_APPLICATION_LABELS = {
+    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-altered": "Will the item be altered or processed before it is exported again?",
+    "is-altered-comments": "Explain how the product will be processed or altered",
+    "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
+    "is-incorporated-comments": "Describe what you are incorporating the product into",
+    "is-deactivated": "Has the product been deactivated?",
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+}
+
+
+def add_edit_links(
+    summary,
+    edit_links,
+    get_edit_link,
+):
+    summary_with_edit_links = ()
+
+    for key, value, *rest in summary:
+        try:
+            edit_link_key = edit_links[key]
+        except KeyError:
+            edit_link = None
+        else:
+            edit_link = get_edit_link(edit_link_key)
+
+        summary_with_edit_links += ((key, value, *rest, edit_link),)
+
+    return summary_with_edit_links

@@ -38,7 +38,7 @@ def advice(current_user):
             "text": "meets the criteria",
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": {"key": "proviso", "value": "Proviso"},
-            "ultimate_end_user": None,
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "user": current_user,
         }
         for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
@@ -99,6 +99,10 @@ def test_view_approve_advice_with_conditions_notes_and_nlr_products(
         "Third party",
         "Third party",
         "All",
+        "United Kingdom",
+        "Ultimate End-user",
+        "Ultimate End-user",
+        "All",
     ] * 2
 
 
@@ -143,6 +147,11 @@ def test_view_refusal_advice_not_including_nlr_products(
         "Third party",
         "All",
         "five a, five b",
+        "United Kingdom",
+        "Ultimate End-user",
+        "Ultimate End-user",
+        "All",
+        "five a, five b",
     ] * 2
 
 
@@ -183,3 +192,19 @@ def test_advice_by_user_filter(advice, current_user):
     assert len(user_advice) == 2
     for item in advice:
         assert item["level"] == "user"
+
+
+@pytest.mark.parametrize("security_approvals, display_expected", [(["F680"], "F680"), (None, "")])
+def test_view_security_approvals(
+    authorized_client, requests_mock, data_standard_case, security_approvals, display_expected, url
+):
+    data_standard_case["case"]["data"]["security_approvals"] = security_approvals
+    case_id = data_standard_case["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov_users/{case_id}"),
+        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["security_approvals_classified_display"] == display_expected

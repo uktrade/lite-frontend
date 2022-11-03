@@ -1,18 +1,19 @@
 {% load advice_tags tau_tags %}
-{% if good.good.firearm_details.type.key == "firearms" %}
-{% include "tau/firearms_table.html" %}
+
+{% if summary %}
+    {% include "tau/product_summary_table.html" %}
 {% elif good.good.firearm_details.type.key == "ammunition" %}
-{% include "tau/ammunition_table.html" %}
+    {% include "tau/ammunition_table.html" %}
 {% elif good.good.firearm_details.type.key == "components_for_firearms" %}
-{% include "tau/components_for_firearms_table.html" %}
+    {% include "tau/components_for_firearms_table.html" %}
 {% elif good.good.firearm_details.type.key == "components_for_ammunition" %}
-{% include "tau/components_for_ammunition_table.html" %}
+    {% include "tau/components_for_ammunition_table.html" %}
 {% elif good.good.firearm_details.type.key == "firearms_accessory" %}
-{% include "tau/firearms_accessory_table.html" %}
+    {% include "tau/firearms_accessory_table.html" %}
 {% elif good.good.firearm_details.type.key == "software_related_to_firearms" %}
-{% include "tau/software_related_to_firearms_table.html" %}
+    {% include "tau/software_related_to_firearms_table.html" %}
 {% elif good.good.firearm_details.type.key == "technology_related_to_firearms" %}
-{% include "tau/technology_related_to_firearms_table.html" %}
+    {% include "tau/technology_related_to_firearms_table.html" %}
 {% else %}
-Unknown good type
+    Unknown good type
 {% endif %}

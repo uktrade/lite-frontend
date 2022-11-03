@@ -3,6 +3,7 @@ import pytest
 import os
 
 from core import client
+from core.constants import OrganisationDocumentType
 
 
 @pytest.fixture(autouse=True)
@@ -514,7 +515,28 @@ def data_standard_case():
                     "clearance_level": None,
                     "descriptors": None,
                 },
-                "ultimate_end_users": [],
+                "ultimate_end_users": [
+                    {
+                        "id": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+                        "name": "Ultimate End-user",
+                        "address": "44",
+                        "country": {"id": "GB", "name": "United Kingdom", "type": "gov.uk Country", "is_eu": True},
+                        "website": "",
+                        "type": "ultimate_end_user",
+                        "type_display_value": "Ultimate End-user",
+                        "organisation": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",
+                        "document": None,
+                        "sub_type": {"key": "individual", "value": "Individual"},
+                        "sub_type_other": None,
+                        "role": {"key": "consultant", "value": "Consultant"},
+                        "role_other": None,
+                        "flags": [],
+                        "copy_of": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+                        "deleted_at": None,
+                        "clearance_level": None,
+                        "descriptors": None,
+                    }
+                ],
                 "third_parties": [
                     {
                         "id": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
@@ -594,16 +616,20 @@ def data_standard_case():
                                 "reference": "GR123",
                                 "date_of_issue": "2020-02-20",
                             },
+                            "has_declared_at_customs": True,
+                            "has_security_features": True,
+                            "security_feature_details": "security features",
                             "is_document_available": True,
                             "no_document_comments": "",
                             "is_document_sensitive": False,
+                            "design_details": "some design details",
                             "status": {"key": "verified", "value": "Verified"},
                             "item_category": {"key": "group1_device", "value": "Device, equipment or object"},
                             "is_military_use": {"key": "no", "value": "No"},
-                            "is_component": {"key": "no", "value": "No"},
+                            "is_component": {"key": "yes_modified", "value": "This has been modified"},
                             "uses_information_security": False,
                             "modified_military_use_details": None,
-                            "component_details": None,
+                            "component_details": "modified details",
                             "information_security_details": None,
                             "missing_document_reason": {
                                 "key": "OFFICIAL_SENSITIVE",
@@ -625,7 +651,7 @@ def data_standard_case():
                                 "number_of_items": 2,
                                 "serial_numbers_available": "AVAILABLE",
                                 "serial_numbers": ["12345", "ABC-123"],
-                                "is_covered_by_firearm_act_section_one_two_or_five": "No",
+                                "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
                                 "is_covered_by_firearm_act_section_one_two_or_five_explanation": "Not covered by firearm act sections",
                             },
                         },
@@ -642,6 +668,33 @@ def data_standard_case():
                         "control_list_entries": [
                             {"rating": "ML8a", "text": '"Explosives" and mixtures of explosive substances'},
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
+                        ],
+                        "regime_entries": [
+                            {
+                                "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
+                                "name": "mtcr-1",
+                                "subsection": {
+                                    "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
+                                    "name": "MTCR Category 1",
+                                    "regime": {
+                                        "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
+                                        "name": "MTCR",
+                                    },
+                                },
+                            },
+                            {
+                                "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
+                                "name": "wassenaar-1",
+                                "shortened_name": "w-1",
+                                "subsection": {
+                                    "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
+                                    "name": "Wassenaar Arrangement",
+                                    "regime": {
+                                        "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
+                                        "name": "WASSENAAR",
+                                    },
+                                },
+                            },
                         ],
                         "comment": "test comment",
                         "report_summary": "firearms (2)",
@@ -712,6 +765,33 @@ def data_standard_case():
                             {"rating": "ML8a", "text": '"Explosives" and mixtures of explosive substances'},
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
+                        "regime_entries": [
+                            {
+                                "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
+                                "name": "mtcr-1",
+                                "subsection": {
+                                    "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
+                                    "name": "MTCR Category 1",
+                                    "regime": {
+                                        "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
+                                        "name": "MTCR",
+                                    },
+                                },
+                            },
+                            {
+                                "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
+                                "name": "wassenaar-1",
+                                "shortened_name": "w-1",
+                                "subsection": {
+                                    "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
+                                    "name": "Wassenaar Arrangement",
+                                    "regime": {
+                                        "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
+                                        "name": "WASSENAAR",
+                                    },
+                                },
+                            },
+                        ],
                         "comment": "test assesment note",
                         "report_summary": "scale compelling technologies",
                         "audit_trail": [],
@@ -763,7 +843,13 @@ def data_standard_case():
                 "licence": None,
                 "is_shipped_waybill_or_lading": False,
                 "non_waybill_or_lading_route_details": "44",
-                "temp_export_details": "44",
+                "is_mod_security_approved": None,
+                "security_approvals": ["F680"],
+                "f680_reference_number": None,
+                "f1686_contracting_authority": None,
+                "f1686_reference_number": None,
+                "f1686_approval_date": None,
+                "other_security_approval_details": None,
                 "is_temp_direct_control": False,
                 "temp_direct_control_details": "44",
                 "proposed_return_date": "2021-01-01",
@@ -1326,7 +1412,7 @@ def data_organisation():
         "documents": [
             {
                 "id": "b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a",
-                "document_type": "rfd-certificate",
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 "expiry_date": expiry_date.strftime("%d %B %Y"),
                 "reference_code": "RFD123",
                 "is_expired": False,
@@ -1377,6 +1463,11 @@ def standard_firearm_expected_product_summary():
         ("calibre", "0.25", "What is the calibre of the product?"),
         ("is-replica", "No", "Is the product a replica firearm?"),
         ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
+        (
+            "firearms-act-1968-section",
+            "Don't know",
+            "Which section of the Firearms Act 1968 is the product covered by?",
+        ),
         (
             "is-covered-by-firearm-act-section-one-two-or-five-explanation",
             "Not covered by firearm act sections",
@@ -1437,5 +1528,577 @@ def standard_firearm_expected_product_on_application_summary():
             "    </details>\n"
             "\n",
             "Enter serial numbers or other identification markings",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_platform_expected_product_summary():
+    return (
+        (
+            "is-firearm-product",
+            "No",
+            "Is it a firearm product?",
+        ),
+        (
+            "product-category",
+            "It's a complete product",
+            "Select the product category",
+        ),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "uses-information-security",
+            "No",
+            "Does the product include security features to protect information?",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            "link",
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_platform_expected_product_on_application_summary():
+    return (
+        (
+            "is-onward-exported",
+            "Yes",
+            "Will the product be onward exported to any additional countries?",
+        ),
+        (
+            "is-altered",
+            "Yes",
+            "Will the item be altered or processed before it is exported again?",
+        ),
+        (
+            "is-altered-comments",
+            "Will be altered",
+            "Explain how the product will be processed or altered",
+        ),
+        (
+            "is-incorporated",
+            "Yes",
+            "Will the product be incorporated into another item before it is onward exported?",
+        ),
+        (
+            "is-incorporated-comments",
+            "Will be incorporated",
+            "Describe what you are incorporating the product into",
+        ),
+        (
+            "number-of-items",
+            "444",
+            "Number of items",
+        ),
+        (
+            "total-value",
+            "£444.00",
+            "Total value",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_component_expected_product_summary():
+    return (
+        (
+            "is-firearm-product",
+            "No",
+            "Is it a firearm product?",
+        ),
+        ("product-category", "It forms part of a product", "Select the product category"),
+        ("is-material-substance", "No, it's a component, accessory or module", "Is it a material or substance?"),
+        ("name", "p1", "Give the product a descriptive name"),
+        ("is-component", "Yes", "Is the product a component?"),
+        ("component-type", "Modified for hardware", "What type of component is it?"),
+        ("modified-details", "modified details", "Provide details of the modifications and the specific hardware"),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "uses-information-security",
+            "No",
+            "Does the product include security features to protect information?",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            "link",
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_component_expected_product_on_application_summary():
+    return (
+        (
+            "is-onward-exported",
+            "Yes",
+            "Will the product be onward exported to any additional countries?",
+        ),
+        (
+            "is-altered",
+            "Yes",
+            "Will the item be altered or processed before it is exported again?",
+        ),
+        (
+            "is-altered-comments",
+            "Will be altered",
+            "Explain how the product will be processed or altered",
+        ),
+        (
+            "is-incorporated",
+            "Yes",
+            "Will the product be incorporated into another item before it is onward exported?",
+        ),
+        (
+            "is-incorporated-comments",
+            "Will be incorporated",
+            "Describe what you are incorporating the product into",
+        ),
+        (
+            "number-of-items",
+            "444",
+            "Number of items",
+        ),
+        (
+            "total-value",
+            "£444.00",
+            "Total value",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_material_expected_product_summary():
+    return (
+        ("is-firearm-product", "No", "Is it a firearm product?"),
+        ("product-category", "It forms part of a product", "Select the product category"),
+        ("is-material-substance", "Yes", "Is it a material or substance?"),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            "link",
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_material_expected_product_on_application_summary():
+    return (
+        (
+            "is-onward-exported",
+            "Yes",
+            "Will the product be onward exported to any additional countries?",
+        ),
+        (
+            "is-altered",
+            "Yes",
+            "Will the item be altered or processed before it is exported again?",
+        ),
+        (
+            "is-altered-comments",
+            "Will be altered",
+            "Explain how the product will be processed or altered",
+        ),
+        (
+            "is-incorporated",
+            "Yes",
+            "Will the product be incorporated into another item before it is onward exported?",
+        ),
+        (
+            "is-incorporated-comments",
+            "Will be incorporated",
+            "Describe what you are incorporating the product into",
+        ),
+        (
+            "unit",
+            "Gram(s)",
+            "Unit of measurement",
+        ),
+        (
+            "quantity",
+            444.0,
+            "Quantity",
+        ),
+        (
+            "total-value",
+            "£444.00",
+            "Total value",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_software_expected_product_summary():
+    return (
+        (
+            "is-firearm-product",
+            "No",
+            "Is it a firearm product?",
+        ),
+        (
+            "non-firearm-category",
+            "It helps to operate a product",
+            "Select the product category",
+        ),
+        (
+            "name",
+            "p1",
+            "Give the product a descriptive name",
+        ),
+        (
+            "is-good-controlled",
+            "Yes",
+            "Do you know the product's control list entry?",
+        ),
+        (
+            "control-list-entries",
+            "ML1a, ML22b",
+            "Enter the control list entry",
+        ),
+        (
+            "part-number",
+            "44",
+            "Enter the part number",
+        ),
+        (
+            "is-pv-graded",
+            "Yes",
+            "Does the product have a government security grading or classification?",
+        ),
+        (
+            "pv-grading-prefix",
+            "NATO",
+            "Enter a prefix (optional)",
+        ),
+        (
+            "pv-grading-grading",
+            "Official",
+            "What is the security grading or classification?",
+        ),
+        (
+            "pv-grading-suffix",
+            "SUFFIX",
+            "Enter a suffix (optional)",
+        ),
+        (
+            "pv-grading-issuing-authority",
+            "Government entity",
+            "Name and address of the issuing authority",
+        ),
+        (
+            "pv-grading-details-reference",
+            "GR123",
+            "Reference",
+        ),
+        (
+            "pv-grading-details-date-of-issue",
+            "20 February 2020",
+            "Date of issue",
+        ),
+        (
+            "security-features",
+            "Yes",
+            "Does the product include security features to protect information?",
+        ),
+        (
+            "security-feature-details",
+            "security features",
+            "Provide details of the information security features",
+        ),
+        (
+            "declared-at-customs",
+            "Yes",
+            "Will the product be declared at customs?",
+        ),
+        (
+            "has-product-document",
+            "Yes",
+            "Do you have a document that shows what your product is and what it’s designed to do?",
+        ),
+        (
+            "is-document-sensitive",
+            "No",
+            "Is the document rated above Official-sensitive?",
+        ),
+        (
+            "product-document",
+            "link",
+            "Upload a document that shows what your product is designed to do",
+        ),
+        (
+            "product-document-description",
+            "product data sheet",
+            "Description (optional)",
+        ),
+        (
+            "military-use",
+            "No",
+            "Is the product specially designed or modified for military use?",
+        ),
+    )
+
+
+@pytest.fixture
+def standard_software_expected_product_on_application_summary():
+    return (
+        (
+            "is-onward-exported",
+            "Yes",
+            "Will the product be onward exported to any additional countries?",
+        ),
+        (
+            "is-altered",
+            "Yes",
+            "Will the item be altered or processed before it is exported again?",
+        ),
+        (
+            "is-altered-comments",
+            "Will be altered",
+            "Explain how the product will be processed or altered",
+        ),
+        (
+            "is-incorporated",
+            "Yes",
+            "Will the product be incorporated into another item before it is onward exported?",
+        ),
+        (
+            "is-incorporated-comments",
+            "Will be incorporated",
+            "Describe what you are incorporating the product into",
+        ),
+        (
+            "number-of-items",
+            "444",
+            "Number of items",
+        ),
+        (
+            "total-value",
+            "£444.00",
+            "Total value",
         ),
     )

@@ -1,8 +1,10 @@
 from decimal import Decimal
 
 from core.constants import (
+    COMPONENT_DETAILS_MAP,
     FirearmsActDocumentType,
     FirearmsActSections,
+    OrganisationDocumentType,
     SerialChoices,
 )
 from core.goods.helpers import is_product_category_made_before_1938
@@ -138,18 +140,19 @@ def firearms_act_section5_reducer(firearm_details, organisation_documents):
                 ),
             )
         else:
+            section_5_certificate_document = organisation_documents[FirearmsActDocumentType.SECTION_5]
             summary += (
                 (
                     "section-5-certificate-document",
-                    organisation_documents[FirearmsActDocumentType.SECTION_5],
+                    section_5_certificate_document,
                 ),
                 (
                     "section-5-certificate-reference-number",
-                    firearm_details["section_certificate_number"],
+                    section_5_certificate_document["reference_code"],
                 ),
                 (
                     "section-5-certificate-date-of-expiry",
-                    firearm_details["section_certificate_date_of_expiry"],
+                    section_5_certificate_document["expiry_date"],
                 ),
             )
 
@@ -175,6 +178,10 @@ def firearms_act_reducer(firearm_details, is_user_rfd, organisation_documents):
         summary += firearms_act_section5_reducer(firearm_details, organisation_documents)
     elif firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"]:
         summary = (
+            (
+                "firearms-act-1968-section",
+                firearm_details["is_covered_by_firearm_act_section_one_two_or_five"],
+            ),
             (
                 "is-covered-by-firearm-act-section-one-two-or-five-explanation",
                 firearm_details["is_covered_by_firearm_act_section_one_two_or_five_explanation"],
@@ -220,6 +227,8 @@ def has_product_document_reducer(good):
                 good["no_document_comments"],
             ),
         )
+        if good.get("product_description"):
+            summary += (("product-description", good["product_description"]),)
 
     return summary
 
@@ -261,10 +270,10 @@ def firearm_reducer(good, is_user_rfd, organisation_documents):
 
 
 def rfd_reducer(is_user_rfd, organisation_documents):
-    if not is_user_rfd or not organisation_documents.get("rfd-certificate"):
+    if not is_user_rfd or not organisation_documents.get(OrganisationDocumentType.RFD_CERTIFICATE):
         return ()
 
-    rfd_certificate_document = organisation_documents["rfd-certificate"]
+    rfd_certificate_document = organisation_documents[OrganisationDocumentType.RFD_CERTIFICATE]
 
     summary = (
         (
@@ -357,15 +366,19 @@ def year_of_manufacture_reducer(firearm_details):
     return summary
 
 
-def is_onward_exported_reducer(firearm_details):
-    summary = (("is-onward-exported", firearm_details["is_onward_exported"]),)
-    if firearm_details["is_onward_exported"]:
-        summary += (("is-altered", firearm_details["is_onward_altered_processed"]),)
-        if firearm_details["is_onward_altered_processed"]:
-            summary += (("is-altered-comments", firearm_details["is_onward_altered_processed_comments"]),)
-        summary += (("is-incorporated", firearm_details["is_onward_incorporated"]),)
-        if firearm_details["is_onward_incorporated"]:
-            summary += (("is-incorporated-comments", firearm_details["is_onward_incorporated_comments"]),)
+def is_onward_exported_reducer(onward_exported_object):
+    # The object could be firearm_details or good_on_application as we've
+    # copied this value back to the original object as it pertains to more than
+    # just firearms now but there may be current firearm goods that haven't
+    # had this data ported back yet
+    summary = (("is-onward-exported", onward_exported_object["is_onward_exported"]),)
+    if onward_exported_object["is_onward_exported"]:
+        summary += (("is-altered", onward_exported_object["is_onward_altered_processed"]),)
+        if onward_exported_object["is_onward_altered_processed"]:
+            summary += (("is-altered-comments", onward_exported_object["is_onward_altered_processed_comments"]),)
+        summary += (("is-incorporated", onward_exported_object["is_onward_incorporated"]),)
+        if onward_exported_object["is_onward_incorporated"]:
+            summary += (("is-incorporated-comments", onward_exported_object["is_onward_incorporated_comments"]),)
     return summary
 
 
@@ -392,4 +405,205 @@ def serial_numbers_reducer(firearm_details):
     ):
         summary += (("no-identification-markings-details", firearm_details["no_identification_markings_details"]),)
 
+    return summary
+
+
+def uses_information_security_reducer(good):
+    if not good["uses_information_security"]:
+        return (("uses-information-security", False),)
+
+    return (
+        ("uses-information-security", True),
+        ("uses-information-security-details", good["information_security_details"]),
+    )
+
+
+def component_details_reducer(good):
+    is_component_key = good.get("is_component", {}).get("key")
+    if not is_component_key or is_component_key == "no":
+        return (("is-component", False),)
+    else:
+        return (
+            ("is-component", True),
+            (COMPONENT_DETAILS_MAP[is_component_key].replace("_", "-"), good["component_details"]),
+            ("component-type", is_component_key),
+        )
+
+
+def part_number_reducer(good):
+    no_part_number_comments = good.get("no_part_number_comments")
+    if no_part_number_comments:
+        return (
+            ("has-part-number", False),
+            ("no-part-number-comments", no_part_number_comments),
+        )
+    return (("part-number", good["part_number"]),)
+
+
+def platform_reducer(good):
+    summary = (
+        (
+            "is-firearm-product",
+            False,
+        ),
+        (
+            "product-category",
+            "platform",
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += uses_information_security_reducer(good)
+    summary += has_product_document_reducer(good)
+    summary += part_number_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+
+    return summary
+
+
+def component_reducer(good):
+    summary = (
+        (
+            "is-firearm-product",
+            False,
+        ),
+        (
+            "product-category",
+            "component",
+        ),
+        (
+            "is-material-substance",
+            False,
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += component_details_reducer(good)
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += uses_information_security_reducer(good)
+    summary += has_product_document_reducer(good)
+    summary += part_number_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+
+    return summary
+
+
+def material_reducer(good):
+    summary = (
+        (
+            "is-firearm-product",
+            False,
+        ),
+        (
+            "product-category",
+            "material",
+        ),
+        (
+            "is-material-substance",
+            True,
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += has_product_document_reducer(good)
+    summary += part_number_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+
+    return summary
+
+
+def platform_on_application_reducer(good_on_application):
+    summary = (
+        ("number-of-items", good_on_application["quantity"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+    summary += is_onward_exported_reducer(good_on_application)
+    return summary
+
+
+def material_on_application_reducer(good_on_application):
+    summary = (
+        ("unit", good_on_application["unit"]["value"]),
+        ("quantity", good_on_application["quantity"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+    summary += is_onward_exported_reducer(good_on_application)
+    return summary
+
+
+def component_on_application_reducer(good_on_application):
+    summary = (
+        ("number-of-items", good_on_application["quantity"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+    summary += is_onward_exported_reducer(good_on_application)
+    return summary
+
+
+def software_reducer(good):
+    summary = (
+        (
+            "is-firearm-product",
+            False,
+        ),
+        ("non-firearm-category", "It helps to operate a product"),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += has_product_document_reducer(good)
+    summary += part_number_reducer(good)
+    summary += security_features_reducer(good)
+    summary += declared_at_customs_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+    return summary
+
+
+def security_features_reducer(good):
+    if good.get("has_security_features"):
+        return (
+            ("security-features", True),
+            ("security-feature-details", good["security_feature_details"]),
+        )
+
+    return (("security-features", False),)
+
+
+def declared_at_customs_reducer(good):
+    if good.get("has_declared_at_customs"):
+        return (("declared-at-customs", True),)
+
+    return (("declared-at-customs", False),)
+
+
+def designed_for_military_use_reducer(good):
+    is_military_use_key = good["is_military_use"]["key"]
+
+    summary = (("military-use", is_military_use_key),)
+    if is_military_use_key == "yes_modified":
+        summary += (("military-use-details", good["modified_military_use_details"]),)
+
+    return summary
+
+
+def software_on_application_reducer(good_on_application):
+    summary = (
+        ("number-of-items", good_on_application["quantity"]),
+        ("total-value", Decimal(good_on_application["value"])),
+    )
+    summary += is_onward_exported_reducer(good_on_application)
     return summary

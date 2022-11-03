@@ -5,7 +5,8 @@ from urllib.parse import urlparse, urlunparse
 from core.ip_filter import get_client_ip
 
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponseServerError, QueryDict
+from django.core.exceptions import SuspiciousOperation
+from django.http import HttpResponseRedirect, QueryDict
 from django.shortcuts import redirect, resolve_url
 from django.utils.functional import cached_property
 from django.urls import reverse
@@ -15,13 +16,13 @@ from django.utils.http import urlencode
 
 from core.auth.utils import get_profile
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AuthView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         protect_level = {"vtr": "['Cl']"} if settings.AUTHBROKER_LOW_SECURITY else {}
-        log.info(
+        logger.info(
             "Authentication:Service: %s Protect:Level : %s : Get login redirect url from authorisation site: client_ip: %s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             protect_level,
@@ -38,7 +39,7 @@ class AuthView(RedirectView):
 
 class AuthLogoutView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        log.info(
+        logger.info(
             "Authentication:Service: %s: logout user %s: client_ip: %s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             settings.LOGOUT_URL,
@@ -81,7 +82,7 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
     @cached_property
     def user_profile(self):
-        log.info(
+        logger.info(
             "Authentication:Service: %s: get profile %s :client_ip %s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             settings.AUTHBROKER_PROFILE_URL,
@@ -90,7 +91,7 @@ class AbstractAuthCallbackView(abc.ABC, View):
         return get_profile(self.request.authbroker_client)
 
     def get(self, request, *args, **kwargs):
-        log.info(
+        logger.info(
             "Authentication:Service: %s: callback for login called :client_ip %s",
             settings.AUTHBROKER_AUTHORIZATION_URL,
             get_client_ip(self.request),
@@ -98,10 +99,18 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
         auth_code = request.GET.get("code", None)
         if not auth_code:
+            logger.error("No auth code from authbroker")
             return redirect(reverse("auth:login"))
+
         state = self.request.session.get(f"{settings.TOKEN_SESSION_KEY}_oauth_state", None)
         if not state:
-            return HttpResponseServerError()
+            logger.error("No state found in session")
+            raise SuspiciousOperation("No state found in session")
+
+        auth_service_state = self.request.GET.get("state")
+        if state != auth_service_state:
+            logger.error("Session state and passed back state differ")
+            raise SuspiciousOperation("Session state and passed back state differ")
 
         token = self.fetch_token(request, auth_code)
         self.request.session[settings.TOKEN_SESSION_KEY] = dict(token)

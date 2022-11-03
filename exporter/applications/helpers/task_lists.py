@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 
 from exporter.applications.constants import OielLicenceTypes
 from exporter.applications.helpers.check_your_answers import (
@@ -12,6 +13,7 @@ from exporter.applications.helpers.task_list_sections import (
     get_route_of_goods,
     get_temporary_export_details,
     get_product_location_and_journey_details,
+    get_security_approval_details,
 )
 from exporter.applications.services import (
     get_application_goods,
@@ -90,6 +92,9 @@ def get_application_task_list(request, application, errors=None):
     context["locations"] = get_product_location_and_journey_details(application)
     context["notes"] = get_case_notes(request, application["id"])["case_notes"]
 
+    context["security_approvals"] = get_security_approval_details(application)
+    context["FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED"] = settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED
+
     if application_type == STANDARD:
         context["reference_number_description"] = get_reference_number_description(application)
         context["route_of_goods"] = get_route_of_goods(application)
@@ -139,6 +144,8 @@ def get_application_task_list(request, application, errors=None):
 
     if not application_type == OPEN:
         context["goods"] = get_application_goods(request, application["id"])
-        context["ultimate_end_users_required"] = True in [good["is_good_incorporated"] for good in context["goods"]]
+        context["ultimate_end_users_required"] = any(
+            good.get("is_onward_exported") or good.get("is_good_incorporated") for good in context["goods"]
+        )
 
     return render(request, "applications/task-list.html", context)

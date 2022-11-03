@@ -1,6 +1,8 @@
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
+import initARS from "./tau/ars";
 
 const initAssessmentForm = () => {
   const noControlListCheckboxEl = document.querySelector(
@@ -16,7 +18,16 @@ const initAssessmentForm = () => {
     "#control_list_entries"
   );
 
-  const suggestionsEl = document.querySelector(".tau__cle-suggestions");
+  const suggestionsEl = document.createElement("div");
+  suggestionsEl.classList.add("tau__cle-suggestions");
+  const controlListEntriesLabel = document.querySelector(
+    "[for=control_list_entries]"
+  );
+  controlListEntriesLabel.parentNode.insertBefore(
+    suggestionsEl,
+    controlListEntriesLabel.nextSibling
+  );
+
   const cleSuggestions = new CLESuggestions(
     suggestionsEl,
     (selectedSuggestions) => {
@@ -25,6 +36,13 @@ const initAssessmentForm = () => {
     }
   );
 
+  const mtcrEntriesEl = document.querySelector("#mtcr_entries");
+  if (mtcrEntriesEl) {
+    progressivelyEnhanceMultipleSelectField(mtcrEntriesEl, (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    });
+  }
+
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent
   );
@@ -32,3 +50,4 @@ const initAssessmentForm = () => {
 };
 
 initAssessmentForm();
+initARS();

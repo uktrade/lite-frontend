@@ -563,6 +563,7 @@ class DateInput:
         optional: bool = None,
         classes: Optional[List] = None,
         extras: Optional[List] = None,
+        suffix: str = "",
     ):
         from lite_forms.helpers import convert_to_markdown
 
@@ -576,6 +577,7 @@ class DateInput:
         self.input_type = "date"
         self.short_title = short_title
         self.inline_title = inline_title
+        self.suffix = suffix
 
 
 class Summary:

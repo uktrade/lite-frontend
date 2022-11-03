@@ -61,6 +61,16 @@ def test_edit_approve_advice_post(authorized_client, requests_mock, data_standar
             "type": "approve",
         },
         {
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+            "denial_reasons": [],
+            "footnote": "",
+            "footnote_required": False,
+            "note": "no specific instructions",
+            "proviso": "",
+            "text": "meets the requirements updated",
+            "type": "approve",
+        },
+        {
             "denial_reasons": [],
             "footnote": "",
             "footnote_required": False,
@@ -139,6 +149,13 @@ def test_edit_refuse_advice_post(
             "type": "refuse",
         },
         {
+            "type": "refuse",
+            "text": "doesn't meet the requirement",
+            "footnote_required": False,
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+            "denial_reasons": ["3", "4", "5", "5a", "5b"],
+        },
+        {
             "denial_reasons": ["3", "4", "5", "5a", "5b"],
             "footnote_required": False,
             "text": "doesn't meet the requirement",
@@ -163,3 +180,26 @@ def test_edit_refuse_advice_post(
             "type": "no_licence_required",
         },
     ]
+
+
+def test_edit_refuse_advice_get(
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    standard_case_with_advice,
+    refusal_advice,
+    url,
+):
+
+    case_data = deepcopy(data_standard_case)
+    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
+    case_data["case"]["advice"] = refusal_advice
+
+    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=case_data)
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov_users/{data_standard_case['case']['id']}"),
+        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+    )
+    response = authorized_client.get(url)
+    assert response.context["security_approvals_classified_display"] == "F680"
+    assert response.context["edit"] is True
