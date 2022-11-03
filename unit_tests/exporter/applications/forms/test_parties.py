@@ -4,6 +4,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from exporter.applications.forms import parties
+from exporter.applications.forms.constants import Validation
 
 
 @pytest.mark.parametrize(
@@ -45,6 +46,8 @@ def test_party_subtype_select_form(data, valid, errors):
     (
         ({"name": "test"}, True, None),
         ({"name": ""}, False, {"name": ["Enter a name"]}),
+        ({"name": "department of internation trade in collaboration with the department of national trade"},
+         False, {"name": [f'End user name should be {Validation.END_USER_NAME_MAX_LENGTH} characters or less']}),
     ),
 )
 def test_party_name_form(data, valid, errors):
