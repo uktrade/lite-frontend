@@ -220,7 +220,7 @@ class PartyNameForm(forms.Form):
                 Validation.PARTY_NAME_MAX_LENGTH,
                 f"End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less",
             )
-        ]
+        ],
     )
 
     def __init__(self, *args, **kwargs):
