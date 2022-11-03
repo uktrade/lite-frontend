@@ -2,11 +2,12 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
+from django.core.validators import MaxLengthValidator
 from django.urls import reverse_lazy
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
-from exporter.applications.forms.validators import validate_name
+from exporter.applications.forms.constants import Validation
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
@@ -214,7 +215,7 @@ class PartyNameForm(forms.Form):
     name = forms.CharField(
         label="",
         error_messages={"required": "Enter a name"},
-        validators=[validate_name]
+        validators=[MaxLengthValidator(Validation.PARTY_NAME_MAX_LENGTH, f'End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less')]
     )
 
     def __init__(self, *args, **kwargs):
