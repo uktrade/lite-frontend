@@ -215,7 +215,12 @@ class PartyNameForm(forms.Form):
     name = forms.CharField(
         label="",
         error_messages={"required": "Enter a name"},
-        validators=[MaxLengthValidator(Validation.PARTY_NAME_MAX_LENGTH, f'End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less')]
+        validators=[
+            MaxLengthValidator(
+                Validation.PARTY_NAME_MAX_LENGTH,
+                f'End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less'
+            )
+        ]
     )
 
     def __init__(self, *args, **kwargs):

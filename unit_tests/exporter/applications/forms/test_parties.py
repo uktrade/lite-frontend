@@ -46,8 +46,10 @@ def test_party_subtype_select_form(data, valid, errors):
     (
         ({"name": "test"}, True, None),
         ({"name": ""}, False, {"name": ["Enter a name"]}),
-        ({"name": "department of internation trade in collaboration with the department of national trade"},
-         False, {"name": [f'End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less']}),
+        (
+                {"name": "department of internation trade in collaboration with the department of national trade"},
+                False,
+                {"name": [f'End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less']}),
     ),
 )
 def test_party_name_form(data, valid, errors):
