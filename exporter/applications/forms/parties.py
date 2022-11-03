@@ -218,7 +218,7 @@ class PartyNameForm(forms.Form):
         validators=[
             MaxLengthValidator(
                 Validation.PARTY_NAME_MAX_LENGTH,
-                f"End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less"
+                f"End user name should be {Validation.PARTY_NAME_MAX_LENGTH} characters or less",
             )
         ]
     )
