@@ -211,7 +211,7 @@ def test_add_good_technology_end_to_end(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
-        "item_category": "group3_technology",
+        "item_category": "group3_software",
         "name": "technology 1",
         "is_good_controlled": True,
         "control_list_entries": ["ML1", "ML1a"],
@@ -331,7 +331,7 @@ def test_add_good_technology_no_pv(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
-        "item_category": "group3_technology",
+        "item_category": "group3_software",
         "name": "product_1",
         "is_good_controlled": False,
         "control_list_entries": [],

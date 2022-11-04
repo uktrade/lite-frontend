@@ -649,10 +649,10 @@ def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_
         ),
         (
             {"software_or_technology_details": ""},
-            "group3_technology",
+            "group3_software",
             False,
             "software_or_technology_details",
-            "Enter the purpose of the technology",
+            "Enter the purpose of the software",
         ),
     ),
 )

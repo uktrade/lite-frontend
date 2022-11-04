@@ -337,7 +337,7 @@ def edit_material(request, pk, json):
 
 
 def post_technology(request, json):
-    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_SOFTWARE
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 

@@ -377,7 +377,7 @@ class ProductCategoryForm(forms.Form):
             (ProductCategories.PRODUCT_CATEGORY_COMPONENT, CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
             (ProductCategories.PRODUCT_CATEGORY_MATERIAL, CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
             (ProductCategories.PRODUCT_CATEGORY_FIREARM, CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
-            (ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY, CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
+            (ProductCategories.PRODUCT_CATEGORY_SOFTWARE, CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
             (ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY, CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
         ),
         widget=forms.RadioSelect,
