@@ -342,6 +342,6 @@ def post_technology(request, json):
     return data.json(), data.status_code
 
 
-def edit_technolgy(request, pk, json):
+def edit_technology(request, pk, json):
     response = client.put(request, f"/goods/{pk}", json)
     return response.json(), response.status_code
