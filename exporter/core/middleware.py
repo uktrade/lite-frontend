@@ -2,12 +2,11 @@ import logging
 
 from django.conf import settings
 from django.shortcuts import redirect
-from lite_forms.generators import error_page
+from django.urls import reverse
 
-from core.exceptions import ServiceError
 from .constants import OrganisationStatus
-
-from django.urls import reverse_lazy, reverse
+from core.exceptions import ServiceError
+from lite_forms.generators import error_page
 from exporter.organisation.members.services import get_user
 
 logger = logging.getLogger(__name__)
