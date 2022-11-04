@@ -15,9 +15,11 @@ from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_onward_exported,
 )
-from exporter.applications.views.goods.common.steps import ProductNameStep
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+)
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
     BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
@@ -127,8 +129,15 @@ class ComponentAccessoryEditName(
     step = ProductNameStep()
 
 
-class ComponentAccessoryEditControlListEntry(BaseEditControlListEntry, BaseComponentAccessoryEditView):
-    pass
+class ComponentAccessoryEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    ComponentAccessorySummaryMixin,
+    StepEditView,
+):
+    actions = (EditComponentAccessory(),)
+    step = ProductControlListEntryStep()
 
 
 class ComponentAccessoryEditPartNumberView(

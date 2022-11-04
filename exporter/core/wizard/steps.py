@@ -5,3 +5,6 @@ class Step:
 
     def get_initial(self, view):
         raise NotImplementedError(f"Implement `get_initial` on {self.__class__.__name__}")
+
+    def get_form_kwargs(self, view):
+        return {}
