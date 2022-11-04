@@ -24,7 +24,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
     BaseEditProductDocumentAvailability,
     BaseEditProductDescription,
     BaseEditProductDocumentSensitivity,
@@ -50,7 +49,10 @@ from exporter.applications.views.goods.common.payloads import (
     get_pv_grading_details_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.applications.views.goods.common.steps import ProductNameStep
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+)
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
     convert_api_date_string_to_date,
@@ -204,8 +206,15 @@ class FirearmEditCalibre(BaseFirearmEditView):
         return {"calibre": self.good["firearm_details"]["calibre"]}
 
 
-class FirearmEditControlListEntry(BaseEditControlListEntry, BaseGoodEditView):
-    pass
+class FirearmEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    FirearmSummaryMixin,
+    StepEditView,
+):
+    actions = (EditFirearm(),)
+    step = ProductControlListEntryStep()
 
 
 class FirearmEditReplica(BaseFirearmEditView):
