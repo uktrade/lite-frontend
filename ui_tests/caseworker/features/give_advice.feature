@@ -56,7 +56,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is assigned to queues "Licensing Unit Pre-circulation Cases to Review"
     # LU
     When I switch to "Licensing Unit" with queue "Licensing Unit Pre-circulation Cases to Review" and I submit the case
-    Then I see the case status is now "OGD Advice"
+    Then I see the case status is now "OGD Consolidation"
     And I see the case is assigned to queues "MOD-DI Indirect cases to review, MOD-CapProt cases to review, FCDO Cases to Review"
     # MOD-DI
     When I switch to "MOD-DI" with queue "MOD-DI Indirect cases to review" and I submit the case
