@@ -16,7 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
     BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
@@ -45,7 +44,10 @@ from exporter.applications.views.goods.common.payloads import (
     get_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.applications.views.goods.common.steps import ProductNameStep
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+)
 from exporter.core.wizard.views import (
     BaseSessionWizardView,
     StepEditView,
@@ -120,8 +122,15 @@ class CompleteItemEditName(
     step = ProductNameStep()
 
 
-class CompleteItemEditControlListEntry(BaseEditControlListEntry, BaseCompleteItemEditView):
-    pass
+class CompleteItemEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    CompleteItemSummaryMixin,
+    StepEditView,
+):
+    actions = (EditCompleteItem(),)
+    step = ProductControlListEntryStep()
 
 
 class CompleteItemEditPartNumberView(
