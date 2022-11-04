@@ -14,30 +14,21 @@ logger = logging.getLogger(__name__)
 
 
 class OrganisationRedirectMiddleWare:
-    ignore_paths = [
-        reverse_lazy("core:register_an_organisation_triage"),
-        reverse_lazy("core:register_an_organisation_confirm"),
-        reverse_lazy("core:register_name"),
-        reverse_lazy("core:home"),
-        reverse_lazy("auth:logout"),
-    ]
-    home_url = reverse_lazy("core:home")
-    register_triage = reverse_lazy("core:register_an_organisation_triage")
-
     def __init__(self, get_response=None):
         self.get_response = get_response
 
     def __call__(self, request):
-        # skip for register-an-organisation log-out and other whitelist urls
-        # Check if the user is allowed to make API calls
+        # whitelist logout
         if request.path == reverse("auth:logout"):
             return self.get_response(request)
         if not request.path == reverse("core:register_an_organisation_confirm"):
+            # Check if the user is allowed to make API calls and logged in
             if request.authbroker_client.token and request.session.get("user_token"):
                 if self.is_organisations_in_status(request, OrganisationStatus.REVIEW):
                     # An application is still in review
                     return redirect(reverse("core:register_an_organisation_confirm") + "?animate=True")
-        if request.path == self.home_url:
+        # If the user doesn't have a LITE account don't allow them to homepage since they need to register
+        if request.path == reverse("core:home"):
             if request.authbroker_client.token and not request.session.get("user_token"):
                 if not (request.session.get("first_name") or request.session.get("second_name")):
                     return redirect(reverse("core:register_name"))
