@@ -1,4 +1,4 @@
-from exporter.applications.views.goods.common.edit import get_name_initial_data
+from exporter.applications.views.goods.common.initial import get_name_initial_data
 from exporter.core.wizard.steps import Step
 from exporter.goods.forms.common import ProductNameForm
 

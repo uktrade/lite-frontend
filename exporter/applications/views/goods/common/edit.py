@@ -18,7 +18,6 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductNameForm,
     ProductPartNumberForm,
 )
 from exporter.goods.services import (
@@ -33,10 +32,7 @@ from .conditionals import (
 )
 from . import constants
 from .helpers import get_product_document
-from .initial import (
-    get_control_list_entry_initial_data,
-    get_name_initial_data,
-)
+from .initial import get_control_list_entry_initial_data
 from .mixins import (
     ApplicationMixin,
     GoodMixin,
@@ -82,13 +78,6 @@ class BaseProductEditView(
         ctx["title"] = self.form_class.Layout.TITLE
 
         return ctx
-
-
-class BaseEditName:
-    form_class = ProductNameForm
-
-    def get_initial(self):
-        return get_name_initial_data(self.good)
 
 
 class BaseEditControlListEntry:
