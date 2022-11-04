@@ -61,7 +61,6 @@
 							</span>
 						</a>
 					</div>
-					{% if not user_in_limbo %}
 						<div class="govuk-header__content">
 							{% block header_title %}
 								<a href="/" class="govuk-header__link govuk-header__link--service-name">
@@ -72,7 +71,6 @@
 								<a href="{% url 'auth:logout' %}" class="govuk-header__link app-header__link--sign-out" id="link-sign-out">Sign out</a>
 							{% endif %}
 						</div>
-					{% endif %}
 				</div>
 			</header>
 		{% endblock %}

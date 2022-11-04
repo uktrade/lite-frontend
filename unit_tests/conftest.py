@@ -2,8 +2,15 @@ import datetime
 import pytest
 import os
 
+from django.conf import settings
+
 from core import client
 from core.constants import OrganisationDocumentType
+
+
+@pytest.fixture(autouse=True)
+def setup():
+    settings.HAWK_AUTHENTICATION_ENABLED = False
 
 
 @pytest.fixture(autouse=True)
