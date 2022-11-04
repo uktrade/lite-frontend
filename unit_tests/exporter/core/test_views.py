@@ -47,7 +47,7 @@ def test_register_name_redirects_name_known(authorized_client):
     assert response.url == settings.LOGIN_URL
 
 
-def test_home_no_logged_in_user_start_page_template_used(client):
+def test_home_no_logged_in_go_uk_user_start_page_template_used(client):
     url = reverse("core:home")
     response = client.get(url)
     assert response.status_code == 200

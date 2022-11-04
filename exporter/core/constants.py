@@ -235,3 +235,9 @@ class ProductSecurityFeatures:
 class ProductDeclaredAtCustoms:
     TITLE = "Will the product be declared at customs?"
     NO = "No, the product is sent electronically"
+
+
+class OrganisationStatus:
+    DRAFT = "draft"
+    REVIEW = "in_review"
+    ACTIVE = "active"
