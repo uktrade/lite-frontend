@@ -2,6 +2,7 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
+from django.core.validators import MaxLengthValidator
 from django.urls import reverse_lazy
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
@@ -210,7 +211,16 @@ class PartySubTypeSelectForm(forms.Form):
 
 class PartyNameForm(forms.Form):
     title = "End user name"
-    name = forms.CharField(label="", error_messages={"required": "Enter a name"})
+    name = forms.CharField(
+        label="",
+        error_messages={"required": "Enter a name"},
+        validators=[
+            MaxLengthValidator(
+                80,
+                f"End user name should be 80 characters or less",
+            )
+        ],
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
