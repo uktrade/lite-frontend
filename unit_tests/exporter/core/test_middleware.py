@@ -96,7 +96,6 @@ def test_organisation_middleware_user_no_name(rf):
 
     # Instantiate and call the middleware
     instance = OrganisationRedirectMiddleWare(get_response)
-    # We should get a 200 use to allowed to log out
     response = instance(request)
     assert response.status_code == 302
     assert response.url == reverse("core:register_name")
@@ -113,7 +112,6 @@ def test_organisation_middleware_user_directs_to_registration(rf):
 
     # Instantiate and call the middleware
     instance = OrganisationRedirectMiddleWare(get_response)
-    # We should get a 200 use to allowed to log out
     response = instance(request)
     assert response.status_code == 302
     assert response.url == reverse("core:register_an_organisation_triage")
@@ -131,7 +129,22 @@ def test_organisation_middleware_user_org_in_review(mock_get_user, rf):
     mock_get_user.return_value = {"organisations": [{"status": {"key": "in_review"}}]}
     # Instantiate and call the middleware
     instance = OrganisationRedirectMiddleWare(get_response)
-    # We should get a 200 use to allowed to log out
     response = instance(request)
     assert response.status_code == 302
     assert response.url == reverse("core:register_an_organisation_confirm") + "?animate=True"
+
+
+@mock.patch("exporter.core.middleware.get_user")
+def test_organisation_middleware_user_no_org(mock_get_user, rf):
+    # Set up mock request and response
+    request = rf.get(reverse("core:register_an_organisation_triage"))
+    request.authbroker_client = mock.Mock()
+    request.authbroker_client.token = {"access_token": "test"}
+    request.authbroker_client.get = mock.Mock()
+    request.session = {"user_token": "xyz"}
+    get_response = mock.Mock(return_value=Response())
+    mock_get_user.return_value = {"organisations": []}
+    # Instantiate and call the middleware
+    instance = OrganisationRedirectMiddleWare(get_response)
+    response = instance(request)
+    assert response.status_code == 200
