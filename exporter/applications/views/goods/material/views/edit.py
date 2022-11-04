@@ -16,7 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
     BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
@@ -45,7 +44,10 @@ from exporter.applications.views.goods.common.payloads import (
     get_unit_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.applications.views.goods.common.steps import ProductNameStep
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+)
 from exporter.core.wizard.views import (
     BaseSessionWizardView,
     StepEditView,
@@ -120,8 +122,15 @@ class MaterialEditName(
     step = ProductNameStep()
 
 
-class MaterialEditControlListEntry(BaseEditControlListEntry, BaseMaterialEditView):
-    pass
+class MaterialEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    MaterialSummaryMixin,
+    StepEditView,
+):
+    actions = (EditMaterial(),)
+    step = ProductControlListEntryStep()
 
 
 class MaterialEditPartNumberView(
