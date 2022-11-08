@@ -304,7 +304,7 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
     summary += firearms_act_section1_reducer(firearm_details, good_on_application_documents)
     summary += firearms_act_section2_reducer(firearm_details, good_on_application_documents)
     summary += year_of_manufacture_reducer(firearm_details)
-    summary += is_onward_exported_reducer(firearm_details)
+    summary += is_onward_exported_reducer(good_on_application)
     summary += is_deactivated_reducer(firearm_details)
     summary += serial_numbers_reducer(firearm_details)
 
@@ -367,10 +367,6 @@ def year_of_manufacture_reducer(firearm_details):
 
 
 def is_onward_exported_reducer(onward_exported_object):
-    # The object could be firearm_details or good_on_application as we've
-    # copied this value back to the original object as it pertains to more than
-    # just firearms now but there may be current firearm goods that haven't
-    # had this data ported back yet
     summary = (("is-onward-exported", onward_exported_object["is_onward_exported"]),)
     if onward_exported_object["is_onward_exported"]:
         summary += (("is-altered", onward_exported_object["is_onward_altered_processed"]),)

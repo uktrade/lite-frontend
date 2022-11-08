@@ -271,16 +271,12 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
             "good_on_application_pk": good_on_application["good"]["id"],
         },
     )
-
     assert mock_good_on_application_post.last_request.json() == {
+        "good_id": expected_good_data["id"],
+        "is_good_incorporated": False,
         "firearm_details": {
             "is_made_before_1938": True,
             "year_of_manufacture": 1937,
-            "is_onward_exported": True,
-            "is_onward_altered_processed": True,
-            "is_onward_altered_processed_comments": "processed comments",
-            "is_onward_incorporated": True,
-            "is_onward_incorporated_comments": "incorporated comments",
             "is_deactivated": True,
             "date_of_deactivation": "2007-11-12",
             "is_deactivated_to_standard": True,
@@ -290,10 +286,13 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
             "no_identification_markings_details": "",
             "serial_numbers": ["s111", "s222"],
         },
-        "good_id": expected_good_data["id"],
-        "is_good_incorporated": True,
-        "quantity": "2",
+        "is_onward_exported": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "processed comments",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "incorporated comments",
         "unit": "NAR",
+        "quantity": "2",
         "value": "16.32",
     }
 
@@ -466,16 +465,10 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
             "good_on_application_pk": good_on_application["good"]["id"],
         },
     )
-
     assert mock_good_on_application_post.last_request.json() == {
         "firearm_details": {
             "is_made_before_1938": True,
             "year_of_manufacture": 1937,
-            "is_onward_exported": True,
-            "is_onward_altered_processed": True,
-            "is_onward_altered_processed_comments": "processed comments",
-            "is_onward_incorporated": True,
-            "is_onward_incorporated_comments": "incorporated comments",
             "is_deactivated": True,
             "date_of_deactivation": "2007-11-12",
             "is_deactivated_to_standard": True,
@@ -488,6 +481,11 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
             "no_identification_markings_details": "",
             "serial_numbers": ["s111", "s222"],
         },
+        "is_onward_exported": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "processed comments",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "incorporated comments",
         "good_id": expected_good_data["id"],
         "is_good_incorporated": True,
         "quantity": "2",
@@ -635,11 +633,6 @@ def test_firearm_category_made_before_1938_end_to_end(
     assert mock_good_on_application_post.last_request.json() == {
         "firearm_details": {
             "year_of_manufacture": 1937,
-            "is_onward_exported": True,
-            "is_onward_altered_processed": True,
-            "is_onward_altered_processed_comments": "processed comments",
-            "is_onward_incorporated": True,
-            "is_onward_incorporated_comments": "incorporated comments",
             "is_deactivated": True,
             "date_of_deactivation": "2007-11-12",
             "is_deactivated_to_standard": True,
@@ -649,6 +642,11 @@ def test_firearm_category_made_before_1938_end_to_end(
             "no_identification_markings_details": "",
             "serial_numbers": ["s111", "s222"],
         },
+        "is_onward_exported": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "processed comments",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "incorporated comments",
         "good_id": expected_good_data["id"],
         "is_good_incorporated": True,
         "quantity": "2",
