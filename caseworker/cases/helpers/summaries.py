@@ -10,12 +10,12 @@ from core.summaries.summaries import (
     material_summary as core_material_summary,
     material_product_on_application_summary as core_material_product_on_application_summary,
     NoSummaryForType,
-    platform_summary as core_platform_summary,
-    platform_product_on_application_summary as core_platform_product_on_application_summary,
     technology_summary as core_technology_summary,
     technology_product_on_application_summary as core_technology_product_on_application_summary,
     component_accessory_summary as core_component_accessory_summary,
     component_accessory_product_on_application_summary as core_component_accessory_summary_on_application_summary,
+    complete_item_summary as core_complete_item_summary,
+    complete_item_product_on_application_summary as core_complete_item_product_on_application_summary,
     SummaryTypes,
 )
 
@@ -88,9 +88,9 @@ def firearm_on_application_summary(good_on_application, queue_pk, application_pk
     )
 
 
-def platform_summary(good, queue_pk, application_pk, *args, **kwargs):
+def complete_item_summary(good, queue_pk, application_pk, *args, **kwargs):
     product_document_formatter = product_document_formatter_factory(queue_pk, application_pk)
-    return core_platform_summary(
+    return core_complete_item_summary(
         good,
         {
             "product-document": product_document_formatter,
@@ -98,8 +98,8 @@ def platform_summary(good, queue_pk, application_pk, *args, **kwargs):
     )
 
 
-def platform_product_on_application_summary(good_on_application, *args, **kwargs):
-    return core_platform_product_on_application_summary(good_on_application)
+def complete_item_product_on_application_summary(good_on_application, *args, **kwargs):
+    return core_complete_item_product_on_application_summary(good_on_application)
 
 
 def material_summary(good, queue_pk, application_pk, *args, **kwargs):
@@ -165,9 +165,9 @@ def get_good_on_application_summary(
             firearm_summary,
             firearm_on_application_summary,
         ),
-        SummaryTypes.PLATFORM: (
-            platform_summary,
-            platform_product_on_application_summary,
+        SummaryTypes.COMPLETE_ITEM: (
+            complete_item_summary,
+            complete_item_product_on_application_summary,
         ),
         SummaryTypes.MATERIAL: (
             material_summary,

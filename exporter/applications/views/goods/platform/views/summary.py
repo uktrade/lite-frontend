@@ -9,12 +9,12 @@ from exporter.applications.views.goods.common.mixins import (
     GoodOnApplicationMixin,
 )
 from exporter.applications.summaries.platform import (
-    add_platform_summary_edit_links,
-    add_platform_on_application_summary_edit_links,
-    PLATFORM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
-    platform_summary,
-    PLATFORM_SUMMARY_EDIT_LINKS,
-    platform_product_on_application_summary,
+    add_complete_item_summary_edit_links,
+    add_complete_item_on_application_summary_edit_links,
+    COMPLETE_ITEM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+    complete_item_summary,
+    COMPLETE_ITEM_SUMMARY_EDIT_LINKS,
+    complete_item_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
 from .mixins import NonFirearmsPlatformFlagMixin
@@ -33,19 +33,19 @@ class BasePlatformOnApplicationSummary(
     def organisation_documents(self):
         return get_organisation_documents(self.application)
 
-    def get_platform_summary(self):
-        product_summary = platform_summary(
+    def get_complete_item_summary(self):
+        product_summary = complete_item_summary(
             self.good,
         )
         return product_summary
 
-    def get_platform_on_application_summary(self):
-        product_on_application_summary = platform_product_on_application_summary(
+    def get_complete_item_on_application_summary(self):
+        product_on_application_summary = complete_item_product_on_application_summary(
             self.good_on_application,
         )
-        product_on_application_summary = add_platform_on_application_summary_edit_links(
+        product_on_application_summary = add_complete_item_on_application_summary_edit_links(
             product_on_application_summary,
-            PLATFORM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            COMPLETE_ITEM_ON_APPLICATION_SUMMARY_EDIT_LINKS,
             self.application,
             self.good_on_application,
             self.summary_type,
@@ -60,13 +60,13 @@ class BasePlatformOnApplicationSummary(
             "application": self.application,
             "good": self.good,
             "good_on_application": self.good_on_application,
-            "product_summary": self.get_platform_summary(),
-            "product_on_application_summary": self.get_platform_on_application_summary(),
+            "product_summary": self.get_complete_item_summary(),
+            "product_on_application_summary": self.get_complete_item_on_application_summary(),
         }
 
 
 class PlatformProductOnApplicationSummary(BasePlatformOnApplicationSummary):
-    summary_type = "platform-on-application-summary"
+    summary_type = "complete_item-on-application-summary"
 
 
 class PlatformProductSummary(
@@ -83,10 +83,10 @@ class PlatformProductSummary(
         context["application_id"] = self.application["id"]
         context["good"] = self.good
 
-        summary = platform_summary(self.good)
-        summary = add_platform_summary_edit_links(
+        summary = complete_item_summary(self.good)
+        summary = add_complete_item_summary_edit_links(
             summary,
-            PLATFORM_SUMMARY_EDIT_LINKS,
+            COMPLETE_ITEM_SUMMARY_EDIT_LINKS,
             self.application,
             self.good,
         )

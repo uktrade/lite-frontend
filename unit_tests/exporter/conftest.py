@@ -361,7 +361,7 @@ def good_id(data_standard_case):
 
 
 @pytest.fixture
-def platform_summary(good_id):
+def complete_item_summary(good_id):
     return (
         (
             "is-firearm-product",

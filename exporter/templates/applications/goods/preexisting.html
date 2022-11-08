@@ -33,7 +33,7 @@
 								{% if good.firearm_details.type.key == "firearms" %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">{{good.name}}</a>
 								{% elif good.item_category.key == "group1_platform"  %}
-                    				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:platform_detail" good.id %}">{{good.name}}</a>
+                    				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:complete_item_detail" good.id %}">{{good.name}}</a>
 								{% elif good.item_category.key == "group3_software"  %}
                     				<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:technology_detail" good.id %}">{{good.name}}</a>
 								{% elif good.item_category.key == "group1_materials"  %}
@@ -61,7 +61,7 @@
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
                                 {% elif good.item_category.key == "group1_platform"  %}
-                                    	<a href="{% url 'applications:attach_platform_to_application' draft_id good.id %}" id="add-platform-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+                                    	<a href="{% url 'applications:attach_complete_item_to_application' draft_id good.id %}" id="add-complete_item-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
 								{% elif good.item_category.key == "group3_software"  %}

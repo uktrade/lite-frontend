@@ -28,8 +28,8 @@ from exporter.goods.forms.common import (
     ProductUsesInformationSecurityForm,
 )
 
-from exporter.goods.services import post_platform
-from exporter.applications.services import post_platform_good_on_application
+from exporter.goods.services import post_complete_item
+from exporter.applications.services import post_complete_item_good_on_application
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
@@ -111,7 +111,7 @@ class AddGoodPlatform(
 
     def get_success_url(self):
         return reverse(
-            "applications:platform_product_summary",
+            "applications:complete_item_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
@@ -120,16 +120,16 @@ class AddGoodPlatform(
         "Error creating complete product",
         "Unexpected error adding complete product",
     )
-    def post_platform(self, form_dict):
+    def post_complete_item(self, form_dict):
         payload = self.get_payload(form_dict)
 
-        return post_platform(
+        return post_complete_item(
             self.request,
             payload,
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        good, _ = self.post_platform(form_dict)
+        good, _ = self.post_complete_item(form_dict)
         self.good = good["good"]
 
         ProductDocumentAction(self).run()
@@ -162,7 +162,7 @@ class AddGoodPlatformToApplication(
 
     def get_success_url(self):
         return reverse(
-            "applications:platform_on_application_summary",
+            "applications:complete_item_on_application_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_on_application_pk": self.good_on_application["id"],
@@ -175,12 +175,12 @@ class AddGoodPlatformToApplication(
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error adding platform to application",
-        "Unexpected error adding platform to application",
+        "Error adding complete item to application",
+        "Unexpected error adding complete item to application",
     )
-    def post_platform_to_application(self, form_dict):
+    def post_complete_item_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
-        return post_platform_good_on_application(
+        return post_complete_item_good_on_application(
             self.request,
             self.application["id"],
             self.good["id"],
@@ -191,7 +191,7 @@ class AddGoodPlatformToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:platform_product_summary",
+            "applications:complete_item_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],
@@ -202,7 +202,7 @@ class AddGoodPlatformToApplication(
         return ctx
 
     def done(self, form_list, form_dict, **kwargs):
-        good_on_application, _ = self.post_platform_to_application(form_dict)
+        good_on_application, _ = self.post_complete_item_to_application(form_dict)
         good_on_application = good_on_application["good"]
         self.good_on_application = good_on_application
 

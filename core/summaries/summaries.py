@@ -11,10 +11,10 @@ from core.summaries.formatters import (
     FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
     template_formatter,
-    PLATFORM_LABELS,
-    PLATFORM_VALUE_FORMATTERS,
-    PLATFORM_ON_APPLICATION_FORMATTERS,
-    PLATFORM_ON_APPLICATION_LABELS,
+    COMPLETE_ITEM_LABELS,
+    COMPLETE_ITEM_VALUE_FORMATTERS,
+    COMPLETE_ITEM_ON_APPLICATION_FORMATTERS,
+    COMPLETE_ITEM_ON_APPLICATION_LABELS,
     TECHNOLOGY_LABELS,
     TECHNOLOGY_VALUE_FORMATTERS,
     TECHNOLOGY_ON_APPLICATION_FORMATTERS,
@@ -31,8 +31,8 @@ from core.summaries.formatters import (
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
-    platform_on_application_reducer,
-    platform_reducer,
+    complete_item_on_application_reducer,
+    complete_item_reducer,
     technology_on_application_reducer,
     technology_reducer,
     material_reducer,
@@ -80,7 +80,7 @@ FIREARM_FIELDS = (
     "product-document-description",
 )
 
-PLATFORM_FIELDS = (
+COMPLETE_ITEM_FIELDS = (
     "is-firearm-product",
     "product-category",
     "name",
@@ -273,7 +273,7 @@ def firearm_on_application_summary(good_on_application, good_on_application_docu
     return summary
 
 
-PLATFORM_ON_APPLICATION_FIELDS = (
+COMPLETE_ITEM_ON_APPLICATION_FIELDS = (
     "is-onward-exported",
     "is-altered",
     "is-altered-comments",
@@ -284,35 +284,35 @@ PLATFORM_ON_APPLICATION_FIELDS = (
 )
 
 
-def platform_summary(good, additional_formatters=None):
+def complete_item_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = platform_reducer(good)
+    summary = complete_item_reducer(good)
     formatters = {
-        **PLATFORM_VALUE_FORMATTERS,
+        **COMPLETE_ITEM_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, PLATFORM_FIELDS)
+    summary = pick_fields(summary, COMPLETE_ITEM_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, PLATFORM_LABELS)
+    summary = add_labels(summary, COMPLETE_ITEM_LABELS)
 
     return summary
 
 
-def platform_product_on_application_summary(good_on_application, additional_formatters=None):
+def complete_item_product_on_application_summary(good_on_application, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = platform_on_application_reducer(good_on_application)
+    summary = complete_item_on_application_reducer(good_on_application)
     formatters = {
-        **PLATFORM_ON_APPLICATION_FORMATTERS,
+        **COMPLETE_ITEM_ON_APPLICATION_FORMATTERS,
         **additional_formatters,
     }
 
-    summary = pick_fields(summary, PLATFORM_ON_APPLICATION_FIELDS)
+    summary = pick_fields(summary, COMPLETE_ITEM_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, PLATFORM_ON_APPLICATION_LABELS)
+    summary = add_labels(summary, COMPLETE_ITEM_ON_APPLICATION_LABELS)
 
     return summary
 
@@ -455,7 +455,7 @@ class NoSummaryForType(Exception):
 
 class SummaryTypes:
     FIREARM = "FIREARM"
-    PLATFORM = "PLATFORM"
+    COMPLETE_ITEM = "COMPLETE_ITEM"
     MATERIAL = "MATERIAL"
     TECHNOLOGY = "TECHNOLOGY"
     COMPONENT_ACCESSORY = "COMPONENT_ACCESSORY"
@@ -475,7 +475,7 @@ def get_summary_type_for_good(good):
     item_category = item_category["key"]
 
     summary_map = {
-        ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
+        ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM: SummaryTypes.COMPLETE_ITEM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
         ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
         ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
@@ -505,7 +505,7 @@ def get_summary_type_for_good_on_application(good_on_application):
     item_category = item_category["key"]
 
     summary_map = {
-        ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
+        ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM: SummaryTypes.COMPLETE_ITEM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
         ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
         ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,

@@ -440,7 +440,7 @@ def part_number_reducer(good):
     return (("part-number", good["part_number"]),)
 
 
-def platform_reducer(good):
+def complete_item_reducer(good):
     summary = (
         (
             "is-firearm-product",
@@ -448,7 +448,7 @@ def platform_reducer(good):
         ),
         (
             "product-category",
-            "platform",
+            "complete_item",
         ),
         (
             "name",
@@ -523,7 +523,7 @@ def material_reducer(good):
     return summary
 
 
-def platform_on_application_reducer(good_on_application):
+def complete_item_on_application_reducer(good_on_application):
     summary = (
         ("number-of-items", good_on_application["quantity"]),
         ("total-value", Decimal(good_on_application["value"])),

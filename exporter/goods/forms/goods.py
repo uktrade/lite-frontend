@@ -271,8 +271,8 @@ def delete_good_form(good):
     try:
         if good["firearm_details"] and good["firearm_details"]["type"]["key"] == "firearms":
             back_link = reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
-        elif good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_PLATFORM:
-            back_link = reverse("goods:platform_detail", kwargs={"pk": good["id"]})
+        elif good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM:
+            back_link = reverse("goods:complete_item_detail", kwargs={"pk": good["id"]})
     except KeyError:
         pass
 
@@ -689,7 +689,7 @@ class NonFirearmCategoryForm(BaseForm):
         TITLE = "Select the product category"
 
     class NonFirearmCategoryChoices(models.TextChoices):
-        PLATFORM = "PLATFORM", "It's a complete product"
+        COMPLETE_ITEM = "COMPLETE_ITEM", "It's a complete product"
         MATERIAL_CATEGORY = "MATERIAL_CATEGORY", "It forms part of a product"
         TECHNOLOGY = "TECHNOLOGY", "It helps to operate a product"
 
@@ -701,7 +701,7 @@ class NonFirearmCategoryForm(BaseForm):
         if settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED:
             category_choices.append(
                 TextChoice(
-                    self.NonFirearmCategoryChoices.PLATFORM,
+                    self.NonFirearmCategoryChoices.COMPLETE_ITEM,
                     hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
                 ),
             )

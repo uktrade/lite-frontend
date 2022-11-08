@@ -24,8 +24,8 @@ from core.summaries.reducers import (
     is_onward_exported_reducer,
     is_pv_graded_reducer,
     is_replica_reducer,
-    platform_reducer,
-    platform_on_application_reducer,
+    complete_item_reducer,
+    complete_item_on_application_reducer,
     material_reducer,
     material_on_application_reducer,
     rfd_reducer,
@@ -584,7 +584,7 @@ def test_firearm_on_application_reducer(mocker):
     )
 
 
-def test_platform_on_application_reducer(mocker):
+def test_complete_item_on_application_reducer(mocker):
 
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
@@ -594,7 +594,7 @@ def test_platform_on_application_reducer(mocker):
         "quantity": "6",
         "value": "14.44",
     }
-    assert platform_on_application_reducer(good_on_application) == (
+    assert complete_item_on_application_reducer(good_on_application) == (
         ("number-of-items", "6"),
         ("total-value", Decimal("14.44")),
     )
@@ -921,7 +921,7 @@ def test_serial_numbers_reducer(firearm_details, output):
     assert serial_numbers_reducer(firearm_details) == output
 
 
-def test_platform_reducer(mocker):
+def test_complete_item_reducer(mocker):
     mock_is_good_controlled_reducer = mocker.patch(
         "core.summaries.reducers.is_good_controlled_reducer", return_value=()
     )
@@ -944,10 +944,10 @@ def test_platform_reducer(mocker):
     good = {
         "name": "good-name",
     }
-    result = platform_reducer(good)
+    result = complete_item_reducer(good)
     assert result == (
         ("is-firearm-product", False),
-        ("product-category", "platform"),
+        ("product-category", "complete_item"),
         ("name", "good-name"),
     )
 

@@ -182,7 +182,7 @@ class CreateGoodForm:
 
     class ProductCategory:
         TITLE = "Select a product category"
-        GROUP1_PLATFORM = "Platform, vehicle, system or machine"
+        GROUP1_COMPLETE_ITEM = "Platform, vehicle, system or machine"
         GROUP1_DEVICE = "Device, equipment or object"
         GROUP1_COMPONENTS = "Components, modules or accessories of something"
         GROUP1_MATERIALS = "Materials or substances"

@@ -1540,7 +1540,7 @@ def standard_firearm_expected_product_on_application_summary():
 
 
 @pytest.fixture
-def standard_platform_expected_product_summary():
+def standard_complete_item_expected_product_summary():
     return (
         (
             "is-firearm-product",
@@ -1641,7 +1641,7 @@ def standard_platform_expected_product_summary():
 
 
 @pytest.fixture
-def standard_platform_expected_product_on_application_summary():
+def standard_complete_item_expected_product_on_application_summary():
     return (
         (
             "is-onward-exported",
