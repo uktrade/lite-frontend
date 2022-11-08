@@ -123,6 +123,7 @@ from .payloads import (
     get_attach_firearm_act_certificate_payload,
     get_deactivation_details_payload,
     get_firearm_details_cleaned_data,
+    get_onward_incorporated_payload,
     get_quantity_and_value_payload,
     get_serial_numbers_payload,
 )
@@ -717,7 +718,7 @@ class FirearmProductOnApplicationSummaryEditOnwardIncorporated(BaseGoodOnApplica
         return get_onward_incorporated_initial_data(self.good_on_application)
 
     def get_edit_payload(self, form):
-        return get_cleaned_data(form)
+        return get_onward_incorporated_payload(form)
 
 
 class FirearmProductOnApplicationSummaryEditIsDeactivated(BaseProductOnApplicationSummaryEditWizardView):

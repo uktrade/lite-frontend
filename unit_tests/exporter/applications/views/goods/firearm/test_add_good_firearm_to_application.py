@@ -273,7 +273,7 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
     )
     assert mock_good_on_application_post.last_request.json() == {
         "good_id": expected_good_data["id"],
-        "is_good_incorporated": False,
+        "is_good_incorporated": True,
         "firearm_details": {
             "is_made_before_1938": True,
             "year_of_manufacture": 1937,

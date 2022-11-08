@@ -98,6 +98,16 @@ def get_firearm_section_5_payload(form):
     }
 
 
+def get_onward_incorporated_payload(form):
+    cleaned_data = get_cleaned_data(form)
+    # We copy the value back to the original field as well as populating the new
+    # field.
+    # Because we are going to have firearm products coming from the new wizard
+    # and the old wizard we want to make sure that we synchronise this value
+    # back to the old field.
+    return {"is_good_incorporated": cleaned_data["is_onward_incorporated"], **cleaned_data}
+
+
 @firearm_details_payload
 def get_deactivation_details_payload(form):
     firearm_deactivation_details_data = form.cleaned_data
@@ -169,7 +179,7 @@ class AddGoodFirearmToApplicationPayloadBuilder(MergingPayloadBuilder):
         AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
-        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED: get_firearm_details_cleaned_data,
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_deactivation_details_payload,
         AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
@@ -274,7 +284,7 @@ class FirearmProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(Merging
     payload_dict = {
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
-        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_cleaned_data,
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
     }
 
 
@@ -307,7 +317,7 @@ class AttachFirearmToApplicationGoodOnApplicationPayloadBuilder(MergingPayloadBu
         AttachFirearmToApplicationSteps.YEAR_OF_MANUFACTURE: get_firearm_details_cleaned_data,
         AttachFirearmToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
         AttachFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
-        AttachFirearmToApplicationSteps.ONWARD_INCORPORATED: get_cleaned_data,
+        AttachFirearmToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
         AttachFirearmToApplicationSteps.IS_DEACTIVATED: get_firearm_details_cleaned_data,
         AttachFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: get_deactivation_details_payload,
         AttachFirearmToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
