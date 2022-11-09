@@ -23,7 +23,7 @@ from exporter.core.helpers import (
     convert_control_list_entries,
     str_to_bool,
 )
-from core.constants import ComponentChoices
+from core.constants import ComponentAccessoryChoices
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
 from exporter.core.common.forms import BaseForm
@@ -1597,7 +1597,7 @@ class FirearmsUnitQuantityValueForm(forms.Form):
         return cleaned_data
 
 
-class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
+class ComponentAccessoryOfAFirearmUnitQuantityValueForm(forms.Form):
     title = AddGoodToApplicationForm.TITLE
 
     value = forms.CharField(
@@ -1764,7 +1764,7 @@ class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
         return cleaned_data
 
 
-class ComponentOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
+class ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
     title = AddGoodToApplicationForm.TITLE
 
     value = forms.CharField(
@@ -1977,7 +1977,7 @@ class ProductComponentDetailsForm(BaseForm):
         TITLE = "What type of component is it?"
 
     component_type = forms.ChoiceField(
-        choices=ComponentChoices.choices,
+        choices=ComponentAccessoryChoices.choices,
         label="",
         widget=forms.RadioSelect,
         error_messages={
@@ -2008,15 +2008,15 @@ class ProductComponentDetailsForm(BaseForm):
             ConditionalRadios(
                 "component_type",
                 ConditionalRadiosQuestion(
-                    ComponentChoices.DESIGNED.label,
+                    ComponentAccessoryChoices.DESIGNED.label,
                     "designed_details",
                 ),
                 ConditionalRadiosQuestion(
-                    ComponentChoices.MODIFIED.label,
+                    ComponentAccessoryChoices.MODIFIED.label,
                     "modified_details",
                 ),
                 ConditionalRadiosQuestion(
-                    ComponentChoices.GENERAL.label,
+                    ComponentAccessoryChoices.GENERAL.label,
                     "general_details",
                 ),
             ),
@@ -2031,17 +2031,17 @@ class ProductComponentDetailsForm(BaseForm):
         modified_hardware_details = cleaned_data.get("modified_details")
         general_purpose_details = cleaned_data.get("general_details")
 
-        if component_type == ComponentChoices.DESIGNED.value and not hardware_details:
+        if component_type == ComponentAccessoryChoices.DESIGNED.value and not hardware_details:
             self.add_error(
                 "designed_details",
                 "Enter details of the specific hardware",
             )
-        elif component_type == ComponentChoices.MODIFIED.value and not modified_hardware_details:
+        elif component_type == ComponentAccessoryChoices.MODIFIED.value and not modified_hardware_details:
             self.add_error(
                 "modified_details",
                 "Enter details of the modifications and the specific hardware",
             )
-        elif component_type == ComponentChoices.GENERAL.value and not general_purpose_details:
+        elif component_type == ComponentAccessoryChoices.GENERAL.value and not general_purpose_details:
             self.add_error(
                 "general_details",
                 "Enter details of the intended general-purpose use",

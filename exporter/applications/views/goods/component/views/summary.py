@@ -20,7 +20,7 @@ from exporter.core.helpers import get_organisation_documents
 from .mixins import NonFirearmsComponentFlagMixin
 
 
-class BaseComponentOnApplicationSummary(
+class BaseComponentAccessoryOnApplicationSummary(
     LoginRequiredMixin,
     NonFirearmsComponentFlagMixin,
     ApplicationMixin,
@@ -64,11 +64,11 @@ class BaseComponentOnApplicationSummary(
         }
 
 
-class ComponentProductOnApplicationSummary(BaseComponentOnApplicationSummary):
+class ComponentAccessoryProductOnApplicationSummary(BaseComponentAccessoryOnApplicationSummary):
     summary_type = "component-accessory-on-application-summary"
 
 
-class ComponentProductSummary(
+class ComponentAccessoryProductSummary(
     LoginRequiredMixin,
     NonFirearmsComponentFlagMixin,
     ApplicationMixin,

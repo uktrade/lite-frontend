@@ -8,101 +8,101 @@ from .views import (
 
 
 urlpatterns = [
-    path("add-new/", add.AddGoodComponent.as_view(), name="new_good_component_accessory"),
+    path("add-new/", add.AddGoodComponentAccessory.as_view(), name="new_good_component_accessory"),
     path(
         "<uuid:good_pk>/add-to-application/",
-        add.AddGoodComponentToApplication.as_view(),
+        add.AddGoodComponentAccessoryToApplication.as_view(),
         name="new_good_component_accessory_to_application",
     ),
     path(
         "<uuid:good_pk>/attach/",
-        add.AddGoodComponentToApplication.as_view(),
+        add.AddGoodComponentAccessoryToApplication.as_view(),
         name="attach_component_accessory_to_application",
     ),
     path(
         "<uuid:good_pk>/product-summary/",
-        summary.ComponentProductSummary.as_view(),
+        summary.ComponentAccessoryProductSummary.as_view(),
         name="component_accessory_product_summary",
     ),
     path(
         "<uuid:good_on_application_pk>/product-on-application-summary/",
-        summary.ComponentProductOnApplicationSummary.as_view(),
+        summary.ComponentAccessoryProductOnApplicationSummary.as_view(),
         name="component_accessory_on_application_summary",
     ),
-    path("<uuid:good_pk>/edit/name/", edit.ComponentEditName.as_view(), name="component_accessory_edit_name"),
+    path("<uuid:good_pk>/edit/name/", edit.ComponentAccessoryEditName.as_view(), name="component_accessory_edit_name"),
     path(
-        "<uuid:good_pk>/edit/component-details/",
-        edit.ComponentEditComponentDetails.as_view(),
+        "<uuid:good_pk>/edit/component_accessory-details/",
+        edit.ComponentAccessoryEditComponentDetails.as_view(),
         name="component_accessory_edit_component_details",
     ),
     path(
         "<uuid:good_pk>/edit/control-list-entries/",
-        edit.ComponentEditControlListEntry.as_view(),
+        edit.ComponentAccessoryEditControlListEntry.as_view(),
         name="component_accessory_edit_control_list_entries",
     ),
     path(
         "<uuid:good_pk>/edit/pv-grading/",
-        edit.ComponentEditPVGrading.as_view(),
+        edit.ComponentAccessoryEditPVGrading.as_view(),
         name="component_accessory_edit_pv_grading",
     ),
     path(
         "<uuid:good_pk>/edit/pv-grading-details/",
-        edit.ComponentEditPVGradingDetails.as_view(),
+        edit.ComponentAccessoryEditPVGradingDetails.as_view(),
         name="component_accessory_edit_pv_grading_details",
     ),
     path(
         "<uuid:good_pk>/edit/uses-information-security/",
-        edit.ComponentEditUsesInformationSecurity.as_view(),
+        edit.ComponentAccessoryEditUsesInformationSecurity.as_view(),
         name="component_accessory_edit_uses_information_security",
     ),
     path(
         "<uuid:good_pk>/edit/product-document-availability/",
-        edit.ComponentEditProductDocumentAvailability.as_view(),
+        edit.ComponentAccessoryEditProductDocumentAvailability.as_view(),
         name="component_accessory_edit_product_document_availability",
     ),
     path(
         "<uuid:good_pk>/edit/product-document-sensitivity/",
-        edit.ComponentEditProductDocumentSensitivity.as_view(),
+        edit.ComponentAccessoryEditProductDocumentSensitivity.as_view(),
         name="component_accessory_edit_product_document_sensitivity",
     ),
     path(
         "<uuid:good_pk>/edit/product-document/",
-        edit.ComponentEditProductDocumentView.as_view(),
+        edit.ComponentAccessoryEditProductDocumentView.as_view(),
         name="component_accessory_edit_product_document",
     ),
     path(
         "<uuid:good_pk>/edit/product-description/",
-        edit.ComponentEditProductDescriptionView.as_view(),
+        edit.ComponentAccessoryEditProductDescriptionView.as_view(),
         name="component_accessory_edit_product_description",
     ),
     path(
         "<uuid:good_pk>/edit/part-number/",
-        edit.ComponentEditPartNumberView.as_view(),
+        edit.ComponentAccessoryEditPartNumberView.as_view(),
         name="component_accessory_edit_part_number",
     ),
     path(
         "<uuid:good_pk>/edit/military-use/",
-        edit.ComponentEditMilitaryUseView.as_view(),
+        edit.ComponentAccessoryEditMilitaryUseView.as_view(),
         name="component_accessory_edit_military_use",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-exported/",
-        edit.ComponentOnApplicationSummaryEditOnwardExported.as_view(),
+        edit.ComponentAccessoryOnApplicationSummaryEditOnwardExported.as_view(),
         name="component_accessory_on_application_summary_edit_onward_exported",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
-        edit.ComponentOnApplicationSummaryEditOnwardAltered.as_view(),
+        edit.ComponentAccessoryOnApplicationSummaryEditOnwardAltered.as_view(),
         name="component_accessory_on_application_summary_edit_onward_altered",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
-        edit.ComponentOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        edit.ComponentAccessoryOnApplicationSummaryEditOnwardIncorporated.as_view(),
         name="component_accessory_on_application_summary_edit_onward_incorporated",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
-        edit.ComponentOnApplicationSummaryEditQuantityValue.as_view(),
+        edit.ComponentAccessoryOnApplicationSummaryEditQuantityValue.as_view(),
         name="component_accessory_on_application_summary_edit_quantity_value",
     ),
 ]

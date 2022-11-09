@@ -12,7 +12,7 @@ from django.utils.safestring import mark_safe
 from core.constants import (
     FirearmsActSections,
     SerialChoices,
-    ComponentChoices,
+    ComponentAccessoryChoices,
 )
 from exporter.goods.forms.common import ProductMilitaryUseForm
 from exporter.goods.forms.goods import ProductDeclaredAtCustomsForm
@@ -519,7 +519,7 @@ COMPONENT_ACCESSORY_VALUE_FORMATTERS = {
     "product-category": product_category_formatter,
     "is-material-substance": is_material_substance_formatter,
     "is-component": yesno,
-    "component-type": model_choices_formatter(ComponentChoices),
+    "component-type": model_choices_formatter(ComponentAccessoryChoices),
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("I do not have a part number"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),

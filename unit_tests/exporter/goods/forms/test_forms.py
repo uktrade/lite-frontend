@@ -994,7 +994,7 @@ def test_component_of_a_firearm_unit_quantity_value_form(data, valid, errors):
         },
     }
 
-    form = forms.ComponentOfAFirearmUnitQuantityValueForm(data=data, good=good, number_of_items=5)
+    form = forms.ComponentAccessoryOfAFirearmUnitQuantityValueForm(data=data, good=good, number_of_items=5)
 
     assert form.is_valid() == valid
 
@@ -1100,7 +1100,7 @@ def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid,
         },
     }
 
-    form = forms.ComponentOfAFirearmAmmunitionUnitQuantityValueForm(data=data, good=good, number_of_items=5)
+    form = forms.ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm(data=data, good=good, number_of_items=5)
 
     assert form.is_valid() == valid
 
