@@ -4,7 +4,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
-  @mod_approve_advice
+  @mod_approve_advice @wip
   Scenario: MOD approve advice journey
     ##### MOD to circulate a case #####
     Given I sign in to SSO or am signed into SSO
