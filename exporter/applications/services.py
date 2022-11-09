@@ -180,7 +180,7 @@ def post_material_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
-def post_component_good_on_application(request, pk, good_id, json):
+def post_component_accessory_good_on_application(request, pk, good_id, json):
     json = {
         "good_id": good_id,
         "is_good_incorporated": False,

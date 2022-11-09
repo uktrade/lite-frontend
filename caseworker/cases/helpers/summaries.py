@@ -14,8 +14,8 @@ from core.summaries.summaries import (
     platform_product_on_application_summary as core_platform_product_on_application_summary,
     technology_summary as core_technology_summary,
     technology_product_on_application_summary as core_technology_product_on_application_summary,
-    component_summary as core_component_summary,
-    component_product_on_application_summary as core_component_summary_on_application_summary,
+    component_accessory_summary as core_component_accessory_summary,
+    component_accessory_product_on_application_summary as core_component_accessory_summary_on_application_summary,
     SummaryTypes,
 )
 
@@ -126,16 +126,16 @@ def technology_summary(good, queue_pk, application_pk, *args, **kwargs):
     )
 
 
-def component_product_on_application_summary(good_on_application, *args, **kwargs):
-    return core_component_summary_on_application_summary(good_on_application)
+def component_accessory_product_on_application_summary(good_on_application, *args, **kwargs):
+    return core_component_accessory_summary_on_application_summary(good_on_application)
 
 
-def component_summary(good, queue_pk, application_pk, *args, **kwargs):
+def component_accessory_summary(good, queue_pk, application_pk, *args, **kwargs):
     def product_document_formatter(document):
         url = _get_document_url(queue_pk, application_pk, document)
         return document_formatter(document, url)
 
-    return core_component_summary(
+    return core_component_accessory_summary(
         good,
         {
             "product-document": product_document_formatter,
@@ -177,9 +177,9 @@ def get_good_on_application_summary(
             technology_summary,
             technology_product_on_application_summary,
         ),
-        SummaryTypes.COMPONENT: (
-            component_summary,
-            component_product_on_application_summary,
+        SummaryTypes.COMPONENT_ACCESSORY: (
+            component_accessory_summary,
+            component_accessory_product_on_application_summary,
         ),
     }
 

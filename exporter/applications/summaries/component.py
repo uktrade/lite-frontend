@@ -5,11 +5,11 @@ from core.summaries.formatters import (
     document_formatter,
 )
 from core.summaries.summaries import (
-    component_summary as core_component_summary,
-    component_product_on_application_summary as core_component_product_on_application_summary,
+    component_accessory_summary as core_component_accessory_summary,
+    component_accessory_product_on_application_summary as core_component_accessory_product_on_application_summary,
 )
 
-COMPONENT_SUMMARY_EDIT_LINKS = {
+COMPONENT_ACCESSORY_SUMMARY_EDIT_LINKS = {
     "name": "name",
     "is-component": "component_details",
     "component-type": "component_details",
@@ -41,10 +41,10 @@ COMPONENT_SUMMARY_EDIT_LINKS = {
 }
 
 
-def get_component_summary_edit_link_factory(application, good):
+def get_component_accessory_summary_edit_link_factory(application, good):
     def get_edit_link(name):
         return reverse(
-            f"applications:component_edit_{name}",
+            f"applications:component_accessory_edit_{name}",
             kwargs={
                 "pk": application["id"],
                 "good_pk": good["id"],
@@ -54,13 +54,13 @@ def get_component_summary_edit_link_factory(application, good):
     return get_edit_link
 
 
-def add_component_summary_edit_links(summary, edit_links, application, good):
-    get_edit_link = get_component_summary_edit_link_factory(application, good)
+def add_component_accessory_summary_edit_links(summary, edit_links, application, good):
+    get_edit_link = get_component_accessory_summary_edit_link_factory(application, good)
 
     return add_edit_links(summary, edit_links, get_edit_link)
 
 
-def component_summary(good, *args, **kwargs):
+def component_accessory_summary(good, *args, **kwargs):
     def goods_document_formatter(document):
         url = reverse(
             "goods:document",
@@ -72,7 +72,7 @@ def component_summary(good, *args, **kwargs):
 
         return document_formatter(document, url)
 
-    return core_component_summary(
+    return core_component_accessory_summary(
         good,
         {
             "product-document": goods_document_formatter,
@@ -80,11 +80,11 @@ def component_summary(good, *args, **kwargs):
     )
 
 
-def component_product_on_application_summary(good_on_application, *args, **kwargs):
-    return core_component_product_on_application_summary(good_on_application)
+def component_accessory_product_on_application_summary(good_on_application, *args, **kwargs):
+    return core_component_accessory_product_on_application_summary(good_on_application)
 
 
-COMPONENT_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
+COMPONENT_ACCESSORY_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
     "is-onward-exported": "onward_exported",
     "is-altered": "onward_altered",
     "is-altered-comments": "onward_altered",
@@ -95,10 +95,10 @@ COMPONENT_ON_APPLICATION_SUMMARY_EDIT_LINKS = {
 }
 
 
-def get_component_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
+def get_component_accessory_on_application_summary_edit_link_factory(application, good_on_application, summary_type):
     def get_edit_link(name):
         return reverse(
-            f"applications:component_on_application_summary_edit_{name}",
+            f"applications:component_accessory_on_application_summary_edit_{name}",
             kwargs={
                 "pk": application["id"],
                 "good_on_application_pk": good_on_application["id"],
@@ -109,14 +109,14 @@ def get_component_on_application_summary_edit_link_factory(application, good_on_
     return get_edit_link
 
 
-def add_component_on_application_summary_edit_links(
+def add_component_accessory_on_application_summary_edit_links(
     summary,
     edit_links,
     application,
     good_on_application,
     summary_type,
 ):
-    get_edit_link = get_component_on_application_summary_edit_link_factory(
+    get_edit_link = get_component_accessory_on_application_summary_edit_link_factory(
         application,
         good_on_application,
         summary_type,

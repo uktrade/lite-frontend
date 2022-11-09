@@ -45,22 +45,22 @@ def product_document():
     "url_name, form_data, expected",
     (
         (
-            "component_edit_name",
+            "component_accessory_edit_name",
             {"name": "new good"},
             {"name": "new good"},
         ),
         (
-            "component_edit_control_list_entries",
+            "component_accessory_edit_control_list_entries",
             {"is_good_controlled": False},
             {"is_good_controlled": False, "control_list_entries": []},
         ),
         (
-            "component_edit_control_list_entries",
+            "component_accessory_edit_control_list_entries",
             {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
             {"is_good_controlled": True, "control_list_entries": ["ML1a", "ML22b"]},
         ),
         (
-            "component_edit_uses_information_security",
+            "component_accessory_edit_uses_information_security",
             {
                 "uses_information_security": True,
                 "information_security_details": "Uses information security details",
@@ -71,7 +71,7 @@ def product_document():
             },
         ),
         (
-            "component_edit_part_number",
+            "component_accessory_edit_part_number",
             {
                 "part_number": "12345",
             },
@@ -81,7 +81,7 @@ def product_document():
             },
         ),
         (
-            "component_edit_part_number",
+            "component_accessory_edit_part_number",
             {
                 "part_number_missing": True,
                 "no_part_number_comments": "No part number",
@@ -92,7 +92,7 @@ def product_document():
             },
         ),
         (
-            "component_edit_military_use",
+            "component_accessory_edit_military_use",
             {
                 "is_military_use": "yes_designed",
             },
@@ -102,7 +102,7 @@ def product_document():
             },
         ),
         (
-            "component_edit_military_use",
+            "component_accessory_edit_military_use",
             {"is_military_use": "yes_modified", "modified_military_use_details": "Modified details"},
             {
                 "is_military_use": "yes_modified",
@@ -110,13 +110,13 @@ def product_document():
             },
         ),
         (
-            "component_edit_product_description",
+            "component_accessory_edit_product_description",
             {"product_description": "Product description"},
             {"product_description": "Product description"},
         ),
     ),
 )
-def test_edit_component_post(
+def test_edit_component_accessory_post(
     authorized_client,
     requests_mock,
     application,
@@ -124,7 +124,7 @@ def test_edit_component_post(
     url_name,
     form_data,
     expected,
-    component_product_summary_url,
+    component_accessory_product_summary_url,
 ):
     url = reverse(f"applications:{url_name}", kwargs={"pk": application["id"], "good_pk": good_on_application["id"]})
 
@@ -133,7 +133,7 @@ def test_edit_component_post(
         data=form_data,
     )
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
     assert requests_mock.last_request.json() == expected
 
 
@@ -141,47 +141,47 @@ def test_edit_component_post(
     "url_name,good_on_application_data,initial",
     (
         (
-            "component_edit_name",
+            "component_accessory_edit_name",
             {},
             {"name": "p1"},
         ),
         (
-            "component_edit_component_details",
-            {"is_component": {"key": "yes_modified"}, "component_details": "modified"},
+            "component_accessory_edit_component_details",
+            {"is_component": {"key": "yes_modified"}, "component_accessory_details": "modified"},
             {"is_component": True},
         ),
         (
-            "component_edit_component_details",
+            "component_accessory_edit_component_details",
             {"is_component": {"key": "no"}},
             {"is_component": False},
         ),
         (
-            "component_edit_control_list_entries",
+            "component_accessory_edit_control_list_entries",
             {},
             {"control_list_entries": ["ML1a", "ML22b"], "is_good_controlled": "True"},
         ),
         (
-            "component_edit_uses_information_security",
+            "component_accessory_edit_uses_information_security",
             {},
             {"uses_information_security": False},
         ),
         (
-            "component_edit_uses_information_security",
+            "component_accessory_edit_uses_information_security",
             {"uses_information_security": True, "information_security_details": "Details"},
             {"uses_information_security": True, "information_security_details": "Details"},
         ),
         (
-            "component_edit_part_number",
+            "component_accessory_edit_part_number",
             {},
             {"part_number": "44"},
         ),
         (
-            "component_edit_part_number",
+            "component_accessory_edit_part_number",
             {"no_part_number_comments": "No part number"},
             {"no_part_number_comments": "No part number", "part_number_missing": True},
         ),
         (
-            "component_edit_military_use",
+            "component_accessory_edit_military_use",
             {
                 "is_military_use": {"key": "yes_designed"},
             },
@@ -191,7 +191,7 @@ def test_edit_component_post(
             },
         ),
         (
-            "component_edit_military_use",
+            "component_accessory_edit_military_use",
             {"is_military_use": {"key": "yes_modified"}, "modified_military_use_details": "Modified details"},
             {
                 "is_military_use": "yes_modified",
@@ -199,13 +199,13 @@ def test_edit_component_post(
             },
         ),
         (
-            "component_edit_product_description",
+            "component_accessory_edit_product_description",
             {"product_description": "Product description"},
             {"product_description": "Product description"},
         ),
     ),
 )
-def test_edit_component_initial(
+def test_edit_component_accessory_initial(
     authorized_client,
     application,
     good_on_application,
@@ -225,7 +225,7 @@ def test_edit_component_initial(
 @pytest.fixture(autouse=True)
 def edit_pv_grading_url(application, good_on_application):
     return reverse(
-        "applications:component_edit_pv_grading",
+        "applications:component_accessory_edit_pv_grading",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -245,7 +245,7 @@ def test_edit_pv_grading(
     pv_gradings,
     goto_step_pv_grading,
     post_to_step_pv_grading,
-    component_product_summary_url,
+    component_accessory_product_summary_url,
 ):
     response = goto_step_pv_grading(AddGoodComponentSteps.PV_GRADING)
     assert response.status_code == 200
@@ -271,7 +271,7 @@ def test_edit_pv_grading(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {
@@ -291,10 +291,10 @@ def test_edit_pv_grading_details(
     good_on_application,
     requests_mock,
     pv_gradings,
-    component_product_summary_url,
+    component_accessory_product_summary_url,
 ):
     url = reverse(
-        "applications:component_edit_pv_grading_details",
+        "applications:component_accessory_edit_pv_grading_details",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -312,7 +312,7 @@ def test_edit_pv_grading_details(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
     assert requests_mock.last_request.json() == {
         "is_pv_graded": "yes",
         "pv_grading_details": {
@@ -327,33 +327,33 @@ def test_edit_pv_grading_details(
 
 
 @pytest.fixture(autouse=True)
-def edit_component_details_url(application, good_on_application):
+def edit_component_accessory_details_url(application, good_on_application):
     return reverse(
-        "applications:component_edit_component_details",
+        "applications:component_accessory_edit_component_details",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
 
 @pytest.fixture
-def goto_step_component_details(goto_step_factory, edit_component_details_url):
-    return goto_step_factory(edit_component_details_url)
+def goto_step_component_accessory_details(goto_step_factory, edit_component_accessory_details_url):
+    return goto_step_factory(edit_component_accessory_details_url)
 
 
 @pytest.fixture
-def post_to_step_component_details(post_to_step_factory, edit_component_details_url):
-    return post_to_step_factory(edit_component_details_url)
+def post_to_step_component_accessory_details(post_to_step_factory, edit_component_accessory_details_url):
+    return post_to_step_factory(edit_component_accessory_details_url)
 
 
-def test_edit_component_details(
+def test_edit_component_accessory_details(
     requests_mock,
-    goto_step_component_details,
-    post_to_step_component_details,
-    component_product_summary_url,
+    goto_step_component_accessory_details,
+    post_to_step_component_accessory_details,
+    component_accessory_product_summary_url,
 ):
-    response = goto_step_component_details(AddGoodComponentSteps.IS_COMPONENT)
+    response = goto_step_component_accessory_details(AddGoodComponentSteps.IS_COMPONENT)
     assert response.status_code == 200
 
-    response = post_to_step_component_details(
+    response = post_to_step_component_accessory_details(
         AddGoodComponentSteps.IS_COMPONENT,
         {"is_component": True},
     )
@@ -362,7 +362,7 @@ def test_edit_component_details(
 
     assert isinstance(response.context["form"], ProductComponentDetailsForm)
 
-    response = post_to_step_component_details(
+    response = post_to_step_component_accessory_details(
         AddGoodComponentSteps.COMPONENT_DETAILS,
         {
             "component_type": "yes_modified",
@@ -371,7 +371,7 @@ def test_edit_component_details(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
     assert requests_mock.last_request.json() == {
         "is_component": "yes_modified",
         "modified_details": "modified component",
@@ -381,7 +381,7 @@ def test_edit_component_details(
 @pytest.fixture
 def edit_product_availability_url(application, good_on_application):
     return reverse(
-        "applications:component_edit_product_document_availability",
+        "applications:component_accessory_edit_product_document_availability",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -392,7 +392,7 @@ def post_to_step_edit_product_document_availability(post_to_step_factory, edit_p
 
 
 def test_edit_product_document_availability_select_not_available(
-    requests_mock, post_to_step_edit_product_document_availability, component_product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, component_accessory_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
         AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -407,7 +407,7 @@ def test_edit_product_document_availability_select_not_available(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -423,7 +423,7 @@ def test_edit_product_document_availability_select_not_available(
 def test_edit_product_document_availability_select_available_but_sensitive(
     requests_mock,
     post_to_step_edit_product_document_availability,
-    component_product_summary_url,
+    component_accessory_product_summary_url,
 ):
     response = post_to_step_edit_product_document_availability(
         AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -435,7 +435,7 @@ def test_edit_product_document_availability_select_available_but_sensitive(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -449,7 +449,7 @@ def test_edit_product_document_availability_select_available_but_sensitive(
 
 
 def test_edit_product_document_availability_upload_new_document(
-    requests_mock, post_to_step_edit_product_document_availability, product_document, component_product_summary_url
+    requests_mock, post_to_step_edit_product_document_availability, product_document, component_accessory_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
         AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -465,7 +465,7 @@ def test_edit_product_document_availability_upload_new_document(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -485,7 +485,7 @@ def test_edit_product_document_availability_upload_new_document(
 @pytest.fixture
 def edit_product_sensitivity_url(application, good_on_application):
     return reverse(
-        "applications:component_edit_product_document_sensitivity",
+        "applications:component_accessory_edit_product_document_sensitivity",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
 
@@ -499,7 +499,7 @@ def test_upload_new_product_document_to_replace_existing_one(
     requests_mock,
     post_to_step_edit_product_document_sensitivity,
     product_document,
-    component_product_summary_url,
+    component_accessory_product_summary_url,
 ):
     response = post_to_step_edit_product_document_sensitivity(
         AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY,
@@ -511,7 +511,7 @@ def test_upload_new_product_document_to_replace_existing_one(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"
@@ -525,7 +525,7 @@ def test_upload_new_product_document_to_replace_existing_one(
 
 
 def test_edit_product_document_is_sensitive(
-    requests_mock, post_to_step_edit_product_document_sensitivity, component_product_summary_url
+    requests_mock, post_to_step_edit_product_document_sensitivity, component_accessory_product_summary_url
 ):
     response = post_to_step_edit_product_document_sensitivity(
         AddGoodComponentSteps.PRODUCT_DOCUMENT_SENSITIVITY,
@@ -533,7 +533,7 @@ def test_edit_product_document_is_sensitive(
     )
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
 
     # if any document exists then we delete that one
     document_delete_request = requests_mock.request_history.pop()
@@ -544,16 +544,16 @@ def test_edit_product_document_is_sensitive(
 
 
 def test_edit_product_document_upload_form(
-    authorized_client, requests_mock, application, good_on_application, product_document, component_product_summary_url
+    authorized_client, requests_mock, application, good_on_application, product_document, component_accessory_product_summary_url
 ):
     url = reverse(
-        "applications:component_edit_product_document",
+        "applications:component_accessory_edit_product_document",
         kwargs={"pk": application["id"], "good_pk": good_on_application["id"]},
     )
     response = authorized_client.post(url, data=product_document)
 
     assert response.status_code == 302
-    assert response.url == component_product_summary_url
+    assert response.url == component_accessory_product_summary_url
 
     document_delete_request = requests_mock.request_history.pop()
     assert document_delete_request.method == "DELETE"

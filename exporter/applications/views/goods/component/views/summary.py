@@ -9,12 +9,12 @@ from exporter.applications.views.goods.common.mixins import (
     GoodOnApplicationMixin,
 )
 from exporter.applications.summaries.component import (
-    add_component_summary_edit_links,
-    add_component_on_application_summary_edit_links,
-    COMPONENT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
-    component_summary,
-    COMPONENT_SUMMARY_EDIT_LINKS,
-    component_product_on_application_summary,
+    add_component_accessory_summary_edit_links,
+    add_component_accessory_on_application_summary_edit_links,
+    COMPONENT_ACCESSORY_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+    component_accessory_summary,
+    COMPONENT_ACCESSORY_SUMMARY_EDIT_LINKS,
+    component_accessory_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
 from .mixins import NonFirearmsComponentFlagMixin
@@ -33,19 +33,19 @@ class BaseComponentOnApplicationSummary(
     def organisation_documents(self):
         return get_organisation_documents(self.application)
 
-    def get_component_summary(self):
-        product_summary = component_summary(
+    def get_component_accessory_summary(self):
+        product_summary = component_accessory_summary(
             self.good,
         )
         return product_summary
 
-    def get_component_on_application_summary(self):
-        product_on_application_summary = component_product_on_application_summary(
+    def get_component_accessory_on_application_summary(self):
+        product_on_application_summary = component_accessory_product_on_application_summary(
             self.good_on_application,
         )
-        product_on_application_summary = add_component_on_application_summary_edit_links(
+        product_on_application_summary = add_component_accessory_on_application_summary_edit_links(
             product_on_application_summary,
-            COMPONENT_ON_APPLICATION_SUMMARY_EDIT_LINKS,
+            COMPONENT_ACCESSORY_ON_APPLICATION_SUMMARY_EDIT_LINKS,
             self.application,
             self.good_on_application,
             self.summary_type,
@@ -59,13 +59,13 @@ class BaseComponentOnApplicationSummary(
             "application": self.application,
             "good": self.good,
             "good_on_application": self.good_on_application,
-            "product_summary": self.get_component_summary(),
-            "product_on_application_summary": self.get_component_on_application_summary(),
+            "product_summary": self.get_component_accessory_summary(),
+            "product_on_application_summary": self.get_component_accessory_on_application_summary(),
         }
 
 
 class ComponentProductOnApplicationSummary(BaseComponentOnApplicationSummary):
-    summary_type = "component-on-application-summary"
+    summary_type = "component-accessory-on-application-summary"
 
 
 class ComponentProductSummary(
@@ -82,10 +82,10 @@ class ComponentProductSummary(
         context["application_id"] = self.application["id"]
         context["good"] = self.good
 
-        summary = component_summary(self.good)
-        summary = add_component_summary_edit_links(
+        summary = component_accessory_summary(self.good)
+        summary = add_component_accessory_summary_edit_links(
             summary,
-            COMPONENT_SUMMARY_EDIT_LINKS,
+            COMPONENT_ACCESSORY_SUMMARY_EDIT_LINKS,
             self.application,
             self.good,
         )

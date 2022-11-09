@@ -75,7 +75,7 @@ def is_material_substance_url(application_pk):
     "data, redirect_url",
     (
         (True, "new_good_material"),
-        (False, "new_good_component"),
+        (False, "new_good_component_accessory"),
     ),
 )
 def test_is_material_substance_select(authorized_client, application_pk, data, redirect_url, is_material_substance_url):

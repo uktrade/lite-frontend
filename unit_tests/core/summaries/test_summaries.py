@@ -47,8 +47,8 @@ def test_firearm_on_application_summary(data_standard_case, standard_firearm_exp
             SummaryTypes.TECHNOLOGY,
         ),
         (
-            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT}},
-            SummaryTypes.COMPONENT,
+            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY}},
+            SummaryTypes.COMPONENT_ACCESSORY,
         ),
     ),
 )
@@ -92,8 +92,8 @@ def test_get_summary_type_for_good_no_summary_type(good):
             SummaryTypes.TECHNOLOGY,
         ),
         (
-            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT}}},
-            SummaryTypes.COMPONENT,
+            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY}}},
+            SummaryTypes.COMPONENT_ACCESSORY,
         ),
     ),
 )

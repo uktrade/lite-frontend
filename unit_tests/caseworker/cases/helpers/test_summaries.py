@@ -14,8 +14,8 @@ from caseworker.cases.helpers.summaries import (
     platform_product_on_application_summary,
     technology_summary,
     technology_product_on_application_summary,
-    component_summary,
-    component_product_on_application_summary,
+    component_accessory_summary,
+    component_accessory_product_on_application_summary,
 )
 
 from unit_tests.helpers import merge_summaries
@@ -201,18 +201,18 @@ def test_platform_product_on_application_summary(
     assert product_summary == standard_platform_expected_product_on_application_summary
 
 
-def test_component_summary(data_standard_case, standard_component_expected_product_summary):
+def test_component_accessory_summary(data_standard_case, standard_component_accessory_expected_product_summary):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = component_summary(
+    product_summary = component_accessory_summary(
         good_on_application["good"],
         queue_pk,
         application_pk,
     )
 
     expected_summary = merge_summaries(
-        standard_component_expected_product_summary,
+        standard_component_accessory_expected_product_summary,
         (
             (
                 "product-document",
@@ -226,7 +226,7 @@ def test_component_summary(data_standard_case, standard_component_expected_produ
     assert product_summary == expected_summary
 
 
-def test_component_product_on_application_summary(
+def test_component_accessory_product_on_application_summary(
     data_standard_case, standard_platform_expected_product_on_application_summary
 ):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
@@ -242,7 +242,7 @@ def test_component_product_on_application_summary(
     )
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = component_product_on_application_summary(good_on_application, queue_pk, application_pk)
+    product_summary = component_accessory_product_on_application_summary(good_on_application, queue_pk, application_pk)
     assert product_summary == standard_platform_expected_product_on_application_summary
 
 

@@ -23,10 +23,10 @@ from core.summaries.formatters import (
     MATERIAL_VALUE_FORMATTERS,
     MATERIAL_ON_APPLICATION_FORMATTERS,
     MATERIAL_ON_APPLICATION_LABELS,
-    COMPONENT_LABELS,
-    COMPONENT_VALUE_FORMATTERS,
-    COMPONENT_ON_APPLICATION_FORMATTERS,
-    COMPONENT_ON_APPLICATION_LABELS,
+    COMPONENT_ACCESSORY_LABELS,
+    COMPONENT_ACCESSORY_VALUE_FORMATTERS,
+    COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS,
+    COMPONENT_ACCESSORY_ON_APPLICATION_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
@@ -37,8 +37,8 @@ from core.summaries.reducers import (
     technology_reducer,
     material_reducer,
     material_on_application_reducer,
-    component_on_application_reducer,
-    component_reducer,
+    component_accessory_on_application_reducer,
+    component_accessory_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -164,7 +164,7 @@ TECHNOLOGY_FIELDS = (
     "military-use-details",
 )
 
-COMPONENT_FIELDS = (
+COMPONENT_ACCESSORY_FIELDS = (
     "is-firearm-product",
     "product-category",
     "is-material-substance",
@@ -406,7 +406,7 @@ def technology_product_on_application_summary(good_on_application, additional_fo
     return summary
 
 
-COMPONENT_ON_APPLICATION_FIELDS = (
+COMPONENT_ACCESSORY_ON_APPLICATION_FIELDS = (
     "is-onward-exported",
     "is-altered",
     "is-altered-comments",
@@ -417,34 +417,34 @@ COMPONENT_ON_APPLICATION_FIELDS = (
 )
 
 
-def component_summary(good, additional_formatters=None):
+def component_accessory_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
-    summary = component_reducer(good)
+    summary = component_accessory_reducer(good)
     formatters = {
-        **COMPONENT_VALUE_FORMATTERS,
+        **COMPONENT_ACCESSORY_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, COMPONENT_FIELDS)
+    summary = pick_fields(summary, COMPONENT_ACCESSORY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, COMPONENT_LABELS)
+    summary = add_labels(summary, COMPONENT_ACCESSORY_LABELS)
 
     return summary
 
 
-def component_product_on_application_summary(good_on_application, additional_formatters=None):
+def component_accessory_product_on_application_summary(good_on_application, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = component_on_application_reducer(good_on_application)
+    summary = component_accessory_on_application_reducer(good_on_application)
     formatters = {
-        **COMPONENT_ON_APPLICATION_FORMATTERS,
+        **COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS,
         **additional_formatters,
     }
 
-    summary = pick_fields(summary, COMPONENT_ON_APPLICATION_FIELDS)
+    summary = pick_fields(summary, COMPONENT_ACCESSORY_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, COMPONENT_ON_APPLICATION_LABELS)
+    summary = add_labels(summary, COMPONENT_ACCESSORY_ON_APPLICATION_LABELS)
 
     return summary
 
@@ -458,7 +458,7 @@ class SummaryTypes:
     PLATFORM = "PLATFORM"
     MATERIAL = "MATERIAL"
     TECHNOLOGY = "TECHNOLOGY"
-    COMPONENT = "COMPONENT"
+    COMPONENT_ACCESSORY = "COMPONENT_ACCESSORY"
 
 
 def get_summary_type_for_good(good):
@@ -478,7 +478,7 @@ def get_summary_type_for_good(good):
         ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
         ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
-        ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
+        ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
     }
 
     try:
@@ -508,7 +508,7 @@ def get_summary_type_for_good_on_application(good_on_application):
         ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
         ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
-        ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
+        ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
     }
 
     try:
