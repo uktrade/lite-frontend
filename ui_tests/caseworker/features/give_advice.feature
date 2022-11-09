@@ -35,7 +35,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I expand the details for "FCDO has approved"
     Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
 
-  @mod_approve_advice @wip
+  @mod_approve_advice
   Scenario: MOD approve advice journey
     ##### MOD to circulate a case #####
     Given I sign in to SSO or am signed into SSO
@@ -56,11 +56,11 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is assigned to queues "Licensing Unit Pre-circulation Cases to Review"
     # LU
     When I switch to "Licensing Unit" with queue "Licensing Unit Pre-circulation Cases to Review" and I submit the case
-    Then I see the case status is now "OGD Consolidation"
+    Then I see the case status is now "OGD Advice"
     And I see the case is assigned to queues "MOD-DI Indirect cases to review, MOD-CapProt cases to review, FCDO Cases to Review"
     # MOD-DI
     When I switch to "MOD-DI" with queue "MOD-DI Indirect cases to review" and I submit the case
-    Then I see the case status is now "OGD Consolidation"
+    Then I see the case status is now "OGD Advice"
     And I see the case is assigned to queues "MOD-CapProt cases to review, FCDO Cases to Review"
 
     ##### Sub-advisor to give advice #####
