@@ -481,7 +481,12 @@ def test_edit_product_document_is_sensitive(
 
 
 def test_edit_product_document_upload_form(
-    authorized_client, requests_mock, application, good_on_application, product_document, complete_item_product_summary_url
+    authorized_client,
+    requests_mock,
+    application,
+    good_on_application,
+    product_document,
+    complete_item_product_summary_url,
 ):
     url = reverse(
         "applications:complete_item_edit_product_document",

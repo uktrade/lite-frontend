@@ -182,7 +182,9 @@ def test_good_detail_summary_check_your_answers_context(
     )
     mocker.patch(
         "exporter.applications.views.goods.goods.complete_item_product_on_application_summary",
-        return_value=(("id-application-summary", "application-summary", "complete_item_product_on_application_summary"),),
+        return_value=(
+            ("id-application-summary", "application-summary", "complete_item_product_on_application_summary"),
+        ),
     )
 
     mocker.patch(
