@@ -9,7 +9,7 @@ from core.constants import OrganisationDocumentType
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def disable_hawk():
     settings.HAWK_AUTHENTICATION_ENABLED = False
 
 
