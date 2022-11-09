@@ -71,7 +71,7 @@ Feature: I want to add a company to LITE
     And I click on In review tab
     Then I should see details of organisation previously created
     When I click on the organisation and click Review
-    Then I should see a summary along with primary site
+    Then I should see a summary along with registered office address
     When I select approve and Save
     Then the organisation should be set to "Active"
     And the "activated" organisation appears in the audit trail

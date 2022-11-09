@@ -12,5 +12,5 @@ class Details:
     VAT_NUMBER = "VAT number"
     REGISTRATION_NUMBER = "Registration number"
     CREATED_AT = "Created at"
-    PRIMARY_SITE = "Primary site"
+    PRIMARY_SITE = "Registered office address"
     TYPE = "Type"

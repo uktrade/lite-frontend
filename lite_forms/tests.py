@@ -3,6 +3,7 @@ from unittest import TestCase
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 
+from exporter.core.forms import site_form
 from lite_forms.components import (
     Form,
     DetailComponent,
@@ -185,6 +186,14 @@ class FormTests(TestCase):
         )
         insert_hidden_fields({"matt": "berninger"}, form)
         self.assertEqual(len(form.questions), 1)
+
+    def test_site_form_help(self):
+        uk_org_form = site_form(None, True, "UNITED_KINGDOM")
+        foreign_org_form = site_form(None, True, "abroad")
+        uk_individual_form = site_form(None, False, "UNITED_KINGDOM")
+        self.assertIsNotNone(uk_org_form.form_help)
+        self.assertIsNone(foreign_org_form.form_help)
+        self.assertIsNone(uk_individual_form.form_help)
 
 
 class TemplateTagsTestCase(TestCase):

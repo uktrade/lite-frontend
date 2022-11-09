@@ -16,6 +16,7 @@ from lite_forms.components import (
     FormGroup,
     TextInput,
     HiddenField,
+    DetailComponent,
 )
 from lite_forms.helpers import conditional
 
@@ -111,6 +112,14 @@ def site_form(request, is_individual, location):
             ),
         ],
         default_button_name=generic.CONTINUE,
+        form_help=conditional(
+            is_in_uk and not is_individual,
+            DetailComponent(
+                title=RegisterAnOrganisation.Headquarters.FORM_HELP_TITLE,
+                description=RegisterAnOrganisation.Headquarters.FORM_HELP_DESCRIPTION,
+            ),
+            None,
+        ),
     )
 
 
