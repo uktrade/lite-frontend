@@ -140,8 +140,12 @@ class RegisterAnOrganisation:
         NAME = "Name of headquarters"
         NAME_DESCRIPTION = ""
         FORM_HELP_TITLE = "Help with your registered office address"
-        FORM_HELP_DESCRIPTION = "This is usually the office address registered with Companies House. Or HM Revenue and Customs if you're not on Companies House.\n"
-        "Your organisation might have multiple sites or business addresses, but there will only be one registered office."
+        FORM_HELP_DESCRIPTION = (
+            "This is usually the office address registered with Companies House. "
+            "Or HM Revenue and Customs if you're not on Companies House.\n "
+            "Your organisation might have multiple sites or business addresses, "
+            "but there will only be one registered office."
+        )
 
 
 class SignatureHelp:
