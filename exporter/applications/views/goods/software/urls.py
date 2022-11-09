@@ -8,101 +8,101 @@ from .views import (
 
 
 urlpatterns = [
-    path("add-new/", add.AddGoodSoftware.as_view(), name="new_good_technology"),
+    path("add-new/", add.AddGoodTechnology.as_view(), name="new_good_technology"),
     path(
         "<uuid:good_pk>/add-to-application/",
-        add.AddGoodSoftwareToApplication.as_view(),
+        add.AddGoodTechnologyToApplication.as_view(),
         name="new_good_technology_to_application",
     ),
     path(
         "<uuid:good_pk>/attach/",
-        add.AddGoodSoftwareToApplication.as_view(),
+        add.AddGoodTechnologyToApplication.as_view(),
         name="attach_technology_to_application",
     ),
     path(
         "<uuid:good_pk>/product-summary/",
-        summary.SoftwareProductSummary.as_view(),
+        summary.TechnologyProductSummary.as_view(),
         name="technology_product_summary",
     ),
     path(
         "<uuid:good_on_application_pk>/product-on-application-summary/",
-        summary.SoftwareProductOnApplicationSummary.as_view(),
+        summary.TechnologyProductOnApplicationSummary.as_view(),
         name="technology_on_application_summary",
     ),
-    path("<uuid:good_pk>/edit/name/", edit.SoftwareEditName.as_view(), name="technology_edit_name"),
+    path("<uuid:good_pk>/edit/name/", edit.TechnologyEditName.as_view(), name="technology_edit_name"),
     path(
         "<uuid:good_pk>/edit/control-list-entries/",
-        edit.SoftwareEditControlListEntry.as_view(),
+        edit.TechnologyEditControlListEntry.as_view(),
         name="technology_edit_control_list_entries",
     ),
     path(
         "<uuid:good_pk>/edit/pv-grading/",
-        edit.SoftwareEditPVGrading.as_view(),
+        edit.TechnologyEditPVGrading.as_view(),
         name="technology_edit_pv_grading",
     ),
     path(
         "<uuid:good_pk>/edit/pv-grading-details/",
-        edit.SoftwareEditPVGradingDetails.as_view(),
+        edit.TechnologyEditPVGradingDetails.as_view(),
         name="technology_edit_pv_grading_details",
     ),
     path(
         "<uuid:good_pk>/edit/security-features/",
-        edit.SoftwareEditSecurityFeatures.as_view(),
+        edit.TechnologyEditSecurityFeatures.as_view(),
         name="technology_edit_security_features",
     ),
     path(
         "<uuid:good_pk>/edit/declared-at-customs/",
-        edit.SoftwareEditDeclaredAtCustoms.as_view(),
+        edit.TechnologyEditDeclaredAtCustoms.as_view(),
         name="technology_edit_declared_at_customs",
     ),
     path(
         "<uuid:good_pk>/edit/product-document-availability/",
-        edit.SoftwareEditProductDocumentAvailability.as_view(),
+        edit.TechnologyEditProductDocumentAvailability.as_view(),
         name="technology_edit_product_document_availability",
     ),
     path(
         "<uuid:good_pk>/edit/product-document-sensitivity/",
-        edit.SoftwareEditProductDocumentSensitivity.as_view(),
+        edit.TechnologyEditProductDocumentSensitivity.as_view(),
         name="technology_edit_product_document_sensitivity",
     ),
     path(
         "<uuid:good_pk>/edit/product-document/",
-        edit.SoftwareEditProductDocumentView.as_view(),
+        edit.TechnologyEditProductDocumentView.as_view(),
         name="technology_edit_product_document",
     ),
     path(
         "<uuid:good_pk>/edit/product-description/",
-        edit.SoftwareEditProductDescriptionView.as_view(),
+        edit.TechnologyEditProductDescriptionView.as_view(),
         name="technology_edit_product_description",
     ),
     path(
         "<uuid:good_pk>/edit/part-number/",
-        edit.SoftwareEditPartNumberView.as_view(),
+        edit.TechnologyEditPartNumberView.as_view(),
         name="technology_edit_part_number",
     ),
     path(
         "<uuid:good_pk>/edit/military-use/",
-        edit.SoftwareEditMilitaryUseView.as_view(),
+        edit.TechnologyEditMilitaryUseView.as_view(),
         name="technology_edit_military_use",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-exported/",
-        edit.SoftwareOnApplicationSummaryEditOnwardExported.as_view(),
+        edit.TechnologyOnApplicationSummaryEditOnwardExported.as_view(),
         name="technology_on_application_summary_edit_onward_exported",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-altered/",
-        edit.SoftwareOnApplicationSummaryEditOnwardAltered.as_view(),
+        edit.TechnologyOnApplicationSummaryEditOnwardAltered.as_view(),
         name="technology_on_application_summary_edit_onward_altered",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/onward-incorporated/",
-        edit.SoftwareOnApplicationSummaryEditOnwardIncorporated.as_view(),
+        edit.TechnologyOnApplicationSummaryEditOnwardIncorporated.as_view(),
         name="technology_on_application_summary_edit_onward_incorporated",
     ),
     path(
         "<uuid:good_on_application_pk>/<str:summary_type>/edit/quantity-value/",
-        edit.SoftwareOnApplicationSummaryEditQuantityValue.as_view(),
+        edit.TechnologyOnApplicationSummaryEditQuantityValue.as_view(),
         name="technology_on_application_summary_edit_quantity_value",
     ),
 ]

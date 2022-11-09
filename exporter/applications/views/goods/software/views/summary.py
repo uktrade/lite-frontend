@@ -20,7 +20,7 @@ from exporter.core.helpers import get_organisation_documents
 from .mixins import NonFirearmsSoftwareFlagMixin
 
 
-class BaseSoftwareOnApplicationSummary(
+class BaseTechnologyOnApplicationSummary(
     LoginRequiredMixin,
     NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
@@ -65,11 +65,11 @@ class BaseSoftwareOnApplicationSummary(
         }
 
 
-class SoftwareProductOnApplicationSummary(BaseSoftwareOnApplicationSummary):
+class TechnologyProductOnApplicationSummary(BaseTechnologyOnApplicationSummary):
     summary_type = "technology-on-application-summary"
 
 
-class SoftwareProductSummary(
+class TechnologyProductSummary(
     LoginRequiredMixin,
     NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,

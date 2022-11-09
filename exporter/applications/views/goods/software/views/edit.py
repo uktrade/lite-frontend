@@ -62,11 +62,11 @@ from exporter.goods.forms import (
 from exporter.goods.services import edit_technolgy
 
 from .constants import (
-    AddGoodSoftwareToApplicationSteps,
-    AddGoodSoftwareSteps,
+    AddGoodTechnologyToApplicationSteps,
+    AddGoodTechnologySteps,
 )
 from .payloads import (
-    SoftwareProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
+    TechnologyProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
     get_onward_incorporated_payload,
 )
 from .mixins import NonFirearmsSoftwareFlagMixin
@@ -85,27 +85,27 @@ class BaseEditView(
         edit_technolgy(request, good_id, payload)
 
 
-class BaseSoftwareEditView(BaseEditView):
+class BaseTechnologyEditView(BaseEditView):
     def get_edit_payload(self, form):
         return get_cleaned_data(form)
 
 
-class SoftwareEditName(BaseEditName, BaseSoftwareEditView):
+class TechnologyEditName(BaseEditName, BaseTechnologyEditView):
     pass
 
 
-class SoftwareEditControlListEntry(BaseEditControlListEntry, BaseSoftwareEditView):
+class TechnologyEditControlListEntry(BaseEditControlListEntry, BaseTechnologyEditView):
     pass
 
 
-class SoftwareEditPartNumberView(
+class TechnologyEditPartNumberView(
     BaseEditPartNumber,
-    BaseSoftwareEditView,
+    BaseTechnologyEditView,
 ):
     pass
 
 
-class BaseSoftwareEditWizardView(
+class BaseTechnologyEditWizardView(
     NonFirearmsSoftwareFlagMixin,
     BaseProductEditWizardView,
 ):
@@ -116,27 +116,27 @@ class BaseSoftwareEditWizardView(
         return edit_technolgy(self.request, good_pk, payload)
 
 
-class SoftwareEditPVGrading(BaseSoftwareEditWizardView):
+class TechnologyEditPVGrading(BaseTechnologyEditWizardView):
     form_list = [
-        (AddGoodSoftwareSteps.PV_GRADING, ProductPVGradingForm),
-        (AddGoodSoftwareSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
+        (AddGoodTechnologySteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodTechnologySteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
     ]
     condition_dict = {
-        AddGoodSoftwareSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodTechnologySteps.PV_GRADING_DETAILS: is_pv_graded,
     }
 
     def get_form_initial(self, step):
         initial = {}
-        if step == AddGoodSoftwareSteps.PV_GRADING:
+        if step == AddGoodTechnologySteps.PV_GRADING:
             initial = get_pv_grading_initial_data(self.good)
-        elif step == AddGoodSoftwareSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
+        elif step == AddGoodTechnologySteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
             initial = get_pv_grading_details_initial_data(self.good)
         return initial
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == AddGoodSoftwareSteps.PV_GRADING_DETAILS:
+        if step == AddGoodTechnologySteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
         return kwargs
 
@@ -144,7 +144,7 @@ class SoftwareEditPVGrading(BaseSoftwareEditWizardView):
         return ProductEditPVGradingPayloadBuilder().build(form_dict)
 
 
-class SoftwareEditPVGradingDetails(BaseSoftwareEditView):
+class TechnologyEditPVGradingDetails(BaseTechnologyEditView):
     form_class = ProductPVGradingDetailsForm
 
     def get_initial(self):
@@ -159,7 +159,7 @@ class SoftwareEditPVGradingDetails(BaseSoftwareEditView):
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
-class SoftwareEditSecurityFeatures(BaseSoftwareEditView):
+class TechnologyEditSecurityFeatures(BaseTechnologyEditView):
     form_class = ProductSecurityFeaturesForm
 
     def get_initial(self):
@@ -174,7 +174,7 @@ class SoftwareEditSecurityFeatures(BaseSoftwareEditView):
         }
 
 
-class SoftwareEditDeclaredAtCustoms(BaseSoftwareEditView):
+class TechnologyEditDeclaredAtCustoms(BaseTechnologyEditView):
     form_class = ProductDeclaredAtCustomsForm
 
     def get_initial(self):
@@ -183,7 +183,7 @@ class SoftwareEditDeclaredAtCustoms(BaseSoftwareEditView):
         }
 
 
-class SoftwareEditMilitaryUseView(BaseSoftwareEditView):
+class TechnologyEditMilitaryUseView(BaseTechnologyEditView):
     form_class = ProductMilitaryUseForm
 
     def get_initial(self):
@@ -193,37 +193,37 @@ class SoftwareEditMilitaryUseView(BaseSoftwareEditView):
         }
 
 
-class BaseSoftwareEditProductDocumentView(
+class BaseTechnologyEditProductDocumentView(
     BaseEditProductDocumentView,
-    BaseSoftwareEditWizardView,
+    BaseTechnologyEditWizardView,
 ):
     pass
 
 
-class SoftwareEditProductDocumentAvailability(
+class TechnologyEditProductDocumentAvailability(
     BaseEditProductDocumentAvailability,
-    BaseSoftwareEditProductDocumentView,
+    BaseTechnologyEditProductDocumentView,
 ):
     pass
 
 
-class SoftwareEditProductDocumentSensitivity(
+class TechnologyEditProductDocumentSensitivity(
     BaseEditProductDocumentSensitivity,
-    BaseSoftwareEditProductDocumentView,
+    BaseTechnologyEditProductDocumentView,
 ):
     pass
 
 
-class SoftwareEditProductDocumentView(
+class TechnologyEditProductDocumentView(
     BaseProductDocumentUpload,
-    BaseSoftwareEditView,
+    BaseTechnologyEditView,
 ):
     pass
 
 
-class SoftwareEditProductDescriptionView(
+class TechnologyEditProductDescriptionView(
     BaseEditProductDescription,
-    BaseSoftwareEditView,
+    BaseTechnologyEditView,
 ):
     pass
 
@@ -291,36 +291,36 @@ class BaseProductOnApplicationSummaryEditWizardView(
         return redirect(self.get_success_url())
 
 
-class SoftwareOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
+class TechnologyOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
     form_list = [
-        (AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
-        (AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
-        (AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
+        (AddGoodTechnologyToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodTechnologyToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodTechnologyToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
     ]
     condition_dict = {
-        AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
-        AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+        AddGoodTechnologyToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodTechnologyToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
     }
 
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
 
-        if step == AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED:
+        if step == AddGoodTechnologyToApplicationSteps.ONWARD_EXPORTED:
             initial.update(get_is_onward_exported_initial_data(self.good_on_application))
 
-        if step == AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED:
+        if step == AddGoodTechnologyToApplicationSteps.ONWARD_ALTERED_PROCESSED:
             initial.update(get_onward_altered_processed_initial_data(self.good_on_application))
 
-        if step == AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED:
+        if step == AddGoodTechnologyToApplicationSteps.ONWARD_INCORPORATED:
             initial.update(get_onward_incorporated_initial_data(self.good_on_application))
 
         return initial
 
     def get_edit_technology_good_on_application_payload(self, form_dict):
-        return SoftwareProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
+        return TechnologyProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
-class BaseSoftwareOnApplicationEditView(
+class BaseTechnologyOnApplicationEditView(
     LoginRequiredMixin,
     NonFirearmsSoftwareFlagMixin,
     SummaryTypeMixin,
@@ -358,14 +358,14 @@ class BaseSoftwareOnApplicationEditView(
         return get_cleaned_data(form)
 
 
-class SoftwareOnApplicationSummaryEditOnwardAltered(BaseSoftwareOnApplicationEditView):
+class TechnologyOnApplicationSummaryEditOnwardAltered(BaseTechnologyOnApplicationEditView):
     form_class = ProductOnwardAlteredProcessedForm
 
     def get_initial(self):
         return get_onward_altered_processed_initial_data(self.good_on_application)
 
 
-class SoftwareOnApplicationSummaryEditOnwardIncorporated(BaseSoftwareOnApplicationEditView):
+class TechnologyOnApplicationSummaryEditOnwardIncorporated(BaseTechnologyOnApplicationEditView):
     form_class = ProductOnwardIncorporatedForm
 
     def get_initial(self):
@@ -375,7 +375,7 @@ class SoftwareOnApplicationSummaryEditOnwardIncorporated(BaseSoftwareOnApplicati
         return get_onward_incorporated_payload(form)
 
 
-class SoftwareOnApplicationSummaryEditQuantityValue(BaseSoftwareOnApplicationEditView):
+class TechnologyOnApplicationSummaryEditQuantityValue(BaseTechnologyOnApplicationEditView):
     form_class = ProductQuantityAndValueForm
 
     def get_initial(self):

@@ -3,7 +3,7 @@ import pytest
 from django.urls import reverse
 
 from core import client
-from exporter.applications.views.goods.software.views.constants import AddGoodSoftwareToApplicationSteps
+from exporter.applications.views.goods.software.views.constants import AddGoodTechnologyToApplicationSteps
 from exporter.applications.views.goods.software.views.edit import SummaryTypeMixin
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
@@ -69,7 +69,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodTechnologyToApplicationSteps.ONWARD_EXPORTED,
         data={"is_onward_exported": True},
     )
     assert response.status_code == 200
@@ -81,7 +81,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        AddGoodTechnologyToApplicationSteps.ONWARD_ALTERED_PROCESSED,
         data={
             "is_onward_altered_processed": True,
             "is_onward_altered_processed_comments": "Altering",
@@ -96,7 +96,7 @@ def test_edit_onward_exported_true(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED,
+        AddGoodTechnologyToApplicationSteps.ONWARD_INCORPORATED,
         data={
             "is_onward_incorporated": True,
             "is_onward_incorporated_comments": "Incorporated",
@@ -137,7 +137,7 @@ def test_edit_onward_exported_false(
     }
 
     response = post_to_step_onward_exported(
-        AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED,
+        AddGoodTechnologyToApplicationSteps.ONWARD_EXPORTED,
         data={"is_onward_exported": False},
     )
     assert response.status_code == 302
