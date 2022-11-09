@@ -581,7 +581,10 @@ def test_tau_assessment_form_goods_choices(
         return_value=(("technology-product-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.cases.helpers.summaries.component_accessory_summary", return_value=(("component-accessory-summary",),))
+    mocker.patch(
+        "caseworker.cases.helpers.summaries.component_accessory_summary",
+        return_value=(("component-accessory-summary",),),
+    )
     mocker.patch(
         "caseworker.cases.helpers.summaries.component_accessory_product_on_application_summary",
         return_value=(("component-accessory-product-on-application-summary",),),

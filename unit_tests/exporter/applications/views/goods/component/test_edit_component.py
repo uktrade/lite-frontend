@@ -449,7 +449,10 @@ def test_edit_product_document_availability_select_available_but_sensitive(
 
 
 def test_edit_product_document_availability_upload_new_document(
-    requests_mock, post_to_step_edit_product_document_availability, product_document, component_accessory_product_summary_url
+    requests_mock,
+    post_to_step_edit_product_document_availability,
+    product_document,
+    component_accessory_product_summary_url,
 ):
     response = post_to_step_edit_product_document_availability(
         AddGoodComponentSteps.PRODUCT_DOCUMENT_AVAILABILITY,
@@ -544,7 +547,12 @@ def test_edit_product_document_is_sensitive(
 
 
 def test_edit_product_document_upload_form(
-    authorized_client, requests_mock, application, good_on_application, product_document, component_accessory_product_summary_url
+    authorized_client,
+    requests_mock,
+    application,
+    good_on_application,
+    product_document,
+    component_accessory_product_summary_url,
 ):
     url = reverse(
         "applications:component_accessory_edit_product_document",

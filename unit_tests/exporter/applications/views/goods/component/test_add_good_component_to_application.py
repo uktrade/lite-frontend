@@ -180,5 +180,8 @@ def test_add_component_accessory_to_application_end_to_end_handles_service_error
     assertInHTML("Unexpected error adding component accessory to application", str(response.content))
     assert len(caplog.records) == 1
     log = caplog.records[0]
-    assert log.message == "Error adding component accessory to application - response was: 400 - {'errors': ['Failed to post']}"
+    assert (
+        log.message
+        == "Error adding component accessory to application - response was: 400 - {'errors': ['Failed to post']}"
+    )
     assert log.levelno == logging.ERROR
