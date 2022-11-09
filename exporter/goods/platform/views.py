@@ -5,7 +5,7 @@ from exporter.applications.summaries.platform import complete_item_summary
 from ..common.base import BaseProductDetails
 
 
-class PlatformProductDetails(BaseProductDetails):
+class CompleteItemProductDetails(BaseProductDetails):
     summary_type = SummaryTypes.COMPLETE_ITEM
 
     def get_summary(self):
