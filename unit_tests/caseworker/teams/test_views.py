@@ -53,7 +53,7 @@ def test_teams_add_view_returns_ok_user_on_config_admin_list(
     assert response.status_code == 200
 
 
-def test_edit_team_view(authorized_client, form_team_data, requests_mock):
+def test_edit_team_view(authorized_client, form_team_data, requests_mock, specify_config_users_list):
     mock_data = {
         "team": {
             "id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74",

@@ -1200,12 +1200,12 @@ def mock_team_get(requests_mock, request):
 
 
 @pytest.fixture()
-def reset_config_users_list():
+def reset_config_users_list(settings):
     settings.CONFIG_ADMIN_USERS_LIST = []
 
 
 @pytest.fixture()
-def specify_config_users_list():
+def specify_config_users_list(settings):
     settings.CONFIG_ADMIN_USERS_LIST = ["govuser@example.com"]
 
 
