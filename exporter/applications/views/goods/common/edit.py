@@ -13,7 +13,6 @@ from exporter.core.helpers import get_document_data
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
-    ProductControlListEntryForm,
     ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
@@ -32,7 +31,6 @@ from .conditionals import (
 )
 from . import constants
 from .helpers import get_product_document
-from .initial import get_control_list_entry_initial_data
 from .mixins import (
     ApplicationMixin,
     GoodMixin,
@@ -78,17 +76,6 @@ class BaseProductEditView(
         ctx["title"] = self.form_class.Layout.TITLE
 
         return ctx
-
-
-class BaseEditControlListEntry:
-    form_class = ProductControlListEntryForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        return {**kwargs, "request": self.request}
-
-    def get_initial(self):
-        return get_control_list_entry_initial_data(self.good)
 
 
 class BaseEditPartNumber:
