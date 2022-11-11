@@ -40,6 +40,6 @@ services:
        dockerize -wait tcp://api:8100 -timeout 10m
        npm install
        npm run build_exporter
-       ./manage.py runserver 0.0.0.0:${PORT:-8300}
+       python manage.py runserver 0.0.0.0:${PORT:-8300}
     stdin_open: true
     tty: true
