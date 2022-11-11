@@ -65,7 +65,6 @@ from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps
 from exporter.core.helpers import (
     has_valid_rfd_certificate,
-    is_category_firearms,
     is_draft,
     is_preexisting,
     is_product_type,
@@ -76,7 +75,7 @@ from exporter.core.helpers import (
     str_to_bool,
 )
 from exporter.core.validators import validate_expiry_date
-from exporter.core.wizard.conditionals import C, Flag
+from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
@@ -92,7 +91,6 @@ from exporter.goods.forms import (
     FirearmsYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
     IdentificationMarkingsForm,
-    ProductCategoryForm,
     ProductComponentForm,
     ProductMilitaryUseForm,
     ProductUsesInformationSecurityForm,
@@ -336,13 +334,10 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
     storage_name = "exporter.applications.views.goods.SkipResetSessionStorage"
 
     form_list = [
-        (AddGoodFormSteps.PRODUCT_CATEGORY, ProductCategoryForm),
         (AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE, GroupTwoProductTypeForm),
         (AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS, FirearmsNumberOfItemsForm),
         (AddGoodFormSteps.IDENTIFICATION_MARKINGS, IdentificationMarkingsForm),
         (AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS, FirearmsCaptureSerialNumbersForm),
-        (AddGoodFormSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
-        (AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY, ProductUsesInformationSecurityForm),
         (AddGoodFormSteps.ADD_GOODS_QUESTIONS, AddGoodsQuestionsForm),
         (AddGoodFormSteps.PV_DETAILS, PvDetailsForm),
         (AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS, FirearmsYearOfManufactureDetailsForm),
@@ -358,8 +353,6 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
     ]
 
     condition_dict = {
-        AddGoodFormSteps.PRODUCT_CATEGORY: ~Flag(settings, "FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS"),
-        AddGoodFormSteps.GROUP_TWO_PRODUCT_TYPE: is_category_firearms,
         AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS: C(is_draft) & C(is_product_type("ammunition_or_component")),
         AddGoodFormSteps.IDENTIFICATION_MARKINGS: C(is_draft) & C(is_product_type("ammunition_or_component")),
         AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS: (
@@ -367,8 +360,6 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
             & C(is_product_type("ammunition_or_component"))
             & C(show_serial_numbers_form(AddGoodFormSteps.IDENTIFICATION_MARKINGS))
         ),
-        AddGoodFormSteps.PRODUCT_MILITARY_USE: ~C(is_category_firearms),
-        AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY: ~C(is_category_firearms),
         AddGoodFormSteps.PV_DETAILS: is_pv_graded,
         AddGoodFormSteps.FIREARMS_YEAR_OF_MANUFACTURE_DETAILS: C(is_draft) & C(is_product_type("firearm")),
         AddGoodFormSteps.FIREARMS_REPLICA: is_product_type("firearm"),
