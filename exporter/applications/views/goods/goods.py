@@ -289,15 +289,9 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
 
     def form_valid(self, form):
         category = form.cleaned_data["no_firearm_category"]
-<<<<<<< HEAD
-        redirect_url = reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
+        redirect_url = reverse("applications:new_good_complete_item", kwargs={"pk": self.kwargs["pk"]})
         if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.TECHNOLOGY.value:
             redirect_url = reverse("applications:new_good_technology", kwargs={"pk": self.kwargs["pk"]})
-=======
-        redirect_url = reverse("applications:new_good_complete_item", kwargs={"pk": self.kwargs["pk"]})
-        if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.SOFTWARE.value:
-            redirect_url = reverse("applications:new_good_software", kwargs={"pk": self.kwargs["pk"]})
->>>>>>> aefddbb94 (non-firearm rename platform to complete_item)
         elif category == NonFirearmCategoryForm.NonFirearmCategoryChoices.MATERIAL_CATEGORY.value:
             redirect_url = reverse("applications:is_material_substance", kwargs={"pk": self.kwargs["pk"]})
         return redirect(redirect_url)

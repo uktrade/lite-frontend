@@ -16,6 +16,8 @@ from core.summaries.summaries import (
     component_accessory_product_on_application_summary as core_component_accessory_summary_on_application_summary,
     complete_item_summary as core_complete_item_summary,
     complete_item_product_on_application_summary as core_complete_item_product_on_application_summary,
+    technology_summary as core_technology_summary,
+    technology_product_on_application_summary as core_technology_product_on_application_summary,
     SummaryTypes,
 )
 
