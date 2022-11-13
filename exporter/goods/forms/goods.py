@@ -691,7 +691,7 @@ class NonFirearmCategoryForm(BaseForm):
     class NonFirearmCategoryChoices(models.TextChoices):
         PLATFORM = "PLATFORM", "It's a complete product"
         MATERIAL_CATEGORY = "MATERIAL_CATEGORY", "It forms part of a product"
-        SOFTWARE = "SOFTWARE", "It helps to operate a product"
+        TECHNOLOGY = "TECHNOLOGY", "It helps to operate a product"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -717,7 +717,7 @@ class NonFirearmCategoryForm(BaseForm):
         if settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED:
             category_choices.append(
                 TextChoice(
-                    self.NonFirearmCategoryChoices.SOFTWARE,
+                    self.NonFirearmCategoryChoices.TECHNOLOGY,
                     hint="For example, software or information such as technology manuals and specifications.",
                 ),
             )

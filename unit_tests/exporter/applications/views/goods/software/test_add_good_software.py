@@ -28,10 +28,10 @@ def setup(no_op_storage):
 
 
 @pytest.fixture
-def new_good_software_url(data_standard_case):
+def new_good_technology_url(data_standard_case):
     application_id = data_standard_case["case"]["data"]["id"]
     return reverse(
-        "applications:new_good_software",
+        "applications:new_good_technology",
         kwargs={
             "pk": application_id,
         },
@@ -67,30 +67,30 @@ def post_good_document_matcher(requests_mock, good_id):
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, new_good_software_url):
-    return goto_step_factory(new_good_software_url)
+def goto_step(goto_step_factory, new_good_technology_url):
+    return goto_step_factory(new_good_technology_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, new_good_software_url):
-    return post_to_step_factory(new_good_software_url)
+def post_to_step(post_to_step_factory, new_good_technology_url):
+    return post_to_step_factory(new_good_technology_url)
 
 
-def test_add_good_software_access_denied_without_feature_flag(
+def test_add_good_technology_access_denied_without_feature_flag(
     settings,
     authorized_client,
-    new_good_software_url,
+    new_good_technology_url,
 ):
     settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = False
-    response = authorized_client.get(new_good_software_url)
+    response = authorized_client.get(new_good_technology_url)
     assert response.status_code == 404
 
 
-def test_add_good_software_end_to_end(
+def test_add_good_technology_end_to_end(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_software_url,
+    new_good_technology_url,
     mock_application_get,
     control_list_entries,
     pv_gradings,
@@ -98,11 +98,11 @@ def test_add_good_software_end_to_end(
     post_goods_matcher,
     post_good_document_matcher,
 ):
-    authorized_client.get(new_good_software_url)
+    authorized_client.get(new_good_technology_url)
 
     response = post_to_step(
         AddGoodSoftwareSteps.NAME,
-        {"name": "software 1"},
+        {"name": "technology 1"},
     )
 
     assert response.status_code == 200
@@ -201,7 +201,7 @@ def test_add_good_software_end_to_end(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:software_product_summary",
+        "applications:technology_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -212,7 +212,7 @@ def test_add_good_software_end_to_end(
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
         "item_category": "group3_software",
-        "name": "software 1",
+        "name": "technology 1",
         "is_good_controlled": True,
         "control_list_entries": ["ML1", "ML1a"],
         "is_pv_graded": "yes",
@@ -242,17 +242,17 @@ def test_add_good_software_end_to_end(
     ]
 
 
-def test_add_good_software_no_pv(
+def test_add_good_technology_no_pv(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_software_url,
+    new_good_technology_url,
     mock_application_get,
     control_list_entries,
     post_to_step,
     post_goods_matcher,
 ):
-    authorized_client.get(new_good_software_url)
+    authorized_client.get(new_good_technology_url)
 
     response = post_to_step(
         AddGoodSoftwareSteps.NAME,
@@ -321,7 +321,7 @@ def test_add_good_software_no_pv(
     )
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:software_product_summary",
+        "applications:technology_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,

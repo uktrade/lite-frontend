@@ -62,7 +62,7 @@ def test_non_firearm_category_form(data, is_valid, errors):
         ("FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED", "PLATFORM"),
         ("FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED", "MATERIAL_CATEGORY"),
         ("FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED", "MATERIAL_CATEGORY"),
-        ("FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED", "SOFTWARE"),
+        ("FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED", "TECHNOLOGY"),
     ),
 )
 def test_non_firearm_category_form_ff_enabled(settings, disable_non_firearms, feature, choice):

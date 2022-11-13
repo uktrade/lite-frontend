@@ -59,7 +59,7 @@ from exporter.goods.forms import (
     ProductSecurityFeaturesForm,
     ProductDeclaredAtCustomsForm,
 )
-from exporter.goods.services import edit_software
+from exporter.goods.services import edit_technolgy
 
 from .constants import (
     AddGoodSoftwareToApplicationSteps,
@@ -79,10 +79,10 @@ class BaseEditView(
     BaseProductEditView,
 ):
     def get_success_url(self):
-        return reverse("applications:software_product_summary", kwargs=self.kwargs)
+        return reverse("applications:technology_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_id, payload):
-        edit_software(request, good_id, payload)
+        edit_technolgy(request, good_id, payload)
 
 
 class BaseSoftwareEditView(BaseEditView):
@@ -110,10 +110,10 @@ class BaseSoftwareEditWizardView(
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
-        return reverse("applications:software_product_summary", kwargs=self.kwargs)
+        return reverse("applications:technology_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_pk, payload):
-        return edit_software(self.request, good_pk, payload)
+        return edit_technolgy(self.request, good_pk, payload)
 
 
 class SoftwareEditPVGrading(BaseSoftwareEditWizardView):
@@ -230,7 +230,7 @@ class SoftwareEditProductDescriptionView(
 
 class SummaryTypeMixin:
     SUMMARY_TYPES = [
-        "software-on-application-summary",
+        "technology-on-application-summary",
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -274,7 +274,7 @@ class BaseProductOnApplicationSummaryEditWizardView(
         "Error updating product",
         "Unexpected error updating product",
     )
-    def edit_software_good_on_application(self, request, good_on_application_id, payload):
+    def edit_technology_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -282,10 +282,10 @@ class BaseProductOnApplicationSummaryEditWizardView(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        self.edit_software_good_on_application(
+        self.edit_technology_good_on_application(
             self.request,
             self.good_on_application["id"],
-            self.get_edit_software_good_on_application_payload(form_dict),
+            self.get_edit_technology_good_on_application_payload(form_dict),
         )
 
         return redirect(self.get_success_url())
@@ -316,7 +316,7 @@ class SoftwareOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSum
 
         return initial
 
-    def get_edit_software_good_on_application_payload(self, form_dict):
+    def get_edit_technology_good_on_application_payload(self, form_dict):
         return SoftwareProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
@@ -332,10 +332,10 @@ class BaseSoftwareOnApplicationEditView(
 
     @expect_status(
         HTTPStatus.OK,
-        "Error updating software",
-        "Unexpected error updating software",
+        "Error updating technology",
+        "Unexpected error updating technology",
     )
-    def edit_software_good_on_application(self, request, good_on_application_id, payload):
+    def edit_technology_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -343,7 +343,7 @@ class BaseSoftwareOnApplicationEditView(
         )
 
     def perform_actions(self, form):
-        self.edit_software_good_on_application(
+        self.edit_technology_good_on_application(
             self.request,
             self.good_on_application["id"],
             self.get_edit_payload(form),

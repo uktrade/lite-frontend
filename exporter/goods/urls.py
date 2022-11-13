@@ -58,7 +58,7 @@ urlpatterns = [
     path("platform/<uuid:pk>/", PlatformProductDetails.as_view(), name="platform_detail"),
     path("material/<uuid:pk>/", MaterialProductDetails.as_view(), name="material_detail"),
     path("component/<uuid:pk>/", ComponentProductDetails.as_view(), name="component_detail"),
-    path("software/<uuid:pk>/", SoftwareProductDetails.as_view(), name="software_detail"),
+    path("software/<uuid:pk>/", SoftwareProductDetails.as_view(), name="technology_detail"),
 ]
 
 
