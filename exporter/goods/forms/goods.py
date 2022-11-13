@@ -367,37 +367,6 @@ def has_valid_section_five_certificate(application):
     return False
 
 
-class ProductCategoryForm(forms.Form):
-    title = CreateGoodForm.ProductCategory.TITLE
-
-    item_category = forms.ChoiceField(
-        choices=(
-            (ProductCategories.PRODUCT_CATEGORY_PLATFORM, CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
-            (ProductCategories.PRODUCT_CATEGORY_DEVICE, CreateGoodForm.ProductCategory.GROUP1_DEVICE),
-            (ProductCategories.PRODUCT_CATEGORY_COMPONENT, CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
-            (ProductCategories.PRODUCT_CATEGORY_MATERIAL, CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
-            (ProductCategories.PRODUCT_CATEGORY_FIREARM, CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
-            (ProductCategories.PRODUCT_CATEGORY_SOFTWARE, CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
-            (ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY, CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
-        ),
-        widget=forms.RadioSelect,
-        label="",
-        error_messages={
-            "required": "Select a product category",
-        },
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "item_category",
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
-        )
-
-
 class GroupTwoProductTypeForm(forms.Form):
     title = CreateGoodForm.FirearmGood.ProductType.TITLE
 
