@@ -240,9 +240,9 @@ def firearm_product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
-def platform_product_summary_url(data_standard_case, good_id):
+def complete_item_product_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:platform_product_summary",
+        "applications:complete_item_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -330,8 +330,8 @@ def control_list_entries(requests_mock):
 
 
 @pytest.fixture
-def platform_on_application_summary_url_factory(application, good_on_application):
-    def platform_on_application_summary_url(summary_type):
+def complete_item_on_application_summary_url_factory(application, good_on_application):
+    def complete_item_on_application_summary_url(summary_type):
         url = reverse(
             f"applications:{summary_type.replace('-', '_')}",
             kwargs={
@@ -341,12 +341,12 @@ def platform_on_application_summary_url_factory(application, good_on_application
         )
         return url
 
-    return platform_on_application_summary_url
+    return complete_item_on_application_summary_url
 
 
 @pytest.fixture
-def platform_on_application_summary_url(platform_on_application_summary_url_factory):
-    return platform_on_application_summary_url_factory("platform-on-application-summary")
+def complete_item_on_application_summary_url(complete_item_on_application_summary_url_factory):
+    return complete_item_on_application_summary_url_factory("complete_item-on-application-summary")
 
 
 @pytest.fixture

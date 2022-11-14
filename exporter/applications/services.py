@@ -145,7 +145,7 @@ def post_firearm_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
-def post_platform_good_on_application(request, pk, good_id, json):
+def post_complete_item_good_on_application(request, pk, good_id, json):
     # We have a default for `is_good_incorporated` however this may get overriden
     # from the json blob depending on the question asked in the firearm wizard
     # flow.

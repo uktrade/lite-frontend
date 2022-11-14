@@ -14,9 +14,9 @@ def default_feature_flags(settings):
 
 
 @pytest.fixture
-def platform_product_details_url(good_id):
+def complete_item_product_details_url(good_id):
     return reverse(
-        "goods:platform_detail",
+        "goods:complete_item_detail",
         kwargs={
             "pk": good_id,
         },
@@ -29,7 +29,7 @@ def mock_good_get(requests_mock, data_standard_case):
     good["good"].update(
         {
             "item_category": {
-                "key": ProductCategories.PRODUCT_CATEGORY_PLATFORM,
+                "key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM,
             },
         },
     )
@@ -39,31 +39,31 @@ def mock_good_get(requests_mock, data_standard_case):
     return requests_mock.get(url=url, json=good)
 
 
-def test_platform_product_details_status_code(
+def test_complete_item_product_details_status_code(
     authorized_client,
-    platform_product_details_url,
+    complete_item_product_details_url,
     mock_good_get,
 ):
-    response = authorized_client.get(platform_product_details_url)
+    response = authorized_client.get(complete_item_product_details_url)
     assert response.status_code == 200
 
 
-def test_platform_product_details_template_used(
+def test_complete_item_product_details_template_used(
     authorized_client,
-    platform_product_details_url,
+    complete_item_product_details_url,
     mock_good_get,
 ):
-    response = authorized_client.get(platform_product_details_url)
+    response = authorized_client.get(complete_item_product_details_url)
     assertTemplateUsed(response, "goods/product-details.html")
 
 
-def test_platform_product_details_context(
+def test_complete_item_product_details_context(
     authorized_client,
-    platform_product_details_url,
+    complete_item_product_details_url,
     mock_good_get,
-    platform_summary,
+    complete_item_summary,
 ):
 
-    response = authorized_client.get(platform_product_details_url)
+    response = authorized_client.get(complete_item_product_details_url)
     assert response.status_code == 200
-    assert response.context["summary"] == platform_summary
+    assert response.context["summary"] == complete_item_summary

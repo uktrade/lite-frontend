@@ -54,8 +54,8 @@ def test_non_firearm_category(authorized_client, application_pk):
 @pytest.mark.parametrize(
     "data, redirect_url",
     (
-        ("PLATFORM", "new_good_platform"),
         ("TECHNOLOGY", "new_good_technology"),
+        ("COMPLETE_ITEM", "new_good_complete_item"),
         ("MATERIAL_CATEGORY", "is_material_substance"),
     ),
 )

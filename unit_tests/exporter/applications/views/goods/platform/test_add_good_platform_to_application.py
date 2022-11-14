@@ -20,10 +20,10 @@ def setup(mock_application_get, mock_good_get, no_op_storage):
 
 
 @pytest.fixture
-def new_platform_to_application_url(application):
+def new_complete_item_to_application_url(application):
     good = application["goods"][0]["good"]
     return reverse(
-        "applications:new_good_platform_to_application",
+        "applications:new_good_complete_item_to_application",
         kwargs={
             "pk": application["id"],
             "good_pk": good["id"],
@@ -43,13 +43,13 @@ def set_feature_flags(settings):
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, new_platform_to_application_url):
-    return goto_step_factory(new_platform_to_application_url)
+def goto_step(goto_step_factory, new_complete_item_to_application_url):
+    return goto_step_factory(new_complete_item_to_application_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, new_platform_to_application_url):
-    return post_to_step_factory(new_platform_to_application_url)
+def post_to_step(post_to_step_factory, new_complete_item_to_application_url):
+    return post_to_step_factory(new_complete_item_to_application_url)
 
 
 @pytest.fixture(autouse=True)
@@ -60,7 +60,7 @@ def mock_get_document(requests_mock, expected_good_data):
     )
 
 
-def test_add_platform_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
+def test_add_complete_item_to_application_onward_exported_step_not_onward_export(goto_step, post_to_step):
     goto_step(AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED)
     response = post_to_step(
         AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
@@ -71,7 +71,7 @@ def test_add_platform_to_application_onward_exported_step_not_onward_export(goto
     assert isinstance(response.context["form"], ProductQuantityAndValueForm)
 
 
-def test_add_platform_to_application_end_to_end(
+def test_add_complete_item_to_application_end_to_end(
     requests_mock,
     expected_good_data,
     mock_good_on_application_post,
@@ -112,7 +112,7 @@ def test_add_platform_to_application_end_to_end(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_on_application_summary",
+        "applications:complete_item_on_application_summary",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["good"]["id"],
@@ -133,7 +133,7 @@ def test_add_platform_to_application_end_to_end(
     }
 
 
-def test_add_platform_to_application_end_to_end_handles_service_error(
+def test_add_complete_item_to_application_end_to_end_handles_service_error(
     requests_mock,
     expected_good_data,
     application,
@@ -177,8 +177,10 @@ def test_add_platform_to_application_end_to_end_handles_service_error(
     )
 
     assert response.status_code == 200
-    assertInHTML("Unexpected error adding platform to application", str(response.content))
+    assertInHTML("Unexpected error adding complete item to application", str(response.content))
     assert len(caplog.records) == 1
     log = caplog.records[0]
-    assert log.message == "Error adding platform to application - response was: 400 - {'errors': ['Failed to post']}"
+    assert (
+        log.message == "Error adding complete item to application - response was: 400 - {'errors': ['Failed to post']}"
+    )
     assert log.levelno == logging.ERROR

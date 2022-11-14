@@ -98,13 +98,13 @@ def test_good_detail_summary_check_your_answers_view_template_used(
                 "good": {
                     "id": str(uuid.uuid4()),
                     "item_category": {
-                        "key": ProductCategories.PRODUCT_CATEGORY_PLATFORM,
+                        "key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM,
                     },
                 },
             },
             (
-                ("id-summary", "summary", "platform_summary"),
-                ("id-application-summary", "application-summary", "platform_product_on_application_summary"),
+                ("id-summary", "summary", "complete_item_summary"),
+                ("id-application-summary", "application-summary", "complete_item_product_on_application_summary"),
             ),
         ),
         (
@@ -177,12 +177,14 @@ def test_good_detail_summary_check_your_answers_context(
     )
 
     mocker.patch(
-        "exporter.applications.views.goods.goods.platform_summary",
-        return_value=(("id-summary", "summary", "platform_summary"),),
+        "exporter.applications.views.goods.goods.complete_item_summary",
+        return_value=(("id-summary", "summary", "complete_item_summary"),),
     )
     mocker.patch(
-        "exporter.applications.views.goods.goods.platform_product_on_application_summary",
-        return_value=(("id-application-summary", "application-summary", "platform_product_on_application_summary"),),
+        "exporter.applications.views.goods.goods.complete_item_product_on_application_summary",
+        return_value=(
+            ("id-application-summary", "application-summary", "complete_item_product_on_application_summary"),
+        ),
     )
 
     mocker.patch(

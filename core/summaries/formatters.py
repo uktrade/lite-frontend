@@ -55,7 +55,7 @@ FIREARM_LABELS = {
     "section-5-certificate-missing-reason": "Explain why you do not have a section 5 letter of authority",
 }
 
-PLATFORM_LABELS = {
+COMPLETE_ITEM_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "product-category": "Select the product category",
     "name": "Give the product a descriptive name",
@@ -359,14 +359,14 @@ is_material_substance_formatter = mapping_formatter(
 
 product_category_formatter = mapping_formatter(
     {
-        "platform": "It's a complete product",
+        "complete_item": "It's a complete product",
         "material": "It forms part of a product",
         "component": "It forms part of a product",
     },
 )
 
 
-PLATFORM_VALUE_FORMATTERS = {
+COMPLETE_ITEM_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "product-category": product_category_formatter,
     "is-good-controlled": key_value_formatter,
@@ -386,7 +386,7 @@ PLATFORM_VALUE_FORMATTERS = {
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
-PLATFORM_ON_APPLICATION_FORMATTERS = {
+COMPLETE_ITEM_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
@@ -394,7 +394,7 @@ PLATFORM_ON_APPLICATION_FORMATTERS = {
     "total-value": money_formatter,
 }
 
-PLATFORM_ON_APPLICATION_LABELS = {
+COMPLETE_ITEM_ON_APPLICATION_LABELS = {
     "is-onward-exported": "Will the product be onward exported to any additional countries?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",

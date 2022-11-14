@@ -47,7 +47,7 @@ def test_is_firearm_form(data, is_valid, errors):
     "data, is_valid, errors",
     (
         ({}, False, {"no_firearm_category": ["Select the product category"]}),
-        ({"no_firearm_category": "PLATFORM"}, True, {}),
+        ({"no_firearm_category": "COMPLETE_ITEM"}, True, {}),
     ),
 )
 def test_non_firearm_category_form(data, is_valid, errors):
@@ -59,7 +59,7 @@ def test_non_firearm_category_form(data, is_valid, errors):
 @pytest.mark.parametrize(
     "feature, choice",
     (
-        ("FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED", "PLATFORM"),
+        ("FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED", "COMPLETE_ITEM"),
         ("FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED", "MATERIAL_CATEGORY"),
         ("FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED", "MATERIAL_CATEGORY"),
         ("FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED", "TECHNOLOGY"),

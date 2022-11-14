@@ -25,10 +25,10 @@ def setup(no_op_storage):
 
 
 @pytest.fixture
-def new_good_platform_url(data_standard_case):
+def new_good_complete_item_url(data_standard_case):
     application_id = data_standard_case["case"]["data"]["id"]
     return reverse(
-        "applications:new_good_platform",
+        "applications:new_good_complete_item",
         kwargs={
             "pk": application_id,
         },
@@ -64,30 +64,30 @@ def post_good_document_matcher(requests_mock, good_id):
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, new_good_platform_url):
-    return goto_step_factory(new_good_platform_url)
+def goto_step(goto_step_factory, new_good_complete_item_url):
+    return goto_step_factory(new_good_complete_item_url)
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, new_good_platform_url):
-    return post_to_step_factory(new_good_platform_url)
+def post_to_step(post_to_step_factory, new_good_complete_item_url):
+    return post_to_step_factory(new_good_complete_item_url)
 
 
-def test_add_good_platform_access_denied_without_feature_flag(
+def test_add_good_complete_item_access_denied_without_feature_flag(
     settings,
     authorized_client,
-    new_good_platform_url,
+    new_good_complete_item_url,
 ):
     settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = False
-    response = authorized_client.get(new_good_platform_url)
+    response = authorized_client.get(new_good_complete_item_url)
     assert response.status_code == 404
 
 
-def test_add_good_platform_end_to_end(
+def test_add_good_complete_item_end_to_end(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_platform_url,
+    new_good_complete_item_url,
     mock_application_get,
     control_list_entries,
     pv_gradings,
@@ -95,7 +95,7 @@ def test_add_good_platform_end_to_end(
     post_goods_matcher,
     post_good_document_matcher,
 ):
-    authorized_client.get(new_good_platform_url)
+    authorized_client.get(new_good_complete_item_url)
 
     response = post_to_step(
         AddGoodPlatformSteps.NAME,
@@ -190,7 +190,7 @@ def test_add_good_platform_end_to_end(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_product_summary",
+        "applications:complete_item_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -230,11 +230,11 @@ def test_add_good_platform_end_to_end(
     ]
 
 
-def test_add_good_platform_no_pv(
+def test_add_good_complete_item_no_pv(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_platform_url,
+    new_good_complete_item_url,
     mock_application_get,
     control_list_entries,
     pv_gradings,
@@ -242,7 +242,7 @@ def test_add_good_platform_no_pv(
     post_goods_matcher,
     post_good_document_matcher,
 ):
-    authorized_client.get(new_good_platform_url)
+    authorized_client.get(new_good_complete_item_url)
 
     post_to_step(
         AddGoodPlatformSteps.NAME,
@@ -291,7 +291,7 @@ def test_add_good_platform_no_pv(
 
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_product_summary",
+        "applications:complete_item_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -318,18 +318,18 @@ def test_add_good_platform_no_pv(
     }
 
 
-def test_add_good_platform_no_product_document(
+def test_add_good_complete_item_no_product_document(
     authorized_client,
     data_standard_case,
     good_id,
-    new_good_platform_url,
+    new_good_complete_item_url,
     mock_application_get,
     control_list_entries,
     pv_gradings,
     post_to_step,
     post_goods_matcher,
 ):
-    authorized_client.get(new_good_platform_url)
+    authorized_client.get(new_good_complete_item_url)
 
     response = post_to_step(
         AddGoodPlatformSteps.NAME,
@@ -393,7 +393,7 @@ def test_add_good_platform_no_product_document(
     )
     assert response.status_code == 302
     assert response.url == reverse(
-        "applications:platform_product_summary",
+        "applications:complete_item_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,

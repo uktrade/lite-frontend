@@ -35,8 +35,8 @@ def test_firearm_on_application_summary(data_standard_case, standard_firearm_exp
             SummaryTypes.FIREARM,
         ),
         (
-            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM}},
-            SummaryTypes.PLATFORM,
+            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM}},
+            SummaryTypes.COMPLETE_ITEM,
         ),
         (
             {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_MATERIAL}},
@@ -80,8 +80,8 @@ def test_get_summary_type_for_good_no_summary_type(good):
             SummaryTypes.FIREARM,
         ),
         (
-            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM}}},
-            SummaryTypes.PLATFORM,
+            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM}}},
+            SummaryTypes.COMPLETE_ITEM,
         ),
         (
             {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_MATERIAL}}},

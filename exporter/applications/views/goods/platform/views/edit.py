@@ -56,7 +56,7 @@ from exporter.goods.forms.common import (
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
 )
-from exporter.goods.services import edit_platform
+from exporter.goods.services import edit_complete_item
 
 from .constants import (
     AddGoodPlatformToApplicationSteps,
@@ -73,10 +73,10 @@ class BaseEditView(
     BaseProductEditView,
 ):
     def get_success_url(self):
-        return reverse("applications:platform_product_summary", kwargs=self.kwargs)
+        return reverse("applications:complete_item_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_id, payload):
-        edit_platform(request, good_id, payload)
+        edit_complete_item(request, good_id, payload)
 
 
 class BasePlatformEditView(BaseEditView):
@@ -104,10 +104,10 @@ class BasePlatformEditWizardView(
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
-        return reverse("applications:platform_product_summary", kwargs=self.kwargs)
+        return reverse("applications:complete_item_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_pk, payload):
-        return edit_platform(self.request, good_pk, payload)
+        return edit_complete_item(self.request, good_pk, payload)
 
 
 class PlatformEditPVGrading(BasePlatformEditWizardView):
@@ -215,7 +215,7 @@ class PlatformEditProductDescriptionView(
 
 class SummaryTypeMixin:
     SUMMARY_TYPES = [
-        "platform-on-application-summary",
+        "complete_item-on-application-summary",
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -259,7 +259,7 @@ class BaseProductOnApplicationSummaryEditWizardView(
         "Error updating product",
         "Unexpected error updating product",
     )
-    def edit_platform_good_on_application(self, request, good_on_application_id, payload):
+    def edit_complete_item_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -267,10 +267,10 @@ class BaseProductOnApplicationSummaryEditWizardView(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        self.edit_platform_good_on_application(
+        self.edit_complete_item_good_on_application(
             self.request,
             self.good_on_application["id"],
-            self.get_edit_platform_good_on_application_payload(form_dict),
+            self.get_edit_complete_item_good_on_application_payload(form_dict),
         )
 
         return redirect(self.get_success_url())
@@ -301,7 +301,7 @@ class PlatformOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSum
 
         return initial
 
-    def get_edit_platform_good_on_application_payload(self, form_dict):
+    def get_edit_complete_item_good_on_application_payload(self, form_dict):
         return PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
@@ -317,10 +317,10 @@ class BasePlatformOnApplicationEditView(
 
     @expect_status(
         HTTPStatus.OK,
-        "Error updating platform",
-        "Unexpected error updating platform",
+        "Error updating complete item",
+        "Unexpected error updating complete item",
     )
-    def edit_platform_good_on_application(self, request, good_on_application_id, payload):
+    def edit_complete_item_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -328,7 +328,7 @@ class BasePlatformOnApplicationEditView(
         )
 
     def perform_actions(self, form):
-        self.edit_platform_good_on_application(
+        self.edit_complete_item_good_on_application(
             self.request,
             self.good_on_application["id"],
             self.get_edit_payload(form),

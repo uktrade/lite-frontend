@@ -303,8 +303,8 @@ def post_good_document_sensitivity(request, pk, json):
     return data.json(), data.status_code
 
 
-def post_platform(request, json):
-    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_PLATFORM
+def post_complete_item(request, json):
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
@@ -315,7 +315,7 @@ def post_component_accessory(request, json):
     return data.json(), data.status_code
 
 
-def edit_platform(request, pk, json):
+def edit_complete_item(request, pk, json):
     response = client.put(request, f"/goods/{pk}", json)
     return response.json(), response.status_code
 

@@ -14,36 +14,36 @@ def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]
 
 
-def test_platform_summary_response_status_code(
+def test_complete_item_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_product_summary_url,
+    complete_item_product_summary_url,
 ):
-    response = authorized_client.get(platform_product_summary_url)
+    response = authorized_client.get(complete_item_product_summary_url)
     assert response.status_code == 200
 
 
-def test_platform_summary_template_used(
+def test_complete_item_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_product_summary_url,
+    complete_item_product_summary_url,
 ):
-    response = authorized_client.get(platform_product_summary_url)
+    response = authorized_client.get(complete_item_product_summary_url)
     assertTemplateUsed(response, "applications/goods/platform/product-summary.html")
 
 
-def test_platform_product_summary_context(
+def test_complete_item_product_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    platform_product_summary_url,
-    platform_summary,
+    complete_item_product_summary_url,
+    complete_item_summary,
     data_standard_case,
     good_id,
 ):
-    response = authorized_client.get(platform_product_summary_url)
+    response = authorized_client.get(complete_item_product_summary_url)
 
     def _get_test_url(name):
         if not name:
@@ -72,14 +72,14 @@ def test_platform_product_summary_context(
     }
 
     summary_with_links = tuple(
-        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in platform_summary
+        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in complete_item_summary
     )
     assert response.context["summary"] == summary_with_links
 
 
-def test_platform_product_on_application_summary_response_status_code(
+def test_complete_item_product_on_application_summary_response_status_code(
     authorized_client,
-    platform_on_application_summary_url,
+    complete_item_on_application_summary_url,
     mock_application_get,
     mock_good_get,
     mock_good_on_application_get,
@@ -88,12 +88,12 @@ def test_platform_product_on_application_summary_response_status_code(
     requests_mock,
 ):
 
-    response = authorized_client.get(platform_on_application_summary_url)
+    response = authorized_client.get(complete_item_on_application_summary_url)
     assert response.status_code == 200
 
 
 @pytest.fixture
-def platform_on_application_summary():
+def complete_item_on_application_summary():
     return (
         ("is-onward-exported", "Yes", "Will the product be onward exported to any additional countries?"),
         ("is-altered", "Yes", "Will the item be altered or processed before it is exported again?"),
@@ -109,9 +109,9 @@ def platform_on_application_summary():
     )
 
 
-def test_platform_on_application_summary_context(
+def test_complete_item_on_application_summary_context(
     authorized_client,
-    platform_on_application_summary_url,
+    complete_item_on_application_summary_url,
     mock_application_get,
     mock_good_get,
     mock_good_on_application_get,
@@ -119,17 +119,17 @@ def test_platform_on_application_summary_context(
     good,
     good_on_application,
     requests_mock,
-    platform_summary,
-    platform_on_application_summary,
+    complete_item_summary,
+    complete_item_on_application_summary,
 ):
 
-    response = authorized_client.get(platform_on_application_summary_url)
+    response = authorized_client.get(complete_item_on_application_summary_url)
     context = response.context
 
     def _get_test_url(name):
         if not name:
             return None
-        return f"/applications/{application['id']}/goods/complete-item/{good_on_application['id']}/platform-on-application-summary/edit/{name}/"
+        return f"/applications/{application['id']}/goods/complete-item/{good_on_application['id']}/complete_item-on-application-summary/edit/{name}/"
 
     url_map = {
         "is-onward-exported": "onward-exported",
@@ -141,13 +141,13 @@ def test_platform_on_application_summary_context(
         "total-value": "quantity-value",
     }
 
-    platform_on_application_summary_with_links = tuple(
+    complete_item_on_application_summary_with_links = tuple(
         (key, value, label, _get_test_url(url_map.get(key, None)))
-        for key, value, label in platform_on_application_summary
+        for key, value, label in complete_item_on_application_summary
     )
 
     assert context["application"] == application
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
-    assert context["product_summary"] == platform_summary
-    assert context["product_on_application_summary"] == platform_on_application_summary_with_links
+    assert context["product_summary"] == complete_item_summary
+    assert context["product_on_application_summary"] == complete_item_on_application_summary_with_links

@@ -54,8 +54,8 @@ from exporter.applications.summaries.material import (
     material_product_on_application_summary,
 )
 from exporter.applications.summaries.platform import (
-    platform_summary,
-    platform_product_on_application_summary,
+    complete_item_summary,
+    complete_item_product_on_application_summary,
 )
 from exporter.applications.summaries.software import (
     technology_summary,
@@ -289,7 +289,7 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
 
     def form_valid(self, form):
         category = form.cleaned_data["no_firearm_category"]
-        redirect_url = reverse("applications:new_good_platform", kwargs={"pk": self.kwargs["pk"]})
+        redirect_url = reverse("applications:new_good_complete_item", kwargs={"pk": self.kwargs["pk"]})
         if category == NonFirearmCategoryForm.NonFirearmCategoryChoices.TECHNOLOGY.value:
             redirect_url = reverse("applications:new_good_technology", kwargs={"pk": self.kwargs["pk"]})
         elif category == NonFirearmCategoryForm.NonFirearmCategoryChoices.MATERIAL_CATEGORY.value:
@@ -1096,9 +1096,9 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
                 firearm_summary,
                 firearm_on_application_summary,
             ),
-            SummaryTypes.PLATFORM: (
-                platform_summary,
-                platform_product_on_application_summary,
+            SummaryTypes.COMPLETE_ITEM: (
+                complete_item_summary,
+                complete_item_product_on_application_summary,
             ),
             SummaryTypes.MATERIAL: (
                 material_summary,

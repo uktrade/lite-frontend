@@ -433,28 +433,28 @@ def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, setti
         ),
         (
             {
-                "platform": {
+                "complete_item": {
                     "good": {
                         "id": "12345",
                         "item_category": {
-                            "key": ProductCategories.PRODUCT_CATEGORY_PLATFORM,
+                            "key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM,
                         },
                     },
                 },
             },
             [
                 (
-                    "platform",
+                    "complete_item",
                     {
                         "good_on_application": {
                             "good": {
                                 "id": "12345",
-                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM},
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM},
                             }
                         },
                         "summary": (
-                            ("platform-summary",),
-                            ("platform-product-on-application-summary",),
+                            ("complete_item-summary",),
+                            ("complete_item-product-on-application-summary",),
                         ),
                     },
                 ),
@@ -563,10 +563,10 @@ def test_tau_assessment_form_goods_choices(
         return_value=(("firearm-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.cases.helpers.summaries.platform_summary", return_value=(("platform-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.complete_item_summary", return_value=(("complete_item-summary",),))
     mocker.patch(
-        "caseworker.cases.helpers.summaries.platform_product_on_application_summary",
-        return_value=(("platform-product-on-application-summary",),),
+        "caseworker.cases.helpers.summaries.complete_item_product_on_application_summary",
+        return_value=(("complete_item-product-on-application-summary",),),
     )
 
     mocker.patch("caseworker.cases.helpers.summaries.material_summary", return_value=(("material-summary",),))
