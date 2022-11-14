@@ -20,7 +20,7 @@ from exporter.core.helpers import get_organisation_documents
 from .mixins import NonFirearmsPlatformFlagMixin
 
 
-class BasePlatformOnApplicationSummary(
+class BaseCompleteItemOnApplicationSummary(
     LoginRequiredMixin,
     NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
@@ -65,11 +65,11 @@ class BasePlatformOnApplicationSummary(
         }
 
 
-class PlatformProductOnApplicationSummary(BasePlatformOnApplicationSummary):
+class CompleteItemProductOnApplicationSummary(BaseCompleteItemOnApplicationSummary):
     summary_type = "complete_item-on-application-summary"
 
 
-class PlatformProductSummary(
+class CompleteItemProductSummary(
     LoginRequiredMixin,
     NonFirearmsPlatformFlagMixin,
     ApplicationMixin,

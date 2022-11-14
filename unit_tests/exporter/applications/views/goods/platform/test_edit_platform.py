@@ -3,7 +3,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from exporter.applications.views.goods.platform.views.constants import AddGoodPlatformSteps
+from exporter.applications.views.goods.platform.views.constants import AddGoodCompleteItemSteps
 from exporter.goods.forms.common import ProductDescriptionForm
 
 
@@ -236,18 +236,18 @@ def test_edit_pv_grading(
     post_to_step_pv_grading,
     complete_item_product_summary_url,
 ):
-    response = goto_step_pv_grading(AddGoodPlatformSteps.PV_GRADING)
+    response = goto_step_pv_grading(AddGoodCompleteItemSteps.PV_GRADING)
     assert response.status_code == 200
 
     response = post_to_step_pv_grading(
-        AddGoodPlatformSteps.PV_GRADING,
+        AddGoodCompleteItemSteps.PV_GRADING,
         {"is_pv_graded": True},
     )
 
     assert response.status_code == 200
 
     response = post_to_step_pv_grading(
-        AddGoodPlatformSteps.PV_GRADING_DETAILS,
+        AddGoodCompleteItemSteps.PV_GRADING_DETAILS,
         {
             "prefix": "NATO",
             "grading": "official",
@@ -332,14 +332,14 @@ def test_edit_product_document_availability_select_not_available(
     requests_mock, post_to_step_edit_product_document_availability, complete_item_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": False, "no_document_comments": "Product not manufactured yet"},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductDescriptionForm)
 
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DESCRIPTION,
+        AddGoodCompleteItemSteps.PRODUCT_DESCRIPTION,
         data={"product_description": "This is the product description"},
     )
 
@@ -363,11 +363,11 @@ def test_edit_product_document_availability_select_available_but_sensitive(
     complete_item_product_summary_url,
 ):
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": True},
     )
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": True},
     )
 
@@ -389,15 +389,15 @@ def test_edit_product_document_availability_upload_new_document(
     requests_mock, post_to_step_edit_product_document_availability, product_document, complete_item_product_summary_url
 ):
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_AVAILABILITY,
         data={"is_document_available": True},
     )
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": False},
     )
     response = post_to_step_edit_product_document_availability(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_UPLOAD,
         data=product_document,
     )
 
@@ -439,11 +439,11 @@ def test_upload_new_product_document_to_replace_existing_one(
     complete_item_product_summary_url,
 ):
     response = post_to_step_edit_product_document_sensitivity(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": False},
     )
     response = post_to_step_edit_product_document_sensitivity(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_UPLOAD,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_UPLOAD,
         data=product_document,
     )
 
@@ -465,7 +465,7 @@ def test_edit_product_document_is_sensitive(
     requests_mock, post_to_step_edit_product_document_sensitivity, complete_item_product_summary_url
 ):
     response = post_to_step_edit_product_document_sensitivity(
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_SENSITIVITY,
         data={"is_document_sensitive": True},
     )
 

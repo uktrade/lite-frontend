@@ -59,10 +59,10 @@ from exporter.goods.forms.common import (
 from exporter.goods.services import edit_complete_item
 
 from .constants import (
-    AddGoodPlatformToApplicationSteps,
-    AddGoodPlatformSteps,
+    AddGoodCompleteItemToApplicationSteps,
+    AddGoodCompleteItemSteps,
 )
-from .payloads import PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
+from .payloads import CompleteItemProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
 from .mixins import NonFirearmsPlatformFlagMixin
 
 logger = logging.getLogger(__name__)
@@ -79,27 +79,27 @@ class BaseEditView(
         edit_complete_item(request, good_id, payload)
 
 
-class BasePlatformEditView(BaseEditView):
+class BaseCompleteItemEditView(BaseEditView):
     def get_edit_payload(self, form):
         return get_cleaned_data(form)
 
 
-class PlatformEditName(BaseEditName, BasePlatformEditView):
+class CompleteItemEditName(BaseEditName, BaseCompleteItemEditView):
     pass
 
 
-class PlatformEditControlListEntry(BaseEditControlListEntry, BasePlatformEditView):
+class CompleteItemEditControlListEntry(BaseEditControlListEntry, BaseCompleteItemEditView):
     pass
 
 
-class PlatformEditPartNumberView(
+class CompleteItemEditPartNumberView(
     BaseEditPartNumber,
-    BasePlatformEditView,
+    BaseCompleteItemEditView,
 ):
     pass
 
 
-class BasePlatformEditWizardView(
+class BaseCompleteItemEditWizardView(
     NonFirearmsPlatformFlagMixin,
     BaseProductEditWizardView,
 ):
@@ -110,27 +110,27 @@ class BasePlatformEditWizardView(
         return edit_complete_item(self.request, good_pk, payload)
 
 
-class PlatformEditPVGrading(BasePlatformEditWizardView):
+class CompleteItemEditPVGrading(BaseCompleteItemEditWizardView):
     form_list = [
-        (AddGoodPlatformSteps.PV_GRADING, ProductPVGradingForm),
-        (AddGoodPlatformSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
+        (AddGoodCompleteItemSteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodCompleteItemSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
     ]
     condition_dict = {
-        AddGoodPlatformSteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodCompleteItemSteps.PV_GRADING_DETAILS: is_pv_graded,
     }
 
     def get_form_initial(self, step):
         initial = {}
-        if step == AddGoodPlatformSteps.PV_GRADING:
+        if step == AddGoodCompleteItemSteps.PV_GRADING:
             initial = get_pv_grading_initial_data(self.good)
-        elif step == AddGoodPlatformSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
+        elif step == AddGoodCompleteItemSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
             initial = get_pv_grading_details_initial_data(self.good)
         return initial
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == AddGoodPlatformSteps.PV_GRADING_DETAILS:
+        if step == AddGoodCompleteItemSteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
         return kwargs
 
@@ -138,7 +138,7 @@ class PlatformEditPVGrading(BasePlatformEditWizardView):
         return ProductEditPVGradingPayloadBuilder().build(form_dict)
 
 
-class PlatformEditPVGradingDetails(BasePlatformEditView):
+class CompleteItemEditPVGradingDetails(BaseCompleteItemEditView):
     form_class = ProductPVGradingDetailsForm
 
     def get_initial(self):
@@ -153,7 +153,7 @@ class PlatformEditPVGradingDetails(BasePlatformEditView):
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
-class PlatformEditUsesInformationSecurity(BasePlatformEditView):
+class CompleteItemEditUsesInformationSecurity(BaseCompleteItemEditView):
     form_class = ProductUsesInformationSecurityForm
 
     def get_initial(self):
@@ -168,7 +168,7 @@ class PlatformEditUsesInformationSecurity(BasePlatformEditView):
         }
 
 
-class PlatformEditMilitaryUseView(BasePlatformEditView):
+class CompleteItemEditMilitaryUseView(BaseCompleteItemEditView):
     form_class = ProductMilitaryUseForm
 
     def get_initial(self):
@@ -178,37 +178,37 @@ class PlatformEditMilitaryUseView(BasePlatformEditView):
         }
 
 
-class BasePlatformEditProductDocumentView(
+class BaseCompleteEditProductDocumentView(
     BaseEditProductDocumentView,
-    BasePlatformEditWizardView,
+    BaseCompleteItemEditWizardView,
 ):
     pass
 
 
-class PlatformEditProductDocumentAvailability(
+class CompleteItemEditProductDocumentAvailability(
     BaseEditProductDocumentAvailability,
-    BasePlatformEditProductDocumentView,
+    BaseCompleteEditProductDocumentView,
 ):
     pass
 
 
-class PlatformEditProductDocumentSensitivity(
+class CompleteItemEditProductDocumentSensitivity(
     BaseEditProductDocumentSensitivity,
-    BasePlatformEditProductDocumentView,
+    BaseCompleteEditProductDocumentView,
 ):
     pass
 
 
-class PlatformEditProductDocumentView(
+class CompleteItemEditProductDocumentView(
     BaseProductDocumentUpload,
-    BasePlatformEditView,
+    BaseCompleteItemEditView,
 ):
     pass
 
 
-class PlatformEditProductDescriptionView(
+class CompleteItemEditProductDescriptionView(
     BaseEditProductDescription,
-    BasePlatformEditView,
+    BaseCompleteItemEditView,
 ):
     pass
 
@@ -276,36 +276,36 @@ class BaseProductOnApplicationSummaryEditWizardView(
         return redirect(self.get_success_url())
 
 
-class PlatformOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
+class CompleteItemOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
     form_list = [
-        (AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
-        (AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
+        (AddGoodCompleteItemToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodCompleteItemToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodCompleteItemToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
     ]
     condition_dict = {
-        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
-        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
     }
 
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
 
-        if step == AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED:
+        if step == AddGoodCompleteItemToApplicationSteps.ONWARD_EXPORTED:
             initial.update(get_is_onward_exported_initial_data(self.good_on_application))
 
-        if step == AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED:
+        if step == AddGoodCompleteItemToApplicationSteps.ONWARD_ALTERED_PROCESSED:
             initial.update(get_onward_altered_processed_initial_data(self.good_on_application))
 
-        if step == AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED:
+        if step == AddGoodCompleteItemToApplicationSteps.ONWARD_INCORPORATED:
             initial.update(get_onward_incorporated_initial_data(self.good_on_application))
 
         return initial
 
     def get_edit_complete_item_good_on_application_payload(self, form_dict):
-        return PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
+        return CompleteItemProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
-class BasePlatformOnApplicationEditView(
+class BaseCompleteItemOnApplicationEditView(
     LoginRequiredMixin,
     NonFirearmsPlatformFlagMixin,
     SummaryTypeMixin,
@@ -343,14 +343,14 @@ class BasePlatformOnApplicationEditView(
         return get_cleaned_data(form)
 
 
-class PlatformOnApplicationSummaryEditOnwardAltered(BasePlatformOnApplicationEditView):
+class CompleteItemOnApplicationSummaryEditOnwardAltered(BaseCompleteItemOnApplicationEditView):
     form_class = ProductOnwardAlteredProcessedForm
 
     def get_initial(self):
         return get_onward_altered_processed_initial_data(self.good_on_application)
 
 
-class PlatformOnApplicationSummaryEditOnwardIncorporated(BasePlatformOnApplicationEditView):
+class CompleteItemOnApplicationSummaryEditOnwardIncorporated(BaseCompleteItemOnApplicationEditView):
     form_class = ProductOnwardIncorporatedForm
 
     def get_initial(self):
@@ -365,7 +365,7 @@ class PlatformOnApplicationSummaryEditOnwardIncorporated(BasePlatformOnApplicati
         }
 
 
-class PlatformOnApplicationSummaryEditQuantityValue(BasePlatformOnApplicationEditView):
+class CompleteItemOnApplicationSummaryEditQuantityValue(BaseCompleteItemOnApplicationEditView):
     form_class = ProductQuantityAndValueForm
 
     def get_initial(self):
