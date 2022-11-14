@@ -16,7 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -47,6 +46,7 @@ from exporter.applications.views.goods.common.payloads import (
 from exporter.applications.views.goods.common.steps import (
     ProductControlListEntryStep,
     ProductNameStep,
+    ProductPartNumberStep,
 )
 from exporter.core.wizard.views import (
     BaseSessionWizardView,
@@ -99,15 +99,14 @@ class EditCompleteItem:
         "Error editing complete item",
         "Unexpected error editing complete item",
     )
-    def edit_complete_item(self, request, good_id, form):
-        payload = get_cleaned_data(form)
+    def edit_complete_item(self, request, good_id, payload):
         return edit_complete_item(request, good_id, payload)
 
     def run(self, view, form):
         self.edit_complete_item(
             view.request,
             view.good["id"],
-            form,
+            view.get_step_data(form),
         )
 
 
@@ -134,10 +133,14 @@ class CompleteItemEditControlListEntry(
 
 
 class CompleteItemEditPartNumberView(
-    BaseEditPartNumber,
-    BaseCompleteItemEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    CompleteItemSummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditCompleteItem(),)
+    step = ProductPartNumberStep()
 
 
 class BaseCompleteItemEditWizardView(
