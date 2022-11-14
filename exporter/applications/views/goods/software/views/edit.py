@@ -16,7 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -47,6 +46,7 @@ from exporter.applications.views.goods.common.payloads import (
 from exporter.applications.views.goods.common.steps import (
     ProductControlListEntryStep,
     ProductNameStep,
+    ProductPartNumberStep,
 )
 from exporter.core.wizard.views import (
     BaseSessionWizardView,
@@ -105,15 +105,14 @@ class EditTechnology:
         "Error editing technology",
         "Unexpected error editing technology",
     )
-    def edit_technology(self, request, good_id, form):
-        payload = get_cleaned_data(form)
+    def edit_technology(self, request, good_id, payload):
         return edit_technology(request, good_id, payload)
 
     def run(self, view, form):
         self.edit_technology(
             view.request,
             view.good["id"],
-            form,
+            view.get_step_data(form),
         )
 
 
@@ -140,10 +139,14 @@ class TechnologyEditControlListEntry(
 
 
 class TechnologyEditPartNumberView(
-    BaseEditPartNumber,
-    BaseTechnologyEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    TechnologySummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditTechnology(),)
+    step = ProductPartNumberStep()
 
 
 class BaseTechnologyEditWizardView(
