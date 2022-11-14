@@ -2,7 +2,7 @@ import pytest
 
 from django.urls import reverse
 
-from exporter.applications.views.goods.software.views.constants import AddGoodSoftwareSteps
+from exporter.applications.views.goods.software.views.constants import AddGoodTechnologySteps
 
 
 @pytest.fixture(autouse=True)
@@ -120,18 +120,18 @@ def test_edit_pv_grading(
     post_to_step_pv_grading,
     technology_product_summary_url,
 ):
-    response = goto_step_pv_grading(AddGoodSoftwareSteps.PV_GRADING)
+    response = goto_step_pv_grading(AddGoodTechnologySteps.PV_GRADING)
     assert response.status_code == 200
 
     response = post_to_step_pv_grading(
-        AddGoodSoftwareSteps.PV_GRADING,
+        AddGoodTechnologySteps.PV_GRADING,
         {"is_pv_graded": True},
     )
 
     assert response.status_code == 200
 
     response = post_to_step_pv_grading(
-        AddGoodSoftwareSteps.PV_GRADING_DETAILS,
+        AddGoodTechnologySteps.PV_GRADING_DETAILS,
         {
             "prefix": "NATO",
             "grading": "official",

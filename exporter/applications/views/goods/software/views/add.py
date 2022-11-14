@@ -42,19 +42,19 @@ from exporter.applications.views.goods.common.conditionals import (
 from exporter.core.wizard.conditionals import C
 
 from .constants import (
-    AddGoodSoftwareSteps,
-    AddGoodSoftwareToApplicationSteps,
+    AddGoodTechnologySteps,
+    AddGoodTechnologyToApplicationSteps,
 )
 from .payloads import (
-    AddGoodSoftwarePayloadBuilder,
-    AddGoodSoftwareToApplicationPayloadBuilder,
+    AddGoodTechnologyPayloadBuilder,
+    AddGoodTechnologyToApplicationPayloadBuilder,
 )
 from .mixins import NonFirearmsSoftwareFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
-class AddGoodSoftware(
+class AddGoodTechnology(
     LoginRequiredMixin,
     NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
@@ -62,33 +62,33 @@ class AddGoodSoftware(
     ProductSecurityFeaturesForm,
 ):
     form_list = [
-        (AddGoodSoftwareSteps.NAME, ProductNameForm),
-        (AddGoodSoftwareSteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
-        (AddGoodSoftwareSteps.PART_NUMBER, ProductPartNumberForm),
-        (AddGoodSoftwareSteps.PV_GRADING, ProductPVGradingForm),
-        (AddGoodSoftwareSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
-        (AddGoodSoftwareSteps.SECURITY_FEATURES, ProductSecurityFeaturesForm),
-        (AddGoodSoftwareSteps.PRODUCT_DECLARED_AT_CUSTOMS, ProductDeclaredAtCustomsForm),
-        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
-        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
-        (AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
-        (AddGoodSoftwareSteps.PRODUCT_DESCRIPTION, ProductDescriptionForm),
-        (AddGoodSoftwareSteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
+        (AddGoodTechnologySteps.NAME, ProductNameForm),
+        (AddGoodTechnologySteps.PRODUCT_CONTROL_LIST_ENTRY, ProductControlListEntryForm),
+        (AddGoodTechnologySteps.PART_NUMBER, ProductPartNumberForm),
+        (AddGoodTechnologySteps.PV_GRADING, ProductPVGradingForm),
+        (AddGoodTechnologySteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
+        (AddGoodTechnologySteps.SECURITY_FEATURES, ProductSecurityFeaturesForm),
+        (AddGoodTechnologySteps.PRODUCT_DECLARED_AT_CUSTOMS, ProductDeclaredAtCustomsForm),
+        (AddGoodTechnologySteps.PRODUCT_DOCUMENT_AVAILABILITY, ProductDocumentAvailabilityForm),
+        (AddGoodTechnologySteps.PRODUCT_DOCUMENT_SENSITIVITY, ProductDocumentSensitivityForm),
+        (AddGoodTechnologySteps.PRODUCT_DOCUMENT_UPLOAD, ProductDocumentUploadForm),
+        (AddGoodTechnologySteps.PRODUCT_DESCRIPTION, ProductDescriptionForm),
+        (AddGoodTechnologySteps.PRODUCT_MILITARY_USE, ProductMilitaryUseForm),
     ]
     condition_dict = {
-        AddGoodSoftwareSteps.PV_GRADING_DETAILS: is_pv_graded,
-        AddGoodSoftwareSteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
-        AddGoodSoftwareSteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
-        AddGoodSoftwareSteps.PRODUCT_DESCRIPTION: ~C(is_product_document_available),
+        AddGoodTechnologySteps.PV_GRADING_DETAILS: is_pv_graded,
+        AddGoodTechnologySteps.PRODUCT_DOCUMENT_SENSITIVITY: is_product_document_available,
+        AddGoodTechnologySteps.PRODUCT_DOCUMENT_UPLOAD: C(is_product_document_available) & ~C(is_document_sensitive),
+        AddGoodTechnologySteps.PRODUCT_DESCRIPTION: ~C(is_product_document_available),
     }
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == AddGoodSoftwareSteps.PRODUCT_CONTROL_LIST_ENTRY:
+        if step == AddGoodTechnologySteps.PRODUCT_CONTROL_LIST_ENTRY:
             kwargs["request"] = self.request
 
-        if step == AddGoodSoftwareSteps.PV_GRADING_DETAILS:
+        if step == AddGoodTechnologySteps.PV_GRADING_DETAILS:
             kwargs["request"] = self.request
         return kwargs
 
@@ -106,7 +106,7 @@ class AddGoodSoftware(
         return ctx
 
     def get_payload(self, form_dict):
-        good_payload = AddGoodSoftwarePayloadBuilder().build(form_dict)
+        good_payload = AddGoodTechnologyPayloadBuilder().build(form_dict)
         return good_payload
 
     def get_success_url(self):
@@ -137,7 +137,7 @@ class AddGoodSoftware(
         return redirect(self.get_success_url())
 
 
-class AddGoodSoftwareToApplication(
+class AddGoodTechnologyToApplication(
     LoginRequiredMixin,
     NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
@@ -145,15 +145,15 @@ class AddGoodSoftwareToApplication(
     BaseSessionWizardView,
 ):
     form_list = [
-        (AddGoodSoftwareToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
-        (AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
-        (AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
-        (AddGoodSoftwareToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
+        (AddGoodTechnologyToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
+        (AddGoodTechnologyToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
+        (AddGoodTechnologyToApplicationSteps.ONWARD_INCORPORATED, ProductOnwardIncorporatedForm),
+        (AddGoodTechnologyToApplicationSteps.QUANTITY_AND_VALUE, ProductQuantityAndValueForm),
     ]
 
     condition_dict = {
-        AddGoodSoftwareToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
-        AddGoodSoftwareToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
+        AddGoodTechnologyToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
+        AddGoodTechnologyToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
     }
 
     def get_form_kwargs(self, step=None):
@@ -170,7 +170,7 @@ class AddGoodSoftwareToApplication(
         )
 
     def get_payload(self, form_dict):
-        good_on_application_payload = AddGoodSoftwareToApplicationPayloadBuilder().build(form_dict)
+        good_on_application_payload = AddGoodTechnologyToApplicationPayloadBuilder().build(form_dict)
         return good_on_application_payload
 
     @expect_status(

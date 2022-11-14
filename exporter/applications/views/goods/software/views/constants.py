@@ -1,7 +1,7 @@
 from exporter.applications.views.goods.common import constants
 
 
-class AddGoodSoftwareSteps:
+class AddGoodTechnologySteps:
     NAME = constants.NAME
     PRODUCT_CONTROL_LIST_ENTRY = constants.PRODUCT_CONTROL_LIST_ENTRY
     PART_NUMBER = constants.PART_NUMBER
@@ -18,7 +18,7 @@ class AddGoodSoftwareSteps:
     PART_NUMBER = constants.PART_NUMBER
 
 
-class AddGoodSoftwareToApplicationSteps:
+class AddGoodTechnologyToApplicationSteps:
     ONWARD_EXPORTED = constants.ONWARD_EXPORTED
     ONWARD_ALTERED_PROCESSED = constants.ONWARD_ALTERED_PROCESSED
     ONWARD_INCORPORATED = constants.ONWARD_INCORPORATED
