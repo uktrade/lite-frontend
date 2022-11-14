@@ -251,9 +251,9 @@ def platform_product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
-def component_product_summary_url(data_standard_case, good_id):
+def component_accessory_product_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:component_product_summary",
+        "applications:component_accessory_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -350,8 +350,8 @@ def platform_on_application_summary_url(platform_on_application_summary_url_fact
 
 
 @pytest.fixture
-def component_on_application_summary_url_factory(application, good_on_application):
-    def component_on_application_summary_url(summary_type):
+def component_accessory_on_application_summary_url_factory(application, good_on_application):
+    def component_accessory_on_application_summary_url(summary_type):
         url = reverse(
             f"applications:{summary_type.replace('-', '_')}",
             kwargs={
@@ -361,12 +361,12 @@ def component_on_application_summary_url_factory(application, good_on_applicatio
         )
         return url
 
-    return component_on_application_summary_url
+    return component_accessory_on_application_summary_url
 
 
 @pytest.fixture
-def component_on_application_summary_url(component_on_application_summary_url_factory):
-    return component_on_application_summary_url_factory("component-on-application-summary")
+def component_accessory_on_application_summary_url(component_accessory_on_application_summary_url_factory):
+    return component_accessory_on_application_summary_url_factory("component-accessory-on-application-summary")
 
 
 @pytest.fixture

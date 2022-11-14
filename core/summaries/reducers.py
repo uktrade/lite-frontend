@@ -418,7 +418,7 @@ def uses_information_security_reducer(good):
     )
 
 
-def component_details_reducer(good):
+def component_accessory_details_reducer(good):
     is_component_key = good.get("is_component", {}).get("key")
     if not is_component_key or is_component_key == "no":
         return (("is-component", False),)
@@ -465,7 +465,7 @@ def platform_reducer(good):
     return summary
 
 
-def component_reducer(good):
+def component_accessory_reducer(good):
     summary = (
         (
             "is-firearm-product",
@@ -484,7 +484,7 @@ def component_reducer(good):
             good["name"],
         ),
     )
-    summary += component_details_reducer(good)
+    summary += component_accessory_details_reducer(good)
     summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
     summary += uses_information_security_reducer(good)
@@ -542,7 +542,7 @@ def material_on_application_reducer(good_on_application):
     return summary
 
 
-def component_on_application_reducer(good_on_application):
+def component_accessory_on_application_reducer(good_on_application):
     summary = (
         ("number-of-items", good_on_application["quantity"]),
         ("total-value", Decimal(good_on_application["value"])),

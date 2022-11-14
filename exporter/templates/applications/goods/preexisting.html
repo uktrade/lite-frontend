@@ -73,7 +73,7 @@
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
 								{% elif good.item_category.key == "group1_components"  %}
-                                    	<a href="{% url 'applications:attach_component_to_application' draft_id good.id %}" id="add-component-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
+                                    	<a href="{% url 'applications:attach_component_accessory_to_application' draft_id good.id %}" id="add-component-accessory-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
 										Add <span class="govuk-visually-hidden">{% if good.name %} {{ good.name }} {% else %} {{ good.description }} {% endif %}</span> to application
 									</a>
 								{% else %}

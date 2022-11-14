@@ -57,7 +57,7 @@ from exporter.goods.forms.common import (
     ProductUsesInformationSecurityForm,
 )
 from exporter.goods.forms.goods import ProductIsComponentForm, ProductComponentDetailsForm
-from exporter.goods.services import edit_component
+from exporter.goods.services import edit_component_accessory
 
 from .constants import (
     AddGoodComponentToApplicationSteps,
@@ -79,10 +79,10 @@ class BaseEditView(
     BaseProductEditView,
 ):
     def get_success_url(self):
-        return reverse("applications:component_product_summary", kwargs=self.kwargs)
+        return reverse("applications:component_accessory_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_id, payload):
-        edit_component(request, good_id, payload)
+        edit_component_accessory(request, good_id, payload)
 
 
 class BaseComponentEditView(BaseEditView):
@@ -110,10 +110,10 @@ class BaseComponentEditWizardView(
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
-        return reverse("applications:component_product_summary", kwargs=self.kwargs)
+        return reverse("applications:component_accessory_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_pk, payload):
-        return edit_component(self.request, good_pk, payload)
+        return edit_component_accessory(self.request, good_pk, payload)
 
 
 class ComponentEditPVGrading(BaseComponentEditWizardView):
@@ -221,7 +221,7 @@ class ComponentEditProductDescriptionView(
 
 class SummaryTypeMixin:
     SUMMARY_TYPES = [
-        "component-on-application-summary",
+        "component-accessory-on-application-summary",
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -265,7 +265,7 @@ class BaseProductOnApplicationSummaryEditWizardView(
         "Error updating product",
         "Unexpected error updating product",
     )
-    def edit_component_good_on_application(self, request, good_on_application_id, payload):
+    def edit_component_accessory_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -273,10 +273,10 @@ class BaseProductOnApplicationSummaryEditWizardView(
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        self.edit_component_good_on_application(
+        self.edit_component_accessory_good_on_application(
             self.request,
             self.good_on_application["id"],
-            self.get_edit_component_good_on_application_payload(form_dict),
+            self.get_edit_component_accessory_good_on_application_payload(form_dict),
         )
 
         return redirect(self.get_success_url())
@@ -307,7 +307,7 @@ class ComponentOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSu
 
         return initial
 
-    def get_edit_component_good_on_application_payload(self, form_dict):
+    def get_edit_component_accessory_good_on_application_payload(self, form_dict):
         return ComponentProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
@@ -323,10 +323,10 @@ class BaseComponentOnApplicationEditView(
 
     @expect_status(
         HTTPStatus.OK,
-        "Error updating component",
-        "Unexpected error updating component",
+        "Error updating component accessory",
+        "Unexpected error updating component accessory",
     )
-    def edit_component_good_on_application(self, request, good_on_application_id, payload):
+    def edit_component_accessory_good_on_application(self, request, good_on_application_id, payload):
         return edit_good_on_application(
             request,
             good_on_application_id,
@@ -334,7 +334,7 @@ class BaseComponentOnApplicationEditView(
         )
 
     def perform_actions(self, form):
-        self.edit_component_good_on_application(
+        self.edit_component_accessory_good_on_application(
             self.request,
             self.good_on_application["id"],
             self.get_edit_payload(form),

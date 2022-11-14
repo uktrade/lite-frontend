@@ -309,8 +309,8 @@ def post_platform(request, json):
     return data.json(), data.status_code
 
 
-def post_component(request, json):
-    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_COMPONENT
+def post_component_accessory(request, json):
+    json["item_category"] = ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY
     data = client.post(request, "/goods/", json)
     return data.json(), data.status_code
 
@@ -320,7 +320,7 @@ def edit_platform(request, pk, json):
     return response.json(), response.status_code
 
 
-def edit_component(request, pk, json):
+def edit_component_accessory(request, pk, json):
     response = client.put(request, f"/goods/{pk}", json)
     return response.json(), response.status_code
 

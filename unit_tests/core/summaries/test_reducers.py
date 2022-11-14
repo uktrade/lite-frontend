@@ -34,8 +34,8 @@ from core.summaries.reducers import (
     technology_reducer,
     uses_information_security_reducer,
     year_of_manufacture_reducer,
-    component_reducer,
-    component_on_application_reducer,
+    component_accessory_reducer,
+    component_accessory_on_application_reducer,
 )
 
 
@@ -603,7 +603,7 @@ def test_platform_on_application_reducer(mocker):
     )
 
 
-def test_component_on_application_reducer(mocker):
+def test_component_accessory_on_application_reducer(mocker):
 
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
@@ -613,7 +613,7 @@ def test_component_on_application_reducer(mocker):
         "quantity": "6",
         "value": "14.44",
     }
-    assert component_on_application_reducer(good_on_application) == (
+    assert component_accessory_on_application_reducer(good_on_application) == (
         ("number-of-items", "6"),
         ("total-value", Decimal("14.44")),
     )
@@ -959,9 +959,9 @@ def test_platform_reducer(mocker):
     mock_designed_for_military_use_reducer.assert_called_with(good)
 
 
-def test_component_reducer(mocker):
-    mock_component_details_reducer = mocker.patch(
-        "core.summaries.reducers.component_details_reducer",
+def test_component_accessory_reducer(mocker):
+    mock_component_accessory_details_reducer = mocker.patch(
+        "core.summaries.reducers.component_accessory_details_reducer",
         return_value=(),
     )
     mock_is_good_controlled_reducer = mocker.patch(
@@ -986,7 +986,7 @@ def test_component_reducer(mocker):
     good = {
         "name": "good-name",
     }
-    result = component_reducer(good)
+    result = component_accessory_reducer(good)
     assert result == (
         ("is-firearm-product", False),
         ("product-category", "component"),
@@ -994,7 +994,7 @@ def test_component_reducer(mocker):
         ("name", "good-name"),
     )
 
-    mock_component_details_reducer.assert_called_with(good)
+    mock_component_accessory_details_reducer.assert_called_with(good)
     mock_is_good_controlled_reducer.assert_called_with(good)
     mock_is_pv_graded_reducer.assert_called_with(good)
     mock_uses_information_security_reducer.assert_called_with(good)

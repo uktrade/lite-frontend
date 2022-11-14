@@ -110,7 +110,7 @@ MATERIAL_LABELS = {
     "military-use-details": "Provide details of the modifications",
 }
 
-COMPONENT_LABELS = {
+COMPONENT_ACCESSORY_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "product-category": "Select the product category",
     "is-material-substance": "Is it a material or substance?",
@@ -514,7 +514,7 @@ TECHNOLOGY_ON_APPLICATION_LABELS = {
     "total-value": "Total value",
 }
 
-COMPONENT_VALUE_FORMATTERS = {
+COMPONENT_ACCESSORY_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "product-category": product_category_formatter,
     "is-material-substance": is_material_substance_formatter,
@@ -537,7 +537,7 @@ COMPONENT_VALUE_FORMATTERS = {
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
-COMPONENT_ON_APPLICATION_FORMATTERS = {
+COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
@@ -545,7 +545,7 @@ COMPONENT_ON_APPLICATION_FORMATTERS = {
     "total-value": money_formatter,
 }
 
-COMPONENT_ON_APPLICATION_LABELS = {
+COMPONENT_ACCESSORY_ON_APPLICATION_LABELS = {
     "is-onward-exported": "Will the product be onward exported to any additional countries?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",

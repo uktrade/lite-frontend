@@ -520,28 +520,28 @@ def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, setti
         ),
         (
             {
-                "component": {
+                "component_accessory": {
                     "good": {
                         "id": "12345",
                         "item_category": {
-                            "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT,
+                            "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY,
                         },
                     },
                 },
             },
             [
                 (
-                    "component",
+                    "component_accessory",
                     {
                         "good_on_application": {
                             "good": {
                                 "id": "12345",
-                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT},
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY},
                             }
                         },
                         "summary": (
-                            ("component-summary",),
-                            ("component-product-on-application-summary",),
+                            ("component-accessory-summary",),
+                            ("component-accessory-product-on-application-summary",),
                         ),
                     },
                 ),
@@ -581,10 +581,13 @@ def test_tau_assessment_form_goods_choices(
         return_value=(("technology-product-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.cases.helpers.summaries.component_summary", return_value=(("component-summary",),))
     mocker.patch(
-        "caseworker.cases.helpers.summaries.component_product_on_application_summary",
-        return_value=(("component-product-on-application-summary",),),
+        "caseworker.cases.helpers.summaries.component_accessory_summary",
+        return_value=(("component-accessory-summary",),),
+    )
+    mocker.patch(
+        "caseworker.cases.helpers.summaries.component_accessory_product_on_application_summary",
+        return_value=(("component-accessory-product-on-application-summary",),),
     )
 
     queue_pk = uuid.uuid4()

@@ -42,8 +42,8 @@ from exporter.applications.services import (
     post_good_on_application,
 )
 from exporter.applications.summaries.component import (
-    component_summary,
-    component_product_on_application_summary,
+    component_accessory_summary,
+    component_accessory_product_on_application_summary,
 )
 from exporter.applications.summaries.firearm import (
     firearm_summary,
@@ -315,7 +315,7 @@ class IsMaterialSubstanceCategory(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         is_material_substance = form.cleaned_data["is_material_substance"]
-        redirect_url = reverse("applications:new_good_component", kwargs={"pk": self.kwargs["pk"]})
+        redirect_url = reverse("applications:new_good_component_accessory", kwargs={"pk": self.kwargs["pk"]})
         if is_material_substance:
             redirect_url = reverse("applications:new_good_material", kwargs={"pk": self.kwargs["pk"]})
         return redirect(redirect_url)
@@ -1108,9 +1108,9 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
                 technology_summary,
                 technology_product_on_application_summary,
             ),
-            SummaryTypes.COMPONENT: (
-                component_summary,
-                component_product_on_application_summary,
+            SummaryTypes.COMPONENT_ACCESSORY: (
+                component_accessory_summary,
+                component_accessory_product_on_application_summary,
             ),
         }
 
