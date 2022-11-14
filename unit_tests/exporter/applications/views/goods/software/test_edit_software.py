@@ -13,7 +13,7 @@ def setup(
     mock_control_list_entries_get,
     settings,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
+    pass
 
 
 @pytest.fixture

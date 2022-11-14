@@ -50,14 +50,12 @@ from .payloads import (
     AddGoodCompleteItemPayloadBuilder,
     AddGoodCompleteItemToApplicationPayloadBuilder,
 )
-from .mixins import NonFirearmsPlatformFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodCompleteItem(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
 ):
@@ -139,7 +137,6 @@ class AddGoodCompleteItem(
 
 class AddGoodCompleteItemToApplication(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,

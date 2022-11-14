@@ -17,12 +17,10 @@ from exporter.applications.summaries.software import (
     technology_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
-from .mixins import NonFirearmsSoftwareFlagMixin
 
 
 class BaseTechnologyOnApplicationSummary(
     LoginRequiredMixin,
-    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
@@ -71,7 +69,6 @@ class TechnologyProductOnApplicationSummary(BaseTechnologyOnApplicationSummary):
 
 class TechnologyProductSummary(
     LoginRequiredMixin,
-    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,

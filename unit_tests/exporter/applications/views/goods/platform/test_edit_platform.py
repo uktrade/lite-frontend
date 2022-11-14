@@ -18,7 +18,7 @@ def setup(
     settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
+    pass
 
 
 @pytest.fixture

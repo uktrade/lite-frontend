@@ -4,7 +4,6 @@ from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
 
 from django import forms
 from django.template.loader import render_to_string
-from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.db import models
@@ -696,31 +695,21 @@ class NonFirearmCategoryForm(BaseForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        category_choices = []
+        category_choices = [
+            TextChoice(
+                self.NonFirearmCategoryChoices.COMPLETE_ITEM,
+                hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
+            ),
+            TextChoice(
+                self.NonFirearmCategoryChoices.MATERIAL_CATEGORY,
+                hint="Hardware such as components and accessories, or raw materials and substances.",
+            ),
+            TextChoice(
+                self.NonFirearmCategoryChoices.TECHNOLOGY,
+                hint="For example, software or information such as technology manuals and specifications.",
+            ),
+        ]
 
-        if settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED:
-            category_choices.append(
-                TextChoice(
-                    self.NonFirearmCategoryChoices.COMPLETE_ITEM,
-                    hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
-                ),
-            )
-
-        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
-            category_choices.append(
-                TextChoice(
-                    self.NonFirearmCategoryChoices.MATERIAL_CATEGORY,
-                    hint="Hardware such as components and accessories, or raw materials and substances.",
-                ),
-            )
-
-        if settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED:
-            category_choices.append(
-                TextChoice(
-                    self.NonFirearmCategoryChoices.TECHNOLOGY,
-                    hint="For example, software or information such as technology manuals and specifications.",
-                ),
-            )
         self.fields["no_firearm_category"].choices = category_choices
 
     no_firearm_category = forms.ChoiceField(
@@ -742,11 +731,7 @@ class IsMaterialSubstanceCategoryForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        material_substance_choices = []
-        if settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
-            material_substance_choices.append((True, "Yes"))
-        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED:
-            material_substance_choices.append((False, "No, it's a component, accessory or module"))
+        material_substance_choices = [(True, "Yes"), (False, "No, it's a component, accessory or module")]
         self.fields["is_material_substance"].choices = material_substance_choices
 
     is_material_substance = forms.TypedChoiceField(

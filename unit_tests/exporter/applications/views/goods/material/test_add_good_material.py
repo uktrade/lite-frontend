@@ -34,11 +34,6 @@ def new_good_material_url(data_standard_case):
     )
 
 
-@pytest.fixture(autouse=True)
-def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
-
-
 @pytest.fixture
 def post_goods_matcher(requests_mock, good_id):
     return requests_mock.post(
@@ -70,16 +65,6 @@ def goto_step(goto_step_factory, new_good_material_url):
 @pytest.fixture
 def post_to_step(post_to_step_factory, new_good_material_url):
     return post_to_step_factory(new_good_material_url)
-
-
-def test_add_good_material_access_denied_without_feature_flag(
-    settings,
-    authorized_client,
-    new_good_material_url,
-):
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = False
-    response = authorized_client.get(new_good_material_url)
-    assert response.status_code == 404
 
 
 def test_add_good_material_end_to_end(

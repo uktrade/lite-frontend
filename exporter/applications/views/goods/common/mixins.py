@@ -1,17 +1,9 @@
 import requests
 
-from django.conf import settings
 from django.http import Http404
 
 from exporter.applications.services import get_application
 from exporter.goods.services import get_good, get_good_on_application
-
-
-class NonFirearmsFlagMixin:
-    def dispatch(self, request, **kwargs):
-        if not settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
-            raise Http404
-        return super().dispatch(request, **kwargs)
 
 
 class GoodOnApplicationMixin:

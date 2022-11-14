@@ -19,7 +19,7 @@ def setup(
     settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
+    pass
 
 
 @pytest.fixture

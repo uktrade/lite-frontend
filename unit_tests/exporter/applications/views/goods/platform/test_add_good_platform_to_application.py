@@ -37,11 +37,6 @@ def expected_good_data(application):
     return good
 
 
-@pytest.fixture(autouse=True)
-def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
-
-
 @pytest.fixture
 def goto_step(goto_step_factory, new_complete_item_to_application_url):
     return goto_step_factory(new_complete_item_to_application_url)
