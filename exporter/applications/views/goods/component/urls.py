@@ -31,7 +31,7 @@ urlpatterns = [
     ),
     path("<uuid:good_pk>/edit/name/", edit.ComponentAccessoryEditName.as_view(), name="component_accessory_edit_name"),
     path(
-        "<uuid:good_pk>/edit/component_accessory-details/",
+        "<uuid:good_pk>/edit/component-accessory-details/",
         edit.ComponentAccessoryEditComponentDetails.as_view(),
         name="component_accessory_edit_component_details",
     ),
