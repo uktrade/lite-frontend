@@ -16,7 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -47,6 +46,7 @@ from exporter.applications.views.goods.common.payloads import (
 from exporter.applications.views.goods.common.steps import (
     ProductControlListEntryStep,
     ProductNameStep,
+    ProductPartNumberStep,
 )
 from exporter.core.wizard.views import (
     BaseSessionWizardView,
@@ -94,15 +94,14 @@ class EditMaterial:
         "Error editing material",
         "Unexpected error editing material",
     )
-    def edit_material(self, request, good_id, form):
-        payload = get_cleaned_data(form)
+    def edit_material(self, request, good_id, payload):
         return edit_material(request, good_id, payload)
 
     def run(self, view, form):
         self.edit_material(
             view.request,
             view.good["id"],
-            form,
+            view.get_step_data(form),
         )
 
 
@@ -134,10 +133,14 @@ class MaterialEditControlListEntry(
 
 
 class MaterialEditPartNumberView(
-    BaseEditPartNumber,
-    BaseMaterialEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    MaterialSummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditMaterial(),)
+    step = ProductPartNumberStep()
 
 
 class BaseMaterialEditWizardView(
