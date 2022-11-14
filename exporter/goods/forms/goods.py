@@ -11,6 +11,7 @@ from django.db import models
 from core.builtins.custom_tags import default_na, linkify
 from core.constants import ProductCategories
 from core.forms.layouts import ConditionalRadiosQuestion, ConditionalRadios, summary_list
+from core.constants import ComponentAccessoryChoices
 
 from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 from exporter.core.constants import (
@@ -22,7 +23,6 @@ from exporter.core.helpers import (
     convert_control_list_entries,
     str_to_bool,
 )
-from core.constants import ComponentAccessoryChoices
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
 from exporter.core.common.forms import BaseForm
