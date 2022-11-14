@@ -227,7 +227,7 @@ def test_component_accessory_summary(data_standard_case, standard_component_acce
 
 
 def test_component_accessory_product_on_application_summary(
-    data_standard_case, standard_platform_expected_product_on_application_summary
+    data_standard_case, standard_component_accessory_expected_product_on_application_summary
 ):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     del good_on_application["firearm_details"]
@@ -243,7 +243,7 @@ def test_component_accessory_product_on_application_summary(
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
     product_summary = component_accessory_product_on_application_summary(good_on_application, queue_pk, application_pk)
-    assert product_summary == standard_platform_expected_product_on_application_summary
+    assert product_summary == standard_component_accessory_expected_product_on_application_summary
 
 
 def test_material_summary(data_standard_case, standard_material_expected_product_summary):
