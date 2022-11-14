@@ -17,7 +17,6 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductPartNumberForm,
 )
 from exporter.goods.services import (
     delete_good_document,
@@ -36,7 +35,6 @@ from .mixins import (
     GoodMixin,
 )
 from .payloads import (
-    get_part_number_payload,
     ProductEditProductDocumentAvailabilityPayloadBuilder,
     ProductEditProductDocumentSensitivityPayloadBuilder,
 )
@@ -76,24 +74,6 @@ class BaseProductEditView(
         ctx["title"] = self.form_class.Layout.TITLE
 
         return ctx
-
-
-class BaseEditPartNumber:
-    form_class = ProductPartNumberForm
-
-    def get_edit_payload(self, form):
-        return get_part_number_payload(form)
-
-    def get_initial(self):
-        no_part_number_comments = self.good.get("no_part_number_comments")
-        if no_part_number_comments:
-            return {
-                "part_number_missing": True,
-                "no_part_number_comments": no_part_number_comments,
-            }
-        return {
-            "part_number": self.good["part_number"],
-        }
 
 
 class BaseEditProductDescription:
