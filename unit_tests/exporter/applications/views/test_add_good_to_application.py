@@ -12,8 +12,8 @@ from core.constants import OrganisationDocumentType
 from exporter.applications.views.goods import AddGoodToApplicationFormSteps
 from exporter.goods.forms import (
     AttachFirearmsDealerCertificateForm,
-    ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
-    ComponentOfAFirearmUnitQuantityValueForm,
+    ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm,
+    ComponentAccessoryOfAFirearmUnitQuantityValueForm,
     FirearmsActConfirmationForm,
     FirearmsCaptureSerialNumbersForm,
     FirearmsNumberOfItemsForm,
@@ -756,7 +756,7 @@ def test_add_good_to_application_component_of_a_firearm_not_preexisting_start(
     response = authorized_client.get(not_preexisting_url)
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ComponentOfAFirearmUnitQuantityValueForm)
+    assert isinstance(response.context["form"], ComponentAccessoryOfAFirearmUnitQuantityValueForm)
     assertNotContains(response, "Step 1 of", html=True)
 
 
@@ -778,7 +778,7 @@ def test_add_good_to_application_component_of_a_firearm_ammunition_not_preexisti
     response = authorized_client.get(not_preexisting_url)
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ComponentOfAFirearmAmmunitionUnitQuantityValueForm)
+    assert isinstance(response.context["form"], ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm)
     assertNotContains(response, "Step 1 of", html=True)
 
 

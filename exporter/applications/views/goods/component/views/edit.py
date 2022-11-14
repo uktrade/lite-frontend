@@ -64,7 +64,7 @@ from .constants import (
     AddGoodComponentSteps,
 )
 from .payloads import (
-    ComponentProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
+    ComponentAccessoryProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
     ProductEditComponentDetailsPayloadBuilder,
 )
 from .mixins import NonFirearmsComponentFlagMixin
@@ -85,27 +85,27 @@ class BaseEditView(
         edit_component_accessory(request, good_id, payload)
 
 
-class BaseComponentEditView(BaseEditView):
+class BaseComponentAccessoryEditView(BaseEditView):
     def get_edit_payload(self, form):
         return get_cleaned_data(form)
 
 
-class ComponentEditName(BaseEditName, BaseComponentEditView):
+class ComponentAccessoryEditName(BaseEditName, BaseComponentAccessoryEditView):
     pass
 
 
-class ComponentEditControlListEntry(BaseEditControlListEntry, BaseComponentEditView):
+class ComponentAccessoryEditControlListEntry(BaseEditControlListEntry, BaseComponentAccessoryEditView):
     pass
 
 
-class ComponentEditPartNumberView(
+class ComponentAccessoryEditPartNumberView(
     BaseEditPartNumber,
-    BaseComponentEditView,
+    BaseComponentAccessoryEditView,
 ):
     pass
 
 
-class BaseComponentEditWizardView(
+class BaseComponentAccessoryEditWizardView(
     NonFirearmsComponentFlagMixin,
     BaseProductEditWizardView,
 ):
@@ -116,7 +116,7 @@ class BaseComponentEditWizardView(
         return edit_component_accessory(self.request, good_pk, payload)
 
 
-class ComponentEditPVGrading(BaseComponentEditWizardView):
+class ComponentAccessoryEditPVGrading(BaseComponentAccessoryEditWizardView):
     form_list = [
         (AddGoodComponentSteps.PV_GRADING, ProductPVGradingForm),
         (AddGoodComponentSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
@@ -144,7 +144,7 @@ class ComponentEditPVGrading(BaseComponentEditWizardView):
         return ProductEditPVGradingPayloadBuilder().build(form_dict)
 
 
-class ComponentEditPVGradingDetails(BaseComponentEditView):
+class ComponentAccessoryEditPVGradingDetails(BaseComponentAccessoryEditView):
     form_class = ProductPVGradingDetailsForm
 
     def get_initial(self):
@@ -159,7 +159,7 @@ class ComponentEditPVGradingDetails(BaseComponentEditView):
         return {"is_pv_graded": self.good["is_pv_graded"].get("key"), **grading_details}
 
 
-class ComponentEditUsesInformationSecurity(BaseComponentEditView):
+class ComponentAccessoryEditUsesInformationSecurity(BaseComponentAccessoryEditView):
     form_class = ProductUsesInformationSecurityForm
 
     def get_initial(self):
@@ -174,7 +174,7 @@ class ComponentEditUsesInformationSecurity(BaseComponentEditView):
         }
 
 
-class ComponentEditMilitaryUseView(BaseComponentEditView):
+class ComponentAccessoryEditMilitaryUseView(BaseComponentAccessoryEditView):
     form_class = ProductMilitaryUseForm
 
     def get_initial(self):
@@ -184,37 +184,37 @@ class ComponentEditMilitaryUseView(BaseComponentEditView):
         }
 
 
-class BaseComponentEditProductDocumentView(
+class BaseComponentAccessoryEditProductDocumentView(
     BaseEditProductDocumentView,
-    BaseComponentEditWizardView,
+    BaseComponentAccessoryEditWizardView,
 ):
     pass
 
 
-class ComponentEditProductDocumentAvailability(
+class ComponentAccessoryEditProductDocumentAvailability(
     BaseEditProductDocumentAvailability,
-    BaseComponentEditProductDocumentView,
+    BaseComponentAccessoryEditProductDocumentView,
 ):
     pass
 
 
-class ComponentEditProductDocumentSensitivity(
+class ComponentAccessoryEditProductDocumentSensitivity(
     BaseEditProductDocumentSensitivity,
-    BaseComponentEditProductDocumentView,
+    BaseComponentAccessoryEditProductDocumentView,
 ):
     pass
 
 
-class ComponentEditProductDocumentView(
+class ComponentAccessoryEditProductDocumentView(
     BaseProductDocumentUpload,
-    BaseComponentEditView,
+    BaseComponentAccessoryEditView,
 ):
     pass
 
 
-class ComponentEditProductDescriptionView(
+class ComponentAccessoryEditProductDescriptionView(
     BaseEditProductDescription,
-    BaseComponentEditView,
+    BaseComponentAccessoryEditView,
 ):
     pass
 
@@ -282,7 +282,7 @@ class BaseProductOnApplicationSummaryEditWizardView(
         return redirect(self.get_success_url())
 
 
-class ComponentOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
+class ComponentAccessoryOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSummaryEditWizardView):
     form_list = [
         (AddGoodComponentToApplicationSteps.ONWARD_EXPORTED, ProductOnwardExportedForm),
         (AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED, ProductOnwardAlteredProcessedForm),
@@ -308,10 +308,10 @@ class ComponentOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationSu
         return initial
 
     def get_edit_component_accessory_good_on_application_payload(self, form_dict):
-        return ComponentProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
+        return ComponentAccessoryProductOnApplicationSummaryEditOnwardExportedPayloadBuilder().build(form_dict)
 
 
-class BaseComponentOnApplicationEditView(
+class BaseComponentAccessoryOnApplicationEditView(
     LoginRequiredMixin,
     NonFirearmsComponentFlagMixin,
     SummaryTypeMixin,
@@ -348,14 +348,14 @@ class BaseComponentOnApplicationEditView(
         return get_cleaned_data(form)
 
 
-class ComponentOnApplicationSummaryEditOnwardAltered(BaseComponentOnApplicationEditView):
+class ComponentAccessoryOnApplicationSummaryEditOnwardAltered(BaseComponentAccessoryOnApplicationEditView):
     form_class = ProductOnwardAlteredProcessedForm
 
     def get_initial(self):
         return get_onward_altered_processed_initial_data(self.good_on_application)
 
 
-class ComponentOnApplicationSummaryEditOnwardIncorporated(BaseComponentOnApplicationEditView):
+class ComponentAccessoryOnApplicationSummaryEditOnwardIncorporated(BaseComponentAccessoryOnApplicationEditView):
     form_class = ProductOnwardIncorporatedForm
 
     def get_initial(self):
@@ -370,7 +370,7 @@ class ComponentOnApplicationSummaryEditOnwardIncorporated(BaseComponentOnApplica
         }
 
 
-class ComponentOnApplicationSummaryEditQuantityValue(BaseComponentOnApplicationEditView):
+class ComponentAccessoryOnApplicationSummaryEditQuantityValue(BaseComponentAccessoryOnApplicationEditView):
     form_class = ProductQuantityAndValueForm
 
     def get_initial(self):
@@ -380,7 +380,7 @@ class ComponentOnApplicationSummaryEditQuantityValue(BaseComponentOnApplicationE
         return get_quantity_and_value_payload(form)
 
 
-class ComponentEditComponentDetails(BaseComponentEditWizardView):
+class ComponentAccessoryEditComponentDetails(BaseComponentAccessoryEditWizardView):
     form_list = [
         (AddGoodComponentSteps.IS_COMPONENT, ProductIsComponentForm),
         (AddGoodComponentSteps.COMPONENT_DETAILS, ProductComponentDetailsForm),

@@ -5,7 +5,7 @@ from exporter.applications.summaries.component import component_accessory_summar
 from ..common.base import BaseProductDetails
 
 
-class ComponentProductDetails(BaseProductDetails):
+class ComponentAccessoryProductDetails(BaseProductDetails):
     summary_type = SummaryTypes.COMPONENT_ACCESSORY
 
     def get_summary(self):

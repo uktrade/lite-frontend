@@ -80,8 +80,8 @@ from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
-    ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
-    ComponentOfAFirearmUnitQuantityValueForm,
+    ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm,
+    ComponentAccessoryOfAFirearmUnitQuantityValueForm,
     FirearmsActConfirmationForm,
     FirearmsCalibreDetailsForm,
     FirearmsCaptureSerialNumbersForm,
@@ -788,11 +788,11 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
         (AddGoodToApplicationFormSteps.FIREARM_UNIT_QUANTITY_VALUE, FirearmsUnitQuantityValueForm),
         (
             AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_UNIT_QUANTITY_VALUE,
-            ComponentOfAFirearmUnitQuantityValueForm,
+            ComponentAccessoryOfAFirearmUnitQuantityValueForm,
         ),
         (
             AddGoodToApplicationFormSteps.COMPONENT_OF_A_FIREARM_AMMUNITION_UNIT_QUANTITY_VALUE,
-            ComponentOfAFirearmAmmunitionUnitQuantityValueForm,
+            ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm,
         ),
         (AddGoodToApplicationFormSteps.UNIT_QUANTITY_VALUE, UnitQuantityValueForm),
         (AddGoodToApplicationFormSteps.REGISTERED_FIREARMS_DEALER, RegisteredFirearmsDealerForm),

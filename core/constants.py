@@ -88,16 +88,16 @@ class SerialChoices(models.TextChoices):
     NOT_AVAILABLE = "NOT_AVAILABLE", "No"
 
 
-class ComponentChoices(models.TextChoices):
+class ComponentAccessoryChoices(models.TextChoices):
     DESIGNED = "yes_designed", "Specially designed for hardware"
     MODIFIED = "yes_modified", "Modified for hardware"
     GENERAL = "yes_general", "General-purpose component"
 
 
 COMPONENT_DETAILS_MAP = {
-    ComponentChoices.DESIGNED: "designed_details",
-    ComponentChoices.MODIFIED: "modified_details",
-    ComponentChoices.GENERAL: "general_details",
+    ComponentAccessoryChoices.DESIGNED: "designed_details",
+    ComponentAccessoryChoices.MODIFIED: "modified_details",
+    ComponentAccessoryChoices.GENERAL: "general_details",
 }
 
 

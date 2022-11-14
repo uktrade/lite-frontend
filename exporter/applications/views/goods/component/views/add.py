@@ -57,7 +57,7 @@ from .mixins import NonFirearmsComponentFlagMixin
 logger = logging.getLogger(__name__)
 
 
-class AddGoodComponent(
+class AddGoodComponentAccessory(
     LoginRequiredMixin,
     NonFirearmsComponentFlagMixin,
     ApplicationMixin,
@@ -164,7 +164,7 @@ class AddGoodComponent(
         return redirect(self.get_success_url())
 
 
-class AddGoodComponentToApplication(
+class AddGoodComponentAccessoryToApplication(
     LoginRequiredMixin,
     NonFirearmsComponentFlagMixin,
     ApplicationMixin,

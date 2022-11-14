@@ -2,7 +2,7 @@ from django.conf import settings
 from django.urls import path
 
 from exporter.goods import views
-from exporter.goods.component.views import ComponentProductDetails
+from exporter.goods.component.views import ComponentAccessoryProductDetails
 from exporter.goods.firearms.views import FirearmProductDetails
 from exporter.goods.materials.views import MaterialProductDetails
 from exporter.goods.platform.views import PlatformProductDetails
@@ -58,7 +58,7 @@ urlpatterns = [
     path("platform/<uuid:pk>/", PlatformProductDetails.as_view(), name="platform_detail"),
     path("material/<uuid:pk>/", MaterialProductDetails.as_view(), name="material_detail"),
     path("software/<uuid:pk>/", TechnologyProductDetails.as_view(), name="technology_detail"),
-    path("component/<uuid:pk>/", ComponentProductDetails.as_view(), name="component_accessory_detail"),
+    path("component/<uuid:pk>/", ComponentAccessoryProductDetails.as_view(), name="component_accessory_detail"),
 ]
 
 
