@@ -8,3 +8,6 @@ class Step:
 
     def get_form_kwargs(self, view):
         return {}
+
+    def get_step_data(self, form):
+        return form.cleaned_data

@@ -18,9 +18,9 @@ from exporter.applications.views.goods.common.conditionals import (
 from exporter.applications.views.goods.common.steps import (
     ProductControlListEntryStep,
     ProductNameStep,
+    ProductPartNumberStep,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -106,15 +106,14 @@ class EditComponentAccessory:
         "Error editing component/accessory",
         "Unexpected error editing component/accessory",
     )
-    def edit_component_accessory(self, request, good_id, form):
-        payload = get_cleaned_data(form)
+    def edit_component_accessory(self, request, good_id, payload):
         return edit_component_accessory(request, good_id, payload)
 
     def run(self, view, form):
         self.edit_component_accessory(
             view.request,
             view.good["id"],
-            form,
+            view.get_step_data(form),
         )
 
 
@@ -141,10 +140,14 @@ class ComponentAccessoryEditControlListEntry(
 
 
 class ComponentAccessoryEditPartNumberView(
-    BaseEditPartNumber,
-    BaseComponentAccessoryEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    ComponentAccessorySummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditComponentAccessory(),)
+    step = ProductPartNumberStep()
 
 
 class BaseComponentAccessoryEditWizardView(

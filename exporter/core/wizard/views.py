@@ -37,3 +37,6 @@ class StepEditView(FormView):
             **form_kwargs,
             **step_form_kwargs,
         }
+
+    def get_step_data(self, form):
+        return self.step.get_step_data(form)
