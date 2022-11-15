@@ -87,7 +87,7 @@
                             {% elif good.item_category.key == "group1_platform"  %}
                     		    <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:platform_detail" good.id %}">View</a>
 							{% elif good.item_category.key == "group1_components" %}
-								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:component_detail" good.id %}">View</a>
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:component_accessory_detail" good.id %}">View</a>
 							{% elif good.item_category.key == "group3_software" %}
 								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:software_detail" good.id %}">View</a>
 							{% elif good.item_category.key == "group1_materials" %}
