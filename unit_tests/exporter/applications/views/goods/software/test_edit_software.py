@@ -11,7 +11,6 @@ def setup(
     mock_good_get,
     mock_good_put,
     mock_control_list_entries_get,
-    settings,
 ):
     pass
 
