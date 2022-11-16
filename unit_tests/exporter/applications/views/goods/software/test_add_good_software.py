@@ -24,7 +24,7 @@ from exporter.goods.forms.goods import (
 
 @pytest.fixture(autouse=True)
 def setup(no_op_storage):
-    pass
+    yield
 
 
 @pytest.fixture

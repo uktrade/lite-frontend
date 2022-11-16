@@ -18,7 +18,7 @@ def setup(
     mock_control_list_entries_get,
     no_op_storage,
 ):
-    pass
+    yield
 
 
 @pytest.fixture

@@ -16,10 +16,9 @@ def setup(
     mock_control_list_entries_get,
     mock_good_document_post,
     mock_good_document_delete,
-    settings,
     no_op_storage,
 ):
-    pass
+    yield
 
 
 @pytest.fixture

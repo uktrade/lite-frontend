@@ -59,7 +59,7 @@ def setup(
     mock_post_party_document,
     no_op_storage,
 ):
-    pass
+    yield
 
 
 @pytest.fixture

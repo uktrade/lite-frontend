@@ -22,7 +22,7 @@ def mock_good_on_application_get(requests_mock, good_on_application):
 
 @pytest.fixture(autouse=True)
 def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
-    pass
+    yield
 
 
 @pytest.fixture

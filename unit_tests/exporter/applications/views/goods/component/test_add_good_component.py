@@ -22,7 +22,7 @@ from exporter.goods.forms.goods import ProductComponentDetailsForm, ProductIsCom
 
 @pytest.fixture(autouse=True)
 def setup(no_op_storage):
-    pass
+    yield
 
 
 @pytest.fixture

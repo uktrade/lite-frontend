@@ -33,7 +33,7 @@ ADD_GOOD_VIEW = "add_good"
 
 @pytest.fixture(autouse=True)
 def setup(no_op_storage):
-    pass
+    yield
 
 
 @pytest.fixture(autouse=True)

@@ -12,7 +12,7 @@ def setup(
     mock_good_put,
     mock_control_list_entries_get,
 ):
-    pass
+    yield
 
 
 @pytest.fixture
