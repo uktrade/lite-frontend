@@ -574,7 +574,7 @@ def test_firearm_on_application_reducer(mocker):
         good_on_application["firearm_details"],
     )
     mock_is_onward_exported_reducer.assert_called_with(
-        good_on_application["firearm_details"],
+        good_on_application,
     )
     mock_is_deactivated_reducer.assert_called_with(
         good_on_application["firearm_details"],

@@ -686,15 +686,14 @@ class FirearmProductOnApplicationSummaryEditOnwardExported(BaseProductOnApplicat
 
     def get_form_initial(self, step):
         initial = super().get_form_initial(step)
-
         if step == AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED:
-            initial.update(get_is_onward_exported_initial_data(self.good_on_application["firearm_details"]))
+            initial.update(get_is_onward_exported_initial_data(self.good_on_application))
 
         if step == AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED:
-            initial.update(get_onward_altered_processed_initial_data(self.good_on_application["firearm_details"]))
+            initial.update(get_onward_altered_processed_initial_data(self.good_on_application))
 
         if step == AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED:
-            initial.update(get_onward_incorporated_initial_data(self.good_on_application["firearm_details"]))
+            initial.update(get_onward_incorporated_initial_data(self.good_on_application))
 
         return initial
 
@@ -706,14 +705,17 @@ class FirearmProductOnApplicationSummaryEditOnwardAltered(BaseGoodOnApplicationE
     form_class = ProductOnwardAlteredProcessedForm
 
     def get_initial(self):
-        return get_onward_altered_processed_initial_data(self.good_on_application["firearm_details"])
+        return get_onward_altered_processed_initial_data(self.good_on_application)
+
+    def get_edit_payload(self, form):
+        return get_cleaned_data(form)
 
 
 class FirearmProductOnApplicationSummaryEditOnwardIncorporated(BaseGoodOnApplicationEditView):
     form_class = ProductOnwardIncorporatedForm
 
     def get_initial(self):
-        return get_onward_incorporated_initial_data(self.good_on_application["firearm_details"])
+        return get_onward_incorporated_initial_data(self.good_on_application)
 
     def get_edit_payload(self, form):
         return get_onward_incorporated_payload(form)

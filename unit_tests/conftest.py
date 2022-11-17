@@ -723,9 +723,9 @@ def data_standard_case():
                             "serial_numbers_available": "AVAILABLE",
                             "serial_numbers": ["12345", "ABC-123"],
                             "year_of_manufacture": "1990",
-                            "is_onward_exported": False,
                             "is_deactivated": False,
                         },
+                        "is_onward_exported": False,
                     },
                     {
                         "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",

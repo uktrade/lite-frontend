@@ -659,14 +659,12 @@ def test_edit_onward_exported_true(
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
-        "firearm_details": {
-            "is_onward_altered_processed": True,
-            "is_onward_altered_processed_comments": "Altering",
-            "is_onward_exported": True,
-            "is_onward_incorporated": True,
-            "is_onward_incorporated_comments": "Incorporated",
-        },
         "is_good_incorporated": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "Altering",
+        "is_onward_exported": True,
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "Incorporated",
     }
 
 
@@ -699,9 +697,7 @@ def test_edit_onward_exported_false(
 
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
-        "firearm_details": {
-            "is_onward_exported": False,
-        },
+        "is_onward_exported": False,
     }
 
 
@@ -748,10 +744,8 @@ def test_edit_onward_altered_processed(
     assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
-        "firearm_details": {
-            "is_onward_altered_processed": True,
-            "is_onward_altered_processed_comments": "Altered",
-        },
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "Altered",
     }
 
 
@@ -798,8 +792,9 @@ def test_edit_onward_incorporated(
     assert response.url == product_on_application_summary_url_factory(summary_type)
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
-        "firearm_details": {"is_onward_incorporated": True, "is_onward_incorporated_comments": "Incorporated"},
         "is_good_incorporated": True,
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "Incorporated",
     }
 
 
