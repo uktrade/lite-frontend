@@ -20,7 +20,7 @@ def setup(
     mock_standard_case_documents,
     mock_standard_case_additional_contacts,
 ):
-    pass
+    yield
 
 
 def test_notes_and_timeline_tab(authorized_client, data_queue, data_standard_case):

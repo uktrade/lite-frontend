@@ -22,12 +22,7 @@ def mock_good_on_application_get(requests_mock, good_on_application):
 
 @pytest.fixture(autouse=True)
 def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
-    pass
-
-
-@pytest.fixture(autouse=True)
-def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
+    yield
 
 
 @pytest.fixture

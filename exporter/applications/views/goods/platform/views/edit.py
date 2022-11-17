@@ -63,13 +63,11 @@ from .constants import (
     AddGoodCompleteItemSteps,
 )
 from .payloads import CompleteItemProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
-from .mixins import NonFirearmsPlatformFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    NonFirearmsPlatformFlagMixin,
     BaseProductEditView,
 ):
     def get_success_url(self):
@@ -100,7 +98,6 @@ class CompleteItemEditPartNumberView(
 
 
 class BaseCompleteItemEditWizardView(
-    NonFirearmsPlatformFlagMixin,
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
@@ -248,7 +245,6 @@ class SummaryTypeMixin:
 
 class BaseProductOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -307,7 +303,6 @@ class CompleteItemOnApplicationSummaryEditOnwardExported(BaseProductOnApplicatio
 
 class BaseCompleteItemOnApplicationEditView(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,

@@ -49,14 +49,12 @@ from .payloads import (
     AddGoodTechnologyPayloadBuilder,
     AddGoodTechnologyToApplicationPayloadBuilder,
 )
-from .mixins import NonFirearmsSoftwareFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodTechnology(
     LoginRequiredMixin,
-    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
     ProductSecurityFeaturesForm,
@@ -139,7 +137,6 @@ class AddGoodTechnology(
 
 class AddGoodTechnologyToApplication(
     LoginRequiredMixin,
-    NonFirearmsSoftwareFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,

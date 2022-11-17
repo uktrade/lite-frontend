@@ -17,12 +17,10 @@ from exporter.applications.summaries.component import (
     component_accessory_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
-from .mixins import NonFirearmsComponentFlagMixin
 
 
 class BaseComponentAccessoryOnApplicationSummary(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
@@ -70,7 +68,6 @@ class ComponentAccessoryProductOnApplicationSummary(BaseComponentAccessoryOnAppl
 
 class ComponentAccessoryProductSummary(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,

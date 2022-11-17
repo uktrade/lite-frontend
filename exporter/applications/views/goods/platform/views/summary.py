@@ -17,12 +17,10 @@ from exporter.applications.summaries.platform import (
     complete_item_product_on_application_summary,
 )
 from exporter.core.helpers import get_organisation_documents
-from .mixins import NonFirearmsPlatformFlagMixin
 
 
 class BaseCompleteItemOnApplicationSummary(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
@@ -71,7 +69,6 @@ class CompleteItemProductOnApplicationSummary(BaseCompleteItemOnApplicationSumma
 
 class CompleteItemProductSummary(
     LoginRequiredMixin,
-    NonFirearmsPlatformFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,

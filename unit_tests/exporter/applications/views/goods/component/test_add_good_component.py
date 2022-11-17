@@ -22,7 +22,7 @@ from exporter.goods.forms.goods import ProductComponentDetailsForm, ProductIsCom
 
 @pytest.fixture(autouse=True)
 def setup(no_op_storage):
-    pass
+    yield
 
 
 @pytest.fixture
@@ -34,11 +34,6 @@ def new_good_component_accessory_url(data_standard_case):
             "pk": application_id,
         },
     )
-
-
-@pytest.fixture(autouse=True)
-def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
 
 
 @pytest.fixture
@@ -72,16 +67,6 @@ def goto_step(goto_step_factory, new_good_component_accessory_url):
 @pytest.fixture
 def post_to_step(post_to_step_factory, new_good_component_accessory_url):
     return post_to_step_factory(new_good_component_accessory_url)
-
-
-def test_add_good_component_accessory_access_denied_without_feature_flag(
-    settings,
-    authorized_client,
-    new_good_component_accessory_url,
-):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = False
-    response = authorized_client.get(new_good_component_accessory_url)
-    assert response.status_code == 404
 
 
 def test_add_good_component_accessory_end_to_end(

@@ -27,7 +27,7 @@ from exporter.goods.forms.firearms import (
 
 @pytest.fixture(autouse=True)
 def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
-    pass
+    yield
 
 
 @pytest.fixture(autouse=True)

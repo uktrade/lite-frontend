@@ -4,11 +4,6 @@ from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
-
-
 @pytest.fixture
 def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]

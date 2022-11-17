@@ -3,11 +3,6 @@ import pytest
 from pytest_django.asserts import assertTemplateUsed
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
-
-
 @pytest.fixture
 def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]

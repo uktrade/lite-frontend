@@ -32,8 +32,8 @@ ADD_GOOD_VIEW = "add_good"
 
 
 @pytest.fixture(autouse=True)
-def setup(no_op_storage, settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
+def setup(no_op_storage):
+    yield
 
 
 @pytest.fixture(autouse=True)
@@ -80,12 +80,6 @@ def test_add_good_start(url, authorized_client, goods_url):
     assert isinstance(response.context["form"], GroupTwoProductTypeForm)
     assert CreateGoodForm.FirearmGood.ProductType.TITLE.encode("utf-8") in response.content
     assert response.context["back_link_url"] == goods_url
-
-
-def test_add_good_back_link_with_non_firearm_feature_switch(url, authorized_client, settings, is_good_firearm_url):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
-    response = authorized_client.get(url)
-    assert response.context["back_link_url"] == is_good_firearm_url
 
 
 def test_add_good_firearm_redirects_to_firearm_wizard(url, authorized_client, add_new_firearm_url):

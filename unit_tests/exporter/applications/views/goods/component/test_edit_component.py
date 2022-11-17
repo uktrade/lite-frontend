@@ -16,10 +16,9 @@ def setup(
     mock_control_list_entries_get,
     mock_good_document_post,
     mock_good_document_delete,
-    settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
+    yield
 
 
 @pytest.fixture

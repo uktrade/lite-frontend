@@ -16,7 +16,7 @@ from exporter.goods.forms.common import (
 
 @pytest.fixture(autouse=True)
 def setup(mock_application_get, mock_good_get, no_op_storage):
-    pass
+    yield
 
 
 @pytest.fixture
@@ -35,11 +35,6 @@ def new_complete_item_to_application_url(application):
 def expected_good_data(application):
     good = application["goods"][0]["good"]
     return good
-
-
-@pytest.fixture(autouse=True)
-def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
 
 
 @pytest.fixture

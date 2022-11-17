@@ -67,7 +67,7 @@ from .payloads import (
     ComponentAccessoryProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
     ProductEditComponentDetailsPayloadBuilder,
 )
-from .mixins import NonFirearmsComponentFlagMixin
+
 from .conditionals import is_component
 from .initial import get_is_component_initial_data, get_component_details_initial_data
 
@@ -75,7 +75,6 @@ logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    NonFirearmsComponentFlagMixin,
     BaseProductEditView,
 ):
     def get_success_url(self):
@@ -106,7 +105,6 @@ class ComponentAccessoryEditPartNumberView(
 
 
 class BaseComponentAccessoryEditWizardView(
-    NonFirearmsComponentFlagMixin,
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
@@ -254,7 +252,6 @@ class SummaryTypeMixin:
 
 class BaseProductOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -313,7 +310,6 @@ class ComponentAccessoryOnApplicationSummaryEditOnwardExported(BaseProductOnAppl
 
 class BaseComponentAccessoryOnApplicationEditView(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,

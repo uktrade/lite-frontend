@@ -69,13 +69,11 @@ from .payloads import (
     TechnologyProductOnApplicationSummaryEditOnwardExportedPayloadBuilder,
     get_onward_incorporated_payload,
 )
-from .mixins import NonFirearmsSoftwareFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    NonFirearmsSoftwareFlagMixin,
     BaseProductEditView,
 ):
     def get_success_url(self):
@@ -106,7 +104,6 @@ class TechnologyEditPartNumberView(
 
 
 class BaseTechnologyEditWizardView(
-    NonFirearmsSoftwareFlagMixin,
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
@@ -263,7 +260,6 @@ class SummaryTypeMixin:
 
 class BaseProductOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
-    NonFirearmsSoftwareFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -322,7 +318,6 @@ class TechnologyOnApplicationSummaryEditOnwardExported(BaseProductOnApplicationS
 
 class BaseTechnologyOnApplicationEditView(
     LoginRequiredMixin,
-    NonFirearmsSoftwareFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,

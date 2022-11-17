@@ -3,8 +3,6 @@ import logging
 from datetime import datetime
 from http import HTTPStatus
 
-from django.http import Http404
-from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
@@ -123,9 +121,6 @@ from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
 
 
-from .common.mixins import NonFirearmsFlagMixin
-
-
 log = logging.getLogger(__name__)
 
 
@@ -167,7 +162,6 @@ class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
             exhibition=is_exhibition,
             goods_value=None if is_exhibition else get_total_goods_value(goods),
             includes_firearms=includes_firearms,
-            feature_flag_non_firearms_enabled=settings.FEATURE_FLAG_NON_FIREARMS_ENABLED,
             **kwargs,
         )
 
@@ -213,7 +207,6 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "filters": filters,
-            "feature_flag_firearms_enabled": settings.FEATURE_FLAG_FIREARMS_ENABLED,
         }
 
         return render(request, "applications/goods/preexisting.html", context)
@@ -265,7 +258,7 @@ class SkipResetSessionStorage(SessionStorage):
             super().reset()
 
 
-class IsGoodFirearm(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
+class IsGoodFirearm(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
     form_class = IsFirearmForm
 
@@ -283,7 +276,7 @@ class IsGoodFirearm(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
         return context
 
 
-class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
+class NonFirearmCategory(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
     form_class = NonFirearmCategoryForm
 
@@ -305,13 +298,6 @@ class NonFirearmCategory(LoginRequiredMixin, NonFirearmsFlagMixin, FormView):
 class IsMaterialSubstanceCategory(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
     form_class = IsMaterialSubstanceCategoryForm
-
-    def dispatch(self, request, **kwargs):
-        if not (
-            settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED
-        ):
-            raise Http404
-        return super().dispatch(request, **kwargs)
 
     def form_valid(self, form):
         is_material_substance = form.cleaned_data["is_material_substance"]
@@ -395,8 +381,6 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
         # The back_link_url is used for the first form in the sequence. For subsequent forms,
         # the wizard automatically generates the back link to the previous form.
         context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
-        if settings.FEATURE_FLAG_NON_FIREARMS_ENABLED:
-            context["back_link_url"] = reverse("applications:is_good_firearm", kwargs={"pk": self.kwargs["pk"]})
         return context
 
     def get_form_kwargs(self, step=None):

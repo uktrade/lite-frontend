@@ -2,7 +2,6 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
-from .mixins import NonFirearmsMaterialFlagMixin
 
 from exporter.applications.views.goods.common.mixins import ApplicationMixin, GoodMixin, GoodOnApplicationMixin
 from exporter.applications.summaries.material import (
@@ -18,7 +17,6 @@ from exporter.core.helpers import get_organisation_documents
 
 class BaseMaterialOnApplicationSummary(
     LoginRequiredMixin,
-    NonFirearmsMaterialFlagMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
     TemplateView,
@@ -66,7 +64,6 @@ class MaterialProductOnApplicationSummary(BaseMaterialOnApplicationSummary):
 
 class MaterialProductSummary(
     LoginRequiredMixin,
-    NonFirearmsMaterialFlagMixin,
     ApplicationMixin,
     GoodMixin,
     TemplateView,

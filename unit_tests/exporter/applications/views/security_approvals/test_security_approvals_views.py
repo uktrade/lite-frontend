@@ -12,7 +12,7 @@ from exporter.applications.views.security_approvals.forms import (
 
 @pytest.fixture(autouse=True)
 def setup(no_op_storage):
-    pass
+    yield
 
 
 @pytest.fixture(autouse=True)

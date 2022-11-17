@@ -4,15 +4,6 @@ import uuid
 from django.urls import reverse
 
 
-@pytest.fixture(autouse=True)
-def setup(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
-    settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED = True
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = True
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
-
-
 @pytest.fixture
 def application_pk():
     return str(uuid.uuid4())
@@ -22,13 +13,6 @@ def test_is_good_firearm_form(authorized_client, application_pk):
     url = reverse("applications:is_good_firearm", kwargs={"pk": application_pk})
     response = authorized_client.get(url)
     assert response.status_code == 200
-
-
-def test_is_good_firearm_view_raise_404(authorized_client, application_pk, settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
-    url = reverse(f"applications:is_good_firearm", kwargs={"pk": application_pk})
-    response = authorized_client.get(url)
-    assert response.status_code == 404
 
 
 @pytest.mark.parametrize(
@@ -82,13 +66,6 @@ def test_is_material_substance_select(authorized_client, application_pk, data, r
     response = authorized_client.post(is_material_substance_url, data={"is_material_substance": data})
     assert response.status_code == 302
     assert response.url == reverse(f"applications:{redirect_url}", kwargs={"pk": application_pk})
-
-
-def test_is_material_substance_404(authorized_client, settings, is_material_substance_url):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = False
-    settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED = False
-    response = authorized_client.get(is_material_substance_url, data={"is_material_substance": True})
-    assert response.status_code == 404
 
 
 def test_is_material_substance_context_data(authorized_client, application_pk, is_material_substance_url):

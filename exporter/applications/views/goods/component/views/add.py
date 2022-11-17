@@ -52,14 +52,12 @@ from .payloads import (
     AddGoodComponentPayloadBuilder,
     AddGoodComponentToApplicationPayloadBuilder,
 )
-from .mixins import NonFirearmsComponentFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodComponentAccessory(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
 ):
@@ -166,7 +164,6 @@ class AddGoodComponentAccessory(
 
 class AddGoodComponentAccessoryToApplication(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,
