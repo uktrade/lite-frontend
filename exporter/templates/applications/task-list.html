@@ -126,7 +126,7 @@
 				{% endif %}
 
                 {# Security Approvals #}
-                {% if application_type|application_type_in_list:"HAS_SECURITY_APPROVAL" }
+                {% if application_type|application_type_in_list:"HAS_SECURITY_APPROVAL" %}
                     {% if security_approvals %}
 						{% url 'applications:security_approvals_summary' application.id as security_approvals_url %}
 					{% else %}
