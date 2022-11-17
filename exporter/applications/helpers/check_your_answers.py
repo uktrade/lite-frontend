@@ -2,7 +2,6 @@ from _decimal import Decimal
 
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.conf import settings
 
 from exporter.applications.helpers.countries import ContractTypes
 from exporter.applications.helpers.parties import party_requires_ec3_document
@@ -117,9 +116,8 @@ def _convert_standard_application(application, editable=False, is_summary=False)
         strings.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(application["additional_documents"], pk),
     }
 
-    if settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED:
-        security_approvals = {"Do you have a security approval?": _get_security_approvals(application)}
-        converted = {**security_approvals, **converted}
+    security_approvals = {"Do you have a security approval?": _get_security_approvals(application)}
+    converted = {**security_approvals, **converted}
 
     if old_locations:
         converted[strings.ROUTE_OF_GOODS] = _get_route_of_goods(application)

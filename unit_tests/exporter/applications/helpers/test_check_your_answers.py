@@ -212,15 +212,7 @@ def test_get_security_approvals(security_data, expected):
     assert actual == expected
 
 
-def test_convert_standard_application_has_security_approvals__feature_on(application, settings):
-    settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = True
+def test_convert_standard_application_has_security_approvals(application, settings):
     test_application = Application(application)
     actual = check_your_answers._convert_standard_application(test_application)
     assert "Do you have a security approval?" in actual.keys()
-
-
-def test_convert_standard_application_security_approvals_feature_off(application, settings):
-    settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = False
-    test_application = Application(application)
-    actual = check_your_answers._convert_standard_application(test_application)
-    assert "Do you have a security approval?" not in actual.keys()
