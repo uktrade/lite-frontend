@@ -1,6 +1,6 @@
 from exporter.core.wizard.payloads import MergingPayloadBuilder
 
-from .constants import AddGoodPlatformSteps, AddGoodPlatformToApplicationSteps
+from .constants import AddGoodCompleteItemSteps, AddGoodCompleteItemToApplicationSteps
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_payload,
@@ -17,27 +17,27 @@ def get_quantity_and_value_payload(form):
     }
 
 
-class AddGoodPlatformPayloadBuilder(MergingPayloadBuilder):
+class AddGoodCompleteItemPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
-        AddGoodPlatformSteps.NAME: get_cleaned_data,
-        AddGoodPlatformSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
-        AddGoodPlatformSteps.PART_NUMBER: get_part_number_payload,
-        AddGoodPlatformSteps.PV_GRADING: get_pv_grading_payload,
-        AddGoodPlatformSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
-        AddGoodPlatformSteps.PRODUCT_USES_INFORMATION_SECURITY: get_cleaned_data,
-        AddGoodPlatformSteps.PRODUCT_DESCRIPTION: get_cleaned_data,
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
-        AddGoodPlatformSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
-        AddGoodPlatformSteps.PRODUCT_MILITARY_USE: get_cleaned_data,
+        AddGoodCompleteItemSteps.NAME: get_cleaned_data,
+        AddGoodCompleteItemSteps.PRODUCT_CONTROL_LIST_ENTRY: get_cleaned_data,
+        AddGoodCompleteItemSteps.PART_NUMBER: get_part_number_payload,
+        AddGoodCompleteItemSteps.PV_GRADING: get_pv_grading_payload,
+        AddGoodCompleteItemSteps.PV_GRADING_DETAILS: get_pv_grading_details_payload,
+        AddGoodCompleteItemSteps.PRODUCT_USES_INFORMATION_SECURITY: get_cleaned_data,
+        AddGoodCompleteItemSteps.PRODUCT_DESCRIPTION: get_cleaned_data,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_AVAILABILITY: get_cleaned_data,
+        AddGoodCompleteItemSteps.PRODUCT_DOCUMENT_SENSITIVITY: get_cleaned_data,
+        AddGoodCompleteItemSteps.PRODUCT_MILITARY_USE: get_cleaned_data,
     }
 
 
-class AddGoodPlatformToApplicationPayloadBuilder(MergingPayloadBuilder):
+class AddGoodCompleteItemToApplicationPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
-        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
-        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
-        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: get_cleaned_data,
-        AddGoodPlatformToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_INCORPORATED: get_cleaned_data,
+        AddGoodCompleteItemToApplicationSteps.QUANTITY_AND_VALUE: get_quantity_and_value_payload,
     }
 
 
@@ -50,9 +50,9 @@ def get_onward_incorporated_payload(form):
     }
 
 
-class PlatformProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(MergingPayloadBuilder):
+class CompleteItemProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
-        AddGoodPlatformToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
-        AddGoodPlatformToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
-        AddGoodPlatformToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,
+        AddGoodCompleteItemToApplicationSteps.ONWARD_INCORPORATED: get_onward_incorporated_payload,
     }

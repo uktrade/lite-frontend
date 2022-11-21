@@ -6,8 +6,8 @@ from django.urls import reverse
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, settings):
-    pass
+def setup(mock_queue):
+    yield
 
 
 @pytest.fixture

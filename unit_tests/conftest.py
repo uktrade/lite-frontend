@@ -9,7 +9,7 @@ from core.constants import OrganisationDocumentType
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def disable_hawk(settings):
     settings.HAWK_AUTHENTICATION_ENABLED = False
 
 
@@ -723,9 +723,9 @@ def data_standard_case():
                             "serial_numbers_available": "AVAILABLE",
                             "serial_numbers": ["12345", "ABC-123"],
                             "year_of_manufacture": "1990",
-                            "is_onward_exported": False,
                             "is_deactivated": False,
                         },
+                        "is_onward_exported": False,
                     },
                     {
                         "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
@@ -1540,7 +1540,7 @@ def standard_firearm_expected_product_on_application_summary():
 
 
 @pytest.fixture
-def standard_platform_expected_product_summary():
+def standard_complete_item_expected_product_summary():
     return (
         (
             "is-firearm-product",
@@ -1641,7 +1641,7 @@ def standard_platform_expected_product_summary():
 
 
 @pytest.fixture
-def standard_platform_expected_product_on_application_summary():
+def standard_complete_item_expected_product_on_application_summary():
     return (
         (
             "is-onward-exported",
@@ -1682,7 +1682,7 @@ def standard_platform_expected_product_on_application_summary():
 
 
 @pytest.fixture
-def standard_component_expected_product_summary():
+def standard_component_accessory_expected_product_summary():
     return (
         (
             "is-firearm-product",
@@ -1784,7 +1784,7 @@ def standard_component_expected_product_summary():
 
 
 @pytest.fixture
-def standard_component_expected_product_on_application_summary():
+def standard_component_accessory_expected_product_on_application_summary():
     return (
         (
             "is-onward-exported",
@@ -1960,7 +1960,7 @@ def standard_material_expected_product_on_application_summary():
 
 
 @pytest.fixture
-def standard_software_expected_product_summary():
+def standard_technology_expected_product_summary():
     return (
         (
             "is-firearm-product",
@@ -2071,7 +2071,7 @@ def standard_software_expected_product_summary():
 
 
 @pytest.fixture
-def standard_software_expected_product_on_application_summary():
+def standard_technology_expected_product_on_application_summary():
     return (
         (
             "is-onward-exported",

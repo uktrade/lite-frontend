@@ -3,11 +3,6 @@ import pytest
 from pytest_django.asserts import assertTemplateUsed
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
-
-
 def test_firearm_summary_response_status_code(
     authorized_client,
     mock_application_get,

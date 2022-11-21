@@ -9,9 +9,9 @@ from core.constants import ProductCategories
 
 
 @pytest.fixture
-def component_product_details_url(good_id):
+def component_accessory_product_details_url(good_id):
     return reverse(
-        "goods:component_detail",
+        "goods:component_accessory_detail",
         kwargs={
             "pk": good_id,
         },
@@ -26,7 +26,7 @@ def mock_good_get(requests_mock, data_standard_case):
             "is_pv_graded": {"key": "yes", "value": "Yes"},
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
             "item_category": {
-                "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT,
+                "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY,
             },
         }
     )
@@ -35,30 +35,30 @@ def mock_good_get(requests_mock, data_standard_case):
     return requests_mock.get(url=url, json=good)
 
 
-def test_component_product_details_status_code(
+def test_component_accessory_product_details_status_code(
     authorized_client,
-    component_product_details_url,
+    component_accessory_product_details_url,
     mock_good_get,
 ):
-    response = authorized_client.get(component_product_details_url)
+    response = authorized_client.get(component_accessory_product_details_url)
     assert response.status_code == 200
 
 
-def test_component_product_details_template_used(
+def test_component_accessory_product_details_template_used(
     authorized_client,
-    component_product_details_url,
+    component_accessory_product_details_url,
     mock_good_get,
 ):
-    response = authorized_client.get(component_product_details_url)
+    response = authorized_client.get(component_accessory_product_details_url)
     assertTemplateUsed(response, "goods/product-details.html")
 
 
-def test_component_product_details_context(
+def test_component_accessory_product_details_context(
     authorized_client,
-    component_product_details_url,
+    component_accessory_product_details_url,
     mock_good_get,
 ):
-    response = authorized_client.get(component_product_details_url)
+    response = authorized_client.get(component_accessory_product_details_url)
     assert response.context["summary"] == (
         ("is-firearm-product", "No", "Is it a firearm product?"),
         ("product-category", "It forms part of a product", "Select the product category"),

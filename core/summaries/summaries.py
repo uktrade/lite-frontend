@@ -11,34 +11,34 @@ from core.summaries.formatters import (
     FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
     template_formatter,
-    PLATFORM_LABELS,
-    PLATFORM_VALUE_FORMATTERS,
-    PLATFORM_ON_APPLICATION_FORMATTERS,
-    PLATFORM_ON_APPLICATION_LABELS,
-    SOFTWARE_LABELS,
-    SOFTWARE_VALUE_FORMATTERS,
-    SOFTWARE_ON_APPLICATION_FORMATTERS,
-    SOFTWARE_ON_APPLICATION_LABELS,
+    COMPLETE_ITEM_LABELS,
+    COMPLETE_ITEM_VALUE_FORMATTERS,
+    COMPLETE_ITEM_ON_APPLICATION_FORMATTERS,
+    COMPLETE_ITEM_ON_APPLICATION_LABELS,
+    TECHNOLOGY_LABELS,
+    TECHNOLOGY_VALUE_FORMATTERS,
+    TECHNOLOGY_ON_APPLICATION_FORMATTERS,
+    TECHNOLOGY_ON_APPLICATION_LABELS,
     MATERIAL_LABELS,
     MATERIAL_VALUE_FORMATTERS,
     MATERIAL_ON_APPLICATION_FORMATTERS,
     MATERIAL_ON_APPLICATION_LABELS,
-    COMPONENT_LABELS,
-    COMPONENT_VALUE_FORMATTERS,
-    COMPONENT_ON_APPLICATION_FORMATTERS,
-    COMPONENT_ON_APPLICATION_LABELS,
+    COMPONENT_ACCESSORY_LABELS,
+    COMPONENT_ACCESSORY_VALUE_FORMATTERS,
+    COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS,
+    COMPONENT_ACCESSORY_ON_APPLICATION_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
-    platform_on_application_reducer,
-    platform_reducer,
-    software_on_application_reducer,
-    software_reducer,
+    complete_item_on_application_reducer,
+    complete_item_reducer,
+    technology_on_application_reducer,
+    technology_reducer,
     material_reducer,
     material_on_application_reducer,
-    component_on_application_reducer,
-    component_reducer,
+    component_accessory_on_application_reducer,
+    component_accessory_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -80,7 +80,7 @@ FIREARM_FIELDS = (
     "product-document-description",
 )
 
-PLATFORM_FIELDS = (
+COMPLETE_ITEM_FIELDS = (
     "is-firearm-product",
     "product-category",
     "name",
@@ -135,7 +135,7 @@ MATERIAL_FIELDS = (
     "military-use-details",
 )
 
-SOFTWARE_FIELDS = (
+TECHNOLOGY_FIELDS = (
     "is-firearm-product",
     "non-firearm-category",
     "name",
@@ -164,7 +164,7 @@ SOFTWARE_FIELDS = (
     "military-use-details",
 )
 
-COMPONENT_FIELDS = (
+COMPONENT_ACCESSORY_FIELDS = (
     "is-firearm-product",
     "product-category",
     "is-material-substance",
@@ -273,7 +273,7 @@ def firearm_on_application_summary(good_on_application, good_on_application_docu
     return summary
 
 
-PLATFORM_ON_APPLICATION_FIELDS = (
+COMPLETE_ITEM_ON_APPLICATION_FIELDS = (
     "is-onward-exported",
     "is-altered",
     "is-altered-comments",
@@ -284,35 +284,35 @@ PLATFORM_ON_APPLICATION_FIELDS = (
 )
 
 
-def platform_summary(good, additional_formatters=None):
+def complete_item_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = platform_reducer(good)
+    summary = complete_item_reducer(good)
     formatters = {
-        **PLATFORM_VALUE_FORMATTERS,
+        **COMPLETE_ITEM_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, PLATFORM_FIELDS)
+    summary = pick_fields(summary, COMPLETE_ITEM_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, PLATFORM_LABELS)
+    summary = add_labels(summary, COMPLETE_ITEM_LABELS)
 
     return summary
 
 
-def platform_product_on_application_summary(good_on_application, additional_formatters=None):
+def complete_item_product_on_application_summary(good_on_application, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = platform_on_application_reducer(good_on_application)
+    summary = complete_item_on_application_reducer(good_on_application)
     formatters = {
-        **PLATFORM_ON_APPLICATION_FORMATTERS,
+        **COMPLETE_ITEM_ON_APPLICATION_FORMATTERS,
         **additional_formatters,
     }
 
-    summary = pick_fields(summary, PLATFORM_ON_APPLICATION_FIELDS)
+    summary = pick_fields(summary, COMPLETE_ITEM_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, PLATFORM_ON_APPLICATION_LABELS)
+    summary = add_labels(summary, COMPLETE_ITEM_ON_APPLICATION_LABELS)
 
     return summary
 
@@ -362,7 +362,7 @@ def material_product_on_application_summary(good_on_application, additional_form
     return summary
 
 
-SOFTWARE_ON_APPLICATION_FIELDS = (
+TECHNOLOGY_ON_APPLICATION_FIELDS = (
     "is-onward-exported",
     "is-altered",
     "is-altered-comments",
@@ -373,40 +373,40 @@ SOFTWARE_ON_APPLICATION_FIELDS = (
 )
 
 
-def software_summary(good, additional_formatters=None):
+def technology_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = software_reducer(good)
+    summary = technology_reducer(good)
     formatters = {
-        **SOFTWARE_VALUE_FORMATTERS,
+        **TECHNOLOGY_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, SOFTWARE_FIELDS)
+    summary = pick_fields(summary, TECHNOLOGY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, SOFTWARE_LABELS)
+    summary = add_labels(summary, TECHNOLOGY_LABELS)
 
     return summary
 
 
-def software_product_on_application_summary(good_on_application, additional_formatters=None):
+def technology_product_on_application_summary(good_on_application, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = software_on_application_reducer(good_on_application)
+    summary = technology_on_application_reducer(good_on_application)
     formatters = {
-        **SOFTWARE_ON_APPLICATION_FORMATTERS,
+        **TECHNOLOGY_ON_APPLICATION_FORMATTERS,
         **additional_formatters,
     }
 
-    summary = pick_fields(summary, SOFTWARE_ON_APPLICATION_FIELDS)
+    summary = pick_fields(summary, TECHNOLOGY_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, SOFTWARE_ON_APPLICATION_LABELS)
+    summary = add_labels(summary, TECHNOLOGY_ON_APPLICATION_LABELS)
 
     return summary
 
 
-COMPONENT_ON_APPLICATION_FIELDS = (
+COMPONENT_ACCESSORY_ON_APPLICATION_FIELDS = (
     "is-onward-exported",
     "is-altered",
     "is-altered-comments",
@@ -417,34 +417,34 @@ COMPONENT_ON_APPLICATION_FIELDS = (
 )
 
 
-def component_summary(good, additional_formatters=None):
+def component_accessory_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
-    summary = component_reducer(good)
+    summary = component_accessory_reducer(good)
     formatters = {
-        **COMPONENT_VALUE_FORMATTERS,
+        **COMPONENT_ACCESSORY_VALUE_FORMATTERS,
         **additional_formatters,
     }
-    summary = pick_fields(summary, COMPONENT_FIELDS)
+    summary = pick_fields(summary, COMPONENT_ACCESSORY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, COMPONENT_LABELS)
+    summary = add_labels(summary, COMPONENT_ACCESSORY_LABELS)
 
     return summary
 
 
-def component_product_on_application_summary(good_on_application, additional_formatters=None):
+def component_accessory_product_on_application_summary(good_on_application, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = component_on_application_reducer(good_on_application)
+    summary = component_accessory_on_application_reducer(good_on_application)
     formatters = {
-        **COMPONENT_ON_APPLICATION_FORMATTERS,
+        **COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS,
         **additional_formatters,
     }
 
-    summary = pick_fields(summary, COMPONENT_ON_APPLICATION_FIELDS)
+    summary = pick_fields(summary, COMPONENT_ACCESSORY_ON_APPLICATION_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, COMPONENT_ON_APPLICATION_LABELS)
+    summary = add_labels(summary, COMPONENT_ACCESSORY_ON_APPLICATION_LABELS)
 
     return summary
 
@@ -455,10 +455,10 @@ class NoSummaryForType(Exception):
 
 class SummaryTypes:
     FIREARM = "FIREARM"
-    PLATFORM = "PLATFORM"
+    COMPLETE_ITEM = "COMPLETE_ITEM"
     MATERIAL = "MATERIAL"
-    SOFTWARE = "SOFTWARE"
-    COMPONENT = "COMPONENT"
+    TECHNOLOGY = "TECHNOLOGY"
+    COMPONENT_ACCESSORY = "COMPONENT_ACCESSORY"
 
 
 def get_summary_type_for_good(good):
@@ -475,10 +475,10 @@ def get_summary_type_for_good(good):
     item_category = item_category["key"]
 
     summary_map = {
-        ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
+        ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM: SummaryTypes.COMPLETE_ITEM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
-        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
-        ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
+        ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
+        ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
     }
 
     try:
@@ -505,10 +505,10 @@ def get_summary_type_for_good_on_application(good_on_application):
     item_category = item_category["key"]
 
     summary_map = {
-        ProductCategories.PRODUCT_CATEGORY_PLATFORM: SummaryTypes.PLATFORM,
+        ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM: SummaryTypes.COMPLETE_ITEM,
         ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
-        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.SOFTWARE,
-        ProductCategories.PRODUCT_CATEGORY_COMPONENT: SummaryTypes.COMPONENT,
+        ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
+        ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
     }
 
     try:

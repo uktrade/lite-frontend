@@ -29,8 +29,8 @@ from exporter.goods.forms.common import (
     ProductDescriptionForm,
 )
 from exporter.goods.forms.goods import ProductIsComponentForm, ProductComponentDetailsForm
-from exporter.goods.services import post_component, post_good_documents
-from exporter.applications.services import post_component_good_on_application
+from exporter.goods.services import post_component_accessory, post_good_documents
+from exporter.applications.services import post_component_accessory_good_on_application
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
     GoodMixin,
@@ -52,14 +52,12 @@ from .payloads import (
     AddGoodComponentPayloadBuilder,
     AddGoodComponentToApplicationPayloadBuilder,
 )
-from .mixins import NonFirearmsComponentFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
-class AddGoodComponent(
+class AddGoodComponentAccessory(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
 ):
@@ -108,8 +106,8 @@ class AddGoodComponent(
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error with product document when creating component",
-        "Unexpected error adding component",
+        "Error with product document when creating component accessory",
+        "Unexpected error adding component accessory",
     )
     def post_product_documentation(self, good):
         document_payload = self.get_product_document_payload()
@@ -138,25 +136,25 @@ class AddGoodComponent(
 
     def get_success_url(self):
         return reverse(
-            "applications:component_product_summary",
+            "applications:component_accessory_product_summary",
             kwargs={"pk": self.application["id"], "good_pk": self.good["id"]},
         )
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error creating complete component",
+        "Error creating complete component accessory",
         "Unexpected error adding complete product",
     )
-    def post_component(self, form_dict):
+    def post_component_accessory(self, form_dict):
         payload = self.get_payload(form_dict)
 
-        return post_component(
+        return post_component_accessory(
             self.request,
             payload,
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        good, _ = self.post_component(form_dict)
+        good, _ = self.post_component_accessory(form_dict)
         self.good = good["good"]
 
         ProductDocumentAction(self).run()
@@ -164,9 +162,8 @@ class AddGoodComponent(
         return redirect(self.get_success_url())
 
 
-class AddGoodComponentToApplication(
+class AddGoodComponentAccessoryToApplication(
     LoginRequiredMixin,
-    NonFirearmsComponentFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,
@@ -189,7 +186,7 @@ class AddGoodComponentToApplication(
 
     def get_success_url(self):
         return reverse(
-            "applications:component_on_application_summary",
+            "applications:component_accessory_on_application_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_on_application_pk": self.good_on_application["id"],
@@ -202,12 +199,12 @@ class AddGoodComponentToApplication(
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error adding component to application",
-        "Unexpected error adding component to application",
+        "Error adding component accessory to application",
+        "Unexpected error adding component accessory to application",
     )
-    def post_component_to_application(self, form_dict):
+    def post_component_accessory_to_application(self, form_dict):
         payload = self.get_payload(form_dict)
-        return post_component_good_on_application(
+        return post_component_accessory_good_on_application(
             self.request,
             self.application["id"],
             self.good["id"],
@@ -218,7 +215,7 @@ class AddGoodComponentToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:component_product_summary",
+            "applications:component_accessory_product_summary",
             kwargs={
                 "pk": self.kwargs["pk"],
                 "good_pk": self.good["id"],
@@ -229,7 +226,7 @@ class AddGoodComponentToApplication(
         return ctx
 
     def done(self, form_list, form_dict, **kwargs):
-        good_on_application, _ = self.post_component_to_application(form_dict)
+        good_on_application, _ = self.post_component_accessory_to_application(form_dict)
         good_on_application = good_on_application["good"]
         self.good_on_application = good_on_application
 

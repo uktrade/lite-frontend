@@ -12,7 +12,7 @@ from django.utils.safestring import mark_safe
 from core.constants import (
     FirearmsActSections,
     SerialChoices,
-    ComponentChoices,
+    ComponentAccessoryChoices,
 )
 from exporter.goods.forms.common import ProductMilitaryUseForm
 from exporter.goods.forms.goods import ProductDeclaredAtCustomsForm
@@ -55,7 +55,7 @@ FIREARM_LABELS = {
     "section-5-certificate-missing-reason": "Explain why you do not have a section 5 letter of authority",
 }
 
-PLATFORM_LABELS = {
+COMPLETE_ITEM_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "product-category": "Select the product category",
     "name": "Give the product a descriptive name",
@@ -110,7 +110,7 @@ MATERIAL_LABELS = {
     "military-use-details": "Provide details of the modifications",
 }
 
-COMPONENT_LABELS = {
+COMPONENT_ACCESSORY_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "product-category": "Select the product category",
     "is-material-substance": "Is it a material or substance?",
@@ -359,14 +359,14 @@ is_material_substance_formatter = mapping_formatter(
 
 product_category_formatter = mapping_formatter(
     {
-        "platform": "It's a complete product",
+        "complete_item": "It's a complete product",
         "material": "It forms part of a product",
         "component": "It forms part of a product",
     },
 )
 
 
-PLATFORM_VALUE_FORMATTERS = {
+COMPLETE_ITEM_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "product-category": product_category_formatter,
     "is-good-controlled": key_value_formatter,
@@ -386,7 +386,7 @@ PLATFORM_VALUE_FORMATTERS = {
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
-PLATFORM_ON_APPLICATION_FORMATTERS = {
+COMPLETE_ITEM_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
@@ -394,7 +394,7 @@ PLATFORM_ON_APPLICATION_FORMATTERS = {
     "total-value": money_formatter,
 }
 
-PLATFORM_ON_APPLICATION_LABELS = {
+COMPLETE_ITEM_ON_APPLICATION_LABELS = {
     "is-onward-exported": "Will the product be onward exported to any additional countries?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",
@@ -447,7 +447,7 @@ MATERIAL_ON_APPLICATION_LABELS = {
 }
 
 
-SOFTWARE_LABELS = {
+TECHNOLOGY_LABELS = {
     "is-firearm-product": "Is it a firearm product?",
     "non-firearm-category": "Select the product category",
     "name": "Give the product a descriptive name",
@@ -474,7 +474,7 @@ SOFTWARE_LABELS = {
     "military-use-details": "Provide details of the modifications",
 }
 
-SOFTWARE_VALUE_FORMATTERS = {
+TECHNOLOGY_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "is-good-controlled": key_value_formatter,
     "control-list-entries": comma_separated_list(itemgetter("rating")),
@@ -495,7 +495,7 @@ SOFTWARE_VALUE_FORMATTERS = {
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
-SOFTWARE_ON_APPLICATION_FORMATTERS = {
+TECHNOLOGY_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
@@ -503,7 +503,7 @@ SOFTWARE_ON_APPLICATION_FORMATTERS = {
     "number-of-items": integer,
 }
 
-SOFTWARE_ON_APPLICATION_LABELS = {
+TECHNOLOGY_ON_APPLICATION_LABELS = {
     "is-onward-exported": "Will the product be onward exported to any additional countries?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",
@@ -514,12 +514,12 @@ SOFTWARE_ON_APPLICATION_LABELS = {
     "total-value": "Total value",
 }
 
-COMPONENT_VALUE_FORMATTERS = {
+COMPONENT_ACCESSORY_VALUE_FORMATTERS = {
     "is-firearm-product": yesno,
     "product-category": product_category_formatter,
     "is-material-substance": is_material_substance_formatter,
     "is-component": yesno,
-    "component-type": model_choices_formatter(ComponentChoices),
+    "component-type": model_choices_formatter(ComponentAccessoryChoices),
     "is-good-controlled": key_value_formatter,
     "has-part-number": just("I do not have a part number"),
     "control-list-entries": comma_separated_list(itemgetter("rating")),
@@ -537,7 +537,7 @@ COMPONENT_VALUE_FORMATTERS = {
     "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
-COMPONENT_ON_APPLICATION_FORMATTERS = {
+COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
@@ -545,7 +545,7 @@ COMPONENT_ON_APPLICATION_FORMATTERS = {
     "total-value": money_formatter,
 }
 
-COMPONENT_ON_APPLICATION_LABELS = {
+COMPONENT_ACCESSORY_ON_APPLICATION_LABELS = {
     "is-onward-exported": "Will the product be onward exported to any additional countries?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",

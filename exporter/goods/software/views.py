@@ -1,12 +1,12 @@
 from core.summaries.summaries import SummaryTypes
 
-from exporter.applications.summaries.software import software_summary
+from exporter.applications.summaries.software import technology_summary
 
 from ..common.base import BaseProductDetails
 
 
-class SoftwareProductDetails(BaseProductDetails):
-    summary_type = SummaryTypes.SOFTWARE
+class TechnologyProductDetails(BaseProductDetails):
+    summary_type = SummaryTypes.TECHNOLOGY
 
     def get_summary(self):
-        return software_summary(self.good)
+        return technology_summary(self.good)

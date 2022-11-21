@@ -22,18 +22,13 @@ def mock_good_on_application_get(requests_mock, good_on_application):
 
 @pytest.fixture(autouse=True)
 def setup(mock_application_get, mock_good_get, mock_good_on_application_get):
-    pass
-
-
-@pytest.fixture(autouse=True)
-def set_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
+    yield
 
 
 @pytest.fixture
 def edit_onward_exported_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:component_on_application_summary_edit_onward_exported",
+        "applications:component_accessory_on_application_summary_edit_onward_exported",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -152,7 +147,7 @@ def test_edit_onward_exported_false(
 @pytest.fixture
 def edit_onward_altered_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:component_on_application_summary_edit_onward_altered",
+        "applications:component_accessory_on_application_summary_edit_onward_altered",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -200,7 +195,7 @@ def test_edit_onward_altered_processed(
 @pytest.fixture
 def edit_onward_incorporated_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:component_on_application_summary_edit_onward_incorporated",
+        "applications:component_accessory_on_application_summary_edit_onward_incorporated",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],
@@ -249,7 +244,7 @@ def test_edit_onward_incorporated(
 @pytest.fixture
 def edit_quantity_value_url(application, good_on_application, summary_type):
     url = reverse(
-        "applications:component_on_application_summary_edit_quantity_value",
+        "applications:component_accessory_on_application_summary_edit_quantity_value",
         kwargs={
             "pk": application["id"],
             "good_on_application_pk": good_on_application["id"],

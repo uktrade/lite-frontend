@@ -7,7 +7,7 @@ from exporter.applications.views.goods.common.payloads import (
     get_pv_grading_details_payload,
     get_part_number_payload,
 )
-from core.constants import ComponentChoices
+from core.constants import ComponentAccessoryChoices
 
 
 def get_quantity_and_value_payload(form):
@@ -22,9 +22,9 @@ def get_component_payload(form):
     component_payload = {}
     component_type_clean_data = form.cleaned_data["component_type"]
     details = (
-        (ComponentChoices.DESIGNED.value, "designed_details"),
-        (ComponentChoices.MODIFIED.value, "modified_details"),
-        (ComponentChoices.GENERAL.value, "general_details"),
+        (ComponentAccessoryChoices.DESIGNED.value, "designed_details"),
+        (ComponentAccessoryChoices.MODIFIED.value, "modified_details"),
+        (ComponentAccessoryChoices.GENERAL.value, "general_details"),
     )
     for is_component, details_field in details:
         if component_type_clean_data == is_component:
@@ -82,7 +82,7 @@ def get_onward_incorporated_payload(form):
     }
 
 
-class ComponentProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(MergingPayloadBuilder):
+class ComponentAccessoryProductOnApplicationSummaryEditOnwardExportedPayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         AddGoodComponentToApplicationSteps.ONWARD_EXPORTED: get_cleaned_data,
         AddGoodComponentToApplicationSteps.ONWARD_ALTERED_PROCESSED: get_cleaned_data,

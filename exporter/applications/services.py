@@ -145,7 +145,7 @@ def post_firearm_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
-def post_platform_good_on_application(request, pk, good_id, json):
+def post_complete_item_good_on_application(request, pk, good_id, json):
     # We have a default for `is_good_incorporated` however this may get overriden
     # from the json blob depending on the question asked in the firearm wizard
     # flow.
@@ -160,7 +160,7 @@ def post_platform_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
-def post_software_good_on_application(request, pk, good_id, json):
+def post_technology_good_on_application(request, pk, good_id, json):
     json = {
         "good_id": good_id,
         "is_good_incorporated": False,
@@ -180,7 +180,7 @@ def post_material_good_on_application(request, pk, good_id, json):
     return response.json(), response.status_code
 
 
-def post_component_good_on_application(request, pk, good_id, json):
+def post_component_accessory_good_on_application(request, pk, good_id, json):
     json = {
         "good_id": good_id,
         "is_good_incorporated": False,

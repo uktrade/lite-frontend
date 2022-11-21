@@ -11,7 +11,7 @@ from caseworker.tau import views
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case, mock_mtcr_entries_get, mock_wassenaar_entries_get):
-    pass
+    yield
 
 
 @pytest.fixture(autouse=True)

@@ -4,46 +4,41 @@ from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED = True
-
-
 @pytest.fixture
 def good(data_standard_case):
     return data_standard_case["case"]["data"]["goods"][0]
 
 
-def test_component_summary_response_status_code(
+def test_component_accessory_summary_response_status_code(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    component_product_summary_url,
+    component_accessory_product_summary_url,
 ):
-    response = authorized_client.get(component_product_summary_url)
+    response = authorized_client.get(component_accessory_product_summary_url)
     assert response.status_code == 200
 
 
-def test_component_summary_template_used(
+def test_component_accessory_summary_template_used(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    component_product_summary_url,
+    component_accessory_product_summary_url,
 ):
-    response = authorized_client.get(component_product_summary_url)
+    response = authorized_client.get(component_accessory_product_summary_url)
     assertTemplateUsed(response, "applications/goods/component/product-summary.html")
 
 
-def test_component_product_summary_context(
+def test_component_accessory_product_summary_context(
     authorized_client,
     mock_application_get,
     mock_good_get,
-    component_product_summary_url,
-    component_summary,
+    component_accessory_product_summary_url,
+    component_accessory_summary,
     data_standard_case,
     good_id,
 ):
-    response = authorized_client.get(component_product_summary_url)
+    response = authorized_client.get(component_accessory_product_summary_url)
 
     def _get_test_url(name):
         if not name:
@@ -54,9 +49,9 @@ def test_component_product_summary_context(
         "name": "name",
         "is-good-controlled": "control-list-entries",
         "control-list-entries": "control-list-entries",
-        "is-component": "component-details",
-        "component-type": "component-details",
-        "modified-details": "component-details",
+        "is-component": "component-accessory-details",
+        "component-type": "component-accessory-details",
+        "modified-details": "component-accessory-details",
         "part-number": "part-number",
         "is-pv-graded": "pv-grading",
         "pv-grading-prefix": "pv-grading-details",
@@ -75,14 +70,14 @@ def test_component_product_summary_context(
     }
 
     summary_with_links = tuple(
-        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in component_summary
+        (key, value, label, _get_test_url(url_map.get(key, None))) for key, value, label in component_accessory_summary
     )
     assert response.context["summary"] == summary_with_links
 
 
-def test_component_product_on_application_summary_response_status_code(
+def test_component_accessory_product_on_application_summary_response_status_code(
     authorized_client,
-    component_on_application_summary_url,
+    component_accessory_on_application_summary_url,
     mock_application_get,
     mock_good_get,
     mock_good_on_application_get,
@@ -91,12 +86,12 @@ def test_component_product_on_application_summary_response_status_code(
     requests_mock,
 ):
 
-    response = authorized_client.get(component_on_application_summary_url)
+    response = authorized_client.get(component_accessory_on_application_summary_url)
     assert response.status_code == 200
 
 
 @pytest.fixture
-def component_on_application_summary():
+def component_accessory_on_application_summary():
     return (
         ("is-onward-exported", "Yes", "Will the product be onward exported to any additional countries?"),
         ("is-altered", "Yes", "Will the item be altered or processed before it is exported again?"),
@@ -112,9 +107,9 @@ def component_on_application_summary():
     )
 
 
-def test_component_on_application_summary_context(
+def test_component_accessory_on_application_summary_context(
     authorized_client,
-    component_on_application_summary_url,
+    component_accessory_on_application_summary_url,
     mock_application_get,
     mock_good_get,
     mock_good_on_application_get,
@@ -122,17 +117,17 @@ def test_component_on_application_summary_context(
     good,
     good_on_application,
     requests_mock,
-    component_summary,
-    component_on_application_summary,
+    component_accessory_summary,
+    component_accessory_on_application_summary,
 ):
 
-    response = authorized_client.get(component_on_application_summary_url)
+    response = authorized_client.get(component_accessory_on_application_summary_url)
     context = response.context
 
     def _get_test_url(name):
         if not name:
             return None
-        return f"/applications/{application['id']}/goods/component-accessory/{good_on_application['id']}/component-on-application-summary/edit/{name}/"
+        return f"/applications/{application['id']}/goods/component-accessory/{good_on_application['id']}/component-accessory-on-application-summary/edit/{name}/"
 
     url_map = {
         "is-onward-exported": "onward-exported",
@@ -144,13 +139,13 @@ def test_component_on_application_summary_context(
         "total-value": "quantity-value",
     }
 
-    component_on_application_summary_with_links = tuple(
+    component_accessory_on_application_summary_with_links = tuple(
         (key, value, label, _get_test_url(url_map.get(key, None)))
-        for key, value, label in component_on_application_summary
+        for key, value, label in component_accessory_on_application_summary
     )
 
     assert context["application"] == application
     assert context["good"] == good["good"]
     assert context["good_on_application"] == good_on_application
-    assert context["product_summary"] == component_summary
-    assert context["product_on_application_summary"] == component_on_application_summary_with_links
+    assert context["product_summary"] == component_accessory_summary
+    assert context["product_on_application_summary"] == component_accessory_on_application_summary_with_links

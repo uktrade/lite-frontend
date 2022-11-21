@@ -80,11 +80,6 @@ def good_on_application(data_standard_case):
             "section_certificate_missing_reason": "",
             "is_made_before_1938": True,
             "year_of_manufacture": 1930,
-            "is_onward_exported": True,
-            "is_onward_altered_processed": True,
-            "is_onward_altered_processed_comments": "I will alter it real good",
-            "is_onward_incorporated": True,
-            "is_onward_incorporated_comments": "I will onward incorporate",
             "is_deactivated": True,
             "date_of_deactivation": datetime.date(2007, 12, 12).isoformat(),
             "is_deactivated_to_standard": False,
@@ -240,9 +235,9 @@ def firearm_product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
-def platform_product_summary_url(data_standard_case, good_id):
+def complete_item_product_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:platform_product_summary",
+        "applications:complete_item_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -251,9 +246,9 @@ def platform_product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
-def component_product_summary_url(data_standard_case, good_id):
+def component_accessory_product_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:component_product_summary",
+        "applications:component_accessory_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -273,9 +268,9 @@ def material_product_summary_url(data_standard_case, good_id):
 
 
 @pytest.fixture
-def software_product_summary_url(data_standard_case, good_id):
+def technology_product_summary_url(data_standard_case, good_id):
     return reverse(
-        "applications:software_product_summary",
+        "applications:technology_product_summary",
         kwargs={
             "pk": data_standard_case["case"]["id"],
             "good_pk": good_id,
@@ -330,8 +325,8 @@ def control_list_entries(requests_mock):
 
 
 @pytest.fixture
-def platform_on_application_summary_url_factory(application, good_on_application):
-    def platform_on_application_summary_url(summary_type):
+def complete_item_on_application_summary_url_factory(application, good_on_application):
+    def complete_item_on_application_summary_url(summary_type):
         url = reverse(
             f"applications:{summary_type.replace('-', '_')}",
             kwargs={
@@ -341,17 +336,17 @@ def platform_on_application_summary_url_factory(application, good_on_application
         )
         return url
 
-    return platform_on_application_summary_url
+    return complete_item_on_application_summary_url
 
 
 @pytest.fixture
-def platform_on_application_summary_url(platform_on_application_summary_url_factory):
-    return platform_on_application_summary_url_factory("platform-on-application-summary")
+def complete_item_on_application_summary_url(complete_item_on_application_summary_url_factory):
+    return complete_item_on_application_summary_url_factory("complete_item-on-application-summary")
 
 
 @pytest.fixture
-def component_on_application_summary_url_factory(application, good_on_application):
-    def component_on_application_summary_url(summary_type):
+def component_accessory_on_application_summary_url_factory(application, good_on_application):
+    def component_accessory_on_application_summary_url(summary_type):
         url = reverse(
             f"applications:{summary_type.replace('-', '_')}",
             kwargs={
@@ -361,12 +356,12 @@ def component_on_application_summary_url_factory(application, good_on_applicatio
         )
         return url
 
-    return component_on_application_summary_url
+    return component_accessory_on_application_summary_url
 
 
 @pytest.fixture
-def component_on_application_summary_url(component_on_application_summary_url_factory):
-    return component_on_application_summary_url_factory("component-on-application-summary")
+def component_accessory_on_application_summary_url(component_accessory_on_application_summary_url_factory):
+    return component_accessory_on_application_summary_url_factory("component-accessory-on-application-summary")
 
 
 @pytest.fixture
@@ -390,8 +385,8 @@ def material_on_application_summary_url(material_on_application_summary_url_fact
 
 
 @pytest.fixture
-def software_on_application_summary_url_factory(application, good_on_application):
-    def software_on_application_summary_url(summary_type):
+def technology_on_application_summary_url_factory(application, good_on_application):
+    def technology_on_application_summary_url(summary_type):
         url = reverse(
             f"applications:{summary_type.replace('-', '_')}",
             kwargs={
@@ -401,9 +396,9 @@ def software_on_application_summary_url_factory(application, good_on_application
         )
         return url
 
-    return software_on_application_summary_url
+    return technology_on_application_summary_url
 
 
 @pytest.fixture
-def software_on_application_summary_url(software_on_application_summary_url_factory):
-    return software_on_application_summary_url_factory("software-on-application-summary")
+def technology_on_application_summary_url(technology_on_application_summary_url_factory):
+    return technology_on_application_summary_url_factory("technology-on-application-summary")

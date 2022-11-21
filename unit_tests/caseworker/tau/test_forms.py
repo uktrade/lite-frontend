@@ -433,28 +433,28 @@ def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, setti
         ),
         (
             {
-                "platform": {
+                "complete_item": {
                     "good": {
                         "id": "12345",
                         "item_category": {
-                            "key": ProductCategories.PRODUCT_CATEGORY_PLATFORM,
+                            "key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM,
                         },
                     },
                 },
             },
             [
                 (
-                    "platform",
+                    "complete_item",
                     {
                         "good_on_application": {
                             "good": {
                                 "id": "12345",
-                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM},
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM},
                             }
                         },
                         "summary": (
-                            ("platform-summary",),
-                            ("platform-product-on-application-summary",),
+                            ("complete_item-summary",),
+                            ("complete_item-product-on-application-summary",),
                         ),
                     },
                 ),
@@ -491,28 +491,28 @@ def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, setti
         ),
         (
             {
-                "software": {
+                "technology": {
                     "good": {
                         "id": "12345",
                         "item_category": {
-                            "key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE,
+                            "key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY,
                         },
                     },
                 },
             },
             [
                 (
-                    "software",
+                    "technology",
                     {
                         "good_on_application": {
                             "good": {
                                 "id": "12345",
-                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE},
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY},
                             }
                         },
                         "summary": (
-                            ("software-summary",),
-                            ("software-product-on-application-summary",),
+                            ("technology-summary",),
+                            ("technology-product-on-application-summary",),
                         ),
                     },
                 ),
@@ -520,28 +520,28 @@ def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, setti
         ),
         (
             {
-                "component": {
+                "component_accessory": {
                     "good": {
                         "id": "12345",
                         "item_category": {
-                            "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT,
+                            "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY,
                         },
                     },
                 },
             },
             [
                 (
-                    "component",
+                    "component_accessory",
                     {
                         "good_on_application": {
                             "good": {
                                 "id": "12345",
-                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT},
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY},
                             }
                         },
                         "summary": (
-                            ("component-summary",),
-                            ("component-product-on-application-summary",),
+                            ("component-accessory-summary",),
+                            ("component-accessory-product-on-application-summary",),
                         ),
                     },
                 ),
@@ -563,10 +563,10 @@ def test_tau_assessment_form_goods_choices(
         return_value=(("firearm-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.cases.helpers.summaries.platform_summary", return_value=(("platform-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.complete_item_summary", return_value=(("complete_item-summary",),))
     mocker.patch(
-        "caseworker.cases.helpers.summaries.platform_product_on_application_summary",
-        return_value=(("platform-product-on-application-summary",),),
+        "caseworker.cases.helpers.summaries.complete_item_product_on_application_summary",
+        return_value=(("complete_item-product-on-application-summary",),),
     )
 
     mocker.patch("caseworker.cases.helpers.summaries.material_summary", return_value=(("material-summary",),))
@@ -575,16 +575,19 @@ def test_tau_assessment_form_goods_choices(
         return_value=(("material-product-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.cases.helpers.summaries.software_summary", return_value=(("software-summary",),))
+    mocker.patch("caseworker.cases.helpers.summaries.technology_summary", return_value=(("technology-summary",),))
     mocker.patch(
-        "caseworker.cases.helpers.summaries.software_product_on_application_summary",
-        return_value=(("software-product-on-application-summary",),),
+        "caseworker.cases.helpers.summaries.technology_product_on_application_summary",
+        return_value=(("technology-product-on-application-summary",),),
     )
 
-    mocker.patch("caseworker.cases.helpers.summaries.component_summary", return_value=(("component-summary",),))
     mocker.patch(
-        "caseworker.cases.helpers.summaries.component_product_on_application_summary",
-        return_value=(("component-product-on-application-summary",),),
+        "caseworker.cases.helpers.summaries.component_accessory_summary",
+        return_value=(("component-accessory-summary",),),
+    )
+    mocker.patch(
+        "caseworker.cases.helpers.summaries.component_accessory_product_on_application_summary",
+        return_value=(("component-accessory-product-on-application-summary",),),
     )
 
     queue_pk = uuid.uuid4()

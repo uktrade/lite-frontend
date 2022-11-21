@@ -10,12 +10,12 @@ from caseworker.cases.helpers.summaries import (
     firearm_on_application_summary,
     material_summary,
     material_product_on_application_summary,
-    platform_summary,
-    platform_product_on_application_summary,
-    software_summary,
-    software_product_on_application_summary,
-    component_summary,
-    component_product_on_application_summary,
+    technology_summary,
+    technology_product_on_application_summary,
+    component_accessory_summary,
+    component_accessory_product_on_application_summary,
+    complete_item_summary,
+    complete_item_product_on_application_summary,
 )
 
 from unit_tests.helpers import merge_summaries
@@ -155,18 +155,18 @@ def test_firearm_on_application_summary(data_standard_case, standard_firearm_exp
     assert product_summary == standard_firearm_expected_product_on_application_summary
 
 
-def test_platform_summary(data_standard_case, standard_platform_expected_product_summary):
+def test_complete_item_summary(data_standard_case, standard_complete_item_expected_product_summary):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = platform_summary(
+    product_summary = complete_item_summary(
         good_on_application["good"],
         queue_pk,
         application_pk,
     )
 
     expected_summary = merge_summaries(
-        standard_platform_expected_product_summary,
+        standard_complete_item_expected_product_summary,
         (
             (
                 "product-document",
@@ -180,8 +180,8 @@ def test_platform_summary(data_standard_case, standard_platform_expected_product
     assert product_summary == expected_summary
 
 
-def test_platform_product_on_application_summary(
-    data_standard_case, standard_platform_expected_product_on_application_summary
+def test_complete_item_product_on_application_summary(
+    data_standard_case, standard_complete_item_expected_product_on_application_summary
 ):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     del good_on_application["firearm_details"]
@@ -196,23 +196,23 @@ def test_platform_product_on_application_summary(
     )
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = platform_product_on_application_summary(good_on_application, queue_pk, application_pk)
+    product_summary = complete_item_product_on_application_summary(good_on_application, queue_pk, application_pk)
 
-    assert product_summary == standard_platform_expected_product_on_application_summary
+    assert product_summary == standard_complete_item_expected_product_on_application_summary
 
 
-def test_component_summary(data_standard_case, standard_component_expected_product_summary):
+def test_component_accessory_summary(data_standard_case, standard_component_accessory_expected_product_summary):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = component_summary(
+    product_summary = component_accessory_summary(
         good_on_application["good"],
         queue_pk,
         application_pk,
     )
 
     expected_summary = merge_summaries(
-        standard_component_expected_product_summary,
+        standard_component_accessory_expected_product_summary,
         (
             (
                 "product-document",
@@ -226,8 +226,8 @@ def test_component_summary(data_standard_case, standard_component_expected_produ
     assert product_summary == expected_summary
 
 
-def test_component_product_on_application_summary(
-    data_standard_case, standard_platform_expected_product_on_application_summary
+def test_component_accessory_product_on_application_summary(
+    data_standard_case, standard_component_accessory_expected_product_on_application_summary
 ):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     del good_on_application["firearm_details"]
@@ -242,8 +242,8 @@ def test_component_product_on_application_summary(
     )
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = component_product_on_application_summary(good_on_application, queue_pk, application_pk)
-    assert product_summary == standard_platform_expected_product_on_application_summary
+    product_summary = component_accessory_product_on_application_summary(good_on_application, queue_pk, application_pk)
+    assert product_summary == standard_component_accessory_expected_product_on_application_summary
 
 
 def test_material_summary(data_standard_case, standard_material_expected_product_summary):
@@ -292,18 +292,18 @@ def test_material_product_on_application_summary(
     assert product_summary == standard_material_expected_product_on_application_summary
 
 
-def test_software_summary(data_standard_case, standard_software_expected_product_summary):
+def test_technology_summary(data_standard_case, standard_technology_expected_product_summary):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = software_summary(
+    product_summary = technology_summary(
         good_on_application["good"],
         queue_pk,
         application_pk,
     )
 
     expected_summary = merge_summaries(
-        standard_software_expected_product_summary,
+        standard_technology_expected_product_summary,
         (
             (
                 "product-document",
@@ -317,8 +317,8 @@ def test_software_summary(data_standard_case, standard_software_expected_product
     assert product_summary == expected_summary
 
 
-def test_software_product_on_application_summary(
-    data_standard_case, standard_software_expected_product_on_application_summary
+def test_technology_product_on_application_summary(
+    data_standard_case, standard_technology_expected_product_on_application_summary
 ):
     good_on_application = data_standard_case["case"]["data"]["goods"][0]
     del good_on_application["firearm_details"]
@@ -333,6 +333,6 @@ def test_software_product_on_application_summary(
     )
     queue_pk = uuid.uuid4()
     application_pk = uuid.uuid4()
-    product_summary = software_product_on_application_summary(good_on_application, queue_pk, application_pk)
+    product_summary = technology_product_on_application_summary(good_on_application, queue_pk, application_pk)
 
-    assert product_summary == standard_software_expected_product_on_application_summary
+    assert product_summary == standard_technology_expected_product_on_application_summary

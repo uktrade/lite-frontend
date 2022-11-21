@@ -88,23 +88,23 @@ class SerialChoices(models.TextChoices):
     NOT_AVAILABLE = "NOT_AVAILABLE", "No"
 
 
-class ComponentChoices(models.TextChoices):
+class ComponentAccessoryChoices(models.TextChoices):
     DESIGNED = "yes_designed", "Specially designed for hardware"
     MODIFIED = "yes_modified", "Modified for hardware"
     GENERAL = "yes_general", "General-purpose component"
 
 
 COMPONENT_DETAILS_MAP = {
-    ComponentChoices.DESIGNED: "designed_details",
-    ComponentChoices.MODIFIED: "modified_details",
-    ComponentChoices.GENERAL: "general_details",
+    ComponentAccessoryChoices.DESIGNED: "designed_details",
+    ComponentAccessoryChoices.MODIFIED: "modified_details",
+    ComponentAccessoryChoices.GENERAL: "general_details",
 }
 
 
 class ProductCategories:
     PRODUCT_CATEGORY_FIREARM = "group2_firearms"
-    PRODUCT_CATEGORY_PLATFORM = "group1_platform"
-    PRODUCT_CATEGORY_COMPONENT = "group1_components"
+    PRODUCT_CATEGORY_COMPONENT_ACCESSORY = "group1_components"
+    PRODUCT_CATEGORY_COMPLETE_ITEM = "group1_platform"
     PRODUCT_CATEGORY_SOFTWARE = "group3_software"
     PRODUCT_CATEGORY_MATERIAL = "group1_materials"
     PRODUCT_CATEGORY_DEVICE = "group1_device"

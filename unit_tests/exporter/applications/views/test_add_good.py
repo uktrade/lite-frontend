@@ -18,7 +18,6 @@ from exporter.goods.forms import (
     FirearmsYearOfManufactureDetailsForm,
     GroupTwoProductTypeForm,
     IdentificationMarkingsForm,
-    ProductCategoryForm,
     ProductComponentForm,
     ProductMilitaryUseForm,
     ProductUsesInformationSecurityForm,
@@ -33,9 +32,8 @@ ADD_GOOD_VIEW = "add_good"
 
 
 @pytest.fixture(autouse=True)
-def setup(no_op_storage, settings):
-    settings.FEATURE_FLAG_ONLY_ALLOW_FIREARMS_PRODUCTS = False
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = False
+def setup(no_op_storage):
+    yield
 
 
 @pytest.fixture(autouse=True)
@@ -79,32 +77,9 @@ def add_new_firearm_url(data_standard_case):
 def test_add_good_start(url, authorized_client, goods_url):
     response = authorized_client.get(url)
     assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductCategoryForm)
-    assert CreateGoodForm.ProductCategory.TITLE.encode("utf-8") in response.content
-    assert response.context["back_link_url"] == goods_url
-
-
-def test_add_good_back_link_with_non_firearm_feature_switch(url, authorized_client, settings, is_good_firearm_url):
-    settings.FEATURE_FLAG_NON_FIREARMS_ENABLED = True
-    response = authorized_client.get(url)
-    assert response.context["back_link_url"] == is_good_firearm_url
-
-
-def test_add_good_product_category(url, authorized_client):
-    title = CreateGoodForm.ProductCategory.TITLE.encode("utf-8")
-    response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_CATEGORY})
-    assert isinstance(response.context["form"], ProductCategoryForm)
-    assert title in response.content
-    response = authorized_client.post(
-        url,
-        data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_CATEGORY,
-            f"{AddGoodFormSteps.PRODUCT_CATEGORY}-item_category": "group2_firearms",
-        },
-    )
-    assert response.status_code == 200
     assert isinstance(response.context["form"], GroupTwoProductTypeForm)
-    assert title not in response.content
+    assert CreateGoodForm.FirearmGood.ProductType.TITLE.encode("utf-8") in response.content
+    assert response.context["back_link_url"] == goods_url
 
 
 def test_add_good_firearm_redirects_to_firearm_wizard(url, authorized_client, add_new_firearm_url):
@@ -182,14 +157,6 @@ def test_add_good_identification_markings(url, authorized_client, data, expected
 
 
 def test_add_good_capture_serial_numbers(url, authorized_client):
-    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_CATEGORY})
-    authorized_client.post(
-        url,
-        data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_CATEGORY,
-            f"{AddGoodFormSteps.PRODUCT_CATEGORY}-item_category": "group1_platform",
-        },
-    )
     authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.FIREARMS_NUMBER_OF_ITEMS})
     authorized_client.post(
         url,
@@ -222,60 +189,6 @@ def test_add_good_capture_serial_numbers(url, authorized_client):
             f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_0": "abcdef",
             f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_1": "abcdef",
             f"{AddGoodFormSteps.FIREARMS_CAPTURE_SERIAL_NUMBERS}-serial_numbers_2": "abcdef",
-        },
-    )
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductMilitaryUseForm)
-    assert title not in response.content
-
-
-def test_add_good_product_military_use(url, authorized_client):
-    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_CATEGORY})
-    authorized_client.post(
-        url,
-        data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_CATEGORY,
-            f"{AddGoodFormSteps.PRODUCT_CATEGORY}-item_category": "group1_device",
-        },
-    )
-
-    title = CreateGoodForm.MilitaryUse.TITLE.encode("utf-8")
-    response = authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_MILITARY_USE})
-    assert isinstance(response.context["form"], ProductMilitaryUseForm)
-    assert title in response.content
-    response = authorized_client.post(
-        url,
-        data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_MILITARY_USE,
-            f"{AddGoodFormSteps.PRODUCT_MILITARY_USE}-is_military_use": "yes_designed",
-        },
-    )
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
-    assert title not in response.content
-
-
-def test_add_good_product_uses_information_security(url, authorized_client):
-    authorized_client.post(url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_CATEGORY})
-    authorized_client.post(
-        url,
-        data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_CATEGORY,
-            f"{AddGoodFormSteps.PRODUCT_CATEGORY}-item_category": "group1_device",
-        },
-    )
-
-    title = CreateGoodForm.ProductInformationSecurity.TITLE.encode("utf-8")
-    response = authorized_client.post(
-        url, data={"wizard_goto_step": AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY}
-    )
-    assert title in response.content
-    assert isinstance(response.context["form"], ProductUsesInformationSecurityForm)
-    response = authorized_client.post(
-        url,
-        data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY,
-            f"{AddGoodFormSteps.PRODUCT_USES_INFORMATION_SECURITY}-uses_information_security": "True",
         },
     )
     assert response.status_code == 200
@@ -516,19 +429,7 @@ def test_add_good_api_submission(url, authorized_client, requests_mock, data_sta
     # The final API submission we expect
     mock_goods_post = requests_mock.post("/goods/", status_code=201, json={"good": {"id": good_id}})
 
-    # Enter the wizard at product category
     response = authorized_client.get(url)
-    assert not response.context["form"].errors
-
-    response = authorized_client.post(
-        url,
-        data={
-            f"{ADD_GOOD_VIEW}-current_step": AddGoodFormSteps.PRODUCT_CATEGORY,
-            f"{AddGoodFormSteps.PRODUCT_CATEGORY}-item_category": "group2_firearms",
-        },
-    )
-    assert response.status_code == 200
-    assert isinstance(response.context["form"], GroupTwoProductTypeForm)
     assert not response.context["form"].errors
 
     response = authorized_client.post(

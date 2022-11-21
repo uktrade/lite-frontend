@@ -49,14 +49,12 @@ from .payloads import (
     AddGoodMaterialPayloadBuilder,
     AddGoodMaterialToApplicationPayloadBuilder,
 )
-from .mixins import NonFirearmsMaterialFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AddGoodMaterial(
     LoginRequiredMixin,
-    NonFirearmsMaterialFlagMixin,
     ApplicationMixin,
     BaseSessionWizardView,
 ):
@@ -136,7 +134,6 @@ class AddGoodMaterial(
 
 class AddGoodMaterialToApplication(
     LoginRequiredMixin,
-    NonFirearmsMaterialFlagMixin,
     ApplicationMixin,
     GoodMixin,
     BaseSessionWizardView,

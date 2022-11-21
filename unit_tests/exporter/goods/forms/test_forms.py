@@ -125,22 +125,6 @@ def test_goods_check_document_sensitivity_form():
 @pytest.mark.parametrize(
     "data, valid",
     (
-        ({"item_category": "group2_firearms"}, True),
-        ({"instructions_to_exporter": ""}, False),
-    ),
-)
-def test_product_category_form(data, valid):
-    form = forms.ProductCategoryForm(data=data)
-
-    assert form.is_valid() == valid
-
-    if not valid:
-        assert form.errors["item_category"][0] == "Select a product category"
-
-
-@pytest.mark.parametrize(
-    "data, valid",
-    (
         ({"type": "firearms"}, True),
         ({"type": ""}, False),
     ),
@@ -665,10 +649,10 @@ def test_firearms_act_confirmation_form(data, is_rfd, valid, error_field, error_
         ),
         (
             {"software_or_technology_details": ""},
-            "group3_technology",
+            "group3_software",
             False,
             "software_or_technology_details",
-            "Enter the purpose of the technology",
+            "Enter the purpose of the software",
         ),
     ),
 )
@@ -1010,7 +994,7 @@ def test_component_of_a_firearm_unit_quantity_value_form(data, valid, errors):
         },
     }
 
-    form = forms.ComponentOfAFirearmUnitQuantityValueForm(data=data, good=good, number_of_items=5)
+    form = forms.ComponentAccessoryOfAFirearmUnitQuantityValueForm(data=data, good=good, number_of_items=5)
 
     assert form.is_valid() == valid
 
@@ -1116,7 +1100,7 @@ def test_component_of_a_firearm_ammunition_unit_quantity_value_form(data, valid,
         },
     }
 
-    form = forms.ComponentOfAFirearmAmmunitionUnitQuantityValueForm(data=data, good=good, number_of_items=5)
+    form = forms.ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm(data=data, good=good, number_of_items=5)
 
     assert form.is_valid() == valid
 

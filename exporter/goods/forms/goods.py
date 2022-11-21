@@ -4,7 +4,6 @@ from crispy_forms_gds.layout import HTML, Field, Fieldset, Layout, Submit
 
 from django import forms
 from django.template.loader import render_to_string
-from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.db import models
@@ -12,6 +11,7 @@ from django.db import models
 from core.builtins.custom_tags import default_na, linkify
 from core.constants import ProductCategories
 from core.forms.layouts import ConditionalRadiosQuestion, ConditionalRadios, summary_list
+from core.constants import ComponentAccessoryChoices
 
 from exporter.core.common.forms import TextChoice, coerce_str_to_bool
 from exporter.core.constants import (
@@ -23,7 +23,6 @@ from exporter.core.helpers import (
     convert_control_list_entries,
     str_to_bool,
 )
-from core.constants import ComponentChoices
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
 from exporter.core.common.forms import BaseForm
@@ -271,8 +270,8 @@ def delete_good_form(good):
     try:
         if good["firearm_details"] and good["firearm_details"]["type"]["key"] == "firearms":
             back_link = reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
-        elif good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_PLATFORM:
-            back_link = reverse("goods:platform_detail", kwargs={"pk": good["id"]})
+        elif good["item_category"]["key"] == ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM:
+            back_link = reverse("goods:complete_item_detail", kwargs={"pk": good["id"]})
     except KeyError:
         pass
 
@@ -365,37 +364,6 @@ def has_valid_section_five_certificate(application):
     if "section-five-certificate" in documents:
         return not documents["section-five-certificate"]["is_expired"]
     return False
-
-
-class ProductCategoryForm(forms.Form):
-    title = CreateGoodForm.ProductCategory.TITLE
-
-    item_category = forms.ChoiceField(
-        choices=(
-            (ProductCategories.PRODUCT_CATEGORY_PLATFORM, CreateGoodForm.ProductCategory.GROUP1_PLATFORM),
-            (ProductCategories.PRODUCT_CATEGORY_DEVICE, CreateGoodForm.ProductCategory.GROUP1_DEVICE),
-            (ProductCategories.PRODUCT_CATEGORY_COMPONENT, CreateGoodForm.ProductCategory.GROUP1_COMPONENTS),
-            (ProductCategories.PRODUCT_CATEGORY_MATERIAL, CreateGoodForm.ProductCategory.GROUP1_MATERIALS),
-            (ProductCategories.PRODUCT_CATEGORY_FIREARM, CreateGoodForm.ProductCategory.GROUP2_FIREARMS),
-            (ProductCategories.PRODUCT_CATEGORY_SOFTWARE, CreateGoodForm.ProductCategory.GROUP3_SOFTWARE),
-            (ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY, CreateGoodForm.ProductCategory.GROUP3_TECHNOLOGY),
-        ),
-        widget=forms.RadioSelect,
-        label="",
-        error_messages={
-            "required": "Select a product category",
-        },
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "item_category",
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
-        )
 
 
 class GroupTwoProductTypeForm(forms.Form):
@@ -720,38 +688,28 @@ class NonFirearmCategoryForm(BaseForm):
         TITLE = "Select the product category"
 
     class NonFirearmCategoryChoices(models.TextChoices):
-        PLATFORM = "PLATFORM", "It's a complete product"
+        COMPLETE_ITEM = "COMPLETE_ITEM", "It's a complete product"
         MATERIAL_CATEGORY = "MATERIAL_CATEGORY", "It forms part of a product"
-        SOFTWARE = "SOFTWARE", "It helps to operate a product"
+        TECHNOLOGY = "TECHNOLOGY", "It helps to operate a product"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        category_choices = []
+        category_choices = [
+            TextChoice(
+                self.NonFirearmCategoryChoices.COMPLETE_ITEM,
+                hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
+            ),
+            TextChoice(
+                self.NonFirearmCategoryChoices.MATERIAL_CATEGORY,
+                hint="Hardware such as components and accessories, or raw materials and substances.",
+            ),
+            TextChoice(
+                self.NonFirearmCategoryChoices.TECHNOLOGY,
+                hint="For example, software or information such as technology manuals and specifications.",
+            ),
+        ]
 
-        if settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED:
-            category_choices.append(
-                TextChoice(
-                    self.NonFirearmCategoryChoices.PLATFORM,
-                    hint="Hardware such as devices, systems, platforms, vehicles, equipment.",
-                ),
-            )
-
-        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED or settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
-            category_choices.append(
-                TextChoice(
-                    self.NonFirearmCategoryChoices.MATERIAL_CATEGORY,
-                    hint="Hardware such as components and accessories, or raw materials and substances.",
-                ),
-            )
-
-        if settings.FEATURE_FLAG_NON_FIREARMS_SOFTWARE_ENABLED:
-            category_choices.append(
-                TextChoice(
-                    self.NonFirearmCategoryChoices.SOFTWARE,
-                    hint="For example, software or information such as technology manuals and specifications.",
-                ),
-            )
         self.fields["no_firearm_category"].choices = category_choices
 
     no_firearm_category = forms.ChoiceField(
@@ -773,11 +731,7 @@ class IsMaterialSubstanceCategoryForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        material_substance_choices = []
-        if settings.FEATURE_FLAG_NON_FIREARMS_MATERIAL_ENABLED:
-            material_substance_choices.append((True, "Yes"))
-        if settings.FEATURE_FLAG_NON_FIREARMS_COMPONENT_ENABLED:
-            material_substance_choices.append((False, "No, it's a component, accessory or module"))
+        material_substance_choices = [(True, "Yes"), (False, "No, it's a component, accessory or module")]
         self.fields["is_material_substance"].choices = material_substance_choices
 
     is_material_substance = forms.TypedChoiceField(
@@ -1628,7 +1582,7 @@ class FirearmsUnitQuantityValueForm(forms.Form):
         return cleaned_data
 
 
-class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
+class ComponentAccessoryOfAFirearmUnitQuantityValueForm(forms.Form):
     title = AddGoodToApplicationForm.TITLE
 
     value = forms.CharField(
@@ -1795,7 +1749,7 @@ class ComponentOfAFirearmUnitQuantityValueForm(forms.Form):
         return cleaned_data
 
 
-class ComponentOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
+class ComponentAccessoryOfAFirearmAmmunitionUnitQuantityValueForm(forms.Form):
     title = AddGoodToApplicationForm.TITLE
 
     value = forms.CharField(
@@ -2008,7 +1962,7 @@ class ProductComponentDetailsForm(BaseForm):
         TITLE = "What type of component is it?"
 
     component_type = forms.ChoiceField(
-        choices=ComponentChoices.choices,
+        choices=ComponentAccessoryChoices.choices,
         label="",
         widget=forms.RadioSelect,
         error_messages={
@@ -2039,15 +1993,15 @@ class ProductComponentDetailsForm(BaseForm):
             ConditionalRadios(
                 "component_type",
                 ConditionalRadiosQuestion(
-                    ComponentChoices.DESIGNED.label,
+                    ComponentAccessoryChoices.DESIGNED.label,
                     "designed_details",
                 ),
                 ConditionalRadiosQuestion(
-                    ComponentChoices.MODIFIED.label,
+                    ComponentAccessoryChoices.MODIFIED.label,
                     "modified_details",
                 ),
                 ConditionalRadiosQuestion(
-                    ComponentChoices.GENERAL.label,
+                    ComponentAccessoryChoices.GENERAL.label,
                     "general_details",
                 ),
             ),
@@ -2062,17 +2016,17 @@ class ProductComponentDetailsForm(BaseForm):
         modified_hardware_details = cleaned_data.get("modified_details")
         general_purpose_details = cleaned_data.get("general_details")
 
-        if component_type == ComponentChoices.DESIGNED.value and not hardware_details:
+        if component_type == ComponentAccessoryChoices.DESIGNED.value and not hardware_details:
             self.add_error(
                 "designed_details",
                 "Enter details of the specific hardware",
             )
-        elif component_type == ComponentChoices.MODIFIED.value and not modified_hardware_details:
+        elif component_type == ComponentAccessoryChoices.MODIFIED.value and not modified_hardware_details:
             self.add_error(
                 "modified_details",
                 "Enter details of the modifications and the specific hardware",
             )
-        elif component_type == ComponentChoices.GENERAL.value and not general_purpose_details:
+        elif component_type == ComponentAccessoryChoices.GENERAL.value and not general_purpose_details:
             self.add_error(
                 "general_details",
                 "Enter details of the intended general-purpose use",

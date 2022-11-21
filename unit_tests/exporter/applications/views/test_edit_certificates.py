@@ -9,8 +9,8 @@ from exporter.goods.forms.firearms import FirearmAttachSection5LetterOfAuthority
 
 
 @pytest.fixture(autouse=True)
-def setup(settings, no_op_storage):
-    pass
+def setup(no_op_storage):
+    yield
 
 
 @pytest.mark.parametrize(

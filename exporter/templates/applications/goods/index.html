@@ -21,12 +21,8 @@
 
 	{% if application.status.key in 'applicant_editing,draft' %}
 		<div>
-            {% if feature_flag_non_firearms_enabled %}
-			    <a id="button-add-new-good" href="{% url 'applications:is_good_firearm' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
-			{% else %}
-                <a id="button-add-new-good" href="{% url 'applications:new_good' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
-            {% endif %}
-                <a id="button-add-preexisting-good" href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
+         	    <a id="button-add-new-good" href="{% url 'applications:is_good_firearm' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'goods.ViewGoodOnApplicationPage.ADD_NEW_BUTTON' %}</a>
+		        <a id="button-add-preexisting-good" href="{% url 'applications:preexisting_good' application.id %}" role='button' draggable='false' class='govuk-button{% if goods %} govuk-button--secondary{% endif %}'>{% lcs 'Goods.AddFromOrganisation.BUTTON' %}</a>
 		</div>
 	{% endif %}
 

@@ -35,20 +35,20 @@ def test_firearm_on_application_summary(data_standard_case, standard_firearm_exp
             SummaryTypes.FIREARM,
         ),
         (
-            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM}},
-            SummaryTypes.PLATFORM,
+            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM}},
+            SummaryTypes.COMPLETE_ITEM,
         ),
         (
             {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_MATERIAL}},
             SummaryTypes.MATERIAL,
         ),
         (
-            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE}},
-            SummaryTypes.SOFTWARE,
+            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY}},
+            SummaryTypes.TECHNOLOGY,
         ),
         (
-            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT}},
-            SummaryTypes.COMPONENT,
+            {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY}},
+            SummaryTypes.COMPONENT_ACCESSORY,
         ),
     ),
 )
@@ -80,20 +80,20 @@ def test_get_summary_type_for_good_no_summary_type(good):
             SummaryTypes.FIREARM,
         ),
         (
-            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_PLATFORM}}},
-            SummaryTypes.PLATFORM,
+            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM}}},
+            SummaryTypes.COMPLETE_ITEM,
         ),
         (
             {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_MATERIAL}}},
             SummaryTypes.MATERIAL,
         ),
         (
-            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE}}},
-            SummaryTypes.SOFTWARE,
+            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY}}},
+            SummaryTypes.TECHNOLOGY,
         ),
         (
-            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT}}},
-            SummaryTypes.COMPONENT,
+            {"good": {"item_category": {"key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY}}},
+            SummaryTypes.COMPONENT_ACCESSORY,
         ),
     ),
 )

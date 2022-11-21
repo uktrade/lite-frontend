@@ -63,13 +63,11 @@ from .constants import (
     AddGoodMaterialSteps,
 )
 from .payloads import MaterialProductOnApplicationSummaryEditOnwardExportedPayloadBuilder
-from .mixins import NonFirearmsMaterialFlagMixin
 
 logger = logging.getLogger(__name__)
 
 
 class BaseEditView(
-    NonFirearmsMaterialFlagMixin,
     BaseProductEditView,
 ):
     def get_success_url(self):
@@ -100,7 +98,6 @@ class MaterialEditPartNumberView(
 
 
 class BaseMaterialEditWizardView(
-    NonFirearmsMaterialFlagMixin,
     BaseProductEditWizardView,
 ):
     def get_success_url(self):
@@ -233,7 +230,6 @@ class SummaryTypeMixin:
 
 class BaseMaterialOnApplicationSummaryEditWizardView(
     LoginRequiredMixin,
-    NonFirearmsMaterialFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
@@ -292,7 +288,6 @@ class MaterialOnApplicationSummaryEditOnwardExported(BaseMaterialOnApplicationSu
 
 class BaseMaterialOnApplicationEditView(
     LoginRequiredMixin,
-    NonFirearmsMaterialFlagMixin,
     SummaryTypeMixin,
     ApplicationMixin,
     GoodOnApplicationMixin,
