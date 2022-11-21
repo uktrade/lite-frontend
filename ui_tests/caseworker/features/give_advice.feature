@@ -57,13 +57,13 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I click on the application previously created
     Then I click on Product Assessment
     Then I select good
-    Then I click on exporter suggestion
+    Then I add exporter suggestion with this "ML1a"
     Then I select report summary and regime to none and submit
     When I click move case forward
     Then I don't see previously created application
     # LU
     When I switch to "Licensing Unit" with queue "Licensing Unit Pre-circulation Cases to Review" and I submit the case
-    Then I see the case status is now "OGD Consolidation"
+    Then I see the case status is now "OGD Advice"
     And I see the case is assigned to queues "MOD-DI Indirect cases to review, MOD-CapProt cases to review, FCDO Cases to Review"
     # MOD-DI
     When I switch to "MOD-DI" with queue "MOD-DI Indirect cases to review" and I submit the case
@@ -95,7 +95,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     # FCDO Team deal with it..
     When I switch to "FCDO" with queue "FCDO Cases to Review" and I submit the case
     And I switch to "FCDO" with queue "FCDO Counter-signing" and I submit the case with decision "decision"
-    Then I see the case status is now "OGD Consolidation"
+    Then I see the case status is now "OGD Advice"
     And I see the case is assigned to queues "Review and combine"
 
     ##### MOD-ECJU to consolidate #####

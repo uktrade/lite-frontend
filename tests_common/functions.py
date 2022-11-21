@@ -84,10 +84,6 @@ def click_next_page(driver: WebDriver):
     driver.find_element_by_id("link-next-page").click()
 
 
-def click_cle_suggestions(driver: WebDriver):
-    driver.find_element_by_xpath("//div[@class='tau__cle-suggestions']//button").click()
-
-
 def select_report_summary_and_fill(driver: WebDriver):
     suggestion_input = driver.find_element(By.NAME, "report_summary")
     suggestion_input.send_keys("none")

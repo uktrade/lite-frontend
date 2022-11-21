@@ -4,7 +4,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
   So that I can focus on working the case and not on routing cases to the correct departments
 
 
-  @e2e_routing @skip
+  @e2e_routing
   Scenario: End to end routing rules
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -26,7 +26,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     When I click on the application previously created
     Then I click on Product Assessment
     Then I select good
-    Then I click on exporter suggestion
+    Then I add exporter suggestion with this "ML1a"
     Then I select report summary and regime to none and submit
     When I click move case forward
     Then I don't see previously created application

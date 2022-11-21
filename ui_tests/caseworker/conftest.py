@@ -54,6 +54,7 @@ import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from tests_common.helpers import applications
+from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 
 
 @when("I go to the internal homepage")  # noqa
@@ -857,13 +858,14 @@ def fill_report_summary_select_regine_none_and_submit(driver):  # noqa
     functions.click_submit(driver)
 
 
-@then(parsers.parse("I click on exporter suggestion"))
-def click_suggestion_cle(driver):  # noqa
-    functions.click_cle_suggestions(driver)
-
-
 @when("I click move case forward")  # noqa
 @when("I click submit recommendation")  # noqa
 @when("I click save and publish to exporter")  # noqa
 def submit_form(driver):  # noqa
     Shared(driver).click_submit()
+
+
+@then(parsers.parse('I add exporter suggestion with this "{control_code}"'))
+def add_cle_value(driver, control_code):  # noqa
+    add_goods_page = AddGoodPage(driver)
+    add_goods_page.enter_control_list_entries(control_code)
