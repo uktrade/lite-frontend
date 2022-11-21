@@ -195,9 +195,7 @@ class FormTests(TestCase):
 
     @mock.patch("django.http.request")
     def test_site_form_help_not_present(self, request):
-        foreign_org_form = site_form(request, True, RegisterAnOrganisationTriage.Locations.ABROAD)
         uk_individual_form = site_form(request, True, RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM)
-        self.assertIsNone(foreign_org_form.form_help)
         self.assertIsNone(uk_individual_form.form_help)
 
 
