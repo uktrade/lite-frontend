@@ -484,7 +484,7 @@ def get_summary_type_for_good(good):
     try:
         return summary_map[item_category]
     except KeyError as e:
-        raise NoSummaryForType from e
+        raise NoSummaryForType(f"Did not find summary for product category {item_category}") from e
 
 
 def get_summary_type_for_good_on_application(good_on_application):
