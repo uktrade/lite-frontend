@@ -1,8 +1,6 @@
 import logging
 from http import HTTPStatus
 
-from django.http import Http404
-from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -20,7 +18,6 @@ from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, Secur
 from .constants import SecurityApprovalSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
 from .payloads import SecurityApprovalStepsPayloadBuilder
-from .mixins import NonF680SecurityClassifiedFlagMixin
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +26,6 @@ class SecurityApprovals(
     LoginRequiredMixin,
     ApplicationMixin,
     BaseSessionWizardView,
-    NonF680SecurityClassifiedFlagMixin,
 ):
     form_list = [
         (SecurityApprovalSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
@@ -43,11 +39,6 @@ class SecurityApprovals(
         SecurityApprovalSteps.F1686_DETAILS: is_f1686_approval,
         SecurityApprovalSteps.SECURITY_OTHER_DETAILS: is_other_approval,
     }
-
-    def dispatch(self, request, **kwargs):
-        if not settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED:
-            raise Http404
-        return super().dispatch(request, **kwargs)
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)

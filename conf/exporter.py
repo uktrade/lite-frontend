@@ -81,9 +81,6 @@ SPIRE_URL = "https://www.spire.trade.gov.uk/spire/fox/espire/LOGIN/login"
 
 FEATURE_FLAG_FIREARMS_ENABLED = env.bool("FEATURE_FLAG_FIREARMS_ENABLED", False)
 
-# Enable Security classified questions
-FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = env.bool("FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED", True)
-
 if "redis" in VCAP_SERVICES:
     REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
 else:

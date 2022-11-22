@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-from django.conf import settings
 from exporter.applications.constants import OielLicenceTypes
 from exporter.applications.helpers.check_your_answers import (
     _is_application_export_type_temporary,
@@ -94,7 +93,6 @@ def get_application_task_list(request, application, errors=None):
 
     context["security_approvals"] = get_security_approval_details(application)
 
-    context["FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED"] = settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED
     if application_type == STANDARD:
         context["reference_number_description"] = get_reference_number_description(application)
         context["route_of_goods"] = get_route_of_goods(application)

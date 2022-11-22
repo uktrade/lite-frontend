@@ -17,10 +17,9 @@ from exporter.applications.views.security_approvals.forms import (
 def setup(
     mock_application_put,
     mock_application_get,
-    settings,
     no_op_storage,
 ):
-    settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = True
+    yield
 
 
 @pytest.fixture
