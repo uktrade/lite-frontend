@@ -17,7 +17,6 @@ from .conditionals import (
     is_f1686_approval_changed_and_selected,
     is_other_approval_changed_and_selected,
 )
-from .mixins import NonF680SecurityClassifiedFlagMixin
 from .payloads import get_f1686_data, SecurityApprovalStepsPayloadBuilder
 from .constants import SecurityApprovalSteps
 from .initial import (
@@ -30,7 +29,6 @@ from .initial import (
 
 class BaseApplicationEditView(
     LoginRequiredMixin,
-    NonF680SecurityClassifiedFlagMixin,
     ApplicationMixin,
     FormView,
 ):
@@ -138,7 +136,6 @@ class EditF1686Details(BaseApplicationEditView):
 
 
 class EditSecurityApprovalDetails(
-    NonF680SecurityClassifiedFlagMixin,
     BaseApplicationEditWizardView,
 ):
     form_list = [

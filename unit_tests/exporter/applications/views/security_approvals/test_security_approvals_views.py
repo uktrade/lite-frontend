@@ -15,11 +15,6 @@ def setup(no_op_storage):
     yield
 
 
-@pytest.fixture(autouse=True)
-def set_feature_flags(settings):
-    settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = True
-
-
 @pytest.fixture
 def application_security_approvals_url(data_standard_case):
     application_id = data_standard_case["case"]["data"]["id"]
@@ -50,16 +45,6 @@ def goto_step(goto_step_factory, application_security_approvals_url):
 @pytest.fixture
 def post_to_step(post_to_step_factory, application_security_approvals_url):
     return post_to_step_factory(application_security_approvals_url)
-
-
-def test_application_security_approvals_access_denied_without_feature_flag(
-    settings,
-    authorized_client,
-    application_security_approvals_url,
-):
-    settings.FEATURE_FLAG_F680_SECURITY_CLASSIFIED_ENABLED = False
-    response = authorized_client.get(application_security_approvals_url)
-    assert response.status_code == 404
 
 
 def test_application_security_approvals_end_to_end(

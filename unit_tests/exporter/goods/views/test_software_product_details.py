@@ -26,7 +26,7 @@ def mock_good_get(requests_mock, data_standard_case):
             "is_pv_graded": {"key": "yes", "value": "Yes"},
             "is_covered_by_firearm_act_section_one_two_or_five": "Yes",
             "item_category": {
-                "key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY,
+                "key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE,
             },
         }
     )
