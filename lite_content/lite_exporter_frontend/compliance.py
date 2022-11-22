@@ -92,7 +92,7 @@ class ComplianceSiteCaseList:
 
 class ComplianceSiteCase:
     BACK_LINK = "Back to compliance list"
-    PRIMARY_SITE = "This is your organisation's primary site"
+    PRIMARY_SITE = "This is your organisation's registered office address"
 
     class Tabs:
         DETAILS = "Details"

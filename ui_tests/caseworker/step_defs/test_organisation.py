@@ -209,7 +209,7 @@ def organisation_summary(driver, context):
     assert driver.find_element(by=By.ID, value="status-rejected").is_enabled()
 
 
-@then("I should see a summary along with primary site")
+@then("I should see a summary along with registered office address")
 def organisation_primaty_site(driver, context):
     summary = OrganisationPage(driver).get_organisation_summary()
     assert context.organisation_name in summary

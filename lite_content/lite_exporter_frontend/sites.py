@@ -3,7 +3,7 @@ class SitesPage:
     ADD_A_SITE_BUTTON = "Add a site"
     EDIT = "Edit "  # Intentional space to separate text and site name
     BACK_TO = "Back to "  # Intentional space to separate text and site name
-    PRIMARY_SITE = "(primary site)"
+    PRIMARY_SITE = "(Registered office address)"
 
     class Table:
         NAME = "Name"
@@ -14,7 +14,7 @@ class SitesPage:
 
 
 class SitePage:
-    PRIMARY_SITE_DETAIL = "This is your organisation's primary site."
+    PRIMARY_SITE_DETAIL = "This is your organisation's registered office address."
     USERS = "Users"
     ADMIN_USERS = "Admin Users"
 

@@ -38,7 +38,7 @@ class OrganisationPage:
         ACTIVITY = "Activity"
 
         class SummaryList:
-            PRIMARY_SITE = "Primary site"
+            PRIMARY_SITE = "Registered office address"
             FIRST_AND_LAST_NAME = "First and last name"
             NAME = "Name"
             EORI_NUMBER = "EORI number"
@@ -191,5 +191,5 @@ class ReviewOrganisationPage:
         SIC = "SIC Code"
         VAT = "VAT Number"
         REGISTRATION = "Registration Number"
-        SITE_NAME = "Primary Site Name"
-        SITE_ADDRESS = "Primary Site Address"
+        SITE_NAME = "Registered office address Name"
+        SITE_ADDRESS = "Registered office address Address"

@@ -16,6 +16,7 @@ from lite_forms.components import (
     FormGroup,
     TextInput,
     HiddenField,
+    DetailComponent,
 )
 from lite_forms.helpers import conditional
 
@@ -81,21 +82,28 @@ def site_form(request, is_individual, location):
     from exporter.core.views import RegisterAnOrganisationTriage
 
     is_in_uk = location == RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM
+    site_title = conditional(
+        not is_individual,
+        conditional(
+            is_in_uk,
+            RegisterAnOrganisation.Headquarters.TITLE,
+            RegisterAnOrganisation.Headquarters.TITLE_FOREIGN,
+        ),
+        conditional(
+            is_in_uk,
+            RegisterAnOrganisation.Headquarters.TITLE_INDIVIDUAL,
+            RegisterAnOrganisation.Headquarters.TITLE_INDIVIDUAL_FOREIGN,
+        ),
+    )
+
+    site_questions = (
+        address_questions(None, is_individual, "site.address.")
+        if is_in_uk
+        else foreign_address_questions(is_individual, get_countries(request, True, ["GB"]), "site.address.")
+    )
 
     return Form(
-        title=conditional(
-            not is_individual,
-            conditional(
-                is_in_uk,
-                RegisterAnOrganisation.Headquarters.TITLE,
-                RegisterAnOrganisation.Headquarters.TITLE_FOREIGN,
-            ),
-            conditional(
-                is_in_uk,
-                RegisterAnOrganisation.Headquarters.TITLE_INDIVIDUAL,
-                RegisterAnOrganisation.Headquarters.TITLE_INDIVIDUAL_FOREIGN,
-            ),
-        ),
+        title=site_title,
         description=RegisterAnOrganisation.Headquarters.DESCRIPTION,
         caption="Step 4 of 4",
         questions=[
@@ -104,13 +112,17 @@ def site_form(request, is_individual, location):
                 description=RegisterAnOrganisation.Headquarters.NAME_DESCRIPTION,
                 name="site.name",
             ),
-            *conditional(
-                is_in_uk,
-                address_questions(None, is_individual, "site.address."),
-                foreign_address_questions(is_individual, get_countries(request, True, ["GB"]), "site.address."),
-            ),
+            *site_questions,
         ],
         default_button_name=generic.CONTINUE,
+        form_help=conditional(
+            is_in_uk and not is_individual,
+            DetailComponent(
+                title=RegisterAnOrganisation.Headquarters.FORM_HELP_TITLE,
+                description=RegisterAnOrganisation.Headquarters.FORM_HELP_DESCRIPTION,
+            ),
+            None,
+        ),
     )
 
 
