@@ -495,7 +495,7 @@ def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, setti
                     "good": {
                         "id": "12345",
                         "item_category": {
-                            "key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY,
+                            "key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE,
                         },
                     },
                 },
@@ -507,7 +507,7 @@ def test_tau_assessment_form_without_feature_flag(data, valid, errors, rf, setti
                         "good_on_application": {
                             "good": {
                                 "id": "12345",
-                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY},
+                                "item_category": {"key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE},
                             }
                         },
                         "summary": (

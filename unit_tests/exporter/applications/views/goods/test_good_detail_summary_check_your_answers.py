@@ -126,7 +126,7 @@ def test_good_detail_summary_check_your_answers_view_template_used(
                 "good": {
                     "id": str(uuid.uuid4()),
                     "item_category": {
-                        "key": ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY,
+                        "key": ProductCategories.PRODUCT_CATEGORY_SOFTWARE,
                     },
                 },
             },
