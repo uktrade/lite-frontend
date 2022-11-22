@@ -461,6 +461,20 @@ class SummaryTypes:
     COMPONENT_ACCESSORY = "COMPONENT_ACCESSORY"
 
 
+def get_summary_type_from_item_category(item_category):
+    summary_map = {
+        ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM: SummaryTypes.COMPLETE_ITEM,
+        ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
+        ProductCategories.PRODUCT_CATEGORY_SOFTWARE: SummaryTypes.TECHNOLOGY,
+        ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
+    }
+
+    try:
+        return summary_map[item_category]
+    except KeyError as e:
+        raise NoSummaryForType(f"Did not find summary for product category {item_category}") from e
+
+
 def get_summary_type_for_good(good):
     firearm_details = good.get("firearm_details")
     if firearm_details:
@@ -474,17 +488,7 @@ def get_summary_type_for_good(good):
 
     item_category = item_category["key"]
 
-    summary_map = {
-        ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM: SummaryTypes.COMPLETE_ITEM,
-        ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
-        ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
-        ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
-    }
-
-    try:
-        return summary_map[item_category]
-    except KeyError as e:
-        raise NoSummaryForType from e
+    return get_summary_type_from_item_category(item_category)
 
 
 def get_summary_type_for_good_on_application(good_on_application):
@@ -492,26 +496,16 @@ def get_summary_type_for_good_on_application(good_on_application):
         return SummaryTypes.FIREARM
 
     if good_on_application.get("firearm_details"):
-        raise NoSummaryForType
+        raise NoSummaryForType("Missing `firearm_details`")
 
     good = good_on_application.get("good")
     if not good:
-        raise NoSummaryForType
+        raise NoSummaryForType("Missing `good`")
 
     item_category = good.get("item_category")
     if not item_category:
-        raise NoSummaryForType
+        raise NoSummaryForType("Missing `item_category`")
 
     item_category = item_category["key"]
 
-    summary_map = {
-        ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM: SummaryTypes.COMPLETE_ITEM,
-        ProductCategories.PRODUCT_CATEGORY_MATERIAL: SummaryTypes.MATERIAL,
-        ProductCategories.PRODUCT_CATEGORY_TECHNOLOGY: SummaryTypes.TECHNOLOGY,
-        ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY: SummaryTypes.COMPONENT_ACCESSORY,
-    }
-
-    try:
-        return summary_map[item_category]
-    except KeyError:
-        raise NoSummaryForType
+    return get_summary_type_from_item_category(item_category)
