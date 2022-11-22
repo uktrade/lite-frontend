@@ -865,7 +865,7 @@ def submit_form(driver):  # noqa
     Shared(driver).click_submit()
 
 
-@then(parsers.parse('I add exporter suggestion with this "{control_code}"'))
+@then(parsers.parse('I select the CLE "{control_code}"'))
 def add_cle_value(driver, control_code):  # noqa
     add_goods_page = AddGoodPage(driver)
     add_goods_page.enter_control_list_entries(control_code)
