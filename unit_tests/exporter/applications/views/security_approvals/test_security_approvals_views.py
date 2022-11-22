@@ -231,15 +231,3 @@ def test_application_summary(
     assert response.context["security_classified_approvals_types"]
     assert response.context["application"]
     assert response.context["back_link_url"] == application_security_approvals_url
-
-
-def test_application_task_list_post_f680_security_approvals(
-    authorized_client,
-    task_list_url,
-    mock_application_get,
-    mock_application_submit,
-):
-    authorized_client.post(task_list_url)
-
-    assert mock_application_submit.called_once
-    assert mock_application_submit.last_request.json() is None

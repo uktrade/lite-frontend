@@ -143,3 +143,15 @@ def test_application_task_list_ultimate_end_users_required(
     )
     response = authorized_client.get(task_list_url)
     assert response.context["ultimate_end_users_required"] == ultimate_end_users_required
+
+
+def test_application_task_list_post_f680_security_approvals(
+    authorized_client,
+    task_list_url,
+    mock_application_get,
+    mock_application_submit,
+):
+    authorized_client.post(task_list_url)
+
+    assert mock_application_submit.called_once
+    assert mock_application_submit.last_request.json() == {}
