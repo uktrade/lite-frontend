@@ -132,13 +132,20 @@ class RegisterAnOrganisation:
         VAT_NUMBER_SHORT_TITLE = "UK VAT number"
 
     class Headquarters:
-        TITLE = "Where in the United Kingdom is your organisation based?"
+        TITLE = "What is your registered office address?"
         TITLE_FOREIGN = "Where is your organisation based?"
         TITLE_INDIVIDUAL = "Where in the United Kingdom are you based?"
         TITLE_INDIVIDUAL_FOREIGN = "Where are you based?"
         DESCRIPTION = ""
         NAME = "Name of headquarters"
         NAME_DESCRIPTION = ""
+        FORM_HELP_TITLE = "Help with your registered office address"
+        FORM_HELP_DESCRIPTION = (
+            "This is usually the office address registered with Companies House. "
+            "Or HM Revenue and Customs if you're not on Companies House.\n "
+            "Your organisation might have multiple sites or business addresses, "
+            "but there will only be one registered office."
+        )
 
 
 class SignatureHelp:

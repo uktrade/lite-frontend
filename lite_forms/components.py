@@ -163,6 +163,7 @@ class Form:
         back_link=BackLink(),
         post_url=None,
         container: str = "two-pane",
+        form_help=None,
     ):
         from lite_forms.helpers import convert_to_markdown, heading_used_as_label
 
@@ -176,6 +177,7 @@ class Form:
         self.back_link = back_link
         if self.buttons is None:
             self.buttons = [Button(default_button_name, "submit", style=default_button_style)]
+        self.form_help = form_help
         self.javascript_imports = javascript_imports or set()
         self.post_url = post_url
         self.single_form_element = heading_used_as_label(questions)

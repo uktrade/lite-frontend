@@ -127,6 +127,18 @@
 				{% endfor %}
 			</div>
 
+            {# Form Help #}
+            {% if page.form_help %}
+                <div>
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading">{{ page.form_help.title }}</h2>
+                    </legend>
+                    <span id="span-{{ page.single_form_element.name }}-hint" class="govuk-hint" style="display: block; margin: 0 0 15px 0;">
+                        {{ page.form_help.description|safe|linebreaksbr }}
+                    </span>
+                </div>
+            {% endif %}
+
 			{# Footer label #}
 			{% if page.footer_label %}
 				{% include "components/label.html" with component=page.footer_label %}
