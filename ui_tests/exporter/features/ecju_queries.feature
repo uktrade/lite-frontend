@@ -22,5 +22,5 @@ So that I can quickly identify where action is required by me and respond to any
     Then I see "Some unique response" as the response under closed queries
 
     Examples:
-    | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  | end_use                  |
+    | name    | product | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  | is_mod_security_approved |
     | Test    | Rifle   | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development | False                    |

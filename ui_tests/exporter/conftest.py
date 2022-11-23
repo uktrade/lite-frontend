@@ -1375,7 +1375,7 @@ def create_application(
 
 
 @given(
-    "I submit an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use><is_mod_security_approved>",
+    "I submit an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>,<is_mod_security_approved>",
     target_fixture="submit_application",
 )
 def submit_application(
@@ -1402,6 +1402,7 @@ def submit_application(
         "consignee_address": consignee_address,
         "country": country,
         "end_use": end_use,
+        "is_mod_security_approved": is_mod_security_approved,
     }
     applications.create_standard_application(api_test_client, context, app_data, submit=True)
 
