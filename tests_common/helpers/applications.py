@@ -87,6 +87,7 @@ def create_standard_application(api_test_client, context, app_data, submit=True)
             "is_eu_military": False,
         },
         route_of_goods={"is_shipped_waybill_or_lading": True},
+        is_mod_security_approved=app_data["is_mod_security_approved"],
     )
 
     if not submit:
