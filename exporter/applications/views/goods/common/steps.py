@@ -3,11 +3,15 @@ from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductNameForm,
     ProductPartNumberForm,
+    ProductPVGradingForm,
+    ProductPVGradingDetailsForm,
 )
 
 from .initial import (
     get_control_list_entry_initial_data,
     get_name_initial_data,
+    get_pv_grading_details_initial_data,
+    get_pv_grading_initial_data,
 )
 from .payloads import get_part_number_payload
 
@@ -45,3 +49,22 @@ class ProductPartNumberStep(Step):
 
     def get_step_data(self, form):
         return get_part_number_payload(form)
+
+
+class ProductPVGradingStep(Step):
+    form_class = ProductPVGradingForm
+    name = "PV_GRADING"
+
+    def get_initial(self, view):
+        return get_pv_grading_initial_data(view.good)
+
+
+class ProductPVGradingDetailsStep(Step):
+    form_class = ProductPVGradingDetailsForm
+    name = "PV_GRADING_DETAILS"
+
+    def get_initial(self, view):
+        return get_pv_grading_details_initial_data(view.good)
+
+    def get_form_kwargs(self, view):
+        return {"request": view.request}

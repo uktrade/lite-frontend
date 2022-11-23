@@ -19,6 +19,8 @@ from exporter.applications.views.goods.common.steps import (
     ProductControlListEntryStep,
     ProductNameStep,
     ProductPartNumberStep,
+    ProductPVGradingDetailsStep,
+    ProductPVGradingStep,
 )
 from exporter.applications.views.goods.common.edit import (
     BaseEditProductDescription,
@@ -33,7 +35,6 @@ from exporter.applications.views.goods.common.initial import (
     get_is_onward_exported_initial_data,
     get_onward_altered_processed_initial_data,
     get_onward_incorporated_initial_data,
-    get_pv_grading_initial_data,
     get_pv_grading_details_initial_data,
     get_quantity_and_value_initial_data,
 )
@@ -51,6 +52,7 @@ from exporter.applications.views.goods.common.payloads import (
 from exporter.core.wizard.views import (
     BaseSessionWizardView,
     StepEditView,
+    StepSessionWizardView,
 )
 from exporter.goods.forms.common import (
     ProductMilitaryUseForm,
@@ -58,7 +60,6 @@ from exporter.goods.forms.common import (
     ProductOnwardExportedForm,
     ProductOnwardIncorporatedForm,
     ProductPVGradingDetailsForm,
-    ProductPVGradingForm,
     ProductQuantityAndValueForm,
     ProductUsesInformationSecurityForm,
 )
@@ -160,32 +161,28 @@ class BaseComponentAccessoryEditWizardView(
         return edit_component_accessory(self.request, good_pk, payload)
 
 
-class ComponentAccessoryEditPVGrading(BaseComponentAccessoryEditWizardView):
-    form_list = [
-        (AddGoodComponentSteps.PV_GRADING, ProductPVGradingForm),
-        (AddGoodComponentSteps.PV_GRADING_DETAILS, ProductPVGradingDetailsForm),
-    ]
+class ComponentAccessoryEditPVGrading(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    StepSessionWizardView,
+):
+    step_list = (
+        ProductPVGradingStep(),
+        ProductPVGradingDetailsStep(),
+    )
     condition_dict = {
-        AddGoodComponentSteps.PV_GRADING_DETAILS: is_pv_graded,
+        ProductPVGradingStep.name: is_pv_graded,
     }
-
-    def get_form_initial(self, step):
-        initial = {}
-        if step == AddGoodComponentSteps.PV_GRADING:
-            initial = get_pv_grading_initial_data(self.good)
-        elif step == AddGoodComponentSteps.PV_GRADING_DETAILS and self.good["pv_grading_details"]:
-            initial = get_pv_grading_details_initial_data(self.good)
-        return initial
-
-    def get_form_kwargs(self, step=None):
-        kwargs = super().get_form_kwargs(step)
-
-        if step == AddGoodComponentSteps.PV_GRADING_DETAILS:
-            kwargs["request"] = self.request
-        return kwargs
 
     def get_payload(self, form_dict):
         return ProductEditPVGradingPayloadBuilder().build(form_dict)
+
+    def get_success_url(self):
+        return reverse("applications:component_accessory_product_summary", kwargs=self.kwargs)
+
+    def edit_object(self, request, good_pk, payload):
+        return edit_component_accessory(self.request, good_pk, payload)
 
 
 class ComponentAccessoryEditPVGradingDetails(BaseComponentAccessoryEditView):
