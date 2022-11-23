@@ -1375,7 +1375,7 @@ def create_application(
 
 
 @given(
-    "I submit an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>",
+    "I submit an application with <name>,<product>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use><is_mod_security_approved>",
     target_fixture="submit_application",
 )
 def submit_application(
@@ -1390,6 +1390,7 @@ def submit_application(
     consignee_address,
     country,
     end_use,
+    is_mod_security_approved,
 ):
     app_data = {
         "name": name,
