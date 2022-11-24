@@ -57,40 +57,35 @@
 		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2">{{ case.status.value }}</p>
 	</td>
 
-	{# assignees #}
+	{# 	Case allocation #}
 	<td class="govuk-table__cell lite-mobile-hide">
+		<div class="app-assignments__container">
+			<ul class="app-assignments__list">
+			{% if case.case_officer.first_name and case.case_officer.last_name %}
+				<li>
+					{{ case.case_officer.first_name  }} {{ case.case_officer.last_name}}
+					<br>Licensing Unit case officer
+				</li>
+			{% endif %}
+			{% if case.assignments %}
 
-		{% if case.assignments %}
-			<div class="app-assignments__container"><ul class="app-assignments__list">
-				{% for id, user in case.assignments.items %}
-					<li
-						class="app-assignments__item"
-						{% if user.first_name and user.last_name %}
-							aria-label="{{ user.first_name }} {{ user.last_name }}"
-							data-tooltip="<b>{{ user.first_name }} {{ user.last_name }}</b>
-						{% else %}
-							aria-label="{{ user.email }}"
-							data-tooltip="<b>{{ user.email }}</b>
-						{% endif %}
-							{% for queue in user.queues %}
-								<br>{{ queue }}
-							{% endfor %}
-							">
-						<a
-							class="app-assignments__item-link"
-							href="{% url 'users:user' id %}">
+					{% for id, user in case.assignments.items %}
+						<br>
+						<li>
 							{% if user.first_name and user.last_name %}
-								{{ user.first_name.0 }}{{ user.last_name.0 }}
+								{{ user.first_name }} {{ user.last_name }}
+							<br> {{ user.team_name }}
 							{% else %}
-								@
+								{{ user.email }}
 							{% endif %}
-						</a>
-					</li>
-				{% endfor %}
-			</div>
-		{% else %}
-			<p class="app-information-bar">{% lcs 'cases.CasesListPage.NoContent.NO_GOODS_FLAGS' %}</p>
-		{% endif %}
+
+						</li>
+					{% endfor %}
+
+
+			{% endif %}
+		 </ul>
+		</div>
 	</td>
 	{# destinations #}
 	<td class="govuk-table__cell lite-mobile-hide">
