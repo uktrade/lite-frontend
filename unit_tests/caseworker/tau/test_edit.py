@@ -14,11 +14,6 @@ def setup(mock_queue, mock_case, mock_wassenaar_entries_get, mock_mtcr_entries_g
 
 
 @pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_REGIMES = True
-
-
-@pytest.fixture(autouse=True)
 def mock_application_good_documents(data_standard_case, requests_mock):
     requests_mock.get(
         re.compile(
