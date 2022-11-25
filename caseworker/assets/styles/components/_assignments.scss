@@ -9,10 +9,8 @@ $app-assignment-item-size: 35px;
     &__item {
         margin-bottom: govuk-spacing(4);
     }
-   &__user {
-        margin-bottom: govuk-spacing(4);
-    }
+
     &__role, &__team {
-        color:$govuk-secondary-text-colour;
+        color: $govuk-secondary-text-colour;
     }
 }
