@@ -15,7 +15,7 @@ class CasesListPage:
         SLA = "SLA"
         INFORMATION = "Information"
         CASE = "Case"
-        ASSIGNEES = "Assignees"
+        ASSIGNEES = "Case allocation"
         GOODS = "Products"
         DESTINATIONS = "Destinations"
         FLAGS = "Flags"
