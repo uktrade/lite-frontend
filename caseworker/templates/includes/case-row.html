@@ -59,33 +59,34 @@
 
 	{# 	Case allocation #}
 	<td class="govuk-table__cell lite-mobile-hide">
-		<div class="app-assignments__container">
-			<ul class="app-assignments__list">
+		<ul class="app-assignments__list">
 			{% if case.case_officer.first_name and case.case_officer.last_name %}
-				<li>
-					{{ case.case_officer.first_name  }} {{ case.case_officer.last_name}}
-					<br>Licensing Unit case officer
-				</li>
+			   <li class="app-assignments__item">
+				   <div class="app-assignments__user">
+						{{ case.case_officer.first_name  }} {{ case.case_officer.last_name}}
+				   </div>
+				   <div class="app-assignments__role">
+					   Licensing Unit case officer
+				   </div>
+			   </li>
 			{% endif %}
 			{% if case.assignments %}
-
-					{% for id, user in case.assignments.items %}
-						<br>
-						<li>
-							{% if user.first_name and user.last_name %}
-								{{ user.first_name }} {{ user.last_name }}
-							<br> {{ user.team_name }}
-							{% else %}
-								{{ user.email }}
-							{% endif %}
-
-						</li>
-					{% endfor %}
-
-
+				{% for id, user in case.assignments.items %}
+				   <li class="app-assignments__item">
+					   <div class="app-assignments__user">
+						   {% if user.first_name and user.last_name %}
+									{{ user.first_name }} {{ user.last_name }}
+								{% else %}
+									{{ user.email }}
+						   {% endif %}
+					   </div>
+					   <div class="app-assignments__team">
+						   {{ user.team_name }}
+					   </div>
+				   </li>
+				{% endfor %}
 			{% endif %}
-		 </ul>
-		</div>
+		</ul>
 	</td>
 	{# destinations #}
 	<td class="govuk-table__cell lite-mobile-hide">
