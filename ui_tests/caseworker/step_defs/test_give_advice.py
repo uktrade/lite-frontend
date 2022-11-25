@@ -16,13 +16,6 @@ from ui_tests.caseworker.pages.application_page import ApplicationPage
 scenarios("../features/give_advice.feature", strict_gherkin=False)
 
 
-@when("I click move case forward")
-@when("I click submit recommendation")
-@when("I click save and publish to exporter")
-def submit_form(driver):  # noqa
-    Shared(driver).click_submit()
-
-
 @when("I click the recommendations and decision tab")
 def click_on_recommendations_and_decision_tab(driver, context):  # noqa
     CasePage(driver).change_tab("advice")
