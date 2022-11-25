@@ -52,6 +52,22 @@
                 <dt class="govuk-summary-list__key">Annual report summary</dt>
                 <dd class="govuk-summary-list__value">{{ good.report_summary | title }}</dd>
               </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Regime</dt>
+                <dd class="govuk-summary-list__value">
+                  {% for entry in good.regime_entries %}
+                    {% if not forloop.last %}
+                      {{ entry.name }},
+                    {% else %}
+                      {{ entry.name }}
+                    {% endif %}
+                  {% endfor %}
+                </dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Quantity</dt>
+                <dd class="govuk-summary-list__value">{{ good.quantity }} {{ good.unit.value }}</dd>
+              </div>
             </dl>
             {% endfor %}
           </div>
@@ -138,6 +154,20 @@
             </dt>
             <dd class="govuk-summary-list__value">
               {{ case.data.intended_end_use }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              End-use undertaking
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if case.data.end_user.end_user_document_available %}
+                <a target="_blank" href="{% url 'cases:document' queue_pk=queue_pk pk=case.id file_pk=case.data.end_user.document.id %}" class="govuk-link--no-visited-state">
+                  {{ case.data.end_user.document.name }} (opens in new tab)
+                </a>
+              {% else %}
+                {{ case.data.end_user.end_user_document_missing_reason }}
+              {% endif %}
             </dd>
           </div>
           <div class="govuk-summary-list__row">
