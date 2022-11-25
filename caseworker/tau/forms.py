@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
@@ -89,8 +88,6 @@ class TAUEditForm(forms.Form):
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.fields["wassenaar_entries"].choices = wassenaar_entries
         self.fields["mtcr_entries"].choices = mtcr_entries
-        if not settings.FEATURE_FLAG_REGIMES:
-            self.fields["regimes"].required = False
 
         self.helper = FormHelper()
 
@@ -99,23 +96,18 @@ class TAUEditForm(forms.Form):
             HTML.p("Or"),
             "does_not_have_control_list_entries",
             "report_summary",
-        ]
-        if settings.FEATURE_FLAG_REGIMES:
-            fields += [
-                ConditionalCheckboxes(
-                    "regimes",
-                    ConditionalCheckboxesQuestion(
-                        "Wassenaar Arrangement",
-                        "wassenaar_entries",
-                    ),
-                    ConditionalCheckboxesQuestion(
-                        "Missile Technology Control Regime",
-                        "mtcr_entries",
-                    ),
-                    "None",
-                )
-            ]
-        fields += [
+            ConditionalCheckboxes(
+                "regimes",
+                ConditionalCheckboxesQuestion(
+                    "Wassenaar Arrangement",
+                    "wassenaar_entries",
+                ),
+                ConditionalCheckboxesQuestion(
+                    "Missile Technology Control Regime",
+                    "mtcr_entries",
+                ),
+                "None",
+            ),
             "comment",
             Submit("submit", self.SUBMIT_BUTTON_TEXT),
         ]
@@ -135,23 +127,22 @@ class TAUEditForm(forms.Form):
         if has_some_cle_entries and no_report_summary:
             self.add_error("report_summary", "This field is required")
 
-        if settings.FEATURE_FLAG_REGIMES:
-            regimes = cleaned_data.get("regimes", [])
+        regimes = cleaned_data.get("regimes", [])
 
-            has_selected_none = "NONE" in regimes
-            only_selected_none = regimes == ["NONE"]
-            if has_selected_none and not only_selected_none:
-                self.add_error("regimes", "Add a regime, or select none")
-            else:
-                is_wassenaar_regime = "WASSENAAR" in regimes
-                wassenaar_entries = cleaned_data.get("wassenaar_entries")
-                if is_wassenaar_regime and not wassenaar_entries:
-                    self.add_error("wassenaar_entries", "Select a Wassenaar Arrangement subsection")
+        has_selected_none = "NONE" in regimes
+        only_selected_none = regimes == ["NONE"]
+        if has_selected_none and not only_selected_none:
+            self.add_error("regimes", "Add a regime, or select none")
+        else:
+            is_wassenaar_regime = "WASSENAAR" in regimes
+            wassenaar_entries = cleaned_data.get("wassenaar_entries")
+            if is_wassenaar_regime and not wassenaar_entries:
+                self.add_error("wassenaar_entries", "Select a Wassenaar Arrangement subsection")
 
-                is_mtcr_regime = "MTCR" in regimes
-                mtcr_entries = cleaned_data.get("mtcr_entries", [])
-                if is_mtcr_regime and not mtcr_entries:
-                    self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
+            is_mtcr_regime = "MTCR" in regimes
+            mtcr_entries = cleaned_data.get("mtcr_entries", [])
+            if is_mtcr_regime and not mtcr_entries:
+                self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
 
         return cleaned_data
 
