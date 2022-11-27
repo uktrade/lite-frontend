@@ -4,8 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-allure-pytest = "~=2.6"
-allure-python-commons = "~=2.6"
+allure-pytest = "~=2.11.1"
+allure-python-commons = "~=2.11.1"
 bandit = "==1.6.2"
 black = "~=22.3.0"
 directory-sso-api-client = "~=6.3"
