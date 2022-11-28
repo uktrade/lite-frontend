@@ -24,8 +24,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
-    BaseEditName,
     BaseEditProductDocumentAvailability,
     BaseEditProductDescription,
     BaseEditProductDocumentSensitivity,
@@ -43,12 +41,17 @@ from exporter.applications.views.goods.common.initial import (
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
+    GoodMixin,
     GoodOnApplicationMixin,
 )
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_details_payload,
     ProductEditPVGradingPayloadBuilder,
+)
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
 )
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
@@ -58,7 +61,10 @@ from exporter.core.helpers import (
     str_to_bool,
 )
 from exporter.core.wizard.conditionals import C
-from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.core.wizard.views import (
+    BaseSessionWizardView,
+    StepEditView,
+)
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
@@ -150,8 +156,38 @@ class BaseFirearmEditView(BaseEditView):
         return get_firearm_details_cleaned_data(form)
 
 
-class FirearmEditName(BaseEditName, BaseGoodEditView):
-    pass
+class FirearmSummaryMixin:
+    def get_success_url(self):
+        return reverse("applications:firearm_product_summary", kwargs=self.kwargs)
+
+
+class EditFirearm:
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing firearm",
+        "Unexpected error editing firearm",
+    )
+    def edit_firearm(self, request, good_id, form):
+        payload = get_cleaned_data(form)
+        return edit_firearm(request, good_id, payload)
+
+    def run(self, view, form):
+        self.edit_firearm(
+            view.request,
+            view.good["id"],
+            form,
+        )
+
+
+class FirearmEditName(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    FirearmSummaryMixin,
+    StepEditView,
+):
+    actions = (EditFirearm(),)
+    step = ProductNameStep()
 
 
 class FirearmEditCategory(BaseFirearmEditView):
@@ -170,8 +206,15 @@ class FirearmEditCalibre(BaseFirearmEditView):
         return {"calibre": self.good["firearm_details"]["calibre"]}
 
 
-class FirearmEditControlListEntry(BaseEditControlListEntry, BaseGoodEditView):
-    pass
+class FirearmEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    FirearmSummaryMixin,
+    StepEditView,
+):
+    actions = (EditFirearm(),)
+    step = ProductControlListEntryStep()
 
 
 class FirearmEditReplica(BaseFirearmEditView):
