@@ -144,9 +144,6 @@ def export_type_form():
         description=description,
         questions=[
             RadioButtons(name="application_type", options=options),
-            DetailComponent(
-                "What licence do I need?", f"Read about the [different types of export control licences]({help_url})."
-            ),
         ],
         default_button_name="Continue",
         back_link=BackLink("Back", reverse("apply_for_a_licence:start")),
