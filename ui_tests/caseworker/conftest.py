@@ -38,22 +38,23 @@ from ui_tests.caseworker.pages.grant_licence_page import GrantLicencePage
 from ui_tests.caseworker.pages.letter_templates import LetterTemplates
 from ui_tests.caseworker.pages.shared import Shared
 from tests_common import functions
-from tests_common.fixtures.apply_for_application import *  # noqa
 from tests_common.fixtures.driver import driver  # noqa
+from tests_common.fixtures.apply_for_application import *  # noqa
 from tests_common.fixtures.sso_sign_in import sso_sign_in  # noqa
 from tests_common.fixtures.core import (  # noqa
-    context,
+    context,  # noqa
     api_test_client,
-    exporter_info,
-    internal_info,
-    api_client,
-)
+    exporter_info,  # noqa
+    internal_info,  # noqa
+    api_client,  # noqa
+)  # noqa
 from tests_common.fixtures.urls import internal_url, sso_sign_in_url, api_url  # noqa
 
 import tests_common.tools.helpers as utils
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from tests_common.helpers import applications
+from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 
 
 @when("I go to the internal homepage")  # noqa
@@ -268,6 +269,11 @@ def should_see_previously_created_application(driver, context):  # noqa
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
     assert driver.find_element(by=By.ID, value=context.case_id).is_displayed()
+
+
+@when("I click on the application previously created")
+def click_on_case(driver, context):  # noqa
+    driver.find_element(by=By.ID, value=f"case-{context.case_id}").click()
 
 
 @when("I click on show filters")
@@ -832,3 +838,34 @@ def i_see_destinations(driver, context):  # noqa
 @then("I click on Notes and timeline")
 def click_on_notes_and_timeline(driver):  # noqa
     ApplicationPage(driver).click_on_notes_and_timeline()
+
+
+@then("I click on Product Assessment")
+def click_on_product_assessment(driver):  # noqa
+    ApplicationPage(driver).click_on_product_assessment()
+
+
+@then("I select good")  # noqa
+def click_on_product_assessment(driver):  # noqa
+    ApplicationPage(driver).select_a_good()
+    functions.click_submit(driver)
+
+
+@then(parsers.parse("I select report summary and regime to none and submit"))
+def fill_report_summary_select_regine_none_and_submit(driver):  # noqa
+    functions.select_report_summary_and_fill(driver)
+    functions.click_regime_none(driver)
+    functions.click_submit(driver)
+
+
+@when("I click move case forward")  # noqa
+@when("I click submit recommendation")  # noqa
+@when("I click save and publish to exporter")  # noqa
+def submit_form(driver):  # noqa
+    Shared(driver).click_submit()
+
+
+@then(parsers.parse('I select the CLE "{control_code}"'))
+def add_cle_value(driver, control_code):  # noqa
+    add_goods_page = AddGoodPage(driver)
+    add_goods_page.enter_control_list_entries(control_code)

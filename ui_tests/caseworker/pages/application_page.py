@@ -64,6 +64,7 @@ class ApplicationPage(BasePage):
     NEXT_REVIEW_DATE_MONTH_ID = "next_review_datemonth"
     NEXT_REVIEW_DATE_YEAR_ID = "next_review_dateyear"
     COUNTERSIGN_NOTE_ID = "note"
+    PRODUCT_ASSESSMENT_TAB = "tab-assessment"
 
     def get_case_copy_of_field_href(self):
         return self.driver.find_element_by_id(self.CASE_COPY_OF_ID).get_attribute("href")
@@ -142,6 +143,9 @@ class ApplicationPage(BasePage):
 
     def click_on_notes_and_timeline(self):
         self.driver.find_element(by=By.ID, value=self.CASE_NOTES_AND_ACTIVITY_TAB).click()
+
+    def click_on_product_assessment(self):
+        self.driver.find_element(by=By.ID, value=self.PRODUCT_ASSESSMENT_TAB).click()
 
     def click_edit_good_flags(self):
         edit_goods_btn = self.driver.find_element_by_id(self.EDIT_GOODS_FLAGS)
