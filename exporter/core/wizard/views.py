@@ -1,3 +1,5 @@
+from django.views.generic import FormView
+
 from formtools.wizard.views import SessionWizardView
 
 from .storage import NoSaveStorage
@@ -12,3 +14,29 @@ class BaseSessionWizardView(SessionWizardView):
         if cleaned_data is None:
             return {}
         return cleaned_data
+
+
+class StepEditView(FormView):
+    template_name = "core/form.html"
+
+    def get_form_class(self):
+        return self.step.form_class
+
+    def get_initial(self):
+        return self.step.get_initial(self)
+
+    def form_valid(self, form):
+        for action in self.actions:
+            action.run(self, form)
+        return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        step_form_kwargs = self.step.get_form_kwargs(self)
+        return {
+            **form_kwargs,
+            **step_form_kwargs,
+        }
+
+    def get_step_data(self, form):
+        return self.step.get_step_data(form)

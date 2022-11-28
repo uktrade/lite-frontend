@@ -16,9 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
-    BaseEditName,
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -37,6 +34,7 @@ from exporter.applications.views.goods.common.initial import (
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
+    GoodMixin,
     GoodOnApplicationMixin,
 )
 from exporter.applications.views.goods.common.payloads import (
@@ -45,7 +43,15 @@ from exporter.applications.views.goods.common.payloads import (
     get_unit_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+    ProductPartNumberStep,
+)
+from exporter.core.wizard.views import (
+    BaseSessionWizardView,
+    StepEditView,
+)
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
@@ -82,19 +88,59 @@ class BaseMaterialEditView(BaseEditView):
         return get_cleaned_data(form)
 
 
-class MaterialEditName(BaseEditName, BaseMaterialEditView):
-    pass
+class EditMaterial:
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing material",
+        "Unexpected error editing material",
+    )
+    def edit_material(self, request, good_id, payload):
+        return edit_material(request, good_id, payload)
+
+    def run(self, view, form):
+        self.edit_material(
+            view.request,
+            view.good["id"],
+            view.get_step_data(form),
+        )
 
 
-class MaterialEditControlListEntry(BaseEditControlListEntry, BaseMaterialEditView):
-    pass
+class MaterialSummaryMixin:
+    def get_success_url(self):
+        return reverse("applications:material_product_summary", kwargs=self.kwargs)
+
+
+class MaterialEditName(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    MaterialSummaryMixin,
+    StepEditView,
+):
+    actions = (EditMaterial(),)
+    step = ProductNameStep()
+
+
+class MaterialEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    MaterialSummaryMixin,
+    StepEditView,
+):
+    actions = (EditMaterial(),)
+    step = ProductControlListEntryStep()
 
 
 class MaterialEditPartNumberView(
-    BaseEditPartNumber,
-    BaseMaterialEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    MaterialSummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditMaterial(),)
+    step = ProductPartNumberStep()
 
 
 class BaseMaterialEditWizardView(
