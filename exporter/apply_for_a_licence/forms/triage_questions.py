@@ -22,7 +22,6 @@ from lite_forms.components import (
     Breadcrumbs,
     BackLink,
     FormGroup,
-    DetailComponent,
     Label,
 )
 from lite_forms.helpers import conditional
