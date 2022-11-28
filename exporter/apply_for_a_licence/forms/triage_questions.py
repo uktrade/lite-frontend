@@ -132,7 +132,6 @@ def export_type_form():
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
     ]
-    help_url = "https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need"
     if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
         description = render_to_string("applications/use-spire-application-type.html")
     else:
