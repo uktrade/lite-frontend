@@ -16,9 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
-    BaseEditName,
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -37,6 +34,7 @@ from exporter.applications.views.goods.common.initial import (
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
+    GoodMixin,
     GoodOnApplicationMixin,
 )
 from exporter.applications.views.goods.common.payloads import (
@@ -45,7 +43,15 @@ from exporter.applications.views.goods.common.payloads import (
     get_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+    ProductPartNumberStep,
+)
+from exporter.core.wizard.views import (
+    BaseSessionWizardView,
+    StepEditView,
+)
 from exporter.goods.forms.common import (
     ProductMilitaryUseForm,
     ProductOnwardAlteredProcessedForm,
@@ -59,7 +65,7 @@ from exporter.goods.forms import (
     ProductSecurityFeaturesForm,
     ProductDeclaredAtCustomsForm,
 )
-from exporter.goods.services import edit_technolgy
+from exporter.goods.services import edit_technology
 
 from .constants import (
     AddGoodTechnologyToApplicationSteps,
@@ -80,7 +86,7 @@ class BaseEditView(
         return reverse("applications:technology_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_id, payload):
-        edit_technolgy(request, good_id, payload)
+        edit_technology(request, good_id, payload)
 
 
 class BaseTechnologyEditView(BaseEditView):
@@ -88,19 +94,59 @@ class BaseTechnologyEditView(BaseEditView):
         return get_cleaned_data(form)
 
 
-class TechnologyEditName(BaseEditName, BaseTechnologyEditView):
-    pass
+class TechnologySummaryMixin:
+    def get_success_url(self):
+        return reverse("applications:technology_product_summary", kwargs=self.kwargs)
 
 
-class TechnologyEditControlListEntry(BaseEditControlListEntry, BaseTechnologyEditView):
-    pass
+class EditTechnology:
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing technology",
+        "Unexpected error editing technology",
+    )
+    def edit_technology(self, request, good_id, payload):
+        return edit_technology(request, good_id, payload)
+
+    def run(self, view, form):
+        self.edit_technology(
+            view.request,
+            view.good["id"],
+            view.get_step_data(form),
+        )
+
+
+class TechnologyEditName(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    TechnologySummaryMixin,
+    StepEditView,
+):
+    actions = (EditTechnology(),)
+    step = ProductNameStep()
+
+
+class TechnologyEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    TechnologySummaryMixin,
+    StepEditView,
+):
+    actions = (EditTechnology(),)
+    step = ProductControlListEntryStep()
 
 
 class TechnologyEditPartNumberView(
-    BaseEditPartNumber,
-    BaseTechnologyEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    TechnologySummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditTechnology(),)
+    step = ProductPartNumberStep()
 
 
 class BaseTechnologyEditWizardView(
@@ -110,7 +156,7 @@ class BaseTechnologyEditWizardView(
         return reverse("applications:technology_product_summary", kwargs=self.kwargs)
 
     def edit_object(self, request, good_pk, payload):
-        return edit_technolgy(self.request, good_pk, payload)
+        return edit_technology(self.request, good_pk, payload)
 
 
 class TechnologyEditPVGrading(BaseTechnologyEditWizardView):

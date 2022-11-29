@@ -22,7 +22,6 @@ from lite_forms.components import (
     Breadcrumbs,
     BackLink,
     FormGroup,
-    DetailComponent,
     Label,
 )
 from lite_forms.helpers import conditional
@@ -133,7 +132,6 @@ def export_type_form():
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
     ]
-    help_url = "https://www.gov.uk/guidance/beginners-guide-to-export-controls#what-licence-do-i-need"
     if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
         description = render_to_string("applications/use-spire-application-type.html")
     else:
@@ -144,9 +142,6 @@ def export_type_form():
         description=description,
         questions=[
             RadioButtons(name="application_type", options=options),
-            DetailComponent(
-                "What licence do I need?", f"Read about the [different types of export control licences]({help_url})."
-            ),
         ],
         default_button_name="Continue",
         back_link=BackLink("Back", reverse("apply_for_a_licence:start")),

@@ -13,13 +13,10 @@ from exporter.core.helpers import get_document_data
 from exporter.core.wizard.conditionals import C
 from exporter.core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
-    ProductControlListEntryForm,
     ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
-    ProductNameForm,
-    ProductPartNumberForm,
 )
 from exporter.goods.services import (
     delete_good_document,
@@ -33,16 +30,11 @@ from .conditionals import (
 )
 from . import constants
 from .helpers import get_product_document
-from .initial import (
-    get_control_list_entry_initial_data,
-    get_name_initial_data,
-)
 from .mixins import (
     ApplicationMixin,
     GoodMixin,
 )
 from .payloads import (
-    get_part_number_payload,
     ProductEditProductDocumentAvailabilityPayloadBuilder,
     ProductEditProductDocumentSensitivityPayloadBuilder,
 )
@@ -82,42 +74,6 @@ class BaseProductEditView(
         ctx["title"] = self.form_class.Layout.TITLE
 
         return ctx
-
-
-class BaseEditName:
-    form_class = ProductNameForm
-
-    def get_initial(self):
-        return get_name_initial_data(self.good)
-
-
-class BaseEditControlListEntry:
-    form_class = ProductControlListEntryForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        return {**kwargs, "request": self.request}
-
-    def get_initial(self):
-        return get_control_list_entry_initial_data(self.good)
-
-
-class BaseEditPartNumber:
-    form_class = ProductPartNumberForm
-
-    def get_edit_payload(self, form):
-        return get_part_number_payload(form)
-
-    def get_initial(self):
-        no_part_number_comments = self.good.get("no_part_number_comments")
-        if no_part_number_comments:
-            return {
-                "part_number_missing": True,
-                "no_part_number_comments": no_part_number_comments,
-            }
-        return {
-            "part_number": self.good["part_number"],
-        }
 
 
 class BaseEditProductDescription:
