@@ -15,10 +15,12 @@ from exporter.applications.views.goods.common.conditionals import (
     is_pv_graded,
     is_onward_exported,
 )
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+    ProductPartNumberStep,
+)
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
-    BaseEditName,
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -37,6 +39,7 @@ from exporter.applications.views.goods.common.initial import (
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
+    GoodMixin,
     GoodOnApplicationMixin,
 )
 from exporter.applications.views.goods.common.payloads import (
@@ -45,7 +48,10 @@ from exporter.applications.views.goods.common.payloads import (
     get_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.core.wizard.views import (
+    BaseSessionWizardView,
+    StepEditView,
+)
 from exporter.goods.forms.common import (
     ProductMilitaryUseForm,
     ProductOnwardAlteredProcessedForm,
@@ -89,19 +95,59 @@ class BaseComponentAccessoryEditView(BaseEditView):
         return get_cleaned_data(form)
 
 
-class ComponentAccessoryEditName(BaseEditName, BaseComponentAccessoryEditView):
-    pass
+class ComponentAccessorySummaryMixin:
+    def get_success_url(self):
+        return reverse("applications:component_accessory_product_summary", kwargs=self.kwargs)
 
 
-class ComponentAccessoryEditControlListEntry(BaseEditControlListEntry, BaseComponentAccessoryEditView):
-    pass
+class EditComponentAccessory:
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing component/accessory",
+        "Unexpected error editing component/accessory",
+    )
+    def edit_component_accessory(self, request, good_id, payload):
+        return edit_component_accessory(request, good_id, payload)
+
+    def run(self, view, form):
+        self.edit_component_accessory(
+            view.request,
+            view.good["id"],
+            view.get_step_data(form),
+        )
+
+
+class ComponentAccessoryEditName(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    ComponentAccessorySummaryMixin,
+    StepEditView,
+):
+    actions = (EditComponentAccessory(),)
+    step = ProductNameStep()
+
+
+class ComponentAccessoryEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    ComponentAccessorySummaryMixin,
+    StepEditView,
+):
+    actions = (EditComponentAccessory(),)
+    step = ProductControlListEntryStep()
 
 
 class ComponentAccessoryEditPartNumberView(
-    BaseEditPartNumber,
-    BaseComponentAccessoryEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    ComponentAccessorySummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditComponentAccessory(),)
+    step = ProductPartNumberStep()
 
 
 class BaseComponentAccessoryEditWizardView(

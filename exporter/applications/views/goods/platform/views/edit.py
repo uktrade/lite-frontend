@@ -16,9 +16,6 @@ from exporter.applications.views.goods.common.conditionals import (
     is_onward_exported,
 )
 from exporter.applications.views.goods.common.edit import (
-    BaseEditControlListEntry,
-    BaseEditName,
-    BaseEditPartNumber,
     BaseEditProductDescription,
     BaseEditProductDocumentAvailability,
     BaseEditProductDocumentSensitivity,
@@ -37,6 +34,7 @@ from exporter.applications.views.goods.common.initial import (
 )
 from exporter.applications.views.goods.common.mixins import (
     ApplicationMixin,
+    GoodMixin,
     GoodOnApplicationMixin,
 )
 from exporter.applications.views.goods.common.payloads import (
@@ -45,7 +43,15 @@ from exporter.applications.views.goods.common.payloads import (
     get_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.core.wizard.views import BaseSessionWizardView
+from exporter.applications.views.goods.common.steps import (
+    ProductControlListEntryStep,
+    ProductNameStep,
+    ProductPartNumberStep,
+)
+from exporter.core.wizard.views import (
+    BaseSessionWizardView,
+    StepEditView,
+)
 from exporter.goods.forms.common import (
     ProductMilitaryUseForm,
     ProductOnwardAlteredProcessedForm,
@@ -82,19 +88,59 @@ class BaseCompleteItemEditView(BaseEditView):
         return get_cleaned_data(form)
 
 
-class CompleteItemEditName(BaseEditName, BaseCompleteItemEditView):
-    pass
+class CompleteItemSummaryMixin:
+    def get_success_url(self):
+        return reverse("applications:complete_item_product_summary", kwargs=self.kwargs)
 
 
-class CompleteItemEditControlListEntry(BaseEditControlListEntry, BaseCompleteItemEditView):
-    pass
+class EditCompleteItem:
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing complete item",
+        "Unexpected error editing complete item",
+    )
+    def edit_complete_item(self, request, good_id, payload):
+        return edit_complete_item(request, good_id, payload)
+
+    def run(self, view, form):
+        self.edit_complete_item(
+            view.request,
+            view.good["id"],
+            view.get_step_data(form),
+        )
+
+
+class CompleteItemEditName(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    CompleteItemSummaryMixin,
+    StepEditView,
+):
+    actions = (EditCompleteItem(),)
+    step = ProductNameStep()
+
+
+class CompleteItemEditControlListEntry(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    CompleteItemSummaryMixin,
+    StepEditView,
+):
+    actions = (EditCompleteItem(),)
+    step = ProductControlListEntryStep()
 
 
 class CompleteItemEditPartNumberView(
-    BaseEditPartNumber,
-    BaseCompleteItemEditView,
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodMixin,
+    CompleteItemSummaryMixin,
+    StepEditView,
 ):
-    pass
+    actions = (EditCompleteItem(),)
+    step = ProductPartNumberStep()
 
 
 class BaseCompleteItemEditWizardView(
