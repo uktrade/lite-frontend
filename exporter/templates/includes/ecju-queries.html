@@ -5,7 +5,11 @@
 	{% for ecju_query in open_queries %}
 		<div class="app-ecju-query" id="open-ecju-query">
 			<div class="app-ecju-query__item">
-				<p class="app-ecju-query__heading">{{ ecju_query.team.name }}</p>
+				{% if "BEIS_CHEMICAL" == ecju_query.team.alias %}
+					<p class="app-ecju-query__heading">BEIS</p>
+				{% else %}
+					<p class="app-ecju-query__heading">{{ ecju_query.team.name }}</p>
+				{% endif %}
 				<div class="app-ecju-query__text">
 					{{ ecju_query.question|linebreaks }}
 				</div>
