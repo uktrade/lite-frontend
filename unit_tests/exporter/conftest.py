@@ -687,3 +687,11 @@ def get_units_mock(requests_mock):
     requests_mock.get(
         "/static/units/", json={"units": {"NAR": "Items", "TON": "Tonne(s)", "KGM": "Kilogram(s)", "GRM": "Gram(s)"}}
     )
+
+
+@pytest.fixture(autouse=True)
+def mock_case_activity_system_user(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/activity/")
+    data = {"activity": []}
+    requests_mock.get(url=url, json=data)
+    yield data
