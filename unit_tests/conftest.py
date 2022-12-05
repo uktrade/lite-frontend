@@ -1,3 +1,4 @@
+import re
 import datetime
 import pytest
 import os
@@ -1356,6 +1357,14 @@ def data_countries():
 def mock_get_countries(requests_mock, data_countries):
     url = client._build_absolute_uri("/static/countries/")
     yield requests_mock.get(url=url, json={"countries": data_countries["countries"]})
+
+
+@pytest.fixture(autouse=True)
+def mock_status_properties(requests_mock):
+    url = client._build_absolute_uri("/static/statuses/properties/")
+    data = {"is_read_only": False, "is_terminal": False}
+    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
+    yield data
 
 
 @pytest.fixture
