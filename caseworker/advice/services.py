@@ -5,6 +5,9 @@ from requests.exceptions import HTTPError
 from core import client
 
 # Queues
+BEIS_CHEMICAL_CASES_TO_REVIEW = "BEIS_CHEMICAL_CASES_TO_REVIEW"
+BEIS_NUCLEAR_CASES_TO_REVIEW = "BEIS_NUCLEAR_CASES_TO_REVIEW"
+BEIS_NUCLEAR_COUNTERSIGNING = "BEIS_NUCLEAR_COUNTERSIGNING"
 FCDO_CASES_TO_REVIEW_QUEUE = "FCDO_CASES_TO_REVIEW"
 FCDO_CPACC_CASES_TO_REVIEW_QUEUE = "FCDO_CPACC_CASES_TO_REVIEW"
 FCDO_COUNTERSIGNING_QUEUE = "FCDO_COUNTER_SIGNING"
@@ -23,6 +26,10 @@ MOD_CONSOLIDATE_QUEUES = [
 LU_POST_CIRC_FINALISE_QUEUE = "LU_POST_CIRC_FINALISE"
 
 # Teams
+BEIS_TEAMS = [
+    "BEIS_CHEMICAL",
+    "BEIS_NUCLEAR",
+]
 FCDO_TEAM = "FCO"
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
 MOD_ECJU_TEAM = "MOD_ECJU"
@@ -320,8 +327,14 @@ def get_advice_tab_context(case, caseworker, queue_id):
         },
     }
 
-    if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS):
-        if queue_alias in (FCDO_CASES_TO_REVIEW_QUEUE, FCDO_CPACC_CASES_TO_REVIEW_QUEUE, *MOD_CONSOLIDATE_QUEUES):
+    if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS, *BEIS_TEAMS):
+        if queue_alias in (
+            FCDO_CASES_TO_REVIEW_QUEUE,
+            FCDO_CPACC_CASES_TO_REVIEW_QUEUE,
+            *MOD_CONSOLIDATE_QUEUES,
+            BEIS_CHEMICAL_CASES_TO_REVIEW,
+            BEIS_NUCLEAR_CASES_TO_REVIEW,
+        ):
             existing_advice = get_my_advice(case.advice, caseworker["id"])
 
             if not existing_advice:
@@ -334,7 +347,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["clear_recommendation"] = True
                 context["buttons"]["move_case_forward"] = True
 
-        elif queue_alias == FCDO_COUNTERSIGNING_QUEUE:
+        elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or queue_alias == BEIS_NUCLEAR_COUNTERSIGNING:
             advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
             countersigned_by = get_countersigners(advice_to_countersign)
 
