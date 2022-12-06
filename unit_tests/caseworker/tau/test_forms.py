@@ -182,6 +182,33 @@ from caseworker.tau import forms
                 "mtcr_entries": ["Type an entry for the Missile Technology Control Regime"],
             },
         ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["NSG"],
+            },
+            False,
+            {
+                "nsg_entries": ["Type an entry for the Nuclear Suppliers Group Regime"],
+            },
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["NSG"],
+                "nsg_entries": [],
+            },
+            False,
+            {
+                "nsg_entries": ["Type an entry for the Nuclear Suppliers Group Regime"],
+            },
+        ),
     ),
 )
 def test_tau_assessment_form(data, valid, errors, rf):
@@ -189,8 +216,9 @@ def test_tau_assessment_form(data, valid, errors, rf):
         request=rf.get("/"),
         goods={"test-id": {}},
         control_list_entries_choices=[("test-rating", "test-text")],
-        wassenaar_entries=[("test-wassenaar-entry", "text-wassenaar-entry-value")],
-        mtcr_entries=[("test-mtcr-entry", "text-mtcr-entry-value")],
+        wassenaar_entries=[("test-wassenaar-entry", "test-wassenaar-entry-value")],
+        mtcr_entries=[("test-mtcr-entry", "test-mtcr-entry-value")],
+        nsg_entries=[("test-nsg-entry", "test-nsg-entry-value")],
         queue_pk="queue_pk",
         application_pk="application_pk",
         is_user_rfd=False,
@@ -483,6 +511,7 @@ def test_tau_assessment_form_goods_choices(
         control_list_entries_choices=[],
         wassenaar_entries=[],
         mtcr_entries=[],
+        nsg_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
         is_user_rfd=False,
@@ -535,6 +564,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         control_list_entries_choices=[],
         wassenaar_entries=[],
         mtcr_entries=[],
+        nsg_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
         is_user_rfd=False,
@@ -690,6 +720,31 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
                 "mtcr_entries": ["Type an entry for the Missile Technology Control Regime"],
             },
         ),
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["NSG"],
+            },
+            False,
+            {
+                "nsg_entries": ["Type an entry for the Nuclear Suppliers Group Regime"],
+            },
+        ),
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["NSG"],
+                "nsg_entries": [],
+            },
+            False,
+            {
+                "nsg_entries": ["Type an entry for the Nuclear Suppliers Group Regime"],
+            },
+        ),
     ),
 )
 def test_tau_edit_form(data, valid, errors):
@@ -697,6 +752,7 @@ def test_tau_edit_form(data, valid, errors):
         control_list_entries_choices=[("test-rating", "test-text")],
         wassenaar_entries=[("test-wassenaar-entry", "test-wassenaar-entry-text")],
         mtcr_entries=[("test-mtcr-entry", "test-mtcr-entry-text")],
+        nsg_entries=[("test-nsg-entry", "test-nsg-entry-text")],
         data=data,
     )
     assert form.is_valid() == valid

@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
@@ -11,6 +12,8 @@ from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
 )
+
+from caseworker.regimes.enums import Regimes
 
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
@@ -53,6 +56,7 @@ class TAUEditForm(forms.Form):
         choices=(
             ("WASSENAAR", "Wassenaar Arrangement"),
             ("MTCR", "Missile Technology Control Regime"),
+            ("NSG", "Nuclear Suppliers Group"),
             ("NONE", "None"),
         ),
         error_messages={
@@ -76,20 +80,40 @@ class TAUEditForm(forms.Form):
         widget=forms.SelectMultiple(attrs={"id": "mtcr_entries"}),
     )
 
+    nsg_entries = forms.MultipleChoiceField(
+        label="What is the entry (for example M1A2)? Type for suggestions",
+        choices=(),  # set in __init__
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(attrs={"id": "nsg_entries"}),
+    )
+
     comment = forms.CharField(
         label="Add an assessment note (optional)",
         required=False,
         widget=forms.Textarea,
     )
 
-    def __init__(self, control_list_entries_choices, wassenaar_entries, mtcr_entries, document=None, *args, **kwargs):
+    def __init__(
+        self, control_list_entries_choices, wassenaar_entries, mtcr_entries, nsg_entries, document=None, *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.document = document
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.fields["wassenaar_entries"].choices = wassenaar_entries
         self.fields["mtcr_entries"].choices = mtcr_entries
+        self.fields["nsg_entries"].choices = nsg_entries
 
         self.helper = FormHelper()
+
+        feature_flagged_regimes = []
+        if settings.FEATURE_NSG_REGIMES:
+            feature_flagged_regimes.append(
+                ConditionalCheckboxesQuestion(
+                    "Nuclear Suppliers Group",
+                    "nsg_entries",
+                ),
+            )
 
         fields = [
             "control_list_entries",
@@ -106,6 +130,7 @@ class TAUEditForm(forms.Form):
                     "Missile Technology Control Regime",
                     "mtcr_entries",
                 ),
+                *feature_flagged_regimes,
                 "None",
             ),
             "comment",
@@ -134,15 +159,20 @@ class TAUEditForm(forms.Form):
         if has_selected_none and not only_selected_none:
             self.add_error("regimes", "Add a regime, or select none")
         else:
-            is_wassenaar_regime = "WASSENAAR" in regimes
+            is_wassenaar_regime = Regimes.WASSENAAR in regimes
             wassenaar_entries = cleaned_data.get("wassenaar_entries")
             if is_wassenaar_regime and not wassenaar_entries:
                 self.add_error("wassenaar_entries", "Select a Wassenaar Arrangement subsection")
 
-            is_mtcr_regime = "MTCR" in regimes
+            is_mtcr_regime = Regimes.MTCR in regimes
             mtcr_entries = cleaned_data.get("mtcr_entries", [])
             if is_mtcr_regime and not mtcr_entries:
                 self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
+
+            is_nsg_regime = Regimes.NSG in regimes
+            nsg_entries = cleaned_data.get("nsg_entries", [])
+            if is_nsg_regime and not nsg_entries:
+                self.add_error("nsg_entries", "Type an entry for the Nuclear Suppliers Group Regime")
 
         return cleaned_data
 
