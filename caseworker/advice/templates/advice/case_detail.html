@@ -7,26 +7,29 @@
               <span class="govuk-details__summary-text">Products</span>
           </summary>
           <div class="govuk-details__text">
-            {% for good in case.goods %}
-            <div class="govuk-heading-s">
-              <h3>{{ forloop.counter }}. {{ good.good.name }}</h3>
-            </div>
-            <dl class="govuk-summary-list govuk-summary-list--no-border">
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Licence required</dt>
-                <dd class="govuk-summary-list__value">
-                  {% if good.is_good_controlled is not None %}
+            <table id="table-nlr-products" class="govuk-table">
+              <tbody class="govuk-table__body">
+                {% for good in case.goods %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell lite-!-no-border" colspan="2">
+                    <h3>{{ forloop.counter }}. {{ good.good.name }}</h3>
+                  </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Licence required</td>
+                  <td class="govuk-table__cell">
+                    {% if good.is_good_controlled is not None %}
                       {{ good.is_good_controlled.value }}
-                  {% elif good.good.is_good_controlled is not None %}
-                      {{ good.good.is_good_controlled.value }}
-                  {% else %}
-                      Not added
-                  {% endif %}
-                </dd>
-              </div>
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Control list entries</dt>
-                <dd class="govuk-summary-list__value">
+                    {% elif good.good.is_good_controlled is not None %}
+                        {{ good.good.is_good_controlled.value }}
+                    {% else %}
+                        Not added
+                    {% endif %}
+                </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Control list entries</td>
+                  <td class="govuk-table__cell">
                     {% with clc=good|get_clc %}
                         {% if clc %}
                             {{ clc|join:', ' }}
@@ -34,12 +37,12 @@
                             None
                         {% endif %}
                     {% endwith %}
-                </dd>
-              </div>
-              {% if display_pv_grading %}
-                <div class="govuk-summary-list__row">
-                  <dt class="govuk-summary-list__key">Security grading</dt>
-                  <dd class="govuk-summary-list__value">
+                  </td>
+                </tr>
+                {% if display_pv_grading %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Security grading</td>
+                  <td class="govuk-table__cell">
                     {% if good.good.is_pv_graded == "yes" %}
                         {% with grading=good.good.pv_grading_details %}
                             {{ grading.prefix }} {{ grading.grading.value }} {{ grading.suffix }}
@@ -47,37 +50,38 @@
                     {% else %}
                         None
                     {% endif %}
-                  </dd>
-                </div>
-              {% endif %}
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Annual report summary</dt>
-                <dd class="govuk-summary-list__value">{{ good.report_summary | title }}</dd>
-              </div>
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Regime</dt>
-                <dd class="govuk-summary-list__value">
-                  {% for entry in good.regime_entries %}
-                    {% if not forloop.last %}
-                      {{ entry.name }},
+                  </td>
+                </tr>
+                {% endif %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Annual report summary</td>
+                  <td class="govuk-table__cell">{{ good.report_summary | title }}</td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Regime</td>
+                  <td class="govuk-table__cell">
+                    {% for entry in good.regime_entries %}
+                      {% if not forloop.last %}
+                        {{ entry.name }},
+                      {% else %}
+                        {{ entry.name }}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Quantity</td>
+                  <td class="govuk-table__cell">
+                    {% if good.unit.value == 'Items' %}
+                      {{ good.quantity|floatformat:"0" }} {{ good.unit.value }}
                     {% else %}
-                      {{ entry.name }}
+                      {{ good.quantity }} {{ good.unit.value }}
                     {% endif %}
-                  {% endfor %}
-                </dd>
-              </div>
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Quantity</dt>
-                <dd class="govuk-summary-list__value">
-                  {% if good.unit.value == 'Items' %}
-                    {{ good.quantity|floatformat:"0" }} {{ good.unit.value }}
-                  {% else %}
-                    {{ good.quantity }} {{ good.unit.value }}
-                  {% endif %}
-                </dd>
-              </div>
-            </dl>
-            {% endfor %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
         </details>
 
