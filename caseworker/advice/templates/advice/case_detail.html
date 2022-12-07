@@ -66,7 +66,11 @@
               </div>
               <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Quantity</dt>
-                <dd class="govuk-summary-list__value">{{ good.quantity }} {{ good.unit.value }}</dd>
+                {% if good.unit.value == 'Items' %}
+                  <dd class="govuk-summary-list__value">{{ good.quantity|floatformat:"0" }} {{ good.unit.value }}</dd>
+                {% else %}
+                  <dd class="govuk-summary-list__value">{{ good.quantity }} {{ good.unit.value }}</dd>
+                {% endif %}
               </div>
             </dl>
             {% endfor %}
