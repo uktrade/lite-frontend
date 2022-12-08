@@ -197,14 +197,6 @@ def mock_cases_search(requests_mock, data_cases_search, queue_pk):
     yield requests_mock.get(url=url, json=data_cases_search)
 
 
-@pytest.fixture(autouse=True)
-def mock_status_properties(requests_mock):
-    url = client._build_absolute_uri("/static/statuses/properties/")
-    data = {"is_read_only": False, "is_terminal": False}
-    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
-    yield data
-
-
 @pytest.fixture
 def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses, gov_uk_user_id):
     url = client._build_absolute_uri("/gov-users/")

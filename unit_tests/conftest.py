@@ -1,3 +1,4 @@
+import re
 import datetime
 import pytest
 import os
@@ -1358,6 +1359,14 @@ def mock_get_countries(requests_mock, data_countries):
     yield requests_mock.get(url=url, json={"countries": data_countries["countries"]})
 
 
+@pytest.fixture(autouse=True)
+def mock_status_properties(requests_mock):
+    url = client._build_absolute_uri("/static/statuses/properties/")
+    data = {"is_read_only": False, "is_terminal": False}
+    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
+    yield data
+
+
 @pytest.fixture
 def data_organisation():
     expiry_date = datetime.date.today() + datetime.timedelta(days=100)
@@ -2109,3 +2118,45 @@ def standard_technology_expected_product_on_application_summary():
             "Total value",
         ),
     )
+
+
+@pytest.fixture
+def data_ecju_queries():
+    return {
+        "ecju_queries": [
+            {
+                "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
+                "question": "gggggg",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user": None,
+                "team": {
+                    "id": "51358bb7-0743-481b-b60f-edf16f644d52",
+                    "name": "BEIS CWC",
+                    "part_of_ecju": None,
+                    "is_ogd": False,
+                    "alias": None,
+                    "department": None,
+                },
+                "created_at": "2022-11-30T16:55:40.807470Z",
+                "responded_at": None,
+            },
+            {
+                "id": "96fe0801-58ae-4a69-b2ba-f44dc79d3af4",
+                "question": "chemical weapons control",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user": None,
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "BEIS Chemical",
+                    "part_of_ecju": False,
+                    "is_ogd": True,
+                    "alias": "BEIS_CHEMICAL",
+                    "department": "f4369d60-5aff-4b7f-b5d4-75e3fa0f402e",
+                },
+                "created_at": "2022-11-30T17:00:17.479098Z",
+                "responded_at": None,
+            },
+        ]
+    }
