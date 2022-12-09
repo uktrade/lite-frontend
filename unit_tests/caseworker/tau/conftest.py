@@ -4,7 +4,7 @@ import pytest
 @pytest.fixture
 def mock_wassenaar_entries_get(requests_mock):
     requests_mock.get(
-        "/static/regimes/wassenaar/entries/",
+        "/static/regimes/entries/wassenaar/",
         json=[
             {
                 "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
@@ -26,7 +26,7 @@ def mock_wassenaar_entries_get(requests_mock):
 @pytest.fixture
 def mock_mtcr_entries_get(requests_mock):
     requests_mock.get(
-        "/static/regimes/mtcr/entries/",
+        "/static/regimes/entries/mtcr/",
         json=[
             {
                 "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
@@ -40,5 +40,26 @@ def mock_mtcr_entries_get(requests_mock):
                     },
                 },
             }
+        ],
+    )
+
+
+@pytest.fixture
+def mock_nsg_entries_get(requests_mock):
+    requests_mock.get(
+        "/static/regimes/entries/nsg/",
+        json=[
+            {
+                "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+                "name": "nsg-1",
+                "subsection": {
+                    "pk": "c82eb495-fdd7-47cc-8a5b-b742c99936c5",
+                    "name": "NSG Category 1",
+                    "regime": {
+                        "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
+                        "name": "NSG",
+                    },
+                },
+            },
         ],
     )
