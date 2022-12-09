@@ -21,7 +21,7 @@ def setup(
 
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
-    settings.FEATURE_NSG_REGIMES = True
+    settings.FEATURE_C6_REGIMES = True
 
 
 @pytest.fixture(autouse=True)

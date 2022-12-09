@@ -107,13 +107,13 @@ class TAUEditForm(forms.Form):
         self.helper = FormHelper()
 
         feature_flagged_regimes = []
-        if settings.FEATURE_NSG_REGIMES:
-            feature_flagged_regimes.append(
+        if settings.FEATURE_C6_REGIMES:
+            feature_flagged_regimes = [
                 ConditionalCheckboxesQuestion(
                     "Nuclear Suppliers Group",
                     "nsg_entries",
                 ),
-            )
+            ]
 
         fields = [
             "control_list_entries",
