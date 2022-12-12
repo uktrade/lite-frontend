@@ -17,10 +17,8 @@ from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.cases.services import post_review_good
-from caseworker.regimes.services import (
-    get_mtcr_entries,
-    get_wassenaar_entries,
-)
+from caseworker.regimes.enums import Regimes
+from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
 from .forms import TAUAssessmentForm, TAUEditForm
@@ -96,29 +94,27 @@ class TAUMixin(CaseTabsMixin):
 
     @expect_status(
         HTTPStatus.OK,
-        "Error loading MTCR entries for assessment",
+        "Error loading regime entries for assessment",
         "Unexpected error loading assessment details",
     )
-    def get_mtcr_entries(self):
-        return get_mtcr_entries(self.request)
+    def get_regime_entries(self, regime_type):
+        return get_regime_entries(self.request, regime_type)
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error loading wassenaar entries for assessment",
-        "Unexpected error loading assessment details",
-    )
-    def get_wassenaar_entries(self):
-        return get_wassenaar_entries(self.request)
+    def get_regime_choices(self, regime_type):
+        entries, _ = self.get_regime_entries(regime_type)
+        return [(entry["pk"], entry["name"]) for entry in entries]
 
     @cached_property
     def wassenaar_entries(self):
-        entries, _ = self.get_wassenaar_entries()
-        return [(entry["pk"], entry["name"]) for entry in entries]
+        return self.get_regime_choices(Regimes.WASSENAAR)
 
     @cached_property
     def mtcr_entries(self):
-        entries, _ = self.get_mtcr_entries()
-        return [(entry["pk"], entry["name"]) for entry in entries]
+        return self.get_regime_choices(Regimes.MTCR)
+
+    @cached_property
+    def nsg_entries(self):
+        return self.get_regime_choices(Regimes.NSG)
 
     def is_assessed(self, good):
         """Returns True if a good has been assessed"""
@@ -158,13 +154,14 @@ class TAUMixin(CaseTabsMixin):
         return context
 
 
-def get_regime_entries(form_cleaned_data):
+def get_regime_entries_payload_data(form_cleaned_data):
     regimes = form_cleaned_data.get("regimes")
 
     entries = []
     for key, entry_field in [
-        ("MTCR", "mtcr_entries"),
-        ("WASSENAAR", "wassenaar_entries"),
+        (Regimes.MTCR, "mtcr_entries"),
+        (Regimes.WASSENAAR, "wassenaar_entries"),
+        (Regimes.NSG, "nsg_entries"),
     ]:
         if key not in regimes:
             continue
@@ -194,6 +191,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["wassenaar_entries"] = self.wassenaar_entries
         form_kwargs["mtcr_entries"] = self.mtcr_entries
+        form_kwargs["nsg_entries"] = self.nsg_entries
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         form_kwargs["queue_pk"] = self.queue_id
         form_kwargs["application_pk"] = self.case["id"]
@@ -238,13 +236,14 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
                 "current_object": good["id"],
                 "objects": [good["good"]["id"]],
                 "is_good_controlled": is_good_controlled,
-                "regime_entries": get_regime_entries(data),
+                "regime_entries": get_regime_entries_payload_data(data),
             }
 
             # These are used to determine the `regime_entries` and aren't needed
             # when sending to the backend
             del payload["mtcr_entries"]
             del payload["wassenaar_entries"]
+            del payload["nsg_entries"]
             del payload["regimes"]
 
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
@@ -267,23 +266,28 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
                 "regimes": ["NONE"],
                 "mtcr_entries": [],
                 "wassenaar_entries": [],
+                "nsg_entries": [],
             }
 
         regimes = set()
         mtcr_entries = []
         wassenaar_entry = None
+        nsg_entries = []
         for entry in good["regime_entries"]:
             regime = entry["subsection"]["regime"]["name"]
             regimes.add(regime)
-            if regime == "MTCR":
+            if regime == Regimes.MTCR:
                 mtcr_entries.append(entry["pk"])
-            if regime == "WASSENAAR":
+            if regime == Regimes.WASSENAAR:
                 wassenaar_entry = entry["pk"]
+            if regime == Regimes.NSG:
+                nsg_entries.append(entry["pk"])
 
         return {
             "regimes": list(regimes),
             "mtcr_entries": mtcr_entries,
             "wassenaar_entries": wassenaar_entry,
+            "nsg_entries": nsg_entries,
         }
 
     def get_form_kwargs(self):
@@ -291,6 +295,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["wassenaar_entries"] = self.wassenaar_entries
         form_kwargs["mtcr_entries"] = self.mtcr_entries
+        form_kwargs["nsg_entries"] = self.nsg_entries
 
         good = self.get_good()
 
@@ -355,13 +360,14 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             "current_object": self.good_id,
             "objects": [good["good"]["id"]],
             "is_good_controlled": is_good_controlled,
-            "regime_entries": get_regime_entries(data),
+            "regime_entries": get_regime_entries_payload_data(data),
         }
 
         # These are used to determine the `regime_entries` and aren't needed
         # when sending to the backend
         del payload["mtcr_entries"]
         del payload["wassenaar_entries"]
+        del payload["nsg_entries"]
         del payload["regimes"]
 
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)

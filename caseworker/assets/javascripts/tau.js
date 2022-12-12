@@ -123,6 +123,13 @@ const initAssessmentForm = () => {
       return { id: option.value, name: option.label, classes: [] };
     });
   }
+
+  const nsgEntriesEl = document.querySelector("#nsg_entries");
+  if (nsgEntriesEl) {
+    progressivelyEnhanceMultipleSelectField(nsgEntriesEl, (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    });
+  }
 };
 
 const initSaveAndContinueButton = () => {

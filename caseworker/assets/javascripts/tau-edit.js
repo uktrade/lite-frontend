@@ -43,6 +43,13 @@ const initAssessmentForm = () => {
     });
   }
 
+  const nsgEntriesEl = document.querySelector("#nsg_entries");
+  if (nsgEntriesEl) {
+    progressivelyEnhanceMultipleSelectField(nsgEntriesEl, (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    });
+  }
+
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent
   );

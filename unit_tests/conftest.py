@@ -703,6 +703,18 @@ def data_standard_case():
                                     },
                                 },
                             },
+                            {
+                                "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+                                "name": "nsg-1",
+                                "subsection": {
+                                    "pk": "c82eb495-fdd7-47cc-8a5b-b742c99936c5",
+                                    "name": "NSG Category 1",
+                                    "regime": {
+                                        "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
+                                        "name": "NSG",
+                                    },
+                                },
+                            },
                         ],
                         "comment": "test comment",
                         "report_summary": "firearms (2)",
@@ -796,6 +808,18 @@ def data_standard_case():
                                     "regime": {
                                         "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
                                         "name": "WASSENAAR",
+                                    },
+                                },
+                            },
+                            {
+                                "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+                                "name": "nsg-1",
+                                "subsection": {
+                                    "pk": "c82eb495-fdd7-47cc-8a5b-b742c99936c5",
+                                    "name": "NSG Category 1",
+                                    "regime": {
+                                        "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
+                                        "name": "NSG",
                                     },
                                 },
                             },

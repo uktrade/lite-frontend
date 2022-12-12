@@ -114,6 +114,7 @@ CACHES = {
 
 FEATURE_PRODUCTPEDIA_ON = env.bool("FEATURE_PRODUCTPEDIA_ON", False)
 FEATURE_FLAG_PRODUCT_SEARCH = env.bool("FEATURE_FLAG_PRODUCT_SEARCH", False)
+FEATURE_C6_REGIMES = env.bool("FEATURE_C6_REGIMES", False)
 
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):
