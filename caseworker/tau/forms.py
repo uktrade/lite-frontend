@@ -77,7 +77,12 @@ class TAUEditForm(forms.Form):
         choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "mtcr_entries"}),
+        widget=forms.SelectMultiple(
+            attrs={
+                "id": "mtcr_entries",
+                "data-module": "regimes-multi-select",
+            }
+        ),
     )
 
     nsg_entries = forms.MultipleChoiceField(
@@ -85,7 +90,12 @@ class TAUEditForm(forms.Form):
         choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "nsg_entries"}),
+        widget=forms.SelectMultiple(
+            attrs={
+                "id": "nsg_entries",
+                "data-module": "regimes-multi-select",
+            }
+        ),
     )
 
     comment = forms.CharField(

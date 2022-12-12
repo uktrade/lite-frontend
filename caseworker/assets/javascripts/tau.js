@@ -7,8 +7,8 @@ import SelectProducts from "./tau/select-products";
 import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
-import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 import initARS from "./tau/ars";
+import initRegimes from "./tau/regimes";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -116,20 +116,6 @@ const initAssessmentForm = () => {
     headline.setProducts(selectedProducts);
     cleSuggestions.setProducts(selectedProducts);
   }).init();
-
-  const mtcrEntriesEl = document.querySelector("#mtcr_entries");
-  if (mtcrEntriesEl) {
-    progressivelyEnhanceMultipleSelectField(mtcrEntriesEl, (option) => {
-      return { id: option.value, name: option.label, classes: [] };
-    });
-  }
-
-  const nsgEntriesEl = document.querySelector("#nsg_entries");
-  if (nsgEntriesEl) {
-    progressivelyEnhanceMultipleSelectField(nsgEntriesEl, (option) => {
-      return { id: option.value, name: option.label, classes: [] };
-    });
-  }
 };
 
 const initSaveAndContinueButton = () => {
@@ -142,3 +128,4 @@ initCheckboxClassToggler();
 initAssessmentForm();
 initSaveAndContinueButton();
 initARS();
+initRegimes();
