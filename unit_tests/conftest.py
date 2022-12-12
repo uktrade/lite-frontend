@@ -44,6 +44,71 @@ def mock_pv_gradings(requests_mock):
 
 
 @pytest.fixture
+def wassenaar_regime_entry():
+    return {
+        "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
+        "name": "wassenaar-1",
+        "shortened_name": "w-1",
+        "subsection": {
+            "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
+            "name": "Wassenaar Arrangement",
+            "regime": {
+                "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
+                "name": "WASSENAAR",
+            },
+        },
+    }
+
+
+@pytest.fixture
+def mtcr_regime_entry():
+    return {
+        "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
+        "name": "mtcr-1",
+        "subsection": {
+            "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
+            "name": "MTCR Category 1",
+            "regime": {
+                "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
+                "name": "MTCR",
+            },
+        },
+    }
+
+
+@pytest.fixture
+def nsg_regime_entry():
+    return {
+        "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+        "name": "nsg-1",
+        "subsection": {
+            "pk": "c82eb495-fdd7-47cc-8a5b-b742c99936c5",
+            "name": "NSG Category 1",
+            "regime": {
+                "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
+                "name": "NSG",
+            },
+        },
+    }
+
+
+@pytest.fixture
+def cwc_regime_entry():
+    return {
+        "pk": "af07fed6-3e27-48b3-a4f1-381c005c63d3",
+        "name": "cwc-1",
+        "subsection": {
+            "pk": "06aee1da-9219-4c8a-b991-757ce6b2f625",
+            "name": "CWC Category 1",
+            "regime": {
+                "pk": "6e8e7ea3-606e-4f94-869d-cfeb257309fd",
+                "name": "CWC",
+            },
+        },
+    }
+
+
+@pytest.fixture
 def data_open_case():
     return {
         "case": {
@@ -360,7 +425,12 @@ def data_open_case():
 
 
 @pytest.fixture
-def data_standard_case():
+def data_standard_case(
+    wassenaar_regime_entry,
+    mtcr_regime_entry,
+    nsg_regime_entry,
+    cwc_regime_entry,
+):
     return {
         "case": {
             "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
@@ -678,43 +748,10 @@ def data_standard_case():
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
                         "regime_entries": [
-                            {
-                                "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
-                                "name": "mtcr-1",
-                                "subsection": {
-                                    "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
-                                    "name": "MTCR Category 1",
-                                    "regime": {
-                                        "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
-                                        "name": "MTCR",
-                                    },
-                                },
-                            },
-                            {
-                                "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
-                                "name": "wassenaar-1",
-                                "shortened_name": "w-1",
-                                "subsection": {
-                                    "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
-                                    "name": "Wassenaar Arrangement",
-                                    "regime": {
-                                        "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
-                                        "name": "WASSENAAR",
-                                    },
-                                },
-                            },
-                            {
-                                "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
-                                "name": "nsg-1",
-                                "subsection": {
-                                    "pk": "c82eb495-fdd7-47cc-8a5b-b742c99936c5",
-                                    "name": "NSG Category 1",
-                                    "regime": {
-                                        "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
-                                        "name": "NSG",
-                                    },
-                                },
-                            },
+                            wassenaar_regime_entry,
+                            mtcr_regime_entry,
+                            nsg_regime_entry,
+                            cwc_regime_entry,
                         ],
                         "comment": "test comment",
                         "report_summary": "firearms (2)",
@@ -786,43 +823,10 @@ def data_standard_case():
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
                         "regime_entries": [
-                            {
-                                "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
-                                "name": "mtcr-1",
-                                "subsection": {
-                                    "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
-                                    "name": "MTCR Category 1",
-                                    "regime": {
-                                        "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
-                                        "name": "MTCR",
-                                    },
-                                },
-                            },
-                            {
-                                "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
-                                "name": "wassenaar-1",
-                                "shortened_name": "w-1",
-                                "subsection": {
-                                    "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
-                                    "name": "Wassenaar Arrangement",
-                                    "regime": {
-                                        "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
-                                        "name": "WASSENAAR",
-                                    },
-                                },
-                            },
-                            {
-                                "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
-                                "name": "nsg-1",
-                                "subsection": {
-                                    "pk": "c82eb495-fdd7-47cc-8a5b-b742c99936c5",
-                                    "name": "NSG Category 1",
-                                    "regime": {
-                                        "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
-                                        "name": "NSG",
-                                    },
-                                },
-                            },
+                            wassenaar_regime_entry,
+                            mtcr_regime_entry,
+                            nsg_regime_entry,
+                            cwc_regime_entry,
                         ],
                         "comment": "test assesment note",
                         "report_summary": "scale compelling technologies",
