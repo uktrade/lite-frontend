@@ -37,6 +37,8 @@
         {% else %}
             {% if can_advise and buttons.make_recommendation %}
                 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
+            {% elif can_advise and buttons.assess_trigger_list_products %}
+                {% include "advice/assess_trigger_list_products.html" with products=trigger_list_products %}
             {% endif %}
         {% endif %}
     {% endif %}

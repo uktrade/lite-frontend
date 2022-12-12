@@ -26,9 +26,11 @@ MOD_CONSOLIDATE_QUEUES = [
 LU_POST_CIRC_FINALISE_QUEUE = "LU_POST_CIRC_FINALISE"
 
 # Teams
+BEIS_CHEMICAL = "BEIS_CHEMICAL"
+BEIS_NUCLEAR = "BEIS_NUCLEAR"
 BEIS_TEAMS = [
-    "BEIS_CHEMICAL",
-    "BEIS_NUCLEAR",
+    BEIS_CHEMICAL,
+    BEIS_NUCLEAR,
 ]
 FCDO_TEAM = "FCO"
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
@@ -45,6 +47,8 @@ LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 LU_COUNTERSIGN_REQUIRED = "LU_COUNTER_REQUIRED"
 LU_SR_MGR_CHECK_REQUIRED = "LU_SENIOR_MANAGER_CHECK_REQUIRED"
 
+NSG_POTENTIAL_TRIGGER_LIST_REGIME = "NSG Potential Trigger List"
+
 
 def filter_nlr_products(products):
     return [
@@ -52,6 +56,18 @@ def filter_nlr_products(products):
         for product in products
         if not product["is_good_controlled"] or product["is_good_controlled"]["key"] == "False"
     ]
+
+
+def is_trigger_list_regime(product):
+    return [
+        regime_entry
+        for regime_entry in product.get("regime_entries", [])
+        if regime_entry["subsection"]["name"] == NSG_POTENTIAL_TRIGGER_LIST_REGIME
+    ]
+
+
+def filter_trigger_list_products(products):
+    return [product for product in products if is_trigger_list_regime(product)]
 
 
 def filter_current_user_advice(all_advice, user_id):
@@ -324,6 +340,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
             "review_and_countersign": False,
             "review_and_combine": False,
             "move_case_forward": False,
+            "assess_trigger_list_products": False,
         },
     }
 
@@ -346,6 +363,11 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["edit_recommendation"] = True
                 context["buttons"]["clear_recommendation"] = True
                 context["buttons"]["move_case_forward"] = True
+
+            # BEIS Nuclear need to assess products first before giving recommendation
+            if team_alias == BEIS_NUCLEAR and queue_alias == BEIS_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
+                context["buttons"]["make_recommendation"] = False
+                context["buttons"]["assess_trigger_list_products"] = True
 
         elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or queue_alias == BEIS_NUCLEAR_COUNTERSIGNING:
             advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
