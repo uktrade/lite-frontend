@@ -54,9 +54,10 @@ class TAUEditForm(forms.Form):
     regimes = forms.MultipleChoiceField(
         label="Add regimes",
         choices=(
-            ("WASSENAAR", "Wassenaar Arrangement"),
-            ("MTCR", "Missile Technology Control Regime"),
-            ("NSG", "Nuclear Suppliers Group"),
+            (Regimes.WASSENAAR.value, "Wassenaar Arrangement"),
+            (Regimes.MTCR.value, "Missile Technology Control Regime"),
+            (Regimes.NSG.value, "Nuclear Suppliers Group"),
+            (Regimes.CWC.value, "Chemical Weapons Convention"),
             ("NONE", "None"),
         ),
         error_messages={
@@ -77,7 +78,12 @@ class TAUEditForm(forms.Form):
         choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "mtcr_entries"}),
+        widget=forms.SelectMultiple(
+            attrs={
+                "id": "mtcr_entries",
+                "data-module": "regimes-multi-select",
+            }
+        ),
     )
 
     nsg_entries = forms.MultipleChoiceField(
@@ -85,7 +91,19 @@ class TAUEditForm(forms.Form):
         choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "nsg_entries"}),
+        widget=forms.SelectMultiple(
+            attrs={
+                "id": "nsg_entries",
+                "data-module": "regimes-multi-select",
+            }
+        ),
+    )
+
+    cwc_entries = forms.ChoiceField(
+        label="",
+        choices=(),  # set in __init__
+        required=False,
+        widget=forms.RadioSelect,
     )
 
     comment = forms.CharField(
@@ -95,7 +113,15 @@ class TAUEditForm(forms.Form):
     )
 
     def __init__(
-        self, control_list_entries_choices, wassenaar_entries, mtcr_entries, nsg_entries, document=None, *args, **kwargs
+        self,
+        control_list_entries_choices,
+        wassenaar_entries,
+        mtcr_entries,
+        nsg_entries,
+        cwc_entries,
+        document=None,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.document = document
@@ -103,12 +129,17 @@ class TAUEditForm(forms.Form):
         self.fields["wassenaar_entries"].choices = wassenaar_entries
         self.fields["mtcr_entries"].choices = mtcr_entries
         self.fields["nsg_entries"].choices = nsg_entries
+        self.fields["cwc_entries"].choices = cwc_entries
 
         self.helper = FormHelper()
 
         feature_flagged_regimes = []
         if settings.FEATURE_C6_REGIMES:
             feature_flagged_regimes = [
+                ConditionalCheckboxesQuestion(
+                    "Chemical Weapons Convention",
+                    "cwc_entries",
+                ),
                 ConditionalCheckboxesQuestion(
                     "Nuclear Suppliers Group",
                     "nsg_entries",
@@ -173,6 +204,11 @@ class TAUEditForm(forms.Form):
             nsg_entries = cleaned_data.get("nsg_entries", [])
             if is_nsg_regime and not nsg_entries:
                 self.add_error("nsg_entries", "Type an entry for the Nuclear Suppliers Group Regime")
+
+            is_cwc_regime = Regimes.CWC in regimes
+            cwc_entries = cleaned_data.get("cwc_entries")
+            if is_cwc_regime and not cwc_entries:
+                self.add_error("cwc_entries", "Select a Chemical Weapons Convention subsection")
 
         return cleaned_data
 
