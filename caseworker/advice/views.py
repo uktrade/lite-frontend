@@ -546,11 +546,80 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class BEISProductAssessment(AdviceView, FormView):
-    """This renders trigger list product assessment for BEIS"""
+class BEISNuclearMixin:
+    def is_trigger_list_assessed(self, product):
+        """Returns True if a product has been assessed for trigger list criteria"""
+        return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in [
+            "TRIGGER_LIST",
+            "DUAL_USE",
+        ]
 
-    template_name = "beis/trigger_list_home.html"
+    @property
+    def unassessed_trigger_list_goods(self):
+        return [
+            product
+            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            if not self.is_trigger_list_assessed(product)
+        ]
+
+    @property
+    def assessed_trigger_list_goods(self):
+        return [
+            product
+            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            if self.is_trigger_list_assessed(product)
+        ]
+
+
+class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
+    """This renders trigger list product assessment for BEIS Nuclear"""
+
+    template_name = "advice/trigger_list_home.html"
     form_class = BEISTriggerListAssessmentForm
 
     def get_success_url(self):
         return self.request.path
+
+    @cached_property
+    def organisation_documents(self):
+        """This property will collect the org documents that we need to access
+        in the template e.g. section 5 certificate etc."""
+        documents = {}
+        for item in self.case.organisation["documents"]:
+            key = item["document_type"].replace("-", "_")
+            documents[key] = item
+            item["document"]["url"] = reverse(
+                "cases:document",
+                kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["document"]["id"]},
+            )
+        return documents
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+
+        form_kwargs["request"] = self.request
+        form_kwargs["queue_pk"] = self.queue_id
+        form_kwargs["application_pk"] = self.case["id"]
+        form_kwargs["organisation_documents"] = self.organisation_documents
+        rfd_certificate = self.organisation_documents.get("rfd_certificate")
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+        form_kwargs["is_user_rfd"] = is_user_rfd
+        form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_trigger_list_goods}
+
+        return form_kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
+            "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
+        }
+
+    def form_valid(self, form):
+        data = {**form.cleaned_data}
+        services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+
+        return super().form_valid(form)

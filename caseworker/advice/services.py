@@ -331,6 +331,12 @@ def move_case_forward(request, case_id, queue_id):
     return response.json()
 
 
+def post_trigger_list_assessment(request, case_id, data):
+    response = client.put(request, f"/applications/{case_id}/trigger-list", data)
+    response.raise_for_status()
+    return response.json()
+
+
 def get_advice_tab_context(case, caseworker, queue_id):
     """Get contextual information for the advice tab such as the tab's URL and
     button visibility, based off the case, the current user and current user's queue.
