@@ -67,7 +67,16 @@ def is_trigger_list_regime(product):
 
 
 def filter_trigger_list_products(products):
-    return [product for product in products if is_trigger_list_regime(product)]
+    """
+    Returns list of products which are controlled and their regime entries
+    match with potential trigger list regime
+    """
+    return [
+        product
+        for product in products
+        if (product["is_good_controlled"] and product["is_good_controlled"]["key"] == "True")
+        and is_trigger_list_regime(product)
+    ]
 
 
 def filter_current_user_advice(all_advice, user_id):
