@@ -20,4 +20,5 @@ urlpatterns = [
     path("consolidate/review/", views.ReviewConsolidateView.as_view(), name="consolidate_review"),
     path("consolidate/edit/", views.ConsolidateEditView.as_view(), name="consolidate_edit"),
     path("consolidate/view-advice/", views.ViewConsolidatedAdviceView.as_view(), name="consolidate_view"),
+    path("assess-trigger-list-products/", views.BEISProductAssessment.as_view(), name="assess_trigger_list"),
 ]

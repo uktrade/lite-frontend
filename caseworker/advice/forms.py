@@ -7,6 +7,8 @@ from django.utils.html import format_html
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from caseworker.advice import services
+from caseworker.tau.summaries import get_good_on_application_tau_summary
+from caseworker.tau.widgets import GoodsMultipleSelect
 
 from core.forms.widgets import GridmultipleSelect
 
@@ -242,3 +244,36 @@ class MoveCaseForwardForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(Submit("submit", "Move case forward"))
+
+
+class BEISTriggerListFormBase(forms.Form):
+    NSG_LIST_TYPE_CHOICES = [("TRIGGER_LIST", "Trigger list"), ("DUAL_USE", "Dual use")]
+
+    nsg_list_type = forms.ChoiceField(
+        choices=NSG_LIST_TYPE_CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Select whether the product/s appear on the trigger list or are for dual use",
+        },
+    )
+
+    is_nca_applicable = forms.BooleanField(
+        label="Does the Nuclear Cooperation Agreement apply to the product?",
+        error_messages={
+            "required": "Select yes if the Nuclear Cooperation Agreement applies to the product",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "nsg_list_type",
+            "is_nca_applicable",
+            Submit("submit", "Move case forward"),
+        )
+
+
+class BEISTriggerListAssessmentForm(BEISTriggerListFormBase):
+    pass

@@ -1,0 +1,19 @@
+{% extends 'layouts/case.html' %}
+
+{% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
+
+{% block header_tabs %}
+<div id="tab-bar" class="app-case-tab-bar">
+    <div class="govuk-width-container lite-tabs__container">
+        <div class="lite-tabs ">
+            {% include "includes/case-tabs.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block full_width %}
+
+
+{% endblock %}
+

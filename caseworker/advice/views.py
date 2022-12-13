@@ -9,6 +9,7 @@ from caseworker.advice import forms, services, constants
 from core import client
 from core.constants import SecurityClassifiedApprovalsType
 
+from caseworker.advice.forms import BEISTriggerListAssessmentForm
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_denial_reasons
@@ -543,3 +544,13 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
 
     def get_success_url(self):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
+
+
+class BEISProductAssessment(AdviceView, FormView):
+    """This renders trigger list product assessment for BEIS"""
+
+    template_name = "beis/trigger_list_home.html"
+    form_class = BEISTriggerListAssessmentForm
+
+    def get_success_url(self):
+        return self.request.path
