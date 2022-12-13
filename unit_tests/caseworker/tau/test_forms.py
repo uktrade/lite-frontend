@@ -232,6 +232,29 @@ from caseworker.tau import forms
             False,
             {"cwc_entries": ["Select a Chemical Weapons Convention subsection"]},
         ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["AG"],
+            },
+            False,
+            {"ag_entries": ["Select an Australia Group subsection"]},
+        ),
+        (
+            {
+                "goods": ["test-id"],
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["AG"],
+                "ag_entries": [],
+            },
+            False,
+            {"ag_entries": ["Select an Australia Group subsection"]},
+        ),
     ),
 )
 def test_tau_assessment_form(data, valid, errors, rf):
@@ -243,6 +266,7 @@ def test_tau_assessment_form(data, valid, errors, rf):
         mtcr_entries=[("test-mtcr-entry", "test-mtcr-entry-value")],
         nsg_entries=[("test-nsg-entry", "test-nsg-entry-value")],
         cwc_entries=[("test-cwc-entry", "test-cwc-entry-value")],
+        ag_entries=[("test-ag-entry", "test-ag-entry-value")],
         queue_pk="queue_pk",
         application_pk="application_pk",
         is_user_rfd=False,
@@ -537,6 +561,7 @@ def test_tau_assessment_form_goods_choices(
         mtcr_entries=[],
         nsg_entries=[],
         cwc_entries=[],
+        ag_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
         is_user_rfd=False,
@@ -591,6 +616,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         mtcr_entries=[],
         nsg_entries=[],
         cwc_entries=[],
+        ag_entries=[],
         queue_pk=queue_pk,
         application_pk=application_pk,
         is_user_rfd=False,
@@ -792,6 +818,27 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             False,
             {"cwc_entries": ["Select a Chemical Weapons Convention subsection"]},
         ),
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["AG"],
+            },
+            False,
+            {"ag_entries": ["Select an Australia Group subsection"]},
+        ),
+        (
+            {
+                "report_summary": "test",
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["AG"],
+                "ag_entries": [],
+            },
+            False,
+            {"ag_entries": ["Select an Australia Group subsection"]},
+        ),
     ),
 )
 def test_tau_edit_form(data, valid, errors):
@@ -801,6 +848,7 @@ def test_tau_edit_form(data, valid, errors):
         mtcr_entries=[("test-mtcr-entry", "test-mtcr-entry-text")],
         nsg_entries=[("test-nsg-entry", "test-nsg-entry-text")],
         cwc_entries=[("test-cwc-entry", "test-cwc-entry-text")],
+        ag_entries=[("test-ag-entry", "test-ag-entry-text")],
         data=data,
     )
     assert form.is_valid() == valid

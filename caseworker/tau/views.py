@@ -120,6 +120,10 @@ class TAUMixin(CaseTabsMixin):
     def cwc_entries(self):
         return self.get_regime_choices(Regimes.CWC)
 
+    @cached_property
+    def ag_entries(self):
+        return self.get_regime_choices(Regimes.AG)
+
     def is_assessed(self, good):
         """Returns True if a good has been assessed"""
         return (good["is_good_controlled"] is not None) or (good["control_list_entries"] != [])
@@ -167,6 +171,7 @@ def get_regime_entries_payload_data(form_cleaned_data):
         (Regimes.WASSENAAR, "wassenaar_entries"),
         (Regimes.NSG, "nsg_entries"),
         (Regimes.CWC, "cwc_entries"),
+        (Regimes.AG, "ag_entries"),
     ]:
         if key not in regimes:
             continue
@@ -198,6 +203,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["mtcr_entries"] = self.mtcr_entries
         form_kwargs["nsg_entries"] = self.nsg_entries
         form_kwargs["cwc_entries"] = self.cwc_entries
+        form_kwargs["ag_entries"] = self.ag_entries
         form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods}
         form_kwargs["queue_pk"] = self.queue_id
         form_kwargs["application_pk"] = self.case["id"]
@@ -251,6 +257,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             del payload["wassenaar_entries"]
             del payload["nsg_entries"]
             del payload["cwc_entries"]
+            del payload["ag_entries"]
             del payload["regimes"]
 
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
@@ -275,11 +282,13 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
                 "wassenaar_entries": [],
                 "nsg_entries": [],
                 "cwc_entries": [],
+                "ag_entries": [],
             }
 
         regimes = set()
         wassenaar_entry = None
         cwc_entry = None
+        ag_entry = None
         mtcr_entries = []
         nsg_entries = []
         for entry in good["regime_entries"]:
@@ -289,6 +298,8 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
                 wassenaar_entry = entry["pk"]
             if regime == Regimes.CWC:
                 cwc_entry = entry["pk"]
+            if regime == Regimes.AG:
+                ag_entry = entry["pk"]
             if regime == Regimes.MTCR:
                 mtcr_entries.append(entry["pk"])
             if regime == Regimes.NSG:
@@ -298,6 +309,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             "regimes": list(regimes),
             "wassenaar_entries": wassenaar_entry,
             "cwc_entries": cwc_entry,
+            "ag_entries": ag_entry,
             "mtcr_entries": mtcr_entries,
             "nsg_entries": nsg_entries,
         }
@@ -309,6 +321,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         form_kwargs["mtcr_entries"] = self.mtcr_entries
         form_kwargs["nsg_entries"] = self.nsg_entries
         form_kwargs["cwc_entries"] = self.cwc_entries
+        form_kwargs["ag_entries"] = self.ag_entries
 
         good = self.get_good()
 
@@ -382,6 +395,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         del payload["wassenaar_entries"]
         del payload["nsg_entries"]
         del payload["cwc_entries"]
+        del payload["ag_entries"]
         del payload["regimes"]
 
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
