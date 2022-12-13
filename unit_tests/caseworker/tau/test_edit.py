@@ -9,8 +9,20 @@ from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_wassenaar_entries_get, mock_mtcr_entries_get):
+def setup(
+    mock_queue,
+    mock_case,
+    mock_wassenaar_entries_get,
+    mock_mtcr_entries_get,
+    mock_nsg_entries_get,
+    mock_cwc_entries_get,
+):
     yield
+
+
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_C6_REGIMES = True
 
 
 @pytest.fixture(autouse=True)
@@ -96,7 +108,7 @@ def test_form(
     form_regimes = [
         regime.attrs["value"] for regime in soup.find_all("input", {"name": "regimes"}) if "checked" in regime.attrs
     ]
-    assert form_regimes == ["WASSENAAR", "MTCR"]
+    assert form_regimes == ["WASSENAAR", "MTCR", "CWC", "NSG"]
 
     edit_mtcr_good_regimes = [
         entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "MTCR"
@@ -117,6 +129,26 @@ def test_form(
         if "checked" in regime_entry.attrs
     ]
     assert edit_wassenaar_good_regimes == form_wassenaar_entries
+
+    edit_nsg_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "NSG"
+    ]
+    form_nsg_entries = [
+        regime_entry.attrs["value"]
+        for regime_entry in soup.find("select", {"id": "nsg_entries"}).find_all("option")
+        if "selected" in regime_entry.attrs
+    ]
+    assert edit_nsg_good_regimes == form_nsg_entries
+
+    edit_cwc_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "CWC"
+    ]
+    form_cwc_entries = [
+        regime_entry.attrs["value"]
+        for regime_entry in soup.find_all("input", {"name": "cwc_entries"})
+        if "checked" in regime_entry.attrs
+    ]
+    assert edit_cwc_good_regimes == form_cwc_entries
 
     # Check report summary
     assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
@@ -236,12 +268,27 @@ def test_form_no_regime_entries(
             ["d73d0273-ef94-4951-9c51-c291eba949a0"],
         ),
         (
+            {"regimes": ["NSG"], "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"]},
+            ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
+        ),
+        (
+            {"regimes": ["CWC"], "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"]},
+            ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
+        ),
+        (
             {
-                "regimes": ["WASSENAAR", "MTCR"],
+                "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC"],
                 "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
                 "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+                "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
+                "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
             },
-            ["c760976f-fd14-4356-9f23-f6eaf084475d", "d73d0273-ef94-4951-9c51-c291eba949a0"],
+            [
+                "c760976f-fd14-4356-9f23-f6eaf084475d",
+                "d73d0273-ef94-4951-9c51-c291eba949a0",
+                "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+                "af07fed6-3e27-48b3-a4f1-381c005c63d3",
+            ],
         ),
     ),
 )

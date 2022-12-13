@@ -1,8 +1,8 @@
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
-import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 import initARS from "./tau/ars";
+import initRegimes from "./tau/regimes";
 
 const initAssessmentForm = () => {
   const noControlListCheckboxEl = document.querySelector(
@@ -36,13 +36,6 @@ const initAssessmentForm = () => {
     }
   );
 
-  const mtcrEntriesEl = document.querySelector("#mtcr_entries");
-  if (mtcrEntriesEl) {
-    progressivelyEnhanceMultipleSelectField(mtcrEntriesEl, (option) => {
-      return { id: option.value, name: option.label, classes: [] };
-    });
-  }
-
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent
   );
@@ -51,3 +44,4 @@ const initAssessmentForm = () => {
 
 initAssessmentForm();
 initARS();
+initRegimes();

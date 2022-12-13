@@ -10,7 +10,14 @@ from caseworker.tau import views
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_mtcr_entries_get, mock_wassenaar_entries_get):
+def setup(
+    mock_queue,
+    mock_case,
+    mock_mtcr_entries_get,
+    mock_wassenaar_entries_get,
+    mock_nsg_entries_get,
+    mock_cwc_entries_get,
+):
     yield
 
 
@@ -77,7 +84,7 @@ def test_home_content(
         "p2",
         "ML8a,ML9a",
         "No",
-        "mtcr-1\n\nw-1",
+        "w-1\n\nmtcr-1\n\nnsg-1\n\ncwc-1",
         "scale compelling technologies",
         "test assesment note",
         "Edit",
@@ -177,12 +184,27 @@ def test_form(
             ["d73d0273-ef94-4951-9c51-c291eba949a0"],
         ),
         (
+            {"regimes": ["NSG"], "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"]},
+            ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
+        ),
+        (
+            {"regimes": ["CWC"], "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"]},
+            ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
+        ),
+        (
             {
-                "regimes": ["WASSENAAR", "MTCR"],
+                "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC"],
                 "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
                 "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
+                "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
+                "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
             },
-            ["c760976f-fd14-4356-9f23-f6eaf084475d", "d73d0273-ef94-4951-9c51-c291eba949a0"],
+            [
+                "c760976f-fd14-4356-9f23-f6eaf084475d",
+                "d73d0273-ef94-4951-9c51-c291eba949a0",
+                "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+                "af07fed6-3e27-48b3-a4f1-381c005c63d3",
+            ],
         ),
     ),
 )

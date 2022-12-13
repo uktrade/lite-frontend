@@ -305,11 +305,13 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, TemplateVi
         return True
 
     def get_context(self, **kwargs):
+        trigger_list_products = services.filter_trigger_list_products(self.case["data"]["goods"])
         context = {
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
             "security_approvals_classified_display": self.security_approvals_classified_display,
+            "trigger_list_products": trigger_list_products,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
             **services.get_advice_tab_context(

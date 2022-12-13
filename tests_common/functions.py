@@ -92,4 +92,7 @@ def select_report_summary_and_fill(driver: WebDriver):
 
 
 def click_regime_none(driver: WebDriver):
-    driver.find_element(By.ID, "id_regimes_2").click()
+    driver.find_element(
+        By.XPATH,
+        "//input[@name='regimes' and @value='NONE']",
+    ).click()

@@ -1,3 +1,4 @@
+import re
 import datetime
 import pytest
 import os
@@ -40,6 +41,71 @@ def mock_control_list_entries(requests_mock, data_control_list_entries):
 def mock_pv_gradings(requests_mock):
     url = client._build_absolute_uri("/static/private-venture-gradings/")
     yield requests_mock.get(url=url, json={"pv_gradings": []})
+
+
+@pytest.fixture
+def wassenaar_regime_entry():
+    return {
+        "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
+        "name": "wassenaar-1",
+        "shortened_name": "w-1",
+        "subsection": {
+            "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
+            "name": "Wassenaar Arrangement",
+            "regime": {
+                "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
+                "name": "WASSENAAR",
+            },
+        },
+    }
+
+
+@pytest.fixture
+def mtcr_regime_entry():
+    return {
+        "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
+        "name": "mtcr-1",
+        "subsection": {
+            "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
+            "name": "MTCR Category 1",
+            "regime": {
+                "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
+                "name": "MTCR",
+            },
+        },
+    }
+
+
+@pytest.fixture
+def nsg_regime_entry():
+    return {
+        "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+        "name": "nsg-1",
+        "subsection": {
+            "pk": "c82eb495-fdd7-47cc-8a5b-b742c99936c5",
+            "name": "NSG Category 1",
+            "regime": {
+                "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
+                "name": "NSG",
+            },
+        },
+    }
+
+
+@pytest.fixture
+def cwc_regime_entry():
+    return {
+        "pk": "af07fed6-3e27-48b3-a4f1-381c005c63d3",
+        "name": "cwc-1",
+        "subsection": {
+            "pk": "06aee1da-9219-4c8a-b991-757ce6b2f625",
+            "name": "CWC Category 1",
+            "regime": {
+                "pk": "6e8e7ea3-606e-4f94-869d-cfeb257309fd",
+                "name": "CWC",
+            },
+        },
+    }
 
 
 @pytest.fixture
@@ -359,7 +425,12 @@ def data_open_case():
 
 
 @pytest.fixture
-def data_standard_case():
+def data_standard_case(
+    wassenaar_regime_entry,
+    mtcr_regime_entry,
+    nsg_regime_entry,
+    cwc_regime_entry,
+):
     return {
         "case": {
             "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
@@ -677,31 +748,10 @@ def data_standard_case():
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
                         "regime_entries": [
-                            {
-                                "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
-                                "name": "mtcr-1",
-                                "subsection": {
-                                    "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
-                                    "name": "MTCR Category 1",
-                                    "regime": {
-                                        "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
-                                        "name": "MTCR",
-                                    },
-                                },
-                            },
-                            {
-                                "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
-                                "name": "wassenaar-1",
-                                "shortened_name": "w-1",
-                                "subsection": {
-                                    "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
-                                    "name": "Wassenaar Arrangement",
-                                    "regime": {
-                                        "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
-                                        "name": "WASSENAAR",
-                                    },
-                                },
-                            },
+                            wassenaar_regime_entry,
+                            mtcr_regime_entry,
+                            nsg_regime_entry,
+                            cwc_regime_entry,
                         ],
                         "comment": "test comment",
                         "report_summary": "firearms (2)",
@@ -773,31 +823,10 @@ def data_standard_case():
                             {"rating": "ML9a", "text": 'Naval "vessels" and components'},
                         ],
                         "regime_entries": [
-                            {
-                                "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
-                                "name": "mtcr-1",
-                                "subsection": {
-                                    "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
-                                    "name": "MTCR Category 1",
-                                    "regime": {
-                                        "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
-                                        "name": "MTCR",
-                                    },
-                                },
-                            },
-                            {
-                                "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
-                                "name": "wassenaar-1",
-                                "shortened_name": "w-1",
-                                "subsection": {
-                                    "pk": "a67b1acd-0578-4b83-af66-36ac56f00296",
-                                    "name": "Wassenaar Arrangement",
-                                    "regime": {
-                                        "pk": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d",
-                                        "name": "WASSENAAR",
-                                    },
-                                },
-                            },
+                            wassenaar_regime_entry,
+                            mtcr_regime_entry,
+                            nsg_regime_entry,
+                            cwc_regime_entry,
                         ],
                         "comment": "test assesment note",
                         "report_summary": "scale compelling technologies",
@@ -1356,6 +1385,14 @@ def data_countries():
 def mock_get_countries(requests_mock, data_countries):
     url = client._build_absolute_uri("/static/countries/")
     yield requests_mock.get(url=url, json={"countries": data_countries["countries"]})
+
+
+@pytest.fixture(autouse=True)
+def mock_status_properties(requests_mock):
+    url = client._build_absolute_uri("/static/statuses/properties/")
+    data = {"is_read_only": False, "is_terminal": False}
+    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
+    yield data
 
 
 @pytest.fixture
@@ -2109,3 +2146,62 @@ def standard_technology_expected_product_on_application_summary():
             "Total value",
         ),
     )
+
+
+@pytest.fixture
+def data_ecju_queries():
+    return {
+        "ecju_queries": [
+            {
+                "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
+                "question": "gggggg",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user": None,
+                "team": {
+                    "id": "51358bb7-0743-481b-b60f-edf16f644d52",
+                    "name": "BEIS CWC",
+                    "part_of_ecju": None,
+                    "is_ogd": False,
+                    "alias": None,
+                    "department": None,
+                },
+                "created_at": "2022-11-30T16:55:40.807470Z",
+                "responded_at": None,
+            },
+            {
+                "id": "96fe0801-58ae-4a69-b2ba-f44dc79d3af4",
+                "question": "chemical weapons control",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user": None,
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "BEIS Chemical",
+                    "part_of_ecju": False,
+                    "is_ogd": True,
+                    "alias": "BEIS_CHEMICAL",
+                    "department": "f4369d60-5aff-4b7f-b5d4-75e3fa0f402e",
+                },
+                "created_at": "2022-11-30T17:00:17.479098Z",
+                "responded_at": None,
+            },
+            {
+                "id": "96fe0801-58ae-4a69-b2ba-f44dc79d3af4",
+                "question": "nuclear team",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user": None,
+                "team": {
+                    "id": "88164d59-8724-4596-811b-40b60b5cf892",
+                    "name": "BEIS Nuclear controls",
+                    "part_of_ecju": False,
+                    "is_ogd": True,
+                    "alias": "BEIS_NUCLEAR",
+                    "department": "f4369d60-5aff-4b7f-b5d4-75e3fa0f402e",
+                },
+                "created_at": "2022-11-30T17:00:17.479098Z",
+                "responded_at": None,
+            },
+        ]
+    }
