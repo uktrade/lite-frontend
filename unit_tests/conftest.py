@@ -2186,5 +2186,22 @@ def data_ecju_queries():
                 "created_at": "2022-11-30T17:00:17.479098Z",
                 "responded_at": None,
             },
+            {
+                "id": "96fe0801-58ae-4a69-b2ba-f44dc79d3af4",
+                "question": "nuclear team",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user": None,
+                "team": {
+                    "id": "88164d59-8724-4596-811b-40b60b5cf892",
+                    "name": "BEIS Nuclear controls",
+                    "part_of_ecju": False,
+                    "is_ogd": True,
+                    "alias": "BEIS_NUCLEAR",
+                    "department": "f4369d60-5aff-4b7f-b5d4-75e3fa0f402e",
+                },
+                "created_at": "2022-11-30T17:00:17.479098Z",
+                "responded_at": None,
+            },
         ]
     }
