@@ -109,6 +109,22 @@ def cwc_regime_entry():
 
 
 @pytest.fixture
+def ag_regime_entry():
+    return {
+        "pk": "95274b74-f644-43a1-ad9b-3a69636c8597",
+        "name": "ag-1",
+        "subsection": {
+            "pk": "490f0805-5e99-4619-b334-1fdc9a79212d",
+            "name": "AG Category 1",
+            "regime": {
+                "pk": "d0b28717-0be3-47ea-bf10-713679f5f626",
+                "name": "AG",
+            },
+        },
+    }
+
+
+@pytest.fixture
 def data_open_case():
     return {
         "case": {
@@ -430,6 +446,7 @@ def data_standard_case(
     mtcr_regime_entry,
     nsg_regime_entry,
     cwc_regime_entry,
+    ag_regime_entry,
 ):
     return {
         "case": {
@@ -752,6 +769,7 @@ def data_standard_case(
                             mtcr_regime_entry,
                             nsg_regime_entry,
                             cwc_regime_entry,
+                            ag_regime_entry,
                         ],
                         "comment": "test comment",
                         "report_summary": "firearms (2)",
@@ -827,6 +845,7 @@ def data_standard_case(
                             mtcr_regime_entry,
                             nsg_regime_entry,
                             cwc_regime_entry,
+                            ag_regime_entry,
                         ],
                         "comment": "test assesment note",
                         "report_summary": "scale compelling technologies",

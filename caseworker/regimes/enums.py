@@ -6,3 +6,4 @@ class Regimes(str, Enum):
     MTCR = "MTCR"
     NSG = "NSG"
     CWC = "CWC"
+    AG = "AG"

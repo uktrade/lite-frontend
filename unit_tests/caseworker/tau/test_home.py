@@ -17,6 +17,7 @@ def setup(
     mock_wassenaar_entries_get,
     mock_nsg_entries_get,
     mock_cwc_entries_get,
+    mock_ag_entries_get,
 ):
     yield
 
@@ -84,7 +85,7 @@ def test_home_content(
         "p2",
         "ML8a,ML9a",
         "No",
-        "w-1\n\nmtcr-1\n\nnsg-1\n\ncwc-1",
+        "w-1\n\nmtcr-1\n\nnsg-1\n\ncwc-1\n\nag-1",
         "scale compelling technologies",
         "test assesment note",
         "Edit",
@@ -192,18 +193,24 @@ def test_form(
             ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
         ),
         (
+            {"regimes": ["AG"], "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"]},
+            ["95274b74-f644-43a1-ad9b-3a69636c8597"],
+        ),
+        (
             {
-                "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC"],
+                "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC", "AG"],
                 "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
                 "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
                 "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
                 "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
+                "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"],
             },
             [
                 "c760976f-fd14-4356-9f23-f6eaf084475d",
                 "d73d0273-ef94-4951-9c51-c291eba949a0",
                 "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
                 "af07fed6-3e27-48b3-a4f1-381c005c63d3",
+                "95274b74-f644-43a1-ad9b-3a69636c8597",
             ],
         ),
     ),
