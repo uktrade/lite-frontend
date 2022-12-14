@@ -1,5 +1,7 @@
 import pytest
 
+from bs4 import BeautifulSoup
+
 from django.conf import settings
 from django.urls import reverse
 
@@ -7,17 +9,23 @@ import os
 
 from core import client
 
-
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_cases_search, authorized_client, queue_pk, mock_queue, mock_countries, mock_queues_list):
+def setup(
+    mock_cases_search,
+    authorized_client,
+    queue_pk,
+    mock_queue,
+    mock_countries,
+    mock_queues_list,
+    mock_control_list_entries,
+):
     yield
 
 
 def test_queues_cannot_be_created_and_modified(authorized_client, reset_config_users_list):
-
     url = reverse("queues:manage")
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -25,7 +33,6 @@ def test_queues_cannot_be_created_and_modified(authorized_client, reset_config_u
 
 
 def test_queues_can_be_created_and_modified(authorized_client, specify_config_users_list):
-
     url = reverse("queues:manage")
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -42,7 +49,6 @@ def test_queues_can_be_created_and_modified(authorized_client, specify_config_us
 def test_queues_add_view_returns_unauthorized_user_not_on_config_admin_list(
     authorized_client, reset_config_users_list, url
 ):
-
     response = authorized_client.get(url)
     assert response.status_code == 403
     assert response.context["title"] == "Sorry, unauthorized"
@@ -57,7 +63,6 @@ def test_queues_add_view_returns_unauthorized_user_not_on_config_admin_list(
     ),
 )
 def test_queues_add_view_returns_ok_user_on_config_admin_list(authorized_client, specify_config_users_list, url):
-
     response = authorized_client.get(url)
     assert response.status_code == 200
 
@@ -127,13 +132,13 @@ def test_cases_home_page_view_context(authorized_client):
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert len(response.context["filters"].filters) == 6
-    assert len(response.context["filters"].advanced_filters) == 21
+    assert len(response.context["filters"].advanced_filters) == 22
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200
 
 
-def test_cases_home_page_view_search(authorized_client, mock_cases_search):
+def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases") + "?is_nca_applicable=True"
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
@@ -141,3 +146,27 @@ def test_cases_home_page_view_search(authorized_client, mock_cases_search):
         "page": ["1"],
         "is_nca_applicable": ["true"],
     }
+
+
+def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?is_trigger_list=True"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        "page": ["1"],
+        "is_trigger_list": ["true"],
+    }
+
+
+def test_trigger_list_checkbox_visible_unchecked(authorized_client):
+    response = authorized_client.get(reverse("core:index"))
+    html = BeautifulSoup(response.content, "html.parser")
+    checkbox = html.find(id="is-trigger-list")
+    assert "checked" not in checkbox.attrs
+
+
+def test_trigger_list_checkbox_visible_checked(authorized_client):
+    response = authorized_client.get(reverse("core:index") + "/?is_trigger_list=True")
+    html = BeautifulSoup(response.content, "html.parser")
+    checkbox = html.find(id="is-trigger-list")
+    assert "checked" in checkbox.attrs
