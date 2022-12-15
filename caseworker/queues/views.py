@@ -71,7 +71,6 @@ class Cases(LoginRequiredMixin, TemplateView):
 
         if hidden:
             params["hidden"] = hidden
-
         data = get_cases_search_data(self.request, self.queue_pk, params)
         return data
 
