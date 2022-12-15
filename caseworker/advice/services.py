@@ -332,7 +332,7 @@ def move_case_forward(request, case_id, queue_id):
 
 
 def post_trigger_list_assessment(request, case_id, data):
-    response = client.put(request, f"/applications/{case_id}/trigger-list", data)
+    response = client.put(request, f"/applications/{case_id}/goods-on-application", data)
     return response.json(), response.status_code
 
 

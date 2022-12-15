@@ -55,7 +55,7 @@ def test_beis_assess_trigger_list_products_post(
 ):
     application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
     good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
-    requests_mock.put(f"/applications/{application_id}/trigger-list/", json={})
+    requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
     data = {
         "nsg_list_type": "TRIGGER_LIST",
         "is_nca_applicable": True,
@@ -65,8 +65,10 @@ def test_beis_assess_trigger_list_products_post(
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
     requests_mock.request_history.pop().json() == {
+        "id": good_on_application["id"],
+        "application": application_id,
+        "good": good_on_application["good"]["id"],
         "nsg_list_type": "TRIGGER_LIST",
         "is_nca_applicable": True,
         "nsg_assessment_note": "meets criteria",
-        "goods": [good_on_application["id"]],
     }

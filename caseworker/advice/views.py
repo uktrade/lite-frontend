@@ -621,12 +621,29 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
         "Error saving trigger list assessment",
         "Unexpected error saving trigger list assessment",
     )
-    def post_trigger_list_assessment(self, request, case_id, data):
+    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
+        good_on_application_map = {
+            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
+            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
+        }
+
+        data = [
+            {
+                "id": item_id,
+                **good_on_application_map[item_id],
+                **data,
+            }
+            for item_id in selected_good_ids
+        ]
+
         return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
+        selected_good_ids = data.pop("goods", [])
 
-        self.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+        self.post_trigger_list_assessment(
+            self.request, case_id=self.kwargs["pk"], selected_good_ids=selected_good_ids, data=data
+        )
 
         return super().form_valid(form)
