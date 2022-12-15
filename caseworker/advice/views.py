@@ -16,6 +16,8 @@ from caseworker.core.services import get_denial_reasons
 from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
 
+from .enums import NSGListTypes
+
 
 class CaseContextMixin:
     """Most advice views need a reference to the associated
@@ -549,10 +551,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
 class BEISNuclearMixin:
     def is_trigger_list_assessed(self, product):
         """Returns True if a product has been assessed for trigger list criteria"""
-        return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in [
-            "TRIGGER_LIST",
-            "DUAL_USE",
-        ]
+        return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in list(NSGListTypes)
 
     @property
     def unassessed_trigger_list_goods(self):

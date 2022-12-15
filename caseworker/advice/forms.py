@@ -12,6 +12,8 @@ from caseworker.tau.widgets import GoodsMultipleSelect
 
 from core.forms.widgets import GridmultipleSelect
 
+from .enums import NSGListTypes
+
 
 def get_approval_advice_form_factory(advice, data=None):
     data = data or {
@@ -247,7 +249,10 @@ class MoveCaseForwardForm(forms.Form):
 
 
 class BEISTriggerListFormBase(forms.Form):
-    NSG_LIST_TYPE_CHOICES = [("TRIGGER_LIST", "Trigger list"), ("DUAL_USE", "Dual use")]
+    NSG_LIST_TYPE_CHOICES = [
+        (NSGListTypes.TRIGGER_LIST.value, "Trigger list"),
+        (NSGListTypes.DUAL_USE.value, "Dual use"),
+    ]
     NCA_CHOICES = [("Yes", "Yes"), ("No", "No")]
 
     nsg_list_type = forms.ChoiceField(
