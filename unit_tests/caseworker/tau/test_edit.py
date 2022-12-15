@@ -16,6 +16,7 @@ def setup(
     mock_mtcr_entries_get,
     mock_nsg_entries_get,
     mock_cwc_entries_get,
+    mock_ag_entries_get,
 ):
     yield
 
@@ -108,7 +109,7 @@ def test_form(
     form_regimes = [
         regime.attrs["value"] for regime in soup.find_all("input", {"name": "regimes"}) if "checked" in regime.attrs
     ]
-    assert form_regimes == ["WASSENAAR", "MTCR", "CWC", "NSG"]
+    assert form_regimes == ["WASSENAAR", "MTCR", "CWC", "NSG", "AG"]
 
     edit_mtcr_good_regimes = [
         entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "MTCR"
@@ -149,6 +150,16 @@ def test_form(
         if "checked" in regime_entry.attrs
     ]
     assert edit_cwc_good_regimes == form_cwc_entries
+
+    edit_ag_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "AG"
+    ]
+    form_ag_entries = [
+        regime_entry.attrs["value"]
+        for regime_entry in soup.find_all("input", {"name": "ag_entries"})
+        if "checked" in regime_entry.attrs
+    ]
+    assert edit_ag_good_regimes == form_ag_entries
 
     # Check report summary
     assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
@@ -276,18 +287,24 @@ def test_form_no_regime_entries(
             ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
         ),
         (
+            {"regimes": ["AG"], "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"]},
+            ["95274b74-f644-43a1-ad9b-3a69636c8597"],
+        ),
+        (
             {
-                "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC"],
+                "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC", "AG"],
                 "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
                 "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
                 "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
                 "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
+                "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"],
             },
             [
                 "c760976f-fd14-4356-9f23-f6eaf084475d",
                 "d73d0273-ef94-4951-9c51-c291eba949a0",
                 "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
                 "af07fed6-3e27-48b3-a4f1-381c005c63d3",
+                "95274b74-f644-43a1-ad9b-3a69636c8597",
             ],
         ),
     ),

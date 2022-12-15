@@ -58,6 +58,7 @@ class TAUEditForm(forms.Form):
             (Regimes.MTCR.value, "Missile Technology Control Regime"),
             (Regimes.NSG.value, "Nuclear Suppliers Group"),
             (Regimes.CWC.value, "Chemical Weapons Convention"),
+            (Regimes.AG.value, "Australia Group"),
             ("NONE", "None"),
         ),
         error_messages={
@@ -106,6 +107,13 @@ class TAUEditForm(forms.Form):
         widget=forms.RadioSelect,
     )
 
+    ag_entries = forms.ChoiceField(
+        label="",
+        choices=(),  # set in __init__
+        required=False,
+        widget=forms.RadioSelect,
+    )
+
     comment = forms.CharField(
         label="Add an assessment note (optional)",
         required=False,
@@ -119,6 +127,7 @@ class TAUEditForm(forms.Form):
         mtcr_entries,
         nsg_entries,
         cwc_entries,
+        ag_entries,
         document=None,
         *args,
         **kwargs,
@@ -130,6 +139,7 @@ class TAUEditForm(forms.Form):
         self.fields["mtcr_entries"].choices = mtcr_entries
         self.fields["nsg_entries"].choices = nsg_entries
         self.fields["cwc_entries"].choices = cwc_entries
+        self.fields["ag_entries"].choices = ag_entries
 
         self.helper = FormHelper()
 
@@ -143,6 +153,10 @@ class TAUEditForm(forms.Form):
                 ConditionalCheckboxesQuestion(
                     "Nuclear Suppliers Group",
                     "nsg_entries",
+                ),
+                ConditionalCheckboxesQuestion(
+                    "Australia Group",
+                    "ag_entries",
                 ),
             ]
 
@@ -169,6 +183,18 @@ class TAUEditForm(forms.Form):
         ]
         self.helper.layout = Layout(*fields)
 
+    def validate_single_regime_choice(self, cleaned_data, selected_regimes, regime, field_name, error_message):
+        is_regime_selected = regime in selected_regimes
+        regime_entries = cleaned_data.get(field_name)
+        if is_regime_selected and not regime_entries:
+            self.add_error(field_name, error_message)
+
+    def validate_multi_regime_choices(self, cleaned_data, selected_regimes, regime, field_name, error_message):
+        is_regime_selected = regime in selected_regimes
+        regime_entries = cleaned_data.get(field_name, [])
+        if is_regime_selected and not regime_entries:
+            self.add_error(field_name, error_message)
+
     def clean(self):
         cleaned_data = super().clean()
 
@@ -190,25 +216,41 @@ class TAUEditForm(forms.Form):
         if has_selected_none and not only_selected_none:
             self.add_error("regimes", "Add a regime, or select none")
         else:
-            is_wassenaar_regime = Regimes.WASSENAAR in regimes
-            wassenaar_entries = cleaned_data.get("wassenaar_entries")
-            if is_wassenaar_regime and not wassenaar_entries:
-                self.add_error("wassenaar_entries", "Select a Wassenaar Arrangement subsection")
-
-            is_mtcr_regime = Regimes.MTCR in regimes
-            mtcr_entries = cleaned_data.get("mtcr_entries", [])
-            if is_mtcr_regime and not mtcr_entries:
-                self.add_error("mtcr_entries", "Type an entry for the Missile Technology Control Regime")
-
-            is_nsg_regime = Regimes.NSG in regimes
-            nsg_entries = cleaned_data.get("nsg_entries", [])
-            if is_nsg_regime and not nsg_entries:
-                self.add_error("nsg_entries", "Type an entry for the Nuclear Suppliers Group Regime")
-
-            is_cwc_regime = Regimes.CWC in regimes
-            cwc_entries = cleaned_data.get("cwc_entries")
-            if is_cwc_regime and not cwc_entries:
-                self.add_error("cwc_entries", "Select a Chemical Weapons Convention subsection")
+            self.validate_single_regime_choice(
+                cleaned_data,
+                regimes,
+                Regimes.WASSENAAR,
+                "wassenaar_entries",
+                "Select a Wassenaar Arrangement subsection",
+            )
+            self.validate_single_regime_choice(
+                cleaned_data,
+                regimes,
+                Regimes.CWC,
+                "cwc_entries",
+                "Select a Chemical Weapons Convention subsection",
+            )
+            self.validate_single_regime_choice(
+                cleaned_data,
+                regimes,
+                Regimes.AG,
+                "ag_entries",
+                "Select an Australia Group subsection",
+            )
+            self.validate_multi_regime_choices(
+                cleaned_data,
+                regimes,
+                Regimes.MTCR,
+                "mtcr_entries",
+                "Type an entry for the Missile Technology Control Regime",
+            )
+            self.validate_multi_regime_choices(
+                cleaned_data,
+                regimes,
+                Regimes.NSG,
+                "nsg_entries",
+                "Type an entry for the Nuclear Suppliers Group Regime",
+            )
 
         return cleaned_data
 
