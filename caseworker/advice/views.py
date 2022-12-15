@@ -12,6 +12,7 @@ from core.constants import SecurityClassifiedApprovalsType
 from caseworker.advice.forms import BEISTriggerListAssessmentForm
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
+from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
 from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
@@ -583,15 +584,10 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
     def organisation_documents(self):
         """This property will collect the org documents that we need to access
         in the template e.g. section 5 certificate etc."""
-        documents = {}
-        for item in self.case.organisation["documents"]:
-            key = item["document_type"].replace("-", "_")
-            documents[key] = item
-            item["document"]["url"] = reverse(
-                "cases:document",
-                kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["document"]["id"]},
-            )
-        return documents
+        return get_organisation_documents(
+            self.case,
+            self.queue_id,
+        )
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
