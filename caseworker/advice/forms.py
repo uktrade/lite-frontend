@@ -6,6 +6,9 @@ from django.utils.html import format_html
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
+
+from core.forms.utils import coerce_str_to_bool
+
 from caseworker.advice import services
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.widgets import GoodsMultipleSelect
@@ -253,7 +256,7 @@ class BEISTriggerListFormBase(forms.Form):
         (NSGListTypes.TRIGGER_LIST.value, "Trigger list"),
         (NSGListTypes.DUAL_USE.value, "Dual use"),
     ]
-    NCA_CHOICES = [("Yes", "Yes"), ("No", "No")]
+    NCA_CHOICES = [(True, "Yes"), (False, "No")]
 
     nsg_list_type = forms.ChoiceField(
         choices=NSG_LIST_TYPE_CHOICES,
@@ -264,13 +267,14 @@ class BEISTriggerListFormBase(forms.Form):
         },
     )
 
-    is_nca_applicable = forms.ChoiceField(
+    is_nca_applicable = forms.TypedChoiceField(
         choices=NCA_CHOICES,
-        widget=forms.RadioSelect,
-        label="Does the Nuclear Cooperation Agreement apply to the product?",
+        coerce=coerce_str_to_bool,
         error_messages={
             "required": "Select yes if the Nuclear Cooperation Agreement applies to the product",
         },
+        label="Does the Nuclear Cooperation Agreement apply to the product?",
+        widget=forms.RadioSelect,
     )
 
     nsg_assessment_note = forms.CharField(

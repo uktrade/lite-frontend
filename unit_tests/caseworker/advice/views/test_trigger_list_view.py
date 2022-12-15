@@ -58,7 +58,7 @@ def test_beis_assess_trigger_list_products_post(
     requests_mock.put(f"/applications/{application_id}/trigger-list/", json={})
     data = {
         "nsg_list_type": "TRIGGER_LIST",
-        "is_nca_applicable": "Yes",
+        "is_nca_applicable": True,
         "nsg_assessment_note": "meets criteria",
         "goods": [good_on_application["id"]],
     }

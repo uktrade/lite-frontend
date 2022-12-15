@@ -9,10 +9,11 @@ from core.forms.layouts import (
     ConditionalRadiosQuestion,
     ConditionalRadios,
 )
+from core.forms.utils import coerce_str_to_bool
 
 from exporter.core.validators import PastDateValidator
 from exporter.core.forms import CustomErrorDateInputField
-from exporter.core.common.forms import BaseForm, coerce_str_to_bool
+from exporter.core.common.forms import BaseForm
 
 
 class SecurityClassifiedDetailsForm(BaseForm):
