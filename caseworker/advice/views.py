@@ -620,6 +620,7 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
+        data["is_nca_applicable"] = data["is_nca_applicable"] == "Yes"
         services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
 
         return super().form_valid(form)
