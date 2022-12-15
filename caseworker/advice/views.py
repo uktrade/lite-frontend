@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
@@ -8,6 +10,7 @@ import sentry_sdk
 from caseworker.advice import forms, services, constants
 from core import client
 from core.constants import SecurityClassifiedApprovalsType
+from core.decorators import expect_status
 
 from caseworker.advice.forms import BEISTriggerListAssessmentForm
 from caseworker.cases.services import get_case
@@ -613,8 +616,17 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
         }
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error saving trigger list assessment",
+        "Unexpected error saving trigger list assessment",
+    )
+    def post_trigger_list_assessment(self, request, case_id, data):
+        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+
     def form_valid(self, form):
         data = {**form.cleaned_data}
-        services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+
+        self.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
 
         return super().form_valid(form)
