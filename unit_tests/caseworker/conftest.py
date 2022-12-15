@@ -356,7 +356,7 @@ def mock_party_denial_search_results(requests_mock):
     yield requests_mock.get(url=url, json={"hits": {"hits": []}})
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def mock_application_good_documents(data_standard_case, requests_mock):
     requests_mock.get(
         re.compile(
