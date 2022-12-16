@@ -93,6 +93,22 @@ def nsg_regime_entry():
 
 
 @pytest.fixture
+def nsg_potential_trigger_list_regime_entry():
+    return {
+        "pk": "abcd976f-fd14-4356-9f23-f6eaf084475d",
+        "name": "T1",
+        "subsection": {
+            "pk": "df3de529-d471-49be-94d7-7a4e5835df90",
+            "name": "NSG Potential Trigger List",
+            "regime": {
+                "pk": "f990b1c1-a7be-4bc8-9292-a8b5ea25c0dd",
+                "name": "NSG",
+            },
+        },
+    }
+
+
+@pytest.fixture
 def cwc_regime_entry():
     return {
         "pk": "af07fed6-3e27-48b3-a4f1-381c005c63d3",
@@ -447,6 +463,7 @@ def data_standard_case(
     nsg_regime_entry,
     cwc_regime_entry,
     ag_regime_entry,
+    nsg_potential_trigger_list_regime_entry,
 ):
     return {
         "case": {
@@ -770,6 +787,7 @@ def data_standard_case(
                             nsg_regime_entry,
                             cwc_regime_entry,
                             ag_regime_entry,
+                            nsg_potential_trigger_list_regime_entry,
                         ],
                         "comment": "test comment",
                         "report_summary": "firearms (2)",

@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
@@ -8,12 +10,17 @@ import sentry_sdk
 from caseworker.advice import forms, services, constants
 from core import client
 from core.constants import SecurityClassifiedApprovalsType
+from core.decorators import expect_status
 
+from caseworker.advice.forms import BEISTriggerListAssessmentForm
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
+from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
 from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
+
+from .enums import NSGListTypes
 
 
 class CaseContextMixin:
@@ -543,3 +550,100 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
 
     def get_success_url(self):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
+
+
+class BEISNuclearMixin:
+    def is_trigger_list_assessed(self, product):
+        """Returns True if a product has been assessed for trigger list criteria"""
+        return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in list(NSGListTypes)
+
+    @property
+    def unassessed_trigger_list_goods(self):
+        return [
+            product
+            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            if not self.is_trigger_list_assessed(product)
+        ]
+
+    @property
+    def assessed_trigger_list_goods(self):
+        return [
+            product
+            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            if self.is_trigger_list_assessed(product)
+        ]
+
+
+class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
+    """This renders trigger list product assessment for BEIS Nuclear"""
+
+    template_name = "advice/trigger_list_home.html"
+    form_class = BEISTriggerListAssessmentForm
+
+    def get_success_url(self):
+        return self.request.path
+
+    @cached_property
+    def organisation_documents(self):
+        """This property will collect the org documents that we need to access
+        in the template e.g. section 5 certificate etc."""
+        return get_organisation_documents(
+            self.case,
+            self.queue_id,
+        )
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+
+        form_kwargs["request"] = self.request
+        form_kwargs["queue_pk"] = self.queue_id
+        form_kwargs["application_pk"] = self.case["id"]
+        form_kwargs["organisation_documents"] = self.organisation_documents
+        rfd_certificate = self.organisation_documents.get("rfd_certificate")
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+        form_kwargs["is_user_rfd"] = is_user_rfd
+        form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_trigger_list_goods}
+
+        return form_kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
+            "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
+        }
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error saving trigger list assessment",
+        "Unexpected error saving trigger list assessment",
+    )
+    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
+        good_on_application_map = {
+            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
+            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
+        }
+
+        data = [
+            {
+                "id": item_id,
+                **good_on_application_map[item_id],
+                **data,
+            }
+            for item_id in selected_good_ids
+        ]
+
+        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+
+    def form_valid(self, form):
+        data = {**form.cleaned_data}
+        selected_good_ids = data.pop("goods", [])
+
+        self.post_trigger_list_assessment(
+            self.request, case_id=self.kwargs["pk"], selected_good_ids=selected_good_ids, data=data
+        )
+
+        return super().form_valid(form)

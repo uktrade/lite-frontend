@@ -5,4 +5,4 @@
         You have {{ trigger_list_products|length }} products to review
     </strong>
 </div>
-<a draggable="false" class="govuk-button govuk-button--primary" href="#">Review products</a>
+<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:assess_trigger_list' queue_pk case.id %}">Review products</a>

@@ -14,8 +14,9 @@ from core.forms.layouts import (
     ConditionalRadiosQuestion,
     ConditionalRadios,
 )
+from core.forms.utils import coerce_str_to_bool
 
-from exporter.core.common.forms import BaseForm, TextChoice, coerce_str_to_bool
+from exporter.core.common.forms import BaseForm, TextChoice
 from exporter.core.forms import (
     CustomErrorDateInputField,
     PotentiallyUnsafeClearableFileInput,

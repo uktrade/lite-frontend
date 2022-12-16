@@ -6,9 +6,16 @@ from django.utils.html import format_html
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
+
+from core.forms.utils import coerce_str_to_bool
+
 from caseworker.advice import services
+from caseworker.tau.summaries import get_good_on_application_tau_summary
+from caseworker.tau.widgets import GoodsMultipleSelect
 
 from core.forms.widgets import GridmultipleSelect
+
+from .enums import NSGListTypes
 
 
 def get_approval_advice_form_factory(advice, data=None):
@@ -242,3 +249,92 @@ class MoveCaseForwardForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(Submit("submit", "Move case forward"))
+
+
+class BEISTriggerListFormBase(forms.Form):
+    NSG_LIST_TYPE_CHOICES = [
+        (NSGListTypes.TRIGGER_LIST.value, "Trigger list"),
+        (NSGListTypes.DUAL_USE.value, "Dual use"),
+    ]
+    NCA_CHOICES = [(True, "Yes"), (False, "No")]
+
+    nsg_list_type = forms.ChoiceField(
+        choices=NSG_LIST_TYPE_CHOICES,
+        widget=forms.RadioSelect,
+        label="Is the product on the trigger list or dual use",
+        error_messages={
+            "required": "Select whether the product/s appear on the trigger list or are for dual use",
+        },
+    )
+
+    is_nca_applicable = forms.TypedChoiceField(
+        choices=NCA_CHOICES,
+        coerce=coerce_str_to_bool,
+        error_messages={
+            "required": "Select yes if the Nuclear Cooperation Agreement applies to the product",
+        },
+        label="Does the Nuclear Cooperation Agreement apply to the product?",
+        widget=forms.RadioSelect,
+    )
+
+    nsg_assessment_note = forms.CharField(
+        label="Add an assessment note (optional)",
+        required=False,
+        widget=forms.Textarea,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "nsg_list_type",
+            "is_nca_applicable",
+            "nsg_assessment_note",
+            Submit("submit", "Continue"),
+        )
+
+
+class BEISTriggerListAssessmentForm(BEISTriggerListFormBase):
+    def __init__(
+        self,
+        request,
+        queue_pk,
+        goods,
+        application_pk,
+        is_user_rfd,
+        organisation_documents,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self.request = request
+        self.queue_pk = queue_pk
+        self.application_pk = application_pk
+        self.is_user_rfd = is_user_rfd
+        self.organisation_documents = organisation_documents
+        self.fields["goods"] = forms.MultipleChoiceField(
+            choices=self.get_goods_choices(goods),
+            widget=GoodsMultipleSelect(),
+            label="Select a product to begin. Or you can select multiple products to give them the same assessment.",
+            error_messages={"required": "Select the products that you want to assess"},
+        )
+
+    def get_goods_choices(self, goods):
+        return [
+            (
+                good_on_application_id,
+                {
+                    "good_on_application": good_on_application,
+                    "summary": get_good_on_application_tau_summary(
+                        self.request,
+                        good_on_application,
+                        self.queue_pk,
+                        self.application_pk,
+                        self.is_user_rfd,
+                        self.organisation_documents,
+                    ),
+                },
+            )
+            for good_on_application_id, good_on_application in goods.items()
+        ]

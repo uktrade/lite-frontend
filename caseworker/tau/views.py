@@ -16,6 +16,7 @@ from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
+from caseworker.core.helpers import get_organisation_documents
 from caseworker.cases.services import post_review_good
 from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
@@ -52,15 +53,10 @@ class TAUMixin(CaseTabsMixin):
     def organisation_documents(self):
         """This property will collect the org documents that we need to access
         in the template e.g. section 5 certificate etc."""
-        documents = {}
-        for item in self.case.organisation["documents"]:
-            key = item["document_type"].replace("-", "_")
-            documents[key] = item
-            item["document"]["url"] = reverse(
-                "cases:document",
-                kwargs={"queue_pk": self.queue_id, "pk": self.case.id, "file_pk": item["document"]["id"]},
-            )
-        return documents
+        return get_organisation_documents(
+            self.case,
+            self.queue_id,
+        )
 
     @cached_property
     def goods(self):

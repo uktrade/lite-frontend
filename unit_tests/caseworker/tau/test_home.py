@@ -18,18 +18,9 @@ def setup(
     mock_nsg_entries_get,
     mock_cwc_entries_get,
     mock_ag_entries_get,
+    mock_application_good_documents,
 ):
     yield
-
-
-@pytest.fixture(autouse=True)
-def mock_application_good_documents(data_standard_case, requests_mock):
-    requests_mock.get(
-        re.compile(
-            rf"/applications/{data_standard_case['case']['id']}/goods/[0-9a-fA-F-]+/documents/",
-        ),
-        json={"documents": []},
-    )
 
 
 @pytest.fixture
