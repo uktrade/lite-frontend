@@ -67,7 +67,16 @@ def is_trigger_list_regime(product):
 
 
 def filter_trigger_list_products(products):
-    return [product for product in products if is_trigger_list_regime(product)]
+    """
+    Returns list of products which are controlled and their regime entries
+    match with potential trigger list regime
+    """
+    return [
+        product
+        for product in products
+        if (product["is_good_controlled"] and product["is_good_controlled"]["key"] == "True")
+        and is_trigger_list_regime(product)
+    ]
 
 
 def filter_current_user_advice(all_advice, user_id):
@@ -320,6 +329,11 @@ def move_case_forward(request, case_id, queue_id):
     except HTTPError as e:
         raise HTTPError(response=response) from e
     return response.json()
+
+
+def post_trigger_list_assessment(request, case_id, data):
+    response = client.put(request, f"/applications/{case_id}/goods-on-application", data)
+    return response.json(), response.status_code
 
 
 def get_advice_tab_context(case, caseworker, queue_id):

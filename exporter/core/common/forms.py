@@ -9,10 +9,6 @@ class TextChoice(Choice):
         super().__init__(choice.value, choice.label, **kwargs)
 
 
-def coerce_str_to_bool(val):
-    return val == "True"
-
-
 class BaseForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

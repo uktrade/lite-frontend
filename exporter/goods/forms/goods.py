@@ -9,11 +9,11 @@ from django.utils import timezone
 from django.db import models
 
 from core.builtins.custom_tags import default_na, linkify
-from core.constants import ProductCategories
+from core.constants import ComponentAccessoryChoices, ProductCategories
 from core.forms.layouts import ConditionalRadiosQuestion, ConditionalRadios, summary_list
-from core.constants import ComponentAccessoryChoices
+from core.forms.utils import coerce_str_to_bool
 
-from exporter.core.common.forms import TextChoice, coerce_str_to_bool
+from exporter.core.common.forms import TextChoice
 from exporter.core.constants import (
     ProductSecurityFeatures,
     ProductDeclaredAtCustoms,

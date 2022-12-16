@@ -1,6 +1,8 @@
 from collections import defaultdict
-from django.conf import settings
 from typing import List
+
+from django.conf import settings
+from django.urls import reverse
 
 from caseworker.core import decorators
 from caseworker.core.constants import Permission
@@ -109,3 +111,15 @@ def format_date(data, date_field):
 def is_user_config_admin(request):
     user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
     return user_data["user"]["email"] in settings.CONFIG_ADMIN_USERS_LIST
+
+
+def get_organisation_documents(case, queue_id):
+    documents = {}
+    for item in case.organisation["documents"]:
+        key = item["document_type"].replace("-", "_")
+        documents[key] = item
+        item["document"]["url"] = reverse(
+            "cases:document",
+            kwargs={"queue_pk": queue_id, "pk": case.id, "file_pk": item["document"]["id"]},
+        )
+    return documents
