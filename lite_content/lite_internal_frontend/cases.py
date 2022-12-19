@@ -51,6 +51,7 @@ class CasesListPage:
         GOODS_RELATED_DESCRIPTION = "goods related description"
         COUNTRY = "country"
         CONTROL_LIST_ENTRY = "control list entry"
+        REGIME_ENTRY = "regime entry"
         FLAGS = "flags"
         SORT_BY_SLA_ELAPSED = "sorted by SLA days"
         SORT_BY_SLA_ELAPSED_ASCENDING = "Ascending"
