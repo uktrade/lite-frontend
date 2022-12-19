@@ -1,14 +1,17 @@
 import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
-import Headline from "./tau/headline";
-import SelectProducts from "./tau/select-products";
+import Headline from "./assessment-form/headline";
+import SelectProducts from "./assessment-form/select-products";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
   selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
-  selectAllButton.classList.add("lite-button--link", "tau__select-all");
+  selectAllButton.classList.add(
+    "lite-button--link",
+    "assessment-form__select-all"
+  );
 
   const checkboxes = goods.querySelectorAll("[name=goods]");
 
@@ -31,7 +34,7 @@ const initExpandAll = (goods) => {
 
 const initButtonContainer = (goods) => {
   const createDivOptions = document.createElement("div");
-  createDivOptions.classList.add("tau__first-column--options");
+  createDivOptions.classList.add("assessment-form__first-column--options");
   goods.insertBefore(
     createDivOptions,
     goods.firstElementChild.nextElementSibling
@@ -58,17 +61,19 @@ const initCheckboxClassToggler = () => {
     return;
   }
   const checkboxes = goods.querySelectorAll("[name=goods]");
-  const assessmentColumn = document.querySelector(".tau__second-column");
+  const assessmentColumn = document.querySelector(
+    ".assessment-form__second-column"
+  );
 
   new CheckboxClassToggler(
     checkboxes,
     assessmentColumn,
-    "tau__second-column--hide"
+    "assessment-form__second-column--hide"
   ).init();
 };
 
 const initAssessmentForm = () => {
-  const headlineEl = document.querySelector(".beis__headline");
+  const headlineEl = document.querySelector(".assessment-form__headline");
   const headline = new Headline(headlineEl);
 
   const goods = document.querySelector("#div_id_goods");

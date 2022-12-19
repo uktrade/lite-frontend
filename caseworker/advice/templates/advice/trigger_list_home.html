@@ -5,8 +5,8 @@
 {% block full_width %}
 
 <div class="govuk-width-container">
-    <main class="govuk-main-wrapper tau">
-        <div class="govuk-grid-row tau__display--flex">
+    <main class="govuk-main-wrapper assessment-form">
+        <div class="govuk-grid-row assessment-form__display--flex">
             <!-- Heading -->
             <div class="govuk-grid-column-two-thirds">
                 {% if unassessed_trigger_list_goods %}
@@ -22,12 +22,12 @@
                 {{ unassessed_trigger_list_goods_json|json_script:"unassessed-trigger-list-goods-json" }}
                 <form id="beis-form" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
                     {% csrf_token %}
-                    <div class="govuk-grid-column-two-thirds tau__first-column">
+                    <div class="govuk-grid-column-two-thirds assessment-form__first-column">
                         {{ form.goods|as_crispy_field }}
                     </div>
 
-                    <div class="govuk-grid-column-one-third tau__second-column">
-                        <h1 class="govuk-heading-m beis__headline"></h1>
+                    <div class="govuk-grid-column-one-third assessment-form__second-column">
+                        <h1 class="govuk-heading-m assessment-form__headline"></h1>
                         {% crispy form %}
                     </div>
                 </form>
