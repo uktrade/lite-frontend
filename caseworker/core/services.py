@@ -183,9 +183,9 @@ def get_control_list_entries(request, convert_to_options=False, include_parent=F
 
 
 # Regime Entries
-def get_regimes(request, convert_to_options=False, regime_entries_cache=[]):  # noqa
+def get_regime_entries(request, convert_to_options=False, regime_entries_cache=[]):  # noqa
     """
-    Preliminary caching mechanism, requires service restart to repopulate control list entries
+    Preliminary caching mechanism, requires service restart to repopulate regime entries
     """
     if convert_to_options:
         if regime_entries_cache:

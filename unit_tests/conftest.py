@@ -39,9 +39,19 @@ def mock_control_list_entries(requests_mock, data_control_list_entries):
 
 
 @pytest.fixture
-def mock_regimes(requests_mock, data_regimes):
+def data_regime_entries():
+    return {
+        "regime_entires": [
+            {"name": "T1", "shortened_name": "T1"},
+            {"name": "T5", "shortened_name": "T5"},
+        ]
+    }
+
+
+@pytest.fixture
+def mock_regimes(requests_mock, data_regime_entries):
     url = client._build_absolute_uri("/static/regimes/")
-    yield requests_mock.get(url=url, json=data_regimes)
+    yield requests_mock.get(url=url, json=data_regime_entries)
 
 
 @pytest.fixture
