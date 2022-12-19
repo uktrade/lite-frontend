@@ -1,5 +1,7 @@
 import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
+import Headline from "./tau/headline";
+import SelectProducts from "./tau/select-products";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
 
@@ -65,6 +67,20 @@ const initCheckboxClassToggler = () => {
   ).init();
 };
 
+const initAssessmentForm = () => {
+  const headlineEl = document.querySelector(".beis__headline");
+  const headline = new Headline(headlineEl);
+
+  const goods = document.querySelector("#div_id_goods");
+  const checkboxes = goods.querySelectorAll("[name=goods]");
+  const products = JSON.parse(
+    document.querySelector("#unassessed-trigger-list-goods-json").textContent
+  );
+  new SelectProducts(checkboxes, products, (selectedProducts) => {
+    headline.setProducts(selectedProducts);
+  }).init();
+};
+
 const initSaveAndContinueButton = () => {
   const button = document.querySelector("#submit-id-submit");
   new DisablingButton(button).init();
@@ -72,4 +88,5 @@ const initSaveAndContinueButton = () => {
 
 addSelectAllExpandAll();
 initCheckboxClassToggler();
+initAssessmentForm();
 initSaveAndContinueButton();

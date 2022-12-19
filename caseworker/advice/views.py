@@ -606,6 +606,16 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
 
         return form_kwargs
 
+    def get_unassessed_trigger_list_goods_json(self, unassessed_trigger_list_goods):
+        goods_json = [
+            {
+                "id": good_on_application["id"],
+                "name": good_on_application["good"]["name"],
+            }
+            for good_on_application in unassessed_trigger_list_goods
+        ]
+        return goods_json
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return {
@@ -614,6 +624,9 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
+            "unassessed_trigger_list_goods_json": self.get_unassessed_trigger_list_goods_json(
+                self.unassessed_trigger_list_goods,
+            ),
         }
 
     @expect_status(
