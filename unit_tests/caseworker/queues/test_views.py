@@ -112,3 +112,32 @@ def test_upload_enforcement_xml_invalid_file(authorized_client, mock_enforcement
 
     assert response.status_code == 200
     assert response.context_data["form"].errors == {"file": ["Invalid XML format received"]}
+
+
+def test_cases_home_page_view_context(authorized_client):
+    context_keys = [
+        "sla_radius",
+        "sla_circumference",
+        "data",
+        "queue",
+        "filters",
+        "is_all_cases_queue",
+        "enforcement_check",
+        "updated_cases_banner_queue_id",
+    ]
+    response = authorized_client.get(reverse("queues:cases"))
+    assert len(response.context["filters"].filters) == 6
+    assert len(response.context["filters"].advanced_filters) == 21
+    for context_key in context_keys:
+        assert response.context[context_key]
+    assert response.status_code == 200
+
+
+def test_cases_home_page_view_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?is_nca_applicable=True"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        "page": ["1"],
+        "is_nca_applicable": ["true"],
+    }
