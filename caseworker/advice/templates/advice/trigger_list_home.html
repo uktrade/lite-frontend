@@ -1,0 +1,45 @@
+{% extends 'layouts/case.html' %}
+
+{% load static crispy_forms_tags  %}
+
+{% block full_width %}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper tau">
+        <div class="govuk-grid-row tau__display--flex">
+            <!-- Heading -->
+            <div class="govuk-grid-column-two-thirds">
+                {% if unassessed_trigger_list_goods %}
+                    <h1 class="govuk-heading-l">Assessing products</h1>
+                    <p id="subtitle" class="govuk-body"><strong>You have {{ unassessed_trigger_list_goods|length }} product{{ unassessed_trigger_list_goods|pluralize }} to review</strong></p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="govuk-grid-row">
+            {% if unassessed_trigger_list_goods %}
+                {{ unassessed_trigger_list_goods_json|json_script:"unassessed-trigger-list-goods-json" }}
+                <form id="beis-form" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
+                    {% csrf_token %}
+                    <div class="govuk-grid-column-two-thirds tau__first-column">
+                        {{ form.goods|as_crispy_field }}
+                    </div>
+
+                    <div class="govuk-grid-column-one-third tau__second-column">
+                        <h1 class="govuk-heading-m beis__headline"></h1>
+                        {% crispy form %}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- Assessed products table -->
+    </main>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'beis.js' %}" type="text/javascript"></script>
+{% endblock %}

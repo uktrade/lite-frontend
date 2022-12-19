@@ -357,6 +357,16 @@ def mock_party_denial_search_results(requests_mock):
 
 
 @pytest.fixture
+def mock_application_good_documents(data_standard_case, requests_mock):
+    requests_mock.get(
+        re.compile(
+            rf"/applications/{data_standard_case['case']['id']}/goods/[0-9a-fA-F-]+/documents/",
+        ),
+        json={"documents": []},
+    )
+
+
+@pytest.fixture
 def current_user():
     return {
         "email": "test.user@example.com",
