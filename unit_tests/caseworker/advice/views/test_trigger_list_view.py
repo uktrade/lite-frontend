@@ -1,24 +1,10 @@
 import pytest
-import re
+
+from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
-
-@pytest.fixture(autouse=True)
-def setup(
-    mock_queue,
-    mock_case,
-    mock_denial_reasons,
-    mock_application_good_documents,
-):
-    yield
-
-
-@pytest.fixture
-def url(data_queue, data_standard_case):
-    return reverse(
-        "cases:assess_trigger_list", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
-    )
+from core import client
 
 
 @pytest.fixture
@@ -45,9 +31,49 @@ def data_standard_case_with_potential_trigger_list_product(data_standard_case):
     return data_standard_case
 
 
+@pytest.fixture
+def mock_case(requests_mock, data_standard_case_with_potential_trigger_list_product):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case_with_potential_trigger_list_product['case']['id']}/")
+    return requests_mock.get(url=url, json=data_standard_case_with_potential_trigger_list_product)
+
+
+@pytest.fixture(autouse=True)
+def setup(
+    mock_queue,
+    mock_case,
+    mock_denial_reasons,
+    mock_application_good_documents,
+):
+    yield
+
+
+@pytest.fixture
+def url(data_queue, data_standard_case):
+    return reverse(
+        "cases:assess_trigger_list", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+
+
 def test_beis_assess_trigger_list_products_get(authorized_client, url):
     response = authorized_client.get(url)
     assert response.status_code == 200
+
+
+def test_beis_assess_trigger_list_products_renders_template(authorized_client, url):
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "advice/trigger_list_home.html")
+
+
+def test_beis_assess_trigger_list_products_json(
+    authorized_client,
+    url,
+    data_standard_case_with_potential_trigger_list_product,
+):
+    unassessed_good = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
+    response = authorized_client.get(url)
+    assert response.context["unassessed_trigger_list_goods_json"] == [
+        {"id": unassessed_good["id"], "name": unassessed_good["good"]["name"]}
+    ]
 
 
 def test_beis_assess_trigger_list_products_post(
