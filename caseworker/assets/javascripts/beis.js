@@ -1,7 +1,7 @@
 import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
-import Headline from "./tau/headline";
-import SelectProducts from "./tau/select-products";
+import Headline from "./assessment-form/headline";
+import SelectProducts from "./assessment-form/select-products";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
 
