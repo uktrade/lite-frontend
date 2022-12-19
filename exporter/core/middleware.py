@@ -1,4 +1,6 @@
 import logging
+import sentry_sdk
+import uuid
 
 from django.conf import settings
 from django.shortcuts import redirect
@@ -54,7 +56,18 @@ class ServiceErrorHandler:
     def process_exception(self, request, exception):
         if not isinstance(exception, ServiceError):
             return None
-
+        # change back button to return the user to previous page, faling that the homepage
+        if request.META["HTTP_REFERER"]:
+            redirect_url = request.META["HTTP_REFERER"]
+        else:
+            redirect_url = reverse("core:home")
+        # return_to used in base html for back button
+        request.GET = request.GET.copy()
+        request.GET.__setitem__("return_to", redirect_url)
+        # Send uuid to sentry and render on 500 page for easier debugging
+        error_uuid = uuid.uuid4()
+        request.sentry_uuid = error_uuid
+        sentry_sdk.set_context("debug info", {"uuid": error_uuid})
         logger.error(
             exception.log_message,
             exception.status_code,

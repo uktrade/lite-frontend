@@ -14,5 +14,9 @@
 	<p class="govuk-body">
 		<strong>Request ID:</strong> {{ request.META.HTTP_X_B3_TRACEID }}
 	</p>
+    {% if request.sentry_uuid %}
+	<p class="govuk-body">
+		<strong>Error ID:</strong> {{ request.sentry_uuid }}
+	</p>
 	{% endif %}
 {% endblock %}
