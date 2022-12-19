@@ -95,7 +95,7 @@ const initAssessmentForm = () => {
   );
 
   const suggestionsEl = document.createElement("div");
-  suggestionsEl.classList.add("assessment-form__cle-suggestions");
+  suggestionsEl.classList.add("tau-assessment-form__cle-suggestions");
   const controlListEntriesLabel = document.querySelector(
     "[for=control_list_entries]"
   );
