@@ -141,5 +141,12 @@ def case_filters_bar(request, filters, is_system_queue) -> FiltersBar:
                 title=CasesListPage.Filters.FLAGS,
                 options=[Option(flag["id"], flag["name"]) for flag in get_flags(request, disable_pagination=True)],
             ),
+            Checkboxes(
+                name="is_nca_applicable",
+                options=[
+                    Option(True, "Filter by Nuclear Cooperation Agreement", id="show-nuclear-cooperation-agreement")
+                ],
+                classes=["govuk-checkboxes--small"],
+            ),
         ],
     )
