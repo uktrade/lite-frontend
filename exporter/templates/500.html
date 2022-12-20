@@ -1,18 +1,9 @@
-{% extends 'layouts/two-pane.html' %}
+{% extends "error.html" %}
 
-{% block two_thirds %}
-    <h1 class="govuk-heading-xl">
-        {% block title %}Service currently unavailable{% endblock %}
-    </h1>
-    <p class="govuk-body">
-        Please try again later.
-    </p>
-    <p class="govuk-body">
-        Contact <a class="govuk-link" href="mailto:lite.support@trade.gov.uk">support</a> for help.
-    </p>
-    {% if request.META.HTTP_X_B3_TRACEID %}
-        <p class="govuk-body">
-            <strong>Request ID:</strong> {{ request.META.HTTP_X_B3_TRACEID }}
-        </p>
-    {% endif %}
+{% block title %}
+    Service currently unavailable
+{% endblock %}
+
+{% block description %}
+    Please try again later.
 {% endblock %}
