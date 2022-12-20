@@ -4,7 +4,6 @@ import pytest
 from django.urls import reverse
 
 from core import client
-from pytest_django.asserts import assertInHTML
 
 from exporter.applications.views.goods.material.views.constants import AddGoodMaterialToApplicationSteps
 from exporter.goods.forms.common import (
@@ -174,7 +173,7 @@ def test_add_material_to_application_end_to_end_handles_service_error(
     )
 
     assert response.status_code == 200
-    assertInHTML("Unexpected error adding material to application", str(response.content))
+    assert "Unexpected error adding material to application" in str(response.content)
     assert len(caplog.records) == 1
     log = caplog.records[0]
     assert log.message == "Error adding material to application - response was: 400 - {'errors': ['Failed to post']}"
