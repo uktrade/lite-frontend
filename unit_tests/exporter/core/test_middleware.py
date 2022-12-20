@@ -26,8 +26,9 @@ def test_service_error_handler_service_error(rf, mocker, caplog, settings):
     get_response = mocker.MagicMock()
     service_error_handler = ServiceErrorHandler(get_response)
 
+    redirect_url = "/test"
     request = rf.get("/")
-    request.META["HTTP_REFERER"] = "/test"
+    request.META["HTTP_REFERER"] = redirect_url
     response = HttpResponse("OK")
     mock_error_page = mocker.patch("exporter.core.middleware.error_page")
     mock_error_page.return_value = response
@@ -42,6 +43,7 @@ def test_service_error_handler_service_error(rf, mocker, caplog, settings):
     handler_response = service_error_handler.process_exception(request, service_error)
 
     assert handler_response == response
+    assert request.GET.get("return_to") == redirect_url
     assert ("ERROR", "Logger message") in [(r.levelname, r.msg) for r in caplog.records]
     mock_error_page.assert_called_with(request, "Error message")
 
@@ -151,3 +153,28 @@ def test_organisation_middleware_user_no_org(mock_get_user, rf):
     instance = OrganisationRedirectMiddleWare(get_response)
     response = instance(request)
     assert response.status_code == 200
+
+
+def test_service_error_handler_service_error_no_referrer(rf, mocker, caplog, settings):
+    settings.DEBUG = False
+    get_response = mocker.MagicMock()
+    service_error_handler = ServiceErrorHandler(get_response)
+
+    request = rf.get("/")
+    request.META["HTTP_REFERER"] = None
+    response = HttpResponse("OK")
+    mock_error_page = mocker.patch("exporter.core.middleware.error_page")
+    mock_error_page.return_value = response
+
+    service_error = ServiceError(
+        "Exception message",
+        500,
+        "Bad request",
+        "Logger message",
+        "Error message",
+    )
+    handler_response = service_error_handler.process_exception(request, service_error)
+
+    assert handler_response == response
+    assert request.GET.get("return_to") == reverse("core:home")
+    mock_error_page.assert_called_with(request, "Error message")
