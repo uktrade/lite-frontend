@@ -193,7 +193,7 @@ def get_regime_entries(request, convert_to_options=False, regime_entries_cache=[
         else:
             data = client.get(request, "/static/regimes/")
 
-        for regime_entry in data.json().get("regimes"):
+        for regime_entry in data.json().get("regime_entires"):
             regime_entries_cache.append(
                 Option(
                     key=regime_entry["id"],

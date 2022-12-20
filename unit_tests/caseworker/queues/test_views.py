@@ -21,6 +21,7 @@ def setup(
     mock_countries,
     mock_queues_list,
     mock_control_list_entries,
+    mock_regime_entries,
 ):
     yield
 
