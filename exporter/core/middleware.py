@@ -56,18 +56,19 @@ class ServiceErrorHandler:
     def process_exception(self, request, exception):
         if not isinstance(exception, ServiceError):
             return None
-        # change back button to return the user to previous page, faling that the homepage
-        if request.META["HTTP_REFERER"]:
-            redirect_url = request.META["HTTP_REFERER"]
-        else:
-            redirect_url = reverse("core:home")
-        # return_to used in base html for back button
-        request.GET = request.GET.copy()
-        request.GET.__setitem__("return_to", redirect_url)
-        # Send uuid to sentry and render on 500 page for easier debugging
-        error_uuid = uuid.uuid4()
-        request.sentry_uuid = error_uuid
-        sentry_sdk.set_context("debug info", {"uuid": error_uuid})
+        # Send uuid to sentry and display on 500 page for easier debugging
+        # also change back button url to return the user to previous page, failing that the homepage
+        if exception.status_code == 500:
+            if request.META["HTTP_REFERER"]:
+                redirect_url = request.META["HTTP_REFERER"]
+            else:
+                redirect_url = reverse("core:home")
+            request.GET = request.GET.copy()
+            request.GET.__setitem__("return_to", redirect_url)
+            error_uuid = uuid.uuid4()
+            request.sentry_uuid = error_uuid
+            sentry_sdk.set_context("debug info", {"uuid": error_uuid})
+
         logger.error(
             exception.log_message,
             exception.status_code,

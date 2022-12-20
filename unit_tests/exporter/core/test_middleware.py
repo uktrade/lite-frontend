@@ -16,6 +16,7 @@ def test_service_error_handler_non_service_error_exception(rf, mocker):
     service_error_handler = ServiceErrorHandler(get_response)
 
     request = rf.get("/")
+    request.META["HTTP_REFERER"] = "/test"
     not_service_error = Exception()
     assert service_error_handler.process_exception(request, not_service_error) is None
 
@@ -26,6 +27,7 @@ def test_service_error_handler_service_error(rf, mocker, caplog, settings):
     service_error_handler = ServiceErrorHandler(get_response)
 
     request = rf.get("/")
+    request.META["HTTP_REFERER"] = "/test"
     response = HttpResponse("OK")
     mock_error_page = mocker.patch("exporter.core.middleware.error_page")
     mock_error_page.return_value = response
@@ -50,6 +52,7 @@ def test_service_error_handler_service_error_with_debug(rf, mocker, caplog, sett
     service_error_handler = ServiceErrorHandler(get_response)
 
     request = rf.get("/")
+    request.META["HTTP_REFERER"] = "/test"
     response = HttpResponse("OK")
     mock_error_page = mocker.patch("exporter.core.middleware.error_page")
     mock_error_page.return_value = response
