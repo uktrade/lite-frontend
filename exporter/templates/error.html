@@ -8,10 +8,14 @@
 
 {% block two_thirds %}
     <h1 class="govuk-heading-xl">
-        {{ title }}
+        {% block title %}
+            {{ title }}
+        {% endblock %}
     </h1>
     <p class="govuk-body">
-        {{ description }}
+        {% block description %}
+            {{ description }}
+        {% endblock %}
     </p>
     <p class="govuk-body">
         Contact <a class="govuk-link" href="mailto:lite.support@trade.gov.uk">support</a> for help.
