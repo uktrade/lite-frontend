@@ -25,6 +25,9 @@
             You can go back by clicking the back button at the top of the page.
         </p>
     {% endif %}
+    <p class="govuk-body">
+        <strong>Timestamp:</strong> {% now "c" %}
+    </p>
     {% if request.META.HTTP_X_B3_TRACEID %}
         <p class="govuk-body">
             <strong>Request ID:</strong> {{ request.META.HTTP_X_B3_TRACEID }}
