@@ -6,6 +6,9 @@ import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
 
 const initSelectAll = (goods) => {
+  if (!goods) {
+    return;
+  }
   const selectAllButton = document.createElement("button");
   selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
   selectAllButton.classList.add(
@@ -14,13 +17,15 @@ const initSelectAll = (goods) => {
   );
 
   const checkboxes = goods.querySelectorAll("[name=goods]");
-
   new SelectAll(selectAllButton, checkboxes).init();
 
   return selectAllButton;
 };
 
 const initExpandAll = (goods) => {
+  if (!goods) {
+    return;
+  }
   const expandAllButton = document.createElement("button");
   expandAllButton.innerText = SHOW_ALL_BUTTON_TEXT;
   expandAllButton.classList.add("lite-button--link");
@@ -78,6 +83,10 @@ const initAssessmentForm = () => {
 
   const goods = document.querySelector("#div_id_goods");
   const checkboxes = goods.querySelectorAll("[name=goods]");
+  if (!goods) {
+    return;
+  }
+  checkboxes = goods.querySelectorAll("[name=goods]");
   const products = JSON.parse(
     document.querySelector("#unassessed-trigger-list-goods-json").textContent
   );
@@ -88,7 +97,9 @@ const initAssessmentForm = () => {
 
 const initSaveAndContinueButton = () => {
   const button = document.querySelector("#submit-id-submit");
-  new DisablingButton(button).init();
+  if (button) {
+    new DisablingButton(button).init();
+  }
 };
 
 addSelectAllExpandAll();
