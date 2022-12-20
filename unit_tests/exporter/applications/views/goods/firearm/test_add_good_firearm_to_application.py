@@ -2,8 +2,6 @@ import datetime
 import logging
 import pytest
 
-from pytest_django.asserts import assertInHTML
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
@@ -761,7 +759,7 @@ def test_add_firearm_to_application_end_to_end_handles_service_error(
     )
 
     assert response.status_code == 200
-    assertInHTML("Unexpected error adding firearm to application", str(response.content))
+    assert "Unexpected error adding firearm to application" in str(response.content)
     assert len(caplog.records) == 1
     log = caplog.records[0]
     assert log.message == "Error adding firearm to application - response was: 400 - {'errors': ['Failed to post']}"

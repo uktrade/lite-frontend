@@ -1,13 +1,3 @@
-{% extends 'layouts/two-pane.html' %}
+{% extends "error.html" %}
 
-{% block two_thirds %}
-	<h1 class="govuk-heading-xl">{{ title }}</h1>
-	<p class="govuk-body-l">
-		{{ description|markdown }}
-	</p>
-	{% if request.META.HTTP_X_B3_TRACEID %}
-	<p class="govuk-body">
-		<strong>Request ID:</strong> {{ request.META.HTTP_X_B3_TRACEID }}
-	</p>
-	{% endif %}
-{% endblock %}
+{% block description %}{{ description|markdown }}{% endblock %}

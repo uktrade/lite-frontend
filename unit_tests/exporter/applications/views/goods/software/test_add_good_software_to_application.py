@@ -172,7 +172,7 @@ def test_add_technology_to_application_end_to_end_handles_service_error(
     )
 
     assert response.status_code == 200
-    assertInHTML("Unexpected error adding technology to application", str(response.content))
+    assert "Unexpected error adding technology to application" in str(response.content)
     assert len(caplog.records) == 1
     log = caplog.records[0]
     assert log.message == "Error adding technology to application - response was: 400 - {'errors': ['Failed to post']}"
