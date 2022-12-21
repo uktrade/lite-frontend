@@ -2,11 +2,13 @@
 
 {% load static crispy_forms_tags  %}
 
+{% load static advice_tags %}
+
 {% block full_width %}
 
 <div class="govuk-width-container">
-    <main class="govuk-main-wrapper tau">
-        <div class="govuk-grid-row tau__display--flex">
+    <main class="govuk-main-wrapper assessment-form">
+        <div class="govuk-grid-row assessment-form__display--flex">
             <!-- Heading -->
             {% if assessed_trigger_list_goods and not unassessed_trigger_list_goods %}
                  <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
@@ -25,12 +27,12 @@
                 {{ unassessed_trigger_list_goods_json|json_script:"unassessed-trigger-list-goods-json" }}
                 <form id="beis-form" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
                     {% csrf_token %}
-                    <div class="govuk-grid-column-two-thirds tau__first-column">
+                    <div class="govuk-grid-column-two-thirds assessment-form__first-column">
                         {{ form.goods|as_crispy_field }}
                     </div>
 
-                    <div class="govuk-grid-column-one-third tau__second-column">
-                        <h1 class="govuk-heading-m beis__headline"></h1>
+                    <div class="govuk-grid-column-one-third assessment-form__second-column">
+                        <h1 class="govuk-heading-m assessment-form__headline"></h1>
                         {% crispy form %}
                     </div>
                 </form>
@@ -38,6 +40,61 @@
         </div>
 
         <!-- Assessed products table -->
+        {% if assessed_trigger_list_goods %}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <table id="assessed-products" class="govuk-table">
+                        <h2 class="govuk-heading-m">Assessed products</h2>
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">
+                                    <span class="govuk-visually-hidden">column number</span>
+                                </th>
+                                <th scope="col" class="govuk-table__header">Name</th>
+                                <th scope="col" class="govuk-table__header">Control entry</th>
+                                <th scope="col" class="govuk-table__header">Licence</th>
+                                <th scope="col" class="govuk-table__header">Trigger</th>
+                                <th scope="col" class="govuk-table__header">Dual use</th>
+                                <th scope="col" class="govuk-table__header">Nuclear Cooperation Agreement</th>
+                                <th scope="col" class="govuk-table__header">Assessment note</th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                {% for good_on_application in assessed_trigger_list_goods %}
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell">{{ forloop.counter }}.</td>
+                                        <td class="govuk-table__cell">{{ good_on_application.good.name }}</td>
+                                        <td class="govuk-table__cell">{{ good_on_application | get_clc | join:',' }}</td>
+                                        <td class="govuk-table__cell">{{ good_on_application.is_good_controlled.value }}</td>
+                                        <td class="govuk-table__cell">
+                                            {% if good_on_application.nsg_list_type.key == "TRIGGER_LIST" %}
+                                                Yes
+                                            {% else %}
+                                                No
+                                            {% endif %}
+                                        </td>
+                                        <td class="govuk-table__cell">
+                                            {% if good_on_application.nsg_list_type.key == "DUAL_USE" %}
+                                                Yes
+                                            {% else %}
+                                                No
+                                            {% endif %}
+                                           </td>
+                                        <td class="govuk-table__cell">
+                                            {% if good_on_application.is_nca_applicable %}
+                                                Yes
+                                            {% else %}
+                                                No
+                                            {% endif %}
+                                        </td>
+                                        <td class="govuk-table__cell">{{ good_on_application.comment|linebreaksbr }}</td>
+                                    </tr>
+                                 {% endfor %}
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %} 
     </main>
 </div>
 {% endblock %}

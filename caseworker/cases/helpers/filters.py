@@ -148,5 +148,10 @@ def case_filters_bar(request, filters, is_system_queue) -> FiltersBar:
                 ],
                 classes=["govuk-checkboxes--small"],
             ),
+            Checkboxes(
+                classes=["govuk-checkboxes--small"],
+                name="is_trigger_list",
+                options=[Option(True, "Filter by Trigger List", id="is-trigger-list")],
+            ),
         ],
     )

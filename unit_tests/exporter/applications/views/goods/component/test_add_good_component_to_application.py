@@ -4,7 +4,6 @@ import pytest
 from django.urls import reverse
 
 from core import client
-from pytest_django.asserts import assertInHTML
 
 from exporter.applications.views.goods.component.views.constants import AddGoodComponentToApplicationSteps
 from exporter.goods.forms.common import (
@@ -172,7 +171,7 @@ def test_add_component_accessory_to_application_end_to_end_handles_service_error
     )
 
     assert response.status_code == 200
-    assertInHTML("Unexpected error adding component accessory to application", str(response.content))
+    assert "Unexpected error adding component accessory to application" in str(response.content)
     assert len(caplog.records) == 1
     log = caplog.records[0]
     assert (
