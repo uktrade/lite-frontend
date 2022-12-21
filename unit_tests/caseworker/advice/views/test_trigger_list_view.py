@@ -152,6 +152,7 @@ def test_beis_assess_trigger_list_products_make_recommandation_shown(
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="make-recommendation-button")
 
+
 def test_beis_assessed_trigger_list_products(
     authorized_client,
     url,
