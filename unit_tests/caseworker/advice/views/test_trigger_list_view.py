@@ -1,7 +1,7 @@
 import pytest
-
+from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
-
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from core import client
@@ -25,7 +25,6 @@ def data_standard_case_with_potential_trigger_list_product(data_standard_case):
             },
         },
     )
-
     data_standard_case["case"]["data"]["goods"][0] = good_on_application
 
     return data_standard_case
@@ -98,3 +97,28 @@ def test_beis_assess_trigger_list_products_post(
         "is_nca_applicable": True,
         "nsg_assessment_note": "meets criteria",
     }
+
+
+def test_beis_assess_trigger_list_products_make_recommandation_not_shown(authorized_client, url):
+    response = authorized_client.get(url)
+    assert response.context["unassessed_trigger_list_goods"]
+    assert response.context["assessed_trigger_list_goods"] == []
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="make-recommendation-button") is None
+
+
+def test_beis_assess_trigger_list_products_make_recommandation_shown(
+    authorized_client, url, mock_case, data_standard_case_with_potential_trigger_list_product
+):
+    data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]["nsg_list_type"] = {
+        "key": "TRIGGER_LIST"
+    }
+    mock_case.return_value = data_standard_case_with_potential_trigger_list_product
+
+    response = authorized_client.get(url)
+    assert response.context["unassessed_trigger_list_goods"] == []
+    assert response.context["assessed_trigger_list_goods"]
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="make-recommendation-button")
