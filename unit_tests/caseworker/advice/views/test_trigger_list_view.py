@@ -128,7 +128,12 @@ def test_beis_assess_trigger_list_products_post(
     }
 
 
-def test_beis_assess_trigger_list_products_make_recommandation_not_shown(authorized_client, url):
+def test_beis_assess_trigger_list_products_make_recommandation_not_shown(
+    authorized_client, url, mock_case, data_standard_case_with_potential_trigger_list_product
+):
+    del data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][1]["nsg_list_type"]
+    del data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][2]["nsg_list_type"]
+    mock_case.return_value = data_standard_case_with_potential_trigger_list_product
     response = authorized_client.get(url)
     assert response.context["unassessed_trigger_list_goods"]
     assert response.context["assessed_trigger_list_goods"] == []
@@ -144,7 +149,6 @@ def test_beis_assess_trigger_list_products_make_recommandation_shown(
         "key": "TRIGGER_LIST"
     }
     mock_case.return_value = data_standard_case_with_potential_trigger_list_product
-
     response = authorized_client.get(url)
     assert response.context["unassessed_trigger_list_goods"] == []
     assert response.context["assessed_trigger_list_goods"]
