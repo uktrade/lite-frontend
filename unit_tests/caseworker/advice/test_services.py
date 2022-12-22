@@ -57,7 +57,7 @@ advice_tab_test_data = [
     # Fields: Has Advice, Advice Level, Countersigned, User Team, Current Queue, Expected Tab URL, Expected Buttons Enabled (dict)
     # An individual giving advice on a case for the first time
     (False, "user", False, BEIS_CHEMICAL, BEIS_CHEMICAL_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True},),
-    (False, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True, "assess_trigger_list_products": False},),
+    (False, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": False, "assess_trigger_list_products": True},),
     (False, "user", False, FCDO_TEAM, FCDO_CASES_TO_REVIEW_QUEUE, "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, FCDO_TEAM, FCDO_CPACC_CASES_TO_REVIEW_QUEUE, "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[0], MOD_CONSOLIDATE_QUEUES[0], "cases:advice_view", {"make_recommendation": True},),
@@ -96,17 +96,21 @@ advice_tab_test_data = [
 
 
 @pytest.mark.parametrize("test_data", advice_tab_test_data)
-def test_get_advice_tab_context(advice, data_standard_case, current_user, test_data):
+def test_get_advice_tab_context(
+    advice, data_standard_case_with_potential_trigger_list_product, current_user, test_data
+):
     has_advice, advice_level, countersigned, team_alias, queue_alias, url, buttons = test_data
-    queue_detail = data_standard_case["case"]["queue_details"][0]
+    queue_detail = data_standard_case_with_potential_trigger_list_product["case"]["queue_details"][0]
     if has_advice:
         advice[0]["level"] = advice_level
         if countersigned:
             advice[0]["countersigned_by"] = current_user
-        data_standard_case["case"]["advice"] = advice
+        data_standard_case_with_potential_trigger_list_product["case"]["advice"] = advice
     current_user["team"]["alias"] = team_alias
     queue_detail["alias"] = queue_alias
-    context = get_advice_tab_context(Case(data_standard_case["case"]), current_user, queue_detail["id"])
+    context = get_advice_tab_context(
+        Case(data_standard_case_with_potential_trigger_list_product["case"]), current_user, queue_detail["id"]
+    )
 
     assert context["url"] == url
 

@@ -1,4 +1,3 @@
-import copy
 import pytest
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
@@ -9,54 +8,6 @@ from django.urls import reverse
 from core import client
 
 from caseworker.advice.enums import NSGListTypes
-
-
-@pytest.fixture
-def data_standard_case_with_potential_trigger_list_product(data_standard_case):
-    good_on_application = data_standard_case["case"]["data"]["goods"][0]
-    good_on_application["is_good_controlled"] = {"key": "True", "value": "Yes"}
-    good_on_application["regime_entries"].append(
-        {
-            "pk": "abcd976f-fd14-4356-9f23-f6eaf084475d",
-            "name": "T1",
-            "subsection": {
-                "pk": "df3de529-d471-49be-94d7-7a4e5835df90",
-                "name": "NSG Potential Trigger List",
-                "regime": {
-                    "pk": "f990b1c1-a7be-4bc8-9292-a8b5ea25c0dd",
-                    "name": "NSG",
-                },
-            },
-        },
-    )
-    data_standard_case["case"]["data"]["goods"][0] = good_on_application
-
-    # an assessed good on the trigger list
-    trigger_list_good = data_standard_case["case"]["data"]["goods"][1]
-    trigger_list_good["is_good_controlled"] = {"key": "True", "value": "Yes"}
-    trigger_list_good["regime_entries"].append(
-        {
-            "pk": "abcd976f-fd14-4356-9f23-f6eaf084475d",
-            "name": "T1",
-            "subsection": {
-                "pk": "df3de529-d471-49be-94d7-7a4e5835df90",
-                "name": "NSG Potential Trigger List",
-                "regime": {
-                    "pk": "f990b1c1-a7be-4bc8-9292-a8b5ea25c0dd",
-                    "name": "NSG",
-                },
-            },
-        },
-    )
-    trigger_list_good["nsg_list_type"] = {"key": "TRIGGER_LIST"}
-    data_standard_case["case"]["data"]["goods"][1] = trigger_list_good
-
-    # set up another assessed good with different trigger list options
-    data_standard_case["case"]["data"]["goods"].append(copy.deepcopy(trigger_list_good))
-    data_standard_case["case"]["data"]["goods"][2]["nsg_list_type"] = {"key": "DUAL_USE"}
-    data_standard_case["case"]["data"]["goods"][2]["is_nca_applicable"] = True
-
-    return data_standard_case
 
 
 @pytest.fixture
