@@ -618,8 +618,8 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["buttons"]["make_recommendation"] = bool(self.assessed_trigger_list_goods) and not bool(
-            self.unassessed_trigger_list_goods
+        context["buttons"]["make_recommendation"] = (
+            self.assessed_trigger_list_goods and not self.unassessed_trigger_list_goods
         )
         return {
             **context,
