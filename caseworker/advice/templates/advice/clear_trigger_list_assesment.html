@@ -1,0 +1,32 @@
+{% extends 'layouts/case.html' %}
+
+{% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
+
+{% block header_tabs %}
+	<div id="tab-bar" class="app-case-tab-bar">
+		<div class="govuk-width-container lite-tabs__container">
+			<div class="lite-tabs ">
+				{% include "includes/case-tabs.html" %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block full_width %}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper tau">
+        <div class="govuk-grid-row">
+			<h1 class="govuk-heading-l">Clear all assessments</h1>
+			<p class="govuk-body">Are you sure you want to permanently delete all {{assessed_goods.count}} product assessments on this case?</p>
+			<form action="" method="POST">
+				{% csrf_token %}
+				<div class="govuk-button-group">
+					<input class="govuk-button" type="submit" value="Continue">
+					<a href="{% url 'cases:tau:home' queue_pk=queue_id pk=case.id %}" class="govuk-link--no-visited-state">Cancel</a>
+				</div>
+			</form>
+		</div>
+	</main>
+</div>
+{% endblock %}
