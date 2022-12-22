@@ -10,9 +10,6 @@
     <main class="govuk-main-wrapper assessment-form">
         <div class="govuk-grid-row assessment-form__display--flex">
             <!-- Heading -->
-            {% if buttons.make_recommendation %}
-                 <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
-            {% endif %}
             <div class="govuk-grid-column-two-thirds">
                 {% if unassessed_trigger_list_goods %}
                     <h1 class="govuk-heading-l">Assessing products</h1>

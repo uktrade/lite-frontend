@@ -3,6 +3,7 @@ from collections import defaultdict
 from requests.exceptions import HTTPError
 
 from core import client
+from .enums import NSGListTypes
 
 # Queues
 BEIS_CHEMICAL_CASES_TO_REVIEW = "BEIS_CHEMICAL_CASES_TO_REVIEW"
@@ -64,6 +65,11 @@ def is_trigger_list_regime(product):
         for regime_entry in product.get("regime_entries", [])
         if regime_entry["subsection"]["name"] == NSG_POTENTIAL_TRIGGER_LIST_REGIME
     ]
+
+
+def is_trigger_list_assessed(product):
+    """Returns True if a product has been assessed for trigger list criteria"""
+    return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in list(NSGListTypes)
 
 
 def filter_trigger_list_products(products):
@@ -336,6 +342,14 @@ def post_trigger_list_assessment(request, case_id, data):
     return response.json(), response.status_code
 
 
+def unassessed_trigger_list_goods(case):
+    return [
+        product
+        for product in filter_trigger_list_products(case["data"]["goods"])
+        if not is_trigger_list_assessed(product)
+    ]
+
+
 def get_advice_tab_context(case, caseworker, queue_id):
     """Get contextual information for the advice tab such as the tab's URL and
     button visibility, based off the case, the current user and current user's queue.
@@ -380,8 +394,8 @@ def get_advice_tab_context(case, caseworker, queue_id):
 
             # BEIS Nuclear need to assess products first before giving recommendation
             if team_alias == BEIS_NUCLEAR and queue_alias == BEIS_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
-                context["buttons"]["make_recommendation"] = False
-                context["buttons"]["assess_trigger_list_products"] = True
+                context["buttons"]["make_recommendation"] = len(unassessed_trigger_list_goods(case)) == 0
+                context["buttons"]["assess_trigger_list_products"] = len(unassessed_trigger_list_goods(case)) > 0
 
         elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or queue_alias == BEIS_NUCLEAR_COUNTERSIGNING:
             advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)

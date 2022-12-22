@@ -97,6 +97,28 @@ class CaseContextMixin:
         }
 
 
+class BEISNuclearMixin:
+    def is_trigger_list_assessed(self, product):
+        """Returns True if a product has been assessed for trigger list criteria"""
+        return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in list(NSGListTypes)
+
+    @property
+    def unassessed_trigger_list_goods(self):
+        return [
+            product
+            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            if not self.is_trigger_list_assessed(product)
+        ]
+
+    @property
+    def assessed_trigger_list_goods(self):
+        return [
+            product
+            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            if self.is_trigger_list_assessed(product)
+        ]
+
+
 class CaseDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     """This endpoint renders case detail panel. This will probably
     not be used stand-alone. This is useful for testing the case
@@ -285,7 +307,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return context
 
 
-class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, TemplateView):
+class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclearMixin, TemplateView):
     template_name = "advice/view-advice.html"
 
     @property
@@ -312,13 +334,12 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, TemplateVi
         return True
 
     def get_context(self, **kwargs):
-        trigger_list_products = services.filter_trigger_list_products(self.case["data"]["goods"])
         context = {
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
             "security_approvals_classified_display": self.security_approvals_classified_display,
-            "trigger_list_products": trigger_list_products,
+            "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
             **services.get_advice_tab_context(
@@ -552,28 +573,6 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class BEISNuclearMixin:
-    def is_trigger_list_assessed(self, product):
-        """Returns True if a product has been assessed for trigger list criteria"""
-        return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in list(NSGListTypes)
-
-    @property
-    def unassessed_trigger_list_goods(self):
-        return [
-            product
-            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
-            if not self.is_trigger_list_assessed(product)
-        ]
-
-    @property
-    def assessed_trigger_list_goods(self):
-        return [
-            product
-            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
-            if self.is_trigger_list_assessed(product)
-        ]
-
-
 class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
     """This renders trigger list product assessment for BEIS Nuclear"""
 
@@ -581,7 +580,7 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
     form_class = BEISTriggerListAssessmentForm
 
     def get_success_url(self):
-        return self.request.path
+        return reverse("cases:advice_view", kwargs=self.kwargs)
 
     @cached_property
     def organisation_documents(self):
@@ -618,9 +617,6 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["buttons"]["make_recommendation"] = (
-            self.assessed_trigger_list_goods and not self.unassessed_trigger_list_goods
-        )
         return {
             **context,
             "case": self.case,
@@ -649,6 +645,7 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
                 **good_on_application_map[item_id],
                 **data,
             }
+            for item_id in selected_good_ids
             for item_id in selected_good_ids
         ]
 

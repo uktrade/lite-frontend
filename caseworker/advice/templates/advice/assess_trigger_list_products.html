@@ -2,7 +2,7 @@
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
         <span class="govuk-warning-text__assistive">Warning</span>
-        You have {{ trigger_list_products|length }} products to review
+        You have {{ unassessed_trigger_list_goods|length }} products to review
     </strong>
 </div>
 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:assess_trigger_list' queue_pk case.id %}">Review products</a>

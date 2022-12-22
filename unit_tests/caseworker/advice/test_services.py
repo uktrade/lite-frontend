@@ -57,7 +57,7 @@ advice_tab_test_data = [
     # Fields: Has Advice, Advice Level, Countersigned, User Team, Current Queue, Expected Tab URL, Expected Buttons Enabled (dict)
     # An individual giving advice on a case for the first time
     (False, "user", False, BEIS_CHEMICAL, BEIS_CHEMICAL_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True},),
-    (False, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": False, "assess_trigger_list_products": True},),
+    (False, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True, "assess_trigger_list_products": False},),
     (False, "user", False, FCDO_TEAM, FCDO_CASES_TO_REVIEW_QUEUE, "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, FCDO_TEAM, FCDO_CPACC_CASES_TO_REVIEW_QUEUE, "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[0], MOD_CONSOLIDATE_QUEUES[0], "cases:advice_view", {"make_recommendation": True},),
@@ -109,5 +109,6 @@ def test_get_advice_tab_context(advice, data_standard_case, current_user, test_d
     context = get_advice_tab_context(Case(data_standard_case["case"]), current_user, queue_detail["id"])
 
     assert context["url"] == url
+
     for button_name, enabled in context["buttons"].items():
         assert buttons.get(button_name, False) == enabled
