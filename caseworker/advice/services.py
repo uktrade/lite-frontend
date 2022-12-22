@@ -350,14 +350,6 @@ def unassessed_trigger_list_goods(case):
     ]
 
 
-def assessed_trigger_list_goods(case):
-    return [
-        product
-        for product in filter_trigger_list_products(case["data"]["goods"])
-        if self.is_trigger_list_assessed(product)
-    ]
-
-
 def get_advice_tab_context(case, caseworker, queue_id):
     """Get contextual information for the advice tab such as the tab's URL and
     button visibility, based off the case, the current user and current user's queue.
