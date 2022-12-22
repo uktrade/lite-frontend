@@ -117,3 +117,38 @@ def test_assessed_products_table(authorized_client, url):
         "Yes",
         "test assesment note",
     ]
+
+
+@pytest.fixture
+def clear_assessments_url(data_queue, data_standard_case):
+    return reverse(
+        "cases:clear_trigger_list_assessments",
+        kwargs={
+            "queue_pk": data_queue["id"],
+            "pk": data_standard_case["case"]["id"],
+        },
+    )
+
+
+def test_beis_clear_assessments_trigger_list_products_post(
+    authorized_client, clear_assessments_url, requests_mock, data_standard_case_with_potential_trigger_list_product
+):
+    application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
+    good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
+    requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
+    data = {
+        "nsg_list_type": "TRIGGER_LIST",
+        "is_nca_applicable": True,
+        "nsg_assessment_note": "meets criteria",
+        "goods": [good_on_application["id"]],
+    }
+    response = authorized_client.post(clear_assessments_url, data=data)
+    assert response.status_code == 302
+    requests_mock.request_history.pop().json() == {
+        "id": good_on_application["id"],
+        "application": application_id,
+        "good": good_on_application["good"]["id"],
+        "nsg_list_type": "",
+        "is_nca_applicable": None,
+        "nsg_assessment_note": "",
+    }

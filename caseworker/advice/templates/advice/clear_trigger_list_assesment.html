@@ -23,7 +23,7 @@
 				{% csrf_token %}
 				<div class="govuk-button-group">
 					<input class="govuk-button" type="submit" value="Continue">
-					<a href="{% url 'cases:tau:home' queue_pk=queue_id pk=case.id %}" class="govuk-link--no-visited-state">Cancel</a>
+					<a href="{% url 'cases:assess_trigger_list' queue_pk=queue_pk pk=case.id %}" class="govuk-link--no-visited-state">Cancel</a>
 				</div>
 			</form>
 		</div>

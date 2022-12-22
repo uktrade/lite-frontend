@@ -42,7 +42,7 @@
                 <div class="govuk-grid-column-full">
                     <table id="assessed-products" class="govuk-table">
                         <h2 class="govuk-heading-m">Assessed products</h2>
-                        <a href="{% url 'cases:clear_trigger_list_assessments' queue_pk case.id  %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+                        <a href="{% url 'cases:clear_trigger_list_assessments' queue_pk=queue_pk pk=case.id  %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th scope="col" class="govuk-table__header">

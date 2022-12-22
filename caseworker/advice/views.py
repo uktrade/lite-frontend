@@ -687,14 +687,6 @@ class BEISProductClearAssessments(AdviceView, BEISNuclearMixin):
 
     template_name = "advice/clear_trigger_list_assesment.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return {
-            **context,
-            "case": self.case,
-            "queue_id": self.queue_id,
-        }
-
     def post(self, request, queue_pk, pk):
         data = {"nsg_list_type": "", "is_nca_applicable": None, "nsg_assessment_note": ""}
         selected_good_ids = [product["id"] for product in self.assessed_trigger_list_goods]
