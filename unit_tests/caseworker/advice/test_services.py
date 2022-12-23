@@ -96,18 +96,23 @@ advice_tab_test_data = [
 
 
 @pytest.mark.parametrize("test_data", advice_tab_test_data)
-def test_get_advice_tab_context(advice, data_standard_case, current_user, test_data):
+def test_get_advice_tab_context(
+    advice, data_standard_case_with_potential_trigger_list_product, current_user, test_data
+):
     has_advice, advice_level, countersigned, team_alias, queue_alias, url, buttons = test_data
-    queue_detail = data_standard_case["case"]["queue_details"][0]
+    queue_detail = data_standard_case_with_potential_trigger_list_product["case"]["queue_details"][0]
     if has_advice:
         advice[0]["level"] = advice_level
         if countersigned:
             advice[0]["countersigned_by"] = current_user
-        data_standard_case["case"]["advice"] = advice
+        data_standard_case_with_potential_trigger_list_product["case"]["advice"] = advice
     current_user["team"]["alias"] = team_alias
     queue_detail["alias"] = queue_alias
-    context = get_advice_tab_context(Case(data_standard_case["case"]), current_user, queue_detail["id"])
+    context = get_advice_tab_context(
+        Case(data_standard_case_with_potential_trigger_list_product["case"]), current_user, queue_detail["id"]
+    )
 
     assert context["url"] == url
+
     for button_name, enabled in context["buttons"].items():
         assert buttons.get(button_name, False) == enabled
