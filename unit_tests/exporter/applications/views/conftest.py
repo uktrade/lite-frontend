@@ -119,7 +119,7 @@ def mock_control_list_entries_get(requests_mock):
 
 @pytest.fixture
 def mock_regimes_get(requests_mock):
-    url = client._build_absolute_uri(f"/static/regimes/")
+    url = client._build_absolute_uri(f"/static/regimes/entries/")
     return requests_mock.get(url=url, json={"regimes": [{"rating": "T1"}, {"rating": "T5"}]})
 
 
@@ -327,13 +327,6 @@ def application_with_rfd_and_section_5_document(data_standard_case, requests_moc
 def control_list_entries(requests_mock):
     clc_url = client._build_absolute_uri("/static/control-list-entries/")
     matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
-    return matcher
-
-
-@pytest.fixture
-def regimes(requests_mock):
-    regime_url = client._build_absolute_uri("/static/regimes/")
-    matcher = requests_mock.get(url=regime_url, json={"regimes": [{"rating": "T1"}, {"rating": "T5"}]})
     return matcher
 
 

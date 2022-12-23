@@ -191,12 +191,12 @@ def get_regime_entries(request, convert_to_options=False, regime_entries_cache=[
         if regime_entries_cache:
             return regime_entries_cache
         else:
-            data = client.get(request, "/static/regimes/")
+            data = client.get(request, "/static/regimes/entries/")
 
-        for regime_entry in data.json().get("regime_entires"):
+        for regime_entry in data.json():
             regime_entries_cache.append(
                 Option(
-                    key=regime_entry["id"],
+                    key=regime_entry["pk"],
                     value=regime_entry["name"],
                     description=regime_entry["name"],
                 )
@@ -204,10 +204,10 @@ def get_regime_entries(request, convert_to_options=False, regime_entries_cache=[
 
         return regime_entries_cache
 
-    response = client.get(request, "/static/regimes/")
+    response = client.get(request, "/static/regimes/entries/")
 
     response.raise_for_status()
-    return response.json().get("regimes")
+    return response.json()
 
 
 def get_gov_pv_gradings(request, convert_to_options=False):

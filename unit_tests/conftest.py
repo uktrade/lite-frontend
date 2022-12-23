@@ -40,17 +40,52 @@ def mock_control_list_entries(requests_mock, data_control_list_entries):
 
 @pytest.fixture
 def data_regime_entries():
-    return {
-        "regime_entires": [
-            {"id": "d73d0273-ef94-4951-9c51-c291eba949a0", "name": "T1", "shortened_name": "T1"},
-            {"id": "66e5fc8d-67c7-4a5a-9d11-2eb8dbc57f7d", "name": "T5", "shortened_name": "T5"},
-        ]
-    }
+    return [
+        {
+            "pk": "2b617d7e-5bb4-4d84-855c-ba29010fa477",
+            "name": "M1A1",
+            "shortened_name": None,
+            "subsection": {
+                "pk": "e529df3d-d471-49be-94d7-7a4e5835df90",
+                "name": "MTCR Category 1",
+                "regime": {
+                    "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
+                    "name": "MTCR"
+                }
+            }
+        },
+        {
+            "pk": "45f8638d-f5c7-417d-b62d-ad250fa9075a",
+            "name": "T",
+            "shortened_name": None,
+            "subsection": {
+                "pk": "61fa2375-6016-4a99-a146-7f968cdb58c1",
+                "name": "NSG Potential Trigger List",
+                "regime": {
+                    "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
+                    "name": "NSG"
+                }
+            }
+        },
+        {
+            "pk": "af8043ee-6657-4d4b-83a2-f1a5cdd016ed",
+            "name": "T1",
+            "shortened_name": None,
+            "subsection": {
+                "pk": "61fa2375-6016-4a99-a146-7f968cdb58c1",
+                "name": "NSG Potential Trigger List",
+                "regime": {
+                    "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
+                    "name": "NSG"
+                }
+            }
+        },
+    ]
 
 
 @pytest.fixture
 def mock_regime_entries(requests_mock, data_regime_entries):
-    url = client._build_absolute_uri("/static/regimes/")
+    url = client._build_absolute_uri("/static/regimes/entries/")
     yield requests_mock.get(url=url, json=data_regime_entries)
 
 
