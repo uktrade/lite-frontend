@@ -50,9 +50,9 @@ def data_regime_entries():
                 "name": "MTCR Category 1",
                 "regime": {
                     "pk": "b1c1f990-a7be-4bc8-9292-a8b5ea25c0dd",
-                    "name": "MTCR"
-                }
-            }
+                    "name": "MTCR",
+                },
+            },
         },
         {
             "pk": "45f8638d-f5c7-417d-b62d-ad250fa9075a",
@@ -63,9 +63,9 @@ def data_regime_entries():
                 "name": "NSG Potential Trigger List",
                 "regime": {
                     "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
-                    "name": "NSG"
-                }
-            }
+                    "name": "NSG",
+                },
+            },
         },
         {
             "pk": "af8043ee-6657-4d4b-83a2-f1a5cdd016ed",
@@ -76,9 +76,9 @@ def data_regime_entries():
                 "name": "NSG Potential Trigger List",
                 "regime": {
                     "pk": "d990c737-3a83-47a2-8e7e-97d5ef04038d",
-                    "name": "NSG"
-                }
-            }
+                    "name": "NSG",
+                },
+            },
         },
     ]
 

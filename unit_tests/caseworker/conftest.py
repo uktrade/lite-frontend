@@ -622,13 +622,6 @@ def standard_case_with_advice(current_user):
                             "text": "clc entry description",
                         }
                     ],
-                    "regime_entries": [
-                        {
-                            "id": "9622ee4e-3f3a-4f3d-ac5f-08280c9e81c9",
-                            "name": "T1",
-                            "shortened_name": "T1",
-                        }
-                    ],
                     "created_at": "2021-09-28T16:01:14.707454+01:00",
                     "good": {
                         "comment": None,
@@ -655,7 +648,6 @@ def standard_case_with_advice(current_user):
                 {
                     "application": "2c14d003-bdbe-4c11-a0fd-bbfd7572c5a4",
                     "control_list_entries": [],
-                    "regime_entries": [],
                     "created_at": "2021-09-28T16:03:09.172821+01:00",
                     "good": {
                         "comment": None,
@@ -1112,7 +1104,6 @@ def data_search():
                 "created": "16:53 01 October 2020",
                 "updated": "16:57 01 October 2020",
                 "case_officer": {},
-                "regime_entries": [],
                 "goods": [
                     {
                         "quantity": 444.0,

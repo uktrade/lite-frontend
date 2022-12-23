@@ -139,7 +139,7 @@ def case_filters_bar(request, filters, is_system_queue) -> FiltersBar:
             AutocompleteInput(
                 name="regime_entry",
                 title=CasesListPage.Filters.REGIME_ENTRY,
-                options=get_regime_entries(request, convert_to_options=True),
+                options=get_regime_entries(request),
                 initial=selected_filters.get("regime_entry"),
             ),
             TokenBar(

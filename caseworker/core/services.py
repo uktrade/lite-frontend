@@ -183,31 +183,25 @@ def get_control_list_entries(request, convert_to_options=False, include_parent=F
 
 
 # Regime Entries
-def get_regime_entries(request, convert_to_options=False, regime_entries_cache=[]):  # noqa
+def get_regime_entries(request, regime_entries_cache=[]):  # noqa
     """
     Preliminary caching mechanism, requires service restart to repopulate regime entries
     """
-    if convert_to_options:
-        if regime_entries_cache:
-            return regime_entries_cache
-        else:
-            data = client.get(request, "/static/regimes/entries/")
-
-        for regime_entry in data.json():
-            regime_entries_cache.append(
-                Option(
-                    key=regime_entry["pk"],
-                    value=regime_entry["name"],
-                    description=regime_entry["name"],
-                )
-            )
-
+    if regime_entries_cache:
         return regime_entries_cache
+    else:
+        data = client.get(request, "/static/regimes/entries/")
 
-    response = client.get(request, "/static/regimes/entries/")
+    for regime_entry in data.json():
+        regime_entries_cache.append(
+            Option(
+                key=regime_entry["pk"],
+                value=regime_entry["name"],
+                description=regime_entry["name"],
+            )
+        )
 
-    response.raise_for_status()
-    return response.json()
+    return regime_entries_cache
 
 
 def get_gov_pv_gradings(request, convert_to_options=False):
