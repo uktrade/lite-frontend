@@ -646,7 +646,6 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
                 **data,
             }
             for item_id in selected_good_ids
-            for item_id in selected_good_ids
         ]
 
         return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)

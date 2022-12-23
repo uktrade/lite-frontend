@@ -393,7 +393,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
             # BEIS Nuclear need to assess products first before giving recommendation
-            if team_alias in BEIS_NUCLEAR and queue_alias == BEIS_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
+            if team_alias == BEIS_NUCLEAR and queue_alias == BEIS_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
                 context["buttons"]["make_recommendation"] = len(unassessed_trigger_list_goods(case)) == 0
                 context["buttons"]["assess_trigger_list_products"] = len(unassessed_trigger_list_goods(case)) > 0
 
