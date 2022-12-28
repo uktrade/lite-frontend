@@ -118,6 +118,12 @@ def mock_control_list_entries_get(requests_mock):
 
 
 @pytest.fixture
+def mock_regimes_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/regimes/entries/")
+    return requests_mock.get(url=url, json={"regimes": [{"rating": "T1"}, {"rating": "T5"}]})
+
+
+@pytest.fixture
 def pv_gradings(requests_mock):
     requests_mock.get(
         "/static/private-venture-gradings/v2/",

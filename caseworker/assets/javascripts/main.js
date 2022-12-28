@@ -18,6 +18,7 @@ import initMenuTooltips from "./menu-tooltips.js";
 import initQueuesMenu from "./queues-menu.js";
 import initFlagListExpanders from "./flag-expanders.js";
 import initCLEEntries from "./cle-entries.js";
+import initRegimeEntries from "./regime-entries.js";
 import initDestinationsList from "./show-hide-destinations.js";
 import { initCaseNotes } from "./case-notes";
 
@@ -35,6 +36,7 @@ $(document).ready(function () {
   initQueuesMenu();
   initFlagListExpanders();
   initCLEEntries();
+  initRegimeEntries();
   initCookierBanner("app-cookie-banner", "js-accept-cookie");
   initDestinationsList();
   initCaseNotes();

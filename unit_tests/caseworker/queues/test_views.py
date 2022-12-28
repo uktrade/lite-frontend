@@ -21,6 +21,7 @@ def setup(
     mock_countries,
     mock_queues_list,
     mock_control_list_entries,
+    mock_regime_entries,
 ):
     yield
 
@@ -132,7 +133,7 @@ def test_cases_home_page_view_context(authorized_client):
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert len(response.context["filters"].filters) == 6
-    assert len(response.context["filters"].advanced_filters) == 22
+    assert len(response.context["filters"].advanced_filters) == 23
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200
@@ -155,6 +156,16 @@ def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_searc
         "queue_id": ["00000000-0000-0000-0000-000000000001"],
         "page": ["1"],
         "is_trigger_list": ["true"],
+    }
+
+
+def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        "page": ["1"],
+        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],
     }
 
 

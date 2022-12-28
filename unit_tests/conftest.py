@@ -39,6 +39,15 @@ def mock_control_list_entries(requests_mock, data_control_list_entries):
 
 
 @pytest.fixture
+def data_regime_entries(wassenaar_regime_entry, mtcr_regime_entry, nsg_regime_entry):
+    return [
+        wassenaar_regime_entry,
+        mtcr_regime_entry,
+        nsg_regime_entry,
+    ]
+
+
+@pytest.fixture
 def mock_pv_gradings(requests_mock):
     url = client._build_absolute_uri("/static/private-venture-gradings/")
     yield requests_mock.get(url=url, json={"pv_gradings": []})
