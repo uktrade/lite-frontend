@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
+from django.shortcuts import redirect
 from django.utils.functional import cached_property
 from requests.exceptions import HTTPError
 import sentry_sdk
@@ -659,3 +660,35 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
         )
 
         return super().form_valid(form)
+
+
+class BEISProductClearAssessments(AdviceView, BEISNuclearMixin):
+    """Clears the assessments for all the goods on the current case."""
+
+    template_name = "advice/clear_trigger_list_assesment.html"
+
+    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
+        good_on_application_map = {
+            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
+            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
+        }
+
+        data = [
+            {
+                "id": item_id,
+                **good_on_application_map[item_id],
+                **data,
+            }
+            for item_id in selected_good_ids
+        ]
+
+        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+
+    def post(self, request, queue_pk, pk):
+        data = {"nsg_list_type": "", "is_nca_applicable": None, "nsg_assessment_note": ""}
+        selected_good_ids = [product["id"] for product in self.assessed_trigger_list_goods]
+
+        self.post_trigger_list_assessment(
+            self.request, case_id=self.case.id, selected_good_ids=selected_good_ids, data=data
+        )
+        return redirect(reverse("cases:assess_trigger_list", kwargs={"queue_pk": queue_pk, "pk": pk}))
