@@ -21,7 +21,11 @@ urlpatterns = [
     path("consolidate/edit/", views.ConsolidateEditView.as_view(), name="consolidate_edit"),
     path("consolidate/view-advice/", views.ViewConsolidatedAdviceView.as_view(), name="consolidate_view"),
     path("assess-trigger-list-products/", views.BEISProductAssessment.as_view(), name="assess_trigger_list"),
-    path("edit-trigger-list-products/<uuid:good_on_application_id>/", views.BEISProductAssessmentEdit.as_view(), name="edit_trigger_list"),
+    path(
+        "edit-trigger-list-products/<uuid:good_on_application_id>/",
+        views.BEISProductAssessmentEdit.as_view(),
+        name="edit_trigger_list",
+    ),
     path(
         "clear-trigger-list-assessments/",
         views.BEISProductClearAssessments.as_view(),

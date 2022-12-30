@@ -582,15 +582,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
-    """This renders trigger list product assessment for BEIS Nuclear"""
-
-    template_name = "advice/trigger_list_home.html"
-    form_class = BEISTriggerListAssessmentForm
-
-    def get_success_url(self):
-        return reverse("cases:advice_view", kwargs=self.kwargs)
-
+class BEISAssessmentView:
     @cached_property
     def organisation_documents(self):
         """This property will collect the org documents that we need to access
@@ -599,6 +591,38 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
             self.case,
             self.queue_id,
         )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error saving trigger list assessment",
+        "Unexpected error saving trigger list assessment",
+    )
+    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
+        good_on_application_map = {
+            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
+            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
+        }
+
+        data = [
+            {
+                "id": item_id,
+                **good_on_application_map[item_id],
+                **data,
+            }
+            for item_id in selected_good_ids
+        ]
+
+        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+
+
+class BEISProductAssessment(AdviceView, BEISNuclearMixin, BEISAssessmentView, FormView):
+    """This renders trigger list product assessment for BEIS Nuclear"""
+
+    template_name = "advice/trigger_list_home.html"
+    form_class = BEISTriggerListAssessmentForm
+
+    def get_success_url(self):
+        return reverse("cases:advice_view", kwargs=self.kwargs)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -637,28 +661,6 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
             ),
         }
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error saving trigger list assessment",
-        "Unexpected error saving trigger list assessment",
-    )
-    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
-        good_on_application_map = {
-            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
-            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
-        }
-
-        data = [
-            {
-                "id": item_id,
-                **good_on_application_map[item_id],
-                **data,
-            }
-            for item_id in selected_good_ids
-        ]
-
-        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
-
     def form_valid(self, form):
         data = {**form.cleaned_data}
         selected_good_ids = data.pop("goods", [])
@@ -670,7 +672,7 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
         return super().form_valid(form)
 
 
-class BEISProductAssessmentEdit(AdviceView, BEISNuclearMixin, FormView):
+class BEISProductAssessmentEdit(AdviceView, BEISNuclearMixin, BEISAssessmentView, FormView):
     """This renders editing of trigger list product assessment for BEIS Nuclear"""
 
     template_name = "advice/trigger_list_edit.html"
@@ -678,15 +680,6 @@ class BEISProductAssessmentEdit(AdviceView, BEISNuclearMixin, FormView):
 
     def get_success_url(self):
         return reverse("cases:advice_view", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
-
-    @cached_property
-    def organisation_documents(self):
-        """This property will collect the org documents that we need to access
-        in the template e.g. section 5 certificate etc."""
-        return get_organisation_documents(
-            self.case,
-            self.queue_id,
-        )
 
     def get_good_on_application(self):
         selected_id = str(self.kwargs["good_on_application_id"])
@@ -747,28 +740,6 @@ class BEISProductAssessmentEdit(AdviceView, BEISNuclearMixin, FormView):
             "summary": summary,
         }
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error saving trigger list assessment",
-        "Unexpected error saving trigger list assessment",
-    )
-    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
-        good_on_application_map = {
-            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
-            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
-        }
-
-        data = [
-            {
-                "id": item_id,
-                **good_on_application_map[item_id],
-                **data,
-            }
-            for item_id in selected_good_ids
-        ]
-
-        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
-
     def form_valid(self, form):
         data = {**form.cleaned_data}
         selected_good_ids = [str(self.kwargs["good_on_application_id"])]
@@ -780,27 +751,10 @@ class BEISProductAssessmentEdit(AdviceView, BEISNuclearMixin, FormView):
         return super().form_valid(form)
 
 
-class BEISProductClearAssessments(AdviceView, BEISNuclearMixin):
+class BEISProductClearAssessments(AdviceView, BEISNuclearMixin, BEISAssessmentView):
     """Clears the assessments for all the goods on the current case."""
 
     template_name = "advice/clear_trigger_list_assesment.html"
-
-    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
-        good_on_application_map = {
-            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
-            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
-        }
-
-        data = [
-            {
-                "id": item_id,
-                **good_on_application_map[item_id],
-                **data,
-            }
-            for item_id in selected_good_ids
-        ]
-
-        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
 
     def post(self, request, queue_pk, pk):
         data = {"nsg_list_type": "", "is_nca_applicable": None, "nsg_assessment_note": ""}
