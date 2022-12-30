@@ -26,4 +26,5 @@ urlpatterns = [
         views.BEISProductClearAssessments.as_view(),
         name="clear_trigger_list_assessments",
     ),
+    path("clear-assessments/", views.AdviceClearAssessmentsView.as_view(), name="clear_assessments"),
 ]

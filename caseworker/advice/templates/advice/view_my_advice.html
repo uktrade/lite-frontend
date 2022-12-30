@@ -1,5 +1,5 @@
 {% extends 'layouts/case.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags advice_tags %}
 
 {% block header_tabs %}
   <div id="tab-bar" class="app-case-tab-bar">
@@ -56,6 +56,53 @@
               {% endif %}
             </div>
         </div>
+        <!-- Assessed products table -->
+        {% if assessed_goods %}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <table id="assessed-products" class="govuk-table">
+                        <h2 class="govuk-heading-m">Assessed products</h2>
+                        <a href="{% url 'cases:clear_assessments' queue_pk case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">
+                                    <span class="govuk-visually-hidden">Line number</span>
+                                </th>
+                                <th scope="col" class="govuk-table__header">Name</th>
+                                <th scope="col" class="govuk-table__header">Control entry</th>
+                                <th scope="col" class="govuk-table__header">Licence</th>
+                                <th scope="col" class="govuk-table__header">Regime</th>
+                                <th scope="col" class="govuk-table__header">Report summary</th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment notes and evidence</th>
+                                <th scope="col" class="govuk-table__header">
+                                    <span class="govuk-visually-hidden">Actions</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            {% for good in assessed_goods %}
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">{{ good.line_number }}.</td>
+                                    <td class="govuk-table__cell">{{ good.good.name }}</td>
+                                    <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
+                                    <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
+                                    <td class="govuk-table__cell">
+                                        {% for regime_entry in good.regime_entries %}
+                                            {{ regime_entry.shortened_name|default:regime_entry.name }}<br>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="govuk-table__cell">{{ good.report_summary }}</td>
+                                    <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
+                                    <td class="govuk-table__cell">
+                                        <a class="govuk-link govuk-link--no-visited-state" href="">Edit</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
     </main>
 </div>
 {% endblock %}

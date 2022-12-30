@@ -14,7 +14,7 @@ from core.constants import SecurityClassifiedApprovalsType
 from core.decorators import expect_status
 
 from caseworker.advice.forms import BEISTriggerListAssessmentForm
-from caseworker.cases.services import get_case
+from caseworker.cases.services import get_case, post_review_good
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
@@ -129,6 +129,35 @@ class CaseDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/case_detail_example.html"
 
 
+class AdviceClearAssessmentsView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    """Clears the assessments for all the goods on the current case."""
+
+    template_name = "tau/clear_assessments.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "assessed_goods": self.assessed_goods,
+        }
+
+    def post(self, request, queue_pk, pk):
+        for good in self.assessed_goods:
+            payload = {
+                "control_list_entries": [],
+                "is_good_controlled": None,
+                "report_summary": None,
+                "comment": None,
+                "current_object": good["id"],
+                "objects": [good["good"]["id"]],
+                "regime_entries": [],
+            }
+            post_review_good(self.request, case_id=pk, data=payload)
+        return redirect(reverse("cases:advice_view", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))
+
+
 class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/select_advice.html"
     form_class = forms.SelectAdviceForm
@@ -197,6 +226,18 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, Form
     template_name = "advice/view_my_advice.html"
     form_class = forms.MoveCaseForwardForm
 
+    def is_assessed(self, good):
+        """Returns True if a good has been assessed"""
+        return (good["is_good_controlled"] is not None) or (good["control_list_entries"] != [])
+
+    @property
+    def assessed_goods(self):
+        assessed_goods = [item for item in self.case["data"]["goods"] if self.is_assessed(item)]
+
+        for (i, good) in enumerate(assessed_goods):
+            good["line_number"] = i + 1
+        return assessed_goods
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
@@ -211,6 +252,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, Form
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:view_my_advice",
             "security_approvals_classified_display": self.security_approvals_classified_display,
+            "assessed_goods": self.assessed_goods,
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
