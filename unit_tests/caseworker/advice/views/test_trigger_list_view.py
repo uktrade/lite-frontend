@@ -107,7 +107,7 @@ def test_assessed_products_table(authorized_client, url):
         "Yes",
         "No",
         "No",
-        "test assesment note",
+        "",
         "2.",
         "p2",
         "ML8a,ML9a",
@@ -115,7 +115,7 @@ def test_assessed_products_table(authorized_client, url):
         "No",
         "Yes",
         "Yes",
-        "test assesment note",
+        "",
     ]
 
 
