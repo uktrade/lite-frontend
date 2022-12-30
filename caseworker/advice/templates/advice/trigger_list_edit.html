@@ -1,0 +1,32 @@
+{% extends 'layouts/case.html' %}
+{% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
+{% block body %}
+<div class="govuk-width-container tau">
+    <h1 class="govuk-heading-l govuk-!-margin-top-6">Product assessment</h1>
+    <p id="subtitle" class="govuk-body">Editing assessment for <strong>{{ good_on_application.good.name }}</strong></p>
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div>
+                    <h3 class="govuk-heading-m">{{ good_on_application.line_number }}. {{ good_on_application.good.name }}</h3>
+                    <div>
+                      {% include "tau/good_table.html" with good=good_on_application summary=summary %}
+                      {% include "tau/precedent_table.html" with precedents=good_on_application.precedents %}
+                    </div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <form id="tau-form" method="POST">
+                    {% csrf_token %}
+                    <h1 class="govuk-heading-m tau__headline">Assessing {{ good_on_application.good.name}}</h1>
+                    {% crispy form %}
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock %}
