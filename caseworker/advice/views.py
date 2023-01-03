@@ -582,7 +582,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class BEISAssessmentView:
+class BEISAssessmentBase:
     @cached_property
     def organisation_documents(self):
         """This property will collect the org documents that we need to access
@@ -615,7 +615,7 @@ class BEISAssessmentView:
         return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
 
 
-class BEISProductAssessment(AdviceView, BEISNuclearMixin, BEISAssessmentView, FormView):
+class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
     """This renders trigger list product assessment for BEIS Nuclear"""
 
     template_name = "advice/trigger_list_home.html"
@@ -672,7 +672,7 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, BEISAssessmentView, Fo
         return super().form_valid(form)
 
 
-class BEISProductAssessmentEdit(AdviceView, BEISNuclearMixin, BEISAssessmentView, FormView):
+class BEISProductAssessmentEditView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
     """This renders editing of trigger list product assessment for BEIS Nuclear"""
 
     template_name = "advice/trigger_list_edit.html"
@@ -751,7 +751,7 @@ class BEISProductAssessmentEdit(AdviceView, BEISNuclearMixin, BEISAssessmentView
         return super().form_valid(form)
 
 
-class BEISProductClearAssessments(AdviceView, BEISNuclearMixin, BEISAssessmentView):
+class BEISProductClearAssessmentsView(AdviceView, BEISNuclearMixin, BEISAssessmentBase):
     """Clears the assessments for all the goods on the current case."""
 
     template_name = "advice/clear_trigger_list_assesment.html"
