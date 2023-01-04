@@ -201,7 +201,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
-class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, FormView):
+class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclearMixin, FormView):
     template_name = "advice/view_my_advice.html"
     form_class = forms.MoveCaseForwardForm
 
@@ -219,6 +219,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, Form
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:view_my_advice",
             "security_approvals_classified_display": self.security_approvals_classified_display,
+            "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 

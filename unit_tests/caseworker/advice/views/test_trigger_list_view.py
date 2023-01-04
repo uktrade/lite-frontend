@@ -133,7 +133,7 @@ def test_assessed_products_table(authorized_client, url):
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="assessed-products")
     assert get_cells(soup, "assessed-products") == [
-        "2.",
+        "1.",
         "p2",
         "ML8a,ML9a",
         "Yes",
@@ -142,7 +142,7 @@ def test_assessed_products_table(authorized_client, url):
         "No",
         "",
         "Edit",
-        "3.",
+        "2.",
         "p2",
         "ML8a,ML9a",
         "Yes",

@@ -1,5 +1,5 @@
 {% extends 'layouts/case.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags advice_tags %}
 
 {% block header_tabs %}
   <div id="tab-bar" class="app-case-tab-bar">
@@ -56,6 +56,10 @@
               {% endif %}
             </div>
         </div>
+        <!-- Assessed products table -->
+        {% if assessed_trigger_list_goods %}
+          {% include "advice/assessed_products.html" with assessed_trigger_list_goods=assessed_trigger_list_goods %}
+        {% endif %}
     </main>
 </div>
 {% endblock %}
