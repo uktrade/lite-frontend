@@ -100,7 +100,7 @@ class GiveApprovalAdviceForm(forms.Form):
     instructions_to_exporter = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
         label="Add any instructions for the exporter (optional)",
-        help_text="These may be added to the licence cover letter, subject to review by the Licencing Unit.",
+        help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
         required=False,
     )
     footnote_details = PicklistCharField(
@@ -338,3 +338,23 @@ class BEISTriggerListAssessmentForm(BEISTriggerListFormBase):
             )
             for good_on_application_id, good_on_application in goods.items()
         ]
+
+
+class BEISTriggerListAssessmentEditForm(BEISTriggerListFormBase):
+    def __init__(
+        self,
+        request,
+        queue_pk,
+        application_pk,
+        is_user_rfd,
+        organisation_documents,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self.request = request
+        self.queue_pk = queue_pk
+        self.application_pk = application_pk
+        self.is_user_rfd = is_user_rfd
+        self.organisation_documents = organisation_documents

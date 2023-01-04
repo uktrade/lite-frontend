@@ -16,7 +16,10 @@
                     <th scope="col" class="govuk-table__header">Dual use</th>
                     <th scope="col" class="govuk-table__header">Nuclear Cooperation Agreement</th>
                     <th scope="col" class="govuk-table__header">Assessment note</th>
-                    </tr>
+                    <th scope="col" class="govuk-table__header">
+                        <span class="govuk-visually-hidden">Actions</span>
+                    </th>
+                </tr>
                 </thead>
                 <tbody class="govuk-table__body">
                     {% for good_on_application in assessed_trigger_list_goods %}
@@ -47,6 +50,9 @@
                                 {% endif %}
                             </td>
                             <td class="govuk-table__cell">{{ good_on_application.nsg_assessment_note|linebreaksbr }}</td>
+                            <td class="govuk-table__cell">
+                                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:edit_trigger_list' queue_pk=queue_id pk=case.id good_on_application_id=good_on_application.id %}">Edit</a>
+                            </td>
                         </tr>
                      {% endfor %}
                 </tbody>

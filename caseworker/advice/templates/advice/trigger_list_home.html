@@ -38,7 +38,7 @@
 
         <!-- Assessed products table -->
         {% if assessed_trigger_list_goods %}
-            {% include "advice/assessed_products.html" %}
+            {% include "advice/assessed_products.html" with assessed_trigger_list_goods=assessed_trigger_list_goods %}
         {% endif %}
     </main>
 </div>
