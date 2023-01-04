@@ -538,11 +538,11 @@ def format_heading(text):
 @register.filter()
 def goods_value(goods):
     total_value = 0
-
     for good in goods:
+        # need to return float in html
         total_value += float(good.get("value", 0))
-
-    return total_value
+    # rounding in case of floating point imprecision during conversion
+    return round(total_value, 2)
 
 
 @register.filter()
