@@ -355,7 +355,7 @@ class ProductDocumentUploadForm(BaseForm):
         TITLE = "Upload a document that shows what your product is designed to do"
 
     product_document = forms.FileField(
-        label="Upload a file",
+        label="Upload a DOCX, DOC, PDF or PNG file.",
         error_messages={
             "required": "Select a document that shows what your product is designed to do",
         },

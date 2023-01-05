@@ -160,7 +160,9 @@ class UltimateEndUser:
         class AttachDocuments:
             TITLE = "Attach a document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
+                "Upload a DOCX, DOC, PDF or PNG file."
+                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to ultimate recipients"
@@ -187,7 +189,9 @@ class Consignee:
         class AttachDocuments:
             TITLE = "Attach a document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
+                "Upload a DOCX, DOC, PDF or PNG file."
+                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to consignee summary"
@@ -217,7 +221,9 @@ class ThirdParties:
         class AttachDocuments:
             TITLE = "Attach a document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
+                "Upload a DOCX, DOC, PDF or PNG file."
+                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to third parties overview"
@@ -366,7 +372,9 @@ class AdditionalDocuments:
         class AttachDocuments:
             TITLE = "Attach a supporting document"
             DESCRIPTION = (
-                "Do not attach a document that's above OFFICIAL-SENSITIVE.\n\nThe file must be smaller than 50MB."
+                "Upload a DOCX, DOC, PDF or PNG file."
+                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
             BACK = "Back to supporting documents"

@@ -362,7 +362,7 @@ class PartyDocumentsForm(forms.Form):
 class PartyDocumentUploadForm(forms.Form):
     title = "Upload an end-user document"
     party_document = forms.FileField(
-        label="",
+        label="Upload a DOCX, DOC, PDF or PNG file.",
         error_messages={
             "required": "Select an end-user document",
         },
@@ -418,7 +418,7 @@ class PartyDocumentUploadForm(forms.Form):
 class PartyEnglishTranslationDocumentUploadForm(forms.Form):
     title = "Upload an English translation"
     party_eng_translation_document = forms.FileField(
-        label="",
+        label="Upload a DOCX, DOC, PDF or PNG file.",
         error_messages={
             "required": "Select an English translation",
         },
@@ -443,7 +443,7 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
 class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
     title = "Upload a document on company letterhead"
     party_letterhead_document = forms.FileField(
-        label="",
+        label="Upload a DOCX, DOC, PDF or PNG file.",
         error_messages={
             "required": "Select a document on company letterhead",
         },

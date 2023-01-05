@@ -216,7 +216,7 @@ class FirearmAttachRFDCertificate(BaseForm):
         TITLE = "Upload a registered firearms dealer certificate"
 
     file = forms.FileField(
-        label="",
+        label="Upload a DOCX, DOC, PDF or PNG file.",
         error_messages={
             "required": "Select a registered firearms dealer certificate",
         },
