@@ -69,6 +69,7 @@ def test_goods_value_correct_float_value():
     good_2_value = Decimal("23.54")
     good_1 = {"id": "8b730c06-ab4e-401c-aeb0-32b3c92e912c", "value": good_1_value}
     good_2 = {"id": "13820c06-ab4e-401c-aeb0-32b3c92e912c", "value": good_2_value}
-    goods = [good_1, good_2]
+    good_3 = {"id": "123fd216-ab4e-401c-aeb0-32b3c92e912c"}
+    goods = [good_1, good_2, good_3]
     total_value = custom_tags.goods_value(goods)
     assert str(total_value) == str(good_1_value + good_2_value)

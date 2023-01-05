@@ -540,7 +540,7 @@ def format_heading(text):
 def goods_value(goods):
     total_value = 0
     for good in goods:
-        total_value += Decimal(good["value"])
+        total_value += Decimal(good.get("value", 0))
     # need to return float in html for intcomma filter
     return float(total_value)
 
