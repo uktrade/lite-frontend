@@ -367,6 +367,12 @@ def mock_application_good_documents(data_standard_case, requests_mock):
 
 
 @pytest.fixture
+def mock_regime_entries(requests_mock, data_regime_entries):
+    url = client._build_absolute_uri("/static/regimes/entries/")
+    yield requests_mock.get(url=url, json=data_regime_entries)
+
+
+@pytest.fixture
 def current_user():
     return {
         "email": "test.user@example.com",

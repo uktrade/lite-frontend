@@ -72,7 +72,7 @@ regex = "==2022.3.2"
 deepmerge = "*"
 phonenumbers = "~=8.12.57"
 django-ipware = "~=3.0.7"
-setuptools = "~=63.4.1"
+setuptools = "~=65.5.1"
 pyopenssl = "~=22.0.0"
 
 [requires]

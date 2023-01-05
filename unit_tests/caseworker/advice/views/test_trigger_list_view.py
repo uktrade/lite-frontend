@@ -33,8 +33,39 @@ def url(data_queue, data_standard_case):
     )
 
 
+@pytest.fixture
+def edit_assessment_url(data_queue, data_standard_case_with_potential_trigger_list_product):
+    application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
+    good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
+    return reverse(
+        "cases:edit_trigger_list",
+        kwargs={
+            "queue_pk": data_queue["id"],
+            "pk": application_id,
+            "good_on_application_id": good_on_application["id"],
+        },
+    )
+
+
 def test_beis_assess_trigger_list_products_get(authorized_client, url):
     response = authorized_client.get(url)
+    assert response.status_code == 200
+
+
+def test_beis_edit_trigger_list_assessment_before_assessing(authorized_client, edit_assessment_url):
+    response = authorized_client.get(edit_assessment_url)
+    assert response.status_code == 404
+
+
+def test_beis_edit_trigger_list_assessment_get(
+    authorized_client, edit_assessment_url, data_standard_case_with_potential_trigger_list_product
+):
+    good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
+    good_on_application["nsg_list_type"] = {"key": "DUAL_USE"}
+    good_on_application["is_nca_applicable"] = False
+    good_on_application["nsg_assessment_note"] = ""
+    data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0] = good_on_application
+    response = authorized_client.get(edit_assessment_url)
     assert response.status_code == 200
 
 
@@ -87,6 +118,8 @@ def test_beis_assessed_trigger_list_products(
     trigger_list_product = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][1]
     dual_use_product = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][2]
     response = authorized_client.get(url)
+    for good in response.context["assessed_trigger_list_goods"]:
+        good.pop("line_number")
     assert response.context["assessed_trigger_list_goods"] == [trigger_list_product, dual_use_product]
 
 
@@ -107,7 +140,8 @@ def test_assessed_products_table(authorized_client, url):
         "Yes",
         "No",
         "No",
-        "test assesment note",
+        "",
+        "Edit",
         "2.",
         "p2",
         "ML8a,ML9a",
@@ -115,5 +149,69 @@ def test_assessed_products_table(authorized_client, url):
         "No",
         "Yes",
         "Yes",
-        "test assesment note",
+        "",
+        "Edit",
     ]
+
+
+@pytest.fixture
+def clear_assessments_url(data_queue, data_standard_case):
+    return reverse(
+        "cases:clear_trigger_list_assessments",
+        kwargs={
+            "queue_pk": data_queue["id"],
+            "pk": data_standard_case["case"]["id"],
+        },
+    )
+
+
+def test_beis_clear_assessments_trigger_list_products_post(
+    authorized_client, clear_assessments_url, requests_mock, data_standard_case_with_potential_trigger_list_product
+):
+    application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
+    good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
+    requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
+    data = {
+        "nsg_list_type": "TRIGGER_LIST",
+        "is_nca_applicable": True,
+        "nsg_assessment_note": "meets criteria",
+        "goods": [good_on_application["id"]],
+    }
+    response = authorized_client.post(clear_assessments_url, data=data)
+    assert response.status_code == 302
+    requests_mock.request_history.pop().json() == {
+        "id": good_on_application["id"],
+        "application": application_id,
+        "good": good_on_application["good"]["id"],
+        "nsg_list_type": "",
+        "is_nca_applicable": None,
+        "nsg_assessment_note": "",
+    }
+
+
+def test_beis_assess_trigger_list_products_edit(
+    authorized_client, edit_assessment_url, requests_mock, data_standard_case_with_potential_trigger_list_product
+):
+    application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
+    good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
+    good_on_application["nsg_list_type"] = {"key": "DUAL_USE"}
+    good_on_application["is_nca_applicable"] = False
+    good_on_application["nsg_assessment_note"] = ""
+    data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0] = good_on_application
+
+    requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
+    data = {
+        "nsg_list_type": "TRIGGER_LIST",
+        "is_nca_applicable": True,
+        "nsg_assessment_note": "updated note",
+    }
+    response = authorized_client.post(edit_assessment_url, data=data)
+    assert response.status_code == 302
+    requests_mock.request_history.pop().json() == {
+        "id": good_on_application["id"],
+        "application": application_id,
+        "good": good_on_application["good"]["id"],
+        "nsg_list_type": "TRIGGER_LIST",
+        "is_nca_applicable": True,
+        "nsg_assessment_note": "updated note",
+    }

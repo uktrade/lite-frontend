@@ -1,4 +1,4 @@
-from caseworker.core.services import get_control_list_entries, get_countries
+from caseworker.core.services import get_control_list_entries, get_countries, get_regime_entries
 from caseworker.flags.services import get_flags
 from lite_content.lite_internal_frontend.cases import CasesListPage
 from lite_forms.components import (
@@ -135,6 +135,12 @@ def case_filters_bar(request, filters, is_system_queue) -> FiltersBar:
                 title=CasesListPage.Filters.CONTROL_LIST_ENTRY,
                 options=get_control_list_entries(request, convert_to_options=True),
                 initial=selected_filters.get("control_list_entry"),
+            ),
+            AutocompleteInput(
+                name="regime_entry",
+                title=CasesListPage.Filters.REGIME_ENTRY,
+                options=get_regime_entries(request),
+                initial=selected_filters.get("regime_entry"),
             ),
             TokenBar(
                 name="flags",

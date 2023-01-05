@@ -38,6 +38,7 @@ def setup(
     mock_case_activity_system_user,
     mock_case,
     mock_control_list_entries,
+    mock_regime_entries,
     mock_application_search,
     mock_good_on_appplication,
     mock_good_on_appplication_documents,

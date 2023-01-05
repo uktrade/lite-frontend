@@ -1,22 +1,24 @@
 from http import HTTPStatus
 
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
+from django.shortcuts import redirect
 from django.utils.functional import cached_property
 from requests.exceptions import HTTPError
 import sentry_sdk
 
 from caseworker.advice import forms, services, constants
 from core import client
-from core.constants import SecurityClassifiedApprovalsType
+from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
 from core.decorators import expect_status
 
-from caseworker.advice.forms import BEISTriggerListAssessmentForm
+from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
+from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
 
@@ -58,6 +60,13 @@ class CaseContextMixin:
     def caseworker(self):
         data, _ = get_gov_user(self.request, self.caseworker_id)
         return data["user"]
+
+    @property
+    def goods(self):
+        for index, good_on_application in enumerate(self.case["data"]["goods"], start=1):
+            good_on_application["line_number"] = index
+
+        return self.case["data"]["goods"]
 
     def unadvised_countries(self):
         """Returns a dict of countries for which advice has not been given by the current user's team."""
@@ -106,7 +115,7 @@ class BEISNuclearMixin:
     def unassessed_trigger_list_goods(self):
         return [
             product
-            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            for product in services.filter_trigger_list_products(self.goods)
             if not self.is_trigger_list_assessed(product)
         ]
 
@@ -114,7 +123,7 @@ class BEISNuclearMixin:
     def assessed_trigger_list_goods(self):
         return [
             product
-            for product in services.filter_trigger_list_products(self.case["data"]["goods"])
+            for product in services.filter_trigger_list_products(self.goods)
             if self.is_trigger_list_assessed(product)
         ]
 
@@ -192,7 +201,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
-class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, FormView):
+class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclearMixin, FormView):
     template_name = "advice/view_my_advice.html"
     form_class = forms.MoveCaseForwardForm
 
@@ -210,6 +219,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, Form
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:view_my_advice",
             "security_approvals_classified_display": self.security_approvals_classified_display,
+            "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
@@ -573,15 +583,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
-    """This renders trigger list product assessment for BEIS Nuclear"""
-
-    template_name = "advice/trigger_list_home.html"
-    form_class = BEISTriggerListAssessmentForm
-
-    def get_success_url(self):
-        return reverse("cases:advice_view", kwargs=self.kwargs)
-
+class BEISAssessmentBase:
     @cached_property
     def organisation_documents(self):
         """This property will collect the org documents that we need to access
@@ -590,6 +592,38 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
             self.case,
             self.queue_id,
         )
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error saving trigger list assessment",
+        "Unexpected error saving trigger list assessment",
+    )
+    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
+        good_on_application_map = {
+            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
+            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
+        }
+
+        data = [
+            {
+                "id": item_id,
+                **good_on_application_map[item_id],
+                **data,
+            }
+            for item_id in selected_good_ids
+        ]
+
+        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
+
+
+class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
+    """This renders trigger list product assessment for BEIS Nuclear"""
+
+    template_name = "advice/trigger_list_home.html"
+    form_class = BEISTriggerListAssessmentForm
+
+    def get_success_url(self):
+        return reverse("cases:advice_view", kwargs=self.kwargs)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -620,35 +654,13 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
         return {
             **context,
             "case": self.case,
-            "queue_id": self.queue_id,
+            "queue_pk": self.queue_id,
             "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "unassessed_trigger_list_goods_json": self.get_unassessed_trigger_list_goods_json(
                 self.unassessed_trigger_list_goods,
             ),
         }
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error saving trigger list assessment",
-        "Unexpected error saving trigger list assessment",
-    )
-    def post_trigger_list_assessment(self, request, case_id, selected_good_ids, data):
-        good_on_application_map = {
-            item["id"]: {"application": str(case_id), "good": item["good"]["id"]}
-            for item in services.filter_trigger_list_products(self.case["data"]["goods"])
-        }
-
-        data = [
-            {
-                "id": item_id,
-                **good_on_application_map[item_id],
-                **data,
-            }
-            for item_id in selected_good_ids
-        ]
-
-        return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
@@ -659,3 +671,97 @@ class BEISProductAssessment(AdviceView, BEISNuclearMixin, FormView):
         )
 
         return super().form_valid(form)
+
+
+class BEISProductAssessmentEditView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
+    """This renders editing of trigger list product assessment for BEIS Nuclear"""
+
+    template_name = "advice/trigger_list_edit.html"
+    form_class = BEISTriggerListAssessmentEditForm
+
+    def get_success_url(self):
+        return reverse("cases:advice_view", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
+
+    def get_good_on_application(self):
+        selected_id = str(self.kwargs["good_on_application_id"])
+        for good_on_application in self.assessed_trigger_list_goods:
+            if good_on_application["id"] == selected_id:
+                return good_on_application
+        raise Http404
+
+    def get_good_on_application_summary(self, good):
+        organisation_documents = {
+            document["document_type"]: document for document in self.organisation_documents.values()
+        }
+        rfd_certificate = organisation_documents.get(OrganisationDocumentType.RFD_CERTIFICATE)
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+
+        summary = get_good_on_application_tau_summary(
+            self.request,
+            good,
+            self.queue_id,
+            self.case["id"],
+            is_user_rfd,
+            organisation_documents,
+        )
+
+        return summary
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+
+        form_kwargs["request"] = self.request
+        form_kwargs["queue_pk"] = self.queue_id
+        form_kwargs["application_pk"] = self.case["id"]
+        form_kwargs["organisation_documents"] = self.organisation_documents
+        rfd_certificate = self.organisation_documents.get("rfd_certificate")
+        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
+        form_kwargs["is_user_rfd"] = is_user_rfd
+
+        good_on_application = self.get_good_on_application()
+
+        form_kwargs["data"] = self.request.POST or {
+            "nsg_list_type": good_on_application["nsg_list_type"]["key"],
+            "is_nca_applicable": good_on_application["is_nca_applicable"],
+            "nsg_assessment_note": good_on_application["nsg_assessment_note"],
+        }
+
+        return form_kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        good_on_application = self.get_good_on_application()
+        summary = self.get_good_on_application_summary(good_on_application)
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "good_on_application": good_on_application,
+            "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
+            "summary": summary,
+        }
+
+    def form_valid(self, form):
+        data = {**form.cleaned_data}
+        selected_good_ids = [str(self.kwargs["good_on_application_id"])]
+
+        self.post_trigger_list_assessment(
+            self.request, case_id=self.kwargs["pk"], selected_good_ids=selected_good_ids, data=data
+        )
+
+        return super().form_valid(form)
+
+
+class BEISProductClearAssessmentsView(AdviceView, BEISNuclearMixin, BEISAssessmentBase):
+    """Clears the assessments for all the goods on the current case."""
+
+    template_name = "advice/clear_trigger_list_assesment.html"
+
+    def post(self, request, queue_pk, pk):
+        data = {"nsg_list_type": "", "is_nca_applicable": None, "nsg_assessment_note": ""}
+        selected_good_ids = [product["id"] for product in self.assessed_trigger_list_goods]
+
+        self.post_trigger_list_assessment(
+            self.request, case_id=self.case.id, selected_good_ids=selected_good_ids, data=data
+        )
+        return redirect(reverse("cases:assess_trigger_list", kwargs={"queue_pk": queue_pk, "pk": pk}))
