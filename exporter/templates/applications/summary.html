@@ -1,9 +1,18 @@
 {% if not type %}
 	{% for key, value in answers.items %}
-		<h2 class="govuk-heading-m">{{ key }}</h2>
+		{% if value %}
+					<h2 class="govuk-heading-m">{{ key }}</h2>
+			{% else %}
+					{% if key != "Third parties" and key != "Consignee" %}
+						<h2 class="govuk-heading-m">{{ key }}</h2>
+			{% endif %}
+		{% endif %}
+
 		<div>
 			{% if not value %}
-				<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
+				{% if key != "Third parties" and key != "Consignee" %}
+					<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
+				{% endif %}
 			{% elif value|classname == 'str' %}
 				<dl class="govuk-summary-list">
 					<div class="govuk-summary-list__row">
