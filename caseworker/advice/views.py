@@ -654,7 +654,7 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
         return {
             **context,
             "case": self.case,
-            "queue_id": self.queue_id,
+            "queue_pk": self.queue_id,
             "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "unassessed_trigger_list_goods_json": self.get_unassessed_trigger_list_goods_json(
