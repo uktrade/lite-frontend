@@ -1,4 +1,5 @@
 from __future__ import division
+from _decimal import Decimal
 
 import datetime
 import json
@@ -539,10 +540,9 @@ def format_heading(text):
 def goods_value(goods):
     total_value = 0
     for good in goods:
-        # need to return float in html
-        total_value += float(good.get("value", 0))
-    # rounding in case of floating point imprecision during conversion
-    return round(total_value, 2)
+        total_value += Decimal(good["value"])
+    # need to return float in html for intcomma filter
+    return float(total_value)
 
 
 @register.filter()
