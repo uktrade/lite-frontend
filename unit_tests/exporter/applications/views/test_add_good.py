@@ -331,10 +331,12 @@ def test_add_good_attach_firearm_dealer_certificate(url, authorized_client):
     )
 
     title = b"Attach your registered firearms dealer certificate"
+    label = b"Upload a DOCX, DOC, PDF or PNG file."
     response = authorized_client.post(
         url, data={"wizard_goto_step": AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE}
     )
     assert title in response.content
+    assert label in response.content
     assert isinstance(response.context["form"], AttachFirearmsDealerCertificateForm)
     certificate = SimpleUploadedFile("test.pdf", b"file_content", content_type="application/pdf")
     response = authorized_client.post(

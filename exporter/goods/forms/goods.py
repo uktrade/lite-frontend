@@ -306,7 +306,7 @@ def format_list_item(link, name, description):
 def upload_firearms_act_certificate_form(section, filename, back_link):
     return Form(
         title=f"Attach your Firearms Act 1968 {section} certificate",
-        description="The file must be smaller than 50MB",
+        description="Upload a DOCX, DOC, PDF or PNG file.\n\nThe file must be smaller than 50MB.",
         questions=[
             HiddenField("firearms_certificate_uploaded", False),
             FileUpload(),
@@ -1139,7 +1139,7 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
     title = "Attach your registered firearms dealer certificate"
 
     file = forms.FileField(
-        label="",
+        label="Upload a DOCX, DOC, PDF or PNG file.",
         help_text="The file must be smaller than 50MB",
         error_messages={
             "required": "Select certificate file to upload",

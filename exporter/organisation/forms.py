@@ -52,7 +52,7 @@ class UploadSectionFiveCertificateForm(forms.Form):
 
 class UploadFirearmsCertificateForm(forms.Form):
     file = forms.FileField(
-        label="",
+        label="Upload a DOCX, DOC, PDF or PNG file.",
         help_text="The file must be smaller than 50MB",
         error_messages={"required": "Select certificate file to upload"},
     )
