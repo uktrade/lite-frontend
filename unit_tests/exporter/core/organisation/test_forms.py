@@ -149,7 +149,7 @@ def test_register_commercial_details_form(data, valid, error):
                 "city": ["Enter a real city"],
                 "region": ["Enter a real region"],
                 "postcode": ["Enter a real postcode"],
-                "phone_number": ["Enter a phone number"],
+                "phone_number": ["Enter a telephone number"],
             },
         ),
         (
@@ -164,7 +164,7 @@ def test_register_commercial_details_form(data, valid, error):
             },
             False,
             {
-                "phone_number": ["Invalid phone number"],
+                "phone_number": ["Invalid telephone number"],
                 "website": ["Enter a valid URL"],
             },
         ),
@@ -176,6 +176,19 @@ def test_register_commercial_details_form(data, valid, error):
                 "city": "c1",
                 "postcode": "pc",
                 "phone_number": "+441234567890",
+                "website": "http://www.notreal.com",
+            },
+            True,
+            None,
+        ),
+        (
+            {
+                "name": "joe",
+                "address_line_1": "xyz",
+                "region": "r",
+                "city": "c1",
+                "postcode": "pc",
+                "phone_number": "01234567890",
                 "website": "http://www.notreal.com",
             },
             True,
@@ -196,7 +209,7 @@ def test_register_non_uk_address_details_form():
     assert form.errors == {
         "name": ["Enter a name for your site"],
         "address": ["Enter an address"],
-        "phone_number": ["Enter a phone number"],
+        "phone_number": ["Enter a telephone number"],
         "country": ["Enter a country"],
     }
 
