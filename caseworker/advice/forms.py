@@ -261,7 +261,7 @@ class BEISTriggerListFormBase(forms.Form):
     nsg_list_type = forms.ChoiceField(
         choices=NSG_LIST_TYPE_CHOICES,
         widget=forms.RadioSelect,
-        label="Is the product on the trigger list or dual use",
+        label="Is the product on the trigger list or dual use?",
         error_messages={
             "required": "Select whether the product/s appear on the trigger list or are for dual use",
         },
