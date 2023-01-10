@@ -12,4 +12,9 @@
 				{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
 		{% endfor %}
 	{%endif%}
+	{% for flag in goods_flags %}
+		<li
+			class="app-flag app-flag--{{ flag.colour }}"
+			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
+	{% endfor %}
 </ol>
