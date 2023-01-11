@@ -61,6 +61,17 @@
 
 	{% include 'filters.html' %}
 
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="{{ open_queries_tabs.all_cases_url }}" class="lite-tabs__tab  {% if open_queries_tabs.has_open_queries == "False" %}lite-tabs__tab--selected{% endif %}" id="view-all-queries-tab">
+				All cases {% if open_queries_tabs.has_open_queries == "False" %}({{ data.count }}){% endif %}
+			</a>
+			<a href="{{ open_queries_tabs.open_queries_url }}" class="lite-tabs__tab {% if open_queries_tabs.has_open_queries == "True" %}lite-tabs__tab--selected{% endif %}" id="view-open-queries-tab">
+				View open queries {% if open_queries_tabs.has_open_queries == "True" %}({{ data.count }}){% else %}({{  open_queries_tabs.unselected_tab_count }}){% endif %}
+			</a>
+		</div>
+	</div>
+
 	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
 		{% if not data.results.cases %}
 			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
