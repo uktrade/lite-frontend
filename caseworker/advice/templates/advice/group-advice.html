@@ -56,6 +56,18 @@
                     </tbody>
                 </table>
                 {% with decision_advice.advice.0.advice as advice %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-three-quarters">
+                      {% if advice.countersigned_by %}
+                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
+                          <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-three-quarters">
+                              <h2 class="govuk-heading-m">Countersigned by {{ advice.countersigned_by|full_name }}</h2>
+                              <p class="govuk-body">{{ advice.countersign_comments }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      {% endif %}
                 <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Reasons for approving">
                     <div class="govuk-cookie-banner__message govuk-width-container">
                         <div class="govuk-grid-row">
