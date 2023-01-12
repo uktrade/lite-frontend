@@ -1,213 +1,233 @@
 {% load static advice_tags %}
 
-        {% with display_pv_grading=case.goods|is_case_pv_graded %}
-        <h2 class="govuk-heading-m">Case details</h2>
-        <details class="govuk-details" data-module="govuk-details">
-          <summary class="govuk-details__summary">
-              <span class="govuk-details__summary-text">Products</span>
-          </summary>
-          <div class="govuk-details__text">
+{% with display_pv_grading=case.goods|is_case_pv_graded %}
+    <h2 class="govuk-heading-m">Case details</h2>
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">Products</span>
+        </summary>
+        <div class="govuk-details__text">
             <table id="table-nlr-products" class="govuk-table">
-              <tbody class="govuk-table__body">
-                {% for good in case.goods %}
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell lite-!-no-border" colspan="2">
-                    <h3>{{ forloop.counter }}. {{ good.good.name }}</h3>
-                  </td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell govuk-!-font-weight-bold">Licence required</td>
-                  <td class="govuk-table__cell">
-                    {% if good.is_good_controlled is not None %}
-                      {{ good.is_good_controlled.value }}
-                    {% elif good.good.is_good_controlled is not None %}
-                        {{ good.good.is_good_controlled.value }}
-                    {% else %}
-                        Not added
-                    {% endif %}
-                </td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell govuk-!-font-weight-bold">Control list entries</td>
-                  <td class="govuk-table__cell">
-                    {% with clc=good|get_clc %}
-                        {% if clc %}
-                            {{ clc|join:', ' }}
-                        {% else %}
-                            None
+                <tbody class="govuk-table__body">
+                    {% for good in case.goods %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell lite-!-no-border" colspan="2">
+                                <h3>{{ forloop.counter }}. {{ good.good.name }}</h3>
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell govuk-!-font-weight-bold">Licence required</td>
+                            <td class="govuk-table__cell">
+                                {% if good.is_good_controlled is not None %}
+                                    {{ good.is_good_controlled.value }}
+                                {% elif good.good.is_good_controlled is not None %}
+                                    {{ good.good.is_good_controlled.value }}
+                                {% else %}
+                                    Not added
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell govuk-!-font-weight-bold">Control list entries</td>
+                            <td class="govuk-table__cell">
+                                {% with clc=good|get_clc %}
+                                    {% if clc %}
+                                        {{ clc|join:', ' }}
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                        {% if display_pv_grading %}
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell govuk-!-font-weight-bold">Security grading</td>
+                                <td class="govuk-table__cell">
+                                    {% if good.good.is_pv_graded == "yes" %}
+                                        {% with grading=good.good.pv_grading_details %}
+                                            {{ grading.prefix }} {{ grading.grading.value }} {{ grading.suffix }}
+                                        {% endwith %}
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                </td>
+                            </tr>
                         {% endif %}
-                    {% endwith %}
-                  </td>
-                </tr>
-                {% if display_pv_grading %}
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell govuk-!-font-weight-bold">Security grading</td>
-                  <td class="govuk-table__cell">
-                    {% if good.good.is_pv_graded == "yes" %}
-                        {% with grading=good.good.pv_grading_details %}
-                            {{ grading.prefix }} {{ grading.grading.value }} {{ grading.suffix }}
-                        {% endwith %}
-                    {% else %}
-                        None
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endif %}
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell govuk-!-font-weight-bold">Annual report summary</td>
-                  <td class="govuk-table__cell">{{ good.report_summary | title }}</td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell govuk-!-font-weight-bold">Regime</td>
-                  <td class="govuk-table__cell">
-                    {% for entry in good.regime_entries %}
-                      {% if not forloop.last %}
-                        {{ entry.name }},
-                      {% else %}
-                        {{ entry.name }}
-                      {% endif %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell govuk-!-font-weight-bold">Annual report summary</td>
+                            <td class="govuk-table__cell">{{ good.report_summary | title }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell govuk-!-font-weight-bold">Regime</td>
+                            <td class="govuk-table__cell">
+                                {% for entry in good.regime_entries %}
+                                    {% if not forloop.last %}
+                                        {{ entry.name }},
+                                    {% else %}
+                                        {{ entry.name }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell govuk-!-font-weight-bold">Quantity</td>
+                            <td class="govuk-table__cell">
+                                {% if good.unit.value == 'Items' %}
+                                    {{ good.quantity|floatformat:"0" }} {{ good.unit.value }}
+                                {% else %}
+                                    {{ good.quantity }} {{ good.unit.value }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if good.good.firearm_details %}
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell govuk-!-font-weight-bold">Serial numbers</td>
+                                <td class="govuk-table__cell">
+                                    {% if good.good.firearm_details.serial_numbers_available == "LATER" and not good.good.firearm_details.serial_numbers %}
+                                        Not added yet
+                                        {{ good.good.firearm_details.serial_numbers }}
+                                    {% else %}
+                                        <details class="govuk-details" data-module="govuk-details">
+                                            <summary class="govuk-details__summary">
+                                                <span class="govuk-details__summary-text">View serial numbers</span>
+                                            </summary>
+                                            <div class="govuk-details__text">
+                                                {{ good.good.firearm_details.serial_numbers|format_serial_numbers:good.quantity|join:"<br>" }}
+                                            </div>
+                                        </details>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
-                  </td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell govuk-!-font-weight-bold">Quantity</td>
-                  <td class="govuk-table__cell">
-                    {% if good.unit.value == 'Items' %}
-                      {{ good.quantity|floatformat:"0" }} {{ good.unit.value }}
-                    {% else %}
-                      {{ good.quantity }} {{ good.unit.value }}
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
+                </tbody>
             </table>
-          </div>
-        </details>
+        </div>
+    </details>
 
-        <details class="govuk-details" data-module="govuk-details">
-          <summary class="govuk-details__summary">
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text">Destinations</span>
-          </summary>
-          <div class="govuk-details__text">
+        </summary>
+        <div class="govuk-details__text">
             <table id="table-nlr-products" class="govuk-table">
-              <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                  <th scope="col" class="govuk-table__header">Country</th>
-                  <th scope="col" class="govuk-table__header">Type</th>
-                  <th scope="col" class="govuk-table__header">Name</th>
-                </tr>
-              </thead>
-              <tbody class="govuk-table__body">
-                {% for destination in case.destinations %}
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell">{{ destination.country.name }}</td>
-                  {% if 'type_display_value' in destination %}
-                    <td class="govuk-table__cell">{{ destination.type_display_value }}</td>
-                  {% else %}
-                    <td class="govuk-table__cell">{{ destination.type }}</td>
-                  {% endif %}
-                  <td class="govuk-table__cell">{{ destination.name }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Country</th>
+                        <th scope="col" class="govuk-table__header">Type</th>
+                        <th scope="col" class="govuk-table__header">Name</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for destination in case.destinations %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ destination.country.name }}</td>
+                            {% if 'type_display_value' in destination %}
+                                <td class="govuk-table__cell">{{ destination.type_display_value }}</td>
+                            {% else %}
+                                <td class="govuk-table__cell">{{ destination.type }}</td>
+                            {% endif %}
+                            <td class="govuk-table__cell">{{ destination.name }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-          </div>
-        </details>
+        </div>
+    </details>
 
-        <dl class="govuk-summary-list govuk-summary-list--no-border">
-          <div class="govuk-summary-list__row">
+    <dl class="govuk-summary-list govuk-summary-list--no-border">
+        <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Control list entries
+                Control list entries
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ case.goods | get_clc | join:', ' }}
+                {{ case.goods | get_clc | join:', ' }}
             </dd>
-          </div>
-          <div class="govuk-summary-list__row">
+        </div>
+        <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Security graded
+                Security graded
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ display_pv_grading|yesno|capfirst }}
+                {{ display_pv_grading|yesno|capfirst }}
             </dd>
-          </div>
-           <div class="govuk-summary-list__row">
+        </div>
+        <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Security approvals
+                Security approvals
             </dt>
             <dd class="govuk-summary-list__value">
-            {% if security_approvals_classified_display %}
-                {{ security_approvals_classified_display }}
-            {% else %}
-                None
-            {% endif %}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Total value
-            </dt>
-            <dd class="govuk-summary-list__value">
-              £{{ case.goods | get_case_value }}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Location of products
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ case.organisation.primary_site.address.country.name }}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              End-use
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ case.data.intended_end_use }}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              End-user document
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if case.data.end_user.end_user_document_available %}
-                <a target="_blank" href="{% url 'cases:document' queue_pk=queue_pk pk=case.id file_pk=case.data.end_user.document.id %}" class="govuk-link--no-visited-state">
-                  {{ case.data.end_user.document.name }} (opens in new tab)
-                </a>
-              {% else %}
-                {{ case.data.end_user.end_user_document_missing_reason }}
-              {% endif %}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Denial matches
-            </dt>
-            <dd class="govuk-summary-list__value">
-                {% if case.data.denial_matches %}
-                  {% for denial in case.data.denial_matches %}
-                    <p>
-                      <a href="{% url 'external_data:denial-detail' pk=denial.denial.id %}?queue_id={{queue.id}}&case_id={{case.id}}">
-                        {{ denial.denial.reference }}
-                      </a>
-                      <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
-                        {% if denial.category == "exact" %}
-                          EXACT MATCH
-                        {% elif denial.category == "partial" %}
-                          PARTIAL MATCH
-                        {% endif %}
-                      </span>
-
-                    </p>
-                  {% endfor %}
+                {% if security_approvals_classified_display %}
+                    {{ security_approvals_classified_display }}
                 {% else %}
                     None
                 {% endif %}
             </dd>
-          </div>
-        </dl>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Total value
+            </dt>
+            <dd class="govuk-summary-list__value">
+                £{{ case.goods | get_case_value }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Location of products
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ case.organisation.primary_site.address.country.name }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                End-use
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ case.data.intended_end_use }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                End-user document
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {% if case.data.end_user.end_user_document_available %}
+                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue_pk pk=case.id file_pk=case.data.end_user.document.id %}" class="govuk-link--no-visited-state">
+                        {{ case.data.end_user.document.name }} (opens in new tab)
+                    </a>
+                {% else %}
+                    {{ case.data.end_user.end_user_document_missing_reason }}
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Denial matches
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {% if case.data.denial_matches %}
+                    {% for denial in case.data.denial_matches %}
+                        <p>
+                            <a href="{% url 'external_data:denial-detail' pk=denial.denial.id %}?queue_id={{queue.id}}&case_id={{case.id}}">
+                                {{ denial.denial.reference }}
+                            </a>
+                            <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
+                                {% if denial.category == "exact" %}
+                                    EXACT MATCH
+                                {% elif denial.category == "partial" %}
+                                    PARTIAL MATCH
+                                {% endif %}
+                            </span>
 
-        {% endwith %}
+                        </p>
+                    {% endfor %}
+                {% else %}
+                    None
+                {% endif %}
+            </dd>
+        </div>
+    </dl>
+
+{% endwith %}
