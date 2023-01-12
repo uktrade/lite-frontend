@@ -70,20 +70,34 @@
 				   </div>
 			   </li>
 			{% endif %}
-			{% if case.assignments %}
-				{% for id, user in case.assignments.items %}
+
+			{% if case.queue_assignments %}
+				{% for queue_id, assignment in case.queue_assignments.items %}
+                   {% if not assignment.assignees %}
 				   <li class="app-assignments__item">
 					   <div class="app-assignments__user">
-						   {% if user.first_name and user.last_name %}
-									{{ user.first_name }} {{ user.last_name }}
-								{% else %}
-									{{ user.email }}
-						   {% endif %}
+                                Not Allocated
 					   </div>
 					   <div class="app-assignments__team">
-						   {{ user.team_name }}
+						   {{ assignment.queue_name }}
 					   </div>
 				   </li>
+                   {% else %}
+                        {% for assignee in assignment.assignees %}
+				            <li class="app-assignments__item">
+				                <div class="app-assignments__user">
+				             	    {% if assignee.first_name and assignee.last_name %}
+				             	     		{{ assignee.first_name }} {{ assignee.last_name }}
+				             	    {% else %}
+				             	     		{{ assignee.email }}
+				             	    {% endif %}
+				                </div>
+				                <div class="app-assignments__team">
+				             	   {{ assignment.queue_name }}
+				                </div>
+				            </li>
+                        {% endfor %}
+                   {% endif %}
 				{% endfor %}
 			{% endif %}
 		</ul>
