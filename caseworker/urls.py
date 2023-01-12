@@ -33,6 +33,12 @@ if settings.FEATURE_SPIRE_SEARCH_ON:
     urlpatterns.append(path("spire/", include("caseworker.spire.urls")))
 
 
+if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+    urlpatterns = [
+        path("", include("caseworker.mock_sso.urls")),
+    ] + urlpatterns
+
+
 if settings.FEATURE_DEBUG_TOOLBAR_ON:
     import debug_toolbar
 
