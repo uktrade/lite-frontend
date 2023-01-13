@@ -80,7 +80,7 @@ def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_u
         },
         {
             "consignee": None,
-            "countersign_comments": "Agree with the recommendation",
+            "countersign_comments": "agree recommendation to refuse. Head of Cases in ECJU-FCDO agreed the recommendation to refuse\r\nNartin Mario - ECJU - FCDO",
             "countersigned_by": {
                 "email": "countersigner@example.com",
                 "first_name": "Countersigner",
@@ -106,36 +106,10 @@ def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_u
             "level": "user",
             "note": "",
             "proviso": None,
-            "text": "Approve from our team",
+            "text": "On behalf of the ECJU-FCDO Desk Officer for Buckinghamshire, their recommendation to refuse is as follows:\r\n\r\nThis licence would permit the export of miniature broccoli and associated accessories for stock. Ultimate end users are unknown.\r\n\r\nBased on the information available, alongside the unacceptable risk of diversion, I recommend to DIT that they refuse this licence.\r\n\r\nSarah Alcatraz ECJU-FCDO",
             "third_party": None,
             "type": {"key": "approve", "value": "Approve"},
             "ultimate_end_user": None,
-            "user": FCDO_team_user,
-        },
-        {
-            "created_at": "2022-07-22 10:37:26.683454+00",
-            "updated_at": "2022-07-22 10:41:32.794485+00",
-            "id": "4c3ddc00-6c3c-4b34-88bf-a62b22104beb",
-            "type": {"key": "refuse", "value": "Refuse"},
-            "text": "On behalf of the ECJU-FCDO Desk Officer for Buckinghamshire, their recommendation to refuse is as follows:\r\n\r\nThis licence would permit the export of miniature broccoli and associated accessories for stock. Ultimate end users are unknown.\r\n\r\nBased on the information available, alongside the unacceptable risk of diversion, I recommend to DIT that they refuse this licence.\r\n\r\nSarah Alcatraz ECJU-FCDO",
-            "note": None,
-            "proviso": None,
-            "case_id": "aafec4b3-d351-4c82-b696-d41fdab29d16",
-            "consignee_id": None,
-            "country_id": None,
-            "end_user_id": None,
-            "good_id": None,
-            "goods_type_id": None,
-            "third_party_id": None,
-            "ultimate_end_user_id": "8ca64eb5-7430-41fd-9c9d-45da9b27ffaf",
-            "collated_pv_grading": None,
-            "pv_grading": None,
-            "level": "user",
-            "team_id": None,
-            "footnote": None,
-            "footnote_required": False,
-            "countersign_comments": "agree recommendation to refuse. Head of Cases in ECJU-FCDO agreed the recommendation to refuse\r\nNartin Mario - ECJU - FCDO",
-            "countersigned_by_id": "3688a95b-e476-477b-a78b-93a7875fc5f5",
             "user": FCDO_team_user,
         },
     ]
@@ -156,11 +130,11 @@ def test_show_countersign_comment_for_countersigning_team(
     # use soup to check page for text
     soup = BeautifulSoup(response.content, "html.parser")
 
-    assert "Countersigned by" in soup.find("h2")
-
-    print(soup.find("main"))
-
-    assert False
+    assert "Countersigned by Countersigner Team" in [h2.text for h2 in soup.find_all("h2")]
+    assert (
+        "agree recommendation to refuse. Head of Cases in ECJU-FCDO agreed the recommendation to refuse\r\nNartin Mario - ECJU - FCDO"
+        in [p.text for p in soup.find_all("p")]
+    )
 
 
 # test that countersign comment does not show (e.g. MOD doesn't countersign)
