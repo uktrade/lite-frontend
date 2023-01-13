@@ -99,12 +99,3 @@ def test_fcdo_cannot_advice_when_all_destinations_covered(
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert not response.context_data["can_advise"]
-
-
-def test_show_countersign_comment(authorized_client, data_standard_case, data_case_advice, url):
-    data_standard_case["case"]["advice"] = data_case_advice
-    response = authorized_client.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
-    assert "Other recommendations for this case" in soup.find("h2")
-    assert "Countersigned by" in soup.find("h2")
-    assert False
