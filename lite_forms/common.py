@@ -27,6 +27,7 @@ def address_questions(countries, is_individual, prefix="address."):
         TextInput(
             title=phone_number_title,
             name="phone_number",
+            description="For international numbers include the country code",
         ),
         TextInput(title="Website", name="website"),
         conditional(countries, country_question(countries, prefix)),
@@ -40,6 +41,7 @@ def foreign_address_questions(is_individual, countries, prefix="address."):
         TextInput(
             title=phone_number_title,
             name="phone_number",
+            description="For international numbers include the country code",
         ),
         TextInput(title="Website", name="website"),
         conditional(countries, country_question(countries, prefix)),

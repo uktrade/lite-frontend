@@ -60,7 +60,7 @@ def test_create_default_site_form(rf, client, is_individual, in_uk, num_question
     assert len(form.questions) == num_questions
 
     ph_no_q = form.questions[7] if in_uk else form.questions[3]
-    assert ph_no_q.title == "Telephone number" if is_individual else "Organisation Telephone number"
+    assert ph_no_q.title == "Telephone number" if is_individual else "Organisation telephone number"
     assert ph_no_q.name == "phone_number"
     assert ph_no_q.description == "For international numbers include the country code"
 
