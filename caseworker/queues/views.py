@@ -40,7 +40,7 @@ from caseworker.queues.services import (
     post_enforcement_xml,
 )
 from caseworker.users.services import get_gov_user
-from caseworker.queues.services import get_cases_search_data
+from caseworker.queues.services import get_cases_search_data, head_cases_search_data
 
 
 class Cases(LoginRequiredMixin, TemplateView):
@@ -65,14 +65,13 @@ class Cases(LoginRequiredMixin, TemplateView):
         data = get_cases_search_data(self.request, self.queue_pk, params)
         return data
 
-    def data_for_queries_tab(self, has_open_queries):
+    def count_for_queries_tab(self, has_open_queries_filter):
         # we need to include all the existing params,
         # except we want the opposite of the current value for the queries tab
         params = self.build_params()
-        params["has_open_queries"] = has_open_queries
-        # TODO: could point to a different endpoint that just returns count?
-        data = get_cases_search_data(self.request, self.queue_pk, params)
-        return data
+        params["has_open_queries_filter"] = has_open_queries_filter
+        count = head_cases_search_data(self.request, self.queue_pk, params)
+        return count
 
     def build_params(self):
         hidden = self.request.GET.get("hidden")
@@ -93,23 +92,23 @@ class Cases(LoginRequiredMixin, TemplateView):
         return self.data["results"]["filters"]
 
     def open_queries_tabs(self):
-        has_open_queries = self.request.GET.get("has_open_queries") or "False"
+        has_open_queries_filter = self.request.GET.get("has_open_queries_filter") or "False"
 
         params_with_queries = self.request.GET.copy()
-        params_with_queries.__setitem__("has_open_queries", "True")
+        params_with_queries["has_open_queries_filter"] = "True"
         params_all_cases = self.request.GET.copy()
-        params_all_cases.__setitem__("has_open_queries", "False")
+        params_all_cases["has_open_queries_filter"] = "False"
 
         open_queries_url = "{}?{}".format(self.request.path, params_with_queries.urlencode())
         all_cases_url = "{}?{}".format(self.request.path, params_all_cases.urlencode())
 
-        data_for_count = self.data_for_queries_tab(not has_open_queries)
+        unselected_tab_count = self.count_for_queries_tab(not has_open_queries_filter)
 
         open_queries_tabs = {
-            "has_open_queries": has_open_queries,
+            "has_open_queries_filter": has_open_queries_filter,
             "open_queries_url": open_queries_url,
             "all_cases_url": all_cases_url,
-            "unselected_tab_count": data_for_count["count"],
+            "unselected_tab_count": unselected_tab_count,
         }
 
         return open_queries_tabs

@@ -191,16 +191,16 @@ def test_with_all_cases_default(authorized_client):
 
 
 def test_with_all_cases_param(authorized_client):
-    response = authorized_client.get(reverse("core:index") + "/?has_open_queries=False")
+    response = authorized_client.get(reverse("core:index") + "/?has_open_queries_filter=False")
     html = BeautifulSoup(response.content, "html.parser")
     all_queries_button = html.find(id="view-all-queries-tab")
-    assert "/?has_open_queries=False" in all_queries_button.attrs["href"]
+    assert "/?has_open_queries_filter=False" in all_queries_button.attrs["href"]
     assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
 
 
 def test_with_open_queries(authorized_client):
-    response = authorized_client.get(reverse("core:index") + "/?has_open_queries=True")
+    response = authorized_client.get(reverse("core:index") + "/?has_open_queries_filter=True")
     html = BeautifulSoup(response.content, "html.parser")
     open_queries_tab = html.find(id="view-open-queries-tab")
-    assert "/?has_open_queries=True" in open_queries_tab.attrs["href"]
+    assert "/?has_open_queries_filter=True" in open_queries_tab.attrs["href"]
     assert "lite-tabs__tab--selected" in open_queries_tab.attrs["class"]
