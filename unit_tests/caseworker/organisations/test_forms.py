@@ -60,7 +60,7 @@ def test_create_default_site_form(rf, client, is_individual, in_uk, num_question
     assert len(form.questions) == num_questions
 
     ph_no_q = form.questions[7] if in_uk else form.questions[3]
-    assert ph_no_q.title == "Phone number" if is_individual else "Organisation phone number"
+    assert ph_no_q.title == "Telephone number" if is_individual else "Organisation Telephone number"
     assert ph_no_q.name == "phone_number"
     assert ph_no_q.description == "For international numbers include the country code"
 
@@ -72,7 +72,7 @@ def test_create_default_site_form(rf, client, is_individual, in_uk, num_question
 def test_create_admin_user_form():
     form = forms.create_admin_user_form()
     assert len(form.questions) == 2
-    assert form.questions[1].title == "Contact phone number"
+    assert form.questions[1].title == "Contact telephone number"
     assert form.questions[1].optional == True
 
 
@@ -91,7 +91,7 @@ def test_edit_address_questions_form(countries, is_commercial, in_uk, num_questi
     assert len(form.questions) == num_questions
 
     ph_no_q = form.questions[7] if in_uk else form.questions[3]
-    assert ph_no_q.title == "Organisation phone number" if is_commercial else "Phone number"
+    assert ph_no_q.title == "Organisation telephone number" if is_commercial else "Telephone number"
     assert ph_no_q.name == "phone_number"
     assert ph_no_q.description == "For international numbers include the country code"
 
