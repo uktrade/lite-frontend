@@ -623,7 +623,7 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
     form_class = BEISTriggerListAssessmentForm
 
     def get_success_url(self):
-        return reverse("cases:advice_view", kwargs=self.kwargs)
+        return self.request.path
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
