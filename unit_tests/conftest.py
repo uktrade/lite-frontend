@@ -1042,6 +1042,14 @@ def data_standard_case_with_potential_trigger_list_product(data_standard_case):
 
 
 @pytest.fixture
+def data_standard_case_with_potential_trigger_list_product_and_advice_for_first_product(
+    data_standard_case_with_potential_trigger_list_product,
+):
+    data = data_standard_case_with_potential_trigger_list_product
+    data["case"]["advice"] = []
+
+
+@pytest.fixture
 def data_good_on_application(data_standard_case):
     return {
         "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",

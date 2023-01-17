@@ -349,6 +349,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
             "security_approvals_classified_display": self.security_approvals_classified_display,
+            "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
@@ -623,7 +624,12 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
     form_class = BEISTriggerListAssessmentForm
 
     def get_success_url(self):
-        return reverse("cases:advice_view", kwargs=self.kwargs)
+        if len(self.unassessed_trigger_list_goods) == len(self.selected_good_ids) and set(
+            [good["id"] for good in self.unassessed_trigger_list_goods]
+        ) == set(self.selected_good_ids):
+            return reverse("cases:advice_view", kwargs=self.kwargs)
+
+        return self.request.path
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -664,10 +670,10 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
-        selected_good_ids = data.pop("goods", [])
+        self.selected_good_ids = data.pop("goods", [])
 
         self.post_trigger_list_assessment(
-            self.request, case_id=self.kwargs["pk"], selected_good_ids=selected_good_ids, data=data
+            self.request, case_id=self.kwargs["pk"], selected_good_ids=self.selected_good_ids, data=data
         )
 
         return super().form_valid(form)
