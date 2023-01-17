@@ -42,7 +42,7 @@ from caseworker.queues.services import (
     post_enforcement_xml,
 )
 from caseworker.users.services import get_gov_user
-from caseworker.queues.services import get_cases_search_data
+from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.cases.services import update_case_officer_on_cases
 
 
@@ -63,6 +63,16 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @cached_property
     def data(self):
+        params = self.get_params()
+
+        data = get_cases_search_data(self.request, self.queue_pk, params)
+        return data
+
+    @property
+    def filters(self):
+        return self.data["results"]["filters"]
+
+    def get_params(self):
         params = {"page": int(self.request.GET.get("page", 1))}
         for key, value in self.request.GET.items():
             if key != "flags[]":
@@ -76,12 +86,15 @@ class Cases(LoginRequiredMixin, TemplateView):
         if only_open_queries == "True":
             params["hidden"] = "True"
 
-        data = get_cases_search_data(self.request, self.queue_pk, params)
-        return data
+        return params
 
-    @property
-    def filters(self):
-        return self.data["results"]["filters"]
+    def get_open_queries_count(self, only_open_queries):
+        # we need to include all the existing params,
+        # except we want the opposite of the current value for only_open_queries
+        params = self.get_params()
+        params["only_open_queries"] = only_open_queries
+        count = head_cases_search_count(self.request, self.queue_pk, params)
+        return count
 
     def open_queries_tabs(self):
         only_open_queries = self.request.GET.get("only_open_queries") or "False"
@@ -94,10 +107,13 @@ class Cases(LoginRequiredMixin, TemplateView):
         open_queries_url = "{}?{}".format(self.request.path, params_with_queries.urlencode())
         all_cases_url = "{}?{}".format(self.request.path, params_all_cases.urlencode())
 
+        unselected_tab_count = self.get_open_queries_count("True" if only_open_queries == "False" else "False")
+
         open_queries_tabs = {
             "only_open_queries": only_open_queries,
             "open_queries_url": open_queries_url,
             "all_cases_url": all_cases_url,
+            "unselected_tab_count": unselected_tab_count,
         }
 
         return open_queries_tabs

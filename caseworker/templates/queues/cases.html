@@ -71,10 +71,12 @@
 				{% endif %}
 				{% if open_queries_tabs.only_open_queries == "False" %}
 					({{ data.count }})
+				{% else %}
+					({{  open_queries_tabs.unselected_tab_count }})
 				{% endif %}
 			</a>
 			<a href="{{ open_queries_tabs.open_queries_url }}" class="lite-tabs__tab {% if open_queries_tabs.only_open_queries == "True" %}lite-tabs__tab--selected{% endif %}" id="view-open-queries-tab">
-				Open queries {% if open_queries_tabs.only_open_queries == "True" %}({{ data.count }}){% endif %}
+				Open queries {% if open_queries_tabs.only_open_queries == "True" %}({{ data.count }}){% else %}({{  open_queries_tabs.unselected_tab_count }}){% endif %}
 			</a>
 		</div>
 	</div>
