@@ -63,6 +63,12 @@ def get_cases_search_data(request, queue_pk, params):
     return data.json()
 
 
+def head_cases_search_count(request, queue_pk, params):
+    querystring = convert_parameters_to_query_params({"queue_id": queue_pk, **params})
+    response = client.head(request, f"/cases/{querystring}")
+    return response.headers["Resource-Count"]
+
+
 def put_queue(request, pk, json):
     data = client.put(request, f"/queues/{pk}/", json)
     return data.json(), data.status_code
