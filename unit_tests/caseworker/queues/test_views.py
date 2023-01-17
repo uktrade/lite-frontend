@@ -18,6 +18,7 @@ queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 @pytest.fixture(autouse=True)
 def setup(
     mock_cases_search,
+    mock_cases_search_head,
     authorized_client,
     queue_pk,
     mock_queue,
@@ -105,6 +106,12 @@ def mock_team_cases(requests_mock, data_cases_search):
     )
     url = client._build_absolute_uri(f"/cases/?{encoded_params}")
     yield requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
+def mock_cases_search_head(requests_mock):
+    url = client._build_absolute_uri(f"/cases/")
+    yield requests_mock.head(url=re.compile(f"{url}.*"), headers={"resource-count": "350"})
 
 
 @pytest.fixture
@@ -236,11 +243,21 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
     }
 
 
-def test_with_all_cases_default(authorized_client, mock_cases_search):
+def test_with_all_cases_default(authorized_client, mock_cases_search, mock_cases_search_head):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
-    all_queries_button = html.find(id="view-all-queries-tab")
-    assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
+    all_queries_tab = html.find(id="view-all-queries-tab")
+    open_queries_tab = html.find(id="view-open-queries-tab")
+
+    assert "All cases" in all_queries_tab.get_text()
+    assert "(2)" in all_queries_tab.get_text()
+    assert "(350)" in open_queries_tab.get_text()
+    assert "lite-tabs__tab--selected" in all_queries_tab.attrs["class"]
+    assert mock_cases_search_head.last_request.qs == {
+        "only_open_queries": ["true"],
+        "page": ["1"],
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+    }
     assert mock_cases_search.last_request.qs == {
         "queue_id": ["00000000-0000-0000-0000-000000000001"],
         "page": ["1"],
@@ -264,6 +281,7 @@ def test_with_open_queries(authorized_client, mock_cases_search):
     response = authorized_client.get(reverse("core:index") + "/?only_open_queries=True")
     html = BeautifulSoup(response.content, "html.parser")
     open_queries_tab = html.find(id="view-open-queries-tab")
+
     assert "/?only_open_queries=True" in open_queries_tab.attrs["href"]
     assert "lite-tabs__tab--selected" in open_queries_tab.attrs["class"]
     assert mock_cases_search.last_request.qs == {
