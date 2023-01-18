@@ -624,9 +624,9 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
     form_class = BEISTriggerListAssessmentForm
 
     def get_success_url(self):
-        if len(self.unassessed_trigger_list_goods) == len(self.selected_good_ids) and set(
-            [good["id"] for good in self.unassessed_trigger_list_goods]
-        ) == set(self.selected_good_ids):
+        if self.case:
+            del self.case
+        if len(self.unassessed_trigger_list_goods) == 0:
             return reverse("cases:advice_view", kwargs=self.kwargs)
 
         return self.request.path
