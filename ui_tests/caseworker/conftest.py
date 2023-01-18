@@ -387,6 +387,13 @@ def i_see_the_case_page(driver, context):  # noqa
     assert context.reference_code in driver.find_element_by_id(ApplicationPage.HEADING_ID).text
 
 
+@then("I see the case count returned")
+def i_see_the_case_count(driver, context):
+    print("################## case count")
+    print(driver.find_element_by_id("text-case-count"))
+    assert "305 cases" in driver.find_element_by_id(CaseListPage.CASE_COUNT).text
+
+
 @then(parsers.parse('I see the case status is now "{status}"'))
 def should_see_case_status(driver, status):  # noqa
     assert CasePage(driver).get_status() == status

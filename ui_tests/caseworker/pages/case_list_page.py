@@ -21,6 +21,7 @@ class CaseListPage(BasePage):
     BUTTON_ASSIGN_USERS = "assign-users-button"  # ID
 
     # Filters
+    CASE_COUNT = "text-case-count"
     BUTTON_CLEAR_FILTERS = "button-clear-filters"  # ID
     LINK_ADVANCED_FILTERS = "advanced-filters-link"  # ID
     LINK_HIDE_FILTERS = "hide-filters-link"  # ID
