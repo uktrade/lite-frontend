@@ -12,8 +12,7 @@ advice_tags tau_tags %} {% block header_tabs %}
     <div class="govuk-grid-row">
       <h1 class="govuk-heading-l">Clear all assessments</h1>
       <p class="govuk-body">
-        Are you sure you want to clear all {{assessed_goods.count}} product
-        assessments on this case?
+        Do you want to clear all product assessments on this case?
       </p>
       <form action="" method="POST">
         {% csrf_token %}
