@@ -625,6 +625,7 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
 
     def get_success_url(self):
         if self.case:
+            # Clear the cached case in order to get the updated case from the DB.
             del self.case
         if len(self.unassessed_trigger_list_goods) == 0:
             return reverse("cases:advice_view", kwargs=self.kwargs)
@@ -670,10 +671,10 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
-        self.selected_good_ids = data.pop("goods", [])
+        selected_good_ids = data.pop("goods", [])
 
         self.post_trigger_list_assessment(
-            self.request, case_id=self.kwargs["pk"], selected_good_ids=self.selected_good_ids, data=data
+            self.request, case_id=self.kwargs["pk"], selected_good_ids=selected_good_ids, data=data
         )
 
         return super().form_valid(form)
