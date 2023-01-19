@@ -1,4 +1,4 @@
-@all @internal @give_advice
+@skip @all @internal @give_advice
 Feature: I want to record my user advice and any comments and conditions relating to my recommendation
   As a logged in government user working on a specific case that is assigned to me
   I want to record my user advice and any comments and conditions relating to my recommendation

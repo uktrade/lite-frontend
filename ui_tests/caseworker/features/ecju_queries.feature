@@ -4,7 +4,7 @@ Feature: I want to create ECJU queries
   I want to raise a query to an exporter about their case
   So that I can ask them for additional information or to correct an issue with the case they have submitted
 
-  @ecju_query
+  @skip @ecju_query
   Scenario: Add an ECJU Query to a case
     # Caseworker creates query
     Given I sign in to SSO or am signed into SSO

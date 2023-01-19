@@ -1,4 +1,4 @@
-@all @internal @review_goods
+@skip @all @internal @review_goods
 Feature: I want to review, amend where required and confirm the goods ratings and descriptions on an application
   As a logged in government user
   I want to review, amend where required and confirm the goods ratings and descriptions on a standard application

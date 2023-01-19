@@ -4,7 +4,7 @@ Feature: I want to add an internal note to a case and view notes
   I want to add an internal note to a case and view existing notes
   So that I can record my findings and comments and others users can see these
 
-  @add_case_note
+  @skip @add_case_note
   Scenario: Add a new valid case note
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created

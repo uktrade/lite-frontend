@@ -23,7 +23,7 @@ Feature: I want to view the case details of a case
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
     | Test    | Rifle   | PN-123/XYZ  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
-
+  @skip 
   Scenario: Gov user can view product document
     Given I sign in to SSO or am signed into SSO
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>

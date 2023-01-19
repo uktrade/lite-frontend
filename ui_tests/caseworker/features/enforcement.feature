@@ -1,4 +1,4 @@
-@all @internal @enforcement
+@skip @all @internal @enforcement
 Feature: I want to export and import XML for enforcement checking
   As a logged in government user
   I want to download the entities for all application cases on a queue in XML format

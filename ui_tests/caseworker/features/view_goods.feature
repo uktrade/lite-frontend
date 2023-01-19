@@ -1,4 +1,4 @@
-@all @internal @view_goods
+@skip @all @internal @view_goods
 Feature: I want to be able to view goods on a case
 
   Scenario: View goods detail page

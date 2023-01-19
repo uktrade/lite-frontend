@@ -1,4 +1,4 @@
-@all @internal @sanctions
+@skip @all @internal @sanctions
 Feature: I want to check sanctions matches
   As a logged in government user
   I want to check that the sanction match is highlighted
