@@ -1055,6 +1055,13 @@ def data_standard_case_with_potential_trigger_list_product(
 def data_standard_case_with_all_trigger_list_products_assessed(data_standard_case_with_potential_trigger_list_product):
     data = copy.deepcopy(data_standard_case_with_potential_trigger_list_product)
     data["case"]["data"]["goods"][0]["nsg_list_type"] = {"key": "TRIGGER_LIST"}
+    data["case"]["queue_details"].append(
+        {
+            "id": "566fd526-bd6d-40c1-94bd-60d10c967cf7",
+            "name": "queue 20230119000000",
+            "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
+        },
+    )
 
     return data
 
