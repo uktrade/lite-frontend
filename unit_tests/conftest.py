@@ -994,8 +994,9 @@ def data_standard_case(
 
 
 @pytest.fixture
-def data_standard_case_with_potential_trigger_list_product(data_standard_case):
-    good_on_application = data_standard_case["case"]["data"]["goods"][0]
+def data_standard_case_with_potential_trigger_list_product_no_assessments(data_standard_case):
+    data = copy.deepcopy(data_standard_case)
+    good_on_application = data["case"]["data"]["goods"][0]
     good_on_application["is_good_controlled"] = {"key": "True", "value": "Yes"}
     good_on_application["regime_entries"].append(
         {
@@ -1011,10 +1012,10 @@ def data_standard_case_with_potential_trigger_list_product(data_standard_case):
             },
         },
     )
-    data_standard_case["case"]["data"]["goods"][0] = good_on_application
+    data["case"]["data"]["goods"][0] = good_on_application
 
     # an assessed good on the trigger list
-    trigger_list_good = data_standard_case["case"]["data"]["goods"][1]
+    trigger_list_good = data["case"]["data"]["goods"][1]
     trigger_list_good["is_good_controlled"] = {"key": "True", "value": "Yes"}
     trigger_list_good["regime_entries"].append(
         {
@@ -1030,23 +1031,32 @@ def data_standard_case_with_potential_trigger_list_product(data_standard_case):
             },
         },
     )
-    trigger_list_good["nsg_list_type"] = {"key": "TRIGGER_LIST"}
-    data_standard_case["case"]["data"]["goods"][1] = trigger_list_good
+    data["case"]["data"]["goods"][1] = trigger_list_good
 
     # set up another assessed good with different trigger list options
-    data_standard_case["case"]["data"]["goods"].append(copy.deepcopy(trigger_list_good))
-    data_standard_case["case"]["data"]["goods"][2]["nsg_list_type"] = {"key": "DUAL_USE"}
-    data_standard_case["case"]["data"]["goods"][2]["is_nca_applicable"] = True
+    data["case"]["data"]["goods"].append(copy.deepcopy(trigger_list_good))
 
-    return data_standard_case
+    return data
 
 
 @pytest.fixture
-def data_standard_case_with_potential_trigger_list_product_and_advice_for_first_product(
-    data_standard_case_with_potential_trigger_list_product,
+def data_standard_case_with_potential_trigger_list_product(
+    data_standard_case_with_potential_trigger_list_product_no_assessments,
 ):
-    data = data_standard_case_with_potential_trigger_list_product
-    data["case"]["advice"] = []
+    data = copy.deepcopy(data_standard_case_with_potential_trigger_list_product_no_assessments)
+    data["case"]["data"]["goods"][1]["nsg_list_type"] = {"key": "TRIGGER_LIST"}
+    data["case"]["data"]["goods"][2]["nsg_list_type"] = {"key": "DUAL_USE"}
+    data["case"]["data"]["goods"][2]["is_nca_applicable"] = True
+
+    return data
+
+
+@pytest.fixture
+def data_standard_case_with_all_trigger_list_products_assessed(data_standard_case_with_potential_trigger_list_product):
+    data = copy.deepcopy(data_standard_case_with_potential_trigger_list_product)
+    data["case"]["data"]["goods"][0]["nsg_list_type"] = {"key": "TRIGGER_LIST"}
+
+    return data
 
 
 @pytest.fixture

@@ -88,11 +88,25 @@ def test_beis_assess_trigger_list_products_json(
 
 
 def test_beis_assess_trigger_list_products_post_final_advice_and_returns_to_advice_view(
-    authorized_client, url, advice_url, requests_mock, data_standard_case_with_potential_trigger_list_product
+    authorized_client,
+    url,
+    advice_url,
+    requests_mock,
+    data_standard_case_with_potential_trigger_list_product,
+    data_standard_case_with_all_trigger_list_products_assessed,
 ):
     application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
     good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
-    requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
+    url1 = client._build_absolute_uri(f"/cases/{application_id}/")
+    requests_mock.get(
+        url1,
+        [
+            {"json": data_standard_case_with_potential_trigger_list_product, "status_code": 200},
+            {"json": data_standard_case_with_all_trigger_list_products_assessed, "status_code": 200},
+        ],
+    )
+    url2 = client._build_absolute_uri(f"/applications/{application_id}/goods-on-application/")
+    requests_mock.put(url2, json={})
     data = {
         "nsg_list_type": "TRIGGER_LIST",
         "is_nca_applicable": True,
@@ -104,7 +118,8 @@ def test_beis_assess_trigger_list_products_post_final_advice_and_returns_to_advi
     assert response.status_code == 302
     # All products have been assessed so go to advice page
     assert response.headers["Location"] == advice_url
-    assert requests_mock.request_history.pop().json() == [
+    put_req = [req for req in requests_mock.request_history if req.method == "PUT"].pop().json()
+    assert put_req == [
         {
             "id": good_on_application["id"],
             "application": application_id,
