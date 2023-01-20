@@ -349,6 +349,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
             "security_approvals_classified_display": self.security_approvals_classified_display,
+            "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
@@ -623,7 +624,13 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
     form_class = BEISTriggerListAssessmentForm
 
     def get_success_url(self):
-        return reverse("cases:advice_view", kwargs=self.kwargs)
+        if self.case:
+            # Clear the cached case in order to get the updated case from the DB.
+            del self.case
+        if len(self.unassessed_trigger_list_goods) == 0:
+            return reverse("cases:advice_view", kwargs=self.kwargs)
+
+        return self.request.path
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
