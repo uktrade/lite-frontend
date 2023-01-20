@@ -1,11 +1,12 @@
 from __future__ import division
-from _decimal import Decimal
 
 import datetime
 import json
 import os
 import re
+
 from collections import Counter, OrderedDict
+from decimal import Decimal
 from importlib import import_module
 
 import bleach
