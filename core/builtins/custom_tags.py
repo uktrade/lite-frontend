@@ -4,7 +4,9 @@ import datetime
 import json
 import os
 import re
+
 from collections import Counter, OrderedDict
+from decimal import Decimal
 from importlib import import_module
 
 import bleach
@@ -538,11 +540,10 @@ def format_heading(text):
 @register.filter()
 def goods_value(goods):
     total_value = 0
-
     for good in goods:
-        total_value += float(good.get("value", 0))
-
-    return total_value
+        total_value += Decimal(good.get("value", 0))
+    # need to return float in html for intcomma filter
+    return float(total_value)
 
 
 @register.filter()
