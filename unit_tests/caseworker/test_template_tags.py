@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from core.builtins import custom_tags
 
 from caseworker.core.constants import SLA_CIRCUMFERENCE
@@ -62,14 +60,3 @@ def test_sla_colour(remaining, unit, colour):
 def test_sla_colour_missing_unit():
     with pytest.raises(ValueError):
         custom_tags.sla_colour(10, "")
-
-
-def test_goods_value_correct_float_value():
-    good_1_value = Decimal("34.01")
-    good_2_value = Decimal("23.54")
-    good_1 = {"id": "8b730c06-ab4e-401c-aeb0-32b3c92e912c", "value": good_1_value}
-    good_2 = {"id": "13820c06-ab4e-401c-aeb0-32b3c92e912c", "value": good_2_value}
-    good_3 = {"id": "123fd216-ab4e-401c-aeb0-32b3c92e912c"}
-    goods = [good_1, good_2, good_3]
-    total_value = custom_tags.goods_value(goods)
-    assert str(total_value) == str(good_1_value + good_2_value)
