@@ -246,8 +246,8 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
 def test_with_all_cases_default(authorized_client, mock_cases_search, mock_cases_search_head):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
-    all_queries_tab = html.find(id="view-all-queries-tab")
-    open_queries_tab = html.find(id="view-open-queries-tab")
+    all_queries_tab = html.find(id="all-queries-tab")
+    open_queries_tab = html.find(id="open-queries-tab")
 
     assert "All cases" in all_queries_tab.get_text()
     assert "(2)" in all_queries_tab.get_text()
@@ -267,7 +267,7 @@ def test_with_all_cases_default(authorized_client, mock_cases_search, mock_cases
 def test_with_all_cases_param(authorized_client, mock_cases_search):
     response = authorized_client.get(reverse("core:index") + "/?only_open_queries=False")
     html = BeautifulSoup(response.content, "html.parser")
-    all_queries_button = html.find(id="view-all-queries-tab")
+    all_queries_button = html.find(id="all-queries-tab")
     assert "/?only_open_queries=False" in all_queries_button.attrs["href"]
     assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
     assert mock_cases_search.last_request.qs == {
@@ -280,7 +280,7 @@ def test_with_all_cases_param(authorized_client, mock_cases_search):
 def test_with_open_queries(authorized_client, mock_cases_search):
     response = authorized_client.get(reverse("core:index") + "/?only_open_queries=True")
     html = BeautifulSoup(response.content, "html.parser")
-    open_queries_tab = html.find(id="view-open-queries-tab")
+    open_queries_tab = html.find(id="open-queries-tab")
 
     assert "/?only_open_queries=True" in open_queries_tab.attrs["href"]
     assert "lite-tabs__tab--selected" in open_queries_tab.attrs["class"]
@@ -296,8 +296,8 @@ def test_with_open_queries_team_queue(authorized_client, mock_team_cases, mock_t
     url = client._build_absolute_uri(f"/queues/{queue_pk}/?only_open_queries=True")
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
-    open_queries_tab = html.find(id="view-open-queries-tab")
-    all_queries_tab = html.find(id="view-all-queries-tab")
+    open_queries_tab = html.find(id="open-queries-tab")
+    all_queries_tab = html.find(id="all-queries-tab")
 
     assert "Cases to review" in all_queries_tab.get_text()
     assert "/?only_open_queries=True" in open_queries_tab.attrs["href"]
