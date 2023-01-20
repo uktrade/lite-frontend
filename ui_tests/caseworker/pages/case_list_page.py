@@ -21,6 +21,8 @@ class CaseListPage(BasePage):
     BUTTON_ASSIGN_USERS = "assign-users-button"  # ID
 
     # Filters
+    ALL_CASES_TAB = "all-queries-tab"
+    OPEN_CASES_TAB = "open-queries-tab"
     BUTTON_CLEAR_FILTERS = "button-clear-filters"  # ID
     LINK_ADVANCED_FILTERS = "advanced-filters-link"  # ID
     LINK_HIDE_FILTERS = "hide-filters-link"  # ID
