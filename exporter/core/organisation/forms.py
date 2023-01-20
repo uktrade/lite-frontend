@@ -173,9 +173,9 @@ class RegisterAddressDetailsForm(BaseForm):
     )
 
     phone_number = forms.CharField(
-        label="Phone number",
+        label="Telephone number",
         error_messages={
-            "required": "Enter a phone number",
+            "required": "Enter a telephone number",
         },
         validators=[validate_phone],
     )
