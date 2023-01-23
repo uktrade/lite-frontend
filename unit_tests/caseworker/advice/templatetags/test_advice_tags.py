@@ -6,6 +6,7 @@ from caseworker.advice.templatetags.advice_tags import (
     group_advice,
     is_case_pv_graded,
     get_denial_reason_display_values,
+    format_serial_numbers,
 )
 from caseworker.cases.objects import Case
 
@@ -452,3 +453,12 @@ def test_get_denial_reason_display_values():
     display_dict = {"m": "military", "d": "destruction"}
 
     assert "military, destruction" == get_denial_reason_display_values(["m", "d"], display_dict)
+
+
+@pytest.mark.parametrize(
+    "serial_numbers, quantity, expected_result",
+    ([(["1234", "2345"], 2, ["1. 1234", "2. 2345"]), (["1234"], 2, ["1. 1234", "2."])]),
+)
+def test_format_serial_numbersformat_serial_numbers(serial_numbers, quantity, expected_result):
+    result = format_serial_numbers(serial_numbers, quantity)
+    assert result == expected_result
