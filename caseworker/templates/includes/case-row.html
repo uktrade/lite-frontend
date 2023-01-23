@@ -58,10 +58,10 @@
 	</td>
 
 	{# 	Case allocation #}
-	<td class="govuk-table__cell lite-mobile-hide">
-		<ul class="app-assignments__list">
+	<td class="govuk-table__cell lite-mobile-hide expander" data-expander-visible-elems="3">
+		<ul class="app-assignments__list expander__expand-list">
 			{% if case.case_officer.first_name and case.case_officer.last_name %}
-			   <li class="app-assignments__item">
+			   <li class="app-assignments__item expander__expand-list__item">
 				   <div class="app-assignments__user">
 						{{ case.case_officer.first_name  }} {{ case.case_officer.last_name}}
 				   </div>
@@ -74,7 +74,7 @@
 			{% if case.queue_assignments %}
 				{% for queue_id, assignment in case.queue_assignments.items %}
                    {% if not assignment.assignees %}
-				   <li class="app-assignments__item">
+				   <li class="app-assignments__item expander__expand-list__item">
 					   <div class="app-assignments__user">
                                 Not Allocated
 					   </div>
@@ -84,7 +84,7 @@
 				   </li>
                    {% else %}
                         {% for assignee in assignment.assignees %}
-				            <li class="app-assignments__item">
+				            <li class="app-assignments__item expander__expand-list__item">
 				                <div class="app-assignments__user">
 				             	    {% if assignee.first_name and assignee.last_name %}
 				             	     		{{ assignee.first_name }} {{ assignee.last_name }}
