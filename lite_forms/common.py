@@ -9,7 +9,7 @@ def country_question(countries, prefix="address."):
 
 
 def address_questions(countries, is_individual, prefix="address."):
-    phone_number_title = "Phone number" if is_individual else "Organisation phone number"
+    phone_number_title = "Telephone number" if is_individual else "Organisation telephone number"
     return [
         TextInput(
             title="Building and street",
@@ -35,7 +35,7 @@ def address_questions(countries, is_individual, prefix="address."):
 
 
 def foreign_address_questions(is_individual, countries, prefix="address."):
-    phone_number_title = "Phone number" if is_individual else "Organisation phone number"
+    phone_number_title = "Telephone number" if is_individual else "Organisation telephone number"
     return [
         TextArea(title="Address", name=prefix + "address", classes=["govuk-input--width-20"], rows=6),
         TextInput(
@@ -49,7 +49,7 @@ def foreign_address_questions(is_individual, countries, prefix="address."):
 
 
 def edit_address_questions_form(is_commercial, in_uk, countries, prefix="site.address."):
-    phone_number_label = "Organisation phone number" if is_commercial else "Phone number"
+    phone_number_label = "Organisation telephone number" if is_commercial else "Telephone number"
 
     if in_uk:
         questions = [

@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   caseworker:
+    platform: linux/amd64
     env_file:
       - ./caseworker.env
     environment:
@@ -20,6 +21,7 @@ services:
     tty: true
 
   exporter:
+    platform: linux/amd64
     env_file:
       - ./exporter.env
     environment:

@@ -6,6 +6,11 @@ from conf.base import *
 
 ROOT_URLCONF = "caseworker.urls"
 
+MOCK_SSO_ACTIVATE_ENDPOINTS = env.bool("MOCK_SSO_ACTIVATE_ENDPOINTS", False)
+MOCK_SSO_USER_EMAIL = env.str("MOCK_SSO_USER_EMAIL", "")
+MOCK_SSO_USER_FIRST_NAME = env.str("MOCK_SSO_USER_FIRST_NAME", "")
+MOCK_SSO_USER_LAST_NAME = env.str("MOCK_SSO_USER_LAST_NAME", "")
+
 INSTALLED_APPS += [
     "rest_framework",
     "caseworker.core",
@@ -18,6 +23,11 @@ INSTALLED_APPS += [
     "caseworker.cases",
     "caseworker.activities",
 ]
+
+if MOCK_SSO_ACTIVATE_ENDPOINTS:
+    INSTALLED_APPS += [
+        "caseworker.mock_sso",
+    ]
 
 
 TEMPLATES = [

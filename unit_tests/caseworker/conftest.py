@@ -25,6 +25,13 @@ def pytest_configure(config):
     if not os.environ.get("PIPENV_DOTENV_LOCATION"):
         load_dotenv(dotenv_path=DEFAULT_ENVFILE, override=True)
 
+    # Force mock_sso django application to be activated for test environments;
+    # must be activated up front for mock_sso django app urls to be added
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    settings.MOCK_SSO_USER_EMAIL = "test@example.net"
+    settings.MOCK_SSO_USER_FIRST_NAME = "test"
+    settings.MOCK_SSO_USER_LAST_NAME = "user"
+
 
 @pytest.fixture
 def gov_uk_user_id():
@@ -250,6 +257,19 @@ def mock_gov_fcdo_user(requests_mock, mock_notifications, mock_case_statuses, mo
         "id": "521154de-f39e-45bf-9922-baaaaaa",
         "name": "FCDO",
         "alias": "FCDO",
+    }
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
+
+
+@pytest.fixture
+def mock_gov_beis_nuclear_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+    mock_gov_user["user"]["team"] = {
+        "id": "521154de-f39e-45bf-9922-baaaaaa",
+        "name": "BEIS_NUCLEAR ",
+        "alias": "BEIS_NUCLEAR",
     }
 
     url = client._build_absolute_uri("/gov-users/")

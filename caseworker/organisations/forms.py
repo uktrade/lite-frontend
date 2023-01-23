@@ -182,7 +182,7 @@ def create_admin_user_form():
         title="Create an admin user for this organisation",
         questions=[
             TextInput(title=RegisterAnOrganisation.EMAIL, name="user.email"),
-            TextInput(title="Contact phone number", name="user.phone_number", optional=True),
+            TextInput(title="Contact telephone number", name="user.phone_number", optional=True),
         ],
         default_button_name="Submit",
         helpers=[HelpSection("Help", RegisterAnOrganisation.DEFAULT_USER)],

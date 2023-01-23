@@ -1,13 +1,9 @@
 import pytest
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
-from django.template.loader import render_to_string
-
 from django.urls import reverse
 
 from core import client
-
-from caseworker.advice.enums import NSGListTypes
 
 
 @pytest.fixture
@@ -31,6 +27,11 @@ def url(data_queue, data_standard_case):
     return reverse(
         "cases:assess_trigger_list", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
     )
+
+
+@pytest.fixture
+def advice_url(data_queue, data_standard_case):
+    return reverse("cases:advice_view", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
 
 
 @pytest.fixture
@@ -86,12 +87,26 @@ def test_beis_assess_trigger_list_products_json(
     ]
 
 
-def test_beis_assess_trigger_list_products_post(
-    authorized_client, url, requests_mock, data_standard_case_with_potential_trigger_list_product
+def test_beis_assess_trigger_list_products_post_final_advice_and_returns_to_advice_view(
+    authorized_client,
+    url,
+    advice_url,
+    requests_mock,
+    data_standard_case_with_potential_trigger_list_product,
+    data_standard_case_with_all_trigger_list_products_assessed,
 ):
     application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
     good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
-    requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
+    url1 = client._build_absolute_uri(f"/cases/{application_id}/")
+    requests_mock.get(
+        url1,
+        [
+            {"json": data_standard_case_with_potential_trigger_list_product, "status_code": 200},
+            {"json": data_standard_case_with_all_trigger_list_products_assessed, "status_code": 200},
+        ],
+    )
+    url2 = client._build_absolute_uri(f"/applications/{application_id}/goods-on-application/")
+    requests_mock.put(url2, json={})
     data = {
         "nsg_list_type": "TRIGGER_LIST",
         "is_nca_applicable": True,
@@ -99,15 +114,45 @@ def test_beis_assess_trigger_list_products_post(
         "goods": [good_on_application["id"]],
     }
     response = authorized_client.post(url, data=data)
+
     assert response.status_code == 302
-    requests_mock.request_history.pop().json() == {
-        "id": good_on_application["id"],
-        "application": application_id,
-        "good": good_on_application["good"]["id"],
+    # All products have been assessed so go to advice page
+    assert response.headers["Location"] == advice_url
+    put_req = [req for req in requests_mock.request_history if req.method == "PUT"].pop().json()
+    assert put_req == [
+        {
+            "id": good_on_application["id"],
+            "application": application_id,
+            "good": good_on_application["good"]["id"],
+            "nsg_list_type": "TRIGGER_LIST",
+            "is_nca_applicable": True,
+            "nsg_assessment_note": "meets criteria",
+        }
+    ]
+
+
+def test_beis_assess_trigger_list_products_post_advice_and_remains_on_trigger_list_view(
+    authorized_client, url, requests_mock, data_standard_case_with_potential_trigger_list_product
+):
+    application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
+
+    good_on_application_1 = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][1]
+    good_on_application_2 = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][2]
+    del good_on_application_2["nsg_list_type"]
+    del good_on_application_2["is_nca_applicable"]
+
+    requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
+    data = {
         "nsg_list_type": "TRIGGER_LIST",
         "is_nca_applicable": True,
         "nsg_assessment_note": "meets criteria",
+        "goods": [good_on_application_1["id"], good_on_application_2["id"]],
     }
+    response = authorized_client.post(url, data=data)
+
+    assert response.status_code == 302
+    # First product has not been assessed so remain on the trigger list view.
+    assert response.headers["Location"] == url
 
 
 def test_beis_assessed_trigger_list_products(
@@ -207,11 +252,13 @@ def test_beis_assess_trigger_list_products_edit(
     }
     response = authorized_client.post(edit_assessment_url, data=data)
     assert response.status_code == 302
-    requests_mock.request_history.pop().json() == {
-        "id": good_on_application["id"],
-        "application": application_id,
-        "good": good_on_application["good"]["id"],
-        "nsg_list_type": "TRIGGER_LIST",
-        "is_nca_applicable": True,
-        "nsg_assessment_note": "updated note",
-    }
+    assert requests_mock.request_history.pop().json() == [
+        {
+            "id": good_on_application["id"],
+            "application": application_id,
+            "good": good_on_application["good"]["id"],
+            "nsg_list_type": "TRIGGER_LIST",
+            "is_nca_applicable": True,
+            "nsg_assessment_note": "updated note",
+        }
+    ]

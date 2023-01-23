@@ -1,8 +1,11 @@
 import datetime
 import pytest
 
+from decimal import Decimal
+
 from core.builtins import custom_tags
 from core.builtins.custom_tags import highlight_text
+
 from exporter.core import constants
 from exporter.core.objects import Application
 
@@ -283,3 +286,14 @@ def test_get_party_type(party_type, expected):
 )
 def test_list_to_choice_labels(items, expected, dummy_choice):
     assert expected == custom_tags.list_to_choice_labels(items, dummy_choice)
+
+
+def test_goods_value_correct_float_value():
+    good_1_value = Decimal("34.01")
+    good_2_value = Decimal("23.54")
+    good_1 = {"id": "8b730c06-ab4e-401c-aeb0-32b3c92e912c", "value": good_1_value}
+    good_2 = {"id": "13820c06-ab4e-401c-aeb0-32b3c92e912c", "value": good_2_value}
+    good_3 = {"id": "123fd216-ab4e-401c-aeb0-32b3c92e912c"}
+    goods = [good_1, good_2, good_3]
+    total_value = custom_tags.goods_value(goods)
+    assert str(total_value) == str(good_1_value + good_2_value)
