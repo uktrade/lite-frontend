@@ -89,9 +89,6 @@ def put_queue_single_case_assignment(request, pk, json):
             "case_assignments": [{"case_id": json.get("case_pk"), "users": [json.get("user_pk")]}],
             "note": json.get("note"),
         }
-        import pdb
-
-        pdb.set_trace()
         data = client.put(request, f"/queues/{queue}/case-assignments/", json)
         return data.json(), data.status_code
     else:

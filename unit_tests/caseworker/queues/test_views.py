@@ -1,5 +1,8 @@
 import pytest
 import uuid
+import re
+from urllib import parse
+
 from bs4 import BeautifulSoup
 
 from django.conf import settings
@@ -85,6 +88,23 @@ def test_cases_view(url, authorized_client):
 def mock_enforcement_xml_upload(requests_mock):
     url = client._build_absolute_uri(f"/cases/enforcement-check/{queue_pk}/")
     yield requests_mock.post(url=url)
+
+
+@pytest.fixture
+def mock_team_queue(requests_mock, data_queue):
+    data_queue["is_system_queue"] = False
+    url = client._build_absolute_uri("/queues/")
+    yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
+
+
+@pytest.fixture
+def mock_team_cases(requests_mock, data_cases_search):
+    data_cases_search["results"]["filters"]["is_system_queue"] = False
+    encoded_params = parse.urlencode(
+        {"queue_id": queue_pk, "page": 1, "only_open_queries": True, "hidden": True}, doseq=True
+    )
+    url = client._build_absolute_uri(f"/cases/?{encoded_params}")
+    yield requests_mock.get(url=url, json=data_cases_search)
 
 
 @pytest.fixture
@@ -203,17 +223,71 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
         reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
         + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
     )
-    case_officer_put_urls = [
-        client._build_absolute_uri(f"/cases/{cases_ids[0]}/case-officer/"),
-        client._build_absolute_uri(f"/cases/{cases_ids[1]}/case-officer/"),
-    ]
-
-    mock_put_case_case_office_1 = requests_mock.put(url=case_officer_put_urls[0], json={})
-    mock_put_case_case_office_2 = requests_mock.put(url=case_officer_put_urls[1], json={})
+    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
+    mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
 
     data = {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
     assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
-    assert mock_put_case_case_office_1.last_request.json() == {"gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
-    assert mock_put_case_case_office_2.last_request.json() == {"gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    assert mock_put_case_case_office.last_request.json() == {
+        "gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
+        "case_ids": cases_ids,
+    }
+
+
+
+def test_with_all_cases_default(authorized_client, mock_cases_search):
+    response = authorized_client.get(reverse("core:index"))
+    html = BeautifulSoup(response.content, "html.parser")
+    all_queries_button = html.find(id="view-all-queries-tab")
+    assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
+    assert mock_cases_search.last_request.qs == {
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        "page": ["1"],
+    }
+
+
+def test_with_all_cases_param(authorized_client, mock_cases_search):
+    response = authorized_client.get(reverse("core:index") + "/?only_open_queries=False")
+    html = BeautifulSoup(response.content, "html.parser")
+    all_queries_button = html.find(id="view-all-queries-tab")
+    assert "/?only_open_queries=False" in all_queries_button.attrs["href"]
+    assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
+    assert mock_cases_search.last_request.qs == {
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        "page": ["1"],
+        "only_open_queries": ["false"],
+    }
+
+
+def test_with_open_queries(authorized_client, mock_cases_search):
+    response = authorized_client.get(reverse("core:index") + "/?only_open_queries=True")
+    html = BeautifulSoup(response.content, "html.parser")
+    open_queries_tab = html.find(id="view-open-queries-tab")
+    assert "/?only_open_queries=True" in open_queries_tab.attrs["href"]
+    assert "lite-tabs__tab--selected" in open_queries_tab.attrs["class"]
+    assert mock_cases_search.last_request.qs == {
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        "page": ["1"],
+        "only_open_queries": ["true"],
+        "hidden": ["true"],
+    }
+
+
+def test_with_open_queries_team_queue(authorized_client, mock_team_cases, mock_team_queue):
+    url = client._build_absolute_uri(f"/queues/{queue_pk}/?only_open_queries=True")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    open_queries_tab = html.find(id="view-open-queries-tab")
+    all_queries_tab = html.find(id="view-all-queries-tab")
+
+    assert "Cases to review" in all_queries_tab.get_text()
+    assert "/?only_open_queries=True" in open_queries_tab.attrs["href"]
+    assert "lite-tabs__tab--selected" in open_queries_tab.attrs["class"]
+    assert mock_team_cases.last_request.qs == {
+        "queue_id": [queue_pk],
+        "page": ["1"],
+        "only_open_queries": ["true"],
+        "hidden": ["true"],
+    }

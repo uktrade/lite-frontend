@@ -507,6 +507,25 @@ def FCDO_team_user():
 
 
 @pytest.fixture
+def LU_team_user():
+    return {
+        "email": "lu.team@example.com",
+        "first_name": "LU Team",
+        "id": "fad1db47-c5e1-4788-af3d-aea87523826b",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {
+            "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+            "name": "LU Team",
+            "alias": "LICENSING_UNIT",
+            "part_of_ecju": False,
+            "is_ogd": True,
+        },
+    }
+
+
+@pytest.fixture
 def refusal_advice(current_user):
     return [
         {
@@ -1496,8 +1515,8 @@ def mock_gov_users(requests_mock):
     data = [
         {
             "id": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
-            "email": "aaron38@drake.org",
-            "first_name": "Edward",
+            "email": "nobody_1@nodomain.com",
+            "first_name": "joe_1",
             "last_name": "Williams",
             "status": "Active",
             "team": {
@@ -1511,9 +1530,9 @@ def mock_gov_users(requests_mock):
         },
         {
             "id": "53a88f67-feda-4975-b0f9-e7689999abd7",
-            "email": "acostaerika@anderson.net",
-            "first_name": "Elaine",
-            "last_name": "Aguirre",
+            "email": "nobody@nodomain.com",
+            "first_name": "joe_2",
+            "last_name": "smith",
             "status": "Active",
             "team": {
                 "id": "b7640925-2577-4c24-8081-b85bd635b62a",
@@ -1526,7 +1545,7 @@ def mock_gov_users(requests_mock):
         },
         {
             "id": "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
-            "email": "adam.spriggs@trade.gov.uk",
+            "email": "test_3@joebloggs.co.uk",
             "first_name": "",
             "last_name": "",
             "status": "Active",
