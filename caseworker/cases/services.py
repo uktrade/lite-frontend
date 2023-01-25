@@ -320,6 +320,12 @@ def put_case_officer(request, pk, json):
     return data.json(), data.status_code
 
 
+def update_case_officer_on_cases(request, case_ids, user_id):
+    for case_id in case_ids:
+        client.put(request, f"/cases/{case_id}/case-officer/", {"gov_user_pk": user_id})
+    return
+
+
 def delete_case_officer(request, pk, *args):
     data = client.delete(request, f"/cases/{pk}/case-officer/")
     return data.json(), data.status_code

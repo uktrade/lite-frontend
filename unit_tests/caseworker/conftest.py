@@ -1488,3 +1488,63 @@ def mock_precedents_api(requests_mock, data_standard_case, data_queue):
         },
     )
     return requests_mock
+
+
+@pytest.fixture
+def mock_gov_users(requests_mock):
+    gov_users_url = client._build_absolute_uri("/gov-users/?disable_pagination=True&status=Active")
+    data = [
+        {
+            "id": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
+            "email": "aaron38@drake.org",
+            "first_name": "Edward",
+            "last_name": "Williams",
+            "status": "Active",
+            "team": {
+                "id": "b7640925-2577-4c24-8081-b85bd635b62a",
+                "name": "MOD-ECJU",
+                "alias": "MOD_ECJU",
+                "part_of_ecju": True,
+                "is_ogd": True,
+            },
+            "role_name": "MOD Administrator",
+        },
+        {
+            "id": "53a88f67-feda-4975-b0f9-e7689999abd7",
+            "email": "acostaerika@anderson.net",
+            "first_name": "Elaine",
+            "last_name": "Aguirre",
+            "status": "Active",
+            "team": {
+                "id": "b7640925-2577-4c24-8081-b85bd635b62a",
+                "name": "MOD-ECJU",
+                "alias": "MOD_ECJU",
+                "part_of_ecju": True,
+                "is_ogd": True,
+            },
+            "role_name": "MOD Administrator",
+        },
+        {
+            "id": "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
+            "email": "adam.spriggs@trade.gov.uk",
+            "first_name": "",
+            "last_name": "",
+            "status": "Active",
+            "team": {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "name": "Admin",
+                "alias": None,
+                "part_of_ecju": None,
+                "is_ogd": False,
+            },
+            "role_name": "Super User",
+        },
+    ]
+
+    requests_mock.get(
+        url=gov_users_url,
+        json={
+            "results": data,
+        },
+    )
+    return data

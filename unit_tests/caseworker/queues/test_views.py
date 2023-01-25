@@ -1,5 +1,5 @@
 import pytest
-
+import uuid
 from bs4 import BeautifulSoup
 
 from django.conf import settings
@@ -181,3 +181,39 @@ def test_trigger_list_checkbox_visible_checked(authorized_client):
     html = BeautifulSoup(response.content, "html.parser")
     checkbox = html.find(id="is-trigger-list")
     assert "checked" in checkbox.attrs
+
+
+def test_case_assignment_case_office_no_user_selected(authorized_client, mock_gov_users):
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
+    )
+    data = {}
+    response = authorized_client.post(url, data)
+
+    assert response.status_code == 200
+    assert response.context_data["form"].errors == {
+        "user": ["Select a user to allocate as Licensing Unit case officer"]
+    }
+
+
+def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_users):
+    cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
+    )
+    case_officer_put_urls = [
+        client._build_absolute_uri(f"/cases/{cases_ids[0]}/case-officer/"),
+        client._build_absolute_uri(f"/cases/{cases_ids[1]}/case-officer/"),
+    ]
+
+    mock_put_case_case_office_1 = requests_mock.put(url=case_officer_put_urls[0], json={})
+    mock_put_case_case_office_2 = requests_mock.put(url=case_officer_put_urls[1], json={})
+
+    data = {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    response = authorized_client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
+    assert mock_put_case_case_office_1.last_request.json() == {"gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    assert mock_put_case_case_office_2.last_request.json() == {"gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
