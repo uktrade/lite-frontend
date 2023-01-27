@@ -236,7 +236,6 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
     }
 
 
-
 def test_with_all_cases_default(authorized_client, mock_cases_search):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
