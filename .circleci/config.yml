@@ -1,339 +1,270 @@
 version: 2.1
-parameters:
-  run_ui_tests:
-    type: boolean
-    default: false
-  run_unit_tests:
-    type: boolean
-    default: true
-  api_git_tag:
-    type: string
-    default: latest
-  environment:
-    type: string
-    default: devdata
 
-###############################################################################
-# Env vars
-###############################################################################
 common_env_vars: &common_env_vars
-  ENVIRONMENT: << pipeline.parameters.environment >>
-  LITE_API_URL: https://lite-api-<< pipeline.parameters.environment >>.london.cloudapps.digital/
-  PIPENV_VENV_IN_PROJECT: true
-  LITE_INTERNAL_HAWK_KEY: $LITE_INTERNAL_HAWK_KEY_<< pipeline.parameters.environment >>
-  LITE_EXPORTER_HAWK_KEY: $LITE_EXPORTER_HAWK_KEY_<< pipeline.parameters.environment >>
-
-###############################################################################
-# Images
-###############################################################################
+  ELASTICSEARCH_HOST: http://localhost:9200
+  ENABLE_SPIRE_SEARCH: True
 
 image_python: &image_python
   image: cimg/python:3.7.15
 
-image_python_browsers: &image_python_browsers
-  image: circleci/python:3.7-browsers
+
+image_postgres: &image_postgres
+  image: circleci/postgres:11
+  environment:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: password
+
+image_elasticsearch: &image_elasticsearch
+  image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+  environment:
+    ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    xpack.security.enabled: "false"
+    xpack.monitoring.enabled: "false"
+    xpack.graph.enabled: "false"
+    xpack.watcher.enabled: "false"
+    transport.host: "localhost"
 
 image_redis: &image_redis
   image: circleci/redis:3.2-alpine
 
-###############################################################################
-# Commands
-###############################################################################
+parameters:
+  lite_routing_branch_name:
+    type: string
+    default: "default"
 
 commands:
-  run_make:
-    description: Run makefile target with some setup
-    parameters:
-      label:
-        type: string
-        default: Execute make << parameters.target >>
-      target:
-        type: string
+  install_os_libraries:
     steps:
       - run:
-          name: Copy config
+          name: Install OS libraries
           command: |
-            cp ci.caseworker.env caseworker.env
-            cp ci.exporter.env exporter.env
-            cp ci.api.env api.env
-      - run:
-          name: << parameters.label >>
-          command: make << parameters.target >>
+            sudo apt-get update
+            sudo apt-get install swig libpango1.0-0 libcairo2 libpq-dev libpangocairo-1.0-0
 
-  store_selenium_artifacts:
-    description: Store Selenium artifacts
-    steps:
-      - store_artifacts:
-          path: ui_tests/screenshots
-
-  setup_code:
+  setup:
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/repo/tmp
-      - run: pipenv install --dev --deploy
-      - run: git submodule update --init
-
-  backend_unit_tests:
-    parameters:
-      alias:
-        type: string
-    steps:
-      - run:
-          name: Run unit tests
-          command: |
-            pipenv run pytest --cov=.  --cov-report xml --cov-config=.coveragerc
-      - run:
-          name: Code coverage report
-          command: |
-            curl -Os https://uploader.codecov.io/latest/linux/codecov
-            chmod +x codecov
-            ./codecov
-
-  ui_tests:
-    steps:
-      - run: mkdir -p test-results
-      - run: |
-          pipenv run pytest \
-            -rP \
-            --reruns=1 \
-            --reruns-delay=60 \
-            --headless \
-            --disable-pytest-warnings \
-            --junitxml=test-results/junit.xml
-      - store_artifacts:
-          path: ui_tests/screenshots
-      - store_artifacts:
-          path: openvpn.log
-      - store_test_results:
-          path: test-results
-
-  build_api_image:
-    parameters:
-      api_branch:
-        default: master
-        type: string
-    steps:
-      - run: git clone git@github.com:uktrade/lite-api.git; cd lite-api; git checkout <<parameters.api_branch>>
       - run:
           name: Git Submodule Checkout
           command: |
-            cd lite-api
             git submodule sync
             git submodule update --init
-      - run: cd lite-api; docker build -f Dockerfile.e2e -t liteapi .
+      - when:
+          condition:
+            not:
+              and:
+                # If not equal default run this step.
+                - equal:
+                    [
+                      default,
+                      << pipeline.parameters.lite_routing_branch_name >>,
+                    ]
+          steps:
+            - run:
+                name: Git lite_routing Checkout
+                command: |
+                  echo lite_routing checkout to << pipeline.parameters.lite_routing_branch_name >>
+                  cd lite_routing
+                  git checkout << pipeline.parameters.lite_routing_branch_name >>
+                  cd ..
 
-  lint:
-    steps:
-      - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
-      - run: pipenv run prospector
-      - run: pipenv run black . --check --diff
+      # Download and cache dependencies
+      # ensure this step occurs *before* installing dependencies
+      - restore_cache:
+          key: dependencies-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - install_os_libraries
+      - run:
+          name: Install Dependencies
+          command: pipenv sync --dev
+      - run:
+          name: Install code coverage
+          command: |
+            curl -Os https://uploader.codecov.io/latest/linux/codecov
+            chmod +x codecov
+      - save_cache:
+          paths:
+            - ./.venv
+          key: dependencies-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
-  prepare_e2e_tests:
-    parameters:
-      api_branch:
-        default: master
-        type: string
-    steps:
-      - checkout
-      - build_api_image:
-          api_branch: <<parameters.api_branch>>
-      - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
-
-  finish_e2e_tests:
-    steps:
-      - store_artifacts:
-          path: ui_tests/screenshots
-
-  run_e2e_exporter:
+  upload_code_coverage:
     steps:
       - run:
-            name: "decode secret ENV variable"
-            command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
-      - run_make:
-          label: Run exporter e2e tests
-          target: start-exporter exporter-e2e-selenium-test
-
-  run_e2e_caseworker:
-    steps:
-      - run_make:
-          label: Run caseworker e2e tests
-          target: start-caseworker caseworker-e2e-selenium-test
-
-###############################################################################
-# Jobs
-###############################################################################
+          name: Upload code coverage
+          command: ./codecov
 
 jobs:
-  lint:
-    working_directory: ~/repo
+  tests:
     docker:
       - <<: *image_python
-    steps:
-      - setup_code
-      - lint
-
-  caseworker_unit_test:
-    working_directory: ~/repo
-    docker:
-      - <<: *image_python
+      - <<: *image_postgres
+      - <<: *image_elasticsearch
       - <<: *image_redis
+    working_directory: ~/lite-api
     environment:
       <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: tests.caseworker.env
-      PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
-      FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
+      LITE_API_ENABLE_ES: True
     steps:
-      - setup_code
-      - backend_unit_tests:
-          alias: caseworker
+      - setup
+      - run:
+          name: Run tests
+          command: |
+            pipenv run pytest --cov=. --cov-report xml --cov-config=.coveragerc --ignore lite_routing -k "not seeding and not elasticsearch and not performance"
+      - upload_code_coverage
 
-  exporter_unit_test:
-    working_directory: ~/repo
+  seeding_tests:
     docker:
       - <<: *image_python
-      - <<: *image_redis
+      - <<: *image_postgres
+      - <<: *image_elasticsearch
+    working_directory: ~/lite-api
     environment:
       <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: tests.exporter.env
-      PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
-      FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
+      LITE_API_ENABLE_ES: True
     steps:
-      - setup_code
-      - backend_unit_tests:
-          alias: exporter
+      - setup
+      - run:
+          name: Run seeding tests
+          command: |
+            pipenv run pytest --cov=. --cov-report xml --cov-config=.coveragerc -k seeding
+      - upload_code_coverage
 
-  core_unit_test:
-    working_directory: ~/repo
+  lite_routing_tests:
     docker:
       - <<: *image_python
+      - <<: *image_postgres
+      - <<: *image_elasticsearch
       - <<: *image_redis
+    working_directory: ~/lite-api
     environment:
       <<: *common_env_vars
-      PIPENV_DOTENV_LOCATION: tests.exporter.env
-      PYTEST_ADDOPTS: unit_tests/core --capture=no --nomigrations
-      FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
+      LITE_API_ENABLE_ES: True
     steps:
-      - setup_code
-      - backend_unit_tests:
-          alias: core
+      - setup
+      - run:
+          name: Run lite_routing tests
+          command: |
+            pipenv run pytest --cov=. --cov-report xml --cov-config=.coveragerc --ignore lite_routing/routing_rules_internal/tests/bdd lite_routing
+      - upload_code_coverage
 
-  frontend_unit_test:
+  lite_routing_bdd_tests:
     docker:
-      - image: cimg/node:16.15
+      - <<: *image_python
+      - <<: *image_postgres
+      - <<: *image_elasticsearch
+      - <<: *image_redis
+    working_directory: ~/lite-api
+    environment:
+      <<: *common_env_vars
+      LITE_API_ENABLE_ES: True
+    steps:
+      - setup
+      - run:
+          name: Run lite_routing tests
+          command: |
+            pipenv run pytest lite_routing/routing_rules_internal/tests/bdd
+      - upload_code_coverage
+
+  elastic_search_tests:
+    docker:
+      - <<: *image_python
+      - <<: *image_postgres
+      - <<: *image_elasticsearch
+    working_directory: ~/lite-api
+    environment:
+      <<: *common_env_vars
+      LITE_API_ENABLE_ES: True
+    steps:
+      - setup
+      - run:
+          name: Run elasticsearch tests
+          command: |
+            pipenv run pytest --cov=. --cov-report xml --cov-config=.coveragerc -k elasticsearch
+      - upload_code_coverage
+
+  check_migrations:
+    docker:
+      - <<: *image_python
+      - <<: *image_postgres
+      - <<: *image_elasticsearch
+    working_directory: ~/lite-api
+    environment:
+      <<: *common_env_vars
+      LITE_API_ENABLE_ES: True
+    steps:
+      - setup
+      - run:
+          name: Check migrations are made
+          command: pipenv run ./manage.py makemigrations --check
+
+  linting:
+    docker:
+      - <<: *image_python
     steps:
       - checkout
-      - run: npm install
-      - run: npm run test
+      - run:
+          name: Git Submodule Checkout
+          command: |
+            git submodule sync
+            git submodule update --init
+      - restore_cache:
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - install_os_libraries
+      - run:
+          name: Install Dependencies
+          command: pipenv sync --dev
+      - save_cache:
+          paths:
+            - ./venv
+          key: dependencies-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run:
+          name: Prospector
+          command: pipenv run prospector -W pylint -W pep257 -W mccabe
+      - run:
+          name: Black
+          command: pipenv run black . --check --diff
+      - run:
+          name: Bandit
+          command: |
+            pipenv run bandit -r .
 
-  frontend_artefacts_check:
+  check-lite-routing-sha:
     docker:
-      - image: cimg/node:16.15
+      - <<: *image_python
     steps:
       - checkout
-      - run: npm install --include=dev --no-save
-      - run: npm run build_all
-      - run: git diff --exit-code
-
-  caseworker_e2e_test:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_dev_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: dev
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_uat_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: uat
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_master_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: master
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  exporter_e2e_test:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_dev_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: dev
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_uat_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: uat
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_master_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: master
-      - run_e2e_exporter
-      - finish_e2e_tests
+      - run:
+          name: Git Submodule Checkout
+          command: |
+            git submodule sync
+            git submodule update --init
+      - run:
+          name: Check lite-routing submodule sha
+          command: |
+            CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            CHANGED_FILES=$(git diff --name-only $CURRENT_BRANCH $(git merge-base $CURRENT_BRANCH master))
+            if [[ "$CHANGED_FILES" == *"lite_routing"* ]]; then
+                cd lite_routing
+                SUBMODULE_SHA=$(git rev-parse HEAD)
+                git checkout main
+                git pull
+                LATEST_SUBMODULE_SHA=$(git rev-parse HEAD)
+                if [ "$SUBMODULE_SHA" != "$LATEST_SUBMODULE_SHA" ]; then
+                    echo "lite-api's lite_routing submodule SHA has been updated but is not pointing to the latest commit on main"
+                    echo "Updated lite_routing sha; $SUBMODULE_SHA"
+                    echo "main branch lite_routing sha; $LATEST_SUBMODULE_SHA"
+                    exit 1
+                fi
+            fi
 
 workflows:
   version: 2
-  tests:
-    when: << pipeline.parameters.run_unit_tests >>
+  test:
     jobs:
-      - lint
-      - caseworker_unit_test
-      - exporter_unit_test
-      - core_unit_test
-      - frontend_unit_test
-      - frontend_artefacts_check
-      - caseworker_e2e_test_dev_api
-      - exporter_e2e_test_dev_api
-      - caseworker_e2e_test_uat_api
-      - exporter_e2e_test_uat_api
-      - caseworker_e2e_test_master_api
-      - exporter_e2e_test_master_api
-  ui_tests:
-    when: << pipeline.parameters.run_ui_tests >>
-    jobs:
-      - caseworker_e2e_test
-      - exporter_e2e_test
+      - tests
+      - seeding_tests
+      - lite_routing_tests
+      - lite_routing_bdd_tests
+      - elastic_search_tests
+      - check_migrations
+      - linting
+      - check-lite-routing-sha
