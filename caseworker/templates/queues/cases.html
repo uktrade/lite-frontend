@@ -61,29 +61,15 @@
 
 	{% include 'filters.html' %}
 
-	<div class="lite-tabs__container">
-		<div class="lite-tabs">
-			<a href="{{ open_queries_tabs.all_cases_url }}" class="lite-tabs__tab  {% if open_queries_tabs.only_open_queries == "False" %}lite-tabs__tab--selected{% endif %}" id="all-queries-tab">
-				{% if queue.is_system_queue %}
-					All cases
-				{% else %}
-					Cases to review
-				{% endif %}
-				{% if open_queries_tabs.only_open_queries == "False" %}
-					({{ data.count }})
-				{% else %}
-					({{  open_queries_tabs.unselected_tab_count }})
-				{% endif %}
-			</a>
-			<a href="{{ open_queries_tabs.open_queries_url }}" class="lite-tabs__tab {% if open_queries_tabs.only_open_queries == "True" %}lite-tabs__tab--selected{% endif %}" id="open-queries-tab">
-				Open queries {% if open_queries_tabs.only_open_queries == "True" %}({{ data.count }}){% else %}({{  open_queries_tabs.unselected_tab_count }}){% endif %}
-			</a>
-		</div>
-	</div>
+	{% include 'queues/search-tabs.html' %}
 
 	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
 		{% if not data.results.cases %}
-			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
+			{% if tab_data.my_cases.is_selected %}
+				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES_ALLOCATED' %}
+			{% else %}
+				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
+			{% endif %}
 		{% else %}
 		<table id="table-cases" class="govuk-table">
 			<thead class="govuk-table__head">
