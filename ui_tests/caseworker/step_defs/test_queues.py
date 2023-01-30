@@ -86,9 +86,14 @@ def create_countersigning_queue(context, api_test_client):  # noqa
 
 @then("I see the open queries tab")
 def i_see_the_open_queries_tab(driver):  # noqa
-    assert element_with_id_exists(driver, CaseListPage.OPEN_CASES_TAB)
+    assert element_with_id_exists(driver, CaseListPage.OPEN_QUERIES_TAB)
 
 
 @then("I see the all cases tab")
 def i_see_all_cases_tab(driver):  # noqa
     assert element_with_id_exists(driver, CaseListPage.ALL_CASES_TAB)
+
+
+@then("I see the my cases tab")
+def i_see_my_cases_tab(driver):  # noqa
+    assert element_with_id_exists(driver, CaseListPage.MY_CASES_TAB)
