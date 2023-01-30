@@ -236,44 +236,6 @@ jobs:
       - run: npm run build_all
       - run: git diff --exit-code
 
-  # Can we remove this step?  Is it used anymore?
-  caseworker_ui_test:
-    machine:
-      image: ubuntu-2004:202008-01
-      docker_layer_caching: true
-    environment:
-      <<: *common_env_vars
-      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
-      DJANGO_SETTINGS_MODULE: conf.caseworker
-      PYTEST_ADDOPTS: ui_tests/caseworker --capture=no --nomigrations -n3
-    steps:
-      - run: sudo apt-get update
-      - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: pyenv install 3.7.0
-      - run: pyenv global 3.7.0
-      - run: pip install pipenv
-      - setup_code
-      - ui_tests
-
-  # Can we remove this step?  Is it used anymore?
-  exporter_ui_test:
-    machine:
-      image: ubuntu-2004:202008-01
-      docker_layer_caching: true
-    environment:
-      <<: *common_env_vars
-      # not set PIPENV_DOTENV_LOCATION - instead set the env vars in circle
-      DJANGO_SETTINGS_MODULE: conf.exporter
-      PYTEST_ADDOPTS: ui_tests/exporter --capture=no --nomigrations -n3
-    steps:
-      - run: sudo apt-get update
-      - run: sudo apt-get --only-upgrade install google-chrome-stable
-      - run: pyenv install 3.7.0
-      - run: pyenv global 3.7.0
-      - run: pip install pipenv
-      - setup_code
-      - ui_tests
-
   caseworker_e2e_test:
     machine:
       image: ubuntu-2004:202008-01
