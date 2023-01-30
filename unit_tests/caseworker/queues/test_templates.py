@@ -1,4 +1,5 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from django.template.loader import render_to_string
 
@@ -34,3 +35,45 @@ def test_sla_display_days(elapsed, remaining):
         }
     }
     assert render_to_string("includes/sla_display.html", context)
+
+
+def test_cases_with_flags(data_standard_case):
+    context = {}
+    context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
+    case = data_standard_case["case"]
+    case["goods_flags"] = [
+        {
+            "name": "Item not verified",
+            "label": "not-verified",
+            "colour": "default",
+        }
+    ]
+    case["destinations_flags"] = [
+        {
+            "name": "Red Destination",
+            "label": None,
+            "colour": "red",
+        }
+    ]
+    context["data"] = {"results": {"cases": [case]}}
+
+    html = render_to_string("queues/cases.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+
+    flags = soup.find("ol", class_="app-flags--list").text
+    assert "Enforcement Check Req" in flags
+    assert "Item not verified" in flags
+    assert "Red Destination" in flags
+
+
+def test_cases_without_flags(data_standard_case):
+    context = {}
+    context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
+    case = data_standard_case["case"]
+    case["flags"] = []
+    context["data"] = {"results": {"cases": [case]}}
+
+    html = render_to_string("queues/cases.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+
+    assert not soup.find("ol", class_="app-flags--list")
