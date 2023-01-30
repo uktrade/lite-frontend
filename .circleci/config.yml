@@ -121,7 +121,6 @@ commands:
             cd lite-api
             git submodule sync
             git submodule update --init
-      - run: cd lite-api; cp ../Dockerfile-api.e2e Dockerfile.e2e # TODO: Remove this line/file from frontend and adjust Dockerfile.e2e in lite-api repo
       - run: cd lite-api; docker build -f Dockerfile.e2e -t liteapi .
 
   lint:
