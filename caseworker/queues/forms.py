@@ -1,5 +1,6 @@
 from django import forms
 from django.urls import reverse_lazy
+from django.db import models
 
 from storages.backends.s3boto3 import S3Boto3StorageFile
 
@@ -11,6 +12,9 @@ from caseworker.queues.services import get_queues
 from caseworker.users.services import get_gov_users
 from caseworker.core.constants import UserStatuses
 from crispy_forms_gds.choices import Choice
+
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Layout, Submit, HTML, Submit
 
 
 def new_queue_form(request):
@@ -94,11 +98,10 @@ class EnforcementXMLImportForm(forms.Form):
 
 
 class CaseAssignmentsCaseOfficerForm(BaseForm):
-    SUBMIT_BUTTON_TEXT = "Save and continue"
-
     class Layout:
         TITLE = "Who do you want to allocate as Licensing Unit case officer ?"
-        SUBTITLE = "Manages the case until the application outcome(the exporter will see this name until the case office is changed)"
+        SUBTITLE = "Manages the case until the application outcome(the exporter will see this name until the case officer is changed)"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
 
     user = forms.ChoiceField(
         label="",
@@ -110,14 +113,14 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
         widget=forms.RadioSelect,
     )
 
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, request, team_id, *args, **kwargs):
         self.request = request
-
+        self.team_id = team_id
         self.declared_fields["user"].choices = self.get_user_choices()
         super().__init__(*args, **kwargs)
 
     def get_user_choices(self):
-        user_params = {"disable_pagination": True, "status": UserStatuses.ACTIVE}
+        user_params = {"teams": self.team_id, "disable_pagination": True, "status": UserStatuses.ACTIVE}
         users, _ = get_gov_users(self.request, user_params)
         return [
             (
@@ -136,3 +139,31 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
 
     def get_layout_fields(self):
         return ("user",)
+
+
+class SelectAllocateRole(BaseForm):
+    class Layout:
+        TITLE = "Which role do you want to allocate ?"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    class RoleChoices(models.TextChoices):
+        CASE_ADVISOR = "CASE_ADVISOR", "Case advisor"
+        LU_CASE_OFFICER = "LU_CASE_OFFICER", "Licensing unit case officer"
+
+    ROLE_CHOICES = (
+        TextChoice(RoleChoices.CASE_ADVISOR, hint="Reviews or gives advice on the case while it is with your team"),
+        TextChoice(
+            RoleChoices.LU_CASE_OFFICER,
+            hint="Manages the case until the application outcome(the exporter will see this name until the case officer is changed)",
+        ),
+    )
+
+    role = forms.ChoiceField(
+        choices=ROLE_CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={"required": "Select case adviser or Licensing Unit case officer"},
+    )
+
+    def get_layout_fields(self):
+        return ("role",)

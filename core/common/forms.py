@@ -33,6 +33,10 @@ class BaseForm(forms.Form):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
 
     def get_layout_actions(self):
+        if hasattr(self.Layout, "SUBMIT_BUTTON_TEXT"):
+            submit_button_text = self.Layout.SUBMIT_BUTTON_TEXT
+        else:
+            submit_button_text = "Continue"
         return [
-            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", "Continue")),
+            Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", submit_button_text)),
         ]

@@ -45,6 +45,9 @@ from caseworker.users.services import get_gov_user
 from caseworker.queues.services import get_cases_search_data
 from caseworker.cases.services import update_case_officer_on_cases
 
+from caseworker.queues.forms import SelectAllocateRole
+from django.views.generic import FormView
+
 
 class Cases(LoginRequiredMixin, TemplateView):
     """
@@ -188,6 +191,30 @@ class EditQueue(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("queues:manage")
 
 
+class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
+
+    template_name = "core/form.html"
+    form_class = forms.SelectAllocateRole
+
+    def form_valid(self, form):
+        url_view_name = (
+            "case_assignments"
+            if form.cleaned_data["role"] == forms.SelectAllocateRole.RoleChoices.CASE_ADVISOR.value
+            else "case_assignments_case_officer"
+        )
+        self.success_url = (
+            reverse(f"queues:{url_view_name}", kwargs={"pk": self.kwargs["pk"]}) + f"?{self.request.GET.urlencode()}"
+        )
+        return super().form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context = {
+            "back_link_url": reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]}),
+            "title": self.form_class.Layout.TITLE,
+        }
+        return super().get_context_data(*args, **context, **kwargs)
+
+
 class CaseAssignments(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
@@ -212,13 +239,17 @@ class CaseAssignments(LoginRequiredMixin, SingleFormView):
         )
 
 
-class CaseAssignmentsCaseOfficer(LoginRequiredMixin, FormView):
+class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/form.html"
     form_class = forms.CaseAssignmentsCaseOfficerForm
+    success_message = "Licensing Unit case officer allocated successfully"
 
     def get_form_kwargs(self):
+        user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+
         form_kwargs = super().get_form_kwargs()
         form_kwargs["request"] = self.request
+        form_kwargs["team_id"] = user_data["user"]["team"]["id"]
         return form_kwargs
 
     def form_valid(self, form):
@@ -239,7 +270,8 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, FormView):
 
     def get_context_data(self, *args, **kwargs):
         context = {
-            "back_link_url": self.get_success_url(),
+            "back_link_url": reverse("queues:case_assignment_select_role", kwargs={"pk": self.kwargs["pk"]})
+            + f"?{self.request.GET.urlencode()}",
             "title": self.form_class.Layout.TITLE,
         }
         return super().get_context_data(*args, **context, **kwargs)

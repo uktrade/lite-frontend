@@ -236,6 +236,25 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
     }
 
 
+@pytest.mark.parametrize(
+    "user_type, view_name",
+    (
+        ("CASE_ADVISOR", "case_assignments"),
+        ("LU_CASE_OFFICER", "case_assignments_case_officer"),
+    ),
+)
+def test_case_assignment_select_role(authorized_client, mock_gov_user, user_type, view_name):
+    cases_url = f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
+
+    url = reverse("queues:case_assignment_select_role", kwargs={"pk": queue_pk}) + cases_url
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    response = authorized_client.post(url, {"role": user_type})
+    assert response.status_code == 302
+    assert response.url == reverse(f"queues:{view_name}", kwargs={"pk": queue_pk}) + cases_url
+
+
 def test_with_all_cases_default(authorized_client, mock_cases_search):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
