@@ -12,6 +12,12 @@ from core import client
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
+default_params = {
+    "page": ["1"],
+    "queue_id": ["00000000-0000-0000-0000-000000000001"],
+    "selected_tab": ["all_cases"],
+}
+
 
 @pytest.fixture(autouse=True)
 def setup(
@@ -165,10 +171,8 @@ def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_sea
     url = reverse("queues:cases") + "?is_nca_applicable=True"
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
+        **default_params,
         "is_nca_applicable": ["true"],
-        "selected_tab": ["all_cases"],
     }
 
 
@@ -176,10 +180,8 @@ def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_searc
     url = reverse("queues:cases") + "?is_trigger_list=True"
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
+        **default_params,
         "is_trigger_list": ["true"],
-        "selected_tab": ["all_cases"],
     }
 
 
@@ -187,10 +189,8 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
     url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed"  # /PS-IGNORE
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
+        **default_params,
         "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],  # /PS-IGNORE
-        "selected_tab": ["all_cases"],
     }
 
 
@@ -257,11 +257,7 @@ def test_with_all_cases_default(authorized_client, mock_cases_search, mock_cases
     assert "lite-tabs__tab--selected" in all_queries_tab.attrs["class"]
 
     head_request_history = [x.qs for x in mock_cases_search_head.request_history]
-    assert {
-        "selected_tab": ["all_cases"],
-        "page": ["1"],
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-    } in head_request_history
+    assert default_params in head_request_history
 
     tabs_with_hidden_param = ("my_cases", "open_queries")
     for tab in tabs_with_hidden_param:
@@ -279,11 +275,7 @@ def test_tabs_with_all_cases_param(authorized_client, mock_cases_search):
     all_queries_button = html.find(id="all-cases-tab")
     assert "?selected_tab=all_cases" in all_queries_button.attrs["href"]
     assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
-    assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
-        "selected_tab": ["all_cases"],
-    }
+    assert mock_cases_search.last_request.qs == default_params
 
 
 @pytest.mark.parametrize(
@@ -332,6 +324,6 @@ def test_tabs_on_team_queue(authorized_client, mock_team_cases, mock_team_queue,
     assert mock_team_cases.last_request.qs == {
         "queue_id": [queue_pk],
         "page": ["1"],
-        "selected_tab": [f"{tab_name}"],
+        "selected_tab": [tab_name],
         "hidden": ["true"],
     }
