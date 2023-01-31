@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 
 def get_current_branch():
@@ -38,7 +39,16 @@ def get_presumed_target(branch):
     return DEFAULT_BRANCH
 
 
-if __name__ == "__main__":
+def get_branch():
+    _, desired_branch, *_ = sys.argv
+    if desired_branch != "auto":
+        return desired_branch
+
     current_branch = get_current_branch()
     presumed_target = get_presumed_target(current_branch)
-    print(presumed_target)
+
+    return presumed_target
+
+
+if __name__ == "__main__":
+    print(get_branch())
