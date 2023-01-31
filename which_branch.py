@@ -40,7 +40,7 @@ def get_presumed_target(branch):
 
 
 def get_branch():
-    _, desired_branch, *_ = sys.argv
+    desired_branch = sys.argv[1]
     if desired_branch != "auto":
         return desired_branch
 
