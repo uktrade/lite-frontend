@@ -109,12 +109,8 @@ commands:
           path: test-results
 
   build_api_image:
-    parameters:
-      api_branch:
-        default: master
-        type: string
     steps:
-      - run: git clone git@github.com:uktrade/lite-api.git; cd lite-api; git checkout <<parameters.api_branch>>
+      - run: git clone git@github.com:uktrade/lite-api.git; cd lite-api; git checkout $(python ../which_branch.py)
       - run:
           name: Git Submodule Checkout
           command: |
@@ -130,14 +126,9 @@ commands:
       - run: pipenv run black . --check --diff
 
   prepare_e2e_tests:
-    parameters:
-      api_branch:
-        default: master
-        type: string
     steps:
       - checkout
-      - build_api_image:
-          api_branch: <<parameters.api_branch>>
+      - build_api_image
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
 
   finish_e2e_tests:
@@ -240,38 +231,7 @@ jobs:
       image: ubuntu-2004:202008-01
     resource_class: large
     steps:
-      - prepare_e2e_tests:
-          api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_dev_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: dev
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_uat_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: uat
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_master_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: master
+      - prepare_e2e_tests
       - run_e2e_caseworker
       - finish_e2e_tests
 
@@ -280,38 +240,7 @@ jobs:
       image: ubuntu-2004:202008-01
     resource_class: large
     steps:
-      - prepare_e2e_tests:
-          api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_dev_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: dev
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_uat_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: uat
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_master_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: master
+      - prepare_e2e_tests
       - run_e2e_exporter
       - finish_e2e_tests
 
@@ -326,14 +255,5 @@ workflows:
       - core_unit_test
       - frontend_unit_test
       - frontend_artefacts_check
-      - caseworker_e2e_test_dev_api
-      - exporter_e2e_test_dev_api
-      - caseworker_e2e_test_uat_api
-      - exporter_e2e_test_uat_api
-      - caseworker_e2e_test_master_api
-      - exporter_e2e_test_master_api
-  ui_tests:
-    when: << pipeline.parameters.run_ui_tests >>
-    jobs:
       - caseworker_e2e_test
       - exporter_e2e_test
