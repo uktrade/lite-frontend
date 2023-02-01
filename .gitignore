@@ -182,6 +182,3 @@ ui_tests/screenshots
 
 # Playwright
 playwright_videos/
-
-caseworker/assets/built
-exporter/assets/built
