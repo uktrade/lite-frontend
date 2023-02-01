@@ -50,6 +50,9 @@ services:
         && npm run watch
       "
     working_dir: /app
+    ports:
+      - 8400:8400
+      - 8401:8401
 
 networks:
   lite:
