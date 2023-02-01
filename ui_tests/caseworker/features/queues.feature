@@ -83,3 +83,4 @@ Feature: I want to view all cases ready to review
     When I go to the internal homepage
     Then I see the all cases tab
     And I see the open queries tab
+    And I see the my cases tab
