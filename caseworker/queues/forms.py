@@ -13,9 +13,6 @@ from caseworker.users.services import get_gov_users
 from caseworker.core.constants import UserStatuses
 from crispy_forms_gds.choices import Choice
 
-from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit, HTML, Submit
-
 
 def new_queue_form(request):
     return Form(
@@ -121,6 +118,7 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
 
     def get_user_choices(self):
         user_params = {"teams": self.team_id, "disable_pagination": True, "status": UserStatuses.ACTIVE}
+
         users, _ = get_gov_users(self.request, user_params)
         return [
             (

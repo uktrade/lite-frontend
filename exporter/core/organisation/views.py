@@ -98,7 +98,7 @@ class Registration(
 
 
 class SelectOrganisation(LoginRequiredMixin, FormView):
-    form_class = buttSelectOrganisationForm
+    form_class = SelectOrganisationForm
     template_name = "core/form.html"
 
     def get_form_kwargs(self):

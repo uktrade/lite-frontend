@@ -44,9 +44,7 @@ from caseworker.queues.services import (
 from caseworker.users.services import get_gov_user
 from caseworker.queues.services import get_cases_search_data
 from caseworker.cases.services import update_case_officer_on_cases
-
 from caseworker.queues.forms import SelectAllocateRole
-from django.views.generic import FormView
 
 
 class Cases(LoginRequiredMixin, TemplateView):
@@ -194,12 +192,12 @@ class EditQueue(LoginRequiredMixin, SingleFormView):
 class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
 
     template_name = "core/form.html"
-    form_class = forms.SelectAllocateRole
+    form_class = SelectAllocateRole
 
     def form_valid(self, form):
         url_view_name = (
             "case_assignments"
-            if form.cleaned_data["role"] == forms.SelectAllocateRole.RoleChoices.CASE_ADVISOR.value
+            if form.cleaned_data["role"] == SelectAllocateRole.RoleChoices.CASE_ADVISOR.value
             else "case_assignments_case_officer"
         )
         self.success_url = (

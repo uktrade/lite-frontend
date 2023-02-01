@@ -1,6 +1,6 @@
 ---
 applications:
   - buildpacks:
-      - python_buildpack
+      - https://github.com/cloudfoundry/python-buildpack.git#v1.8.3
     health-check-type: http
     health-check-http-endpoint: /healthcheck/

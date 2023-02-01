@@ -87,9 +87,6 @@
 								<li class="govuk-table__cell__actions-list-item">
 									<a id="link-delete-draft" href="{% url 'applications:delete' draft.id %}?return_to={{ CURRENT_PATH }}" class="govuk-link--no-visited-state">{% lcs 'applications.DeleteApplicationPage.BUTTON' %}</a>
 								</li>
-								<li class="govuk-table__cell__actions-list-item">
-									<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{% url 'applications:copy' draft.id %}">{% lcs 'applications.ApplicationsList.COPY_LINK' %}</a>
-								</li>
 							</ul>
 						</td>
 					</tr>
