@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.views.generic.edit import CreateView
+from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -15,6 +16,7 @@ from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
@@ -41,6 +43,7 @@ from caseworker.queues.services import (
 )
 from caseworker.users.services import get_gov_user
 from caseworker.queues.services import get_cases_search_data
+from caseworker.cases.services import update_case_officer_on_cases
 
 
 class Cases(LoginRequiredMixin, TemplateView):
@@ -207,6 +210,39 @@ class CaseAssignments(LoginRequiredMixin, SingleFormView):
         self.success_message = (
             Manage.AssignUsers.SUCCESS_MULTI_MESSAGE if len(case_ids) > 1 else Manage.AssignUsers.SUCCESS_MESSAGE
         )
+
+
+class CaseAssignmentsCaseOfficer(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = forms.CaseAssignmentsCaseOfficerForm
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
+        return form_kwargs
+
+    def form_valid(self, form):
+        self.update_case_officer(form.cleaned_data["user"])
+        return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating case advisor on cases",
+        "Unexpected error updating case advisor on cases",
+    )
+    def update_case_officer(self, user_id):
+        case_ids = self.request.GET.getlist("cases")
+        return update_case_officer_on_cases(self.request, case_ids, user_id)
+
+    def get_success_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+
+    def get_context_data(self, *args, **kwargs):
+        context = {
+            "back_link_url": self.get_success_url(),
+            "title": self.form_class.Layout.TITLE,
+        }
+        return super().get_context_data(*args, **context, **kwargs)
 
 
 class EnforcementXMLExport(LoginRequiredMixin, TemplateView):
