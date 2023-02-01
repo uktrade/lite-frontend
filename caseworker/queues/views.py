@@ -42,7 +42,7 @@ from caseworker.queues.services import (
     post_enforcement_xml,
 )
 from caseworker.users.services import get_gov_user
-from caseworker.queues.services import get_cases_search_data
+from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.cases.services import update_case_officer_on_cases
 from caseworker.queues.forms import SelectAllocateRole
 
@@ -64,18 +64,7 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @cached_property
     def data(self):
-        params = {"page": int(self.request.GET.get("page", 1))}
-        for key, value in self.request.GET.items():
-            if key != "flags[]":
-                params[key] = value
-
-        params["flags"] = self.request.GET.getlist("flags[]", [])
-
-        # if the hidden param is not true
-        # then cases with open queries are filtered out on team queue views
-        only_open_queries = self.request.GET.get("only_open_queries")
-        if only_open_queries == "True":
-            params["hidden"] = "True"
+        params = self.get_params()
 
         data = get_cases_search_data(self.request, self.queue_pk, params)
         return data
@@ -84,24 +73,50 @@ class Cases(LoginRequiredMixin, TemplateView):
     def filters(self):
         return self.data["results"]["filters"]
 
-    def open_queries_tabs(self):
-        only_open_queries = self.request.GET.get("only_open_queries") or "False"
+    def get_params(self):
+        params = {"page": int(self.request.GET.get("page", 1))}
+        for key, value in self.request.GET.items():
+            if key != "flags[]":
+                params[key] = value
 
-        params_with_queries = self.request.GET.copy()
-        params_with_queries["only_open_queries"] = "True"
-        params_all_cases = self.request.GET.copy()
-        params_all_cases["only_open_queries"] = "False"
+        params["flags"] = self.request.GET.getlist("flags[]", [])
 
-        open_queries_url = "{}?{}".format(self.request.path, params_with_queries.urlencode())
-        all_cases_url = "{}?{}".format(self.request.path, params_all_cases.urlencode())
+        params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
+        # if the hidden param is not true
+        # then cases with open queries are filtered out on team queue views
+        if (
+            params["selected_tab"] == CasesListPage.Tabs.MY_CASES
+            or params["selected_tab"] == CasesListPage.Tabs.OPEN_QUERIES
+        ):
+            params["hidden"] = "True"
 
-        open_queries_tabs = {
-            "only_open_queries": only_open_queries,
-            "open_queries_url": open_queries_url,
-            "all_cases_url": all_cases_url,
-        }
+        return params
 
-        return open_queries_tabs
+    def _get_tab_url(self, tab_name):
+        params = self.request.GET.copy()
+        params["selected_tab"] = tab_name
+        return f"?{params.urlencode()}"
+
+    def _get_tab_count(self, tab_name):
+        params = self.get_params()
+        params["selected_tab"] = tab_name
+        if tab_name != CasesListPage.Tabs.ALL_CASES:
+            params["hidden"] = "True"
+
+        return head_cases_search_count(self.request, self.queue_pk, params)
+
+    def _tab_data(self):
+        selected_tab = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
+        tab_data = {}
+
+        for tab in CasesListPage.Tabs:
+            tab_data[tab] = {
+                "count": self._get_tab_count(tab),
+                "is_selected": selected_tab == tab,
+                "url": self._get_tab_url(tab.value),
+            }
+
+        return tab_data
 
     def get_context_data(self, *args, **kwargs):
 
@@ -136,7 +151,7 @@ class Cases(LoginRequiredMixin, TemplateView):
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
             "show_updated_cases_banner": show_updated_cases_banner,
-            "open_queries_tabs": self.open_queries_tabs,
+            "tab_data": self._tab_data(),
         }
 
         return super().get_context_data(*args, **context, **kwargs)

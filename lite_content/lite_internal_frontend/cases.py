@@ -1,6 +1,10 @@
+from enum import Enum
+
+
 class CasesListPage:
     GO_TO_QUEUE = "Go to queue"
     NO_CASES = "There are no new cases"
+    NO_CASES_ALLOCATED = "You are not allocated to any cases"
     ACTIVE_FILTER_NO_CASES = "No cases match your filters"
     EXPORTER_AMENDMENTS_BANNER = "View cases that have changed"
     ASSIGN_USERS = "Assign users_new"
@@ -64,6 +68,11 @@ class CasesListPage:
         class Export:
             NO_CASES = "No matching cases found"
             GENERIC_ERROR = "An error occurred when generating XML for this queue."
+
+    class Tabs(str, Enum):
+        ALL_CASES = "all_cases"
+        MY_CASES = "my_cases"
+        OPEN_QUERIES = "open_queries"
 
 
 class CasePage:
