@@ -11,13 +11,15 @@
     "watch": "npm-run-all --parallel watch_exporter watch_caseworker",
     "build": "npm install --no-save && npm run build_all",
     "build_all": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
+    "heroku-postbuild": "npm run build",
     "test:e2e": "cypress run --browser chrome",
     "test:e2e:watch": "cypress open",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "engines": {
-    "node": ">=16.10.0"
+    "node": "16.x",
+    "npm": "8.11.x"
   },
   "repository": {
     "type": "git",
