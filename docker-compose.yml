@@ -39,6 +39,18 @@ services:
     stdin_open: true
     tty: true
 
+  frontend_assets_watcher:
+    image: node:16.10
+    volumes:
+      - .:/app
+    command:
+      bash -c "
+        npm set unsafe-perm true
+        && npm install
+        && npm run watch
+      "
+    working_dir: /app
+
 networks:
   lite:
     external: true
