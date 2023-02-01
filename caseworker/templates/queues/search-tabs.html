@@ -1,18 +1,18 @@
 <div class="lite-tabs__container">
-  <div class="lite-tabs">
-    <a href="{{ tab_data.all_cases.url }}" class="lite-tabs__tab  {% if tab_data.all_cases.is_selected %}lite-tabs__tab--selected{% endif %}" id="all-cases-tab">
-      {% if queue.is_system_queue %}
+	<div class="lite-tabs">
+		<a href="{{ tab_data.all_cases.url }}" class="lite-tabs__tab  {% if tab_data.all_cases.is_selected %}lite-tabs__tab--selected{% endif %}" id="all-cases-tab">
+			{% if queue.is_system_queue %}
 					All cases
 				{% else %}
 					Cases to review
 			{% endif %}
       ({{  tab_data.all_cases.count }})
     </a>
-    <a href="{{ tab_data.my_cases.url }}" class="lite-tabs__tab {% if tab_data.my_cases.is_selected %}lite-tabs__tab--selected{% endif %}" id="my-cases-tab">
+		<a href="{{ tab_data.my_cases.url }}" class="lite-tabs__tab {% if tab_data.my_cases.is_selected %}lite-tabs__tab--selected{% endif %}" id="my-cases-tab">
 				My cases ({{ tab_data.my_cases.count }})
     </a>
-    <a href="{{ tab_data.open_queries.url }}" class="lite-tabs__tab {% if tab_data.open_queries.is_selected %}lite-tabs__tab--selected{% endif %}" id="open-queries-tab">
+		<a href="{{ tab_data.open_queries.url }}" class="lite-tabs__tab {% if tab_data.open_queries.is_selected %}lite-tabs__tab--selected{% endif %}" id="open-queries-tab">
 				Open queries ({{  tab_data.open_queries.count }})
     </a>
-  </div>
+	</div>
 </div>
