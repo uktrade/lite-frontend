@@ -60,8 +60,6 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @cached_property
     def data(self):
-        hidden = self.request.GET.get("hidden")
-
         params = {"page": int(self.request.GET.get("page", 1))}
         for key, value in self.request.GET.items():
             if key != "flags[]":
@@ -69,8 +67,11 @@ class Cases(LoginRequiredMixin, TemplateView):
 
         params["flags"] = self.request.GET.getlist("flags[]", [])
 
-        if hidden:
-            params["hidden"] = hidden
+        # if the hidden param is not true
+        # then cases with open queries are filtered out on team queue views
+        only_open_queries = self.request.GET.get("only_open_queries")
+        if only_open_queries == "True":
+            params["hidden"] = "True"
 
         data = get_cases_search_data(self.request, self.queue_pk, params)
         return data
@@ -78,6 +79,25 @@ class Cases(LoginRequiredMixin, TemplateView):
     @property
     def filters(self):
         return self.data["results"]["filters"]
+
+    def open_queries_tabs(self):
+        only_open_queries = self.request.GET.get("only_open_queries") or "False"
+
+        params_with_queries = self.request.GET.copy()
+        params_with_queries["only_open_queries"] = "True"
+        params_all_cases = self.request.GET.copy()
+        params_all_cases["only_open_queries"] = "False"
+
+        open_queries_url = "{}?{}".format(self.request.path, params_with_queries.urlencode())
+        all_cases_url = "{}?{}".format(self.request.path, params_all_cases.urlencode())
+
+        open_queries_tabs = {
+            "only_open_queries": only_open_queries,
+            "open_queries_url": open_queries_url,
+            "all_cases_url": all_cases_url,
+        }
+
+        return open_queries_tabs
 
     def get_context_data(self, *args, **kwargs):
 
@@ -112,6 +132,7 @@ class Cases(LoginRequiredMixin, TemplateView):
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
             "show_updated_cases_banner": show_updated_cases_banner,
+            "open_queries_tabs": self.open_queries_tabs,
         }
 
         return super().get_context_data(*args, **context, **kwargs)

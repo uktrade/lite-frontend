@@ -507,6 +507,25 @@ def FCDO_team_user():
 
 
 @pytest.fixture
+def LU_team_user():
+    return {
+        "email": "lu.team@example.com",
+        "first_name": "LU Team",
+        "id": "fad1db47-c5e1-4788-af3d-aea87523826b",
+        "last_name": "User",
+        "role_name": "Super User",
+        "status": "Active",
+        "team": {
+            "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+            "name": "LU Team",
+            "alias": "LICENSING_UNIT",
+            "part_of_ecju": False,
+            "is_ogd": True,
+        },
+    }
+
+
+@pytest.fixture
 def refusal_advice(current_user):
     return [
         {
