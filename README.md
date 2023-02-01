@@ -195,6 +195,12 @@ PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "ru
 
 ## Javascript/SCSS
 
+The Javascript/SCSS is automatically watched via the node docker service.
+
+The production assets are built via Jenkins on deployment.
+
+### Without docker
+
 Node version required is 16.5.0
 All javascripts and scss files are stored under caseworker/assets and exporter/assets
 
@@ -206,10 +212,4 @@ Hot reload for local development.
 
 ```
   npm run watch
-```
-
-Building before PR. Also remove a folder named .parcel-cache before running the command below.
-
-```
-  npm run build
 ```
