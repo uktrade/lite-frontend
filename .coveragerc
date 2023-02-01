@@ -20,3 +20,4 @@ exclude_lines =
   pragma: no cover
   raise NotImplementedError
   if settings.DEBUG
+  if __name__ == "__main__"

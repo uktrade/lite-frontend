@@ -83,25 +83,3 @@ docker push eu.gcr.io/sre-docker-registry/lite-db:latest
 Your image should be now listed at [Google Container Registry](http://gcr.io/sre-docker-registry/github.com/uktrade).
 
 Note that `lite-db` image is hosted in private registry.
-
-
-## Creating and pushing the lite-api docker image
-
-`lite-api` image is hosted in GCR and latest image is pulled from there each time stack is built. A GCR trigger, lite-api, is responsible for building it for each merge to master and tag it as `latest`. 
-
-Note: In order to run automated tests before production release, we need `lite-api` image tagged with release tag that is ready for release. There is another GCR trigger `lite-api-release-tag`, that builds api image upon git releases.
-
-In case we want to update the image manually, simply run the trigger from GCR console.
-
-We can always build it locally and push to GCR - if required.
-
-```bash
-docker build -f Dockerfile.e2e -t lite-api .
-
-gcloud auth login
-gcloud auth configure-docker
-
-docker tag lite-api:latest gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
-
-docker push gcr.io/sre-docker-registry/github.com/uktrade/lite-api:latest
-```

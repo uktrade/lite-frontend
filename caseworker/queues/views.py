@@ -45,9 +45,6 @@ from caseworker.users.services import get_gov_user
 from caseworker.queues.services import get_cases_search_data
 from caseworker.cases.services import update_case_officer_on_cases
 
-from caseworker.queues.forms import SelectAllocateRole
-from django.views.generic import FormView
-
 
 class Cases(LoginRequiredMixin, TemplateView):
     """
@@ -239,17 +236,13 @@ class CaseAssignments(LoginRequiredMixin, SingleFormView):
         )
 
 
-class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class CaseAssignmentsCaseOfficer(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
     form_class = forms.CaseAssignmentsCaseOfficerForm
-    success_message = "Licensing Unit case officer allocated successfully"
 
     def get_form_kwargs(self):
-        user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
-
         form_kwargs = super().get_form_kwargs()
         form_kwargs["request"] = self.request
-        form_kwargs["team_id"] = user_data["user"]["team"]["id"]
         return form_kwargs
 
     def form_valid(self, form):
@@ -270,8 +263,7 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormVi
 
     def get_context_data(self, *args, **kwargs):
         context = {
-            "back_link_url": reverse("queues:case_assignment_select_role", kwargs={"pk": self.kwargs["pk"]})
-            + f"?{self.request.GET.urlencode()}",
+            "back_link_url": self.get_success_url(),
             "title": self.form_class.Layout.TITLE,
         }
         return super().get_context_data(*args, **context, **kwargs)
