@@ -271,9 +271,9 @@ class BEISTriggerListFormBase(forms.Form):
         choices=NCA_CHOICES,
         coerce=coerce_str_to_bool,
         error_messages={
-            "required": "Select yes if the Nuclear Cooperation Agreement applies to the product",
+            "required": "Select yes if a Nuclear Cooperation Agreement applies to the product",
         },
-        label="Does the Nuclear Cooperation Agreement apply to the product?",
+        label="Does a Nuclear Cooperation Agreement apply?",
         widget=forms.RadioSelect,
     )
 
