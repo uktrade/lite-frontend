@@ -10,7 +10,7 @@
     "watch_caseworker": "parcel watch ./caseworker/assets/javascripts/{main,head,cookie-policy-form,search-cases,search-products,beis,tau,tau-edit}.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch": "npm-run-all --parallel watch_exporter watch_caseworker",
     "build": "npm install --no-save && npm run build_all",
-    "build_all": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
+    "build_all": "export NODE_ENV=production || set NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
     "test:e2e": "cypress run --browser chrome",
     "test:e2e:watch": "cypress open",
     "test": "jest",
