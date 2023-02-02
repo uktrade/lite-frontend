@@ -1,6 +1,5 @@
 import re
 import os
-from urllib import parse
 
 import pytest
 from dotenv import load_dotenv
@@ -58,41 +57,6 @@ def data_case_types():
         {"key": "comp_c", "value": "Compliance Site Case"},
         {"key": "comp_v", "value": "Compliance Visit Case"},
     ]
-
-
-@pytest.fixture
-def data_cases_search(data_open_case, data_standard_case, mock_case_statuses, data_case_types, gov_uk_user_id):
-    return {
-        "count": 2,
-        "results": {
-            "cases": [data_open_case["case"], data_standard_case["case"]],
-            "filters": {
-                "advice_types": [
-                    {"key": "approve", "value": "Approve"},
-                    {"key": "proviso", "value": "Proviso"},
-                    {"key": "refuse", "value": "Refuse"},
-                    {"key": "no_licence_required", "value": "No Licence Required"},
-                    {"key": "not_applicable", "value": "Not Applicable"},
-                    {"key": "conflicting", "value": "Conflicting"},
-                ],
-                "case_types": data_case_types,
-                "gov_users": [{"full_name": "John Smith", "id": gov_uk_user_id}],
-                "statuses": mock_case_statuses["statuses"],
-                "is_system_queue": True,
-                "is_work_queue": False,
-                "queue": {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
-            },
-            "queues": [
-                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
-                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000002", "name": "Open cases"},
-                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000003", "name": "My team's cases"},
-                {"case_count": 0, "id": "00000000-0000-0000-0000-000000000004", "name": "New exporter amendments"},
-                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000005", "name": "My assigned cases"},
-                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000006", "name": "My caseload"},
-            ],
-        },
-        "total_pages": 1,
-    }
 
 
 @pytest.fixture
@@ -195,13 +159,6 @@ def mock_queue(requests_mock, data_queue):
 def mock_countries(requests_mock, data_countries):
     url = client._build_absolute_uri("/static/countries/" + convert_value_to_query_param("exclude", None))
     yield requests_mock.get(url=url, json=data_countries)
-
-
-@pytest.fixture
-def mock_cases_search(requests_mock, data_cases_search, queue_pk):
-    encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
-    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
-    yield requests_mock.get(url=url, json=data_cases_search)
 
 
 @pytest.fixture

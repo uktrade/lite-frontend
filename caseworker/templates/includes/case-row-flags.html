@@ -1,20 +1,21 @@
-
-<ol class="app-flags app-flags--list">
-	{% for flag in flags %}
-		<li
-			class="app-flag app-flag--{{ flag.colour }}"
-			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
-	{% endfor %}
-	{%if destinations_flags %}
-		{% for flag in destinations_flags %}
-			<li
-				class="app-flag app-flag--{{ flag.colour }}"
-				{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
-		{% endfor %}
-	{%endif%}
-	{% for flag in goods_flags %}
-		<li
-			class="app-flag app-flag--{{ flag.colour }}"
-			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
-	{% endfor %}
-</ol>
+<div class="expander" data-expander-visible-elems="3">
+    <ol class="app-flags app-flags--list expander__expand-list">
+    	{% for flag in flags %}
+    		<li
+    			class="app-flag app-flag--{{ flag.colour }}"
+    			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
+    	{% endfor %}
+    	{%if destinations_flags %}
+    		{% for flag in destinations_flags %}
+    			<li
+    				class="app-flag app-flag--{{ flag.colour }} expander__expand-list__item"
+    				{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
+    		{% endfor %}
+    	{%endif%}
+    	{% for flag in goods_flags %}
+    		<li
+    			class="app-flag app-flag--{{ flag.colour }} expander__expand-list__item"
+    			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
+    	{% endfor %}
+    </ol>
+</div>

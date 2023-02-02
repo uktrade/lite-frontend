@@ -36,6 +36,9 @@ image_python_browsers: &image_python_browsers
 image_redis: &image_redis
   image: circleci/redis:3.2-alpine
 
+image_node: &image_node
+  image: cimg/node:16.19
+
 ###############################################################################
 # Commands
 ###############################################################################
@@ -225,7 +228,7 @@ jobs:
 
   frontend_unit_test:
     docker:
-      - image: cimg/node:16.15
+      - <<: *image_node
     steps:
       - checkout
       - run: npm install
@@ -233,7 +236,7 @@ jobs:
 
   frontend_artefacts_check:
     docker:
-      - image: cimg/node:16.15
+      - <<: *image_node
     steps:
       - checkout
       - run: npm install --include=dev --no-save

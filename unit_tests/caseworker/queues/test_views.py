@@ -3,6 +3,7 @@ import uuid
 import re
 
 from bs4 import BeautifulSoup
+from urllib import parse
 
 from django.urls import reverse
 
@@ -32,6 +33,168 @@ def setup(
     mock_regime_entries,
 ):
     yield
+
+
+@pytest.fixture
+def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
+    return {
+        "count": 2,
+        "results": {
+            "cases": [
+                {
+                    "id": "094eed9a-23cc-478a-92ad-9a05ac17fad0",
+                    "case_type": {
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "reference": {"key": "oiel", "value": "Open Individual Export Licence"},
+                        "type": {"key": "application", "value": "Application"},
+                        "sub_type": {"key": "open", "value": "Open Licence"},
+                    },
+                    "destinations": [],
+                    "destinations_flags": [],
+                    "flags": [
+                        {
+                            "id": "00000000-0000-0000-0000-000000000007",
+                            "name": "Firearms",
+                            "colour": "default",
+                            "label": None,
+                            "priority": 0,
+                            "removable_by": "Anyone",
+                        },
+                        {
+                            "id": "00000000-0000-0000-0000-000000000014",
+                            "name": "Enforcement Check Req",
+                            "colour": "default",
+                            "label": None,
+                            "priority": 0,
+                            "removable_by": "Anyone",
+                        },
+                    ],
+                    "goods_flags": [],
+                    "has_open_queries": False,
+                    "is_recently_updated": True,
+                    "organisation": {},
+                    "assignments": {
+                        "9c4e66be-9f0f-451a-9c5f-d30e9c4bb69d": {
+                            "email": "test@mail.com",
+                            "first_name": "John",
+                            "last_name": "Smith",
+                            "queues": [{"id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7", "name": "Initial Queue"}],
+                            "team_id": "00000000-0000-0000-0000-000000000001",
+                            "team_name": "Admin",
+                        },
+                        "9c4e66be-9f0f-451a-9c5f-d30e9c4bb69e": {
+                            "email": "test2@mail.com",
+                            "first_name": "Joe",
+                            "last_name": "Smith",
+                            "queues": [{"id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7", "name": "Initial Queue"}],
+                            "team_id": "00000000-0000-0000-0000-000000000001",
+                            "team_name": "Admin",
+                        },
+                    },
+                    "queues": [
+                        {
+                            "countersigning_queue": None,
+                            "id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7",
+                            "name": "Initial Queue",
+                            "team": {
+                                "alias": None,
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "is_ogd": False,
+                                "name": "Admin",
+                                "part_of_ecju": False,
+                            },
+                        },
+                        {
+                            "countersigning_queue": None,
+                            "id": "ee1a3870-73d7-4af3-b629-e28f2c2227d8",
+                            "name": "Another Queue",
+                            "team": {
+                                "alias": None,
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "is_ogd": False,
+                                "name": "Admin",
+                                "part_of_ecju": False,
+                            },
+                        },
+                    ],
+                    "case_officer": None,
+                    "reference_code": "GBOIEL/2020/0000045/P",
+                    "sla_days": 0,
+                    "sla_remaining_days": 60,
+                    "status": {"key": "submitted", "value": "Submitted"},
+                    "next_review_date": None,
+                    "licences": [],
+                    "submitted_at": "2023-01-16T14:53:09.826340Z",
+                },
+                {
+                    "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
+                    "case_type": {
+                        "id": "00000000-0000-0000-0000-000000000004",
+                        "reference": {"key": "siel", "value": "Standard Individual Export Licence"},
+                        "type": {"key": "application", "value": "Application"},
+                        "sub_type": {"key": "standard", "value": "Standard Licence"},
+                    },
+                    "destinations_flags": [],
+                    "flags": [
+                        {
+                            "id": "00000000-0000-0000-0000-000000000014",
+                            "name": "Enforcement Check Req",
+                            "alias": "ENF_CHECK_REQ",
+                            "colour": "default",
+                            "label": None,
+                            "priority": 0,
+                            "removable_by": "Anyone",
+                        }
+                    ],
+                    "goods_flags": [],
+                    "has_open_queries": False,
+                    "is_recently_updated": True,
+                    "assignments": {},
+                    "queues": [],
+                    "case_officer": None,
+                    "reference_code": "GBSIEL/2020/0002687/T",
+                    "sla_days": 2,
+                    "sla_remaining_days": 18,
+                    "status": {"key": "submitted", "value": "Submitted"},
+                    "next_review_date": None,
+                    "licences": [],
+                    "submitted_at": "2023-01-17T14:53:09.826340Z",
+                },
+            ],
+            "filters": {
+                "advice_types": [
+                    {"key": "approve", "value": "Approve"},
+                    {"key": "proviso", "value": "Proviso"},
+                    {"key": "refuse", "value": "Refuse"},
+                    {"key": "no_licence_required", "value": "No Licence Required"},
+                    {"key": "not_applicable", "value": "Not Applicable"},
+                    {"key": "conflicting", "value": "Conflicting"},
+                ],
+                "case_types": data_case_types,
+                "gov_users": [{"full_name": "John Smith", "id": gov_uk_user_id}],
+                "statuses": mock_case_statuses["statuses"],
+                "is_system_queue": True,
+                "is_work_queue": False,
+                "queue": {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
+            },
+            "queues": [
+                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
+                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000002", "name": "Open cases"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000003", "name": "My team's cases"},
+                {"case_count": 0, "id": "00000000-0000-0000-0000-000000000004", "name": "New exporter amendments"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000005", "name": "My assigned cases"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000006", "name": "My caseload"},
+            ],
+        },
+        "total_pages": 1,
+    }
+
+
+@pytest.fixture
+def mock_cases_search(requests_mock, data_cases_search, queue_pk):
+    encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
+    yield requests_mock.get(url=url, json=data_cases_search)
 
 
 def test_queues_cannot_be_created_and_modified(authorized_client, reset_config_users_list):
@@ -347,3 +510,49 @@ def test_tabs_on_team_queue(authorized_client, mock_team_cases, mock_team_queue,
         "selected_tab": [tab_name],
         "hidden": ["true"],
     }
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_queue_assignments(url, authorized_client):
+    response = authorized_client.get(url)
+    expected_queue_assignments = {
+        "ee1a3870-73d7-4af3-b629-e28f2c2227d7": {
+            "assignees": [
+                {
+                    "email": "test@mail.com",
+                    "first_name": "John",
+                    "last_name": "Smith",
+                    "team_id": "00000000-0000-0000-0000-000000000001",
+                    "team_name": "Admin",
+                },
+                {
+                    "email": "test2@mail.com",
+                    "first_name": "Joe",
+                    "last_name": "Smith",
+                    "team_id": "00000000-0000-0000-0000-000000000001",
+                    "team_name": "Admin",
+                },
+            ],
+            "queue_name": "Initial Queue",
+        },
+        "ee1a3870-73d7-4af3-b629-e28f2c2227d8": {
+            "assignees": [],
+            "queue_name": "Another Queue",
+        },
+    }
+    assert response.context["data"]["results"]["cases"][0]["queue_assignments"] == expected_queue_assignments
+
+    html = BeautifulSoup(response.content, "html.parser")
+    li_elems = [elem.get_text() for elem in html.select("li", {"class": "app-assignments__item"})]
+    assert "John Smith" in li_elems[0]
+    assert "Initial Queue" in li_elems[0]
+    assert "Joe Smith" in li_elems[1]
+    assert "Initial Queue" in li_elems[1]
+    assert "Not Allocated" in li_elems[2]
+    assert "Another Queue" in li_elems[2]

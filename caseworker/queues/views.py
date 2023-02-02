@@ -118,6 +118,38 @@ class Cases(LoginRequiredMixin, TemplateView):
 
         return tab_data
 
+    def _transform_destinations(self, case):
+        try:
+            destinations = case["destinations"]
+        except KeyError:
+            destinations = []
+
+        unique_destinations = [dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}]
+        return unique_destinations
+
+    def _transform_queue_assignments(self, case):
+        assigned_queues = {}
+        for _, assignment in case["assignments"].items():
+            for assigned_queue in assignment["queues"]:
+                assignee = {k: v for k, v in assignment.items() if k != "queues"}
+                try:
+                    assigned_queues[assigned_queue["id"]]["assignees"].append(assignee)
+                except KeyError:
+                    assigned_queues[assigned_queue["id"]] = {
+                        "queue_name": assigned_queue["name"],
+                        "assignees": [{k: v for k, v in assignment.items() if k != "queues"}],
+                    }
+
+        all_queues = {queue["id"]: {"queue_name": queue["name"], "assignees": []} for queue in case["queues"]}
+
+        all_assignments = {**all_queues, **assigned_queues}
+
+        return all_assignments
+
+    def transform_case(self, case):
+        case["unique_destinations"] = self._transform_destinations(case)
+        case["queue_assignments"] = self._transform_queue_assignments(case)
+
     def get_context_data(self, *args, **kwargs):
 
         try:
@@ -131,15 +163,7 @@ class Cases(LoginRequiredMixin, TemplateView):
         is_system_queue = self.queue.get("is_system_queue", False)
 
         for case in self.data["results"]["cases"]:
-            try:
-                destinations = case["destinations"]
-            except KeyError:
-                destinations = []
-
-            unique_destinations = [
-                dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}
-            ]
-            case["unique_destinations"] = unique_destinations
+            self.transform_case(case)
 
         context = {
             "sla_radius": SLA_RADIUS,

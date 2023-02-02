@@ -16,11 +16,11 @@ import "./snackbar-hide.js";
 // caseworker
 import initMenuTooltips from "./menu-tooltips.js";
 import initQueuesMenu from "./queues-menu.js";
-import initFlagListExpanders from "./flag-expanders.js";
 import initCLEEntries from "./cle-entries.js";
 import initRegimeEntries from "./regime-entries.js";
 import initDestinationsList from "./show-hide-destinations.js";
 import { initCaseNotes } from "./case-notes";
+import { initExpanders } from "./list-expander";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -34,10 +34,10 @@ $(document).ready(function () {
   // init our JS
   initMenuTooltips();
   initQueuesMenu();
-  initFlagListExpanders();
   initCLEEntries();
   initRegimeEntries();
   initCookierBanner("app-cookie-banner", "js-accept-cookie");
   initDestinationsList();
   initCaseNotes();
+  initExpanders();
 });
