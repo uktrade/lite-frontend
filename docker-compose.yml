@@ -40,7 +40,7 @@ services:
     tty: true
 
   frontend_assets_watcher:
-    image: node:16.10
+    image: node:16.19
     volumes:
       - .:/app
     command:

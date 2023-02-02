@@ -201,7 +201,7 @@ The production assets are built via Jenkins on deployment.
 
 ### Without docker
 
-Node version required is 16.5.0
+Node version required can be found in the `package.json` under `engines`.
 All javascripts and scss files are stored under caseworker/assets and exporter/assets
 
 ```
