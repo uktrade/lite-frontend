@@ -101,10 +101,6 @@
 {% endblock %}
 
 {% block javascript %}
-	<div class="app-hidden--force" id="js-chevron-svg">
-		{% svg 'chevron' %}
-	</div>
-
 	{# this is tied to inline javascript in lite_forms/templates/components/autocomplete.html and cannot be removed yet #}
 	<script nonce="{{ request.csp_nonce }}">
 		loadAutoCompletes();
