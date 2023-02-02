@@ -3,9 +3,14 @@ from django.urls import reverse_lazy
 
 from storages.backends.s3boto3 import S3Boto3StorageFile
 
+from core.common.forms import TextChoice, BaseForm
+
 from lite_content.lite_internal_frontend.queues import AddQueueForm, EditQueueForm
 from lite_forms.components import Form, TextInput, BackLink, Select
 from caseworker.queues.services import get_queues
+from caseworker.users.services import get_gov_users
+from caseworker.core.constants import UserStatuses
+from crispy_forms_gds.choices import Choice
 
 
 def new_queue_form(request):
@@ -86,3 +91,48 @@ class EnforcementXMLImportForm(forms.Form):
     def save(self):
         # the CreateView expects this method
         pass
+
+
+class CaseAssignmentsCaseOfficerForm(BaseForm):
+    SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    class Layout:
+        TITLE = "Who do you want to allocate as Licensing Unit case officer ?"
+        SUBTITLE = "Manages the case until the application outcome(the exporter will see this name until the case office is changed)"
+
+    user = forms.ChoiceField(
+        label="",
+        choices=(),  # set in __init__
+        required=True,
+        error_messages={
+            "required": "Select a user to allocate as Licensing Unit case officer",
+        },
+        widget=forms.RadioSelect,
+    )
+
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+
+        self.declared_fields["user"].choices = self.get_user_choices()
+        super().__init__(*args, **kwargs)
+
+    def get_user_choices(self):
+        user_params = {"disable_pagination": True, "status": UserStatuses.ACTIVE}
+        users, _ = get_gov_users(self.request, user_params)
+        return [
+            (
+                TextChoice(
+                    Choice(
+                        user["id"],
+                        user.get("first_name") + " " + user.get("last_name")
+                        if user.get("first_name")
+                        else user["email"],
+                    ),
+                    hint=user["email"],
+                )
+            )
+            for user in users["results"]
+        ]
+
+    def get_layout_fields(self):
+        return ("user",)

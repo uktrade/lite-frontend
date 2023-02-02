@@ -13,7 +13,7 @@ from core.constants import ComponentAccessoryChoices, ProductCategories
 from core.forms.layouts import ConditionalRadiosQuestion, ConditionalRadios, summary_list
 from core.forms.utils import coerce_str_to_bool
 
-from exporter.core.common.forms import TextChoice
+from core.common.forms import TextChoice
 from exporter.core.constants import (
     ProductSecurityFeatures,
     ProductDeclaredAtCustoms,
@@ -25,7 +25,7 @@ from exporter.core.helpers import (
 )
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
-from exporter.core.common.forms import BaseForm
+from core.common.forms import BaseForm
 from lite_content.lite_exporter_frontend.goods import (
     AddGoodToApplicationForm,
     AttachDocumentForm,

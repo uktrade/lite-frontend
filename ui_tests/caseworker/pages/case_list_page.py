@@ -20,6 +20,11 @@ class CaseListPage(BasePage):
     # App Bar Buttons
     BUTTON_ASSIGN_USERS = "assign-users-button"  # ID
 
+    # Tabs
+    ALL_CASES_TAB = "all-cases-tab"  # ID
+    OPEN_QUERIES_TAB = "open-queries-tab"  # ID
+    MY_CASES_TAB = "my-cases-tab"  # ID
+
     # Filters
     BUTTON_CLEAR_FILTERS = "button-clear-filters"  # ID
     LINK_ADVANCED_FILTERS = "advanced-filters-link"  # ID

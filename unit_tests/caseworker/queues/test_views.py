@@ -1,10 +1,9 @@
 import pytest
+import uuid
 import re
-from urllib import parse
 
 from bs4 import BeautifulSoup
 
-from django.conf import settings
 from django.urls import reverse
 
 import os
@@ -13,10 +12,17 @@ from core import client
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
+default_params = {
+    "page": ["1"],
+    "queue_id": ["00000000-0000-0000-0000-000000000001"],
+    "selected_tab": ["all_cases"],
+}
+
 
 @pytest.fixture(autouse=True)
 def setup(
     mock_cases_search,
+    mock_cases_search_head,
     authorized_client,
     queue_pk,
     mock_queue,
@@ -99,11 +105,14 @@ def mock_team_queue(requests_mock, data_queue):
 @pytest.fixture
 def mock_team_cases(requests_mock, data_cases_search):
     data_cases_search["results"]["filters"]["is_system_queue"] = False
-    encoded_params = parse.urlencode(
-        {"queue_id": queue_pk, "page": 1, "only_open_queries": True, "hidden": True}, doseq=True
-    )
-    url = client._build_absolute_uri(f"/cases/?{encoded_params}")
+    url = client._build_absolute_uri(f"/cases/")
     yield requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
+def mock_cases_search_head(requests_mock):
+    url = client._build_absolute_uri(f"/cases/")
+    yield requests_mock.head(url=re.compile(f"{url}.*"), headers={"resource-count": "350"})
 
 
 @pytest.fixture
@@ -162,8 +171,7 @@ def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_sea
     url = reverse("queues:cases") + "?is_nca_applicable=True"
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
+        **default_params,
         "is_nca_applicable": ["true"],
     }
 
@@ -172,19 +180,17 @@ def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_searc
     url = reverse("queues:cases") + "?is_trigger_list=True"
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
+        **default_params,
         "is_trigger_list": ["true"],
     }
 
 
 def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_search):
-    url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed"
+    url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed"  # /PS-IGNORE
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
-        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],
+        **default_params,
+        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],  # /PS-IGNORE
     }
 
 
@@ -202,57 +208,122 @@ def test_trigger_list_checkbox_visible_checked(authorized_client):
     assert "checked" in checkbox.attrs
 
 
-def test_with_all_cases_default(authorized_client, mock_cases_search):
+def test_case_assignment_case_office_no_user_selected(authorized_client, mock_gov_users):
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
+    )
+    data = {}
+    response = authorized_client.post(url, data)
+
+    assert response.status_code == 200
+    assert response.context_data["form"].errors == {
+        "user": ["Select a user to allocate as Licensing Unit case officer"]
+    }
+
+
+def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_users):
+    cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
+    )
+    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
+    mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
+
+    data = {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    response = authorized_client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
+    assert mock_put_case_case_office.last_request.json() == {
+        "gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
+        "case_ids": cases_ids,
+    }
+
+
+def test_with_all_cases_default(authorized_client, mock_cases_search, mock_cases_search_head):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
-    all_queries_button = html.find(id="view-all-queries-tab")
-    assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
-    assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
-    }
+    all_queries_tab = html.find(id="all-cases-tab")
+    my_cases_tab = html.find(id="my-cases-tab")
+    open_queries_tab = html.find(id="open-queries-tab")
+
+    assert "All cases" in all_queries_tab.get_text()
+    assert "(350)" in all_queries_tab.get_text()
+    assert "My cases" in my_cases_tab.get_text()
+    assert "(350)" in my_cases_tab.get_text()
+    assert "Open queries" in open_queries_tab.get_text()
+    assert "(350)" in open_queries_tab.get_text()
+    assert "lite-tabs__tab--selected" in all_queries_tab.attrs["class"]
+
+    head_request_history = [x.qs for x in mock_cases_search_head.request_history]
+    assert default_params in head_request_history
+
+    tabs_with_hidden_param = ("my_cases", "open_queries")
+    for tab in tabs_with_hidden_param:
+        assert {
+            "selected_tab": [tab],
+            "hidden": ["true"],
+            "page": ["1"],
+            "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        } in head_request_history
 
 
-def test_with_all_cases_param(authorized_client, mock_cases_search):
-    response = authorized_client.get(reverse("core:index") + "/?only_open_queries=False")
+def test_tabs_with_all_cases_param(authorized_client, mock_cases_search):
+    response = authorized_client.get(reverse("core:index") + "/?selected_tab=all_cases")
     html = BeautifulSoup(response.content, "html.parser")
-    all_queries_button = html.find(id="view-all-queries-tab")
-    assert "/?only_open_queries=False" in all_queries_button.attrs["href"]
+    all_queries_button = html.find(id="all-cases-tab")
+    assert "?selected_tab=all_cases" in all_queries_button.attrs["href"]
     assert "lite-tabs__tab--selected" in all_queries_button.attrs["class"]
-    assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
-        "only_open_queries": ["false"],
-    }
+    assert mock_cases_search.last_request.qs == default_params
 
 
-def test_with_open_queries(authorized_client, mock_cases_search):
-    response = authorized_client.get(reverse("core:index") + "/?only_open_queries=True")
+@pytest.mark.parametrize(
+    "tab_name, tab_id, tab_text",
+    [
+        ("open_queries", "open-queries-tab", "Open queries"),
+        ("my_cases", "my-cases-tab", "My cases"),
+    ],
+)
+def test_tabs_on_all_cases_queue(authorized_client, mock_cases_search, tab_name, tab_id, tab_text):
+    response = authorized_client.get(reverse("core:index") + f"/?selected_tab={tab_name}")
     html = BeautifulSoup(response.content, "html.parser")
-    open_queries_tab = html.find(id="view-open-queries-tab")
-    assert "/?only_open_queries=True" in open_queries_tab.attrs["href"]
-    assert "lite-tabs__tab--selected" in open_queries_tab.attrs["class"]
+    selected_tab = html.find(id=tab_id)
+    all_queries_tab = html.find(id="all-cases-tab")
+
+    assert tab_text in selected_tab.get_text()
+    assert "All cases" in all_queries_tab.get_text()
+    assert f"?selected_tab={tab_name}" in selected_tab.attrs["href"]
+    assert "lite-tabs__tab--selected" in selected_tab.attrs["class"]
     assert mock_cases_search.last_request.qs == {
         "queue_id": ["00000000-0000-0000-0000-000000000001"],
         "page": ["1"],
-        "only_open_queries": ["true"],
+        "selected_tab": [tab_name],
         "hidden": ["true"],
     }
 
 
-def test_with_open_queries_team_queue(authorized_client, mock_team_cases, mock_team_queue):
-    url = client._build_absolute_uri(f"/queues/{queue_pk}/?only_open_queries=True")
+@pytest.mark.parametrize(
+    "tab_name, tab_id, tab_text",
+    [
+        ("open_queries", "open-queries-tab", "Open queries"),
+        ("my_cases", "my-cases-tab", "My cases"),
+    ],
+)
+def test_tabs_on_team_queue(authorized_client, mock_team_cases, mock_team_queue, tab_name, tab_id, tab_text):
+    url = client._build_absolute_uri(f"/queues/{queue_pk}/?selected_tab={tab_name}")
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
-    open_queries_tab = html.find(id="view-open-queries-tab")
-    all_queries_tab = html.find(id="view-all-queries-tab")
+    selected_tab = html.find(id=tab_id)
+    all_queries_tab = html.find(id="all-cases-tab")
 
     assert "Cases to review" in all_queries_tab.get_text()
-    assert "/?only_open_queries=True" in open_queries_tab.attrs["href"]
-    assert "lite-tabs__tab--selected" in open_queries_tab.attrs["class"]
+    assert tab_text in selected_tab.get_text()
+    assert f"?selected_tab={tab_name}" in selected_tab.attrs["href"]
+    assert "lite-tabs__tab--selected" in selected_tab.attrs["class"]
     assert mock_team_cases.last_request.qs == {
         "queue_id": [queue_pk],
         "page": ["1"],
-        "only_open_queries": ["true"],
+        "selected_tab": [tab_name],
         "hidden": ["true"],
     }

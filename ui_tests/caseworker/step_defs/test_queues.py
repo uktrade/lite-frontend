@@ -4,6 +4,7 @@ from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.queues_pages import QueuesPages
+from tests_common.functions import element_with_id_exists
 import tests_common.tools.helpers as utils
 
 
@@ -81,3 +82,18 @@ def create_countersigning_queue(context, api_test_client):  # noqa
     api_test_client.queues.add_queue(f"countersigningqueue {utils.get_formatted_date_time_y_m_d_h_s()}")
     context.countersigning_queue_name = api_test_client.context["queue_name"]
     context.countersigning_queue_id = api_test_client.context["queue_id"]
+
+
+@then("I see the open queries tab")
+def i_see_the_open_queries_tab(driver):  # noqa
+    assert element_with_id_exists(driver, CaseListPage.OPEN_QUERIES_TAB)
+
+
+@then("I see the all cases tab")
+def i_see_all_cases_tab(driver):  # noqa
+    assert element_with_id_exists(driver, CaseListPage.ALL_CASES_TAB)
+
+
+@then("I see the my cases tab")
+def i_see_my_cases_tab(driver):  # noqa
+    assert element_with_id_exists(driver, CaseListPage.MY_CASES_TAB)

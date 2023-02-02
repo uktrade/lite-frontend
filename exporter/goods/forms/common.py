@@ -16,7 +16,7 @@ from core.forms.layouts import (
 )
 from core.forms.utils import coerce_str_to_bool
 
-from exporter.core.common.forms import BaseForm
+from core.common.forms import BaseForm
 from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.services import (
     get_control_list_entries,
