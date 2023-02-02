@@ -197,7 +197,7 @@ PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "ru
 
 The Javascript/SCSS is automatically watched via the node docker service.
 
-The production assets are built via Jenkins on deployment.
+The production assets are built on deployment as part of the cloudfoundry build. We specify the [node buildpack in the cloudfoundry manifest file](./manifest.yml#L4) which cloudfoundry automatically picks up. This then runs the command specified [`heroku-postbuild` specified in the package.json](./package.json#L14).
 
 ### Without docker
 
