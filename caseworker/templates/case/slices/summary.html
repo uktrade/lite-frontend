@@ -179,8 +179,10 @@
 				<ol class="govuk-list govuk-!-margin-0">
 					{% for user in users %}
 						<li>
-							<a href="{% url 'users:user' user.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}" class="govuk-link govuk-link--no-visited-state">{{ user|username }}</a>
-                            <a href="{% url 'cases:remove-case-assignment' queue.id case.id %}?assignment_id={{user.assignment_id}}" class="govuk-link govuk-link--no-visited-state app-case__summary-list__value__item-action">Remove</a>
+                            <div class="app-case__summary-list__value__fullwidth">
+							    <a href="{% url 'users:user' user.id %}?return_to={{ CURRENT_PATH }}&return_to_text={{ case.reference_code }}" class="govuk-link govuk-link--no-visited-state">{{ user|username }}</a>
+                                <a href="{% url 'cases:remove-case-assignment' queue.id case.id %}?assignment_id={{user.assignment_id}}" class="govuk-link govuk-link--no-visited-state app-case__summary-list__value__item-action">Remove</a>
+                            </div>
 						</li>
 					{% endfor %}
 				</ol>
