@@ -51,6 +51,14 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
+    report_summary_prefix = forms.CharField(
+        label="Add a report summary prefix",
+        help_text="Type for suggestions",
+        # setting id for javascript to use
+        widget=forms.TextInput(attrs={"id": "report_summary_prefix"}),
+        required=False,
+    )
+
     regimes = forms.MultipleChoiceField(
         label="Add regimes",
         choices=(
@@ -165,6 +173,7 @@ class TAUEditForm(forms.Form):
             HTML.p("Or"),
             "does_not_have_control_list_entries",
             "report_summary",
+            "report_summary_prefix",
             ConditionalCheckboxes(
                 "regimes",
                 ConditionalCheckboxesQuestion(
