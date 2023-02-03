@@ -11,7 +11,7 @@
     "watch": "npm-run-all --parallel watch_exporter watch_caseworker",
     "build": "npm install --no-save && npm run build_all",
     "build_all": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
-    "heroku-postbuild": "npm run build",
+    "heroku-postbuild": "npm run build && rm -r node_modules",
     "test:e2e": "cypress run --browser chrome",
     "test:e2e:watch": "cypress open",
     "test": "jest",
