@@ -19,7 +19,7 @@
   },
   "engines": {
     "node": "16.19.x",
-    "npm": "8.11.x"
+    "npm": "8.19.x"
   },
   "repository": {
     "type": "git",
