@@ -852,9 +852,9 @@ def click_on_product_assessment(driver):  # noqa
     functions.click_submit(driver)
 
 
-@then(parsers.parse("I select report summary and regime to none and submit"))
-def fill_report_summary_select_regine_none_and_submit(driver):  # noqa
-    functions.select_report_summary_and_fill(driver)
+@then(parsers.parse('I select "{subject}" as report summary subject and regime to none and submit'))
+def fill_report_summary_select_regime_none_and_submit(driver, subject):  # noqa
+    functions.select_report_summary_subject_and_fill(driver, subject)
     functions.click_regime_none(driver)
     functions.click_submit(driver)
 
