@@ -34,6 +34,39 @@ const initARS = () => {
     defaultValue: input.value,
     showNoOptionsFound: false,
   });
+
+  const prefixInput = document.querySelector("#report_summary_prefix");
+  const prefixAutocompleteContainer = document.createElement("div");
+  autocompleteContainer.id = "report_summary_prefix_container";
+  prefixInput.parentElement.appendChild(prefixAutocompleteContainer);
+  prefixInput.remove();
+  accessibleAutocomplete({
+    element: document.querySelector("#report_summary_prefix_container"),
+    id: "report_summary_prefix",
+    source: (query, populateResults) => {
+      fetch(`/tau/report_summary/prefix?name=${query}`)
+        .then((response) => response.json())
+        .then((results) => results["report_summary_prefixes"])
+        .then((results) => populateResults(results));
+    },
+    cssNamespace: "lite-autocomplete",
+    name: "report_summary_prefix",
+    templates: {
+      inputValue: (suggestion) => suggestion?.name ?? "",
+      suggestion: (suggestion) => {
+        if (typeof suggestion == "string") {
+          return suggestion;
+        }
+        return `
+          <div class="govuk-body govuk-!-margin-bottom-0">
+            ${suggestion.name}
+          </div>
+        `;
+      },
+    },
+    defaultValue: input.value,
+    showNoOptionsFound: false,
+  });
 };
 
 export default initARS;
