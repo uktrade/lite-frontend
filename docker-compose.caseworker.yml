@@ -33,7 +33,6 @@ services:
     ports:
       - 8200:8200
     volumes:
-      - ./playwright_videos:/app/playwright_videos
       - ./ui_tests/screenshots:/app/ui_tests/screenshots
     entrypoint: ["/bin/sh","-c"]
     command:

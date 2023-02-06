@@ -11,7 +11,6 @@ black = "~=22.3.0"
 directory-sso-api-client = "~=6.3"
 envparse = "~=0.2"
 faker = "~=4.0"
-playwright = "~=1.19.1"
 prospector = "==1.2.0"
 pytest = "~=5.1"
 pytest-cov = "~=2.10.0"
@@ -74,6 +73,8 @@ phonenumbers = "~=8.12.57"
 django-ipware = "~=3.0.7"
 setuptools = "~=65.5.1"
 pyopenssl = "~=22.0.0"
+# The following dependency stops the cryptography package jumping by a major version which breaks pyOpenSSL 22.x
+cryptography = "~=38.0"
 
 [requires]
 python_version = "3.7"
