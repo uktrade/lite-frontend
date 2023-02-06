@@ -90,6 +90,15 @@ def group_advice(context):
     return context
 
 
+@register.filter()
+def format_serial_numbers(serial_numbers, quantity):
+    quantity = int(quantity)
+    response = [f"{index}. {sn}" for index, sn in enumerate(serial_numbers, start=1)]
+    if quantity > len(serial_numbers):
+        response += [f"{index + 1}." for index in range(len(serial_numbers), quantity)]
+    return response
+
+
 @register.filter
 def get_denial_reason_display_values(denial_reasons, denial_reasons_display):
     if denial_reasons and denial_reasons_display:

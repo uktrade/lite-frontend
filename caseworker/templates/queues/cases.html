@@ -61,6 +61,24 @@
 
 	{% include 'filters.html' %}
 
+	<div class="lite-tabs__container">
+		<div class="lite-tabs">
+			<a href="{{ open_queries_tabs.all_cases_url }}" class="lite-tabs__tab  {% if open_queries_tabs.only_open_queries == "False" %}lite-tabs__tab--selected{% endif %}" id="view-all-queries-tab">
+				{% if queue.is_system_queue %}
+					All cases
+				{% else %}
+					Cases to review
+				{% endif %}
+				{% if open_queries_tabs.only_open_queries == "False" %}
+					({{ data.count }})
+				{% endif %}
+			</a>
+			<a href="{{ open_queries_tabs.open_queries_url }}" class="lite-tabs__tab {% if open_queries_tabs.only_open_queries == "True" %}lite-tabs__tab--selected{% endif %}" id="view-open-queries-tab">
+				Open queries {% if open_queries_tabs.only_open_queries == "True" %}({{ data.count }}){% endif %}
+			</a>
+		</div>
+	</div>
+
 	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
 		{% if not data.results.cases %}
 			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
@@ -77,8 +95,7 @@
 					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
 					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
 					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Flags</th>
-					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.GOODS' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
 				</tr>
 			</thead>
 
