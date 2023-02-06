@@ -10,6 +10,7 @@ REPORT_SUMMARY_SUBJECTS = "report_summary_subjects"
 
 prefix_data = [
     {"id": "b0849a92-4611-4e5b-b076-03562b138fb5", "name": "components for"},  # /PS-IGNORE
+    {"id": "1c2d9032-e565-4158-a054-0112e8fabe1c", "name": "countermeasure equipment for"},  # /PS-IGNORE
     {"id": "76c33f3f-1da8-4fde-b259-ada269b43d34", "name": "counter-countermeasure equipment for"},  # /PS-IGNORE
     {"id": "a4bb3d4d-1f6b-46a3-83fa-97a952fdd2c4", "name": "launching vehicles for"},  # /PS-IGNORE
 ]
@@ -21,9 +22,14 @@ subject_data = [
 ]
 
 
+def prefix_json_url_with_query(search_term=None):
+    query = f"?name={search_term}" if search_term else ""
+    return reverse("report_summary:prefix") + query
+
+
 @pytest.fixture
 def prefix_json_url():
-    return reverse("report_summary:prefix")
+    return prefix_json_url_with_query()
 
 
 @pytest.fixture
@@ -49,10 +55,36 @@ def test_prefixes_json_view(authorized_client, prefix_json_url, mock_prefixes_ge
     data = response.json()
     assert REPORT_SUMMARY_PREFIXES in data
     prefixes = data[REPORT_SUMMARY_PREFIXES]
-    assert len(prefixes) == 3
+    assert len(prefixes) == len(prefix_data)
 
     for item in prefixes:
         assert item in prefix_data
+
+
+@pytest.mark.parametrize(
+    "name, search_term, expected_result",
+    [
+        (
+            "single letter",
+            "c",
+            ["components for", "countermeasure equipment for", "counter-countermeasure equipment for"],
+        ),
+        ("two letters", "cou", ["countermeasure equipment for", "counter-countermeasure equipment for"]),
+        ("narrowed to one result", "counter-", ["counter-countermeasure equipment for"]),
+    ],
+)
+def test_prefixes_json_view_filters_by_name_param(
+    name, authorized_client, mock_prefixes_get, search_term, expected_result
+):
+    response = authorized_client.get(prefix_json_url_with_query(search_term))
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert REPORT_SUMMARY_PREFIXES in data
+    prefixes = data[REPORT_SUMMARY_PREFIXES]
+    assert len(prefixes) == len(expected_result)
+    assert set([prefix["name"] for prefix in prefixes]) == set(expected_result)
 
 
 def test_prefix_json_view_permission_not_required(
@@ -81,7 +113,7 @@ def test_subjects_json_view(authorized_client, subject_json_url, mock_subjects_g
     data = response.json()
     assert REPORT_SUMMARY_SUBJECTS in data
     subjects = data[REPORT_SUMMARY_SUBJECTS]
-    assert len(subjects) == 3
+    assert len(subjects) == len(subject_data)
 
     for item in subjects:
         assert item in subject_data

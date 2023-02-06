@@ -10,7 +10,16 @@ class ReportSummaryPrefix(LoginRequiredMixin, TemplateView):
         """
         Return JSON representation of prefixes for use in autocompletion
         """
-        return JsonResponse(data=(get_report_summary_prefixes(request)))
+        search_term = request.GET.get("name")
+        prefixes = get_report_summary_prefixes(request)
+
+        if search_term:
+            filtered_prefixes = [
+                prefix for prefix in prefixes["report_summary_prefixes"] if prefix["name"].startswith(search_term)
+            ]
+            return JsonResponse(data={"report_summary_prefixes": filtered_prefixes})
+
+        return JsonResponse(data=prefixes)
 
 
 class ReportSummarySubject(LoginRequiredMixin, TemplateView):
