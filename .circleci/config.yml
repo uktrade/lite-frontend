@@ -226,6 +226,15 @@ jobs:
       - run: npm install
       - run: npm run test
 
+  frontend_artefacts_check:
+    docker:
+      - image: cimg/node:16.15
+    steps:
+      - checkout
+      - run: npm install --include=dev --no-save
+      - run: npm run build_all
+      - run: git diff --exit-code
+
   caseworker_e2e_test:
     machine:
       image: ubuntu-2004:202008-01
@@ -316,6 +325,7 @@ workflows:
       - exporter_unit_test
       - core_unit_test
       - frontend_unit_test
+      - frontend_artefacts_check
       - caseworker_e2e_test_dev_api
       - exporter_e2e_test_dev_api
       - caseworker_e2e_test_uat_api
