@@ -181,6 +181,22 @@ good_review_parametrize_data = (
     ),
 )
 
+denials_data = [
+    {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "address": "726 example road",
+        "country": "Germany",
+        "end_use": 'For the needs of "example company"',
+        "item_description": "example something",
+        "item_list_codes": "FR3a",
+        "name": "Example Name",
+        "notifying_government": "Lithuania",
+        "reference": "abc123/abc123",
+        "regime_reg_ref": "ABC-1234",
+        "entity_type": "End-user",
+    }
+]
+
 
 @pytest.mark.parametrize("data,expected", good_review_parametrize_data)
 def test_standard_review_goods(
@@ -430,14 +446,27 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
 
     requests_mock.get(
         client._build_absolute_uri(f"/external-data/denial-search/?search={end_user_name}&search={end_user_address}"),
-        json={"hits": {"hits": []}},
+        json={"count": "1", "total_pages": "1", "results": denials_data},
     )
 
     url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
 
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="table-denials")
+
+
+def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, standard_case_pk):
+    requests_mock.get(
+        client._build_absolute_uri(f"/external-data/denial-search/"),
+    )
+    url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
+    response = authorized_client.get(f"{url}")
+
+    soup = BeautifulSoup(response.content, "html.parser")
     assert response.status_code == 200
+    assert "No matching denials" in soup.get_text()
 
 
 def test_good_on_application_detail_clc_entries(
