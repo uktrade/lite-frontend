@@ -252,16 +252,15 @@ class MoveCaseForwardForm(forms.Form):
 
 
 class BEISTriggerListFormBase(forms.Form):
-    NSG_LIST_TYPE_CHOICES = [
-        (NSGListTypes.TRIGGER_LIST.value, "Trigger list"),
-        (NSGListTypes.DUAL_USE.value, "Dual use"),
-    ]
+    TRIGGER_LIST_GUIDELINES_CHOICES = [(True, "Yes"), (False, "No")]
     NCA_CHOICES = [(True, "Yes"), (False, "No")]
 
-    nsg_list_type = forms.ChoiceField(
-        choices=NSG_LIST_TYPE_CHOICES,
+    is_trigger_list_guidelines_applicable = forms.TypedChoiceField(
+        choices=TRIGGER_LIST_GUIDELINES_CHOICES,
         widget=forms.RadioSelect,
-        label="Is the product on the trigger list or dual use?",
+        coerce=coerce_str_to_bool,
+        label="Do the trigger list guidelines apply to this product?",
+        help_text="Select no if the product is on the trigger list but falls outside the guidelines",
         error_messages={
             "required": "Select whether the product/s appear on the trigger list or are for dual use",
         },
@@ -287,7 +286,7 @@ class BEISTriggerListFormBase(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            "nsg_list_type",
+            "is_trigger_list_guidelines_applicable",
             "is_nca_applicable",
             "nsg_assessment_note",
             Submit("submit", "Continue"),
