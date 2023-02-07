@@ -99,6 +99,7 @@ def perform_request(method, request, appended_address, data=None):
 
 
 get = partial(perform_request, "GET")
+head = partial(perform_request, "HEAD")
 patch = partial(perform_request, "PATCH")
 put = partial(perform_request, "PUT")
 post = partial(perform_request, "POST")

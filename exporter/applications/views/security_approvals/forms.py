@@ -13,7 +13,7 @@ from core.forms.utils import coerce_str_to_bool
 
 from exporter.core.validators import PastDateValidator
 from exporter.core.forms import CustomErrorDateInputField
-from exporter.core.common.forms import BaseForm
+from core.common.forms import BaseForm
 
 
 class SecurityClassifiedDetailsForm(BaseForm):

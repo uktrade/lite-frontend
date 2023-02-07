@@ -271,9 +271,9 @@ class BEISTriggerListFormBase(forms.Form):
         choices=NCA_CHOICES,
         coerce=coerce_str_to_bool,
         error_messages={
-            "required": "Select yes if the Nuclear Cooperation Agreement applies to the product",
+            "required": "Select yes if a Nuclear Cooperation Agreement applies to the product",
         },
-        label="Does the Nuclear Cooperation Agreement apply to the product?",
+        label="Does a Nuclear Cooperation Agreement apply?",
         widget=forms.RadioSelect,
     )
 
@@ -316,7 +316,10 @@ class BEISTriggerListAssessmentForm(BEISTriggerListFormBase):
         self.fields["goods"] = forms.MultipleChoiceField(
             choices=self.get_goods_choices(goods),
             widget=GoodsMultipleSelect(),
-            label="Select a product to begin. Or you can select multiple products to give them the same assessment.",
+            label=(
+                "Select a product to begin. Or you can select multiple products to give them the same assessment.\n"
+                "You will then be asked to make a recommendation for all products on this application."
+            ),
             error_messages={"required": "Select the products that you want to assess"},
         )
 

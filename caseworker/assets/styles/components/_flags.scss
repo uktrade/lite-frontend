@@ -13,7 +13,6 @@
 		max-width: 200px;
 
 		.app-flag {
-			display: flex;
 			justify-content: flex-start;
 			text-align: left;
 			white-space: nowrap;
@@ -73,10 +72,6 @@ $flag-border-width: 3px;
 		background: currentColor;
 	}
 
-	&--animate {
-		animation: load-flag .2s;
-	}
-
 	&--checkbox {
 		margin-top: -5px;
 	}
@@ -124,44 +119,5 @@ $flag-border-width: 3px;
 	&--brown {
 		background: govuk-tint(govuk-colour("brown"), 85);
 		color: govuk-colour("brown");
-	}
-}
-
-.app-flags__expander {
-	@include appearance(none);
-	@include govuk-font($size: 16);
-	color: $govuk-secondary-text-colour;
-	background-color: transparent;
-	outline: 0;
-	border: 0;
-	padding: govuk-spacing(1) 0;
-	margin: 0;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-bottom: 2px solid transparent;
-	cursor: pointer;
-
-	&:hover {
-		border-bottom-color: currentColor;
-	}
-
-	&:active {
-		color: $govuk-text-colour;
-		border-bottom-color: $govuk-text-colour;
-	}
-
-	&:focus {
-		@include govuk-focused-text;
-	}
-
-	svg {
-		height: 8px;
-		margin-top: 2px;
-		margin-right: govuk-spacing(1);
-
-		* {
-			fill: currentColor;
-		}
 	}
 }

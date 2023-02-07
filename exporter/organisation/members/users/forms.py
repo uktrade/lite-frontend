@@ -4,7 +4,7 @@ from django import forms
 from django.db import models
 from django.template.loader import render_to_string
 
-from exporter.core.common.forms import BaseForm, TextChoice
+from core.common.forms import BaseForm, TextChoice
 from exporter.core.enums import Roles
 
 

@@ -195,7 +195,13 @@ PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "ru
 
 ## Javascript/SCSS
 
-Node version required is 16.5.0
+The Javascript/SCSS is automatically watched via the node docker service.
+
+The production assets are built on deployment as part of the cloudfoundry build. We specify the [node buildpack in the cloudfoundry manifest file](./manifest.yml#L4) which cloudfoundry automatically picks up. This then runs the command specified [`heroku-postbuild` specified in the package.json](./package.json#L14).
+
+### Without docker
+
+Node version required can be found in the `package.json` under `engines`.
 All javascripts and scss files are stored under caseworker/assets and exporter/assets
 
 ```
@@ -206,10 +212,4 @@ Hot reload for local development.
 
 ```
   npm run watch
-```
-
-Building before PR. Also remove a folder named .parcel-cache before running the command below.
-
-```
-  npm run build
 ```

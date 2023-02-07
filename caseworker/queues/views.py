@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.views.generic.edit import CreateView
+from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -15,6 +16,7 @@ from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
@@ -40,7 +42,9 @@ from caseworker.queues.services import (
     post_enforcement_xml,
 )
 from caseworker.users.services import get_gov_user
-from caseworker.queues.services import get_cases_search_data
+from caseworker.queues.services import get_cases_search_data, head_cases_search_count
+from caseworker.cases.services import update_case_officer_on_cases
+from caseworker.queues.forms import SelectAllocateRole
 
 
 class Cases(LoginRequiredMixin, TemplateView):
@@ -60,18 +64,7 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @cached_property
     def data(self):
-        params = {"page": int(self.request.GET.get("page", 1))}
-        for key, value in self.request.GET.items():
-            if key != "flags[]":
-                params[key] = value
-
-        params["flags"] = self.request.GET.getlist("flags[]", [])
-
-        # if the hidden param is not true
-        # then cases with open queries are filtered out on team queue views
-        only_open_queries = self.request.GET.get("only_open_queries")
-        if only_open_queries == "True":
-            params["hidden"] = "True"
+        params = self.get_params()
 
         data = get_cases_search_data(self.request, self.queue_pk, params)
         return data
@@ -80,24 +73,82 @@ class Cases(LoginRequiredMixin, TemplateView):
     def filters(self):
         return self.data["results"]["filters"]
 
-    def open_queries_tabs(self):
-        only_open_queries = self.request.GET.get("only_open_queries") or "False"
+    def get_params(self):
+        params = {"page": int(self.request.GET.get("page", 1))}
+        for key, value in self.request.GET.items():
+            if key != "flags[]":
+                params[key] = value
 
-        params_with_queries = self.request.GET.copy()
-        params_with_queries["only_open_queries"] = "True"
-        params_all_cases = self.request.GET.copy()
-        params_all_cases["only_open_queries"] = "False"
+        params["flags"] = self.request.GET.getlist("flags[]", [])
 
-        open_queries_url = "{}?{}".format(self.request.path, params_with_queries.urlencode())
-        all_cases_url = "{}?{}".format(self.request.path, params_all_cases.urlencode())
+        params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
+        # if the hidden param is not true
+        # then cases with open queries are filtered out on team queue views
+        if (
+            params["selected_tab"] == CasesListPage.Tabs.MY_CASES
+            or params["selected_tab"] == CasesListPage.Tabs.OPEN_QUERIES
+        ):
+            params["hidden"] = "True"
 
-        open_queries_tabs = {
-            "only_open_queries": only_open_queries,
-            "open_queries_url": open_queries_url,
-            "all_cases_url": all_cases_url,
-        }
+        return params
 
-        return open_queries_tabs
+    def _get_tab_url(self, tab_name):
+        params = self.request.GET.copy()
+        params["selected_tab"] = tab_name
+        return f"?{params.urlencode()}"
+
+    def _get_tab_count(self, tab_name):
+        params = self.get_params()
+        params["selected_tab"] = tab_name
+        if tab_name != CasesListPage.Tabs.ALL_CASES:
+            params["hidden"] = "True"
+
+        return head_cases_search_count(self.request, self.queue_pk, params)
+
+    def _tab_data(self):
+        selected_tab = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
+        tab_data = {}
+
+        for tab in CasesListPage.Tabs:
+            tab_data[tab] = {
+                "count": self._get_tab_count(tab),
+                "is_selected": selected_tab == tab,
+                "url": self._get_tab_url(tab.value),
+            }
+
+        return tab_data
+
+    def _transform_destinations(self, case):
+        try:
+            destinations = case["destinations"]
+        except KeyError:
+            destinations = []
+
+        unique_destinations = [dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}]
+        return unique_destinations
+
+    def _transform_queue_assignments(self, case):
+        assigned_queues = {}
+        for _, assignment in case["assignments"].items():
+            for assigned_queue in assignment["queues"]:
+                assignee = {k: v for k, v in assignment.items() if k != "queues"}
+                try:
+                    assigned_queues[assigned_queue["id"]]["assignees"].append(assignee)
+                except KeyError:
+                    assigned_queues[assigned_queue["id"]] = {
+                        "queue_name": assigned_queue["name"],
+                        "assignees": [{k: v for k, v in assignment.items() if k != "queues"}],
+                    }
+
+        all_queues = {queue["id"]: {"queue_name": queue["name"], "assignees": []} for queue in case["queues"]}
+
+        all_assignments = {**all_queues, **assigned_queues}
+
+        return all_assignments
+
+    def transform_case(self, case):
+        case["unique_destinations"] = self._transform_destinations(case)
+        case["queue_assignments"] = self._transform_queue_assignments(case)
 
     def get_context_data(self, *args, **kwargs):
 
@@ -112,15 +163,7 @@ class Cases(LoginRequiredMixin, TemplateView):
         is_system_queue = self.queue.get("is_system_queue", False)
 
         for case in self.data["results"]["cases"]:
-            try:
-                destinations = case["destinations"]
-            except KeyError:
-                destinations = []
-
-            unique_destinations = [
-                dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}
-            ]
-            case["unique_destinations"] = unique_destinations
+            self.transform_case(case)
 
         context = {
             "sla_radius": SLA_RADIUS,
@@ -132,7 +175,7 @@ class Cases(LoginRequiredMixin, TemplateView):
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
             "show_updated_cases_banner": show_updated_cases_banner,
-            "open_queries_tabs": self.open_queries_tabs,
+            "tab_data": self._tab_data(),
         }
 
         return super().get_context_data(*args, **context, **kwargs)
@@ -185,6 +228,30 @@ class EditQueue(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("queues:manage")
 
 
+class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
+
+    template_name = "core/form.html"
+    form_class = SelectAllocateRole
+
+    def form_valid(self, form):
+        url_view_name = (
+            "case_assignments"
+            if form.cleaned_data["role"] == SelectAllocateRole.RoleChoices.CASE_ADVISOR.value
+            else "case_assignments_case_officer"
+        )
+        self.success_url = (
+            reverse(f"queues:{url_view_name}", kwargs={"pk": self.kwargs["pk"]}) + f"?{self.request.GET.urlencode()}"
+        )
+        return super().form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context = {
+            "back_link_url": reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]}),
+            "title": self.form_class.Layout.TITLE,
+        }
+        return super().get_context_data(*args, **context, **kwargs)
+
+
 class CaseAssignments(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
@@ -207,6 +274,44 @@ class CaseAssignments(LoginRequiredMixin, SingleFormView):
         self.success_message = (
             Manage.AssignUsers.SUCCESS_MULTI_MESSAGE if len(case_ids) > 1 else Manage.AssignUsers.SUCCESS_MESSAGE
         )
+
+
+class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = "core/form.html"
+    form_class = forms.CaseAssignmentsCaseOfficerForm
+    success_message = "Licensing Unit case officer allocated successfully"
+
+    def get_form_kwargs(self):
+        user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
+        form_kwargs["team_id"] = user_data["user"]["team"]["id"]
+        return form_kwargs
+
+    def form_valid(self, form):
+        self.update_case_officer(form.cleaned_data["user"])
+        return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating case advisor on cases",
+        "Unexpected error updating case advisor on cases",
+    )
+    def update_case_officer(self, user_id):
+        case_ids = self.request.GET.getlist("cases")
+        return update_case_officer_on_cases(self.request, case_ids, user_id)
+
+    def get_success_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+
+    def get_context_data(self, *args, **kwargs):
+        context = {
+            "back_link_url": reverse("queues:case_assignment_select_role", kwargs={"pk": self.kwargs["pk"]})
+            + f"?{self.request.GET.urlencode()}",
+            "title": self.form_class.Layout.TITLE,
+        }
+        return super().get_context_data(*args, **context, **kwargs)
 
 
 class EnforcementXMLExport(LoginRequiredMixin, TemplateView):

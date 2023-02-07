@@ -1,9 +1,14 @@
+from enum import Enum
+
+
 class CasesListPage:
     GO_TO_QUEUE = "Go to queue"
     NO_CASES = "There are no new cases"
+    NO_CASES_ALLOCATED = "You are not allocated to any cases"
     ACTIVE_FILTER_NO_CASES = "No cases match your filters"
     EXPORTER_AMENDMENTS_BANNER = "View cases that have changed"
-    ASSIGN_USERS = "Assign users"
+    ASSIGN_USERS = "Assign users_new"
+    ALLOCATE_CASE = "Allocates case(s)"
     STATUS = "Status"
     NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
     OPEN_TEAM_ECJU = "This case contains open enquiries by your team"
@@ -63,6 +68,11 @@ class CasesListPage:
         class Export:
             NO_CASES = "No matching cases found"
             GENERIC_ERROR = "An error occurred when generating XML for this queue."
+
+    class Tabs(str, Enum):
+        ALL_CASES = "all_cases"
+        MY_CASES = "my_cases"
+        OPEN_QUERIES = "open_queries"
 
 
 class CasePage:
@@ -812,13 +822,13 @@ class Manage:
 
     class AssignUsers:
         DESCRIPTION = ""
-        MULTIPLE_TITLE = "Which users do you want to assign to these cases?"
+        MULTIPLE_TITLE = "Who do you want to allocate as case advisor?"
         MULTIPLE_WARNING = "Users already assigned to these cases will be overwritten."
         TITLE = "Which users do you want to assign to this case?"
         NOTE = "Explain why you're making this decision (optional)"
         BUTTON = "Save and return"
-        SUCCESS_MESSAGE = "Case assigned successfully"
-        SUCCESS_MULTI_MESSAGE = "Cases assigned successfully"
+        SUCCESS_MESSAGE = "Case adviser allocated successfully"
+        SUCCESS_MULTI_MESSAGE = "Case adviser allocated successfully"
 
     class AssignUserAndQueue:
         USER_TITLE = "Select the user you want to assign the case to"

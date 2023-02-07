@@ -4,7 +4,7 @@ import re
 from django import forms
 from django.template import RequestContext, Template
 
-from exporter.core.common.forms import BaseForm
+from core.common.forms import BaseForm
 
 
 class NoFileFieldForm(BaseForm):
