@@ -15,13 +15,6 @@
 			This case is closed
 		</div>
 	{% endif %}
-	{% test_rule 'is_user_case_advisor_or_assigned_user' request.session.lite_api_user_id case as is_user_case_advisor_or_assigned_user %}
-	{% if not is_user_case_advisor_or_assigned_user %}
-			<div id="banner-case-closed" class="app-case__finalised-case-banner">
-				You need to allocate yourself to this case to work on it
-					<a href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate Case </a>
-			</div>
-	{% endif %}
 	<div class="app-case-header__container" id="app-header">
 		<div class="app-case-header__aurora" {{ case.all_flags|aurora }}></div>
 		<div class="app-case-header">
@@ -122,6 +115,12 @@
 				</div>
 			{% endif %}
 		</div>
+		{% test_rule 'is_user_case_advisor_or_assigned_user' request.session.lite_api_user_id case as is_user_case_advisor_or_assigned_user %}
+		{% if not is_user_case_advisor_or_assigned_user %}
+			<div class="app-case__finalised-case-banner">
+				You need to allocate yourself to this case to work on it <a href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate Case </a>
+			</div>
+		{% endif %}
 		{% block header_tabs %}
 		{% if tabs %}
 			<div id="tab-bar" class="app-case-tab-bar">
