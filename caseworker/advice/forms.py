@@ -15,8 +15,6 @@ from caseworker.tau.widgets import GoodsMultipleSelect
 
 from core.forms.widgets import GridmultipleSelect
 
-from .enums import NSGListTypes
-
 
 def get_approval_advice_form_factory(advice, data=None):
     data = data or {
@@ -262,7 +260,7 @@ class BEISTriggerListFormBase(forms.Form):
         label="Do the trigger list guidelines apply to this product?",
         help_text="Select no if the product is on the trigger list but falls outside the guidelines",
         error_messages={
-            "required": "Select whether the product/s appear on the trigger list or are for dual use",
+            "required": "Select yes if the trigger list guidelines apply to this product",
         },
     )
 
