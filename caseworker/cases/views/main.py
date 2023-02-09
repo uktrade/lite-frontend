@@ -66,7 +66,6 @@ from caseworker.users.services import (
     get_gov_user_from_form_selection,
 )
 
-
 logger = getLogger(__name__)
 
 

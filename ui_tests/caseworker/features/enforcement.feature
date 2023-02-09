@@ -10,6 +10,7 @@ Feature: I want to export and import XML for enforcement checking
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to application previously created
+    And I assign myself to the case
     And I assign the case to "Enforcement Unit Cases to Review" queue
     When I go to my profile page
     And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"
@@ -35,6 +36,7 @@ Feature: I want to export and import XML for enforcement checking
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to application previously created
+    And I assign myself to the case
     And I assign the case to "Enforcement Unit Cases to Review" queue
     When I go to my profile page
     And I change my team to "Enforcement Unit" and default queue to "Enforcement Unit Cases to Review"

@@ -9,6 +9,7 @@ from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.goods_queries_pages import StandardGoodsReviewPages, OpenGoodsReviewPages
 from ui_tests.caseworker.pages.teams_pages import TeamsPages
+from ui_tests.caseworker.pages.case_officer_page import CaseOfficerPage
 from caseworker.core.constants import DATE_FORMAT
 from ui_tests.caseworker.fixtures.env import environment  # noqa
 from ui_tests.caseworker.fixtures.add_a_flag import (  # noqa
@@ -869,3 +870,16 @@ def submit_form(driver):  # noqa
 def add_cle_value(driver, control_code):  # noqa
     add_goods_page = AddGoodPage(driver)
     add_goods_page.enter_control_list_entries(control_code)
+
+
+@when("I assign myself to the case")
+def assign_myself_to_case(driver, internal_info):  # noqa
+    # go to Assign case officer page
+    CasePage(driver).click_assign_case_officer()
+    # search for myself
+    case_officer_page = CaseOfficerPage(driver)
+    case_officer_page.search(internal_info["email"])
+    # search for myself
+    case_officer_page = CaseOfficerPage(driver)
+    case_officer_page.select_first_user()
+    functions.click_submit(driver)
