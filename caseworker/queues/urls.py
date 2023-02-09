@@ -10,7 +10,17 @@ urlpatterns = [
     path("manage/", views.QueuesList.as_view(), name="manage"),
     path("add/", views.AddQueue.as_view(), name="add"),
     path("<uuid:pk>/edit/", views.EditQueue.as_view(), name="edit"),
+    path(
+        "<uuid:pk>/case-assignment-select-role/",
+        views.CaseAssignmentAllocateRole.as_view(),
+        name="case_assignment_select_role",
+    ),
     path("<uuid:pk>/case-assignments/", views.CaseAssignments.as_view(), name="case_assignments"),
+    path(
+        "<uuid:pk>/case-assignments-assign-case-officer/",
+        views.CaseAssignmentsCaseOfficer.as_view(),
+        name="case_assignments_case_officer",
+    ),
     path("<uuid:pk>/enforcement-xml-export/", views.EnforcementXMLExport.as_view(), name="enforcement_xml_export"),
     path("<uuid:pk>/enforcement-xml-import/", views.EnforcementXMLImport.as_view(), name="enforcement_xml_import"),
 ]

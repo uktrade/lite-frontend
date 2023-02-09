@@ -1,6 +1,6 @@
 from django import forms
 
-from exporter.core.common.forms import BaseForm
+from core.common.forms import BaseForm
 from .validators import (
     validate_vat,
     validate_eori,

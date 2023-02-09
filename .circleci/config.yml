@@ -36,6 +36,9 @@ image_python_browsers: &image_python_browsers
 image_redis: &image_redis
   image: circleci/redis:3.2-alpine
 
+image_node: &image_node
+  image: cimg/node:16.19
+
 ###############################################################################
 # Commands
 ###############################################################################
@@ -111,10 +114,15 @@ commands:
   build_api_image:
     parameters:
       api_branch:
-        default: master
+        default: auto
         type: string
     steps:
-      - run: git clone git@github.com:uktrade/lite-api.git; cd lite-api; git checkout <<parameters.api_branch>>
+      - run:
+          name: Clone API
+          command: |
+            git clone git@github.com:uktrade/lite-api.git
+            cd lite-api
+            git checkout $(python ../which_branch.py <<parameters.api_branch>>)
       - run:
           name: Git Submodule Checkout
           command: |
@@ -132,7 +140,7 @@ commands:
   prepare_e2e_tests:
     parameters:
       api_branch:
-        default: master
+        default: auto
         type: string
     steps:
       - checkout
@@ -220,7 +228,7 @@ jobs:
 
   frontend_unit_test:
     docker:
-      - image: cimg/node:16.15
+      - <<: *image_node
     steps:
       - checkout
       - run: npm install
@@ -228,7 +236,7 @@ jobs:
 
   frontend_artefacts_check:
     docker:
-      - image: cimg/node:16.15
+      - <<: *image_node
     steps:
       - checkout
       - run: npm install --include=dev --no-save
@@ -241,37 +249,7 @@ jobs:
     resource_class: large
     steps:
       - prepare_e2e_tests:
-          api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_dev_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: dev
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_uat_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: uat
-      - run_e2e_caseworker
-      - finish_e2e_tests
-
-  caseworker_e2e_test_master_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: master
+          api_branch: auto
       - run_e2e_caseworker
       - finish_e2e_tests
 
@@ -281,37 +259,27 @@ jobs:
     resource_class: large
     steps:
       - prepare_e2e_tests:
+          api_branch: auto
+      - run_e2e_exporter
+      - finish_e2e_tests
+
+  caseworker_e2e_test_jenkins:
+    machine:
+      image: ubuntu-2004:202008-01
+    resource_class: large
+    steps:
+      - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_exporter
+      - run_e2e_caseworker
       - finish_e2e_tests
 
-  exporter_e2e_test_dev_api:
+  exporter_e2e_test_jenkins:
     machine:
       image: ubuntu-2004:202008-01
     resource_class: large
     steps:
       - prepare_e2e_tests:
-          api_branch: dev
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_uat_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: uat
-      - run_e2e_exporter
-      - finish_e2e_tests
-
-  exporter_e2e_test_master_api:
-    machine:
-      image: ubuntu-2004:202008-01
-    resource_class: large
-    steps:
-      - prepare_e2e_tests:
-          api_branch: master
+          api_branch: << pipeline.parameters.api_git_tag >>
       - run_e2e_exporter
       - finish_e2e_tests
 
@@ -326,14 +294,10 @@ workflows:
       - core_unit_test
       - frontend_unit_test
       - frontend_artefacts_check
-      - caseworker_e2e_test_dev_api
-      - exporter_e2e_test_dev_api
-      - caseworker_e2e_test_uat_api
-      - exporter_e2e_test_uat_api
-      - caseworker_e2e_test_master_api
-      - exporter_e2e_test_master_api
+      - caseworker_e2e_test
+      - exporter_e2e_test
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
-      - caseworker_e2e_test
-      - exporter_e2e_test
+      - caseworker_e2e_test_jenkins
+      - exporter_e2e_test_jenkins

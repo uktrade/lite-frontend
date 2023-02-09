@@ -8,38 +8,6 @@ End to end tests requires the following docker setup:
 - Postgres DB using a UAT DB snapshot (stored in GCR)
 - Caseworker/Exporter (built from code)
 
-
-## Creating and pushing the dependency docker image
-
-The below steps should be run every time a change is done on `Dockerfile.dependencies`
-
-```bash
-export VERSION=1.0.0 # Increment this version each time when you edit the Dockerfile.dependencies file
-```
-Ensure you have gcloud sdk and you are logged in following their instructions:
-
-```bash
-gcloud auth login
-gcloud auth configure-docker
-```
-
-Check this out for further help on setting up gcloud: https://cloud.google.com/sdk/docs
-
-```bash
-docker build -f Dockerfile.dependencies -t lite-frontend-dependencies .
-
-docker tag lite-frontend-dependencies:latest gcr.io/sre-docker-registry/lite-frontend-dependencies:${VERSION}
-
-docker tag lite-frontend-dependencies:latest gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
-
-docker push gcr.io/sre-docker-registry/lite-frontend-dependencies:${VERSION}
-
-docker push gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
-```
-
-Your image should be now listed at [Google Container Registry](http://gcr.io/sre-docker-registry/github.com/uktrade).
-
-
 ## Creating and pushing the lite-db docker image
 
 `lite-db` image is hosted in GCR and latest image is pulled each time stack is built. `lite-api-db-cci-docker-image-refresh` Jenkins job is responsible for keeping it up to date.

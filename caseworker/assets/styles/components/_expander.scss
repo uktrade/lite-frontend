@@ -1,0 +1,50 @@
+.expander {
+
+    &__expand-list {
+        &__item {
+	        &__animate {
+	        	animation: load-flag .2s;
+	        }
+
+            &__hidden {
+                display: none;
+            }
+        }
+    }
+
+    &__expand-button {
+	    @include appearance(none);
+	    @include govuk-font($size: 16);
+	    color: $govuk-secondary-text-colour;
+	    background-color: transparent;
+	    outline: 0;
+	    border: 0;
+	    padding: govuk-spacing(1) 0;
+	    margin: 0;
+	    align-items: center;
+	    justify-content: center;
+	    border-bottom: 2px solid transparent;
+	    cursor: pointer;
+        display: inline-flex;
+
+        &:before {
+	    	@include govuk-shape-arrow($direction: down, $base: 10px, $height: 6px);
+	    	content: "";
+            margin-right: govuk-spacing(1);
+	    }
+
+	    &:hover {
+	    	border-bottom-color: currentColor;
+	    }
+
+	    &:active {
+	    	color: $govuk-text-colour;
+	    	border-bottom-color: $govuk-text-colour;
+	    }
+
+	    &:focus {
+	    	@include govuk-focused-text;
+	    }
+
+    }
+}

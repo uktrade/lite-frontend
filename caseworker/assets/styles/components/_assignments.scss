@@ -12,4 +12,8 @@
     &__role, &__team {
         color: $govuk-secondary-text-colour;
     }
+
+    &__user {
+        font-weight: bold;
+    }
 }

@@ -32,7 +32,6 @@ services:
     ports:
       - 8300:8300
     volumes:
-      - ./playwright_videos:/app/playwright_videos
       - ./ui_tests/screenshots:/app/ui_tests/screenshots
     entrypoint: ["/bin/sh","-c"]
     command:

@@ -32,7 +32,7 @@
 		{% if not queue.is_system_queue %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
 				<div data-enable-on-checkboxes="#table-cases">
-					<button id="assign-users-button" form="form-cases" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ASSIGN_USERS' %}</button>
+					<button id="assign-users-button" form="form-cases" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ALLOCATE_CASE' %}</button>
 				</div>
 				{% if enforcement_check %}
 					{% govuk_link_button id='export-xml' classes='govuk-button--secondary' text='cases.CasesListPage.EnforcementXML.EXPORT_BUTTON' url='queues:enforcement_xml_export' url_param=queue.id %}
@@ -61,27 +61,15 @@
 
 	{% include 'filters.html' %}
 
-	<div class="lite-tabs__container">
-		<div class="lite-tabs">
-			<a href="{{ open_queries_tabs.all_cases_url }}" class="lite-tabs__tab  {% if open_queries_tabs.only_open_queries == "False" %}lite-tabs__tab--selected{% endif %}" id="view-all-queries-tab">
-				{% if queue.is_system_queue %}
-					All cases
-				{% else %}
-					Cases to review
-				{% endif %}
-				{% if open_queries_tabs.only_open_queries == "False" %}
-					({{ data.count }})
-				{% endif %}
-			</a>
-			<a href="{{ open_queries_tabs.open_queries_url }}" class="lite-tabs__tab {% if open_queries_tabs.only_open_queries == "True" %}lite-tabs__tab--selected{% endif %}" id="view-open-queries-tab">
-				Open queries {% if open_queries_tabs.only_open_queries == "True" %}({{ data.count }}){% endif %}
-			</a>
-		</div>
-	</div>
+	{% include 'queues/search-tabs.html' %}
 
-	<form id="form-cases" method="get" action="{% url 'queues:case_assignments' queue.id %}">
+	<form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
 		{% if not data.results.cases %}
-			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
+			{% if tab_data.my_cases.is_selected %}
+				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES_ALLOCATED' %}
+			{% else %}
+				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
+			{% endif %}
 		{% else %}
 		<table id="table-cases" class="govuk-table">
 			<thead class="govuk-table__head">
@@ -113,10 +101,6 @@
 {% endblock %}
 
 {% block javascript %}
-	<div class="app-hidden--force" id="js-chevron-svg">
-		{% svg 'chevron' %}
-	</div>
-
 	{# this is tied to inline javascript in lite_forms/templates/components/autocomplete.html and cannot be removed yet #}
 	<script nonce="{{ request.csp_nonce }}">
 		loadAutoCompletes();
