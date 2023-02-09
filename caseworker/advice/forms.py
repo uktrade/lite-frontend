@@ -314,8 +314,8 @@ class BEISTriggerListAssessmentForm(BEISTriggerListFormBase):
             choices=self.get_goods_choices(goods),
             widget=GoodsMultipleSelect(),
             label=(
-                "Select a product to begin. Or you can select multiple products to give them the same assessment.\n"
-                "You will then be asked to make a recommendation for all products on this application."
+                "Select a product to begin. Or you can select multiple products to give them the same assessment.<br><br>"
+                "<strong>You will then be asked to make a recommendation for all products on this application.</strong>"
             ),
             error_messages={"required": "Select the products that you want to assess"},
         )
