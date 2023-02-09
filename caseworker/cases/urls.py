@@ -1,6 +1,16 @@
 from django.urls import path, include
 
-from caseworker.cases.views import main, advice, generate_document, ecju, goods_query, goods, compliance, external_data
+from caseworker.cases.views import (
+    main,
+    advice,
+    generate_document,
+    ecju,
+    goods_query,
+    goods,
+    compliance,
+    external_data,
+    case_assignments,
+)
 from caseworker.flags.views import AssignFlags
 
 app_name = "cases"
@@ -27,6 +37,11 @@ urlpatterns = [
         "remove-matching-sanction/",
         external_data.SanctionRevokeView.as_view(),
         name="remove-matching-sanctions",
+    ),
+    path(
+        "remove-assignment/",
+        case_assignments.CaseAssignmentRemove.as_view(),
+        name="remove-case-assignment",
     ),
     path(
         "matching-denials/<str:category>/",

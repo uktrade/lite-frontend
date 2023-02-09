@@ -25,6 +25,23 @@
 
     span {
       @include govuk-font($size: 19);
+
+      &.govuk-label {
+        font-weight: bold;
+      }
+
+    }
+
+    &__actions {
+      margin-top: govuk-spacing(3);
+    }
+
+    &__fullwidth {
+      display: flex;
+
+      & > :first-child {
+        margin-right: auto;
+      }
     }
   }
   @media screen and (min-width: 900px) {
