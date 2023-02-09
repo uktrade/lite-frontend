@@ -92,7 +92,7 @@ class CasePage:
         class CaseOfficer:
             CASE_OFFICER = "Case officer"
             INSPECTOR = "Inspector"
-            ASSIGNED_USERS = "Assigned users"
+            ASSIGNED_USERS = "Case advisers"
             NO_CASE_OFFICER = "No case officer assigned"
             NO_INSPECTOR = "No inspector assigned"
             NO_USERS_ASSIGNED = "No users assigned"
@@ -133,7 +133,8 @@ class CasePage:
         TYPE = "Type"
         LAST_UPDATED = "Last updated"
         CASE_OFFICER = "Case officer"
-        ASSIGNED_USERS = "Assigned users"
+        ASSIGNED_USERS = "Case advisers"
+        ADD_ASSIGNED_USER = "Add case adviser"
         COPY_OF = "Copy of"
         RAISED_BY = "Raised by"
         EXPORT_TYPE = "Export type"
