@@ -141,7 +141,7 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
     def get_layout_fields(self):
 
         return (
-            HTML(render_to_string("forms/filter-radios.html")),
+            HTML(render_to_string("forms/filter_radios.html")),
             "users",
         )
 
