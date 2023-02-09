@@ -2,7 +2,7 @@ import rules
 
 
 @rules.predicate
-def is_user_case_worker(user_id, case):
+def is_user_case_advisor(user_id, case):
     case_officer = case["case_officer"]
     if case_officer and user_id == case_officer.get("id"):
         return True
@@ -20,4 +20,4 @@ def is_user_assigned(user_id, case):
     return False
 
 
-rules.add_rule("is_user_case_advisor_or_assigned_user", is_user_case_worker | is_user_assigned)
+rules.add_rule("is_user_case_advisor_or_assigned_user", is_user_case_advisor | is_user_assigned)

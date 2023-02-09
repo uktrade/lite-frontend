@@ -14,9 +14,9 @@ user_id = "a787705e-9b5f-449d-bde0-ea4d29aeab83"
         ({"case_officer": None}, False),
     ),
 )
-def test_is_user_case_worker(data, expected_result):
+def test_is_user_case_officer(data, expected_result):
     user_id = "a787705e-9b5f-449d-bde0-ea4d29aeab83"
-    assert permissions.is_user_case_worker(user_id, data) == expected_result
+    assert permissions.is_user_case_advisor(user_id, data) == expected_result
 
 
 @pytest.mark.parametrize(
