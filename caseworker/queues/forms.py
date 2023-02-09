@@ -100,7 +100,7 @@ class EnforcementXMLImportForm(forms.Form):
 class CaseAssignmentsCaseOfficerForm(BaseForm):
     class Layout:
         TITLE = "Who do you want to allocate as Licensing Unit case officer ?"
-        SUBTITLE = "Manages the case until the application outcome(the exporter will see this name until the case officer is changed)"
+        SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed)"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     users = forms.ChoiceField(
@@ -159,7 +159,7 @@ class SelectAllocateRole(BaseForm):
         TextChoice(RoleChoices.CASE_ADVISOR, hint="Reviews or gives advice on the case while it is with your team"),
         TextChoice(
             RoleChoices.LU_CASE_OFFICER,
-            hint="Manages the case until the application outcome(the exporter will see this name until the case officer is changed)",
+            hint="Manages the case until the application outcome (the exporter will see this name until the case officer is changed)",
         ),
     )
 
