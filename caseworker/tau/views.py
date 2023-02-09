@@ -312,6 +312,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["wassenaar_entries"] = self.wassenaar_entries
         form_kwargs["mtcr_entries"] = self.mtcr_entries

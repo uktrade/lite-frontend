@@ -140,7 +140,7 @@ def test_form(
     assert unassessed_products[0].attrs["value"] == good["id"]
 
     data = {
-        "report_summary": "test",
+        "report_summary_subject": "test",
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],

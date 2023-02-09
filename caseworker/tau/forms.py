@@ -7,6 +7,7 @@ from crispy_forms_gds.layout import (
     Layout,
     Submit,
 )
+from django.core.exceptions import ValidationError
 
 from core.forms.layouts import (
     ConditionalCheckboxes,
@@ -17,6 +18,10 @@ from caseworker.regimes.enums import Regimes
 
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
+from ..report_summary.services import get_report_summary_subjects, get_report_summary_prefixes
+
+REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
+REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
 
 
 class TAUEditForm(forms.Form):
@@ -43,20 +48,20 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary = forms.CharField(
-        label="Add a report summary",
-        help_text="Type for suggestions",
-        # setting id for javascript to use
-        widget=forms.TextInput(attrs={"id": "report_summary"}),
-        required=False,
-    )
-
     report_summary_prefix = forms.CharField(
         label="Add a report summary prefix",
         help_text="Type for suggestions",
         # setting id for javascript to use
-        widget=forms.TextInput(attrs={"id": "report_summary_prefix"}),
+        widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_PREFIX_KEY}),
         required=False,
+    )
+
+    report_summary_subject = forms.CharField(
+        label="Add a report summary subject",
+        help_text="Type for suggestions",
+        # setting id for javascript to use
+        widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_SUBJECT_KEY}),
+        required=True,
     )
 
     regimes = forms.MultipleChoiceField(
@@ -130,6 +135,7 @@ class TAUEditForm(forms.Form):
 
     def __init__(
         self,
+        request,
         control_list_entries_choices,
         wassenaar_entries,
         mtcr_entries,
@@ -141,6 +147,7 @@ class TAUEditForm(forms.Form):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        self.request = request
         self.document = document
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.fields["wassenaar_entries"].choices = wassenaar_entries
@@ -172,8 +179,8 @@ class TAUEditForm(forms.Form):
             "control_list_entries",
             HTML.p("Or"),
             "does_not_have_control_list_entries",
-            "report_summary",
-            "report_summary_prefix",
+            REPORT_SUMMARY_PREFIX_KEY,
+            REPORT_SUMMARY_SUBJECT_KEY,
             ConditionalCheckboxes(
                 "regimes",
                 ConditionalCheckboxesQuestion(
@@ -214,9 +221,13 @@ class TAUEditForm(forms.Form):
         elif not has_no_cle_entries and not has_some_cle_entries:
             self.add_error("does_not_have_control_list_entries", self.MESSAGE_NO_CLC_REQUIRED)
         # report summary is required when there are CLEs
-        no_report_summary = cleaned_data.get("report_summary", "") == ""
-        if has_some_cle_entries and no_report_summary:
-            self.add_error("report_summary", "This field is required")
+
+        if not cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY):
+            raise ValidationError("Enter a report summary subject")
+
+        self.validate_report_summary_subject(cleaned_data)
+
+        self.validate_report_summary_prefix(cleaned_data)
 
         regimes = cleaned_data.get("regimes", [])
 
@@ -263,6 +274,30 @@ class TAUEditForm(forms.Form):
 
         return cleaned_data
 
+    def validate_report_summary_subject(self, cleaned_data):
+        subject_name = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        subject_response = get_report_summary_subjects(self.request, subject_name)
+        matching_subjects = (
+            subject_response["report_summary_subjects"] if "report_summary_subjects" in subject_response else []
+        )
+        if len(matching_subjects) == 1 and matching_subjects[0].get("name") == subject_name:
+            cleaned_data["report_summary_subject_id"] = matching_subjects[0]["id"]
+        else:
+            raise ValidationError("Enter a valid report summary subject")
+
+    def validate_report_summary_prefix(self, cleaned_data):
+        prefix_name = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
+        if prefix_name:
+            prefix_response = get_report_summary_prefixes(self.request, prefix_name)
+            matching_prefixes = (
+                prefix_response["report_summary_prefixes"] if "report_summary_prefixes" in prefix_response else []
+            )
+
+            if len(matching_prefixes) == 1 and matching_prefixes[0].get("name") == prefix_name:
+                cleaned_data["report_summary_prefix_id"] = matching_prefixes[0]["id"]
+            else:
+                raise ValidationError("Enter a valid report summary prefix")
+
 
 class TAUAssessmentForm(TAUEditForm):
     """
@@ -287,9 +322,8 @@ class TAUAssessmentForm(TAUEditForm):
         *args,
         **kwargs,
     ):
-        super().__init__(control_list_entries_choices, wassenaar_entries, mtcr_entries, *args, **kwargs)
+        super().__init__(request, control_list_entries_choices, wassenaar_entries, mtcr_entries, *args, **kwargs)
 
-        self.request = request
         self.queue_pk = queue_pk
         self.application_pk = application_pk
         self.is_user_rfd = is_user_rfd

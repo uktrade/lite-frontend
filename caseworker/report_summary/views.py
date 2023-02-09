@@ -11,13 +11,7 @@ class ReportSummaryPrefix(LoginRequiredMixin, TemplateView):
         Return JSON representation of prefixes for use in autocompletion
         """
         search_term = request.GET.get("name")
-        prefixes = get_report_summary_prefixes(request)
-
-        if search_term:
-            filtered_prefixes = [
-                prefix for prefix in prefixes["report_summary_prefixes"] if prefix["name"].startswith(search_term)
-            ]
-            return JsonResponse(data={"report_summary_prefixes": filtered_prefixes})
+        prefixes = get_report_summary_prefixes(request, search_term)
 
         return JsonResponse(data=prefixes)
 
@@ -25,6 +19,9 @@ class ReportSummaryPrefix(LoginRequiredMixin, TemplateView):
 class ReportSummarySubject(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         """
-        Return JSON representation of prefixes for use in autocompletion
+        Return JSON representation of subjects for use in autocompletion
         """
-        return JsonResponse(data=(get_report_summary_subjects(request)))
+        search_term = request.GET.get("name")
+        subjects = get_report_summary_subjects(request, search_term)
+
+        return JsonResponse(data=subjects)
