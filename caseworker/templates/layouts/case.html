@@ -117,8 +117,11 @@
 		</div>
 		{% test_rule 'is_user_case_advisor_or_assigned_user' request.session.lite_api_user_id case as is_user_case_advisor_or_assigned_user %}
 		{% if not is_user_case_advisor_or_assigned_user %}
-			<div class="app-case__finalised-case-banner">
-				You need to allocate yourself to this case to work on it <a href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate Case </a>
+			<div class="app-case-warning-banner">
+				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
+				<span class="app-case-warning-banner__text">
+					You need to allocate yourself to this case to work on it <a class="app-case-warning-banner__action" href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate Case </a>
+				</span>
 			</div>
 		{% endif %}
 		{% block header_tabs %}

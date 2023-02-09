@@ -514,6 +514,35 @@ $case-header-text-colour: govuk-colour('white');
   }
 }
 
+.app-case-warning-banner {
+  @extend .app-case__finalised-case-banner;
+
+  &__icon {
+    @extend .govuk-warning-text__icon;
+    background-color: govuk-colour('white');
+    border-color: govuk-colour('white');
+    color: govuk-colour('blue');
+  }
+
+  &__text {
+    margin-left: govuk-spacing(8);
+  }
+
+  &__action {
+    @include govuk-font($size: 19);
+    background-color: govuk-colour('white');
+    color: $govuk-text-colour;
+    font-weight: 500;
+    margin-left: govuk-spacing(4);
+    padding: govuk-spacing(2) govuk-spacing(4);
+    text-decoration: none;
+
+    &:hover {
+      background-color: govuk-colour("light-grey");
+    }
+  }
+}
+
 .app-case__slice__controls {
   display: flex;
   justify-content: flex-end;
