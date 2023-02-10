@@ -75,3 +75,8 @@
 		fill: govuk-colour("black")!important;
 	}
 }
+
+.lite-filter-search__container {
+	display: none;
+	max-width: 400px;
+}

@@ -290,7 +290,7 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormVi
         return form_kwargs
 
     def form_valid(self, form):
-        self.update_case_officer(form.cleaned_data["user"])
+        self.update_case_officer(form.cleaned_data["users"])
         return super().form_valid(form)
 
     @expect_status(
