@@ -226,7 +226,6 @@ class TAUEditForm(forms.Form):
             raise ValidationError("Enter a report summary subject")
 
         self.validate_report_summary_subject(cleaned_data)
-
         self.validate_report_summary_prefix(cleaned_data)
 
         regimes = cleaned_data.get("regimes", [])
