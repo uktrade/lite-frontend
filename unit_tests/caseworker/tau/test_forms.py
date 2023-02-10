@@ -1,7 +1,7 @@
 import pytest
 import requests
 import uuid
-from urllib import request, parse
+from urllib import parse
 
 from core.constants import (
     FirearmsProductType,
@@ -9,8 +9,6 @@ from core.constants import (
 )
 
 from caseworker.tau import forms
-
-from core import client
 
 REPORT_SUMMARY_PREFIXES = "report_summary_prefixes"
 REPORT_SUMMARY_SUBJECTS = "report_summary_subjects"
@@ -38,7 +36,6 @@ def configure_mock_request(client, rf):
 
 @pytest.fixture()
 def report_summary_requests_mock(requests_mock):
-    # requests_mock.get("/static/report_summary/prefixes/", json={REPORT_SUMMARY_PREFIXES: PREFIX_API_RESPONSE})
     requests_mock.get(
         "/static/report_summary/prefixes/?name=components", json={REPORT_SUMMARY_PREFIXES: [PREFIX_API_RESPONSE[0]]}
     )
@@ -52,7 +49,6 @@ def report_summary_requests_mock(requests_mock):
     name = parse.quote_plus(resp["name"])
     requests_mock.get(f"/static/report_summary/prefixes/?name={name}", json={REPORT_SUMMARY_PREFIXES: [resp]})
 
-    # requests_mock.get("/static/report_summary/subjects/", json={REPORT_SUMMARY_SUBJECTS: SUBJECT_API_RESPONSE})
     requests_mock.get(
         "/static/report_summary/subjects/?name=co",
         json={REPORT_SUMMARY_SUBJECTS: [SUBJECT_API_RESPONSE[1], SUBJECT_API_RESPONSE[2]]},
