@@ -12,8 +12,6 @@
     "build": "npm install --no-save && npm run build_all",
     "build_all": "export NODE_ENV=production && npm-run-all --serial build_exporter build_caseworker",
     "heroku-postbuild": "npm run build && rm -r node_modules",
-    "test:e2e": "cypress run --browser chrome",
-    "test:e2e:watch": "cypress open",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
@@ -47,7 +45,6 @@
     "@parcel/transformer-sass": "^2.4.1",
     "@popperjs/core": "^2.4.4",
     "@tarekraafat/autocomplete.js": "^8.3.2",
-    "@testing-library/cypress": "^8.0.2",
     "accessible-autocomplete": "^2.0.3",
     "dotenv": "^15.0.0",
     "eslint": "^8.8.0",
