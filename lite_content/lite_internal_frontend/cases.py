@@ -20,6 +20,7 @@ class CasesListPage:
         SLA = "SLA"
         INFORMATION = "Information"
         CASE = "Case"
+        UPDATES = "Case updates"
         ASSIGNEES = "Case allocation"
         DESTINATIONS = "Destinations"
         FLAGS = "Flags"
