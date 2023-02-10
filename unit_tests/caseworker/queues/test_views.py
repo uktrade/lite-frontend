@@ -381,7 +381,7 @@ def test_case_assignment_case_office_no_user_selected(authorized_client, mock_go
 
     assert response.status_code == 200
     assert response.context_data["form"].errors == {
-        "user": ["Select a user to allocate as Licensing Unit case officer"]
+        "users": ["Select a user to allocate as Licensing Unit case officer"]
     }
 
 
@@ -394,7 +394,7 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
     case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
     mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
 
-    data = {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    data = {"users": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
     assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
