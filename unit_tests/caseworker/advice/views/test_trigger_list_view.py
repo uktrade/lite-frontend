@@ -62,7 +62,7 @@ def test_beis_edit_trigger_list_assessment_get(
     authorized_client, edit_assessment_url, data_standard_case_with_potential_trigger_list_product
 ):
     good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
-    good_on_application["nsg_list_type"] = {"key": "DUAL_USE"}
+    good_on_application["is_trigger_list_guidelines_applicable"] = True
     good_on_application["is_nca_applicable"] = False
     good_on_application["nsg_assessment_note"] = ""
     data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0] = good_on_application
@@ -108,7 +108,7 @@ def test_beis_assess_trigger_list_products_post_final_advice_and_returns_to_advi
     url2 = client._build_absolute_uri(f"/applications/{application_id}/goods-on-application/")
     requests_mock.put(url2, json={})
     data = {
-        "nsg_list_type": "TRIGGER_LIST",
+        "is_trigger_list_guidelines_applicable": True,
         "is_nca_applicable": True,
         "nsg_assessment_note": "meets criteria",
         "goods": [good_on_application["id"]],
@@ -124,7 +124,7 @@ def test_beis_assess_trigger_list_products_post_final_advice_and_returns_to_advi
             "id": good_on_application["id"],
             "application": application_id,
             "good": good_on_application["good"]["id"],
-            "nsg_list_type": "TRIGGER_LIST",
+            "is_trigger_list_guidelines_applicable": True,
             "is_nca_applicable": True,
             "nsg_assessment_note": "meets criteria",
         }
@@ -138,12 +138,12 @@ def test_beis_assess_trigger_list_products_post_advice_and_remains_on_trigger_li
 
     good_on_application_1 = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][1]
     good_on_application_2 = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][2]
-    del good_on_application_2["nsg_list_type"]
+    del good_on_application_2["is_trigger_list_guidelines_applicable"]
     del good_on_application_2["is_nca_applicable"]
 
     requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
     data = {
-        "nsg_list_type": "TRIGGER_LIST",
+        "is_trigger_list_guidelines_applicable": True,
         "is_nca_applicable": True,
         "nsg_assessment_note": "meets criteria",
         "goods": [good_on_application_1["id"], good_on_application_2["id"]],
@@ -172,31 +172,63 @@ def get_cells(soup, table_id):
     return ["\n".join([t.strip() for t in td.text.strip().split("\n")]) for td in soup.find(id=table_id).find_all("td")]
 
 
-def test_assessed_products_table(authorized_client, url):
+def get_table(soup, table_id):
+    """Returns table data as list of dicts"""
+
+    table = soup.find(id=table_id)
+    assert table
+
+    rows = table.find_all("tr")
+    headers = [field.text.strip() for field in rows[0].find_all("th")]
+
+    data = []
+    for row in rows[1:]:
+        columns = row.find_all("td")
+        data.append({key: columns[index].text for index, key in enumerate(headers)})
+
+    return data
+
+
+def test_assessed_products_table(
+    authorized_client, url, requests_mock, data_standard_case_with_all_trigger_list_products_assessed
+):
+    # Products in mock_case fixture are not completely assessed for trigger list criteria hence mock with correct case for this test
+    case_url = client._build_absolute_uri(
+        f"/cases/{data_standard_case_with_all_trigger_list_products_assessed['case']['id']}/"
+    )
+    requests_mock.get(url=case_url, json=data_standard_case_with_all_trigger_list_products_assessed)
+
     response = authorized_client.get(url)
+    expected = [
+        {
+            "column number": f"{index}.",
+            "Name": product["good"]["name"],
+            "Control entry": ", ".join(cle["rating"] for cle in product["control_list_entries"]),
+            "Report summary": product["report_summary"],
+            "Regime": ", ".join(item["name"] for item in product["regime_entries"]),
+            "Trigger list": "Yes" if product.get("is_trigger_list_guidelines_applicable") is True else "No",
+            "NCA": "Yes" if product.get("is_nca_applicable") is True else "No",
+            "Assessment note": product.get("nsg_assessment_note", ""),
+            "Actions": "Edit",
+        }
+        for index, product in enumerate(
+            data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"], start=1
+        )
+    ]
 
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find(id="assessed-products")
-    assert get_cells(soup, "assessed-products") == [
-        "1.",
-        "p2",
-        "ML8a,ML9a",
-        "Yes",
-        "Yes",
-        "No",
-        "No",
-        "",
-        "Edit",
-        "2.",
-        "p2",
-        "ML8a,ML9a",
-        "Yes",
-        "No",
-        "Yes",
-        "Yes",
-        "",
-        "Edit",
-    ]
+    actual = get_table(soup, "assessed-products")
+    assert len(actual) == len(expected)
+
+    for row in actual:
+        # for these fields multiple spaces and newlines present in rendered html
+        value = row["Regime"]
+        row["Regime"] = ", ".join(e.strip() for e in value.replace("\n", "").split(","))
+
+        value = row["Actions"]
+        row["Actions"] = value.replace("\n", "")
+
+    assert actual == expected
 
 
 @pytest.fixture
@@ -217,7 +249,7 @@ def test_beis_clear_assessments_trigger_list_products_post(
     good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
     requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
     data = {
-        "nsg_list_type": "TRIGGER_LIST",
+        "is_trigger_list_guidelines_applicable": True,
         "is_nca_applicable": True,
         "nsg_assessment_note": "meets criteria",
         "goods": [good_on_application["id"]],
@@ -228,7 +260,7 @@ def test_beis_clear_assessments_trigger_list_products_post(
         "id": good_on_application["id"],
         "application": application_id,
         "good": good_on_application["good"]["id"],
-        "nsg_list_type": "",
+        "is_trigger_list_guidelines_applicable": "",
         "is_nca_applicable": None,
         "nsg_assessment_note": "",
     }
@@ -239,14 +271,14 @@ def test_beis_assess_trigger_list_products_edit(
 ):
     application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
     good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
-    good_on_application["nsg_list_type"] = {"key": "DUAL_USE"}
+    good_on_application["is_trigger_list_guidelines_applicable"] = False
     good_on_application["is_nca_applicable"] = False
     good_on_application["nsg_assessment_note"] = ""
     data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0] = good_on_application
 
     requests_mock.put(f"/applications/{application_id}/goods-on-application/", json={})
     data = {
-        "nsg_list_type": "TRIGGER_LIST",
+        "is_trigger_list_guidelines_applicable": True,
         "is_nca_applicable": True,
         "nsg_assessment_note": "updated note",
     }
@@ -257,7 +289,7 @@ def test_beis_assess_trigger_list_products_edit(
             "id": good_on_application["id"],
             "application": application_id,
             "good": good_on_application["good"]["id"],
-            "nsg_list_type": "TRIGGER_LIST",
+            "is_trigger_list_guidelines_applicable": True,
             "is_nca_applicable": True,
             "nsg_assessment_note": "updated note",
         }

@@ -1044,8 +1044,8 @@ def data_standard_case_with_potential_trigger_list_product(
     data_standard_case_with_potential_trigger_list_product_no_assessments,
 ):
     data = copy.deepcopy(data_standard_case_with_potential_trigger_list_product_no_assessments)
-    data["case"]["data"]["goods"][1]["nsg_list_type"] = {"key": "TRIGGER_LIST"}
-    data["case"]["data"]["goods"][2]["nsg_list_type"] = {"key": "DUAL_USE"}
+    data["case"]["data"]["goods"][1]["is_trigger_list_guidelines_applicable"] = True
+    data["case"]["data"]["goods"][2]["is_trigger_list_guidelines_applicable"] = False
     data["case"]["data"]["goods"][2]["is_nca_applicable"] = True
 
     return data
@@ -1054,7 +1054,7 @@ def data_standard_case_with_potential_trigger_list_product(
 @pytest.fixture
 def data_standard_case_with_all_trigger_list_products_assessed(data_standard_case_with_potential_trigger_list_product):
     data = copy.deepcopy(data_standard_case_with_potential_trigger_list_product)
-    data["case"]["data"]["goods"][0]["nsg_list_type"] = {"key": "TRIGGER_LIST"}
+    data["case"]["data"]["goods"][0]["is_trigger_list_guidelines_applicable"] = True
     data["case"]["queue_details"].append(
         {
             "id": "566fd526-bd6d-40c1-94bd-60d10c967cf7",
