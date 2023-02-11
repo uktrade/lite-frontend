@@ -218,7 +218,7 @@ class NewSiteAssignUsersForm(SiteFormMixin, forms.Form):
         self.helper.layout = Layout(
             HTML.h1(AddSiteForm.AssignUsers.TITLE),
             HTML.p(AddSiteForm.AssignUsers.DESCRIPTION),
-            HTML(render_to_string("forms/filter.html")) if users_choices else None,
+            HTML(render_to_string("forms/filter_checkboxes.html")) if users_choices else None,
             "users" if users_choices else HTML.warning("No items"),
             Submit("submit", "Continue"),
         )

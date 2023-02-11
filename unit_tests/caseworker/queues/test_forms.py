@@ -15,8 +15,8 @@ def post_request(rf, client, data=None):
 @pytest.mark.parametrize(
     "data, valid, errors",
     (
-        ({"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}, True, None),  # /PS-IGNORE
-        ({"user": ""}, False, {"user": ["Select a user to allocate as Licensing Unit case officer"]}),
+        ({"users": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}, True, None),  # /PS-IGNORE
+        ({"users": ""}, False, {"users": ["Select a user to allocate as Licensing Unit case officer"]}),
     ),
 )
 def test_case_assignment_case_office_form(rf, client, mock_gov_user, mock_gov_users, data, valid, errors):

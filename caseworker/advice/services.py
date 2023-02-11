@@ -3,7 +3,6 @@ from collections import defaultdict
 from requests.exceptions import HTTPError
 
 from core import client
-from .enums import NSGListTypes
 
 # Queues
 BEIS_CHEMICAL_CASES_TO_REVIEW = "BEIS_CHEMICAL_CASES_TO_REVIEW"
@@ -69,7 +68,7 @@ def is_trigger_list_regime(product):
 
 def is_trigger_list_assessed(product):
     """Returns True if a product has been assessed for trigger list criteria"""
-    return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in list(NSGListTypes)
+    return product.get("is_trigger_list_guidelines_applicable") in [True, False]
 
 
 def filter_trigger_list_products(products):
