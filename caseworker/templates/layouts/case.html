@@ -115,8 +115,8 @@
 				</div>
 			{% endif %}
 		</div>
-		{% test_rule 'is_user_case_advisor_or_assigned_user' request.session.lite_api_user_id case as is_user_case_advisor_or_assigned_user %}
-		{% if not is_user_case_advisor_or_assigned_user %}
+		{% test_rule 'is_user_allowed_case_change' user case as is_user_allowed_case_change %}
+		{% if not is_user_allowed_case_change %}
 			<div class="app-case-warning-banner">
 				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
 				<span class="app-case-warning-banner__text">
