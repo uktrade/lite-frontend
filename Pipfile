@@ -75,7 +75,7 @@ setuptools = "~=65.5.1"
 pyopenssl = "~=22.0.0"
 rules="~=3.3.0"
 # The following dependency stops the cryptography package jumping by a major version which breaks pyOpenSSL 22.x
-cryptography = "~=38.0"
+cryptography = "~=39.0"
 
 
 [requires]
