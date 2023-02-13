@@ -18,6 +18,10 @@ def test_is_user_case_officer(data, mock_gov_user, expected_result):
     assert permissions.is_user_case_adviser(mock_gov_user["user"], data) == expected_result
 
 
+def test_is_user_case_officer_none():
+    assert permissions.is_user_case_adviser(None, {"case_officer": None}) == False
+
+
 @pytest.mark.parametrize(
     "data, expected_result",
     (
