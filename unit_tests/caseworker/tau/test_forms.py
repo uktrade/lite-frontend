@@ -97,7 +97,7 @@ def report_summary_requests_mock(requests_mock):
                 ],
                 "goods": ["Select the products that you want to assess"],
                 "regimes": ["Add a regime, or select none"],
-                "report_summary_subject": ["This field is required."],
+                "report_summary_subject_name": ["This field is required."],
                 "__all__": ["Enter a report summary subject"],
             },
         ),
@@ -105,7 +105,7 @@ def report_summary_requests_mock(requests_mock):
             "Valid form",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -116,7 +116,7 @@ def report_summary_requests_mock(requests_mock):
             "Valid form - with comments",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
                 "comments": "test",
@@ -128,7 +128,7 @@ def report_summary_requests_mock(requests_mock):
             "Invalid good-id",
             {
                 "goods": ["test-id-not"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -139,7 +139,7 @@ def report_summary_requests_mock(requests_mock):
             "Missing goods",
             {
                 "goods": [],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -150,18 +150,18 @@ def report_summary_requests_mock(requests_mock):
             "Missing report-summary-subject",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": "",
+                "report_summary_subject_name": "",
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
             False,
-            {"report_summary_subject": ["This field is required."], "__all__": ["Enter a report summary subject"]},
+            {"report_summary_subject_name": ["This field is required."], "__all__": ["Enter a report summary subject"]},
         ),
         (
             "does_not_have_control_list_entries=False and missing control_list_entries",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "regimes": ["NONE"],
             },
@@ -176,7 +176,7 @@ def report_summary_requests_mock(requests_mock):
             "does_not_have_control_list_entries=False but with control_list_entries",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NONE"],
@@ -188,7 +188,7 @@ def report_summary_requests_mock(requests_mock):
             "Does not have control list entries selected, but entries provided",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NONE"],
@@ -200,7 +200,7 @@ def report_summary_requests_mock(requests_mock):
             "Regimes NONE selected as well as another regime",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NONE", "MTCR"],
@@ -214,7 +214,7 @@ def report_summary_requests_mock(requests_mock):
             "Wassenaar regime selected but subsection missing",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["WASSENAAR"],
@@ -226,7 +226,7 @@ def report_summary_requests_mock(requests_mock):
             "Wassenaar regime selected but subsection empty",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["WASSENAAR"],
@@ -239,7 +239,7 @@ def report_summary_requests_mock(requests_mock):
             "MTCR regime selected but entry missing",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["MTCR"],
@@ -253,7 +253,7 @@ def report_summary_requests_mock(requests_mock):
             "MTCR regime selected but entry empty",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["MTCR"],
@@ -268,7 +268,7 @@ def report_summary_requests_mock(requests_mock):
             "NSG regime selected but entry missing",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NSG"],
@@ -282,7 +282,7 @@ def report_summary_requests_mock(requests_mock):
             "NSG regime selected but entry empty",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NSG"],
@@ -297,7 +297,7 @@ def report_summary_requests_mock(requests_mock):
             "CWC regime selected but subsection missing",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["CWC"],
@@ -309,7 +309,7 @@ def report_summary_requests_mock(requests_mock):
             "CWC regime selected but subsection empty",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["CWC"],
@@ -322,7 +322,7 @@ def report_summary_requests_mock(requests_mock):
             "AG regime selected but subsection missing",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["AG"],
@@ -334,7 +334,7 @@ def report_summary_requests_mock(requests_mock):
             "AG regime selected but subsection empty",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["AG"],
@@ -731,14 +731,14 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
                     "Select a control list entry or select 'This product does not have a control list entry'"
                 ],
                 "regimes": ["Add a regime, or select none"],
-                "report_summary_subject": ["This field is required."],
+                "report_summary_subject_name": ["This field is required."],
                 "__all__": ["Enter a report summary subject"],
             },
         ),
         (
             "Valid form",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -748,7 +748,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Valid form with comments",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
                 "comments": "test",
@@ -759,21 +759,21 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Missing report-summary-subject",
             {
-                "report_summary_prefix": "test",
-                "report_summary_subject": "",
+                "report_summary_prefix_name": "test",
+                "report_summary_subject_name": "",
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
             False,
             {
-                "report_summary_subject": ["This field is required."],
+                "report_summary_subject_name": ["This field is required."],
                 "__all__": ["Enter a report summary subject"],
             },
         ),
         (
             "Has no control list entries checked but control list entries missing",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "regimes": ["NONE"],
             },
@@ -787,8 +787,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Has no control list entries unchecked and control list entries present",
             {
-                "report_summary_subject": "test",
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NONE"],
@@ -799,7 +798,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Marked as not have CLEs but has CLEs",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": True,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NONE"],
@@ -810,7 +809,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Regime NONE and another selected",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NONE", "MTCR"],
@@ -823,7 +822,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Wassenaar regime selected but subsection missing",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["WASSENAAR"],
@@ -834,7 +833,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Wassenaar regime selected but subsection empty",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["WASSENAAR"],
@@ -846,7 +845,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "MTCR regime selected but entry missing",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["MTCR"],
@@ -859,7 +858,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "MTCR regime selected but entry empty",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["MTCR"],
@@ -873,7 +872,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "NSG regime selected but entry missing",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NSG"],
@@ -886,7 +885,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "NSG regime selected but entry empty",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NSG"],
@@ -900,7 +899,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "CWC regime selected but subsection missing",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["CWC"],
@@ -911,7 +910,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "CWC regime selected but subsection empty",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["CWC"],
@@ -923,7 +922,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "AG regime selected but subsection missing",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["AG"],
@@ -934,7 +933,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "AG regime selected but subsection empty",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+                "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
                 "does_not_have_control_list_entries": False,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["AG"],
@@ -973,8 +972,8 @@ def test_report_summary_prefix_error_conditions(name, prefix, error, report_summ
     request = configure_mock_request(client, rf)
     data = {
         "goods": ["test-id"],
-        "report_summary_prefix": prefix,
-        "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+        "report_summary_prefix_name": prefix,
+        "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
     }
@@ -1007,12 +1006,12 @@ def test_report_summary_subject_error_conditions(name, subject, error, report_su
     request = configure_mock_request(client, rf)
     data = {
         "goods": ["test-id"],
-        "report_summary_prefix": PREFIX_API_RESPONSE[0]["name"],
+        "report_summary_prefix_name": PREFIX_API_RESPONSE[0]["name"],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
     }
     if subject is not None:
-        data["report_summary_subject"] = subject
+        data["report_summary_subject_name"] = subject
 
     form = forms.TAUEditForm(
         request=request,
@@ -1041,12 +1040,12 @@ def test_report_summary_valid_prefix(name, prefix, expected_prefix_id, report_su
     request = configure_mock_request(client, rf)
     data = {
         "goods": ["test-id"],
-        "report_summary_subject": SUBJECT_API_RESPONSE[1]["name"],
+        "report_summary_subject_name": SUBJECT_API_RESPONSE[1]["name"],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
     }
     if prefix is not None:
-        data["report_summary_prefix"] = prefix
+        data["report_summary_prefix_name"] = prefix
 
     form = forms.TAUEditForm(
         request=request,
@@ -1073,11 +1072,11 @@ def test_report_summary_valid_subject(name, subject, expected_subject_id, report
     request = configure_mock_request(client, rf)
     data = {
         "goods": ["test-id"],
-        "report_summary_prefix": "",
+        "report_summary_prefix_name": "",
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
     }
-    data["report_summary_subject"] = subject
+    data["report_summary_subject_name"] = subject
 
     form = forms.TAUEditForm(
         request=request,

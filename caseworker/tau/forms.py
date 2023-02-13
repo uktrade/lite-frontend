@@ -20,8 +20,8 @@ from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
 from ..report_summary.services import get_report_summary_subjects, get_report_summary_prefixes
 
-REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
-REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
+REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject_name"
+REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix_name"
 
 
 class TAUEditForm(forms.Form):
@@ -48,7 +48,7 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary_prefix = forms.CharField(
+    report_summary_prefix_name = forms.CharField(
         label="Add a report summary prefix",
         help_text="Type for suggestions",
         # setting id for javascript to use
@@ -56,7 +56,7 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary_subject = forms.CharField(
+    report_summary_subject_name = forms.CharField(
         label="Add a report summary subject",
         help_text="Type for suggestions",
         # setting id for javascript to use
@@ -279,7 +279,7 @@ class TAUEditForm(forms.Form):
         matches = [m for m in subject_response.get("report_summary_subjects", []) if m.get("name") == subject_name]
 
         if len(matches) == 1:
-            cleaned_data["report_summary_subject_id"] = matches[0]["id"]
+            cleaned_data["report_summary_subject"] = matches[0]["id"]
         else:
             raise ValidationError("Enter a valid report summary subject")
 
@@ -290,7 +290,7 @@ class TAUEditForm(forms.Form):
             matches = [m for m in prefix_response.get("report_summary_prefixes", []) if m.get("name") == prefix_name]
 
             if len(matches) == 1:
-                cleaned_data["report_summary_prefix_id"] = matches[0]["id"]
+                cleaned_data["report_summary_prefix"] = matches[0]["id"]
             else:
                 raise ValidationError("Enter a valid report summary prefix")
 
