@@ -17,4 +17,4 @@ def is_user_assigned(user, case):
     return False
 
 
-rules.add_rule("is_user_allowed_case_change", is_user_case_adviser | is_user_assigned)
+rules.add_rule("can_user_change_case", is_user_case_adviser | is_user_assigned)
