@@ -276,11 +276,10 @@ class TAUEditForm(forms.Form):
     def validate_report_summary_subject(self, cleaned_data):
         subject_name = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
         subject_response = get_report_summary_subjects(self.request, subject_name)
-        matching_subjects = (
-            subject_response["report_summary_subjects"] if "report_summary_subjects" in subject_response else []
-        )
-        if len(matching_subjects) == 1 and matching_subjects[0].get("name") == subject_name:
-            cleaned_data["report_summary_subject_id"] = matching_subjects[0]["id"]
+        matches = [m for m in subject_response.get("report_summary_subjects", []) if m.get("name") == subject_name]
+
+        if len(matches) == 1:
+            cleaned_data["report_summary_subject_id"] = matches[0]["id"]
         else:
             raise ValidationError("Enter a valid report summary subject")
 
@@ -288,12 +287,10 @@ class TAUEditForm(forms.Form):
         prefix_name = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
         if prefix_name:
             prefix_response = get_report_summary_prefixes(self.request, prefix_name)
-            matching_prefixes = (
-                prefix_response["report_summary_prefixes"] if "report_summary_prefixes" in prefix_response else []
-            )
+            matches = [m for m in prefix_response.get("report_summary_prefixes", []) if m.get("name") == prefix_name]
 
-            if len(matching_prefixes) == 1 and matching_prefixes[0].get("name") == prefix_name:
-                cleaned_data["report_summary_prefix_id"] = matching_prefixes[0]["id"]
+            if len(matches) == 1:
+                cleaned_data["report_summary_prefix_id"] = matches[0]["id"]
             else:
                 raise ValidationError("Enter a valid report summary prefix")
 

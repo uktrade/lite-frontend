@@ -16,6 +16,7 @@ REPORT_SUMMARY_SUBJECTS = "report_summary_subjects"
 PREFIX_API_RESPONSE = [
     {"id": "a4bb3d4d-1f6b-46a3-83fa-97a952fdd2c4", "name": "launching vehicles for"},  # /PS-IGNORE
     {"id": "b0849a92-4611-4e5b-b076-03562b138fb5", "name": "components for"},  # /PS-IGNORE
+    {"id": "1a50d1cf-d22d-46bd-bf30-5a60d131fcce", "name": "promoting the supply of components for"},  # /PS-IGNORE
     {"id": "1c2d9032-e565-4158-a054-0112e8fabe1c", "name": "countermeasure equipment for"},  # /PS-IGNORE
     {"id": "76c33f3f-1da8-4fde-b259-ada269b43d34", "name": "counter-countermeasure equipment for"},  # /PS-IGNORE
 ]
@@ -24,6 +25,7 @@ SUBJECT_API_RESPONSE = [
     {"id": "0f6fbc0f-ce20-4adb-9066-9a6547e5c372", "name": "NBC protective/defensive equipment"},  # /PS-IGNORE
     {"id": "97ebace4-0a4c-4ce3-ad46-cce85ea473e8", "name": "TV cameras and control equipment"},  # /PS-IGNORE
     {"id": "3f169d4d-ef33-4555-861e-3c8aaf0d1ae1", "name": "acoustic vibration test equipment"},  # /PS-IGNORE
+    {"id": "b1dd5e3b-380a-4393-8ba2-7d95e20b7679", "name": "acoustic vibration test equipment 2"},  # /PS-IGNORE
 ]
 
 
@@ -37,11 +39,16 @@ def configure_mock_request(client, rf):
 @pytest.fixture()
 def report_summary_requests_mock(requests_mock):
     requests_mock.get(
-        "/static/report_summary/prefixes/?name=components", json={REPORT_SUMMARY_PREFIXES: [PREFIX_API_RESPONSE[0]]}
+        "/static/report_summary/prefixes/?name=components",
+        json={REPORT_SUMMARY_PREFIXES: [PREFIX_API_RESPONSE[0], PREFIX_API_RESPONSE[1]]},
+    )
+    requests_mock.get(
+        "/static/report_summary/prefixes/?name=components+for",
+        json={REPORT_SUMMARY_PREFIXES: [PREFIX_API_RESPONSE[1], PREFIX_API_RESPONSE[2]]},
     )
     requests_mock.get(
         "/static/report_summary/prefixes/?name=cou",
-        json={REPORT_SUMMARY_PREFIXES: [PREFIX_API_RESPONSE[1], PREFIX_API_RESPONSE[2]]},
+        json={REPORT_SUMMARY_PREFIXES: [PREFIX_API_RESPONSE[3], PREFIX_API_RESPONSE[4]]},
     )
     requests_mock.get("/static/report_summary/prefixes/?name=gnu", json={REPORT_SUMMARY_PREFIXES: []})
 
@@ -61,8 +68,12 @@ def report_summary_requests_mock(requests_mock):
         "/static/report_summary/subjects/?name=acoustic", json={REPORT_SUMMARY_SUBJECTS: [SUBJECT_API_RESPONSE[2]]}
     )
     requests_mock.get(
-        "/static/report_summary/subjects/?name=acoustic vibration test equipment",
-        json={REPORT_SUMMARY_SUBJECTS: [SUBJECT_API_RESPONSE[2]]},
+        "/static/report_summary/subjects/?name=acoustic+vibration+test+equipment",
+        json={REPORT_SUMMARY_SUBJECTS: [SUBJECT_API_RESPONSE[2], SUBJECT_API_RESPONSE[3]]},
+    )
+    requests_mock.get(
+        "/static/report_summary/subjects/?name=acoustic+vibration+test+equipment+2",
+        json={REPORT_SUMMARY_SUBJECTS: [SUBJECT_API_RESPONSE[3]]},
     )
     requests_mock.get("/static/report_summary/subjects/?name=aardvark", json={REPORT_SUMMARY_SUBJECTS: []})
 
@@ -1023,11 +1034,10 @@ def test_report_summary_subject_error_conditions(name, subject, error, report_su
         ("No prefix", "", None),
         ("Blank prefix", None, None),
         ("Valid prefix", PREFIX_API_RESPONSE[0]["name"], PREFIX_API_RESPONSE[0]["id"]),
+        ("Valid prefix with multiple matches", PREFIX_API_RESPONSE[1]["name"], PREFIX_API_RESPONSE[1]["id"]),
     ],
 )
-def test_report_summary_valid_subject_and_prefix(
-    name, prefix, expected_prefix_id, report_summary_requests_mock, rf, client
-):
+def test_report_summary_valid_prefix(name, prefix, expected_prefix_id, report_summary_requests_mock, rf, client):
     request = configure_mock_request(client, rf)
     data = {
         "goods": ["test-id"],
@@ -1037,6 +1047,37 @@ def test_report_summary_valid_subject_and_prefix(
     }
     if prefix is not None:
         data["report_summary_prefix"] = prefix
+
+    form = forms.TAUEditForm(
+        request=request,
+        control_list_entries_choices=[("test-rating", "test-text")],
+        wassenaar_entries=[("test-wassenaar-entry", "test-wassenaar-entry-text")],
+        mtcr_entries=[("test-mtcr-entry", "test-mtcr-entry-text")],
+        nsg_entries=[("test-nsg-entry", "test-nsg-entry-text")],
+        cwc_entries=[("test-cwc-entry", "test-cwc-entry-text")],
+        ag_entries=[("test-ag-entry", "test-ag-entry-text")],
+        data=data,
+    )
+    assert form.is_valid()
+    assert not form.errors
+
+
+@pytest.mark.parametrize(
+    "name, subject, expected_subject_id",
+    [
+        ("Single subject", SUBJECT_API_RESPONSE[3]["name"], SUBJECT_API_RESPONSE[3]["id"]),
+        ("Multiple matches for subject", SUBJECT_API_RESPONSE[2]["name"], SUBJECT_API_RESPONSE[2]["id"]),
+    ],
+)
+def test_report_summary_valid_subject(name, subject, expected_subject_id, report_summary_requests_mock, rf, client):
+    request = configure_mock_request(client, rf)
+    data = {
+        "goods": ["test-id"],
+        "report_summary_prefix": "",
+        "does_not_have_control_list_entries": True,
+        "regimes": ["NONE"],
+    }
+    data["report_summary_subject"] = subject
 
     form = forms.TAUEditForm(
         request=request,

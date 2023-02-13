@@ -33,7 +33,7 @@ const initARS = () => {
     },
     defaultValue: prefixInput.value,
     showNoOptionsFound: true,
-    autoselect: true,
+    autoselect: false,
     showAllValues: true,
   });
 
@@ -47,9 +47,9 @@ const initARS = () => {
     id: "report_summary_subject",
     source: (query, populateResults) => {
       fetch(`/tau/report_summary/subject?name=${query}`)
-          .then((response) => response.json())
-          .then((results) => results["report_summary_subjects"])
-          .then((results) => populateResults(results));
+        .then((response) => response.json())
+        .then((results) => results["report_summary_subjects"])
+        .then((results) => populateResults(results));
     },
     cssNamespace: "lite-autocomplete",
     name: "report_summary_subject",
