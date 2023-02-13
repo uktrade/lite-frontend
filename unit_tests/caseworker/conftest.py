@@ -330,7 +330,7 @@ def mock_post_refusal_advice(requests_mock, standard_case_pk):
 @pytest.fixture
 def mock_party_denial_search_results(requests_mock):
     url = client._build_absolute_uri(f"/external-data/denial-search/")
-    yield requests_mock.get(url=url, json={"hits": {"hits": []}})
+    yield requests_mock.get(url=url, json={"count": "0", "total_pages": "1", "results": []})
 
 
 @pytest.fixture
