@@ -15,6 +15,12 @@ REPORT_SUMMARY_SUBJECT_RESPONSE = {
 }
 
 
+def mock_report_summary_subject(requests_mock):
+    requests_mock.get(
+        "/static/report_summary/subjects/?name=scale+compelling+technologies", json=REPORT_SUMMARY_SUBJECT_RESPONSE
+    )
+
+
 @pytest.fixture(autouse=True)
 def setup(
     mock_queue,
@@ -83,7 +89,7 @@ def test_home_content(
         "ML8a,ML9a",
         "No",
         "w-1\n\nmtcr-1\n\nnsg-1\n\ncwc-1\n\nag-1",
-        "scale compelling technologies",
+        "",
         "test assesment note",
         "Edit",
     ]
@@ -138,9 +144,7 @@ def test_form(
     requests_mock.post(
         client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
     )
-    requests_mock.get(
-        "/static/report_summary/subjects/?name=scale+compelling+technologies", json=REPORT_SUMMARY_SUBJECT_RESPONSE
-    )
+    mock_report_summary_subject(requests_mock)
     # unassessed products should have 1 entry
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -160,7 +164,9 @@ def test_form(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary_subject": "scale compelling technologies",
+        "report_summary_subject": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["name"],
+        "report_summary_subject_id": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["id"],
+        "report_summary_prefix": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
@@ -225,6 +231,7 @@ def test_form_regime_entries(
     regimes_form_data,
     regime_entries,
 ):
+    mock_report_summary_subject(requests_mock)
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
@@ -234,7 +241,7 @@ def test_form_regime_entries(
     )
 
     data = {
-        "report_summary": "test",
+        "report_summary_subject": "scale compelling technologies",
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         **regimes_form_data,
@@ -245,7 +252,9 @@ def test_form_regime_entries(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary": "test",
+        "report_summary_subject": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["name"],
+        "report_summary_subject_id": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["id"],
+        "report_summary_prefix": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
