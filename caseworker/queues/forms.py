@@ -1,8 +1,12 @@
+from storages.backends.s3boto3 import S3Boto3StorageFile
+
 from django import forms
 from django.urls import reverse_lazy
 from django.db import models
 
-from storages.backends.s3boto3 import S3Boto3StorageFile
+from crispy_forms_gds.choices import Choice
+from crispy_forms_gds.layout import HTML
+from django.template.loader import render_to_string
 
 from core.common.forms import TextChoice, BaseForm
 
@@ -11,7 +15,6 @@ from lite_forms.components import Form, TextInput, BackLink, Select
 from caseworker.queues.services import get_queues
 from caseworker.users.services import get_gov_users
 from caseworker.core.constants import UserStatuses
-from crispy_forms_gds.choices import Choice
 
 
 def new_queue_form(request):
@@ -97,10 +100,10 @@ class EnforcementXMLImportForm(forms.Form):
 class CaseAssignmentsCaseOfficerForm(BaseForm):
     class Layout:
         TITLE = "Who do you want to allocate as Licensing Unit case officer ?"
-        SUBTITLE = "Manages the case until the application outcome(the exporter will see this name until the case officer is changed)"
+        SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed)"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    user = forms.ChoiceField(
+    users = forms.ChoiceField(
         label="",
         choices=(),  # set in __init__
         required=True,
@@ -113,13 +116,13 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
     def __init__(self, request, team_id, *args, **kwargs):
         self.request = request
         self.team_id = team_id
-        self.declared_fields["user"].choices = self.get_user_choices()
+        self.declared_fields["users"].choices = self.get_user_choices()
         super().__init__(*args, **kwargs)
 
     def get_user_choices(self):
         user_params = {"teams": self.team_id, "disable_pagination": True, "status": UserStatuses.ACTIVE}
 
-        users, _ = get_gov_users(self.request, user_params)
+        team_users, _ = get_gov_users(self.request, user_params)
         return [
             (
                 TextChoice(
@@ -132,11 +135,15 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
                     hint=user["email"],
                 )
             )
-            for user in users["results"]
+            for user in team_users["results"]
         ]
 
     def get_layout_fields(self):
-        return ("user",)
+
+        return (
+            HTML(render_to_string("forms/filter_radios.html")),
+            "users",
+        )
 
 
 class SelectAllocateRole(BaseForm):
@@ -152,7 +159,7 @@ class SelectAllocateRole(BaseForm):
         TextChoice(RoleChoices.CASE_ADVISOR, hint="Reviews or gives advice on the case while it is with your team"),
         TextChoice(
             RoleChoices.LU_CASE_OFFICER,
-            hint="Manages the case until the application outcome(the exporter will see this name until the case officer is changed)",
+            hint="Manages the case until the application outcome (the exporter will see this name until the case officer is changed)",
         ),
     )
 

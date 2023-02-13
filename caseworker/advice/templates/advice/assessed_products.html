@@ -11,10 +11,10 @@
                     </th>
                     <th scope="col" class="govuk-table__header">Name</th>
                     <th scope="col" class="govuk-table__header">Control entry</th>
-                    <th scope="col" class="govuk-table__header">Licence</th>
-                    <th scope="col" class="govuk-table__header">Trigger</th>
-                    <th scope="col" class="govuk-table__header">Dual use</th>
-                    <th scope="col" class="govuk-table__header">Nuclear Cooperation Agreement</th>
+                    <th scope="col" class="govuk-table__header">Report summary</th>
+                    <th scope="col" class="govuk-table__header">Regime</th>
+                    <th scope="col" class="govuk-table__header">Trigger list</th>
+                    <th scope="col" class="govuk-table__header">NCA</th>
                     <th scope="col" class="govuk-table__header">Assessment note</th>
                     <th scope="col" class="govuk-table__header">
                         <span class="govuk-visually-hidden">Actions</span>
@@ -26,29 +26,19 @@
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">{{ forloop.counter }}.</td>
                             <td class="govuk-table__cell">{{ good_on_application.good.name }}</td>
-                            <td class="govuk-table__cell">{{ good_on_application | get_clc | join:',' }}</td>
-                            <td class="govuk-table__cell">{{ good_on_application.is_good_controlled.value }}</td>
+                            <td class="govuk-table__cell">{{ good_on_application | get_clc | join:', ' }}</td>
+                            <td class="govuk-table__cell">{{ good_on_application.report_summary }}</td>
                             <td class="govuk-table__cell">
-                                {% if good_on_application.nsg_list_type.key == "TRIGGER_LIST" %}
-                                    Yes
-                                {% else %}
-                                    No
-                                {% endif %}
+                                {% for item in good_on_application.regime_entries %}
+                                    {% if forloop.last %}
+                                        {{ item.name }}
+                                    {% else %}
+                                        {{ item.name }},
+                                    {% endif %}
+                                {% endfor %}
                             </td>
-                            <td class="govuk-table__cell">
-                                {% if good_on_application.nsg_list_type.key == "DUAL_USE" %}
-                                    Yes
-                                {% else %}
-                                    No
-                                {% endif %}
-                               </td>
-                            <td class="govuk-table__cell">
-                                {% if good_on_application.is_nca_applicable %}
-                                    Yes
-                                {% else %}
-                                    No
-                                {% endif %}
-                            </td>
+                            <td class="govuk-table__cell">{{ good_on_application.is_trigger_list_guidelines_applicable|yesno|title }}</td>
+                            <td class="govuk-table__cell">{{ good_on_application.is_nca_applicable|yesno|title }}</td>
                             <td class="govuk-table__cell">{{ good_on_application.nsg_assessment_note|linebreaksbr }}</td>
                             <td class="govuk-table__cell">
                                 <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:edit_trigger_list' queue_pk=queue_pk pk=case.id good_on_application_id=good_on_application.id %}">Edit</a>

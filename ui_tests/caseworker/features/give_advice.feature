@@ -328,7 +328,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     When I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Team Leader to Countersign"
+    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
     And I go to my case list
     And I click the application previously created
     Then I see the application destinations
@@ -341,7 +341,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to application previously created
     Then I see the case status is now "Under final review"
     When I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Head of Licensing Unit countersigning"
+    And I change my team to "Licensing Unit" and default queue to "Senior licensing manager countersigning"
     And I go to my case list
     And I click the application previously created
     Then I click on Notes and timeline
