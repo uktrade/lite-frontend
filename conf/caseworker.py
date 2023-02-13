@@ -22,7 +22,7 @@ INSTALLED_APPS += [
     "caseworker.teams",
     "caseworker.cases",
     "caseworker.activities",
-    "rules",
+    "rules.apps.AutodiscoverRulesConfig",
 ]
 
 if MOCK_SSO_ACTIVATE_ENDPOINTS:

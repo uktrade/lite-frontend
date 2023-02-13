@@ -1,7 +1,7 @@
 import pytest
 import rules
 
-from caseworker.core import permissions
+from caseworker.core import rules as caseworker_rules
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
 
@@ -15,11 +15,11 @@ mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
     ),
 )
 def test_is_user_case_officer(data, mock_gov_user, expected_result):
-    assert permissions.is_user_case_adviser(mock_gov_user["user"], data) == expected_result
+    assert caseworker_rules.is_user_case_adviser(mock_gov_user["user"], data) == expected_result
 
 
 def test_is_user_case_officer_none():
-    assert permissions.is_user_case_adviser(None, {"case_officer": None}) == False
+    assert caseworker_rules.is_user_case_adviser(None, {"case_officer": None}) == False
 
 
 @pytest.mark.parametrize(
@@ -46,7 +46,7 @@ def test_is_user_case_officer_none():
 )
 def test_is_user_assigned(data, mock_gov_user, expected_result):
     assigned_users = {"assigned_users": data}
-    assert permissions.is_user_assigned(mock_gov_user["user"], assigned_users) == expected_result
+    assert caseworker_rules.is_user_assigned(mock_gov_user["user"], assigned_users) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -98,5 +98,5 @@ def test_is_user_assigned(data, mock_gov_user, expected_result):
         ),
     ),
 )
-def test_is_user_allowed_case_change(data, mock_gov_user, expected_result):
-    assert rules.test_rule("is_user_allowed_case_change", mock_gov_user["user"], data) == expected_result
+def test_can_user_change_case(data, mock_gov_user, expected_result):
+    assert rules.test_rule("can_user_change_case", mock_gov_user["user"], data) == expected_result

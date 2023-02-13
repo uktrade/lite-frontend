@@ -115,8 +115,8 @@
 				</div>
 			{% endif %}
 		</div>
-		{% test_rule 'is_user_allowed_case_change' user case as is_user_allowed_case_change %}
-		{% if not is_user_allowed_case_change %}
+		{% test_rule 'can_user_change_case' user case as can_user_change_case %}
+		{% if not can_user_change_case %}
 			<div class="app-case-warning-banner">
 				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
 				<span class="app-case-warning-banner__text">
