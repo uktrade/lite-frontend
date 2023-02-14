@@ -618,7 +618,7 @@ def test_queue_assignments(url, authorized_client):
     assert response.context["data"]["results"]["cases"][0]["queue_assignments"] == expected_queue_assignments
 
     html = BeautifulSoup(response.content, "html.parser")
-    li_elems = [elem.get_text() for elem in html.select("li", {"class": "app-assignments__item"})]
+    li_elems = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
     assert "John Smith" in li_elems[0]
     assert "Initial Queue" in li_elems[0]
     assert "Joe Smith" in li_elems[1]
@@ -667,11 +667,13 @@ def test_activity_updates(url, authorized_client):
     assert response.context["data"]["results"]["cases"][0]["activity_updates"] == expected_activity_updates
 
     html = BeautifulSoup(response.content, "html.parser")
-    updates = [update.get_text() for update in html.select("li", {"class": "app-updates__item"})]
+    updates = [update.get_text() for update in html.find_all("li", {"class": "app-updates__item"})]
     assert "LITE system" in updates[0]
     assert "text line1" in updates[0]
     assert "text line2" in updates[0]
+    assert "text line3" not in updates[0]
     assert "additional line1" in updates[0]
     assert "additional line2" in updates[0]
+    assert "additional line3" not in updates[0]
     assert "Joe Bloggs" in updates[1]
     assert "applied for a licence." in updates[1]
