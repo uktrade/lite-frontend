@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from tests_common import functions
@@ -14,11 +15,11 @@ class QueuesPages(BasePage):
     SELECT_COUNTERSIGNING_QUEUE_ID = "countersigning_queue"
 
     def enter_queue_name(self, text):
-        self.driver.find_element_by_id(self.ADD_QUEUE_TEXT_FIELD).clear()
-        self.driver.find_element_by_id(self.ADD_QUEUE_TEXT_FIELD).send_keys(text)
+        self.driver.find_element(by=By.ID, value=self.ADD_QUEUE_TEXT_FIELD).clear()
+        self.driver.find_element(by=By.ID, value=self.ADD_QUEUE_TEXT_FIELD).send_keys(text)
 
     def click_add_a_queue_button(self):
-        self.driver.find_element_by_css_selector(self.ADD_QUEUE_BUTTON).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.ADD_QUEUE_BUTTON).click()
 
     def is_case_on_the_list(self, app_id):
         no = len(self.driver.find_elements_by_css_selector('[href*="' + app_id + '"]'))
@@ -28,11 +29,11 @@ class QueuesPages(BasePage):
         return no
 
     def is_no_cases_notice_displayed(self):
-        return self.driver.find_element_by_css_selector(self.NO_CASES_TEXT).is_displayed()
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.NO_CASES_TEXT).is_displayed()
 
     def click_queue_edit_button(self, num):
-        self.driver.find_elements_by_css_selector(self.TABLE_ROWS)[num].find_element_by_css_selector(
-            self.LINK_EDIT_SELECTOR
+        self.driver.find_elements_by_css_selector(self.TABLE_ROWS)[num].find_element(
+            by=By.CSS_SELECTOR, value=self.LINK_EDIT_SELECTOR
         ).click()
 
     def get_number_of_selected_queues(self):
@@ -44,7 +45,9 @@ class QueuesPages(BasePage):
         return no
 
     def get_row_text(self, id):
-        return self.driver.find_element_by_id(id).text
+        return self.driver.find_element(by=By.ID, value=id).text
 
     def select_countersigning_queue(self, queue_name):
-        Select(self.driver.find_element_by_id(self.SELECT_COUNTERSIGNING_QUEUE_ID)).select_by_visible_text(queue_name)
+        Select(self.driver.find_element(by=By.ID, value=self.SELECT_COUNTERSIGNING_QUEUE_ID)).select_by_visible_text(
+            queue_name
+        )

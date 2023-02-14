@@ -19,7 +19,7 @@ def go_to_routing_rules(driver, sso_sign_in, internal_url):
 
 @then("I see the routing rule in the rule list")
 def see_flag_in_list(driver, context):
-    assert driver.find_element_by_id(context.queue_id).is_displayed()
+    assert driver.find_element(by=By.ID, value=context.queue_id).is_displayed()
 
 
 @when(
@@ -117,7 +117,7 @@ def add_a_case_flag(driver, add_case_flag):  # noqa
 @when(parsers.parse('I change my default queue to "{queue}"'))  # noqa
 def go_to_team_edit_page(driver, team, queue):  # noqa
     # we should already be on the profile page
-    driver.find_element_by_id("link-edit-team").click()
+    driver.find_element(by=By.ID, value="link-edit-team").click()
     teams_page = TeamsPages(driver)
     teams_page.select_team_from_dropdown(team)
     teams_page.select_default_queue_from_dropdown(queue)

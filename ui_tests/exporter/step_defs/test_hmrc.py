@@ -1,5 +1,7 @@
 from pytest_bdd import when, scenarios, parsers
 
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.exporter_hub_page import ExporterHubPage
 from ui_tests.exporter.pages.hmrc_query.find_organisation import HMRCQueryFindOrganisationPage
 from ui_tests.exporter.pages.open_application.add_goods_type import OpenApplicationAddGoodsType
@@ -27,6 +29,6 @@ def add_new_goods_type(driver, description, context):  # noqa
 
 @when(parsers.parse('I leave a note for the "{reasoning}"'))  # noqa
 def i_leave_a_note(driver, reasoning):  # noqa
-    text_area = driver.find_element_by_id("reasoning")
+    text_area = driver.find_element(by=By.ID, value="reasoning")
     text_area.clear()
     text_area.send_keys(reasoning)

@@ -14,13 +14,13 @@ def click_submit(driver: WebDriver):
 
 
 def click_finish_button(driver: WebDriver):
-    element = driver.find_element_by_css_selector("button[value='finish']")
+    element = driver.find_element(by=By.CSS_SELECTOR, value="button[value='finish']")
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.execute_script("arguments[0].click();", element)
 
 
 def click_back_link(driver: WebDriver):
-    driver.find_element_by_id("back-link").click()
+    driver.find_element(by=By.ID, value="back-link").click()
 
 
 def click_continue_link(driver: WebDriver):
@@ -81,14 +81,14 @@ def get_table_rows(driver: WebDriver, table_selector: str = "table", raise_excep
 
 
 def click_next_page(driver: WebDriver):
-    driver.find_element_by_id("link-next-page").click()
+    driver.find_element(by=By.ID, value="link-next-page").click()
 
 
 def select_report_summary_and_fill(driver: WebDriver):
     suggestion_input = driver.find_element(By.NAME, "report_summary")
     suggestion_input.send_keys("none")
     suggestion_input.send_keys(Keys.TAB)
-    driver.find_element_by_xpath("//body").click()
+    driver.find_element(by=By.XPATH, value="//body").click()
 
 
 def click_regime_none(driver: WebDriver):

@@ -1,5 +1,7 @@
 from pytest_bdd import scenarios, given, then, parsers
 
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.hub_page import Hub
 from ui_tests.exporter.pages.shared import Shared
 from tests_common.tools import helpers
@@ -17,12 +19,12 @@ def application_exists_case_note_added(apply_for_open_application, api_test_clie
 def notification_on_application_list(driver, context, num):
     elements = driver.find_elements_by_css_selector(".govuk-table__row")
     no = helpers.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    assert num in elements[no].find_element_by_css_selector(Shared(driver).NOTIFICATION).text
+    assert num in elements[no].find_element(by=By.CSS_SELECTOR, value=Shared(driver).NOTIFICATION).text
 
 
 @then("I can see the internally added note")
 def internal_note_visible(driver, context):
-    assert context.case_note_text in driver.find_element_by_css_selector(".lite-case-notes").text
+    assert context.case_note_text in driver.find_element(by=By.CSS_SELECTOR, value=".lite-case-notes").text
 
 
 @then("I cannot see a notification")

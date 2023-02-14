@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from pytest_bdd import scenarios, then, when
 
 from ui_tests.caseworker.pages.header_page import HeaderPage
@@ -7,8 +9,8 @@ scenarios("../features/menu.feature", strict_gherkin=False)
 
 @then("the log out link is displayed")
 def success(driver):
-    assert driver.find_element_by_id(
-        "link-sign-out"
+    assert driver.find_element(
+        by=By.ID, value="link-sign-out"
     ).is_displayed(), "Log out button is displayed. User may have the service unavailable screen."
 
 

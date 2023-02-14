@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from tests_common import functions
@@ -39,115 +40,119 @@ class CompliancePages(BasePage):
     PEOPLE_PRESENT_TABLE_ID = "people_present"
 
     def find_case_reference(self, context):
-        return self.driver.find_element_by_link_text(context.reference_code)
+        return self.driver.find_element(by=By.LINK_TEXT, value=context.reference_code)
 
     def filter_by_case_reference(self, context):
-        self.driver.find_element_by_id(self.CASE_REFERENCE_ID).send_keys(context.reference_code)
+        self.driver.find_element(by=By.ID, value=self.CASE_REFERENCE_ID).send_keys(context.reference_code)
 
     def add_visit_report(self):
-        self.driver.find_element_by_id(self.ADD_VISIT_REPORT_ID).click()
+        self.driver.find_element(by=By.ID, value=self.ADD_VISIT_REPORT_ID).click()
 
     def add_visit_report_details(self, visit_type, visit_date, overall_risk, licence_risk):
         scroll_to_element_by_id(self.driver, self.EDIT_VISIT_REPORT_DETAILS_ID)
-        self.driver.find_element_by_id(self.EDIT_VISIT_REPORT_DETAILS_ID).click()
-        Select(self.driver.find_element_by_id(self.VISIT_TYPE_ID)).select_by_visible_text(visit_type)
+        self.driver.find_element(by=By.ID, value=self.EDIT_VISIT_REPORT_DETAILS_ID).click()
+        Select(self.driver.find_element(by=By.ID, value=self.VISIT_TYPE_ID)).select_by_visible_text(visit_type)
 
         year, month, day = visit_date.split("-")
-        self.driver.find_element_by_id(self.VISIT_DATE_DAY_ID).send_keys(day)
-        self.driver.find_element_by_id(self.VISIT_DATE_MONTH_ID).send_keys(month)
-        self.driver.find_element_by_id(self.VISIT_DATE_YEAR_ID).send_keys(year)
+        self.driver.find_element(by=By.ID, value=self.VISIT_DATE_DAY_ID).send_keys(day)
+        self.driver.find_element(by=By.ID, value=self.VISIT_DATE_MONTH_ID).send_keys(month)
+        self.driver.find_element(by=By.ID, value=self.VISIT_DATE_YEAR_ID).send_keys(year)
 
-        Select(self.driver.find_element_by_id(self.OVERALL_RISK_VALUE_ID)).select_by_visible_text(overall_risk)
+        Select(self.driver.find_element(by=By.ID, value=self.OVERALL_RISK_VALUE_ID)).select_by_visible_text(
+            overall_risk
+        )
 
-        Select(self.driver.find_element_by_id(self.LICENCE_RISK_VALUE_ID)).select_by_visible_text(licence_risk)
+        Select(self.driver.find_element(by=By.ID, value=self.LICENCE_RISK_VALUE_ID)).select_by_visible_text(
+            licence_risk
+        )
 
         functions.click_submit(self.driver)
 
     def get_visit_type(self):
-        return self.driver.find_element_by_id(self.VISIT_TYPE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.VISIT_TYPE_ID).text
 
     def get_visit_date(self):
-        return self.driver.find_element_by_id(self.VISIT_DATE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.VISIT_DATE_ID).text
 
     def get_overall_risk(self):
-        return self.driver.find_element_by_id(self.OVERALL_RISK_VALUE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.OVERALL_RISK_VALUE_ID).text
 
     def get_licence_risk(self):
-        return self.driver.find_element_by_id(self.LICENCE_RISK_VALUE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.LICENCE_RISK_VALUE_ID).text
 
     def edit_overview(self, text):
         scroll_to_element_by_id(self.driver, self.EDIT_OVERVIEW_ID)
-        self.driver.find_element_by_id(self.EDIT_OVERVIEW_ID).click()
-        self.driver.find_element_by_id(self.OVERVIEW_ID).send_keys(text)
+        self.driver.find_element(by=By.ID, value=self.EDIT_OVERVIEW_ID).click()
+        self.driver.find_element(by=By.ID, value=self.OVERVIEW_ID).send_keys(text)
         functions.click_submit(self.driver)
 
     def get_overview(self):
-        return self.driver.find_element_by_id(self.OVERVIEW_ID).text
+        return self.driver.find_element(by=By.ID, value=self.OVERVIEW_ID).text
 
     def edit_inspection(self, text):
         scroll_to_element_by_id(self.driver, self.EDIT_INSPECTION_ID)
-        self.driver.find_element_by_id(self.EDIT_INSPECTION_ID).click()
-        self.driver.find_element_by_id(self.INSPECTION_ID).send_keys(text)
+        self.driver.find_element(by=By.ID, value=self.EDIT_INSPECTION_ID).click()
+        self.driver.find_element(by=By.ID, value=self.INSPECTION_ID).send_keys(text)
         functions.click_submit(self.driver)
 
     def get_inspection(self):
-        return self.driver.find_element_by_id(self.INSPECTION_ID).text
+        return self.driver.find_element(by=By.ID, value=self.INSPECTION_ID).text
 
     def edit_compliance_with_licences(self, overview, risk_value):
         scroll_to_element_by_id(self.driver, self.EDIT_COMPLIANCE_WITH_LICENCES_ID)
-        self.driver.find_element_by_id(self.EDIT_COMPLIANCE_WITH_LICENCES_ID).click()
-        self.driver.find_element_by_id(self.COMPLIANCE_WITH_LICENCE_OVERVIEW_ID).send_keys(overview)
-        Select(self.driver.find_element_by_id(self.COMPLIANCE_WITH_LICENCE_RISK_VALUE_ID)).select_by_visible_text(
-            risk_value
-        )
+        self.driver.find_element(by=By.ID, value=self.EDIT_COMPLIANCE_WITH_LICENCES_ID).click()
+        self.driver.find_element(by=By.ID, value=self.COMPLIANCE_WITH_LICENCE_OVERVIEW_ID).send_keys(overview)
+        Select(
+            self.driver.find_element(by=By.ID, value=self.COMPLIANCE_WITH_LICENCE_RISK_VALUE_ID)
+        ).select_by_visible_text(risk_value)
         functions.click_submit(self.driver)
 
     def get_compliance_with_licence_overview(self):
-        return self.driver.find_element_by_id(self.COMPLIANCE_WITH_LICENCE_OVERVIEW_ID).text
+        return self.driver.find_element(by=By.ID, value=self.COMPLIANCE_WITH_LICENCE_OVERVIEW_ID).text
 
     def get_compliance_with_licence_risk(self):
-        return self.driver.find_element_by_id(self.COMPLIANCE_WITH_LICENCE_RISK_VALUE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.COMPLIANCE_WITH_LICENCE_RISK_VALUE_ID).text
 
     def edit_knowledge_of_individuals(self, overview, risk_value):
         scroll_to_element_by_id(self.driver, self.EDIT_KNOWLEDGE_OF_INDIVIDUALS_ID)
-        self.driver.find_element_by_id(self.EDIT_KNOWLEDGE_OF_INDIVIDUALS_ID).click()
-        self.driver.find_element_by_id(self.KNOWLEDGE_OF_INDIVIDUALS_OVERVIEW_ID).send_keys(overview)
-        Select(self.driver.find_element_by_id(self.KNOWLEDGE_OF_INDIVIDUALS_RISK_VALUE_ID)).select_by_visible_text(
-            risk_value
-        )
+        self.driver.find_element(by=By.ID, value=self.EDIT_KNOWLEDGE_OF_INDIVIDUALS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_INDIVIDUALS_OVERVIEW_ID).send_keys(overview)
+        Select(
+            self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_INDIVIDUALS_RISK_VALUE_ID)
+        ).select_by_visible_text(risk_value)
         functions.click_submit(self.driver)
 
     def get_knowledge_of_individuals_overview(self):
-        return self.driver.find_element_by_id(self.KNOWLEDGE_OF_INDIVIDUALS_OVERVIEW_ID).text
+        return self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_INDIVIDUALS_OVERVIEW_ID).text
 
     def get_knowledge_of_individuals_risk(self):
-        return self.driver.find_element_by_id(self.KNOWLEDGE_OF_INDIVIDUALS_RISK_VALUE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_INDIVIDUALS_RISK_VALUE_ID).text
 
     def edit_knowledge_of_products(self, overview, risk_value):
         scroll_to_element_by_id(self.driver, self.EDIT_KNOWLEDGE_OF_PRODUCTS_ID)
-        self.driver.find_element_by_id(self.EDIT_KNOWLEDGE_OF_PRODUCTS_ID).click()
-        self.driver.find_element_by_id(self.KNOWLEDGE_OF_PRODUCTS_OVERVIEW_ID).send_keys(overview)
-        Select(self.driver.find_element_by_id(self.KNOWLEDGE_OF_PRODUCTS_RISK_VALUE_ID)).select_by_visible_text(
-            risk_value
-        )
+        self.driver.find_element(by=By.ID, value=self.EDIT_KNOWLEDGE_OF_PRODUCTS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_PRODUCTS_OVERVIEW_ID).send_keys(overview)
+        Select(
+            self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_PRODUCTS_RISK_VALUE_ID)
+        ).select_by_visible_text(risk_value)
         functions.click_submit(self.driver)
 
     def get_knowledge_of_products_overview(self):
-        return self.driver.find_element_by_id(self.KNOWLEDGE_OF_PRODUCTS_OVERVIEW_ID).text
+        return self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_PRODUCTS_OVERVIEW_ID).text
 
     def get_knowledge_of_products_risk(self):
-        return self.driver.find_element_by_id(self.KNOWLEDGE_OF_PRODUCTS_RISK_VALUE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.KNOWLEDGE_OF_PRODUCTS_RISK_VALUE_ID).text
 
     def add_person_present(self, name, job_title):
         scroll_to_element_by_id(self.driver, self.ADD_PEOPLE_PRESENT_BUTTON)
-        self.driver.find_element_by_id(self.ADD_PEOPLE_PRESENT_BUTTON).click()
-        self.driver.find_element_by_id(self.ADD_PERSON_BUTTON_ID).click()
-        self.driver.find_element_by_id(self.PERSON_NAME_ID).send_keys(name)
-        self.driver.find_element_by_id(self.PERSON_JOB_TITLE_ID).send_keys(job_title)
+        self.driver.find_element(by=By.ID, value=self.ADD_PEOPLE_PRESENT_BUTTON).click()
+        self.driver.find_element(by=By.ID, value=self.ADD_PERSON_BUTTON_ID).click()
+        self.driver.find_element(by=By.ID, value=self.PERSON_NAME_ID).send_keys(name)
+        self.driver.find_element(by=By.ID, value=self.PERSON_JOB_TITLE_ID).send_keys(job_title)
         functions.click_submit(self.driver)
 
     def get_people_present_table(self):
-        return self.driver.find_element_by_id(self.PEOPLE_PRESENT_TABLE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.PEOPLE_PRESENT_TABLE_ID).text
 
     def get_compliance_banner_details(self):
-        return self.driver.find_element_by_id(self.COMPLIANCE_BANNER_DETAILS).text
+        return self.driver.find_element(by=By.ID, value=self.COMPLIANCE_BANNER_DETAILS).text

@@ -44,22 +44,22 @@ class CasePage(BasePage):
         self.driver.find_element(by=By.ID, value="tab-" + tab).click()
 
     def click_change_case_flags(self):
-        self.driver.find_element_by_id(self.LINK_CHANGE_CASE_FLAGS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_CASE_FLAGS_ID).click()
 
     def click_assign_case_officer(self):
         scroll_to_element_by_id(self.driver, self.LINK_ASSIGN_CASE_OFFICER_ID)
-        self.driver.find_element_by_id(self.LINK_ASSIGN_CASE_OFFICER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_ASSIGN_CASE_OFFICER_ID).click()
 
     def click_set_next_review_date(self):
         scroll_to_element_by_id(self.driver, self.LINK_SET_NEXT_REVIEW_DATE_ID)
-        self.driver.find_element_by_id(self.LINK_SET_NEXT_REVIEW_DATE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_SET_NEXT_REVIEW_DATE_ID).click()
 
     def get_next_review_date(self):
-        return self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_ID).text
 
     def click_assign_users(self):
         scroll_to_element_by_id(self.driver, self.LINK_ASSIGN_USERS_ID)
-        self.driver.find_element_by_id(self.LINK_ASSIGN_USERS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_ASSIGN_USERS_ID).click()
 
     def get_status(self):
         return self.driver.find_element(
@@ -72,10 +72,10 @@ class CasePage(BasePage):
         ).text
 
     def click_change_status(self):
-        self.driver.find_element_by_id(self.LINK_CHANGE_STATUS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_STATUS_ID).click()
 
     def click_rerun_routing_rules(self):
-        self.driver.find_element_by_id(self.BUTTON_RERUN_ROUTING_RULES_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_RERUN_ROUTING_RULES_ID).click()
 
     def get_goods(self):
         return self.driver.find_elements_by_css_selector(f"#{self.TABLE_GOODS_ID} {Shared(self.driver).TABLE_ROW_CSS}")
@@ -86,10 +86,10 @@ class CasePage(BasePage):
 
     def select_first_good(self):
         scroll_to_element_by_id(self.driver, self.TABLE_GOODS_ID)
-        self.driver.find_element_by_css_selector(f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}").click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}").click()
 
     def get_goods_text(self):
-        return self.driver.find_element_by_id(self.TABLE_GOODS_ID).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_GOODS_ID).text
 
     def get_goods_row_with_headers(self, row_num):
         scroll_to_element_by_id(self.driver, self.TABLE_GOODS_ID)
@@ -117,7 +117,7 @@ class CasePage(BasePage):
         return self.driver.find_element(by=By.ID, value=self.TABLE_DESTINATIONS_ID).text
 
     def get_deleted_entities_text(self):
-        return self.driver.find_element_by_id(self.TABLE_DELETED_ENTITIES_ID).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_DELETED_ENTITIES_ID).text
 
     def select_destinations(self):
         for destination in self.driver.find_elements_by_css_selector(self.TABLE_DESTINATIONS_ID + selectors.CHECKBOX):
@@ -126,21 +126,21 @@ class CasePage(BasePage):
     def is_flag_applied(self, flag_name):
         POPUP_FLAGS_ID = "popup-flags"
 
-        self.driver.find_element_by_id("candy-flags").click()
+        self.driver.find_element(by=By.ID, value="candy-flags").click()
 
         WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.ID, POPUP_FLAGS_ID)))
 
-        return flag_name in self.driver.find_element_by_id(POPUP_FLAGS_ID).text
+        return flag_name in self.driver.find_element(by=By.ID, value=POPUP_FLAGS_ID).text
 
     def is_flag_in_applied_flags_list(self, flag_name):
-        text = self.driver.find_element_by_id("checkbox-counter").text
+        text = self.driver.find_element(by=By.ID, value="checkbox-counter").text
         return flag_name in text
 
     def is_goods_flag_applied(self, flag_name):
-        return flag_name in self.driver.find_element_by_id(self.TABLE_GOODS_ID).text
+        return flag_name in self.driver.find_element(by=By.ID, value=self.TABLE_GOODS_ID).text
 
     def click_edit_goods_flags(self):
-        self.driver.find_element_by_id(self.BUTTON_SET_GOODS_FLAGS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_SET_GOODS_FLAGS_ID).click()
 
     def click_edit_destinations_flags(self):
         scroll_to_element_by_id(self.driver, self.BUTTON_SET_DESTINATIONS_FLAGS_ID)
@@ -153,4 +153,4 @@ class CasePage(BasePage):
         ].click()
 
     def get_reference_code_text(self):
-        return self.driver.find_element_by_id(self.BANNER_REFERENCE_CODE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.BANNER_REFERENCE_CODE_ID).text
