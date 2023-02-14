@@ -82,13 +82,12 @@ class Cases(LoginRequiredMixin, TemplateView):
         params["flags"] = self.request.GET.getlist("flags[]", [])
 
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
-        # if the hidden param is not true
-        # then cases with open queries are filtered out on team queue views
-        if (
-            params["selected_tab"] == CasesListPage.Tabs.MY_CASES
-            or params["selected_tab"] == CasesListPage.Tabs.OPEN_QUERIES
-        ):
-            params["hidden"] = "True"
+
+        # if the hidden param is 'true' then cases with open queries are included
+        # it should be false on team queues for the 'all cases' tab
+        # but it can be overriden by a checkbox on the frontend
+        is_hidden_by_form = self.request.GET.get("hidden", False)
+        params["hidden"] = self._set_is_hidden(params["selected_tab"], is_hidden_by_form)
 
         return params
 
@@ -98,17 +97,25 @@ class Cases(LoginRequiredMixin, TemplateView):
         return f"?{params.urlencode()}"
 
     def _get_tab_count(self, tab_name):
-        is_hidden_by_user = self.request.GET.get("hidden", None)
+        is_hidden_by_form = self.request.GET.get("hidden", None)
         params = self.get_params()
         params["selected_tab"] = tab_name
-        # TODO refactor this to share func
-        is_system_queue = self.queue.get("is_system_queue", False)
-        if tab_name == CasesListPage.Tabs.ALL_CASES and not is_system_queue and not is_hidden_by_user:
-            params["hidden"] = "False"
-        elif tab_name == CasesListPage.Tabs.MY_CASES or tab_name == CasesListPage.Tabs.OPEN_QUERIES:
-            params["hidden"] = "True"
+        params["hidden"] = self._set_is_hidden(tab_name, is_hidden_by_form)
 
         return head_cases_search_count(self.request, self.queue_pk, params)
+
+    def _set_is_hidden(self, tab_name, is_hidden_by_form):
+        if is_hidden_by_form:
+            return "True"
+        elif self._is_system_queue():
+            return "True"
+        elif tab_name == CasesListPage.Tabs.MY_CASES or tab_name == CasesListPage.Tabs.OPEN_QUERIES:
+            return "True"
+        else:
+            return "False"
+
+    def _is_system_queue(self):
+        return self.queue.get("is_system_queue", False)
 
     def _tab_data(self):
         selected_tab = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
@@ -165,8 +172,6 @@ class Cases(LoginRequiredMixin, TemplateView):
         except IndexError:
             show_updated_cases_banner = False
 
-        is_system_queue = self.queue.get("is_system_queue", False)
-
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
@@ -175,7 +180,7 @@ class Cases(LoginRequiredMixin, TemplateView):
             "sla_circumference": SLA_CIRCUMFERENCE,
             "data": self.data,
             "queue": self.queue,  # Used for showing current queue
-            "filters": case_filters_bar(self.request, self.filters, is_system_queue),
+            "filters": case_filters_bar(self.request, self.filters, self._is_system_queue()),
             "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,

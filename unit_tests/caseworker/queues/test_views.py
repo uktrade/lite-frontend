@@ -17,6 +17,7 @@ default_params = {
     "page": ["1"],
     "queue_id": ["00000000-0000-0000-0000-000000000001"],
     "selected_tab": ["all_cases"],
+    "hidden": ["true"],
 }
 
 
