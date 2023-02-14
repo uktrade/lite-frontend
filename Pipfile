@@ -22,8 +22,8 @@ pytest_bdd = "~=3.1"
 pytest-rerunfailures = "~=9.0"
 python-slugify = "6.1.1"
 requests-mock = "~=1.8"
-selenium = "~=3.141"
-selenium-wire = "~=4.6.3"
+selenium = "~=4.8.0"
+selenium-wire = "~=5.1.0"
 setoptconf = "0.3.0"
 webdriver-manager = "~=3.2"
 django-extensions = "~=3.0.5"
@@ -74,7 +74,6 @@ phonenumbers = "~=8.12.57"
 django-ipware = "~=3.0.7"
 setuptools = "~=65.5.1"
 rules="~=3.3.0"
-
 
 [requires]
 python_version = "3.7"
