@@ -49,7 +49,7 @@ def changes_have_been_made_to_case(driver, context, api_test_client):
 def i_see_good_details_view_link(driver, context):  # noqa
     goods = CasePage(driver).get_goods()
     for good in goods:
-        view_link_table_cell = good.find_element_by_css_selector("td#view-good-details")
+        view_link_table_cell = good.find_element(by=By.CSS_SELECTOR, value="td#view-good-details")
         if view_link_table_cell:
             assert "View" in view_link_table_cell.text
 
@@ -65,13 +65,13 @@ def i_see_inactive_party(driver, context):
 
 @then(parsers.parse('the "{party_type}" name is "{name}", address is "{address}", country is "{country}"'))
 def filter_by_application_type(driver, party_type, name, address, country):
-    destinations = driver.find_element_by_id("table-destinations")
+    destinations = driver.find_element(by=By.ID, value="table-destinations")
     party_index = {"End user": 1, "Consignee": 2}
     index = party_index.get(party_type, 1)
-    party = destinations.find_element_by_xpath(f".//tbody/tr[{index}]")
-    party_type_text = party.find_element_by_xpath(".//th").text
-    party_name = party.find_element_by_xpath(".//td[2]").text
-    party_address = party.find_element_by_xpath(".//td[3]").text
+    party = destinations.find_element(by=By.XPATH, value=f".//tbody/tr[{index}]")
+    party_type_text = party.find_element(by=By.XPATH, value=".//th").text
+    party_name = party.find_element(by=By.XPATH, value=".//td[2]").text
+    party_address = party.find_element(by=By.XPATH, value=".//td[3]").text
 
     assert party_type_text == party_type
     assert party_name == name
@@ -80,8 +80,8 @@ def filter_by_application_type(driver, party_type, name, address, country):
 
 @then(parsers.parse('the intended end use details should be "{end_use_expected}"'))
 def filter_by_application_type(driver, end_use_expected):
-    end_use_table = driver.find_element_by_id("slice-end-use-details")
-    end_use_text = end_use_table.find_element_by_xpath(".//tbody/tr[1]/td[3]").text
+    end_use_table = driver.find_element(by=By.ID, value="slice-end-use-details")
+    end_use_text = end_use_table.find_element(by=By.XPATH, value=".//tbody/tr[1]/td[3]").text
     assert end_use_text == end_use_expected
 
 
@@ -89,5 +89,5 @@ def filter_by_application_type(driver, end_use_expected):
 def i_see_link_to_download_document(driver):
     docs = driver.find_elements(by=By.CLASS_NAME, value="app-documents__item")
     assert len(docs) == 1
-    link = docs[0].find_element_by_class_name("app-documents__item-details")
+    link = docs[0].find_element(by=By.CLASS_NAME, value="app-documents__item-details")
     assert link.text.startswith(f"Application Form - {date.today().isoformat()}")

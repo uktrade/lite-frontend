@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from ui_tests.caseworker.pages.BasePage import BasePage
@@ -19,47 +20,47 @@ class FlaggingRulePages(BasePage):
     EDIT_LINK_TEXT = "Edit"  # linktext
 
     def click_include_deactivated(self):
-        self.driver.find_element_by_id(self.INCLUDE_DEACTIVATED).click()
+        self.driver.find_element(by=By.ID, value=self.INCLUDE_DEACTIVATED).click()
 
     def create_new_flagging_rule(self):
-        self.driver.find_element_by_id(self.BTN_CREATE_NEW_FLAGGING_RULE).click()
+        self.driver.find_element(by=By.ID, value=self.BTN_CREATE_NEW_FLAGGING_RULE).click()
 
     def select_flagging_rule_type(self, type):
         if type == "Good":
-            self.driver.find_element_by_id(self.GOOD_OPTION_ID).click()
+            self.driver.find_element(by=By.ID, value=self.GOOD_OPTION_ID).click()
         elif type == "Destination":
-            self.driver.find_element_by_id(self.DESTINATION_OPTION_ID).click()
+            self.driver.find_element(by=By.ID, value=self.DESTINATION_OPTION_ID).click()
         elif type == "Case":
-            self.driver.find_element_by_id(self.CASE_OPTION_ID).click()
+            self.driver.find_element(by=By.ID, value=self.CASE_OPTION_ID).click()
 
     def enter_control_list(self, text):
-        self.driver.find_element_by_id(self.MATCHING_VALUE_ID).clear()
-        self.driver.find_element_by_id(self.MATCHING_VALUE_ID).send_keys(text)
+        self.driver.find_element(by=By.ID, value=self.MATCHING_VALUE_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.MATCHING_VALUE_ID).send_keys(text)
 
     def select_flag(self, flag):
-        Select(self.driver.find_element_by_id(self.SELECT_FLAG_ID)).select_by_visible_text(flag)
+        Select(self.driver.find_element(by=By.ID, value=self.SELECT_FLAG_ID)).select_by_visible_text(flag)
 
     def enter_country(self, country):
         functions.send_keys_to_autocomplete(self.driver, self.MATCHING_VALUE_ID, country)
 
     def select_case_type(self, case_type):
-        select = Select(self.driver.find_element_by_id(self.MATCHING_VALUE_ID))
+        select = Select(self.driver.find_element(by=By.ID, value=self.MATCHING_VALUE_ID))
         select.select_by_value(case_type)
 
     def select_is_for_verified_goods_only(self, answer):
         if answer == "True":
-            self.driver.find_element_by_css_selector("[id$=-True]").click()
+            self.driver.find_element(by=By.CSS_SELECTOR, value="[id$=-True]").click()
         else:
-            self.driver.find_element_by_css_selector("[id$=-False]").click()
+            self.driver.find_element(by=By.CSS_SELECTOR, value="[id$=-False]").click()
 
     def click_on_deactivate_flag(self, element):
-        element.find_element_by_css_selector(self.DEACTIVATE_FLAG_BUTTON).click()
+        element.find_element(by=By.CSS_SELECTOR, value=self.DEACTIVATE_FLAG_BUTTON).click()
 
     def click_confirm_deactivate_activate(self):
-        self.driver.find_element_by_id(self.CONFIRM_DEACTIVATE_DEACTIVATE).click()
+        self.driver.find_element(by=By.ID, value=self.CONFIRM_DEACTIVATE_DEACTIVATE).click()
 
     def click_on_reactivate_flag(self):
-        self.driver.find_element_by_css_selector(self.REACTIVATE_FLAG_BUTTON).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.REACTIVATE_FLAG_BUTTON).click()
 
     def click_on_edit_for_element(self, element):
-        element.find_element_by_link_text(self.EDIT_LINK_TEXT).click()
+        element.find_element(by=By.LINK_TEXT, value=self.EDIT_LINK_TEXT).click()

@@ -2,6 +2,8 @@ import os
 
 from pytest_bdd import scenarios, when, then, parsers
 
+from selenium.webdriver.common.by import By
+
 from tests_common.tools import helpers
 from ui_tests.exporter.pages.add_goods_details import AddGoodDetails
 from ui_tests.exporter.pages.add_goods_grading_page import AddGoodGradingPage
@@ -27,7 +29,9 @@ def assert_good_is_in_list(driver, context, exporter_url):
     assert context.good_description in goods_row
     assert context.part in goods_row
     assert context.control_code in goods_row
-    assert driver.find_element_by_css_selector("[href*='goods/" + context.good_id_from_url + "']").is_displayed()
+    assert driver.find_element(
+        by=By.CSS_SELECTOR, value="[href*='goods/" + context.good_id_from_url + "']"
+    ).is_displayed()
 
 
 @then("I see the good is in a query")
@@ -109,7 +113,7 @@ def good_is_no_longer_in_list(driver, context):
 def click_on_draft_good(driver, context, exporter_url):
     good_id = driver.current_url.split("/goods/")[1].split("/")[0]
     driver.get(exporter_url.rstrip("/") + "/goods/" + good_id)
-    text = driver.find_element_by_css_selector(".govuk-summary-list").text
+    text = driver.find_element(by=By.CSS_SELECTOR, value=".govuk-summary-list").text
     assert "edited" in text
     assert "Yes" in text
     assert "321" in text

@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from tests_common import functions
 from ui_tests.exporter.pages.BasePage import BasePage
 
@@ -10,10 +12,10 @@ class OpenApplicationAddGoodsType(BasePage):
     RADIO_IS_GOOD_INCORPORATED_ID = "is_good_incorporated-"
 
     def enter_description(self, value):
-        self.driver.find_element_by_id(self.INPUT_DESCRIPTION_ID).send_keys(value)
+        self.driver.find_element(by=By.ID, value=self.INPUT_DESCRIPTION_ID).send_keys(value)
 
     def select_is_your_good_controlled(self, value):
-        self.driver.find_element_by_id(self.RADIO_IS_GOOD_CONTROLLED_ID + value).click()
+        self.driver.find_element(by=By.ID, value=self.RADIO_IS_GOOD_CONTROLLED_ID + value).click()
 
     def enter_control_list_entry(self, control_list_entry):
         functions.send_tokens_to_token_bar(
@@ -21,4 +23,6 @@ class OpenApplicationAddGoodsType(BasePage):
         )
 
     def select_is_your_good_incorporated(self, value):
-        self.driver.find_element_by_id(self.RADIO_IS_GOOD_INCORPORATED_ID + str(value.lower() == "yes")).click()
+        self.driver.find_element(
+            by=By.ID, value=self.RADIO_IS_GOOD_INCORPORATED_ID + str(value.lower() == "yes")
+        ).click()

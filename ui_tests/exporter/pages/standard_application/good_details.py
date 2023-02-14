@@ -19,10 +19,10 @@ class StandardApplicationGoodDetails(BasePage):
         ).send_keys(value)
 
     def enter_quantity(self, quantity):
-        self.driver.find_element_by_id(self.INPUT_QUANTITY_ID).send_keys(quantity)
+        self.driver.find_element(by=By.ID, value=self.INPUT_QUANTITY_ID).send_keys(quantity)
 
     def select_unit(self, unit):
-        Select(self.driver.find_element_by_id(self.SELECT_UNIT_ID)).select_by_visible_text(unit)
+        Select(self.driver.find_element(by=By.ID, value=self.SELECT_UNIT_ID)).select_by_visible_text(unit)
 
     def set_good_incorporated(self, value):
         self._set_radio(self.RADIO_INCORPORATED, value)

@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given
 
@@ -142,7 +144,7 @@ def filter_by_ogel(driver):
 @then("I see OGEL case")
 def see_ogel(driver, context, api_test_client):
     response = api_test_client.cases.get_case_info(context.ogel_case_id)
-    assert response["reference_code"] in driver.find_element_by_id(ApplicationPage.HEADING_ID).text
+    assert response["reference_code"] in driver.find_element(by=By.ID, value=ApplicationPage.HEADING_ID).text
     site_info = OpenGeneralLicencesCasePage(driver).get_text_of_site()
     assert response["data"]["site"]["name"] in site_info
     assert response["data"]["site"]["address"]["address_line_1"] in site_info

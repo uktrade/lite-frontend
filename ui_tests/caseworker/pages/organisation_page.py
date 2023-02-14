@@ -14,23 +14,23 @@ class OrganisationPage(BasePage):
     WARNING_BANNER_ID = "org_warning"
 
     def click_edit_organisation_flags(self):
-        self.driver.find_element_by_id(self.LINK_ORGANISATION_FLAGS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_ORGANISATION_FLAGS_ID).click()
 
     def click_edit_organisation_link(self):
-        self.driver.find_element_by_id(self.LINK_EDIT_ORGANISATION_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_EDIT_ORGANISATION_ID).click()
 
     def get_organisation_row(self, organisation_id=None):
         if organisation_id:
-            row = self.driver.find_element_by_id(organisation_id)
+            row = self.driver.find_element(by=By.ID, value=organisation_id)
         else:
-            row = self.driver.find_element_by_css_selector(".govuk-table__body .govuk-table__row")
+            row = self.driver.find_element(by=By.CSS_SELECTOR, value=".govuk-table__body .govuk-table__row")
 
         return {
-            "name": row.find_element_by_id("name").text,
-            "type": row.find_element_by_id("type").text,
-            "eori-number": row.find_element_by_id("eori-number").text,
-            "sic-number": row.find_element_by_id("sic-number").text,
-            "vat-number": row.find_element_by_id("vat-number").text,
+            "name": row.find_element(by=By.ID, value="name").text,
+            "type": row.find_element(by=By.ID, value="type").text,
+            "eori-number": row.find_element(by=By.ID, value="eori-number").text,
+            "sic-number": row.find_element(by=By.ID, value="sic-number").text,
+            "vat-number": row.find_element(by=By.ID, value="vat-number").text,
         }
 
     def click_review_organisation(self):

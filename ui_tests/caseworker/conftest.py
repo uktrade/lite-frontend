@@ -128,15 +128,15 @@ def check_product_name_and_rating(driver, product_name, clc_rating):  # noqa
 
 @then(parsers.parse('I check the product part number is "{part_number}"'))
 def check_product_part_number(driver, part_number):  # noqa
-    product_table = driver.find_element_by_class_name("govuk-table")
-    pn_element = product_table.find_element_by_xpath("//tbody/tr[4]/td")
+    product_table = driver.find_element(by=By.CLASS_NAME, value="govuk-table")
+    pn_element = product_table.find_element(by=By.XPATH, value="//tbody/tr[4]/td")
     assert pn_element.text == part_number
 
 
 @then(parsers.parse('I check the product annual report summary is "{report_summary}"'))
 def check_product_report_summary(driver, report_summary):  # noqa
-    product_table = driver.find_element_by_id("table-goods")
-    summary_element = product_table.find_element_by_xpath("//tbody/tr/td[9]")
+    product_table = driver.find_element(by=By.ID, value="table-goods")
+    summary_element = product_table.find_element(by=By.XPATH, value="//tbody/tr/td[9]")
     assert summary_element.text == report_summary
 
 
@@ -249,8 +249,8 @@ def go_to_queues(driver, internal_url):  # noqa
 @when("I add case to newly created queue")  # noqa
 def move_case_to_new_queue(driver, context):  # noqa
     ApplicationPage(driver).click_move_case_button()
-    if not driver.find_element_by_id(context.queue_name.replace(" ", "-")).is_selected():
-        driver.find_element_by_id(context.queue_name.replace(" ", "-")).click()
+    if not driver.find_element(by=By.ID, value=context.queue_name.replace(" ", "-")).is_selected():
+        driver.find_element(by=By.ID, value=context.queue_name.replace(" ", "-")).click()
     Shared(driver).click_submit()
 
 
@@ -284,7 +284,7 @@ def i_show_filters(driver):  # noqa
 @when(parsers.parse('I click on "{tab_name}" tab'))
 def i_click_on_case_details_tab(driver, tab_name):  # noqa
     tabs = driver.find_element(by=By.CLASS_NAME, value="lite-tabs")
-    target = tabs.find_element_by_link_text(tab_name)
+    target = tabs.find_element(by=By.LINK_TEXT, value=tab_name)
     target.click()
 
 
@@ -349,7 +349,7 @@ def i_click_application_previously_created(driver, context):  # noqa
 def switch_queue_dropdown(driver, queue):  # noqa
     driver.find_element(by=By.ID, value="link-queue").click()
     queues = driver.find_element(by=By.ID, value="queues")
-    queues.find_element_by_xpath(f"//a[contains(text(), '{queue}')]").click()
+    queues.find_element(by=By.XPATH, value=f"//a[contains(text(), '{queue}')]").click()
 
 
 @then("I should see my case in the cases list")  # noqa
@@ -374,7 +374,7 @@ def no_new_cases(driver, context):  # noqa
     functions.try_open_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
-    assert "There are no new cases" in driver.find_element_by_id("form-cases").text
+    assert "There are no new cases" in driver.find_element(by=By.ID, value="form-cases").text
 
 
 @then("I should see my case SLA")  # noqa
@@ -384,7 +384,7 @@ def case_sla(driver, context):  # noqa
 
 @then("I see the case page")  # noqa
 def i_see_the_case_page(driver, context):  # noqa
-    assert context.reference_code in driver.find_element_by_id(ApplicationPage.HEADING_ID).text
+    assert context.reference_code in driver.find_element(by=By.ID, value=ApplicationPage.HEADING_ID).text
 
 
 @then(parsers.parse('I see the case status is now "{status}"'))
@@ -724,13 +724,13 @@ def select_queue(driver, queue_name, check):  # noqa
     queues = driver.find_elements(by=By.CLASS_NAME, value="govuk-checkboxes__item")
     target_queue = None
     for item in queues:
-        label = item.find_element_by_xpath(".//label")
+        label = item.find_element(by=By.XPATH, value=".//label")
         if label.text == queue_name:
             target_queue = item
             break
 
     assert target_queue is not None
-    queue_checkbox = target_queue.find_element_by_xpath(".//input")
+    queue_checkbox = target_queue.find_element(by=By.XPATH, value=".//input")
     if check:
         if not queue_checkbox.is_selected():
             queue_checkbox.click()
@@ -776,7 +776,7 @@ def case_not_assigned_to_any_queue(driver):  # noqa
 
 @then(parsers.parse('the flag "{flag}" is not present'))  # noqa
 def flag_not_present(driver, flag):  # noqa
-    flags_container = driver.find_element_by_id("case-flags")
+    flags_container = driver.find_element(by=By.ID, value="case-flags")
     el = flags_container.find_elements_by_xpath(f"//li[contains(text(), '{flag}')]")
     assert len(el) == 0
 

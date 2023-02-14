@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from pytest_bdd import when, then, parsers, scenarios, given
 
 from ui_tests.caseworker.pages.shared import Shared
@@ -19,7 +21,7 @@ def click_checkbox_for_application(driver, internal_url, context):
 
 @when("I select user to assign SSO users name")
 def assign_user_to_case(driver, internal_info, context):
-    driver.find_element_by_id(internal_info["name"].replace(" ", "-")).click()
+    driver.find_element(by=By.ID, value=internal_info["name"].replace(" ", "-")).click()
     context.user_name = internal_info["name"]
     Shared(driver).click_submit()
 

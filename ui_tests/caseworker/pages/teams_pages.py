@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.caseworker.pages.users_page import UsersPage
 from ui_tests.caseworker.pages.BasePage import BasePage
 
@@ -7,11 +9,11 @@ class TeamsPages(BasePage):
     ADD_TEAM_BUTTON = ".govuk-button[href*='teams/add']"  # CSS
 
     def enter_team_name(self, text):
-        self.driver.find_element_by_id(self.ADD_TEAM_TEXT_FIELD).clear()
-        return self.driver.find_element_by_id(self.ADD_TEAM_TEXT_FIELD).send_keys(text)
+        self.driver.find_element(by=By.ID, value=self.ADD_TEAM_TEXT_FIELD).clear()
+        return self.driver.find_element(by=By.ID, value=self.ADD_TEAM_TEXT_FIELD).send_keys(text)
 
     def click_add_a_team_button(self):
-        self.driver.find_element_by_css_selector(self.ADD_TEAM_BUTTON).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.ADD_TEAM_BUTTON).click()
 
     def select_team_from_dropdown(self, team):
         users_page = UsersPage(self.driver)
