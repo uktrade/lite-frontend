@@ -39,7 +39,7 @@ def setup(
 @pytest.fixture
 def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
     return {
-        "count": 2,
+        "count": 1,
         "results": {
             "cases": [
                 {
@@ -74,6 +74,34 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
                     "has_open_queries": False,
                     "is_recently_updated": True,
                     "organisation": {},
+                    "activity_updates": [
+                        {
+                            "id": "02cc3048-f893-4f0a-b37f-d066bc0b072a",
+                            "created_at": "2023-02-02T17:30:05.184293Z",
+                            "user": {
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "first_name": "LITE",
+                                "last_name": "system",
+                                "type": "system",
+                                "team": "",
+                            },
+                            "text": "text line1\r\ntext line2\r\ntext line3\r\ntext line4\r\ntext line5",
+                            "additional_text": "additional line1\r\nadditional line2\r\nadditional line3\r\nadditional line4\r\nadditional line5",
+                        },
+                        {
+                            "id": "77d3c3d4-9761-403a-9942-a2fcc41aa35d",
+                            "created_at": "2023-02-02T17:30:04.174597Z",
+                            "user": {
+                                "id": "2eb6e0fa-5a5b-4db1-96cc-dd1473e0c636",
+                                "first_name": "Joe",
+                                "last_name": "Bloggs",
+                                "type": "exporter",
+                                "team": "",
+                            },
+                            "text": "applied for a licence.",
+                            "additional_text": "",
+                        },
+                    ],
                     "assignments": {
                         "9c4e66be-9f0f-451a-9c5f-d30e9c4bb69d": {
                             "email": "test@mail.com",
@@ -597,3 +625,53 @@ def test_queue_assignments(url, authorized_client):
     assert "Initial Queue" in li_elems[1]
     assert "Not Allocated" in li_elems[2]
     assert "Another Queue" in li_elems[2]
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_activity_updates(url, authorized_client):
+    response = authorized_client.get(url)
+    expected_activity_updates = [
+        {
+            "id": "02cc3048-f893-4f0a-b37f-d066bc0b072a",
+            "created_at": "2023-02-02T17:30:05.184293Z",
+            "user": {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "first_name": "LITE",
+                "last_name": "system",
+                "type": "system",
+                "team": "",
+            },
+            "text": "text line1\ntext line2",
+            "additional_text": "additional line1\nadditional line2",
+        },
+        {
+            "id": "77d3c3d4-9761-403a-9942-a2fcc41aa35d",
+            "created_at": "2023-02-02T17:30:04.174597Z",
+            "user": {
+                "id": "2eb6e0fa-5a5b-4db1-96cc-dd1473e0c636",
+                "first_name": "Joe",
+                "last_name": "Bloggs",
+                "type": "exporter",
+                "team": "",
+            },
+            "text": "applied for a licence.",
+            "additional_text": "",
+        },
+    ]
+    assert response.context["data"]["results"]["cases"][0]["activity_updates"] == expected_activity_updates
+
+    html = BeautifulSoup(response.content, "html.parser")
+    updates = [update.get_text() for update in html.select("li", {"class": "app-updates__item"})]
+    assert "LITE system" in updates[0]
+    assert "text line1" in updates[0]
+    assert "text line2" in updates[0]
+    assert "additional line1" in updates[0]
+    assert "additional line2" in updates[0]
+    assert "Joe Bloggs" in updates[1]
+    assert "applied for a licence." in updates[1]
