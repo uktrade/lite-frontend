@@ -8,4 +8,8 @@
     &__department, &__activity {
         color: $govuk-secondary-text-colour;
     }
+
+    &__action {
+        font-weight: bold;
+    }
 }
