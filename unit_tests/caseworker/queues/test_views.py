@@ -445,10 +445,10 @@ def test_with_all_cases_default(authorized_client, mock_cases_search, mock_cases
     tabs_with_hidden_param = ("my_cases", "open_queries")
     for tab in tabs_with_hidden_param:
         assert {
-            "selected_tab": [tab],
             "hidden": ["true"],
             "page": ["1"],
             "queue_id": ["00000000-0000-0000-0000-000000000001"],
+            "selected_tab": [tab],
         } in head_request_history
 
 
@@ -479,10 +479,10 @@ def test_tabs_on_all_cases_queue(authorized_client, mock_cases_search, tab_name,
     assert f"?selected_tab={tab_name}" in selected_tab.attrs["href"]
     assert "lite-tabs__tab--selected" in selected_tab.attrs["class"]
     assert mock_cases_search.last_request.qs == {
-        "queue_id": ["00000000-0000-0000-0000-000000000001"],
-        "page": ["1"],
-        "selected_tab": [tab_name],
         "hidden": ["true"],
+        "page": ["1"],
+        "queue_id": ["00000000-0000-0000-0000-000000000001"],
+        "selected_tab": [tab_name],
     }
 
 
@@ -493,7 +493,9 @@ def test_tabs_on_all_cases_queue(authorized_client, mock_cases_search, tab_name,
         ("my_cases", "my-cases-tab", "My cases"),
     ],
 )
-def test_tabs_on_team_queue(authorized_client, mock_team_cases, mock_team_queue, tab_name, tab_id, tab_text):
+def test_tabs_on_team_queue(
+    authorized_client, mock_team_cases, mock_team_queue, mock_cases_search_head, tab_name, tab_id, tab_text
+):
     url = client._build_absolute_uri(f"/queues/{queue_pk}/?selected_tab={tab_name}")
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
@@ -505,11 +507,51 @@ def test_tabs_on_team_queue(authorized_client, mock_team_cases, mock_team_queue,
     assert f"?selected_tab={tab_name}" in selected_tab.attrs["href"]
     assert "lite-tabs__tab--selected" in selected_tab.attrs["class"]
     assert mock_team_cases.last_request.qs == {
-        "queue_id": [queue_pk],
-        "page": ["1"],
-        "selected_tab": [tab_name],
         "hidden": ["true"],
+        "page": ["1"],
+        "queue_id": [queue_pk],
+        "selected_tab": [tab_name],
     }
+    head_request_history = [x.qs for x in mock_cases_search_head.request_history]
+    assert {
+        "hidden": ["false"],
+        "page": ["1"],
+        "queue_id": [queue_pk],
+        "selected_tab": ["all_cases"],
+    } in head_request_history
+
+    tabs_with_hidden_param = ("my_cases", "open_queries")
+    for tab in tabs_with_hidden_param:
+        assert {
+            "hidden": ["true"],
+            "page": ["1"],
+            "queue_id": [queue_pk],
+            "selected_tab": [tab],
+        } in head_request_history
+
+
+# TODO rename mock_team_cases to mock_team_cases_search
+def test_tabs_on_team_queue_with_hidden_param(
+    authorized_client, mock_team_cases, mock_team_queue, mock_cases_search_head
+):
+    url = client._build_absolute_uri(f"/queues/{queue_pk}/?hidden=True")
+    authorized_client.get(url)
+
+    assert mock_team_cases.last_request.qs == {
+        "hidden": ["true"],
+        "page": ["1"],
+        "queue_id": [queue_pk],
+        "selected_tab": ["all_cases"],
+    }
+    head_request_history = [x.qs for x in mock_cases_search_head.request_history]
+    tabs_with_hidden_param = ("all_cases", "my_cases", "open_queries")
+    for tab in tabs_with_hidden_param:
+        assert {
+            "hidden": ["true"],
+            "page": ["1"],
+            "queue_id": [queue_pk],
+            "selected_tab": [tab],
+        } in head_request_history
 
 
 @pytest.mark.parametrize(

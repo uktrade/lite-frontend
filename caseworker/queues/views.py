@@ -98,9 +98,14 @@ class Cases(LoginRequiredMixin, TemplateView):
         return f"?{params.urlencode()}"
 
     def _get_tab_count(self, tab_name):
+        is_hidden_by_user = self.request.GET.get("hidden", None)
         params = self.get_params()
         params["selected_tab"] = tab_name
-        if tab_name != CasesListPage.Tabs.ALL_CASES:
+        # TODO refactor this to share func
+        is_system_queue = self.queue.get("is_system_queue", False)
+        if tab_name == CasesListPage.Tabs.ALL_CASES and not is_system_queue and not is_hidden_by_user:
+            params["hidden"] = "False"
+        elif tab_name == CasesListPage.Tabs.MY_CASES or tab_name == CasesListPage.Tabs.OPEN_QUERIES:
             params["hidden"] = "True"
 
         return head_cases_search_count(self.request, self.queue_pk, params)
