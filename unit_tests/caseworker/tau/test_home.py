@@ -164,9 +164,7 @@ def test_form(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary_subject_name": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["name"],
         "report_summary_subject": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["id"],
-        "report_summary_prefix_name": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
@@ -252,9 +250,7 @@ def test_form_regime_entries(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary_subject_name": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["name"],
         "report_summary_subject": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["id"],
-        "report_summary_prefix_name": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
