@@ -20,6 +20,7 @@ from core.decorators import expect_status
 
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
+from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
     Permission,
@@ -175,7 +176,10 @@ class Cases(LoginRequiredMixin, TemplateView):
                         "assignees": [{k: v for k, v in assignment.items() if k != "queues"}],
                     }
 
-        all_queues = {queue["id"]: {"queue_name": queue["name"], "assignees": []} for queue in case["queues"]}
+        queues_that_hide_assignments = (LU_PRE_CIRC_REVIEW_QUEUE_ALIAS, LU_POST_CIRC_FINALISE_QUEUE_ALIAS)
+        all_queues = {}
+        if self.queue["alias"] not in queues_that_hide_assignments:
+            all_queues = {queue["id"]: {"queue_name": queue["name"], "assignees": []} for queue in case["queues"]}
 
         all_assignments = {**all_queues, **assigned_queues}
 

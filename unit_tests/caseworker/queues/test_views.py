@@ -11,6 +11,8 @@ import os
 
 from core import client
 
+from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
+
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
 default_params = {
@@ -292,6 +294,16 @@ def mock_team_queue(requests_mock, data_queue):
     data_queue["is_system_queue"] = False
     url = client._build_absolute_uri("/queues/")
     yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
+
+
+@pytest.fixture()
+def mock_queue_with_alias_factory(requests_mock, data_queue):
+    def _mock_queue_with_alias(alias):
+        data_queue["alias"] = alias
+        url = client._build_absolute_uri("/queues/")
+        return requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
+
+    return _mock_queue_with_alias
 
 
 @pytest.fixture
@@ -625,6 +637,28 @@ def test_queue_assignments(url, authorized_client):
     assert "Initial Queue" in li_elems[1]
     assert "Not Allocated" in li_elems[2]
     assert "Another Queue" in li_elems[2]
+
+
+@pytest.mark.parametrize(
+    "alias",
+    (
+        (LU_POST_CIRC_FINALISE_QUEUE_ALIAS),
+        (LU_PRE_CIRC_REVIEW_QUEUE_ALIAS),
+    ),
+)
+def test_unallocated_assignments_hidden(
+    authorized_client, mock_team_cases_search, mock_queue_with_alias_factory, alias
+):
+    mock_queue_with_alias_factory(alias)
+    url = client._build_absolute_uri(f"/queues/{queue_pk}")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    assignments = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
+    assert len(assignments) == 2
+    assert "John Smith" in assignments[0]
+    assert "Initial Queue" in assignments[0]
+    assert "Joe Smith" in assignments[1]
+    assert "Initial Queue" in assignments[1]
 
 
 @pytest.mark.parametrize(
