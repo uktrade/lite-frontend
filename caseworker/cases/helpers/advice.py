@@ -52,40 +52,6 @@ def same_value(dicts, key):
     return original_value
 
 
-def flatten_goods_data(items: List[Dict]):
-    if not items:
-        return
-
-    # with OIEL, `items` is the goods, but with SIEL items has key with goods in it
-    try:
-        goods = [x["good"] for x in items]
-    except KeyError:
-        goods = items
-
-    # fallback to default control details on the good if there is no good-on-application control details
-    if all(x["is_good_controlled"] is not None for x in items):
-        control_review = items
-    else:
-        control_review = goods
-    is_good_controlled = same_value(control_review, "is_good_controlled")
-    report_summary = same_value(control_review, "report_summary")
-    control_list_entries = None
-
-    # If the control list entry values do not match, or when not all selected goods are controlled
-    # do not pre-populate the form fields to avoid errors
-    if same_value(control_review, "control_list_entries"):
-        control_list_entries = [
-            {"key": i["rating"], "value": i["rating"]} for i in same_value(control_review, "control_list_entries")
-        ]
-
-    return {
-        "is_good_controlled": is_good_controlled["key"] if is_good_controlled else None,
-        "control_list_entries": control_list_entries,
-        "report_summary": report_summary,
-        "comment": same_value(control_review, "comment"),
-    }
-
-
 def flatten_advice_data(request, case: Case, items: List[Dict], level):
     keys = ["proviso", "denial_reasons", "note", "text", "type"]
 
