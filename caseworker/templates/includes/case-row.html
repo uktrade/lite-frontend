@@ -65,16 +65,16 @@
 					<li class="app-updates__item">
 						<div class="app-updates__action">
 							{% if forloop.first %}
-								Latest Action
+								Latest action
 							{% else %}
-								Previous Action
+								Previous action
 							{% endif %}
 						</div>
 						<div class="app-updates__department">
 							{% if update.user.type == 'exporter' %}
-								Applicant
+								Applicant {{ update.created_at|to_datetime|date:"d F Y" }}
 							{% else %}
-								{{ update.user.team }}
+								{{ update.user.team }} {{ update.created_at|to_datetime|date:"d F Y" }}
 							{% endif %}
 						</div>
 						<div class="app-updates__activity">
@@ -85,9 +85,6 @@
 								{{ update.additional_text|linebreaksbr }}
 							</div>
 						{% endif %}
-						<div class="govuk-hint govuk-!-margin-0 govuk-!-margin-bottom-2">
-							{{ update.created_at|to_datetime|date:"d F Y" }}
-						</div>
 					</li>
 				{% endfor %}
 			{% endif %}
