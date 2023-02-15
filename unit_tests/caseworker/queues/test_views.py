@@ -647,8 +647,8 @@ def test_activity_updates(url, authorized_client):
                 "type": "system",
                 "team": "",
             },
-            "text": "text line1\ntext line2",
-            "additional_text": "additional line1\nadditional line2",
+            "text": "text line1\ntext line2...",
+            "additional_text": "additional line1\nadditional line2...",
         },
         {
             "id": "77d3c3d4-9761-403a-9942-a2fcc41aa35d",
@@ -670,10 +670,10 @@ def test_activity_updates(url, authorized_client):
     updates = [update.get_text() for update in html.find_all("li", {"class": "app-updates__item"})]
     assert "LITE system" in updates[0]
     assert "text line1" in updates[0]
-    assert "text line2" in updates[0]
+    assert "text line2..." in updates[0]
     assert "text line3" not in updates[0]
     assert "additional line1" in updates[0]
-    assert "additional line2" in updates[0]
+    assert "additional line2..." in updates[0]
     assert "additional line3" not in updates[0]
     assert "Joe Bloggs" in updates[1]
     assert "applied for a licence." in updates[1]

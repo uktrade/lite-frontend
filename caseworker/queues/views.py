@@ -140,7 +140,10 @@ class Cases(LoginRequiredMixin, TemplateView):
         return unique_destinations
 
     def _limit_lines(self, text, limit):
-        lines = text.splitlines()[:limit]
+        lines = text.splitlines()
+        if len(lines) > limit:
+            lines = lines[:limit]
+            lines[-1] += "..."
         return "\n".join(lines)
 
     def _transform_activity_updates(self, case):
