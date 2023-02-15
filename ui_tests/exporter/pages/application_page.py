@@ -25,16 +25,16 @@ class ApplicationPage(BasePage):
     DRAFT_TAB = "applications-tab-draft"  # ID
 
     def click_withdraw_application_button(self):
-        self.driver.find_element_by_id(self.BUTTON_WITHDRAW_APPLICATION_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_WITHDRAW_APPLICATION_ID).click()
 
     def click_surrender_application_button(self):
-        self.driver.find_element_by_id(self.BUTTON_SURRENDER_APPLICATION_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_SURRENDER_APPLICATION_ID).click()
 
     def click_edit_application_link(self):
-        self.driver.find_element_by_css_selector(self.LINK_EDIT_APPLICATION).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.LINK_EDIT_APPLICATION).click()
 
     def click_copy_application(self):
-        self.driver.find_element_by_id(self.BUTTON_COPY_APPLICATION_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_COPY_APPLICATION_ID).click()
 
     def notes_notification_count(self):
         return (
@@ -57,12 +57,12 @@ class ApplicationPage(BasePage):
         )
 
     def click_generated_documents_tab(self):
-        self.driver.find_element_by_id(self.LINK_GENERATED_DOCUMENTS_TAB_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_GENERATED_DOCUMENTS_TAB_ID).click()
 
     def generated_documents_notification_count(self):
         return (
-            self.driver.find_element_by_id(self.LINK_GENERATED_DOCUMENTS_TAB_ID)
-            .find_element_by_css_selector(Shared.NOTIFICATION)
+            self.driver.find_element(by=By.ID, value=self.LINK_GENERATED_DOCUMENTS_TAB_ID)
+            .find_element(by=By.CSS_SELECTOR, value=Shared.NOTIFICATION)
             .text
         )
 
@@ -70,10 +70,10 @@ class ApplicationPage(BasePage):
         return len(self.driver.find_elements_by_id(self.LINK_GENERATED_DOCUMENT_DOWNLOAD_LINK))
 
     def click_notes_tab(self):
-        self.driver.find_element_by_id(self.LINK_NOTES_TAB_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_NOTES_TAB_ID).click()
 
     def click_activity_tab(self):
-        self.driver.find_element_by_id(self.LINK_ACTIVITY_TAB_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_ACTIVITY_TAB_ID).click()
 
     def get_count_of_closed_ecju_queries(self):
         return len(self.driver.find_elements_by_id(self.ECJU_QUERIES_CLOSED))
@@ -86,16 +86,16 @@ class ApplicationPage(BasePage):
         return self.driver.find_elements_by_id(self.BUTTON_EDIT_APPLICATION_ID)
 
     def get_status(self):
-        return self.driver.find_element_by_id(self.LABEL_APPLICATION_STATUS_ID).text
+        return self.driver.find_element(by=By.ID, value=self.LABEL_APPLICATION_STATUS_ID).text
 
     def get_text_of_audit_trail_item(self, no):
         return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM)[no].text
 
     def get_text_of_case_buttons(self):
-        return self.driver.find_element_by_css_selector(self.CASE_BUTTONS).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.CASE_BUTTONS).text
 
     def click_draft_applications_tab(self):
-        self.driver.find_element_by_id(self.DRAFT_TAB).click()
+        self.driver.find_element(by=By.ID, value=self.DRAFT_TAB).click()
 
     def get_open_queries_text(self):
         return self.driver.find_element(by=By.ID, value=self.ECJU_QUERIES_OPEN).text

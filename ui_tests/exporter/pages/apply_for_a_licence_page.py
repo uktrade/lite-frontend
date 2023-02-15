@@ -30,11 +30,11 @@ class ApplyForALicencePage(BasePage):
         self.driver.find_element(by=By.ID, value=f"{self.LICENCE_TYPE_PARTIAL_ID}{type}").click()
 
     def select_mod_application_type(self, type):
-        self.driver.find_element_by_id(f"{self.MOD_APPLICATION_TYPE_PARTIAL_ID}{type}").click()
+        self.driver.find_element(by=By.ID, value=f"{self.MOD_APPLICATION_TYPE_PARTIAL_ID}{type}").click()
 
     def click_delete_application(self):
-        self.driver.find_element_by_id(self.LINK_DELETE_DRAFT_ID).click()
-        self.driver.find_element_by_id("choice-yes").click()
+        self.driver.find_element(by=By.ID, value=self.LINK_DELETE_DRAFT_ID).click()
+        self.driver.find_element(by=By.ID, value="choice-yes").click()
         functions.click_submit(self.driver)
 
     def click_export_licence(self, export_type):
@@ -48,31 +48,31 @@ class ApplyForALicencePage(BasePage):
             checkbox.click()
 
     def click_permanent_or_temporary_button(self, string):
-        self.driver.find_element_by_id(self.EXPORT_BUTTON + string).click()
+        self.driver.find_element(by=By.ID, value=self.EXPORT_BUTTON + string).click()
 
     def select_firearms_yes(self):
-        self.driver.find_element_by_css_selector("[id$=-True]").click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value="[id$=-True]").click()
 
     def click_export_licence_yes_or_no(self, string):
-        self.driver.find_element_by_id(self.EXPORT_LICENCE_YES_OR_NO + string).click()
+        self.driver.find_element(by=By.ID, value=self.EXPORT_LICENCE_YES_OR_NO + string).click()
 
     def type_into_reference_number(self, string):
-        self.driver.find_element_by_id(self.REFERENCE_NUMBER).clear()
-        self.driver.find_element_by_id(self.REFERENCE_NUMBER).send_keys(string)
+        self.driver.find_element(by=By.ID, value=self.REFERENCE_NUMBER).clear()
+        self.driver.find_element(by=By.ID, value=self.REFERENCE_NUMBER).send_keys(string)
 
     def is_success_panel_present(self):
         return len(self.driver.find_elements(by=By.CSS_SELECTOR, value=self.SUCCESS_BANNER_CLASS)) > 0
 
     def select_trade_control_activity(self):
-        self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_ID).click()
-        self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID).clear()
-        self.driver.find_element_by_id(self.TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID).send_keys("Other")
+        self.driver.find_element(by=By.ID, value=self.TRADE_CONTROL_ACTIVITY_OTHER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID).send_keys("Other")
         functions.click_submit(self.driver)
 
     def select_trade_control_product_category(self):
-        self.driver.find_element_by_id(self.TRADE_CONTROL_PRODUCT_CATEGORY_A_ID).click()
+        self.driver.find_element(by=By.ID, value=self.TRADE_CONTROL_PRODUCT_CATEGORY_A_ID).click()
         functions.click_submit(self.driver)
 
     def select_open_licence_category(self, category):
-        self.driver.find_element_by_id(self.OIEL_EXPORT_TYPE_RADIO_BUTTON_ID + category).click()
+        self.driver.find_element(by=By.ID, value=self.OIEL_EXPORT_TYPE_RADIO_BUTTON_ID + category).click()
         functions.click_submit(self.driver)

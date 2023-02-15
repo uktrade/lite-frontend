@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from ui_tests.caseworker.pages.BasePage import BasePage
@@ -21,7 +22,7 @@ class RoutingRulesPage(BasePage):
     TEAM_ID_PREFIX = "team-"
 
     def create_new_routing_rule(self):
-        self.driver.find_element_by_id(self.BTN_CREATE_NEW_ROUTING_RULE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BTN_CREATE_NEW_ROUTING_RULE_ID).click()
 
     def initial_details_form(self, case_status=None, queue=None, tier=None, additional_rules=None):
         if case_status:
@@ -59,43 +60,43 @@ class RoutingRulesPage(BasePage):
         functions.send_keys_to_autocomplete(self.driver, self.TEXT_QUEUE_ID, text)
 
     def select_case_status(self, status):
-        select = Select(self.driver.find_element_by_id(self.SELECT_CASE_STATUS_ID))
+        select = Select(self.driver.find_element(by=By.ID, value=self.SELECT_CASE_STATUS_ID))
         select.select_by_visible_text(status)
 
     def enter_tier(self, text):
-        self.driver.find_element_by_id(self.TEXT_TIER_ID).clear()
-        self.driver.find_element_by_id(self.TEXT_TIER_ID).send_keys(text)
+        self.driver.find_element(by=By.ID, value=self.TEXT_TIER_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.TEXT_TIER_ID).send_keys(text)
 
     def select_case_type_by_text(self, text):
-        self.driver.find_element_by_id(text).click()
+        self.driver.find_element(by=By.ID, value=text).click()
 
     def select_flag(self, flag_name):
-        self.driver.find_element_by_id(flag_name.replace(" ", "-")).click()
+        self.driver.find_element(by=By.ID, value=flag_name.replace(" ", "-")).click()
 
     def enter_country(self, country):
         functions.send_keys_to_autocomplete(self.driver, self.TEXT_COUNTRY_ID, country)
 
     def select_first_user(self):
-        self.driver.find_element_by_css_selector(self.RADIO_BUTTONS).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.RADIO_BUTTONS).click()
 
     def click_on_deactivate_rule(self, element):
-        element.find_element_by_id(self.DEACTIVATE_ROUTING_RULE_BUTTON_ID).click()
+        element.find_element(by=By.ID, value=self.DEACTIVATE_ROUTING_RULE_BUTTON_ID).click()
 
     def click_on_reactivate_rule(self, element):
-        element.find_element_by_id(self.REACTIVATE_ROUTING_RULE_BUTTON_ID).click()
+        element.find_element(by=By.ID, value=self.REACTIVATE_ROUTING_RULE_BUTTON_ID).click()
 
     def click_confirm_deactivate_activate(self):
-        self.driver.find_element_by_id(self.CONFIRM_DEACTIVATE_REACTIVATE).click()
+        self.driver.find_element(by=By.ID, value=self.CONFIRM_DEACTIVATE_REACTIVATE).click()
 
     def find_row_by_queue_id(self, queue_id):
         # the queue_id is assigned to a td, and we need the tr, so xpath is used to get the parent element.
-        return self.driver.find_element_by_id(queue_id).find_element_by_xpath("..")
+        return self.driver.find_element(by=By.ID, value=queue_id).find_element(by=By.XPATH, value="..")
 
     def edit_row_by_queue_id(self, queue_id):
-        self.find_row_by_queue_id(queue_id).find_element_by_id(self.EDIT_ROUTING_RULE_BUTTON_ID).click()
+        self.find_row_by_queue_id(queue_id).find_element(by=By.ID, value=self.EDIT_ROUTING_RULE_BUTTON_ID).click()
 
     def select_team(self, team_id):
-        self.driver.find_element_by_id(self.TEAM_ID_PREFIX + team_id).click()
+        self.driver.find_element(by=By.ID, value=self.TEAM_ID_PREFIX + team_id).click()
 
     def filter_by_queue_name(self, queue_name):
         functions.try_open_filters(self.driver)

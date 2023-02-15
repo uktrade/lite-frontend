@@ -15,17 +15,17 @@ class TaskListPage(BasePage):
         self.driver.find_element(by=By.ID, value=section).click()
 
     def get_section_status(self, section):
-        return self.driver.find_element_by_id(section + self.STATUS_PARTIAL_ID).get_attribute("data-status")
+        return self.driver.find_element(by=By.ID, value=section + self.STATUS_PARTIAL_ID).get_attribute("data-status")
 
     def get_section(self, section):
         section = self.driver.find_elements_by_id(section)
         return section[0] if section else None
 
     def get_text_of_lite_task_list_items(self):
-        return self.driver.find_element_by_css_selector(self.TASK_LIST_ITEMS_CSS).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.TASK_LIST_ITEMS_CSS).text
 
     def find_remove_party_link(self):
         try:
-            return self.driver.find_element_by_css_selector(self.REMOVE_PARTY_LINK)
+            return self.driver.find_element(by=By.CSS_SELECTOR, value=self.REMOVE_PARTY_LINK)
         except NoSuchElementException:
             return None

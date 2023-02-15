@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 from tests_common.tools.helpers import find_paginated_item_by_id
 
@@ -18,22 +20,22 @@ class CompliancePages(BasePage):
         return find_paginated_item_by_id(case_id, self.driver)
 
     def view_compliance_case(self, case_id):
-        self.driver.find_element_by_id(f"{self.PARTIAL_SITE_CASE_LIST_LINK_ID}{case_id}").click()
+        self.driver.find_element(by=By.ID, value=f"{self.PARTIAL_SITE_CASE_LIST_LINK_ID}{case_id}").click()
 
     def view_visit_case(self, case_id):
-        self.driver.find_element_by_id(f"{self.PARTIAL_VISIT_CASE_LIST_LINK_ID}{case_id}").click()
+        self.driver.find_element(by=By.ID, value=f"{self.PARTIAL_VISIT_CASE_LIST_LINK_ID}{case_id}").click()
 
     def details_tab(self):
-        return self.driver.find_element_by_id(self.TAB_DETAILS_ID)
+        return self.driver.find_element(by=By.ID, value=self.TAB_DETAILS_ID)
 
     def ecju_queries_tab(self):
-        return self.driver.find_element_by_id(self.TAB_ECJU_QUERIES_ID)
+        return self.driver.find_element(by=By.ID, value=self.TAB_ECJU_QUERIES_ID)
 
     def notes_tab(self):
-        return self.driver.find_element_by_id(self.TAB_NOTES_ID)
+        return self.driver.find_element(by=By.ID, value=self.TAB_NOTES_ID)
 
     def generated_documents_tab(self):
-        return self.driver.find_element_by_id(self.TAB_GENERATED_DOCUMENTS_ID)
+        return self.driver.find_element(by=By.ID, value=self.TAB_GENERATED_DOCUMENTS_ID)
 
     def visits_tab(self):
-        return self.driver.find_element_by_id(self.TAB_VISITS_ID)
+        return self.driver.find_element(by=By.ID, value=self.TAB_VISITS_ID)

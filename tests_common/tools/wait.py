@@ -1,5 +1,7 @@
 from time import sleep
 
+from selenium.webdriver.common.by import By
+
 from ..tools.helpers import page_is_ready
 
 # How frequently in seconds the function should be checked
@@ -20,7 +22,7 @@ def wait_for_function(callback_function, **kwargs):
 
 def is_download_link_present(driver):
     driver.refresh()
-    return "Download" in driver.find_element_by_id("main-content").text
+    return "Download" in driver.find_element(by=By.ID, value="main-content").text
 
 
 def element_is_present(driver, _id):

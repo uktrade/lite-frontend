@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common import selectors
 
@@ -8,4 +10,4 @@ class UnassignQueuePage(BasePage):
             checkbox.click()
 
     def check_unassign_checkbox(self, queue_name):
-        self.driver.find_element_by_id(queue_name).click()
+        self.driver.find_element(by=By.ID, value=queue_name).click()

@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -9,10 +11,10 @@ class GoodsCountriesPage(BasePage):
     SAVE_BUTTON = "button[type='submit']"
 
     def select_all_link(self):
-        self.driver.find_element_by_id(self.SELECT_ALL_ID).click()
+        self.driver.find_element(by=By.ID, value=self.SELECT_ALL_ID).click()
 
     def deselect_all_link(self):
-        self.driver.find_element_by_id(self.DESELECT_ALL_ID).click()
+        self.driver.find_element(by=By.ID, value=self.DESELECT_ALL_ID).click()
 
     def all_selected(self):
         elements = self.driver.find_elements_by_css_selector(self.GOV_CHECKBOXES_INPUT)
@@ -31,4 +33,4 @@ class GoodsCountriesPage(BasePage):
         return True
 
     def click_save(self):
-        self.driver.find_element_by_css_selector(self.SAVE_BUTTON).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.SAVE_BUTTON).click()

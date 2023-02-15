@@ -21,18 +21,18 @@ class UsersPage(BasePage):
     LINK_ID = "link-"
 
     def click_add_a_user_button(self):
-        self.driver.find_element_by_id(self.BUTTON_ADD_USER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_ADD_USER_ID).click()
 
     def enter_email(self, email):
-        self.driver.find_element_by_id(self.EMAIL).clear()
-        self.driver.find_element_by_id(self.EMAIL).send_keys(email)
+        self.driver.find_element(by=By.ID, value=self.EMAIL).clear()
+        self.driver.find_element(by=By.ID, value=self.EMAIL).send_keys(email)
 
     def select_option_from_team_drop_down_by_visible_text(self, value):
         select = Select(self.driver.find_element(by=By.ID, value=self.TEAM))
         select.select_by_visible_text(value)
 
     def select_option_from_role_drop_down_by_visible_text(self, value):
-        select = Select(self.driver.find_element_by_id(self.ROLE))
+        select = Select(self.driver.find_element(by=By.ID, value=self.ROLE))
         select.select_by_visible_text(value)
 
     def select_option_from_default_queue_drop_down_by_visible_text(self, value):
@@ -40,33 +40,33 @@ class UsersPage(BasePage):
         select.select_by_visible_text(value)
 
     def select_option_from_team_drop_down_by_value(self):
-        select = Select(self.driver.find_element_by_id(self.TEAM))
+        select = Select(self.driver.find_element(by=By.ID, value=self.TEAM))
         select.select_by_index(2)
 
     def click_on_manage_roles(self):
-        self.driver.find_element_by_id(self.MANAGE_ROLES_BUTTON).click()
+        self.driver.find_element(by=By.ID, value=self.MANAGE_ROLES_BUTTON).click()
 
     def click_change_email_link(self):
-        self.driver.find_element_by_id(self.LINK_CHANGE_EMAIL_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_EMAIL_ID).click()
 
     def click_deactivate_user(self):
-        self.driver.find_element_by_id(self.BUTTON_DEACTIVATE_USER_ID).click()
-        self.driver.find_element_by_id(self.DEACTIVATE_ARE_YOU_SURE_BUTTON_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_DEACTIVATE_USER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.DEACTIVATE_ARE_YOU_SURE_BUTTON_ID).click()
 
     def click_reactivate_user(self):
-        self.driver.find_element_by_id(self.BUTTON_REACTIVATE_USER_ID).click()
-        self.driver.find_element_by_id(self.REACTIVATE_ARE_YOU_SURE_BUTTON_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_REACTIVATE_USER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.REACTIVATE_ARE_YOU_SURE_BUTTON_ID).click()
 
     def go_to_user_page(self, context):
         self.filter_by_email(context.added_email)
         element_id = "link-" + context.added_email
-        self.driver.find_element_by_id(element_id).click()
+        self.driver.find_element(by=By.ID, value=element_id).click()
 
     def filter_by_email(self, name):
         functions.try_open_filters(self.driver)
-        self.driver.find_element_by_id(self.INPUT_EMAIL_FILTER_ID).clear()
-        self.driver.find_element_by_id(self.INPUT_EMAIL_FILTER_ID).send_keys(name)
+        self.driver.find_element(by=By.ID, value=self.INPUT_EMAIL_FILTER_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.INPUT_EMAIL_FILTER_ID).send_keys(name)
         functions.click_apply_filters(self.driver)
 
     def is_user_email_displayed(self, email):
-        return self.driver.find_element_by_id(self.LINK_ID + email).is_displayed()
+        return self.driver.find_element(by=By.ID, value=self.LINK_ID + email).is_displayed()

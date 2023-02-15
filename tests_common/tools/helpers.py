@@ -6,6 +6,7 @@ from time import sleep
 from allure import attach, attachment_type
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -60,7 +61,7 @@ def find_element(driver, by_type, locator):
 
 
 def find_element_by_href(driver, href):
-    return driver.find_element_by_css_selector('[href="' + href + '"]')
+    return driver.find_element(by=By.CSS_SELECTOR, value='[href="' + href + '"]')
 
 
 def is_element_present(driver, how, what):
@@ -135,11 +136,11 @@ def get_element_index_by_text(elements, text: str, complete_match=True):
 
 
 def get_coordinates_of_element_by_id(driver, selector):
-    return driver.find_element_by_id(selector).location
+    return driver.find_element(by=By.ID, value=selector).location
 
 
 def get_size_of_element_by_id(driver, selector):
-    return driver.find_element_by_id(selector).size
+    return driver.find_element(by=By.ID, value=selector).size
 
 
 def scroll_to_element_below_header_by_id(driver, selector):
@@ -201,7 +202,7 @@ def find_paginated_item_by_id(id, driver):
         else:
             current_page += 1
             try:
-                driver.find_element_by_id(f"page-{current_page}").click()
+                driver.find_element(by=By.ID, value=f"page-{current_page}").click()
             except NoSuchElementException:
                 pass
     driver.implicitly_wait(60)
@@ -223,7 +224,7 @@ def paginated_item_exists(item_id, driver, exists=True):
         else:
             current_page += 1
             try:
-                driver.find_element_by_id(f"page-{current_page}").click()
+                driver.find_element(by=By.ID, value=f"page-{current_page}").click()
             except NoSuchElementException:
                 element_is_found = False
                 break
@@ -245,7 +246,7 @@ def paginated_item_exists_by_css(css, driver, exists=True):
         else:
             current_page += 1
             try:
-                driver.find_element_by_id(f"page-{current_page}").click()
+                driver.find_element(by=By.ID, value=f"page-{current_page}").click()
             except NoSuchElementException:
                 element_is_found = False
                 break
@@ -258,10 +259,10 @@ def get_text_of_multi_page_table(css_selector, driver):
     text = ""
     current_page = 1
     while True:
-        text += driver.find_element_by_css_selector(css_selector).text
+        text += driver.find_element(by=By.CSS_SELECTOR, value=css_selector).text
         current_page += 1
         try:
-            driver.find_element_by_id(f"page-{current_page}").click()
+            driver.find_element(by=By.ID, value=f"page-{current_page}").click()
         except NoSuchElementException:
             break
     driver.implicitly_wait(60)
