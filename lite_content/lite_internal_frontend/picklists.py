@@ -64,6 +64,5 @@ class PicklistCategory:
     PRE_VISIT_QUESTIONNAIRES = "Pre-visit queries (ECJU)"
     COMPLIANCE_ACTIONS = "Compliance action queries (ECJU)"
     LETTER_PARAGRAPHS = "Letter paragraphs"
-    REPORT_SUMMARIES = "Report summaries"
     STANDARD_ADVICE = "Standard Advice"
     FOOTNOTES = "Reporting footnotes"

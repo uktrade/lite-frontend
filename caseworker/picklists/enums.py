@@ -12,7 +12,6 @@ class PicklistCategories:
     pre_visit_questionnaire = Picklist(PicklistCategory.PRE_VISIT_QUESTIONNAIRES, "pre_visit_questionnaire")
     compliance_actions = Picklist(PicklistCategory.COMPLIANCE_ACTIONS, "compliance_actions")
     letter_paragraph = Picklist(PicklistCategory.LETTER_PARAGRAPHS, "letter_paragraph")
-    report_summary = Picklist(PicklistCategory.REPORT_SUMMARIES, "report_summary")
     standard_advice = Picklist(PicklistCategory.STANDARD_ADVICE, "standard_advice")
     footnotes = Picklist(PicklistCategory.FOOTNOTES, "footnotes")
 
@@ -24,7 +23,6 @@ class PicklistCategories:
             cls.pre_visit_questionnaire,
             cls.compliance_actions,
             cls.letter_paragraph,
-            cls.report_summary,
             cls.standard_advice,
             cls.footnotes,
         ]

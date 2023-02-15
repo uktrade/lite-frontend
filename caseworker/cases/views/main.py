@@ -271,11 +271,6 @@ class CaseDetail(CaseTabsMixin, CaseView):
     def get_end_user_advisory_query(self):
         self.slices = [Slices.END_USER_DETAILS]
 
-    def get_goods_query(self):
-        self.slices = [Slices.GOODS_QUERY]
-        if self.case.data["clc_responded"] or self.case.data["pv_grading_responded"]:
-            self.slices.insert(0, Slices.GOODS_QUERY_RESPONSE)
-
     def get_open_registration(self):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
