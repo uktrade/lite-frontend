@@ -642,9 +642,13 @@ class ConsolidateEditView(ReviewConsolidateView):
         level = "final-advice"
         try:
             if isinstance(form, forms.ConsolidateApprovalForm):
-                services.update_approval_advice(self.request, self.case, self.caseworker, form.cleaned_data, level)
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
             if isinstance(form, forms.RefusalAdviceForm):
-                services.update_refusal_advice(self.request, self.case, self.caseworker, form.cleaned_data, level)
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
         except HTTPError as e:
             errors = e.response.json()["errors"]
             form.add_error(None, errors)

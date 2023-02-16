@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import patch
+from uuid import uuid4
 
 from django.urls import reverse
 
@@ -24,14 +25,27 @@ def setup(mock_queue, mock_case, mock_denial_reasons, mock_post_team_advice, moc
     yield
 
 
+def get_advice_subjects(case):
+    case_data = case["case"]["data"]
+    parties = [
+        ("consignee", case_data["consignee"]["id"]),
+        ("end_user", case_data["end_user"]["id"]),
+        ("ultimate_end_user", case_data["ultimate_end_users"][0]["id"]),
+    ]
+    goods = [("good", good["id"]) for good in case["case"]["data"]["goods"]]
+
+    return parties + goods
+
+
 @pytest.fixture
-def consolidated_advice(current_user):
+def consolidated_advice(data_standard_case, current_user):
     current_user["team"]["id"] = "2132131d-2432-423424"
     current_user["team"]["alias"] = services.LICENSING_UNIT_TEAM
+    subjects = get_advice_subjects(data_standard_case)
 
     return [
         {
-            "id": "a9206652-93be-4480-97cf-d7d52ba6e2b5",
+            "id": str(uuid4()),
             "user": current_user,
             "type": {"key": "approve", "value": "Approve"},
             "text": "meets the requirements",
@@ -39,106 +53,12 @@ def consolidated_advice(current_user):
             "level": "final",
             "footnote": None,
             "footnote_required": None,
-            "good": None,
-            "end_user_id": "953f330f-4956-4e9f-9b87-7c07b5dc3abc",
-            "ultimate_end_user_id": None,
-            "consignee_id": None,
-            "third_party_id": None,
+            subject_type: subject_id,
             "proviso": "some conditions",
-            "pv_grading": None,
-            "collated_pv_grading": None,
             "countersign_comments": "",
             "countersigned_by_id": None,
-        },
-        {
-            "id": "78833712-fc78-4a52-8616-37a72bfb1e2a",
-            "user": current_user,
-            "type": {"key": "approve", "value": "Approve"},
-            "text": "meets the requirements",
-            "note": "",
-            "level": "final",
-            "footnote": None,
-            "footnote_required": None,
-            "good_id": None,
-            "goods_type_id": None,
-            "country_id": None,
-            "end_user_id": None,
-            "ultimate_end_user_id": None,
-            "consignee_id": "500abd5e-9c9c-4649-bcb4-e5156b39a715",
-            "third_party_id": None,
-            "proviso": "some conditions",
-            "pv_grading": None,
-            "collated_pv_grading": None,
-            "countersign_comments": "",
-            "countersigned_by_id": None,
-        },
-        {
-            "id": "e6c1dbc5-4a39-48ad-84fd-c5d566c3b258",
-            "user": current_user,
-            "type": {"key": "approve", "value": "Approve"},
-            "text": "meets the requirements",
-            "note": "",
-            "level": "final",
-            "footnote": None,
-            "footnote_required": None,
-            "good_id": None,
-            "goods_type_id": None,
-            "country_id": None,
-            "end_user_id": None,
-            "ultimate_end_user_id": "e2ad9d86-c0b3-4560-a8e5-0d7e4cabac4f",
-            "consignee_id": None,
-            "third_party_id": None,
-            "proviso": "some conditions",
-            "pv_grading": None,
-            "collated_pv_grading": None,
-            "countersign_comments": "",
-            "countersigned_by_id": None,
-        },
-        {
-            "id": "da4149af-bee6-4d80-b647-f0b4027c9a0b",
-            "case_id": "79b2a7f2-3cc1-40ef-a0c7-2517e1aff9a8",
-            "user": current_user,
-            "type": {"key": "approve", "value": "Approve"},
-            "text": "meets the requirements",
-            "note": "",
-            "level": "final",
-            "footnote": None,
-            "footnote_required": None,
-            "good_id": None,
-            "goods_type_id": None,
-            "country_id": None,
-            "end_user_id": None,
-            "ultimate_end_user_id": None,
-            "consignee_id": None,
-            "third_party_id": "cdb3e406-2760-47a4-ac08-06da333c20c9",
-            "proviso": "some conditions",
-            "pv_grading": None,
-            "collated_pv_grading": None,
-            "countersign_comments": "",
-            "countersigned_by_id": None,
-        },
-        {
-            "id": "1f8611f2-1e5a-4dbc-bbbe-776db26f8d24",
-            "user": current_user,
-            "type": {"key": "approve", "value": "Approve"},
-            "text": "meets the requirements",
-            "note": "",
-            "level": "final",
-            "footnote": None,
-            "footnote_required": None,
-            "good_id": "55b1e712-7031-47cb-a613-53ebbdc887ed",
-            "goods_type_id": None,
-            "country_id": None,
-            "end_user_id": None,
-            "ultimate_end_user_id": None,
-            "consignee_id": None,
-            "third_party_id": None,
-            "proviso": "some conditions",
-            "pv_grading": None,
-            "collated_pv_grading": None,
-            "countersign_comments": "",
-            "countersigned_by_id": None,
-        },
+        }
+        for subject_type, subject_id in subjects
     ]
 
 
@@ -353,30 +273,11 @@ def test_edit_consolidated_advice_approve_by_lu_put(
     assert history.method == "PUT"
     assert history.json() == [
         {
-            "id": "a9206652-93be-4480-97cf-d7d52ba6e2b5",
+            "id": advice["id"],
             "text": data["approval_reasons"],
             "proviso": data["proviso"],
-        },
-        {
-            "id": "78833712-fc78-4a52-8616-37a72bfb1e2a",
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-        },
-        {
-            "id": "e6c1dbc5-4a39-48ad-84fd-c5d566c3b258",
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-        },
-        {
-            "id": "da4149af-bee6-4d80-b647-f0b4027c9a0b",
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-        },
-        {
-            "id": "1f8611f2-1e5a-4dbc-bbbe-776db26f8d24",
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-        },
+        }
+        for advice in consolidated_advice
     ]
 
 
@@ -408,28 +309,9 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
     assert history.method == "PUT"
     assert history.json() == [
         {
-            "id": "a9206652-93be-4480-97cf-d7d52ba6e2b5",
+            "id": advice["id"],
             "text": data["refusal_reasons"],
             "denial_reasons": data["denial_reasons"],
-        },
-        {
-            "id": "78833712-fc78-4a52-8616-37a72bfb1e2a",
-            "text": data["refusal_reasons"],
-            "denial_reasons": data["denial_reasons"],
-        },
-        {
-            "id": "e6c1dbc5-4a39-48ad-84fd-c5d566c3b258",
-            "text": data["refusal_reasons"],
-            "denial_reasons": data["denial_reasons"],
-        },
-        {
-            "id": "da4149af-bee6-4d80-b647-f0b4027c9a0b",
-            "text": data["refusal_reasons"],
-            "denial_reasons": data["denial_reasons"],
-        },
-        {
-            "id": "1f8611f2-1e5a-4dbc-bbbe-776db26f8d24",
-            "text": data["refusal_reasons"],
-            "denial_reasons": data["denial_reasons"],
-        },
+        }
+        for advice in consolidated_advice
     ]

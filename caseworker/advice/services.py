@@ -349,7 +349,7 @@ def post_refusal_advice(request, case, data, level="user-advice"):
     return response.json(), response.status_code
 
 
-def update_approval_advice(request, case, caseworker, data, level):
+def update_advice(request, case, caseworker, advice_type, data, level):
     user_team_alias = caseworker["team"]["alias"]
     if user_team_alias != LICENSING_UNIT_TEAM:
         raise NotImplementedError(f"Implement approval advice update for {user_team_alias}")
@@ -357,35 +357,28 @@ def update_approval_advice(request, case, caseworker, data, level):
     team_advice = filter_advice_by_level(case.advice, ["final"])
     consolidated_advice = filter_advice_by_team(team_advice, user_team_alias)
 
-    json = [
-        {
-            "id": advice["id"],
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-        }
-        for advice in consolidated_advice
-    ]
-    response = client.put(request, f"/cases/{case['id']}/{level}/", json)
-    response.raise_for_status()
-    return response.json(), response.status_code
+    json = []
+    if advice_type == "approve" or advice_type == "proviso":
+        json = [
+            {
+                "id": advice["id"],
+                "text": data["approval_reasons"],
+                "proviso": data["proviso"],
+            }
+            for advice in consolidated_advice
+        ]
+    elif advice_type == "refuse":
+        json = [
+            {
+                "id": advice["id"],
+                "text": data["refusal_reasons"],
+                "denial_reasons": data["denial_reasons"],
+            }
+            for advice in consolidated_advice
+        ]
+    else:
+        raise NotImplementedError(f"Implement advice update for advice type {advice_type}")
 
-
-def update_refusal_advice(request, case, caseworker, data, level):
-    user_team_alias = caseworker["team"]["alias"]
-    if user_team_alias != LICENSING_UNIT_TEAM:
-        raise NotImplementedError(f"Implement refusal advice update for {user_team_alias}")
-
-    team_advice = filter_advice_by_level(case.advice, ["final"])
-    consolidated_advice = filter_advice_by_team(team_advice, user_team_alias)
-
-    json = [
-        {
-            "id": advice["id"],
-            "text": data["refusal_reasons"],
-            "denial_reasons": data["denial_reasons"],
-        }
-        for advice in consolidated_advice
-    ]
     response = client.put(request, f"/cases/{case['id']}/{level}/", json)
     response.raise_for_status()
     return response.json(), response.status_code
