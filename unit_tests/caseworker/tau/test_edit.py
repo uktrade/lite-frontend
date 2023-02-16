@@ -182,8 +182,8 @@ def test_form(
     assert edit_ag_good_regimes == form_ag_entries
 
     # Check report summary TODO: - uncomment once work to load report_summaries is done
-    # assert edit_good["report_summary_subject_name"] == soup.find("form").find(id="report_summary_subject_name").attrs["value"]
-    # assert edit_good["report_summary_prefix_name"] == soup.find("form").find(id="report_summary_prefix_name").attrs["value"]
+    # assert edit_good["report_summary_subject"] == soup.find("form").find(id="report_summary_subject").attrs["value"]
+    # assert edit_good["report_summary_prefix"] == soup.find("form").find(id="report_summary_prefix").attrs["value"]
 
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
@@ -191,7 +191,7 @@ def test_form(
     response = authorized_client.post(
         url,
         data={
-            "report_summary_subject_name": "scale compelling technologies",
+            "report_summary_subject": "scale compelling technologies",
             "does_not_have_control_list_entries": True,
             "comment": "test",
             "regimes": ["NONE"],
@@ -265,7 +265,7 @@ def test_form_no_regime_entries(
     response = authorized_client.post(
         url,
         data={
-            "report_summary_subject_name": "scale compelling technologies",
+            "report_summary_subject": "scale compelling technologies",
             "does_not_have_control_list_entries": True,
             "comment": "test",
             "regimes": ["NONE"],
@@ -353,7 +353,7 @@ def test_form_regime_entries(
     response = authorized_client.post(
         url,
         data={
-            "report_summary_subject_name": "scale compelling technologies",
+            "report_summary_subject": "scale compelling technologies",
             "does_not_have_control_list_entries": True,
             "comment": "test",
             **regimes_form_data,

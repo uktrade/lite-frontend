@@ -2,14 +2,14 @@ import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
 
 const initARS = () => {
-  const prefixInput = document.querySelector("#report_summary_prefix_name");
+  const prefixInput = document.querySelector("#report_summary_prefix");
   const prefixAutocompleteContainer = document.createElement("div");
-  prefixAutocompleteContainer.id = "report_summary_prefix_name_container";
+  prefixAutocompleteContainer.id = "report_summary_prefix_container";
   prefixInput.parentElement.appendChild(prefixAutocompleteContainer);
-  prefixInput.remove();
+  prefixInput.style = "display:none";
   accessibleAutocomplete({
-    element: document.querySelector("#report_summary_prefix_name_container"),
-    id: "report_summary_prefix_name",
+    element: document.querySelector("#report_summary_prefix_container"),
+    id: "_report_summary_prefix",
     source: (query, populateResults) => {
       fetch(`/tau/report_summary/prefix?name=${query}`)
         .then((response) => response.json())
@@ -17,7 +17,7 @@ const initARS = () => {
         .then((results) => populateResults(results));
     },
     cssNamespace: "lite-autocomplete",
-    name: "report_summary_prefix_name",
+    name: "_report_summary_prefix",
     templates: {
       inputValue: (suggestion) => suggestion?.name ?? "",
       suggestion: (suggestion) => {
@@ -30,6 +30,12 @@ const initARS = () => {
           </div>
         `;
       },
+    },
+    onConfirm: (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      prefixInput.value = confirmed.id;
     },
     defaultValue: prefixInput.value,
     showNoOptionsFound: true,
@@ -37,14 +43,14 @@ const initARS = () => {
     showAllValues: true,
   });
 
-  const subjectInput = document.querySelector("#report_summary_subject_name");
+  const subjectInput = document.querySelector("#report_summary_subject");
   const subjectAutocompleteContainer = document.createElement("div");
-  subjectAutocompleteContainer.id = "report_summary_subject_name_container";
+  subjectAutocompleteContainer.id = "report_summary_subject_container";
   subjectInput.parentElement.appendChild(subjectAutocompleteContainer);
-  subjectInput.remove();
+  subjectInput.style = "display:none";
   accessibleAutocomplete({
-    element: document.querySelector("#report_summary_subject_name_container"),
-    id: "report_summary_subject_name",
+    element: document.querySelector("#report_summary_subject_container"),
+    id: "_report_summary_subject",
     source: (query, populateResults) => {
       fetch(`/tau/report_summary/subject?name=${query}`)
         .then((response) => response.json())
@@ -52,7 +58,7 @@ const initARS = () => {
         .then((results) => populateResults(results));
     },
     cssNamespace: "lite-autocomplete",
-    name: "report_summary_subject_name",
+    name: "_report_summary_subject",
     templates: {
       inputValue: (suggestion) => suggestion?.name ?? "",
       suggestion: (suggestion) => {
@@ -65,6 +71,12 @@ const initARS = () => {
           </div>
         `;
       },
+    },
+    onConfirm: (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      subjectInput.value = confirmed.id;
     },
     defaultValue: subjectInput.value,
     showNoOptionsFound: true,

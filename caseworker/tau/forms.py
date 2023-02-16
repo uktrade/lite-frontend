@@ -20,8 +20,8 @@ from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
 from ..report_summary.services import get_report_summary_subjects, get_report_summary_prefixes
 
-REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject_name"
-REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix_name"
+REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
+REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
 
 
 class TAUEditForm(forms.Form):
@@ -48,7 +48,7 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary_prefix_name = forms.CharField(
+    report_summary_prefix = forms.CharField(
         label="Add a report summary prefix",
         help_text="Type for suggestions",
         # setting id for javascript to use
@@ -56,7 +56,7 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary_subject_name = forms.CharField(
+    report_summary_subject = forms.CharField(
         label="Add a report summary subject",
         help_text="Type for suggestions",
         # setting id for javascript to use
@@ -274,25 +274,23 @@ class TAUEditForm(forms.Form):
         return cleaned_data
 
     def validate_report_summary_subject(self, cleaned_data):
-        subject_name = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
-        subject_response = get_report_summary_subjects(self.request, subject_name)
-        matches = [m for m in subject_response.get("report_summary_subjects", []) if m.get("name") == subject_name]
+        subject_id = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        subject_response = get_report_summary_subjects(self.request, "")
+        if any(subject_id == subject["id"] for subject in subject_response.get("report_summary_subjects", [])):
+            return
 
-        if len(matches) == 1:
-            cleaned_data["report_summary_subject"] = matches[0]["id"]
-        else:
-            raise ValidationError("Enter a valid report summary subject")
+        raise ValidationError("Enter a valid report summary subject")
 
     def validate_report_summary_prefix(self, cleaned_data):
-        prefix_name = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
-        if prefix_name:
-            prefix_response = get_report_summary_prefixes(self.request, prefix_name)
-            matches = [m for m in prefix_response.get("report_summary_prefixes", []) if m.get("name") == prefix_name]
+        prefix_id = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
+        if not prefix_id:
+            return
 
-            if len(matches) == 1:
-                cleaned_data["report_summary_prefix"] = matches[0]["id"]
-            else:
-                raise ValidationError("Enter a valid report summary prefix")
+        prefix_response = get_report_summary_prefixes(self.request, "")
+        if any(prefix_id == prefix["id"] for prefix in prefix_response.get("report_summary_prefixes", [])):
+            return
+
+        raise ValidationError("Enter a valid report summary prefix")
 
 
 class TAUAssessmentForm(TAUEditForm):

@@ -153,7 +153,7 @@ def test_form(
     assert unassessed_products[0].attrs["value"] == good["id"]
 
     data = {
-        "report_summary_subject_name": "scale compelling technologies",
+        "report_summary_subject": "scale compelling technologies",
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
@@ -239,7 +239,7 @@ def test_form_regime_entries(
     )
 
     data = {
-        "report_summary_subject_name": "scale compelling technologies",
+        "report_summary_subject": "scale compelling technologies",
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         **regimes_form_data,
