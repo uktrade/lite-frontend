@@ -27,7 +27,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     Then I click on Product Assessment
     And I select good
     And I select the CLE "ML1a"
-    And I select "microwave components" as report summary subject and regime to none and submit
+    And I select "microwave" as report summary subject and regime to none and submit
     When I click move case forward
     Then I don't see previously created application
     # LU

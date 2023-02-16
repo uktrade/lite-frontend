@@ -85,9 +85,10 @@ def click_next_page(driver: WebDriver):
 
 
 def select_report_summary_subject_and_fill(driver, subject):
-    suggestion_input = driver.find_element(By.NAME, "report_summary_subject")
-    suggestion_input.send_keys(subject)
-    suggestion_input.send_keys(Keys.TAB)
+    suggestion_input_autocomplete = driver.find_element(by=By.ID, value="_report_summary_subject")
+    suggestion_input_autocomplete.send_keys(subject)
+    time.sleep(1)
+    suggestion_input_autocomplete.send_keys(Keys.ARROW_DOWN)
     driver.find_element(by=By.XPATH, value="//body").click()
 
 
