@@ -160,11 +160,18 @@ class TAUEditForm(forms.Form):
         self.fields["cwc_entries"].choices = cwc_entries
         self.fields["ag_entries"].choices = ag_entries
 
+        # When we get back the report summary prefix and subject values we get the pks of the objects as this is what
+        # is sent through from the form, however we need to pass the name back to the frontend so that the JS component
+        # can use this to populate the autocomplete field
+        # To handle this we grab the item data from the API using the pk that we have so that we can store the name in
+        # a data attribute that the frontend can then present to the user
         report_summary_prefix_value = self.data.get(REPORT_SUMMARY_PREFIX_KEY)
         if report_summary_prefix_value:
             try:
                 report_summary_prefix = get_report_summary_prefix(request, report_summary_prefix_value)
             except HTTPError:
+                # If we get here then we've ended up with a pk that we can't get any information about so the best
+                # we can do is just present a blank name back to the user
                 report_summary_prefix_name = ""
             else:
                 report_summary_prefix_name = report_summary_prefix["report_summary_prefix"]["name"]
@@ -175,6 +182,8 @@ class TAUEditForm(forms.Form):
             try:
                 report_summary_subject = get_report_summary_subject(request, report_summary_subject_value)
             except HTTPError:
+                # If we get here then we've ended up with a pk that we can't get any information about so the best
+                # we can do is just present a blank name back to the user
                 report_summary_subject_name = ""
             else:
                 report_summary_subject_name = report_summary_subject["report_summary_subject"]["name"]
