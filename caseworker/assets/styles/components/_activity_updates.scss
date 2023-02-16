@@ -5,7 +5,15 @@
         padding: 0;
     }
 
+    &__item {
+        margin-bottom: govuk-spacing(2);
+    }
+
     &__department, &__activity {
         color: $govuk-secondary-text-colour;
+    }
+
+    &__action {
+        font-weight: bold;
     }
 }

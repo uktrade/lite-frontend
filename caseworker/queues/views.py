@@ -139,6 +139,29 @@ class Cases(LoginRequiredMixin, TemplateView):
         unique_destinations = [dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}]
         return unique_destinations
 
+    def _limit_lines(self, text, limit):
+        lines = text.splitlines()
+        if len(lines) > limit:
+            lines = lines[:limit]
+            lines[-1] += "..."
+        return "\n".join(lines)
+
+    def _transform_activity_updates(self, case):
+        try:
+            activity_updates = case["activity_updates"]
+        except KeyError:
+            activity_updates = []
+
+        transformed_updates = []
+        for update in activity_updates:
+            if update["text"]:
+                update["text"] = self._limit_lines(update["text"], 2)
+            if update["additional_text"]:
+                update["additional_text"] = self._limit_lines(update["additional_text"], 2)
+            transformed_updates.append(update)
+
+        return transformed_updates
+
     def _transform_queue_assignments(self, case):
         assigned_queues = {}
         for _, assignment in case["assignments"].items():
@@ -161,6 +184,7 @@ class Cases(LoginRequiredMixin, TemplateView):
     def transform_case(self, case):
         case["unique_destinations"] = self._transform_destinations(case)
         case["queue_assignments"] = self._transform_queue_assignments(case)
+        case["activity_updates"] = self._transform_activity_updates(case)
 
     def get_context_data(self, *args, **kwargs):
 
