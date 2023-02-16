@@ -160,6 +160,20 @@ class TAUEditForm(forms.Form):
         self.fields["cwc_entries"].choices = cwc_entries
         self.fields["ag_entries"].choices = ag_entries
 
+        report_summary_prefix_value = self.data.get(REPORT_SUMMARY_PREFIX_KEY)
+        if report_summary_prefix_value:
+            report_summary_prefix = get_report_summary_prefix(request, report_summary_prefix_value)
+            self.fields[REPORT_SUMMARY_PREFIX_KEY].widget.attrs["data-name"] = report_summary_prefix[
+                "report_summary_prefix"
+            ]["name"]
+
+        report_summary_subject_value = self.data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        if report_summary_subject_value:
+            report_summary_subject = get_report_summary_subject(request, report_summary_subject_value)
+            self.fields[REPORT_SUMMARY_SUBJECT_KEY].widget.attrs["data-name"] = report_summary_subject[
+                "report_summary_subject"
+            ]["name"]
+
         self.helper = FormHelper()
 
         feature_flagged_regimes = []

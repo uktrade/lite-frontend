@@ -37,7 +37,7 @@ const initARS = () => {
       }
       prefixInput.value = confirmed.id;
     },
-    defaultValue: prefixInput.value,
+    defaultValue: prefixInput.dataset.name,
     showNoOptionsFound: true,
     autoselect: false,
     showAllValues: true,
@@ -78,7 +78,7 @@ const initARS = () => {
       }
       subjectInput.value = confirmed.id;
     },
-    defaultValue: subjectInput.value,
+    defaultValue: subjectInput.dataset.name,
     showNoOptionsFound: true,
     autoselect: true,
     showAllValues: true,
