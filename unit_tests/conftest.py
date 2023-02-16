@@ -54,6 +54,16 @@ def mock_pv_gradings(requests_mock):
 
 
 @pytest.fixture
+def report_summary_subject():
+    return {"id": "b0849a92-4611-4e5b-b076-03562b138fb5", "name": "scale compelling technologies"}  # /PS-IGNORE
+
+
+@pytest.fixture
+def report_summary_prefix():
+    return {"id": "36fb2d8b-9e58-4d43-9c83-ca41b48d6d2a", "name": "components for"}
+
+
+@pytest.fixture
 def wassenaar_regime_entry():
     return {
         "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
@@ -474,6 +484,8 @@ def data_standard_case(
     cwc_regime_entry,
     ag_regime_entry,
     nsg_potential_trigger_list_regime_entry,
+    report_summary_prefix,
+    report_summary_subject,
 ):
     return {
         "case": {
@@ -877,8 +889,8 @@ def data_standard_case(
                         ],
                         "comment": "test assesment note",
                         "report_summary": "",
-                        "report_summary_prefix": {"name": "components for"},
-                        "report_summary_subject": {"name": "scale compelling technologies"},
+                        "report_summary_prefix": report_summary_prefix,
+                        "report_summary_subject": report_summary_subject,
                         "audit_trail": [],
                         "good_application_internal_documents": [],
                     },

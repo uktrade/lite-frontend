@@ -8,16 +8,20 @@ from django.urls import reverse
 from core import client
 from caseworker.tau import views
 
-REPORT_SUMMARY_SUBJECT_RESPONSE = {
-    "report_summary_subjects": [
-        {"id": "b0849a92-4611-4e5b-b076-03562b138fb5", "name": "scale compelling technologies"}  # /PS-IGNORE
-    ]
-}
 
-
-def mock_report_summary_subject(requests_mock):
+@pytest.fixture
+def mock_report_summary_subject(requests_mock, report_summary_subject):
     requests_mock.get(
-        "/static/report_summary/subjects/?name=scale+compelling+technologies", json=REPORT_SUMMARY_SUBJECT_RESPONSE
+        "/static/report_summary/subjects/?name=scale+compelling+technologies",
+        json={
+            "report_summary_subjects": [report_summary_subject],
+        },
+    )
+    requests_mock.get(
+        f"/static/report_summary/subjects/{report_summary_subject['id']}/",
+        json={
+            "report_summary_subject": report_summary_subject,
+        },
     )
 
 
@@ -31,6 +35,7 @@ def setup(
     mock_cwc_entries_get,
     mock_ag_entries_get,
     mock_application_good_documents,
+    mock_report_summary_subject,
 ):
     yield
 
@@ -132,6 +137,7 @@ def test_form(
     requests_mock,
     mock_control_list_entries,
     mock_precedents_api,
+    report_summary_subject,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
@@ -144,7 +150,6 @@ def test_form(
     requests_mock.post(
         client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
     )
-    mock_report_summary_subject(requests_mock)
     # unassessed products should have 1 entry
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -153,7 +158,7 @@ def test_form(
     assert unassessed_products[0].attrs["value"] == good["id"]
 
     data = {
-        "report_summary_subject": "scale compelling technologies",
+        "report_summary_subject": report_summary_subject["id"],
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
@@ -164,7 +169,8 @@ def test_form(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary_subject": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["id"],
+        "report_summary_subject": report_summary_subject["id"],
+        "report_summary_prefix": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
@@ -228,8 +234,8 @@ def test_form_regime_entries(
     mock_precedents_api,
     regimes_form_data,
     regime_entries,
+    report_summary_subject,
 ):
-    mock_report_summary_subject(requests_mock)
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
@@ -239,7 +245,7 @@ def test_form_regime_entries(
     )
 
     data = {
-        "report_summary_subject": "scale compelling technologies",
+        "report_summary_subject": report_summary_subject["id"],
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         **regimes_form_data,
@@ -250,7 +256,8 @@ def test_form_regime_entries(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary_subject": REPORT_SUMMARY_SUBJECT_RESPONSE["report_summary_subjects"][0]["id"],
+        "report_summary_subject": report_summary_subject["id"],
+        "report_summary_prefix": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],

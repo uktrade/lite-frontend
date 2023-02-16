@@ -162,17 +162,23 @@ class TAUEditForm(forms.Form):
 
         report_summary_prefix_value = self.data.get(REPORT_SUMMARY_PREFIX_KEY)
         if report_summary_prefix_value:
-            report_summary_prefix = get_report_summary_prefix(request, report_summary_prefix_value)
-            self.fields[REPORT_SUMMARY_PREFIX_KEY].widget.attrs["data-name"] = report_summary_prefix[
-                "report_summary_prefix"
-            ]["name"]
+            try:
+                report_summary_prefix = get_report_summary_prefix(request, report_summary_prefix_value)
+            except HTTPError:
+                report_summary_prefix_name = ""
+            else:
+                report_summary_prefix_name = report_summary_prefix["report_summary_prefix"]["name"]
+            self.fields[REPORT_SUMMARY_PREFIX_KEY].widget.attrs["data-name"] = report_summary_prefix_name
 
         report_summary_subject_value = self.data.get(REPORT_SUMMARY_SUBJECT_KEY)
         if report_summary_subject_value:
-            report_summary_subject = get_report_summary_subject(request, report_summary_subject_value)
-            self.fields[REPORT_SUMMARY_SUBJECT_KEY].widget.attrs["data-name"] = report_summary_subject[
-                "report_summary_subject"
-            ]["name"]
+            try:
+                report_summary_subject = get_report_summary_subject(request, report_summary_subject_value)
+            except HTTPError:
+                report_summary_subject_name = ""
+            else:
+                report_summary_subject_name = report_summary_subject["report_summary_subject"]["name"]
+            self.fields[REPORT_SUMMARY_SUBJECT_KEY].widget.attrs["data-name"] = report_summary_subject_name
 
         self.helper = FormHelper()
 
