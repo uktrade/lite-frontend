@@ -635,7 +635,7 @@ def test_queue_assignments(url, authorized_client):
     assert "Initial Queue" in li_elems[0]
     assert "Joe Smith" in li_elems[1]
     assert "Initial Queue" in li_elems[1]
-    assert "Not Allocated" in li_elems[2]
+    assert "Not allocated" in li_elems[2]
     assert "Another Queue" in li_elems[2]
 
 
