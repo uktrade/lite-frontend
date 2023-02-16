@@ -7,8 +7,20 @@ def _get_url(endpoint, search_term):
     return f"/static/report_summary/{endpoint}/{query_string}"
 
 
+def get_report_summary_prefix(request, pk):
+    response = client.get(request, f"/static/report_summary/prefixes/{pk}")
+    response.raise_for_status()
+    return response.json()
+
+
 def get_report_summary_prefixes(request, search_term):
     response = client.get(request, _get_url("prefixes", search_term))
+    return response.json()
+
+
+def get_report_summary_subject(request, pk):
+    response = client.get(request, f"/static/report_summary/subjects/{pk}")
+    response.raise_for_status()
     return response.json()
 
 
