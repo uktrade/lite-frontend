@@ -880,6 +880,5 @@ def assign_myself_to_case(driver, internal_info):  # noqa
     case_officer_page = CaseOfficerPage(driver)
     case_officer_page.search(internal_info["email"])
     # search for myself
-    case_officer_page = CaseOfficerPage(driver)
     case_officer_page.select_first_user()
     functions.click_submit(driver)
