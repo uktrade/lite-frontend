@@ -63,6 +63,9 @@ class TAUEditForm(forms.Form):
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_SUBJECT_KEY}),
         required=True,
+        error_messages={
+            "required": "Enter a report summary subject",
+        },
     )
 
     regimes = forms.MultipleChoiceField(
@@ -223,9 +226,6 @@ class TAUEditForm(forms.Form):
             self.add_error("does_not_have_control_list_entries", self.MESSAGE_NO_CLC_REQUIRED)
         # report summary is required when there are CLEs
 
-        if not cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY):
-            self.add_error(REPORT_SUMMARY_SUBJECT_KEY, "Enter a report summary subject")
-
         self.validate_report_summary_subject(cleaned_data)
         self.validate_report_summary_prefix(cleaned_data)
 
@@ -276,6 +276,8 @@ class TAUEditForm(forms.Form):
 
     def validate_report_summary_subject(self, cleaned_data):
         subject_id = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        if not subject_id:
+            return
 
         try:
             get_report_summary_subject(self.request, subject_id)
