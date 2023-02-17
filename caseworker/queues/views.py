@@ -18,7 +18,6 @@ from lite_forms.views import SingleFormView
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
-from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
@@ -262,20 +261,26 @@ class EditQueue(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("queues:manage")
 
 
-class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
+class CaseAssignmentSelectRole(LoginRequiredMixin, FormView):
 
     template_name = "core/form.html"
     form_class = SelectAllocateRole
 
+    def _set_success_url(self, form):
+        encoded_query_params = self.request.GET.urlencode()
+        if form.cleaned_data["role"] == SelectAllocateRole.RoleChoices.CASE_ADVISOR.value:
+            self.success_url = (
+                reverse(f"queues:case_assignments_assign_user", kwargs={"pk": self.kwargs["pk"]})
+                + f"?{encoded_query_params}"
+            )
+        else:
+            self.success_url = (
+                reverse(f"queues:case_assignments_assign_case_officer", kwargs={"pk": self.kwargs["pk"]})
+                + f"?{encoded_query_params}"
+            )
+
     def form_valid(self, form):
-        url_view_name = (
-            "case_assignments"
-            if form.cleaned_data["role"] == SelectAllocateRole.RoleChoices.CASE_ADVISOR.value
-            else "case_assignments_case_officer"
-        )
-        self.success_url = (
-            reverse(f"queues:{url_view_name}", kwargs={"pk": self.kwargs["pk"]}) + f"?{self.request.GET.urlencode()}"
-        )
+        self._set_success_url(form)
         return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
@@ -286,33 +291,57 @@ class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
         return super().get_context_data(*args, **context, **kwargs)
 
 
-class CaseAssignments(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        case_ids = request.GET.getlist("cases")
-
-        if not case_ids:
-            return error_page(request, "Invalid case selection")
-
-        queue = get_queue(request, self.object_pk)
-        case_assignments, _ = get_queue_case_assignments(request, self.object_pk)
-        assigned_users = [
-            assignment["user"] for assignment in case_assignments["case_assignments"] if assignment["case"] in case_ids
-        ]
-        user_data, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
-
-        self.data = {"users": assigned_users}
-        self.form = assign_users_form(request, user_data["user"]["team"]["id"], queue, len(case_ids) > 1)
-        self.action = put_queue_case_assignments
-        self.success_url = reverse("queues:cases", kwargs={"queue_pk": self.object_pk})
-        self.success_message = (
-            Manage.AssignUsers.SUCCESS_MULTI_MESSAGE if len(case_ids) > 1 else Manage.AssignUsers.SUCCESS_MESSAGE
-        )
-
-
-class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class CaseAssignmentUsers(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/form.html"
-    form_class = forms.CaseAssignmentsCaseOfficerForm
+    form_class = forms.CaseAssignmentUsersForm
+    success_message = "Case adviser allocated successfully"
+
+    def get_form_kwargs(self):
+        user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
+        form_kwargs["team_id"] = user_data["user"]["team"]["id"]
+        return form_kwargs
+
+    def form_valid(self, form):
+        # TODO
+        #   - if initiated from a system queue; next step should be a multiuser version of /queues/{system_queue_id}/cases/{case_id}/assign-user-queue/{govuser_id}/
+        #   - if queue already determined; this view should put the assignment and redirect
+        self.update_case_adviser(form.cleaned_data)
+        return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating case adviser on cases",
+        "Unexpected error updating case adviser on cases",
+    )
+    def update_case_adviser(self, cleaned_data):
+        case_ids = self.request.GET.getlist("cases")
+        note = cleaned_data["note"]
+        user_ids = cleaned_data["users"]
+        return put_queue_case_assignments(self.request, self.kwargs["pk"], case_ids, user_ids, note)
+
+    def get_success_url(self):
+        # TODO: success URL to go back to case detail OR queue page
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+
+    def get_context_data(self, *args, **kwargs):
+        default_return_to_url = (
+            reverse("queues:case_assignment_select_role", kwargs={"pk": self.kwargs["pk"]})
+            + f"?{self.request.GET.urlencode()}"
+        )
+        return_to_url = self.request.GET.get("return_to", default_return_to_url)
+        context = {
+            "back_link_url": return_to_url,
+            "title": self.form_class.Layout.TITLE,
+        }
+        return super().get_context_data(*args, **context, **kwargs)
+
+
+class CaseAssignmentCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = "core/form.html"
+    form_class = forms.CaseAssignmentCaseOfficerForm
     success_message = "Licensing Unit case officer allocated successfully"
 
     def get_form_kwargs(self):

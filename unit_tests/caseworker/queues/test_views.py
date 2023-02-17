@@ -400,9 +400,19 @@ def test_trigger_list_checkbox_visible_checked(authorized_client):
     assert "checked" in checkbox.attrs
 
 
-def test_case_assignment_case_office_no_user_selected(authorized_client, mock_gov_users):
+def test_case_assignment_case_officer_GET(authorized_client, mock_gov_users):
     url = (
-        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        reverse("queues:case_assignments_assign_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
+    )
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+
+def test_case_assignment_case_officer_POST_no_user_selected(authorized_client, mock_gov_users):
+    url = (
+        reverse("queues:case_assignments_assign_case_officer", kwargs={"pk": queue_pk})
         + f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
     )
     data = {}
@@ -414,10 +424,10 @@ def test_case_assignment_case_office_no_user_selected(authorized_client, mock_go
     }
 
 
-def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_users):
+def test_case_assignment_case_officer_POST(authorized_client, requests_mock, mock_gov_users):
     cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
     url = (
-        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        reverse("queues:case_assignments_assign_case_officer", kwargs={"pk": queue_pk})
         + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
     )
     case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
@@ -434,10 +444,115 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
 
 
 @pytest.mark.parametrize(
+    "case_ids, return_to, expected_back_link",
+    (
+        (
+            ["case-001-1", "case-000-2"],
+            None,
+            "/queues/59ef49f4-cf0c-4085-87b1-9ac6817b4ba6/case-assignment-select-role/?cases=case-000-1&cases=case-000-2",
+        ),
+        (
+            ["case-001-1", "case-000-2"],
+            "/back-somewhere",
+            "/back-somewhere",
+        ),
+    ),
+)
+def test_case_assignment_assign_users_GET(
+    case_ids, return_to, expected_back_link, authorized_client, requests_mock, mock_gov_users
+):
+    query_parts = [f"cases={case_id}" for case_id in case_ids]
+    if return_to:
+        query_parts.append("return_to={return_to}")
+    querystring = "&".join(query_parts)
+    url = reverse("queues:case_assignments_assign_user", kwargs={"pk": queue_pk}) + f"?{querystring}"
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    assert response.context["back_link_url"] == expected_back_link
+
+
+@pytest.mark.parametrize(
+    "case_ids, post_data, expected_assignment_api_call_data",
+    (
+        # Single case, single user, no note
+        (
+            ["case-000-1"],
+            {"users": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"]},
+            {
+                "case_assignments": [
+                    {"case_id": "case-000-1", "users": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"]},
+                ],
+                "remove_existing_assignments": False,
+                "note": "",
+            },
+        ),
+        # Multiple cases, multiple users, no note
+        (
+            ["case-000-1", "case-000-2"],
+            {"users": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb", "53a88f67-feda-4975-b0f9-e7689999abd7"]},
+            {
+                "case_assignments": [
+                    {
+                        "case_id": "case-000-1",
+                        "users": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb", "53a88f67-feda-4975-b0f9-e7689999abd7"],
+                    },
+                    {
+                        "case_id": "case-000-2",
+                        "users": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb", "53a88f67-feda-4975-b0f9-e7689999abd7"],
+                    },
+                ],
+                "remove_existing_assignments": False,
+                "note": "",
+            },
+        ),
+        # Single case, single user, with note
+        (
+            ["case-000-1"],
+            {"users": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"], "note": "Assigning somebody"},
+            {
+                "case_assignments": [
+                    {"case_id": "case-000-1", "users": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"]},
+                ],
+                "remove_existing_assignments": False,
+                "note": "Assigning somebody",
+            },
+        ),
+    ),
+)
+def test_case_assignment_assign_users_POST(
+    case_ids, post_data, expected_assignment_api_call_data, authorized_client, requests_mock, mock_gov_users
+):
+    query_parts = [f"cases={case_id}" for case_id in case_ids]
+    querystring = "&".join(query_parts)
+    url = reverse("queues:case_assignments_assign_user", kwargs={"pk": queue_pk}) + f"?{querystring}"
+
+    assignment_put_url = client._build_absolute_uri(f"/queues/{queue_pk}/case-assignments/")
+    mock_put_case_assignment = requests_mock.put(url=assignment_put_url, json={})
+
+    response = authorized_client.post(url, post_data)
+    assert response.status_code == 302
+    assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
+    assert mock_put_case_assignment.last_request.json() == expected_assignment_api_call_data
+
+
+def test_case_assignment_assign_users_POST_no_user_selected(authorized_client, requests_mock, mock_gov_users):
+    case_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+    url = (
+        reverse("queues:case_assignments_assign_user", kwargs={"pk": queue_pk})
+        + f"?cases={case_ids[0]}&cases={case_ids[1]}"
+    )
+    response = authorized_client.post(url, {})
+
+    assert response.status_code == 200
+    assert response.context_data["form"].errors == {"users": ["Select a user to allocate"]}
+
+
+@pytest.mark.parametrize(
     "user_role_assigned, expected_url_name",
     (
-        ("CASE_ADVISOR", "case_assignments"),
-        ("LU_CASE_OFFICER", "case_assignments_case_officer"),
+        ("CASE_ADVISOR", "case_assignments_assign_user"),
+        ("LU_CASE_OFFICER", "case_assignments_assign_case_officer"),
     ),
 )
 def test_case_assignment_select_role(authorized_client, mock_gov_user, user_role_assigned, expected_url_name):
