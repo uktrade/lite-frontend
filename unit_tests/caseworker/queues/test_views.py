@@ -205,7 +205,7 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
                     {"key": "conflicting", "value": "Conflicting"},
                 ],
                 "case_types": data_case_types,
-                "gov_users": [{"full_name": "John Smith", "id": gov_uk_user_id}],
+                "gov_users": [{"full_name": "John Smith", "id": gov_uk_user_id, "pending": False}],
                 "statuses": mock_case_statuses["statuses"],
                 "is_system_queue": True,
                 "is_work_queue": False,
