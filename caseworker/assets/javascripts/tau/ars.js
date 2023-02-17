@@ -1,5 +1,6 @@
 import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
+import debounce from "lodash.debounce";
 
 const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
   const originalInput = document.querySelector(
@@ -14,12 +15,15 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
       `#report_summary_${summaryFieldType}_container`
     ),
     id: `_report_summary_${summaryFieldType}`,
-    source: (query, populateResults) => {
+    source: debounce((query, populateResults) => {
+      if (!query) {
+        return;
+      }
       fetch(`/tau/report_summary/${summaryFieldType}?name=${query}`)
         .then((response) => response.json())
         .then((results) => results[`report_summary_${summaryFieldPluralised}`])
         .then((results) => populateResults(results));
-    },
+    }, 300),
     cssNamespace: "lite-autocomplete",
     name: `_report_summary_${summaryFieldType}`,
     templates: {
