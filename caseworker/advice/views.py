@@ -22,8 +22,6 @@ from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
 from core.auth.views import LoginRequiredMixin
 
-from .enums import NSGListTypes
-
 
 class CaseContextMixin:
     """Most advice views need a reference to the associated
@@ -109,7 +107,7 @@ class CaseContextMixin:
 class BEISNuclearMixin:
     def is_trigger_list_assessed(self, product):
         """Returns True if a product has been assessed for trigger list criteria"""
-        return product.get("nsg_list_type") and product["nsg_list_type"]["key"] in list(NSGListTypes)
+        return product.get("is_trigger_list_guidelines_applicable") in [True, False]
 
     @property
     def unassessed_trigger_list_goods(self):
@@ -728,7 +726,7 @@ class BEISProductAssessmentEditView(AdviceView, BEISNuclearMixin, BEISAssessment
         good_on_application = self.get_good_on_application()
 
         form_kwargs["data"] = self.request.POST or {
-            "nsg_list_type": good_on_application["nsg_list_type"]["key"],
+            "is_trigger_list_guidelines_applicable": good_on_application["is_trigger_list_guidelines_applicable"],
             "is_nca_applicable": good_on_application["is_nca_applicable"],
             "nsg_assessment_note": good_on_application["nsg_assessment_note"],
         }
@@ -765,7 +763,7 @@ class BEISProductClearAssessmentsView(AdviceView, BEISNuclearMixin, BEISAssessme
     template_name = "advice/clear_trigger_list_assesment.html"
 
     def post(self, request, queue_pk, pk):
-        data = {"nsg_list_type": "", "is_nca_applicable": None, "nsg_assessment_note": ""}
+        data = {"is_trigger_list_guidelines_applicable": None, "is_nca_applicable": None, "nsg_assessment_note": ""}
         selected_good_ids = [product["id"] for product in self.assessed_trigger_list_goods]
 
         self.post_trigger_list_assessment(

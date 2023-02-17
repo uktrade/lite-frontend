@@ -42,6 +42,11 @@ def put_unassign_queues(request, pk, json):
     return data.json(), data.status_code
 
 
+def delete_case_assignment(request, case_id, assignment_id):
+    response = client.delete(request, f"/cases/{case_id}/case-assignments/{assignment_id}")
+    return response
+
+
 # Applications
 def put_application_status(request, pk, json):
     data = client.put(request, f"/applications/{pk}/status/", json)

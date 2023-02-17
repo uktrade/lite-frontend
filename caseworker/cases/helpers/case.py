@@ -147,6 +147,7 @@ class CaseView(TemplateView):
             "is_read_only": status_props["is_read_only"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "has_future_next_review_date": future_next_review_date,
+            "user": self.caseworker,
             **self.additional_context,
         }
 

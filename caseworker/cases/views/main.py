@@ -118,6 +118,7 @@ class CaseTabsMixin:
 
 class CaseDetail(CaseTabsMixin, CaseView):
     def get_advice_additional_context(self):
+
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         current_advice_level = ["user"]
         blocking_flags = get_blocking_flags(self.request, self.case["id"])
@@ -642,10 +643,12 @@ class Denials(LoginRequiredMixin, TemplateView):
             search.append(party["address"])
             filter["country"].add(party["country"]["name"])
 
-        if search:
-            response = search_denials(request=self.request, search=search, filter=filter)
-            results = [item["_source"] for item in response.json()["hits"]["hits"]]
-        else:
-            results = []
+        total_pages = 0
+        results = []
 
-        return super().get_context_data(case=case, results=results, **kwargs)
+        if search:
+            response = search_denials(request=self.request, search=search, filter=filter).json()
+            results = response["results"]
+            total_pages = response["total_pages"]
+
+        return super().get_context_data(case=case, results=results, total_pages=total_pages, **kwargs)

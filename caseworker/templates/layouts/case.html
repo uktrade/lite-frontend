@@ -1,6 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% load svg static %}
+{% load rules %}
 
 {% block body_classes %}app-template__case-body{% endblock %}
 
@@ -14,7 +15,6 @@
 			This case is closed
 		</div>
 	{% endif %}
-
 	<div class="app-case-header__container" id="app-header">
 		<div class="app-case-header__aurora" {{ case.all_flags|aurora }}></div>
 		<div class="app-case-header">
@@ -115,6 +115,15 @@
 				</div>
 			{% endif %}
 		</div>
+		{% test_rule 'can_user_change_case' user case as can_user_change_case %}
+		{% if not can_user_change_case %}
+			<div class="app-case-warning-banner">
+				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
+				<span class="app-case-warning-banner__text">
+					You need to allocate yourself to this case to work on it <a class="app-case-warning-banner__action" href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate Case </a>
+				</span>
+			</div>
+		{% endif %}
 		{% block header_tabs %}
 		{% if tabs %}
 			<div id="tab-bar" class="app-case-tab-bar">
