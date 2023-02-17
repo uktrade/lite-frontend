@@ -84,9 +84,9 @@ def click_next_page(driver: WebDriver):
     driver.find_element(by=By.ID, value="link-next-page").click()
 
 
-def select_report_summary_and_fill(driver: WebDriver):
-    suggestion_input = driver.find_element(By.NAME, "report_summary")
-    suggestion_input.send_keys("none")
+def select_report_summary_subject_and_fill(driver, subject):
+    suggestion_input = driver.find_element(By.NAME, "report_summary_subject_name")
+    suggestion_input.send_keys(subject)
     suggestion_input.send_keys(Keys.TAB)
     driver.find_element(by=By.XPATH, value="//body").click()
 

@@ -255,6 +255,8 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             del payload["cwc_entries"]
             del payload["ag_entries"]
             del payload["regimes"]
+            del payload["report_summary_prefix_name"]
+            del payload["report_summary_subject_name"]
 
             post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
 
@@ -312,6 +314,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
         form_kwargs["control_list_entries_choices"] = self.control_list_entries
         form_kwargs["wassenaar_entries"] = self.wassenaar_entries
         form_kwargs["mtcr_entries"] = self.mtcr_entries
@@ -325,6 +328,8 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
             "report_summary": good["report_summary"],
+            "report_summary_prefix_name": good["report_summary_prefix"]["name"],
+            "report_summary_subject_name": good["report_summary_subject"]["name"],
             "comment": good["comment"],
             **self.get_regime_entries_form_data(good),
         }
@@ -351,7 +356,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             is_user_rfd,
             organisation_documents,
         )
-
         return summary
 
     def get_context_data(self, **kwargs):
@@ -393,8 +397,11 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         del payload["cwc_entries"]
         del payload["ag_entries"]
         del payload["regimes"]
+        del payload["report_summary_prefix_name"]
+        del payload["report_summary_subject_name"]
 
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
+
         return super().form_valid(form)
 
 
