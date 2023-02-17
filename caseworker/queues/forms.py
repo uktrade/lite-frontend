@@ -14,6 +14,7 @@ from lite_content.lite_internal_frontend.queues import AddQueueForm, EditQueueFo
 from lite_forms.components import Form, TextInput, BackLink, Select
 from caseworker.queues.services import get_queues
 from caseworker.users.services import get_gov_users
+from caseworker.teams.services import get_users_team_queues
 from caseworker.core.constants import UserStatuses
 
 
@@ -143,6 +144,46 @@ class CaseAssignmentCaseOfficerForm(BaseForm):
         return (
             HTML(render_to_string("forms/filter_radios.html")),
             "users",
+        )
+
+
+class CaseAssignmentUsersSelectQueueForm(BaseForm):
+    class Layout:
+        TITLE = "Select a team queue to add the case to"
+        SUBMIT_BUTTON_TEXT = "Save"
+
+    queue = forms.ChoiceField(
+        label="",
+        choices=(),  # set in __init__
+        required=True,
+        error_messages={
+            "required": "Select a queue to add the case to",
+        },
+        widget=forms.RadioSelect,
+    )
+
+    def __init__(self, request, user_id, *args, **kwargs):
+        self.request = request
+        self.user_id = user_id
+        self.declared_fields["queue"].choices = self.get_queue_choices()
+        super().__init__(*args, **kwargs)
+
+    def get_queue_choices(self):
+        queues, _ = get_users_team_queues(self.request, self.user_id, False)
+        return [
+            (
+                TextChoice(
+                    Choice(queue_id, queue_name),
+                )
+            )
+            for queue_id, queue_name in queues["queues"]
+        ]
+
+    def get_layout_fields(self):
+
+        return (
+            HTML(render_to_string("forms/filter_radios.html")),
+            "queue",
         )
 
 

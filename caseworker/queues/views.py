@@ -1,7 +1,8 @@
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 from django.conf import settings
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.views.generic.edit import CreateView
 from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -308,7 +309,17 @@ class CaseAssignmentUsers(LoginRequiredMixin, SuccessMessageMixin, FormView):
         # TODO
         #   - if initiated from a system queue; next step should be a multiuser version of /queues/{system_queue_id}/cases/{case_id}/assign-user-queue/{govuser_id}/
         #   - if queue already determined; this view should put the assignment and redirect
-        self.update_case_adviser(form.cleaned_data)
+        queue = get_queue(self.request, self.kwargs["pk"])
+        if queue["is_system_queue"]:
+            params = {"cases": self.request.GET.getlist("cases"), **form.cleaned_data}
+            queryparams = urlencode(params, doseq=True)
+            next_url = (
+                reverse("queues:case_assignments_assign_user_select_queue", kwargs={"pk": self.kwargs["pk"]})
+                + f"?{queryparams}"
+            )
+            return HttpResponseRedirect(next_url)
+        else:
+            self.update_case_adviser(form.cleaned_data)
         return super().form_valid(form)
 
     @expect_status(
@@ -332,6 +343,48 @@ class CaseAssignmentUsers(LoginRequiredMixin, SuccessMessageMixin, FormView):
             + f"?{self.request.GET.urlencode()}"
         )
         return_to_url = self.request.GET.get("return_to", default_return_to_url)
+        context = {
+            "back_link_url": return_to_url,
+            "title": self.form_class.Layout.TITLE,
+        }
+        return super().get_context_data(*args, **context, **kwargs)
+
+
+class CaseAssignmentUsersSelectQueue(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = "core/form.html"
+    form_class = forms.CaseAssignmentUsersSelectQueueForm
+    success_message = "Case adviser allocated successfully"
+
+    def get_form_kwargs(self):
+        user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
+        form_kwargs["user_id"] = user_data["user"]["id"]
+        return form_kwargs
+
+    def form_valid(self, form):
+        self.update_case_adviser(form.cleaned_data)
+        return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating case adviser on cases",
+        "Unexpected error updating case adviser on cases",
+    )
+    def update_case_adviser(self, cleaned_data):
+        case_ids = self.request.GET.getlist("cases")
+        user_ids = self.request.GET.getlist("users")
+        note = self.request.GET.getlist("note")
+        queue_id = cleaned_data["queue"]
+        return put_queue_case_assignments(self.request, queue_id, case_ids, user_ids, note)
+
+    def get_success_url(self):
+        # TODO: success URL to go back to case detail OR queue page
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+
+    def get_context_data(self, *args, **kwargs):
+        return_to_url = self.request.GET.get("return_to")
         context = {
             "back_link_url": return_to_url,
             "title": self.form_class.Layout.TITLE,
