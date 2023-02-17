@@ -1,23 +1,31 @@
 import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
+import debounce from "lodash.debounce";
 
-const initARS = () => {
-  const prefixInput = document.querySelector("#report_summary_prefix_name");
-  const prefixAutocompleteContainer = document.createElement("div");
-  prefixAutocompleteContainer.id = "report_summary_prefix_name_container";
-  prefixInput.parentElement.appendChild(prefixAutocompleteContainer);
-  prefixInput.remove();
+const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
+  const originalInput = document.querySelector(
+    `#report_summary_${summaryFieldType}`
+  );
+  const autocompleteContainer = document.createElement("div");
+  autocompleteContainer.id = `report_summary_${summaryFieldType}_container`;
+  originalInput.parentElement.appendChild(autocompleteContainer);
+  originalInput.style = "display:none";
   accessibleAutocomplete({
-    element: document.querySelector("#report_summary_prefix_name_container"),
-    id: "report_summary_prefix_name",
-    source: (query, populateResults) => {
-      fetch(`/tau/report_summary/prefix?name=${query}`)
+    element: document.querySelector(
+      `#report_summary_${summaryFieldType}_container`
+    ),
+    id: `_report_summary_${summaryFieldType}`,
+    source: debounce((query, populateResults) => {
+      if (!query) {
+        return;
+      }
+      fetch(`/tau/report_summary/${summaryFieldType}?name=${query}`)
         .then((response) => response.json())
-        .then((results) => results["report_summary_prefixes"])
+        .then((results) => results[`report_summary_${summaryFieldPluralised}`])
         .then((results) => populateResults(results));
-    },
+    }, 300),
     cssNamespace: "lite-autocomplete",
-    name: "report_summary_prefix_name",
+    name: `_report_summary_${summaryFieldType}`,
     templates: {
       inputValue: (suggestion) => suggestion?.name ?? "",
       suggestion: (suggestion) => {
@@ -31,46 +39,22 @@ const initARS = () => {
         `;
       },
     },
-    defaultValue: prefixInput.value,
+    onConfirm: (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      originalInput.value = confirmed.id;
+    },
+    defaultValue: originalInput.dataset.name,
     showNoOptionsFound: true,
     autoselect: false,
     showAllValues: true,
   });
+};
 
-  const subjectInput = document.querySelector("#report_summary_subject_name");
-  const subjectAutocompleteContainer = document.createElement("div");
-  subjectAutocompleteContainer.id = "report_summary_subject_name_container";
-  subjectInput.parentElement.appendChild(subjectAutocompleteContainer);
-  subjectInput.remove();
-  accessibleAutocomplete({
-    element: document.querySelector("#report_summary_subject_name_container"),
-    id: "report_summary_subject_name",
-    source: (query, populateResults) => {
-      fetch(`/tau/report_summary/subject?name=${query}`)
-        .then((response) => response.json())
-        .then((results) => results["report_summary_subjects"])
-        .then((results) => populateResults(results));
-    },
-    cssNamespace: "lite-autocomplete",
-    name: "report_summary_subject_name",
-    templates: {
-      inputValue: (suggestion) => suggestion?.name ?? "",
-      suggestion: (suggestion) => {
-        if (typeof suggestion == "string") {
-          return suggestion;
-        }
-        return `
-          <div class="govuk-body govuk-!-margin-bottom-0">
-            ${suggestion.name}
-          </div>
-        `;
-      },
-    },
-    defaultValue: subjectInput.value,
-    showNoOptionsFound: true,
-    autoselect: true,
-    showAllValues: true,
-  });
+const initARS = () => {
+  initAutocompleteField("prefix", "prefixes");
+  initAutocompleteField("subject", "subjects");
 };
 
 export default initARS;

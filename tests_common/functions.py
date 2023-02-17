@@ -5,6 +5,8 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 def click_submit(driver: WebDriver):
@@ -85,9 +87,15 @@ def click_next_page(driver: WebDriver):
 
 
 def select_report_summary_subject_and_fill(driver, subject):
-    suggestion_input = driver.find_element(By.NAME, "report_summary_subject_name")
-    suggestion_input.send_keys(subject)
-    suggestion_input.send_keys(Keys.TAB)
+    suggestion_input_autocomplete = driver.find_element(by=By.ID, value="_report_summary_subject")
+    suggestion_input_autocomplete.send_keys(subject)
+    WebDriverWait(driver, 30).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".lite-autocomplete__menu--visible #_report_summary_subject__option--0"),
+            subject,
+        )
+    )
+    suggestion_input_autocomplete.send_keys(Keys.ARROW_DOWN)
     driver.find_element(by=By.XPATH, value="//body").click()
 
 

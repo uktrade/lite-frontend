@@ -849,7 +849,6 @@ def click_on_product_assessment(driver):  # noqa
 @then("I select good")  # noqa
 def click_on_product_assessment(driver):  # noqa
     ApplicationPage(driver).select_a_good()
-    functions.click_submit(driver)
 
 
 @then(parsers.parse('I select "{subject}" as report summary subject and regime to none and submit'))

@@ -1,13 +1,14 @@
 from django import forms
 from django.conf import settings
 
+from requests.exceptions import HTTPError
+
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
     HTML,
     Layout,
     Submit,
 )
-from django.core.exceptions import ValidationError
 
 from core.forms.layouts import (
     ConditionalCheckboxes,
@@ -18,10 +19,10 @@ from caseworker.regimes.enums import Regimes
 
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
-from ..report_summary.services import get_report_summary_subjects, get_report_summary_prefixes
+from ..report_summary.services import get_report_summary_prefix, get_report_summary_subject
 
-REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject_name"
-REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix_name"
+REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
+REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
 
 
 class TAUEditForm(forms.Form):
@@ -48,7 +49,7 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary_prefix_name = forms.CharField(
+    report_summary_prefix = forms.CharField(
         label="Add a report summary prefix",
         help_text="Type for suggestions",
         # setting id for javascript to use
@@ -56,12 +57,15 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary_subject_name = forms.CharField(
+    report_summary_subject = forms.CharField(
         label="Add a report summary subject",
         help_text="Type for suggestions",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_SUBJECT_KEY}),
         required=True,
+        error_messages={
+            "required": "Enter a report summary subject",
+        },
     )
 
     regimes = forms.MultipleChoiceField(
@@ -156,6 +160,35 @@ class TAUEditForm(forms.Form):
         self.fields["cwc_entries"].choices = cwc_entries
         self.fields["ag_entries"].choices = ag_entries
 
+        # When we get back the report summary prefix and subject values we get the pks of the objects as this is what
+        # is sent through from the form, however we need to pass the name back to the frontend so that the JS component
+        # can use this to populate the autocomplete field
+        # To handle this we grab the item data from the API using the pk that we have so that we can store the name in
+        # a data attribute that the frontend can then present to the user
+        report_summary_prefix_value = self.data.get(REPORT_SUMMARY_PREFIX_KEY)
+        if report_summary_prefix_value:
+            try:
+                report_summary_prefix = get_report_summary_prefix(request, report_summary_prefix_value)
+            except HTTPError:
+                # If we get here then we've ended up with a pk that we can't get any information about so the best
+                # we can do is just present a blank name back to the user
+                report_summary_prefix_name = ""
+            else:
+                report_summary_prefix_name = report_summary_prefix["report_summary_prefix"]["name"]
+            self.fields[REPORT_SUMMARY_PREFIX_KEY].widget.attrs["data-name"] = report_summary_prefix_name
+
+        report_summary_subject_value = self.data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        if report_summary_subject_value:
+            try:
+                report_summary_subject = get_report_summary_subject(request, report_summary_subject_value)
+            except HTTPError:
+                # If we get here then we've ended up with a pk that we can't get any information about so the best
+                # we can do is just present a blank name back to the user
+                report_summary_subject_name = ""
+            else:
+                report_summary_subject_name = report_summary_subject["report_summary_subject"]["name"]
+            self.fields[REPORT_SUMMARY_SUBJECT_KEY].widget.attrs["data-name"] = report_summary_subject_name
+
         self.helper = FormHelper()
 
         feature_flagged_regimes = []
@@ -222,9 +255,6 @@ class TAUEditForm(forms.Form):
             self.add_error("does_not_have_control_list_entries", self.MESSAGE_NO_CLC_REQUIRED)
         # report summary is required when there are CLEs
 
-        if not cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY):
-            raise ValidationError("Enter a report summary subject")
-
         self.validate_report_summary_subject(cleaned_data)
         self.validate_report_summary_prefix(cleaned_data)
 
@@ -274,25 +304,24 @@ class TAUEditForm(forms.Form):
         return cleaned_data
 
     def validate_report_summary_subject(self, cleaned_data):
-        subject_name = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
-        subject_response = get_report_summary_subjects(self.request, subject_name)
-        matches = [m for m in subject_response.get("report_summary_subjects", []) if m.get("name") == subject_name]
+        subject_id = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        if not subject_id:
+            return
 
-        if len(matches) == 1:
-            cleaned_data["report_summary_subject"] = matches[0]["id"]
-        else:
-            raise ValidationError("Enter a valid report summary subject")
+        try:
+            get_report_summary_subject(self.request, subject_id)
+        except HTTPError:
+            self.add_error(REPORT_SUMMARY_SUBJECT_KEY, "Enter a valid report summary subject")
 
     def validate_report_summary_prefix(self, cleaned_data):
-        prefix_name = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
-        if prefix_name:
-            prefix_response = get_report_summary_prefixes(self.request, prefix_name)
-            matches = [m for m in prefix_response.get("report_summary_prefixes", []) if m.get("name") == prefix_name]
+        prefix_id = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
+        if not prefix_id:
+            return
 
-            if len(matches) == 1:
-                cleaned_data["report_summary_prefix"] = matches[0]["id"]
-            else:
-                raise ValidationError("Enter a valid report summary prefix")
+        try:
+            get_report_summary_prefix(self.request, prefix_id)
+        except HTTPError:
+            self.add_error(REPORT_SUMMARY_PREFIX_KEY, "Enter a valid report summary prefix")
 
 
 class TAUAssessmentForm(TAUEditForm):
