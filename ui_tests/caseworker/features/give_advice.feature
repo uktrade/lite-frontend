@@ -56,6 +56,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to my case list
     Then I see previously created application
     When I click on the application previously created
+    And I assign myself to the case
     Then I click on Product Assessment
     And I select good
     And I select the CLE "ML1a"
