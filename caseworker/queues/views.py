@@ -155,9 +155,9 @@ class Cases(LoginRequiredMixin, TemplateView):
         transformed_updates = []
         for update in activity_updates:
             if update["text"]:
-                update["text"] = self._limit_lines(update["text"], 2)
+                update["text"] = self._limit_lines(str(update["text"]), 2)
             if update["additional_text"]:
-                update["additional_text"] = self._limit_lines(update["additional_text"], 2)
+                update["additional_text"] = self._limit_lines(str(update["additional_text"]), 2)
             transformed_updates.append(update)
 
         return transformed_updates
@@ -375,7 +375,7 @@ class CaseAssignmentUsersSelectQueue(LoginRequiredMixin, SuccessMessageMixin, Fo
     def update_case_adviser(self, cleaned_data):
         case_ids = self.request.GET.getlist("cases")
         user_ids = self.request.GET.getlist("users")
-        note = self.request.GET.getlist("note")
+        note = self.request.GET.get("note")
         queue_id = cleaned_data["queue"]
         return put_queue_case_assignments(self.request, queue_id, case_ids, user_ids, note)
 
@@ -384,9 +384,10 @@ class CaseAssignmentUsersSelectQueue(LoginRequiredMixin, SuccessMessageMixin, Fo
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
 
     def get_context_data(self, *args, **kwargs):
+        # TODO: Review backlinks
         return_to_url = self.request.GET.get("return_to")
         context = {
-            "back_link_url": return_to_url,
+            # "back_link_url": return_to_url,
             "title": self.form_class.Layout.TITLE,
         }
         return super().get_context_data(*args, **context, **kwargs)
