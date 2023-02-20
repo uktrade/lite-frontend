@@ -21,3 +21,8 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.ruff]
+select = ["E", "F", "B", "I", "PT", "DJ", "T10", "N", "S", "C4", "G", "SIM"]
+ignore = ["S101"]
+line-length = 120

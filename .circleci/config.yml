@@ -120,7 +120,7 @@ commands:
       - run:
           name: Clone API
           command: |
-            git clone git@github.com:uktrade/lite-api.git
+            git clone git@github.com:uktrade/lite-api.git  # /PS-IGNORE
             cd lite-api
             git checkout $(python ../which_branch.py <<parameters.api_branch>>)
       - run:
@@ -133,9 +133,8 @@ commands:
 
   lint:
     steps:
-      - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
-      - run: pipenv run prospector
-      - run: pipenv run black . --check --diff
+      - run: pipenv install pre-commit
+      - run: pipenv run pre-commit run --from-ref origin/HEAD --to-ref HEAD
 
   prepare_e2e_tests:
     parameters:

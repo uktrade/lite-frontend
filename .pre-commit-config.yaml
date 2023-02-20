@@ -51,3 +51,8 @@ repos:
     hooks:
       - id: prettier
         files: "^(core|caseworker|exporter)/assets/javascripts"
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.248'
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
