@@ -78,7 +78,7 @@ SELECT_USERS = "SELECT_USERS"
 SELECT_QUEUE = "SELECT_QUEUE"
 
 
-class CaseAssignmentAddUser(
+class CaseAssignmentAddUserAbstractBase(
     LoginRequiredMixin,
     BaseSessionWizardView,
 ):
@@ -91,6 +91,11 @@ class CaseAssignmentAddUser(
         SELECT_QUEUE: is_queue_in_url_system_queue,
     }
 
+    def dispatch(self, request, *args, **kwargs):
+        self.case_ids = self.get_case_ids()
+        self.queue_id = self.get_queue_id()
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
         user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
@@ -102,10 +107,16 @@ class CaseAssignmentAddUser(
         return kwargs
 
     def get_success_url(self):
-        return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+        raise NotImplementedError()
 
     def get_back_link_url(self):
-        return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+        raise NotImplementedError()
+
+    def get_case_ids(self):
+        raise NotImplementedError()
+
+    def get_queue_id(self):
+        raise NotImplementedError()
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
@@ -121,10 +132,10 @@ class CaseAssignmentAddUser(
         "Unexpected error updating case adviser on cases",
     )
     def update_case_adviser(self, form_dict):
-        queue_id = self.kwargs["queue_pk"]
+        queue_id = self.queue_id
         if is_queue_in_url_system_queue(self):
             queue_id = form_dict[SELECT_QUEUE].cleaned_data["queue"]
-        case_ids = [str(self.kwargs["pk"])]
+        case_ids = self.case_ids
         note = form_dict[SELECT_USERS].cleaned_data["note"]
         user_ids = form_dict[SELECT_USERS].cleaned_data["users"]
         return put_queue_case_assignments(self.request, queue_id, case_ids, user_ids, note)
@@ -133,3 +144,17 @@ class CaseAssignmentAddUser(
         self.update_case_adviser(form_dict)
         messages.success(self.request, f"Case adviser was added successfully")
         return redirect(self.get_success_url())
+
+
+class CaseAssignmentAddUser(CaseAssignmentAddUserAbstractBase):
+    def get_success_url(self):
+        return reverse("cases:case", kwargs={"queue_pk": self.queue_id, "pk": self.case_ids[0]})
+
+    def get_back_link_url(self):
+        return reverse("cases:case", kwargs={"queue_pk": self.queue_id, "pk": self.case_ids[0]})
+
+    def get_case_ids(self):
+        return [str(self.kwargs["pk"])]
+
+    def get_queue_id(self):
+        return str(self.kwargs["queue_pk"])
