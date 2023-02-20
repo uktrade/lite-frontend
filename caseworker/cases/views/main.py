@@ -27,7 +27,7 @@ from lite_forms.views import SingleFormView
 from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.additional_contacts import add_additional_contact_form
-from caseworker.cases.forms.assign_users import assign_case_officer_form, assign_user_and_work_queue, users_team_queues
+from caseworker.cases.forms.assign_users import assign_case_officer_form
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import change_status_form
 from caseworker.cases.forms.done_with_case import done_with_case_form
@@ -494,35 +494,6 @@ class CaseOfficer(SingleFormView):
                 else "Case officer set successfully"
             )
             return put_case_officer
-
-
-class UserWorkQueue(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        case = get_case(request, self.object_pk)
-        self.form = assign_user_and_work_queue(request, kwargs["queue_pk"], self.object_pk)
-        self.action = get_gov_user_from_form_selection
-        self.context = {"case": case}
-
-    def get_success_url(self):
-        user_id = self.get_validated_data().get("user").get("id")
-        return reverse_lazy(
-            "cases:assign_user_queue",
-            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "user_pk": user_id},
-        )
-
-
-class UserTeamQueue(SingleFormView):
-    def init(self, request, **kwargs):
-        user_pk = str(kwargs["user_pk"])
-        self.object_pk = kwargs["pk"]
-        case = get_case(request, self.object_pk)
-        self.form = users_team_queues(request, kwargs["queue_pk"], self.object_pk, user_pk)
-        self.action = put_queue_single_case_assignment
-        self.context = {"case": case}
-
-    def get_success_url(self):
-        return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
 
 
 class RerunRoutingRules(SingleFormView):

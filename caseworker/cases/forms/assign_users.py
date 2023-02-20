@@ -77,38 +77,3 @@ def assign_case_officer_form(request: HttpRequest, existing_officer, queue_id, c
         container="case",
         back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_id, "pk": case_id, "tab": "details"})),
     )
-
-
-def assign_user_and_work_queue(request, queue_id, case_id):
-    user_params = {"disable_pagination": True, "status": UserStatuses.ACTIVE}
-    users = get_gov_users(request, user_params, convert_to_options=True)
-    return Form(
-        title=cases.Manage.AssignUserAndQueue.USER_TITLE,
-        description=cases.Manage.AssignUserAndQueue.USER_DESCRIPTION,
-        questions=[Filter(), RadioButtons("user", users, filterable=True)],
-        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_id, "pk": case_id})),
-        default_button_name=strings.CONTINUE,
-        container="case",
-    )
-
-
-def users_team_queues(request, queue_pk, case_pk, user_pk):
-    queues = get_users_team_queues(request, user_pk, True)
-    return Form(
-        title=cases.Manage.AssignUserAndQueue.QUEUE_TITLE,
-        description=cases.Manage.AssignUserAndQueue.QUEUE_DESCRIPTION,
-        questions=[
-            Filter(),
-            RadioButtons("queue", queues, filterable=True),
-            HiddenField("user_pk", user_pk),
-            HiddenField("case_pk", case_pk),
-            DetailComponent(
-                title=cases.Manage.AssignUserAndQueue.NOTE,
-                components=[
-                    TextArea(name="note", classes=["govuk-!-margin-0"]),
-                ],
-            ),
-        ],
-        back_link=BackLink(url=reverse_lazy("cases:assign_user", kwargs={"queue_pk": queue_pk, "pk": case_pk})),
-        container="case",
-    )
