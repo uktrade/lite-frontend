@@ -44,6 +44,11 @@ urlpatterns = [
         name="remove-case-assignment",
     ),
     path(
+        "add-assignment/",
+        case_assignments.CaseAssignmentAddUser.as_view(),
+        name="add-case-assignment",
+    ),
+    path(
         "matching-denials/<str:category>/",
         external_data.MatchingDenials.as_view(),
         name="matching-denials",
