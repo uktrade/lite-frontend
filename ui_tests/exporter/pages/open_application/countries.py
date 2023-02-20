@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -18,17 +20,17 @@ class OpenApplicationCountriesPage(BasePage):
         return countries_names
 
     def select_country(self, name):
-        checkbox = self.driver.find_element_by_id(name)
+        checkbox = self.driver.find_element(by=By.ID, value=name)
         checkbox.click()
 
     def search_for_country(self, country):
-        self.driver.find_element_by_id(self.COUNTRIES_SEARCH_BOX).send_keys(country)
+        self.driver.find_element(by=By.ID, value=self.COUNTRIES_SEARCH_BOX).send_keys(country)
 
     def get_text_of_countries_list(self):
         return self.driver.find_elements_by_css_selector(self.COUNTRIES_LIST_SELECTOR)[0].text
 
     def click_select_all(self):
-        self.driver.find_element_by_id(self.LINK_SELECT_ALL_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_SELECT_ALL_ID).click()
 
     def get_number_of_checkboxes(self, checked=False):
         if checked:
@@ -38,7 +40,9 @@ class OpenApplicationCountriesPage(BasePage):
 
     def get_static_destinations_list(self):
         countries_names = []
-        country_list_element = self.driver.find_element_by_css_selector(self.STATIC_DESTINATIONS_LIST_SELECTOR)
+        country_list_element = self.driver.find_element(
+            by=By.CSS_SELECTOR, value=self.STATIC_DESTINATIONS_LIST_SELECTOR
+        )
         for country in country_list_element.find_elements_by_tag_name("li"):
             countries_names.append(country.text)
         return countries_names

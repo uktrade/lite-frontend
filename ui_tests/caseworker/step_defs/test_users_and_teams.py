@@ -1,6 +1,8 @@
 from faker import Faker
 from pytest_bdd import scenarios, when, then, given, parsers
+
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
@@ -80,7 +82,7 @@ def go_to_users(driver, sso_sign_in, internal_url):  # noqa
 
 @then("the user's profile is updated")
 def users_profile_is_updated(driver, context):
-    assert driver.find_element_by_tag_name("h1").text == context.added_email
+    assert driver.find_element(by=By.TAG_NAME, value="h1").text == context.added_email
 
 
 @when(parsers.parse('I change the user filter to "{status}"'))  # noqa
@@ -96,7 +98,7 @@ def go_to_teams(driver, sso_sign_in, internal_url):
 
 @when("I click on the team BlueOcean")
 def click_on_my_team(driver, context):
-    driver.find_element_by_link_text(context.team_name).click()
+    driver.find_element(by=By.LINK_TEXT, value=context.team_name).click()
 
 
 @when("I select my newly created team")

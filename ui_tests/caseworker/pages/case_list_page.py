@@ -96,7 +96,7 @@ class CaseListPage(BasePage):
             while is_present == 0:
                 url = self.driver.current_url
                 if "page" not in url:
-                    self.driver.find_element_by_id("page-" + str(number_of_pages)).click()
+                    self.driver.find_element(by=By.ID, value="page-" + str(number_of_pages)).click()
                 else:
                     next_page = url + "&page=" + str(page_number)
                     self.driver.get(next_page)
@@ -107,10 +107,10 @@ class CaseListPage(BasePage):
         self.driver.find_element(by=By.ID, value=f"case-{case_id}").click()
 
     def click_on_case_checkbox(self, case_id):
-        self.driver.find_element_by_css_selector(self.CHECKBOX_CASE + case_id + "']").click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.CHECKBOX_CASE + case_id + "']").click()
 
     def click_on_assign_users_button(self):
-        self.driver.find_element_by_id(self.BUTTON_ASSIGN_USERS).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_ASSIGN_USERS).click()
 
     def has_assignees(self, driver, case_id):
         elements = Shared(driver).get_rows_in_lite_table()
@@ -120,13 +120,13 @@ class CaseListPage(BasePage):
     def get_text_of_assignees(self, driver, case_id):
         elements = Shared(driver).get_rows_in_lite_table()
         no = get_element_index_by_text(elements, case_id)
-        return elements[no].find_element_by_css_selector(".app-assignments__container").text
+        return elements[no].find_element(by=By.CSS_SELECTOR, value=".app-assignments__container").text
 
     def click_select_all_checkbox(self):
-        self.driver.find_element_by_id(self.CHECKBOX_SELECT_ALL).click()
+        self.driver.find_element(by=By.ID, value=self.CHECKBOX_SELECT_ALL).click()
 
     def get_class_name_of_assign_users_button(self):
-        return self.driver.find_element_by_id(self.BUTTON_ASSIGN_USERS).get_attribute("class")
+        return self.driver.find_element(by=By.ID, value=self.BUTTON_ASSIGN_USERS).get_attribute("class")
 
     def get_text_checkbox_elements(self):
         return self.driver.find_elements_by_css_selector(self.CHECKBOX_TEXT)
@@ -140,22 +140,22 @@ class CaseListPage(BasePage):
         self.driver.find_element(by=By.ID, value=self.BUTTON_CLEAR_FILTERS).click()
 
     def click_advanced_filters_button(self):
-        self.driver.find_element_by_id(self.LINK_ADVANCED_FILTERS).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_ADVANCED_FILTERS).click()
 
     def click_hide_filters_link(self):
-        self.driver.find_element_by_id(self.LINK_HIDE_FILTERS).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_HIDE_FILTERS).click()
 
     def is_filters_visible(self):
-        return self.driver.find_element_by_class_name(self.FILTER_BAR).is_displayed()
+        return self.driver.find_element(by=By.CLASS_NAME, value=self.FILTER_BAR).is_displayed()
 
     def click_on_queue_title(self):
-        self.driver.find_element_by_id(self.LINK_CHANGE_QUEUE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_QUEUE_ID).click()
 
     def search_for_queue(self, queue_name):
         WebDriverWait(self.driver, 30).until(
             expected_conditions.presence_of_element_located((By.ID, self.QUEUE_SEARCH_BOX))
         )
-        self.driver.find_element_by_id(self.QUEUE_SEARCH_BOX).send_keys(queue_name)
+        self.driver.find_element(by=By.ID, value=self.QUEUE_SEARCH_BOX).send_keys(queue_name)
 
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
@@ -163,51 +163,53 @@ class CaseListPage(BasePage):
         self.driver.find_elements_by_css_selector('#queues .app-menu__item:not([style="display: none;"])')[0].click()
 
     def select_filter_status_from_dropdown(self, status):
-        Select(self.driver.find_element_by_id(self.STATUS_DROPDOWN)).select_by_visible_text(status)
+        Select(self.driver.find_element(by=By.ID, value=self.STATUS_DROPDOWN)).select_by_visible_text(status)
 
     def select_filter_user_status_from_dropdown(self, status):
         scroll_to_element_by_id(self.driver, self.USER_STATUS_DROPDOWN_ID)
-        Select(self.driver.find_element_by_id(self.USER_STATUS_DROPDOWN_ID)).select_by_visible_text(status)
+        Select(self.driver.find_element(by=By.ID, value=self.USER_STATUS_DROPDOWN_ID)).select_by_visible_text(status)
 
     def select_filter_case_type_from_dropdown(self, status):
         Select(self.driver.find_element(by=By.ID, value=self.CASE_TYPE_DROPDOWN)).select_by_visible_text(status)
 
     def click_on_exporter_amendments_banner(self):
-        self.driver.find_element_by_id(self.BANNER_EXPORTER_AMENDMENTS_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BANNER_EXPORTER_AMENDMENTS_ID).click()
 
     def enter_assigned_user_filter_text(self, text):
-        self.driver.find_element_by_id(self.INPUT_ASSIGNED_USER_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.INPUT_ASSIGNED_USER_ID).clear()
         functions.send_keys_to_autocomplete(self.driver, self.INPUT_ASSIGNED_USER_ID, text)
 
     def enter_name_to_filter_search_box(self, text):
-        self.driver.find_element_by_id(self.FILTER_SEARCH_BOX).send_keys(text)
+        self.driver.find_element(by=By.ID, value=self.FILTER_SEARCH_BOX).send_keys(text)
 
     def get_case_row(self, case_id):
         return self.driver.find_element(by=By.ID, value=case_id)
 
     def assert_all_advanced_filters_available(self):
         for advanced_filter in self.ADVANCED_FILTERS:
-            assert self.driver.find_element_by_id(advanced_filter)
+            assert self.driver.find_element(by=By.ID, value=advanced_filter)
 
     def filter_by_exporter_application_reference(self, exporter_application_reference):
-        self.driver.find_element_by_id(self.EXPORTER_APPLICATION_REFERENCE_ID).send_keys(exporter_application_reference)
+        self.driver.find_element(by=By.ID, value=self.EXPORTER_APPLICATION_REFERENCE_ID).send_keys(
+            exporter_application_reference
+        )
 
     def filter_by_case_reference(self, case_reference):
         self.driver.find_element(by=By.ID, value=self.CASE_REFERENCE_ID).send_keys(case_reference)
 
     def filter_by_goods_related_description(self, goods_related_description):
-        self.driver.find_element_by_id(self.GOODS_RELATED_DESCRIPTION_ID)
-        self.driver.find_element_by_id(self.GOODS_RELATED_DESCRIPTION_ID).send_keys(goods_related_description)
+        self.driver.find_element(by=By.ID, value=self.GOODS_RELATED_DESCRIPTION_ID)
+        self.driver.find_element(by=By.ID, value=self.GOODS_RELATED_DESCRIPTION_ID).send_keys(goods_related_description)
 
     def filter_by_organisation_name(self, org_name):
-        self.driver.find_element_by_id(self.ORGANISATION_NAME_ID)
-        self.driver.find_element_by_id(self.ORGANISATION_NAME_ID).send_keys(org_name)
+        self.driver.find_element(by=By.ID, value=self.ORGANISATION_NAME_ID)
+        self.driver.find_element(by=By.ID, value=self.ORGANISATION_NAME_ID).send_keys(org_name)
 
     def get_case_row_sla(self, row: WebElement):
-        return row.find_element_by_class_name(self.SLA_CLASS).text
+        return row.find_element(by=By.CLASS_NAME, value=self.SLA_CLASS).text
 
     def click_checkbox_to_show_team_ecju_query_and_hidden_cases(self):
-        return self.driver.find_element_by_id(self.SHOW_TEAM_ECJU_AND_HIDDEN_CASES).click()
+        return self.driver.find_element(by=By.ID, value=self.SHOW_TEAM_ECJU_AND_HIDDEN_CASES).click()
 
     def click_export_enforcement_xml(self):
         WebDriverWait(self.driver, 30).until(

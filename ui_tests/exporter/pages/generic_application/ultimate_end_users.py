@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -11,4 +13,4 @@ class GenericApplicationUltimateEndUsers(BasePage):
         return self.driver.find_elements_by_css_selector(self.TABLE_BODY + " " + self.TABLE_ROW)
 
     def click_add_ultimate_recipient_button(self):
-        self.driver.find_element_by_id(self.BUTTON_ADD_ULTIMATE_RECIPIENT_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_ADD_ULTIMATE_RECIPIENT_ID).click()

@@ -12,10 +12,10 @@ class BaseAdvicePage(BasePage):
     BUTTON_GROUPED_VIEW_ID = "button-grouped-view"
 
     def click_give_advice(self):
-        self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_GIVE_ADVICE_ID).click()
 
     def click_grouped_view_button(self):
-        self.driver.find_element_by_id(self.BUTTON_GROUPED_VIEW_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_GROUPED_VIEW_ID).click()
 
     def click_on_all_checkboxes(self):
         elements = self.driver.find_elements_by_css_selector(f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}")
@@ -23,12 +23,12 @@ class BaseAdvicePage(BasePage):
         for element in elements:
             self.driver.execute_script("arguments[0].click();", element)
 
-        self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_GIVE_ADVICE_ID).click()
         return len(elements)
 
     def is_advice_button_enabled(self):
         try:
-            return self.driver.find_element_by_id(self.BUTTON_GIVE_ADVICE_ID).is_enabled()
+            return self.driver.find_element(by=By.ID, value=self.BUTTON_GIVE_ADVICE_ID).is_enabled()
         except WebDriverException:
             return False
 
@@ -40,7 +40,7 @@ class UserAdvicePage(BaseAdvicePage):
     BUTTON_COALESCE_ID = "button-combine-user-advice"
 
     def click_combine_advice(self):
-        self.driver.find_element_by_id(self.BUTTON_COALESCE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_COALESCE_ID).click()
 
     def click_grouped_view_checkboxes(self, group):
         for checkbox in self.driver.find_elements_by_css_selector(
@@ -57,10 +57,10 @@ class TeamAdvicePage(BaseAdvicePage):
     BUTTON_COALESCE_ID = "button-combine-team-advice"
 
     def click_combine_advice(self):
-        self.driver.find_element_by_id(self.BUTTON_COALESCE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_COALESCE_ID).click()
 
     def click_clear_advice(self):
-        self.driver.find_element_by_id(self.BUTTON_CLEAR_ADVICE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_CLEAR_ADVICE_ID).click()
 
 
 class FinalAdvicePage(BaseAdvicePage):
@@ -72,18 +72,18 @@ class FinalAdvicePage(BaseAdvicePage):
     BLOCKING_FLAGS_WARNING_ID = "warning-text-blocking-flags"
 
     def can_finalise(self):
-        return "govuk-button--disabled" in self.driver.find_element_by_id(self.BUTTON_FINALISE_ID).get_attribute(
-            "class"
-        )
+        return "govuk-button--disabled" in self.driver.find_element(
+            by=By.ID, value=self.BUTTON_FINALISE_ID
+        ).get_attribute("class")
 
     def click_finalise(self):
-        self.driver.find_element_by_id(self.BUTTON_FINALISE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_FINALISE_ID).click()
 
     def get_blocking_flags_text(self):
-        return self.driver.find_element_by_id(self.BLOCKING_FLAGS_WARNING_ID).text
+        return self.driver.find_element(by=By.ID, value=self.BLOCKING_FLAGS_WARNING_ID).text
 
     def click_clear_advice(self):
-        self.driver.find_element_by_id(self.BUTTON_CLEAR_ADVICE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_CLEAR_ADVICE_ID).click()
 
 
 class RecommendationsAndDecisionPage(BasePage):

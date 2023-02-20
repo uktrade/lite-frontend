@@ -21,13 +21,13 @@ class Shared(BasePage):
     REFERENCE_ID = "reference"
 
     def get_text_of_error_messages(self):
-        return self.driver.find_element_by_css_selector(self.ERROR_MESSAGES).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.ERROR_MESSAGES).text
 
     def get_text_of_body(self):
-        return self.driver.find_element_by_tag_name("body").text
+        return self.driver.find_element(by=By.TAG_NAME, value="body").text
 
     def get_text_of_gov_table(self):
-        return self.driver.find_element_by_css_selector(self.GOV_TABLE).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.GOV_TABLE).text
 
     def get_table_rows(self):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW)
@@ -37,7 +37,7 @@ class Shared(BasePage):
             expected_conditions.presence_of_element_located((By.ID, self.ORG_NAME_HEADING_ID))
         )
 
-        return self.driver.find_element_by_id(self.ORG_NAME_HEADING_ID).text
+        return self.driver.find_element(by=By.ID, value=self.ORG_NAME_HEADING_ID).text
 
     def get_radio_buttons_elements(self):
         return self.driver.find_elements(by=By.CSS_SELECTOR, value=self.RADIO_BUTTONS)
@@ -62,18 +62,18 @@ class Shared(BasePage):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_CELL)
 
     def get_text_of_govuk_table_body(self):
-        return self.driver.find_element_by_css_selector(self.GOV_TABLE_BODY).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.GOV_TABLE_BODY).text
 
     def get_text_of_main_content(self):
-        return self.driver.find_element_by_id(self.MAIN_CONTENT_ID).text
+        return self.driver.find_element(by=By.ID, value=self.MAIN_CONTENT_ID).text
 
     def click_show_filters_link(self):
-        self.driver.find_element_by_id(self.FILTERS_LINK_ID).click()
+        self.driver.find_element(by=By.ID, value=self.FILTERS_LINK_ID).click()
 
     def filter_by_reference_number(self, reference_number):
         self.click_show_filters_link()
-        self.driver.find_element_by_id(self.REFERENCE_ID).send_keys(reference_number)
+        self.driver.find_element(by=By.ID, value=self.REFERENCE_ID).send_keys(reference_number)
         self.click_apply_filters_button()
 
     def click_apply_filters_button(self):
-        self.driver.find_element_by_id(self.BUTTON_APPLY_FILTER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_APPLY_FILTER_ID).click()

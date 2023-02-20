@@ -9,6 +9,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
+    And I assign myself to the case
     And I assign the case to "FCDO Cases to Review" queue
     And I go to my profile page
     And I change my team to "FCDO" and default queue to "FCDO Cases to Review"
@@ -58,7 +59,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I click on Product Assessment
     And I select good
     And I select the CLE "ML1a"
-    And I select report summary and regime to none and submit
+    And I select "components for" / "microwave components" as report summary prefix / subject and regime to none and submit
     When I click move case forward
     Then I don't see previously created application
     # LU
@@ -125,6 +126,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
+    And I assign myself to the case
     And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
     And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
@@ -160,6 +162,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
+    And I assign myself to the case
     And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
     And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
@@ -190,6 +193,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
+    And I assign myself to the case
     And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
     And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"
@@ -249,6 +253,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I prepare the application for final review
     # OGD refusal
     When I go to application previously created
+    And I assign myself to the case
     And I assign the case to "MOD-CapProt cases to review" queue
     And I go to my profile page
     And I change my team to "MOD-CapProt" and default queue to "MOD-CapProt cases to review"

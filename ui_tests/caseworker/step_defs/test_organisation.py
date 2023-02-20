@@ -221,8 +221,8 @@ def organisation_primaty_site(driver, context):
     assert context.organisation_address in summary
     assert context.organisation_primary_site in summary
 
-    assert driver.find_element_by_id("status-active").is_enabled()
-    assert driver.find_element_by_id("status-rejected").is_enabled()
+    assert driver.find_element(by=By.ID, value="status-active").is_enabled()
+    assert driver.find_element(by=By.ID, value="status-rejected").is_enabled()
 
 
 @when("I select approve and Save")

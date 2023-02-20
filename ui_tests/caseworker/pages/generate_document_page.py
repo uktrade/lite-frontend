@@ -25,42 +25,42 @@ class GeneratedDocument(BasePage):
 
     def click_letter_template(self, document_template_name):
         Shared(self.driver).go_to_last_page()
-        self.driver.find_element_by_id(document_template_name).click()
+        self.driver.find_element(by=By.ID, value=document_template_name).click()
 
     def select_addressee(self, id):
         find_paginated_item_by_id(self.ADDRESSEE_PARTIAL_ID + id, self.driver).click()
 
     def preview_is_shown(self):
-        return self.driver.find_element_by_id(self.PREVIEW).is_displayed()
+        return self.driver.find_element(by=By.ID, value=self.PREVIEW).is_displayed()
 
     def get_document_preview_text(self):
         return self.driver.find_element(by=By.ID, value=self.PREVIEW).text
 
     def get_document_paragraph_text_in_preview(self):
-        return self.driver.find_element_by_id(self.PARAGRAPHS).text
+        return self.driver.find_element(by=By.ID, value=self.PARAGRAPHS).text
 
     def check_download_link_is_present(self, document):
-        return document.find_element_by_class_name(self.LINK_DOWNLOAD_CLASS).is_displayed()
+        return document.find_element(by=By.CLASS_NAME, value=self.LINK_DOWNLOAD_CLASS).is_displayed()
 
     def get_document_text_in_edit_text_area(self):
-        return self.driver.find_element_by_id(self.TEXT).text
+        return self.driver.find_element(by=By.ID, value=self.TEXT).text
 
     def select_and_return_first_checkbox_value(self):
-        checkbox = self.driver.find_element_by_css_selector(self.PARAGRAPH_CHECKBOXES)
+        checkbox = self.driver.find_element(by=By.CSS_SELECTOR, value=self.PARAGRAPH_CHECKBOXES)
         checkbox.click()
         return checkbox.get_attribute("value")
 
     def add_text_to_edit_text(self, text):
-        return self.driver.find_element_by_id(self.TEXT).send_keys(text)
+        return self.driver.find_element(by=By.ID, value=self.TEXT).send_keys(text)
 
     def click_regenerate_button(self):
-        self.driver.find_element_by_id(self.LINK_REGENERATE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_REGENERATE_ID).click()
 
     def select_generate_document(self):
-        self.driver.find_element_by_id(self.GENERATE_DECISION_DOCUMENT_BUTTON_ID).click()
+        self.driver.find_element(by=By.ID, value=self.GENERATE_DECISION_DOCUMENT_BUTTON_ID).click()
 
     def select_document_template(self):
-        self.driver.find_element_by_css_selector(self.DOCUMENT_TEMPLATE_CSS).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.DOCUMENT_TEMPLATE_CSS).click()
 
     def select_document_template_by_name(self, template_name):
         self.driver.find_element(by=By.XPATH, value=f"//img[@alt='{template_name}']").click()

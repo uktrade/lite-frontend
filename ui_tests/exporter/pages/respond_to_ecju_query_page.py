@@ -15,7 +15,7 @@ class RespondToEcjuQueryPage(BasePage):
         response_tb.send_keys(value)
 
     def get_missing_document_reason_text(self):
-        element = self.driver.find_element_by_class_name(self.DOCUMENT_INFORMATION_TEXT)
+        element = self.driver.find_element(by=By.CLASS_NAME, value=self.DOCUMENT_INFORMATION_TEXT)
         return element.text.split("\n")[1].strip()
 
     def get_uploaded_document_items(self):
@@ -32,10 +32,10 @@ class DocumentGradingPage(BasePage):
 
     def confirm_upload_document(self, option):
         # The only options accepted here are 'yes', 'no'
-        self.driver.find_element_by_id(self.DOCUMENT_AVAILABLE_FOR_UPLOAD + option.lower()).click()
+        self.driver.find_element(by=By.ID, value=self.DOCUMENT_AVAILABLE_FOR_UPLOAD + option.lower()).click()
 
     def get_ecju_help(self):
-        return self.driver.find_element_by_id(self.ECJU_HELPLINE_ID).is_displayed()
+        return self.driver.find_element(by=By.ID, value=self.ECJU_HELPLINE_ID).is_displayed()
 
     def select_valid_missing_document_reason(self):
-        Select(self.driver.find_element_by_id(self.MISSING_DOCUMENT_REASON)).select_by_index(2)
+        Select(self.driver.find_element(by=By.ID, value=self.MISSING_DOCUMENT_REASON)).select_by_index(2)

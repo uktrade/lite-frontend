@@ -1,23 +1,31 @@
 import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
+import debounce from "lodash.debounce";
 
-const initARS = () => {
-  const input = document.querySelector("#report_summary");
+const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
+  const originalInput = document.querySelector(
+    `#report_summary_${summaryFieldType}`
+  );
   const autocompleteContainer = document.createElement("div");
-  autocompleteContainer.id = "report_summary_container";
-  input.parentElement.appendChild(autocompleteContainer);
-  input.remove();
+  autocompleteContainer.id = `report_summary_${summaryFieldType}_container`;
+  originalInput.parentElement.appendChild(autocompleteContainer);
+  originalInput.style = "display:none";
   accessibleAutocomplete({
-    element: document.querySelector("#report_summary_container"),
-    id: "report_summary",
-    source: (query, populateResults) => {
-      fetch(`/team/picklists/.json?type=report_summary&name=${query}`)
+    element: document.querySelector(
+      `#report_summary_${summaryFieldType}_container`
+    ),
+    id: `_report_summary_${summaryFieldType}`,
+    source: debounce((query, populateResults) => {
+      if (!query) {
+        return;
+      }
+      fetch(`/tau/report_summary/${summaryFieldType}?name=${query}`)
         .then((response) => response.json())
-        .then((results) => results["results"])
+        .then((results) => results[`report_summary_${summaryFieldPluralised}`])
         .then((results) => populateResults(results));
-    },
+    }, 300),
     cssNamespace: "lite-autocomplete",
-    name: "report_summary",
+    name: `_report_summary_${summaryFieldType}`,
     templates: {
       inputValue: (suggestion) => suggestion?.name ?? "",
       suggestion: (suggestion) => {
@@ -31,9 +39,22 @@ const initARS = () => {
         `;
       },
     },
-    defaultValue: input.value,
-    showNoOptionsFound: false,
+    onConfirm: (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      originalInput.value = confirmed.id;
+    },
+    defaultValue: originalInput.dataset.name,
+    showNoOptionsFound: true,
+    autoselect: false,
+    showAllValues: true,
   });
+};
+
+const initARS = () => {
+  initAutocompleteField("prefix", "prefixes");
+  initAutocompleteField("subject", "subjects");
 };
 
 export default initARS;

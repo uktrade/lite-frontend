@@ -41,19 +41,19 @@ class Shared(BasePage):
         return self.driver.find_element(by=By.CSS_SELECTOR, value=self.BODY).text
 
     def get_text_of_caption(self):
-        return self.driver.find_element_by_css_selector(self.GOVUK_CAPTION).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.GOVUK_CAPTION).text
 
     def get_text_of_table(self):
-        return self.driver.find_element_by_css_selector(self.TABLE_CSS).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.TABLE_CSS).text
 
     def get_text_of_summary_list(self):
-        return self.driver.find_element_by_css_selector(self.SUMMARY_LIST_CSS).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.SUMMARY_LIST_CSS).text
 
     def get_text_of_lite_table_body(self):
-        return self.driver.find_element_by_css_selector(self.TABLE_BODY_CSS).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.TABLE_BODY_CSS).text
 
     def get_text_of_cases_form(self):
-        return self.driver.find_element_by_id(self.CASES_FORM_ID).text
+        return self.driver.find_element(by=By.ID, value=self.CASES_FORM_ID).text
 
     def get_text_of_heading(self):
         return self.driver.find_element(by=By.CSS_SELECTOR, value=self.GOVUK_HEADING)
@@ -86,7 +86,7 @@ class Shared(BasePage):
         scroll_to_element_by_id(self.driver, "row-" + row_index)
 
     def get_text_of_info_bar(self):
-        return self.driver.find_element_by_css_selector(self.SNACKBAR_SELECTOR).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.SNACKBAR_SELECTOR).text
 
     def is_flag_applied(self, flag_name: str, parent_selector: str = ""):
         flags = self.driver.find_elements_by_css_selector(parent_selector + ".app-flag")
@@ -113,12 +113,12 @@ class Shared(BasePage):
 
     def filter_by_name(self, name):
         functions.try_open_filters(self.driver)
-        self.driver.find_element_by_id(self.INPUT_NAME_FILTER_ID).clear()
-        self.driver.find_element_by_id(self.INPUT_NAME_FILTER_ID).send_keys(name)
+        self.driver.find_element(by=By.ID, value=self.INPUT_NAME_FILTER_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.INPUT_NAME_FILTER_ID).send_keys(name)
         functions.click_apply_filters(self.driver)
 
     def click_first_link_in_row(self):
-        self.driver.find_element_by_css_selector(self.FIRST_LINK_IN_ROW).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.FIRST_LINK_IN_ROW).click()
 
     def expand_govuk_details(self):
         self.driver.find_element(by=By.CLASS_NAME, value=self.GOVUK_DETAILS).click()

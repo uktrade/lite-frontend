@@ -28,7 +28,7 @@ class AddGoodPage(BasePage):
     UNSURE_PV_GRADING_DETAILS = "pv_grading_raised_reasons"  # ID
 
     def input_element_by_id(self, id, text):
-        element = self.driver.find_element_by_id(id)
+        element = self.driver.find_element(by=By.ID, value=id)
         element.clear()
         element.send_keys(text)
 
@@ -57,36 +57,36 @@ class AddGoodPage(BasePage):
         )
 
     def enter_control_code_unsure(self, code):
-        control_code_tb = self.driver.find_element_by_id(self.UNSURE_CLC_CODE)
+        control_code_tb = self.driver.find_element(by=By.ID, value=self.UNSURE_CLC_CODE)
         control_code_tb.clear()
         control_code_tb.send_keys(code)
 
     def enter_control_unsure_details(self, details):
-        unsure_details = self.driver.find_element_by_id(self.UNSURE_CLC_DETAILS)
+        unsure_details = self.driver.find_element(by=By.ID, value=self.UNSURE_CLC_DETAILS)
         unsure_details.clear()
         unsure_details.send_keys(details)
 
     def enter_grading_unsure_details(self, details):
-        unsure_pv_details = self.driver.find_element_by_id(self.UNSURE_PV_GRADING_DETAILS)
+        unsure_pv_details = self.driver.find_element(by=By.ID, value=self.UNSURE_PV_GRADING_DETAILS)
         unsure_pv_details.clear()
         unsure_pv_details.send_keys(details)
 
     def enter_part_number(self, part_number):
-        part_number_tb = self.driver.find_element_by_id(self.PART_NUMBER)
+        part_number_tb = self.driver.find_element(by=By.ID, value=self.PART_NUMBER)
         part_number_tb.clear()
         part_number_tb.send_keys(part_number)
 
     def confirm_can_upload_good_document(self):
-        self.driver.find_element_by_id(self.DOCUMENT_VALID_YES).click()
+        self.driver.find_element(by=By.ID, value=self.DOCUMENT_VALID_YES).click()
 
     def confirm_cannot_upload_good_document(self):
-        self.driver.find_element_by_id(self.DOCUMENT_VALID_NO).click()
+        self.driver.find_element(by=By.ID, value=self.DOCUMENT_VALID_NO).click()
 
     def get_ecju_help(self):
-        return self.driver.find_element_by_id(self.ECJU_HELPLINE_ID).is_displayed()
+        return self.driver.find_element(by=By.ID, value=self.ECJU_HELPLINE_ID).is_displayed()
 
     def select_valid_missing_document_reason(self):
-        Select(self.driver.find_element_by_id(self.MISSING_DOCUMENT_REASON)).select_by_index(1)
+        Select(self.driver.find_element(by=By.ID, value=self.MISSING_DOCUMENT_REASON)).select_by_index(1)
 
     def get_good_summary_text(self):
-        return self.driver.find_element_by_css_selector(self.GOOD_SUMMARY).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.GOOD_SUMMARY).text

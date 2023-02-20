@@ -128,6 +128,7 @@ def mock_all_standard_case_data(
 def data_queue():
     return {
         "id": "00000000-0000-0000-0000-000000000001",
+        "alias": None,
         "name": "All cases",
         "is_system_queue": True,
         "countersigning_queue": None,

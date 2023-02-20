@@ -53,7 +53,7 @@ def i_click_on_the_add_button(driver):
 @when("I remove an ultimate end user so there is one less")
 def i_remove_an_ultimate_end_user(driver):
     no_of_ultimate_end_users = Shared(driver).get_size_of_table_rows()
-    driver.find_element_by_link_text("Remove").click()
+    driver.find_element(by=By.LINK_TEXT, value="Remove").click()
     total = no_of_ultimate_end_users - Shared(driver).get_size_of_table_rows()
     assert total == 1, "total on the ultimate end users summary is incorrect after removing ultimate end user"
 
@@ -129,13 +129,13 @@ def i_choose_to_add_product_from_product_list(driver, context):  # noqa
 @when(parsers.parse('I choose to review the product details of product "{index:d}"'))  # noqa
 def i_choose_to_review_product_details(driver, index):  # noqa
     # Click the "View" link on the given good index
-    detail_link = driver.find_element_by_id("import-product-view-product")
+    detail_link = driver.find_element(by=By.ID, value="import-product-view-product")
     detail_link.click()
 
 
 @when("I see option to add product to application on details page")
 def i_see_option_to_add_product_to_application(driver):
-    add_to_application_btn = driver.find_element_by_id("button-add-good-to-application")
+    add_to_application_btn = driver.find_element(by=By.ID, value="button-add-good-to-application")
 
 
 @when(parsers.parse('I append "{text}" to description and submit'))  # noqa
@@ -143,7 +143,7 @@ def i_update_description(driver, text):  # noqa
     change_description = driver.find_elements_by_id("link-edit-description")[0]
     change_description.click()
 
-    desc_element = driver.find_element_by_id("description")
+    desc_element = driver.find_element(by=By.ID, value="description")
     updated_description = f"{desc_element.text} {text}"
     desc_element.clear()
     desc_element.send_keys(updated_description)
@@ -153,7 +153,7 @@ def i_update_description(driver, text):  # noqa
 
 @when("I add product to application")
 def i_add_product_to_application(driver, context):
-    add_to_application_btn = driver.find_element_by_id("button-add-good-to-application")
+    add_to_application_btn = driver.find_element(by=By.ID, value="button-add-good-to-application")
     add_to_application_btn.click()
 
     # Enter good details
@@ -352,7 +352,7 @@ def i_see_the_application_overview(driver, context):  # noqa
 
 @when(parsers.parse('I am on the application overview page entitled "{title}"'))  # noqa
 def i_am_on_application_overview_with_title(driver, title):  # noqa
-    heading = driver.find_element_by_xpath("//h1").text
+    heading = driver.find_element(by=By.XPATH, value="//h1").text
     assert heading == title
 
 
@@ -446,7 +446,7 @@ def change_ref_num(driver, context):  # noqa
 
 @then("I see my edited reference number")
 def assert_ref_num(driver):  # noqa
-    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
+    assert "12345678" in driver.find_element(by=By.CSS_SELECTOR, value=".lite-task-list").text
 
 
 @when(parsers.parse('I answer "{choice}" for compliance with the terms of export from the EU'))  # noqa

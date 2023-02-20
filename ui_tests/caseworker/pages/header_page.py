@@ -26,23 +26,23 @@ class HeaderPage(BasePage):
         ).click()
 
     def click_letters(self):
-        self.driver.find_element_by_css_selector(self.TEMPLATES_LINK).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.TEMPLATES_LINK).click()
 
     def click_teams(self):
-        self.driver.find_element_by_css_selector(self.TEAMS_LINK).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.TEAMS_LINK).click()
 
     def click_users(self):
-        self.driver.find_element_by_css_selector(self.USERS_LINK).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.USERS_LINK).click()
 
     def open_users(self):
         self.click_lite_menu()
         self.click_users()
 
     def click_flags(self):
-        self.driver.find_element_by_css_selector(self.FLAGS_LINK).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.FLAGS_LINK).click()
 
     def click_queues(self):
-        self.driver.find_element_by_css_selector(self.QUEUES_LINK).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.QUEUES_LINK).click()
 
     def click_my_team(self):
-        self.driver.find_element_by_css_selector(self.MY_TEAM_LINK).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.MY_TEAM_LINK).click()

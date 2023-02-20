@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from tests_common import functions
 from ui_tests.exporter.pages.BasePage import BasePage
 
@@ -19,17 +21,17 @@ class OgelPage(BasePage):
         functions.click_submit(self.driver)
 
     def select_created_ogel(self, ogel_id):
-        self.driver.find_element_by_id(self.PARTIAL_OGEL_ID + ogel_id).click()
+        self.driver.find_element(by=By.ID, value=self.PARTIAL_OGEL_ID + ogel_id).click()
         functions.click_submit(self.driver)
 
     def filter_by_name(self, name: str):
         functions.try_open_filters(self.driver)
-        self.driver.find_element_by_id(self.FILTER_NAME_ID).clear()
-        self.driver.find_element_by_id(self.FILTER_NAME_ID).send_keys(name)
+        self.driver.find_element(by=By.ID, value=self.FILTER_NAME_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.FILTER_NAME_ID).send_keys(name)
         functions.click_apply_filters(self.driver)
 
     def click_ogel_tab(self):
-        self.driver.find_element_by_id(self.OGEL_TAB).click()
+        self.driver.find_element(by=By.ID, value=self.OGEL_TAB).click()
 
     def get_text_of_ogel_accordion(self):
-        return self.driver.find_element_by_id(self.OGEL_ACCORDION_IN_RESULTS).text
+        return self.driver.find_element(by=By.ID, value=self.OGEL_ACCORDION_IN_RESULTS).text
