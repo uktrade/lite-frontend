@@ -19,6 +19,7 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.exceptions import ServiceError
 
+from caseworker.cases.views.case_assignments import CaseAssignmentAddUserAbstractBase
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
@@ -366,6 +367,20 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormVi
             "title": self.form_class.Layout.TITLE,
         }
         return super().get_context_data(*args, **context, **kwargs)
+
+
+class CaseAssignmentsCaseAssignee(CaseAssignmentAddUserAbstractBase):
+    def get_success_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.queue_id})
+
+    def get_back_link_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.queue_id})
+
+    def get_case_ids(self):
+        return self.request.GET.getlist("cases")
+
+    def get_queue_id(self):
+        return str(self.kwargs["pk"])
 
 
 class EnforcementXMLExport(LoginRequiredMixin, TemplateView):

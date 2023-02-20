@@ -21,6 +21,11 @@ urlpatterns = [
         views.CaseAssignmentsCaseOfficer.as_view(),
         name="case_assignments_case_officer",
     ),
+    path(
+        "<uuid:pk>/case-assignments-assign-user/",
+        views.CaseAssignmentsCaseAssignee.as_view(),
+        name="case_assignments_assign_user",
+    ),
     path("<uuid:pk>/enforcement-xml-export/", views.EnforcementXMLExport.as_view(), name="enforcement_xml_export"),
     path("<uuid:pk>/enforcement-xml-import/", views.EnforcementXMLImport.as_view(), name="enforcement_xml_import"),
 ]
