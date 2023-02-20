@@ -99,6 +99,19 @@ def select_report_summary_subject_and_fill(driver, subject):
     driver.find_element(by=By.XPATH, value="//body").click()
 
 
+def select_report_summary_prefix_and_fill(driver, prefix):
+    suggestion_input_autocomplete = driver.find_element(by=By.ID, value="_report_summary_prefix")
+    suggestion_input_autocomplete.send_keys(prefix)
+    WebDriverWait(driver, 30).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".lite-autocomplete__menu--visible #_report_summary_prefix__option--0"),
+            prefix,
+        )
+    )
+    suggestion_input_autocomplete.send_keys(Keys.ARROW_DOWN)
+    driver.find_element(by=By.XPATH, value="//body").click()
+
+
 def click_regime_none(driver: WebDriver):
     driver.find_element(
         By.XPATH,
