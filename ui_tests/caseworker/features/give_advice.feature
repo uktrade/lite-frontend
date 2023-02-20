@@ -59,7 +59,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I click on Product Assessment
     And I select good
     And I select the CLE "ML1a"
-    And I select "microwave components" as report summary subject and regime to none and submit
+    And I select "components for" / "microwave components" as report summary prefix / subject and regime to none and submit
     When I click move case forward
     Then I don't see previously created application
     # LU
