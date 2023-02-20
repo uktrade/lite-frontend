@@ -297,7 +297,7 @@ def no_op_storage(mocker):
         def delete(self, name):
             pass
 
-    mocker.patch("exporter.core.wizard.views.BaseSessionWizardView.file_storage", new=NoOpStorage())
+    mocker.patch("core.wizard.views.BaseSessionWizardView.file_storage", new=NoOpStorage())
 
 
 class WizardStepPoster:

@@ -46,7 +46,7 @@ from exporter.core.helpers import (
     is_document_on_letterhead,
     str_to_bool,
 )
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.views import BaseSessionWizardView
 from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin

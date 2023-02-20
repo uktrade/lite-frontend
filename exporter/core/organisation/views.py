@@ -8,7 +8,7 @@ from django.views.generic import FormView
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.views import BaseSessionWizardView
 from exporter.auth.services import authenticate_exporter_user
 from exporter.organisation.members.services import get_user
 from exporter.core.services import get_organisation

@@ -9,7 +9,7 @@ from core.auth.views import LoginRequiredMixin
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from exporter.applications.services import put_application
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.views import BaseSessionWizardView
 
 from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
 from .conditionals import (
