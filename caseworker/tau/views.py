@@ -328,7 +328,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             "does_not_have_control_list_entries": good["control_list_entries"] == [],
             "report_summary": good["report_summary"],
             "report_summary_prefix": good["report_summary_prefix"]["id"] if good["report_summary_prefix"] else "",
-            "report_summary_subject": good["report_summary_subject"]["id"],
+            "report_summary_subject": good["report_summary_subject"]["id"] if good["report_summary_subject"] else "",
             "comment": good["comment"],
             **self.get_regime_entries_form_data(good),
         }

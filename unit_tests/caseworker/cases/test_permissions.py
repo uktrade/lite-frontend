@@ -38,11 +38,16 @@ def setup(
     ),
 )
 def test_permission_summary_change_links(
-    authorized_client, data_queue, data_standard_case, id_element_name, is_user_case_advisor, id_element_name_visible
+    authorized_client,
+    data_queue,
+    mock_gov_user,
+    data_standard_case,
+    id_element_name,
+    is_user_case_advisor,
+    id_element_name_visible,
 ):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
-    # We are changing rule here since mocking doesn't seem straight forward
-    rules.set_rule("can_user_change_case", lambda: is_user_case_advisor)
+    data_standard_case["case_officer"] = mock_gov_user
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     id_html_find_result = soup.find(id=id_element_name)
