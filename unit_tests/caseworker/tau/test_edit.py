@@ -192,9 +192,10 @@ def test_form(
     ]
     assert edit_ag_good_regimes == form_ag_entries
 
-    # Check report summary TODO: - uncomment once work to load report_summaries is done
-    # assert edit_good["report_summary_subject"] == soup.find("form").find(id="report_summary_subject").attrs["value"]
-    # assert edit_good["report_summary_prefix"] == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+    assert edit_good["report_summary_prefix"]["id"] == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+    assert (
+        edit_good["report_summary_subject"]["id"] == soup.find("form").find(id="report_summary_subject").attrs["value"]
+    )
 
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
@@ -406,3 +407,57 @@ def test_control_list_suggestions_json(
 
     response = authorized_client.get(url)
     assert response.context["cle_suggestions_json"] == {"mock": "suggestion"}
+
+
+@pytest.mark.parametrize(
+    "name, prefix, subject",
+    (
+        ("Both present", True, True),
+        ("Prefix missing", False, True),
+        ("Subject missing", True, False),
+        ("Both missing", False, False),
+    ),
+)
+def test_form_report_summary_conditions(
+    name,
+    authorized_client,
+    url,
+    data_standard_case,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+    prefix,
+    subject,
+):
+    """
+    Tests the display of the report_summary prefix and subject in the Edit page
+    """
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+    edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+    if not prefix:
+        edit_good["report_summary_prefix"] = None
+    if not subject:
+        edit_good["report_summary_subject"] = None
+
+    # Get the edit form
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    if subject:
+        assert (
+            edit_good["report_summary_subject"]["id"]
+            == soup.find("form").find(id="report_summary_subject").attrs["value"]
+        )
+    else:
+        assert soup.find("form").find(id="report_summary_subject").attrs.get("value") is None
+    if prefix:
+        assert (
+            edit_good["report_summary_prefix"]["id"]
+            == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+        )
+    else:
+        assert soup.find("form").find(id="report_summary_prefix").attrs.get("value") is None
