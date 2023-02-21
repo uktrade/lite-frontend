@@ -13,6 +13,7 @@ from caseworker.cases.services import (
 )
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
+from caseworker.users.services import get_gov_user
 
 
 class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, TemplateView):
@@ -25,6 +26,11 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, TemplateView):
     @cached_property
     def case(self):
         return get_case(self.request, self.case_id)
+
+    @cached_property
+    def user(self):
+        user, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+        return user["user"]
 
     @cached_property
     def queue_id(self):
@@ -75,4 +81,5 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, TemplateView):
             "team_filters": self.get_team_filters(),
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
+            "user": self.user,
         }
