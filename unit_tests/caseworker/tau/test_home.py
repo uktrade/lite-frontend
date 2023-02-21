@@ -290,7 +290,7 @@ def test_move_case_forward(
     """
     gov_user["user"]["team"]["name"] = team_name
     gov_user["user"]["team"]["alias"] = team_alias
-    rules.set_rule("can_user_move_case_forward", lambda: True)
+    data_standard_case["case_officer"] = gov_user
 
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
@@ -417,9 +417,7 @@ def test_permission_move_case_forward_button(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
         json=gov_user,
     )
-
-    rules.set_rule("can_user_move_case_forward", lambda: is_user_case_advisor)
-
+    data_standard_case["case_officer"] = gov_user
     response = authorized_client.get(url)
 
     soup = BeautifulSoup(response.content, "html.parser")

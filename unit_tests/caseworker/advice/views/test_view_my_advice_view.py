@@ -174,7 +174,7 @@ def test_move_case_forward(
     advice_with_and_without_consignee[0]["user"]["team"]["alias"] = FCDO_TEAM
     data_standard_case["case"]["advice"] = advice_with_and_without_consignee
     case_id = data_standard_case["case"]["id"]
-    rules.set_rule("can_user_move_case_forward", lambda: True)
+    data_standard_case["case_officer"] = mock_gov_user
 
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     requests_mock.get(

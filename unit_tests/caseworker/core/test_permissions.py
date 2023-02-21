@@ -7,16 +7,6 @@ from caseworker.core import rules as caseworker_rules
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
 
 
-@pytest.fixture(autouse=True)
-def setup():
-    # This is required because we need to set back the rules for testing the actual rule
-    # Some tests may have overridden this rule which has a global effect
-    rules.set_rule("can_user_change_case", caseworker_rules.is_user_case_adviser | caseworker_rules.is_user_assigned)
-    rules.set_rule(
-        "can_user_move_case_forward", caseworker_rules.is_user_case_adviser | caseworker_rules.is_user_assigned
-    )
-
-
 @pytest.mark.parametrize(
     "data, expected_result",
     (
@@ -109,58 +99,6 @@ def test_is_user_case_officer(data, mock_gov_user, expected_result):
         ),
     ),
 )
-def test_can_user_change_case_permission(data, mock_gov_user, expected_result):
+def test_user_can_change_case_and_move_case_forward_rule(data, mock_gov_user, expected_result):
     assert rules.test_rule("can_user_change_case", mock_gov_user["user"], data) == expected_result
-
-
-@pytest.mark.parametrize(
-    "data, expected_result",
-    (
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": mock_gov_user_id},
-                    ]
-                },
-                "case_officer": {"id": mock_gov_user_id},
-            },
-            True,
-        ),
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": mock_gov_user_id},
-                    ]
-                },
-                "case_officer": {"id": "fake_id"},
-            },
-            True,
-        ),
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": "fake_id"},
-                    ]
-                },
-                "case_officer": {"id": mock_gov_user_id},
-            },
-            True,
-        ),
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": "fake_id"},
-                    ]
-                },
-                "case_officer": {"id": "fake_id"},
-            },
-            False,
-        ),
-    ),
-)
-def test_can_user_change_case_permission(data, mock_gov_user, expected_result):
-    assert rules.test_rule("can_user_change_case", mock_gov_user["user"], data) == expected_result
+    assert rules.test_rule("can_user_move_case_forward", mock_gov_user["user"], data) == expected_result

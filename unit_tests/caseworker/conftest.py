@@ -5,6 +5,7 @@ import pytest
 from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
+import rules
 
 from core import client
 from core.helpers import convert_value_to_query_param
@@ -1525,3 +1526,13 @@ def mock_gov_users(requests_mock):
         },
     )
     return data
+
+
+@pytest.fixture
+def reset_permissions():
+    # This is required because we need to set back the rules for testing the actual rule
+    # Some tests may have overridden this rule which has a global effect
+    rules.set_rule("can_user_change_case", caseworker_rules.is_user_case_adviser | caseworker_rules.is_user_assigned)
+    rules.set_rule(
+        "can_user_move_case_forward", caseworker_rules.is_user_case_adviser | caseworker_rules.is_user_assigned
+    )
