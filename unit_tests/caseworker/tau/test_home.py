@@ -74,7 +74,13 @@ def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_p
 
 
 def test_home_content(
-    authorized_client, url, data_queue, data_standard_case, mock_control_list_entries, mock_precedents_api
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
 ):
     """GET /tau would return a case info panel"""
     # Remove assessment from a good
@@ -123,6 +129,10 @@ def test_home_content(
         "Report summary",
         "test-report-summary",
     ]
+
+    # test the user is passed through to check rule "can_user_change_case"
+
+    assert response.context["user"] == mock_gov_user["user"]
 
 
 def test_tau_home_noauth(client, url):

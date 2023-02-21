@@ -152,6 +152,7 @@ class TAUMixin(CaseTabsMixin):
             {
                 "tabs": self.get_standard_application_tabs(),
                 "current_tab": "cases:tau:home",
+                "user": self.caseworker,
             }
         )
 
@@ -222,7 +223,6 @@ class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
             "cle_suggestions_json": get_cle_suggestions_json(self.unassessed_goods),
             "organisation_documents": self.organisation_documents,
             "is_tau": self.caseworker["team"]["alias"] == TAU_ALIAS,
-            "user": self.caseworker,
         }
 
     def get_goods(self, good_ids):
