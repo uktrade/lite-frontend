@@ -1,7 +1,9 @@
 import json
 from html import escape
 from json import JSONDecodeError
+import urllib.parse as urlparse
 
+from django.http import QueryDict
 from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -192,14 +194,10 @@ def make_list(*args):
 
 @register.filter
 def pagination_params(url, page):
-    import urllib.parse as urlparse
-    from urllib.parse import urlencode
-
-    url_parts = list(urlparse.urlparse(url))
-    query_params = dict(urlparse.parse_qsl(url_parts[4]))
-    query_params.pop("page", 1)
-    query = {"page": page, **query_params}
-    url_parts[4] = urlencode(query)
+    url_parts = urlparse.urlparse(url)
+    query_dict = QueryDict(url_parts.query, mutable=True)
+    query_dict["page"] = page
+    url_parts = url_parts._replace(query=query_dict.urlencode())
 
     return urlparse.urlunparse(url_parts)
 
