@@ -27,6 +27,19 @@ def setup_mock_api(requests_mock, data):
     requests_mock.get(client._build_absolute_uri(f"/cases/{application_id}"), json=data)
 
 
+def test_advice_view_context(
+    authorized_client,
+    data_standard_case_with_all_trigger_list_products_assessed,
+    mock_gov_user,
+    requests_mock,
+    url,
+):
+    data = data_standard_case_with_all_trigger_list_products_assessed
+    setup_mock_api(requests_mock, data)
+    response = authorized_client.get(url)
+    assert response.context["user"] == mock_gov_user["user"]
+
+
 def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assessed(
     authorized_client,
     requests_mock,

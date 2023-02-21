@@ -99,7 +99,7 @@ class CaseContextMixin:
             **self.get_context(case=self.case),
             "case": self.case,
             "queue_pk": self.kwargs["queue_pk"],
-            "caseworker": self.caseworker,
+            "user": self.caseworker,
         }
 
 
