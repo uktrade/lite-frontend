@@ -446,7 +446,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
 
     requests_mock.get(
         client._build_absolute_uri(f"/external-data/denial-search/?search={end_user_name}&search={end_user_address}"),
-        json={"count": "1", "total_pages": "1", "results": denials_data},
+        json={"count": "26", "total_pages": "2", "results": denials_data * 26},
     )
 
     url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
@@ -455,6 +455,8 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="table-denials")
+    page_2 = soup.find(id="page-2")
+    assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
 
 
 def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, standard_case_pk):
