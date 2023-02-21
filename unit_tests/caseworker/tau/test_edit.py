@@ -192,9 +192,10 @@ def test_form(
     ]
     assert edit_ag_good_regimes == form_ag_entries
 
-    # Check report summary TODO: - uncomment once work to load report_summaries is done
-    # assert edit_good["report_summary_subject"] == soup.find("form").find(id="report_summary_subject").attrs["value"]
-    # assert edit_good["report_summary_prefix"] == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+    assert edit_good["report_summary_prefix"]["id"] == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+    assert (
+        edit_good["report_summary_subject"]["id"] == soup.find("form").find(id="report_summary_subject").attrs["value"]
+    )
 
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
