@@ -162,7 +162,7 @@
 		{% for user in site.users %}
 			<div class="govuk-summary-list__row">
 				<dd class="govuk-summary-list__key">
-					{% if user.first_name %}
+					{% if not user.pending %}
 						<span class="govuk-!-font-weight-bold">{{ user.first_name }} {{ user.last_name }}</span>
 					{% else %}
 						<strong class="govuk-tag govuk-tag--blue">
@@ -189,7 +189,7 @@
 		{% for user in site.admin_users %}
 			<div class="govuk-summary-list__row">
 				<dd class="govuk-summary-list__key">
-					{% if user.first_name %}
+					{% if not user.pending %}
 						<span class="govuk-!-font-weight-bold">{{ user.first_name }} {{ user.last_name }}</span>
 					{% else %}
 						<strong class="govuk-tag govuk-tag--blue">

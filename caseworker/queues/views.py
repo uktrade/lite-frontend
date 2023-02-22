@@ -85,15 +85,10 @@ class Cases(LoginRequiredMixin, TemplateView):
 
         return response.json()
 
-    def _filter_user(self, user):
-        if user["pending"]:
-            return False
-        return True
-
     @property
     def filters(self):
         gov_users = self.data["results"]["filters"]["gov_users"]
-        filtered_gov_users = list(filter(self._filter_user, gov_users))
+        filtered_gov_users = [gov_user for gov_user in gov_users if not gov_user["pending"]]
 
         self.data["results"]["filters"]["gov_users"] = filtered_gov_users
 
