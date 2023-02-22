@@ -163,10 +163,10 @@ def group_advice_by_team(advice):
 
 
 def get_advice_to_countersign(advice, caseworker):
-    advice_levels = [AdviceLevel.USER]
+    advice_levels_to_countersign = [AdviceLevel.USER]
 
     advice_by_team = filter_advice_by_users_team(advice, caseworker)
-    user_advice = filter_advice_by_level(advice_by_team, advice_levels)
+    user_advice = filter_advice_by_level(advice_by_team, advice_levels_to_countersign)
     grouped_user_advice = group_advice_by_user(user_advice)
     return grouped_user_advice
 
