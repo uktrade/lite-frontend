@@ -631,12 +631,18 @@ def test_queue_assignments(url, authorized_client):
 
     html = BeautifulSoup(response.content, "html.parser")
     li_elems = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
-    assert "John Smith" in li_elems[0]
-    assert "Initial Queue" in li_elems[0]
-    assert "Joe Smith" in li_elems[1]
+    # first case
+    assert "Not allocated" in li_elems[0]
+    assert "Licensing Unit case officer" in li_elems[0]
+    assert "John Smith" in li_elems[1]
     assert "Initial Queue" in li_elems[1]
-    assert "Not allocated" in li_elems[2]
-    assert "Another Queue" in li_elems[2]
+    assert "Joe Smith" in li_elems[2]
+    assert "Initial Queue" in li_elems[2]
+    assert "Not allocated" in li_elems[3]
+    assert "Another Queue" in li_elems[3]
+    # second case
+    assert "Not allocated" in li_elems[4]
+    assert "Licensing Unit case officer" in li_elems[4]
 
 
 @pytest.mark.parametrize(
@@ -654,11 +660,17 @@ def test_unallocated_assignments_hidden(
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
     assignments = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
-    assert len(assignments) == 2
-    assert "John Smith" in assignments[0]
-    assert "Initial Queue" in assignments[0]
-    assert "Joe Smith" in assignments[1]
+    assert len(assignments) == 4
+    # first case
+    assert "Not allocated" in assignments[0]
+    assert "Licensing Unit case officer" in assignments[0]
+    assert "John Smith" in assignments[1]
     assert "Initial Queue" in assignments[1]
+    assert "Joe Smith" in assignments[2]
+    assert "Initial Queue" in assignments[2]
+    # second case
+    assert "Not allocated" in assignments[3]
+    assert "Licensing Unit case officer" in assignments[3]
 
 
 @pytest.mark.parametrize(
