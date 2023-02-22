@@ -9,4 +9,4 @@ Include any context that will help reviewers understand the reason for these cha
 * Have you included any relevant screenshots in the JIRA ticket?
 -->
 
-[Link to story](insert Jira link here)
+[LTD-](https://uktrade.atlassian.net/browse/LTD-)

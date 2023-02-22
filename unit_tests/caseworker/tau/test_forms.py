@@ -1024,15 +1024,31 @@ def test_report_summary_valid_prefix(
     assert form.fields["report_summary_prefix"].widget.attrs.get("data-name") == expected_prefix_name
 
 
-def test_report_summary_invalid_prefix(report_summary_requests_mock, rf, client):
+@pytest.mark.parametrize(
+    "name, additional_data, expected_name",
+    (
+        ("Invalid ID", {"report_summary_prefix": "madeupid"}, ""),
+        (
+            "Invalid prefix entered, no previous selection",
+            {"report_summary_prefix": "", "_report_summary_prefix": "no matching entry"},
+            None,
+        ),
+        (
+            "Invalid prefix entered with previous selection",
+            {"report_summary_prefix": PREFIX_API_RESPONSE[1]["id"], "_report_summary_prefix": "no matching entry"},
+            PREFIX_API_RESPONSE[1]["name"],
+        ),
+    ),
+)
+def test_report_summary_invalid_prefix(name, additional_data, expected_name, report_summary_requests_mock, rf, client):
     request = configure_mock_request(client, rf)
     data = {
         "goods": ["test-id"],
         "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
-        "report_summary_prefix": "madeupid",
     }
+    data.update(additional_data)
 
     form = forms.TAUEditForm(
         request=request,
@@ -1046,7 +1062,7 @@ def test_report_summary_invalid_prefix(report_summary_requests_mock, rf, client)
     )
     assert not form.is_valid()
     assert form.errors["report_summary_prefix"] == ["Enter a valid report summary prefix"]
-    assert form.fields["report_summary_prefix"].widget.attrs["data-name"] == ""
+    assert form.fields["report_summary_prefix"].widget.attrs.get("data-name") == expected_name
 
 
 @pytest.mark.parametrize(
@@ -1093,15 +1109,31 @@ def test_report_summary_valid_subject(
     assert form.fields["report_summary_subject"].widget.attrs["data-name"] == expected_subject_name
 
 
-def test_report_summary_invalid_subject(report_summary_requests_mock, rf, client):
+@pytest.mark.parametrize(
+    "name, additional_data, expected_name",
+    (
+        ("Invalid ID", {"report_summary_subject": "madeupid"}, ""),
+        (
+            "Invalid prefix entered, no previous selection",
+            {"report_summary_subject": "", "_report_summary_subject": "no matching entry"},
+            None,
+        ),
+        (
+            "Invalid prefix entered with previous selection",
+            {"report_summary_subject": SUBJECT_API_RESPONSE[1]["id"], "_report_summary_subject": "no matching entry"},
+            SUBJECT_API_RESPONSE[1]["name"],
+        ),
+    ),
+)
+def test_report_summary_invalid_subject(name, additional_data, expected_name, report_summary_requests_mock, rf, client):
     request = configure_mock_request(client, rf)
     data = {
         "goods": ["test-id"],
         "report_summary_prefix": "",
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
-        "report_summary_subject": "madeupid",
     }
+    data.update(additional_data)
 
     form = forms.TAUEditForm(
         request=request,
@@ -1114,5 +1146,5 @@ def test_report_summary_invalid_subject(report_summary_requests_mock, rf, client
         data=data,
     )
     assert not form.is_valid()
-    assert form.errors["report_summary_subject"]
-    assert form.fields["report_summary_subject"].widget.attrs["data-name"] == ""
+    assert "Enter a valid report summary subject" in form.errors["report_summary_subject"]
+    assert form.fields["report_summary_subject"].widget.attrs.get("data-name") == expected_name
