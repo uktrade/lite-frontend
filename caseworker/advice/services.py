@@ -3,6 +3,7 @@ from collections import defaultdict
 from requests.exceptions import HTTPError
 
 from core import client
+from caseworker.advice.constants import AdviceLevel
 
 # Queues
 BEIS_CHEMICAL_CASES_TO_REVIEW = "BEIS_CHEMICAL_CASES_TO_REVIEW"
@@ -88,7 +89,7 @@ def filter_current_user_advice(all_advice, user_id):
     return [
         advice
         for advice in all_advice
-        if advice["level"] == "user"
+        if advice["level"] == AdviceLevel.USER
         and advice["type"]["key"] in ["approve", "proviso", "refuse"]
         and (advice["user"]["id"] == user_id)
     ]
@@ -162,8 +163,10 @@ def group_advice_by_team(advice):
 
 
 def get_advice_to_countersign(advice, caseworker):
+    advice_levels = [AdviceLevel.USER]
+
     advice_by_team = filter_advice_by_users_team(advice, caseworker)
-    user_advice = filter_advice_by_level(advice_by_team, ["user"])
+    user_advice = filter_advice_by_level(advice_by_team, advice_levels)
     grouped_user_advice = group_advice_by_user(user_advice)
     return grouped_user_advice
 
@@ -187,10 +190,10 @@ def get_advice_to_consolidate(advice, user_team_alias):
     """
     if user_team_alias == LICENSING_UNIT_TEAM:
         # LU needs to review the consolidated advice given by MOD which is at team level
-        user_team_advice = filter_advice_by_level(advice, ["user", "team"])
+        user_team_advice = filter_advice_by_level(advice, [AdviceLevel.USER, AdviceLevel.TEAM])
         advice_from_teams = filter_advice_by_teams(user_team_advice, LU_CONSOLIDATE_TEAMS)
     elif user_team_alias == MOD_ECJU_TEAM:
-        user_advice = filter_advice_by_level(advice, ["user"])
+        user_advice = filter_advice_by_level(advice, [AdviceLevel.USER])
         advice_from_teams = filter_advice_by_teams(user_advice, MOD_CONSOLIDATE_TEAMS)
     else:
         raise Exception(f"Consolidate/combine operation not allowed for team {user_team_alias}")
