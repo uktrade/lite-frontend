@@ -17,6 +17,7 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
     id: `_report_summary_${summaryFieldType}`,
     source: debounce((query, populateResults) => {
       if (!query) {
+        populateResults([{ id: null, name: "" }]);
         return;
       }
       fetch(`/tau/report_summary/${summaryFieldType}?name=${query}`)
@@ -45,10 +46,16 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
       }
       originalInput.value = confirmed.id;
     },
-    defaultValue: originalInput.dataset.name,
+    // Check the following is actually required:
+    defaultValue:
+      "subject" == summaryFieldType
+        ? originalInput.dataset.name
+        : originalInput.dataset.name || "",
     showNoOptionsFound: true,
-    autoselect: false,
+    autoselect: true,
     showAllValues: true,
+    required: "subject" == summaryFieldType,
+    confirmOnBlur: true,
   });
 };
 

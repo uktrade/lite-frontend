@@ -23,6 +23,8 @@ from ..report_summary.services import get_report_summary_prefix, get_report_summ
 
 REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
 REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
+INVALID_REPORT_SUMMARY_SUBJECT = "Enter a valid report summary subject"
+INVALID_REPORT_SUMMARY_PREFIX = "Enter a valid report summary prefix"
 
 
 class TAUEditForm(forms.Form):
@@ -305,23 +307,36 @@ class TAUEditForm(forms.Form):
 
     def validate_report_summary_subject(self, cleaned_data):
         subject_id = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        subject_name_as_typed = self.data.get("_report_summary_subject")
+
         if not subject_id:
+            if subject_name_as_typed:
+                self.add_error(REPORT_SUMMARY_SUBJECT_KEY, INVALID_REPORT_SUMMARY_SUBJECT)
             return
 
         try:
-            get_report_summary_subject(self.request, subject_id)
+            actual_name = get_report_summary_subject(self.request, subject_id)[REPORT_SUMMARY_SUBJECT_KEY]["name"]
+            if "_report_summary_subject" in self.data and subject_name_as_typed != actual_name:
+                self.add_error(REPORT_SUMMARY_SUBJECT_KEY, INVALID_REPORT_SUMMARY_SUBJECT)
         except HTTPError:
-            self.add_error(REPORT_SUMMARY_SUBJECT_KEY, "Enter a valid report summary subject")
+            self.add_error(REPORT_SUMMARY_SUBJECT_KEY, INVALID_REPORT_SUMMARY_SUBJECT)
 
     def validate_report_summary_prefix(self, cleaned_data):
         prefix_id = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
+        prefix_name_as_typed = self.data.get("_report_summary_prefix")
+
         if not prefix_id:
+            if prefix_name_as_typed:
+                self.add_error(REPORT_SUMMARY_PREFIX_KEY, INVALID_REPORT_SUMMARY_PREFIX)
             return
 
         try:
-            get_report_summary_prefix(self.request, prefix_id)
+            actual_name = get_report_summary_prefix(self.request, prefix_id)[REPORT_SUMMARY_PREFIX_KEY]["name"]
+            if "_report_summary_prefix" in self.data:
+                if prefix_name_as_typed != actual_name:
+                    self.add_error(REPORT_SUMMARY_PREFIX_KEY, INVALID_REPORT_SUMMARY_PREFIX)
         except HTTPError:
-            self.add_error(REPORT_SUMMARY_PREFIX_KEY, "Enter a valid report summary prefix")
+            self.add_error(REPORT_SUMMARY_PREFIX_KEY, INVALID_REPORT_SUMMARY_PREFIX)
 
 
 class TAUAssessmentForm(TAUEditForm):
