@@ -53,6 +53,10 @@ LU_SR_MGR_CHECK_REQUIRED = "LU_SENIOR_MANAGER_CHECK_REQUIRED"
 
 NSG_POTENTIAL_TRIGGER_LIST_REGIME = "NSG Potential Trigger List"
 
+# Countersigning
+FIRST_COUNTERSIGN = 1
+SECOND_COUNTERSIGN = 2
+
 
 def filter_nlr_products(products):
     return [
@@ -342,6 +346,41 @@ def countersign_advice(request, case, caseworker, formset_data):
             data.append({"id": advice["id"], "countersigned_by": caseworker["id"], "countersign_comments": comments})
 
     response = client.put(request, f"/cases/{case_pk}/countersign-advice/", data)
+    response.raise_for_status()
+
+
+def countersign_advice_v2(request, case, queue_id, caseworker, formset_data):
+    data = []
+    case_pk = case["id"]
+    order = FIRST_COUNTERSIGN  # common case
+
+    queue_alias = next((item["alias"] for item in case["queue_details"] if item["id"] == queue_id), None)
+    # in some case second countersign required
+    if queue_alias == LU_SR_LICENSING_MANAGER_QUEUE:
+        order = SECOND_COUNTERSIGN
+
+    advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
+    for index, (_, user_advice) in enumerate(advice_to_countersign.items()):
+        form_data = formset_data[index]
+        for advice in user_advice:
+            outcome_accepted = form_data["outcome_accepted"]
+            if outcome_accepted:
+                reasons = form_data["approval_reasons"]
+            else:
+                reasons = form_data["rejected_reasons"]
+
+            data.append(
+                {
+                    "order": order,
+                    "outcome_accepted": outcome_accepted,
+                    "reasons": reasons,
+                    "countersigned_user": caseworker["id"],
+                    "case": case_pk,
+                    "advice": advice["id"],
+                }
+            )
+
+    response = client.post(request, f"/cases/{case_pk}/v2/countersign-advice/", data)
     response.raise_for_status()
 
 
