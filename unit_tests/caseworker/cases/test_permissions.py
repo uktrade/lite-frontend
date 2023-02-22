@@ -47,7 +47,8 @@ def test_permission_summary_change_links(
     id_element_name_visible,
 ):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
-    data_standard_case["case_officer"] = mock_gov_user
+    if is_user_case_advisor:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     id_html_find_result = soup.find(id=id_element_name)
@@ -68,7 +69,7 @@ def test_permission_move_case_forward_done_button(
     mock_status_properties,
     mock_queue,
     data_queue,
-    gov_user,
+    mock_gov_user,
     authorized_client,
     data_standard_case,
     id_element_name,
@@ -76,8 +77,8 @@ def test_permission_move_case_forward_done_button(
     id_element_name_visible,
 ):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
-    # We are changing rule here since mocking doesn't seem straight forward
-    data_standard_case["case_officer"] = gov_user
+    if is_user_case_advisor:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
     mock_status_properties["is_terminal"] = True
     data_queue["is_system_queue"] = False
     mock_queue.return_value = data_queue

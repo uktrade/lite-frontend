@@ -174,7 +174,11 @@ def test_move_case_forward(
     advice_with_and_without_consignee[0]["user"]["team"]["alias"] = FCDO_TEAM
     data_standard_case["case"]["advice"] = advice_with_and_without_consignee
     case_id = data_standard_case["case"]["id"]
-    data_standard_case["case_officer"] = mock_gov_user
+
+    advice_completed = advice_with_and_without_consignee.pop()["consignee"] is not None
+
+    if advice_completed:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
 
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     requests_mock.get(
@@ -185,7 +189,7 @@ def test_move_case_forward(
 
     response = authorized_client.get(url)
     assert response.status_code == 200
-    advice_completed = advice_with_and_without_consignee.pop()["consignee"] is not None
+
     assert response.context["advice_completed"] == advice_completed
     # Check if the MoveCaseForwardForm is rendered only when advice_completed
     soup = BeautifulSoup(response.content, "html.parser")
@@ -241,7 +245,10 @@ def test_move_case_forward_permission(
     advice_with_consignee[0]["user"]["team"]["alias"] = FCDO_TEAM
     data_standard_case["case"]["advice"] = advice_with_consignee
     case_id = data_standard_case["case"]["id"]
-    data_standard_case["case_officer"] = mock_gov_user
+
+    if is_user_case_advisor:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
+
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     requests_mock.get(
         client._build_absolute_uri(f"/gov_users/{case_id}"),
