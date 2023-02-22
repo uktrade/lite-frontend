@@ -183,12 +183,7 @@ def test_edit_refuse_advice_post(
 
 
 def test_edit_refuse_advice_get(
-    authorized_client,
-    requests_mock,
-    data_standard_case,
-    standard_case_with_advice,
-    refusal_advice,
-    url,
+    authorized_client, requests_mock, data_standard_case, standard_case_with_advice, refusal_advice, url, mock_gov_user
 ):
 
     case_data = deepcopy(data_standard_case)
@@ -203,3 +198,4 @@ def test_edit_refuse_advice_get(
     response = authorized_client.get(url)
     assert response.context["security_approvals_classified_display"] == "F680"
     assert response.context["edit"] is True
+    assert response.context["user"] == mock_gov_user["user"]

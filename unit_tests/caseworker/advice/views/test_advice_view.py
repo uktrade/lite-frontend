@@ -27,7 +27,7 @@ def setup_mock_api(requests_mock, data):
     requests_mock.get(client._build_absolute_uri(f"/cases/{application_id}"), json=data)
 
 
-def test_advice_view_context(
+def test_user_in_context(
     authorized_client,
     data_standard_case_with_all_trigger_list_products_assessed,
     mock_gov_user,

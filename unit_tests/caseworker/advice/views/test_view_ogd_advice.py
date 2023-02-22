@@ -49,6 +49,15 @@ def test_advice_view_200(mock_queue, mock_case, authorized_client, data_queue, d
     assert response.status_code == 200
 
 
+def test_user_in_context(
+    authorized_client,
+    mock_gov_user,
+    url,
+):
+    response = authorized_client.get(url)
+    assert response.context["user"] == mock_gov_user["user"]
+
+
 def test_advice_view_heading_no_advice(
     requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, url
 ):
