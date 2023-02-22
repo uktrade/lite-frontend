@@ -1,23 +1,17 @@
 from django.http import HttpRequest
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 from caseworker.core.constants import UserStatuses
-from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.components import (
-    Checkboxes,
     Filter,
     Form,
     RadioButtons,
     Button,
-    HiddenField,
     BackLink,
-    DetailComponent,
-    TextArea,
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
-from caseworker.teams.services import get_users_team_queues
 from caseworker.users.services import get_gov_users
 
 

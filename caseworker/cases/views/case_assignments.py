@@ -1,23 +1,15 @@
-from http import HTTPStatus
 import itertools
 
 from django.contrib import messages
 from django.http import Http404
-from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.edit import FormView
 
 from core.auth.views import LoginRequiredMixin
-from core.decorators import expect_status
-from core.wizard.views import BaseSessionWizardView
 from caseworker.cases.forms import case_assignment as forms
 
 from caseworker.cases.services import delete_case_assignment
 from caseworker.cases.services import get_case
-from caseworker.cases.views.conditionals import is_queue_in_url_system_queue
-from caseworker.queues.services import put_queue_case_assignments
-
-from caseworker.users.services import get_gov_user
 
 
 class CaseAssignmentRemove(LoginRequiredMixin, FormView):
@@ -72,89 +64,3 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
             )
 
         return super().form_valid(form)
-
-
-SELECT_USERS = "SELECT_USERS"
-SELECT_QUEUE = "SELECT_QUEUE"
-
-
-class CaseAssignmentAddUserAbstractBase(
-    LoginRequiredMixin,
-    BaseSessionWizardView,
-):
-    form_list = [
-        (SELECT_USERS, forms.CaseAssignmentUsersForm),
-        (SELECT_QUEUE, forms.CaseAssignmentQueueForm),
-    ]
-
-    condition_dict = {
-        SELECT_QUEUE: is_queue_in_url_system_queue,
-    }
-
-    def dispatch(self, request, *args, **kwargs):
-        self.case_ids = self.get_case_ids()
-        self.queue_id = self.get_queue_id()
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_form_kwargs(self, step=None):
-        kwargs = super().get_form_kwargs(step)
-        user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
-        kwargs["request"] = self.request
-        if step == SELECT_USERS:
-            kwargs["team_id"] = user_data["user"]["team"]["id"]
-        if step == SELECT_QUEUE:
-            kwargs["user_id"] = user_data["user_id"] = user_data["user"]["id"]
-        return kwargs
-
-    def get_success_url(self):
-        raise NotImplementedError()
-
-    def get_back_link_url(self):
-        raise NotImplementedError()
-
-    def get_case_ids(self):
-        raise NotImplementedError()
-
-    def get_queue_id(self):
-        raise NotImplementedError()
-
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form, **kwargs)
-
-        context["back_link_url"] = self.get_back_link_url()
-        context["title"] = form.Layout.TITLE
-
-        return context
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating case adviser on cases",
-        "Unexpected error updating case adviser on cases",
-    )
-    def update_case_adviser(self, form_dict):
-        queue_id = self.queue_id
-        if is_queue_in_url_system_queue(self):
-            queue_id = form_dict[SELECT_QUEUE].cleaned_data["queue"]
-        case_ids = self.case_ids
-        note = form_dict[SELECT_USERS].cleaned_data["note"]
-        user_ids = form_dict[SELECT_USERS].cleaned_data["users"]
-        return put_queue_case_assignments(self.request, queue_id, case_ids, user_ids, note)
-
-    def done(self, form_list, form_dict, **kwargs):
-        self.update_case_adviser(form_dict)
-        messages.success(self.request, f"Case adviser was added successfully")
-        return redirect(self.get_success_url())
-
-
-class CaseAssignmentAddUser(CaseAssignmentAddUserAbstractBase):
-    def get_success_url(self):
-        return reverse("cases:case", kwargs={"queue_pk": self.queue_id, "pk": self.case_ids[0]})
-
-    def get_back_link_url(self):
-        return reverse("cases:case", kwargs={"queue_pk": self.queue_id, "pk": self.case_ids[0]})
-
-    def get_case_ids(self):
-        return [str(self.kwargs["pk"])]
-
-    def get_queue_id(self):
-        return str(self.kwargs["queue_pk"])

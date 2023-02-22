@@ -1,6 +1,5 @@
 from django.urls import path, include
 
-#
 from caseworker.cases.views import (
     main,
     advice,
@@ -43,11 +42,6 @@ urlpatterns = [
         "remove-assignment/",
         case_assignments.CaseAssignmentRemove.as_view(),
         name="remove-case-assignment",
-    ),
-    path(
-        "add-assignment/",
-        case_assignments.CaseAssignmentAddUser.as_view(),
-        name="add-case-assignment",
     ),
     path(
         "matching-denials/<str:category>/",

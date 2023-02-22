@@ -5,12 +5,14 @@ from django.http import HttpResponseForbidden, Http404
 from django.views.generic.edit import CreateView
 from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 from django.utils.functional import cached_property
 
-from lite_content.lite_internal_frontend.cases import CasesListPage, Manage
+from lite_content.lite_internal_frontend.cases import CasesListPage
 from lite_forms.components import TextInput, FiltersBar
 from lite_forms.generators import error_page
 from lite_forms.views import SingleFormView
@@ -18,8 +20,8 @@ from lite_forms.views import SingleFormView
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.exceptions import ServiceError
+from core.wizard.views import BaseSessionWizardView
 
-from caseworker.cases.views.case_assignments import CaseAssignmentAddUserAbstractBase
 from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
@@ -38,13 +40,13 @@ from caseworker.queues.services import (
     post_queues,
     get_queue,
     put_queue,
-    get_queue_case_assignments,
     put_queue_case_assignments,
     get_enforcement_xml,
     post_enforcement_xml,
 )
 from caseworker.users.services import get_gov_user
 from caseworker.queues.services import get_cases_search_data, head_cases_search_count
+from caseworker.queues.conditionals import is_queue_in_url_system_queue
 from caseworker.cases.services import update_case_officer_on_cases
 from caseworker.queues.forms import SelectAllocateRole
 
@@ -344,18 +346,81 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormVi
         return super().get_context_data(*args, **context, **kwargs)
 
 
-class CaseAssignmentsCaseAssignee(CaseAssignmentAddUserAbstractBase):
+class CaseAssignmentsCaseAssigneeSteps:
+    SELECT_USERS = "SELECT_USERS"
+    SELECT_QUEUE = "SELECT_QUEUE"
+
+
+class CaseAssignmentsCaseAssignee(
+    LoginRequiredMixin,
+    BaseSessionWizardView,
+):
+    form_list = [
+        (CaseAssignmentsCaseAssigneeSteps.SELECT_USERS, forms.CaseAssignmentUsersForm),
+        (CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE, forms.CaseAssignmentQueueForm),
+    ]
+
+    condition_dict = {
+        CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE: is_queue_in_url_system_queue,
+    }
+
+    def dispatch(self, request, *args, **kwargs):
+        self.case_ids = self.get_case_ids()
+        self.queue_id = self.get_queue_id()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+        user_data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
+        kwargs["request"] = self.request
+        if step == CaseAssignmentsCaseAssigneeSteps.SELECT_USERS:
+            kwargs["team_id"] = user_data["user"]["team"]["id"]
+            if is_queue_in_url_system_queue(self):
+                kwargs["is_next_step"] = True
+        if step == CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE:
+            kwargs["user_id"] = user_data["user_id"] = user_data["user"]["id"]
+        return kwargs
+
     def get_success_url(self):
-        return reverse("queues:cases", kwargs={"queue_pk": self.queue_id})
+        default_success_url = reverse("queues:cases", kwargs={"queue_pk": self.queue_id})
+        return self.request.GET.get("return_to", default_success_url)
 
     def get_back_link_url(self):
-        return reverse("queues:case_assignment_select_role", kwargs={"pk": self.queue_id})
+        default_back_url = reverse("queues:case_assignment_select_role", kwargs={"pk": self.queue_id})
+        return self.request.GET.get("return_to", default_back_url)
 
     def get_case_ids(self):
         return self.request.GET.getlist("cases")
 
     def get_queue_id(self):
         return str(self.kwargs["pk"])
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+
+        context["back_link_url"] = self.get_back_link_url()
+        context["title"] = form.Layout.TITLE
+
+        return context
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating case adviser on cases",
+        "Unexpected error updating case adviser on cases",
+    )
+    def update_case_adviser(self, form_dict):
+        queue_id = self.queue_id
+        if is_queue_in_url_system_queue(self):
+            queue_id = form_dict[CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE].cleaned_data["queue"]
+        case_ids = self.case_ids
+        note = form_dict[CaseAssignmentsCaseAssigneeSteps.SELECT_USERS].cleaned_data["note"]
+        user_ids = form_dict[CaseAssignmentsCaseAssigneeSteps.SELECT_USERS].cleaned_data["users"]
+        return put_queue_case_assignments(self.request, queue_id, case_ids, user_ids, note)
+
+    def done(self, form_list, form_dict, **kwargs):
+        self.update_case_adviser(form_dict)
+        messages.success(self.request, f"Case adviser was added successfully")
+        return redirect(self.get_success_url())
 
 
 class EnforcementXMLExport(LoginRequiredMixin, TemplateView):

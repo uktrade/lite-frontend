@@ -59,11 +59,10 @@ from caseworker.core.objects import Tab
 from caseworker.core.services import get_status_properties, get_permissible_statuses
 from caseworker.core.constants import Permission
 from caseworker.external_data.services import search_denials
-from caseworker.queues.services import put_queue_single_case_assignment, get_queue
+from caseworker.queues.services import get_queue
 from caseworker.teams.services import get_teams
 from caseworker.users.services import (
     get_gov_user,
-    get_gov_user_from_form_selection,
 )
 
 logger = getLogger(__name__)
