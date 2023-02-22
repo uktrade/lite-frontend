@@ -1,4 +1,5 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from django.urls import reverse
 
@@ -25,3 +26,32 @@ def test_select_advice_post(authorized_client, url, recommendation, redirect):
     response = authorized_client.post(url, data={"recommendation": recommendation})
     assert response.status_code == 302
     assert redirect in response.url
+
+
+def test_view_serial_numbers_for_firearm_product_in_select_advice_view(authorized_client, data_standard_case, url):
+    good = data_standard_case["case"]["data"]["goods"][0]
+    assert good["good"]["firearm_details"]["serial_numbers"][0] == "12345"
+    assert good["good"]["firearm_details"]["serial_numbers"][1] == "ABC-123"
+
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    product_details = [d for d in soup.find_all("details") if "Products" in str(d.summary.span)][0]
+
+    assert "1. 12345" in str(product_details)
+    assert "2. ABC-123" in str(product_details)
+    assert "Not added yet" not in str(product_details)
+
+
+def test_serial_numbers_not_added_for_firearm_product_in_select_advice_view(authorized_client, data_standard_case, url):
+    data_standard_case["case"]["data"]["goods"][0]["firearm_details"]["serial_numbers"] = []
+    data_standard_case["case"]["data"]["goods"][0]["firearm_details"]["serial_numbers_available"] = "LATER"
+
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    product_details = [d for d in soup.find_all("details") if "Products" in str(d.summary.span)][0]
+
+    assert "1. 12345" not in str(product_details)
+    assert "2. ABC-123" not in str(product_details)
+    assert "Not added yet" in str(product_details)
