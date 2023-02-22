@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from selenium.webdriver.common.by import By
+
 from pytest_bdd import scenarios, when, parsers, then
 
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
@@ -73,4 +75,4 @@ def see_queue_in_queue_list(driver, context):  # noqa
     case_page.click_checkbox_to_show_team_ecju_query_and_hidden_cases()
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
-    assert driver.find_element_by_id(context.case_id).is_displayed()
+    assert driver.find_element(by=By.ID, value=context.case_id).is_displayed()

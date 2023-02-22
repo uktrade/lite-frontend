@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -14,22 +16,22 @@ class MemberPage(BasePage):
 
     def try_click_more_actions_button(self):
         if self.driver.find_elements_by_class_name(self.PANE_MORE_ACTIONS_HIDDEN_CLASS):
-            self.driver.find_element_by_id(self.BUTTON_MORE_ACTIONS_ID).click()
+            self.driver.find_element(by=By.ID, value=self.BUTTON_MORE_ACTIONS_ID).click()
 
     def click_deactivate_button(self):
         self.try_click_more_actions_button()
-        self.driver.find_element_by_id(self.BUTTON_DEACTIVATE_ID).click()
-        self.driver.find_element_by_id(self.BUTTON_DEACTIVATE_CONFIRM_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_DEACTIVATE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_DEACTIVATE_CONFIRM_ID).click()
 
     def click_reactivate_button(self):
         self.try_click_more_actions_button()
-        self.driver.find_element_by_id(self.BUTTON_REACTIVATE_ID).click()
-        self.driver.find_element_by_id(self.BUTTON_REACTIVATE_CONFIRM_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_REACTIVATE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_REACTIVATE_CONFIRM_ID).click()
 
     def click_assign_sites_button(self):
         self.try_click_more_actions_button()
-        self.driver.find_element_by_id(self.BUTTON_ASSIGN_SITES_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_ASSIGN_SITES_ID).click()
 
     def click_change_role_button(self):
         self.try_click_more_actions_button()
-        self.driver.find_element_by_id(self.BUTTON_CHANGE_ROLE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_CHANGE_ROLE_ID).click()

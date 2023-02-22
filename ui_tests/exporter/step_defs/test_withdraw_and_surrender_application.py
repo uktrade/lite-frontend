@@ -1,5 +1,7 @@
 from pytest_bdd import scenarios, then, when, parsers
 
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.shared import Shared
 from ui_tests.exporter.pages.application_page import ApplicationPage
 
@@ -25,7 +27,7 @@ def i_should_see_a_confirmation_page(driver):
 
 @when("I select the yes radiobutton")
 def i_select_the_yes_radiobutton(driver):
-    driver.find_element_by_id("choice-yes").click()
+    driver.find_element(by=By.ID, value="choice-yes").click()
 
 
 @then(parsers.parse('the application will have the status "{status}"'))

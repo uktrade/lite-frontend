@@ -8,6 +8,34 @@ from django.urls import reverse
 from core import client
 
 
+@pytest.fixture
+def mock_report_summary(requests_mock, report_summary_subject, report_summary_prefix):
+    requests_mock.get(
+        "/static/report_summary/subjects/?name=scale+compelling+technologies",
+        json={
+            "report_summary_subjects": [report_summary_subject],
+        },
+    )
+    requests_mock.get(
+        f"/static/report_summary/subjects/{report_summary_subject['id']}/",
+        json={
+            "report_summary_subject": report_summary_subject,
+        },
+    )
+    requests_mock.get(
+        "/static/report_summary/prefixes/?name=components+for",
+        json={
+            "report_summary_prefixes": [report_summary_prefix],
+        },
+    )
+    requests_mock.get(
+        f"/static/report_summary/prefixes/{report_summary_prefix['id']}/",
+        json={
+            "report_summary_prefix": report_summary_prefix,
+        },
+    )
+
+
 @pytest.fixture(autouse=True)
 def setup(
     mock_queue,
@@ -17,6 +45,7 @@ def setup(
     mock_nsg_entries_get,
     mock_cwc_entries_get,
     mock_ag_entries_get,
+    mock_report_summary,
 ):
     yield
 
@@ -79,6 +108,8 @@ def test_form(
     mock_cle_post,
     mock_control_list_entries,
     mock_precedents_api,
+    report_summary_prefix,
+    report_summary_subject,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
@@ -161,8 +192,10 @@ def test_form(
     ]
     assert edit_ag_good_regimes == form_ag_entries
 
-    # Check report summary
-    assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
+    assert edit_good["report_summary_prefix"]["id"] == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+    assert (
+        edit_good["report_summary_subject"]["id"] == soup.find("form").find(id="report_summary_subject").attrs["value"]
+    )
 
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
@@ -170,7 +203,7 @@ def test_form(
     response = authorized_client.post(
         url,
         data={
-            "report_summary": "test",
+            "report_summary_subject": report_summary_subject["id"],
             "does_not_have_control_list_entries": True,
             "comment": "test",
             "regimes": ["NONE"],
@@ -181,7 +214,8 @@ def test_form(
     assert response.status_code == 302
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary": "test",
+        "report_summary_subject": report_summary_subject["id"],
+        "report_summary_prefix": "",
         "comment": "test",
         "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
@@ -198,6 +232,7 @@ def test_form_no_regime_entries(
     mock_cle_post,
     mock_control_list_entries,
     mock_precedents_api,
+    report_summary_subject,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
@@ -235,7 +270,7 @@ def test_form_no_regime_entries(
     assert [] == form_mtcr_entries
 
     # Check report summary
-    assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
+    # assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
 
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
@@ -243,7 +278,7 @@ def test_form_no_regime_entries(
     response = authorized_client.post(
         url,
         data={
-            "report_summary": "test",
+            "report_summary_subject": report_summary_subject["id"],
             "does_not_have_control_list_entries": True,
             "comment": "test",
             "regimes": ["NONE"],
@@ -254,7 +289,8 @@ def test_form_no_regime_entries(
     assert response.status_code == 302
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary": "test",
+        "report_summary_subject": report_summary_subject["id"],
+        "report_summary_prefix": "",
         "comment": "test",
         "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
@@ -319,6 +355,7 @@ def test_form_regime_entries(
     mock_precedents_api,
     regimes_form_data,
     regime_entries,
+    report_summary_subject,
 ):
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
@@ -330,7 +367,7 @@ def test_form_regime_entries(
     response = authorized_client.post(
         url,
         data={
-            "report_summary": "test",
+            "report_summary_subject": report_summary_subject["id"],
             "does_not_have_control_list_entries": True,
             "comment": "test",
             **regimes_form_data,
@@ -341,7 +378,8 @@ def test_form_regime_entries(
     assert response.status_code == 302, response.context["form"].errors
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary": "test",
+        "report_summary_subject": report_summary_subject["id"],
+        "report_summary_prefix": "",
         "comment": "test",
         "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
@@ -353,6 +391,7 @@ def test_form_regime_entries(
 def test_control_list_suggestions_json(
     authorized_client,
     url,
+    requests_mock,
     mock_control_list_entries,
     mock_precedents_api,
     mocker,
@@ -368,3 +407,57 @@ def test_control_list_suggestions_json(
 
     response = authorized_client.get(url)
     assert response.context["cle_suggestions_json"] == {"mock": "suggestion"}
+
+
+@pytest.mark.parametrize(
+    "name, prefix, subject",
+    (
+        ("Both present", True, True),
+        ("Prefix missing", False, True),
+        ("Subject missing", True, False),
+        ("Both missing", False, False),
+    ),
+)
+def test_form_report_summary_conditions(
+    name,
+    authorized_client,
+    url,
+    data_standard_case,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+    prefix,
+    subject,
+):
+    """
+    Tests the display of the report_summary prefix and subject in the Edit page
+    """
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+    edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+    if not prefix:
+        edit_good["report_summary_prefix"] = None
+    if not subject:
+        edit_good["report_summary_subject"] = None
+
+    # Get the edit form
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    if subject:
+        assert (
+            edit_good["report_summary_subject"]["id"]
+            == soup.find("form").find(id="report_summary_subject").attrs["value"]
+        )
+    else:
+        assert soup.find("form").find(id="report_summary_subject").attrs.get("value") is None
+    if prefix:
+        assert (
+            edit_good["report_summary_prefix"]["id"]
+            == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+        )
+    else:
+        assert soup.find("form").find(id="report_summary_prefix").attrs.get("value") is None

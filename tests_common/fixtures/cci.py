@@ -1,6 +1,8 @@
 import logging
 import os
+
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 ENVIRONMENT = os.environ.get("ENVIRONMENT")
 BROWSER_HOSTS = os.environ.get("BROWSER_HOSTS")
@@ -18,13 +20,13 @@ class wait_for_page_load_after_action(object):
         self.timeout = timeout
 
     def __enter__(self):
-        self.old_page = self.driver.find_element_by_tag_name("html")
+        self.old_page = self.driver.find_element(by=By.TAG_NAME, value="html")
 
     def __exit__(self, *_):
         self.wait_for(self.page_has_loaded)
 
     def page_has_loaded(self):
-        new_page = self.driver.find_element_by_tag_name("html")
+        new_page = self.driver.find_element(by=By.TAG_NAME, value="html")
         has_loaded = new_page.id != self.old_page.id
         if has_loaded:
             logging.debug("Page has loaded.  %s", self.driver.current_url)

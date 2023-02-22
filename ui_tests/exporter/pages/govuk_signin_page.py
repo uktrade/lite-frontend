@@ -1,4 +1,7 @@
 import os
+
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -11,17 +14,17 @@ class GovukSigninPage(BasePage):
     CONTINUE_BUTTON = ".govuk-button"
 
     def enter_email(self, email):
-        email_input = self.driver.find_element_by_id(self.EMAIL_INPUT_ID)
+        email_input = self.driver.find_element(By.ID, value=self.EMAIL_INPUT_ID)
         email_input.clear()
         email_input.send_keys(email)
 
     def enter_password(self, password):
-        password_input = self.driver.find_element_by_id(self.PASSWORD_INPUT_ID)
+        password_input = self.driver.find_element(By.ID, value=self.PASSWORD_INPUT_ID)
         password_input.clear()
         password_input.send_keys(password)
 
     def click_continue(self):
-        self.driver.find_element_by_css_selector(self.SUBMIT_BUTTON_CSS_SELECTOR).click()
+        self.driver.find_element(By.CSS_SELECTOR, value=self.SUBMIT_BUTTON_CSS_SELECTOR).click()
 
     def enter_basic_auth(self):
         username = os.environ.get("GOVUK_BASIC_AUTH_USER_NAME")
@@ -31,7 +34,7 @@ class GovukSigninPage(BasePage):
         self.driver.get(url)
 
     def click_create_govuk_account(self):
-        self.driver.find_element_by_id(self.CREATE_GOVUK_ACCOUNT).click()
+        self.driver.find_element(By.ID, value=self.CREATE_GOVUK_ACCOUNT).click()
 
     def sign_in(self, email, password):
         self.enter_basic_auth()

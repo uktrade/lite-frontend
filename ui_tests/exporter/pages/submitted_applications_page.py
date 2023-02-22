@@ -1,5 +1,7 @@
 from typing import List
 
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -13,16 +15,16 @@ class SubmittedApplicationsPages(BasePage):
 
     def enter_case_note(self, text):
         self.driver.execute_script(f'document.getElementById("{self.INPUT_CASE_NOTE_ID}").value = "{text[:-1]}"')
-        self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).send_keys(text[-1:])
+        self.driver.find_element(by=By.ID, value=self.INPUT_CASE_NOTE_ID).send_keys(text[-1:])
 
     def get_text_of_case_note_field(self):
-        return self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.INPUT_CASE_NOTE_ID).text
 
     def click_post_note_button(self):
-        self.driver.find_element_by_id(self.BUTTON_POST_NOTE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.BUTTON_POST_NOTE_ID).click()
 
     def click_cancel_button(self):
-        self.driver.find_element_by_id(self.LINK_CANCEL_NOTE_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_CANCEL_NOTE_ID).click()
 
     def get_text_of_case_note(self, no):
         return self.driver.find_elements_by_class_name(self.CASE_NOTE_EXPORTER_CLASS)[no].text

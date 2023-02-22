@@ -28,6 +28,7 @@ from caseworker.users.services import get_gov_user
 TAU_ALIAS = "TAU"
 LU_ALIAS = "LICENSING_UNIT"
 LU_POST_CIRC_FINALISE_QUEUE_ALIAS = "LU_POST_CIRC_FINALISE"
+LU_PRE_CIRC_REVIEW_QUEUE_ALIAS = "LU_PRE_CIRC_REVIEW"
 
 
 class Tabs:

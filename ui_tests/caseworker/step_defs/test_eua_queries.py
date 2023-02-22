@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from pytest_bdd import then, scenarios, given, when
 
 from ui_tests.caseworker.pages.application_page import ApplicationPage
@@ -14,7 +16,7 @@ def create_eua(driver, apply_for_eua_query):
 
 @then("I should see the ability to add case notes")
 def case_notes_are_available(driver):
-    assert driver.find_element_by_id(ApplicationPage.INPUT_CASE_NOTE_ID)
+    assert driver.find_element(by=By.ID, value=ApplicationPage.INPUT_CASE_NOTE_ID)
 
 
 @then("the status has been changed in the end user advisory")

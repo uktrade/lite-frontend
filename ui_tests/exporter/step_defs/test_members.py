@@ -1,5 +1,6 @@
 from faker import Faker
 from pytest_bdd import scenarios, when, then, parsers
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from ui_tests.exporter.pages.add_member import AddMemberPage
@@ -31,7 +32,7 @@ def add_member(driver, context):
 
     add_member_page.check_all_sites()
     scroll_to_element_by_id(driver, "button-Save")
-    driver.find_element_by_id("button-Save").click()
+    driver.find_element(by=By.ID, value="button-Save").click()
 
 
 @when("I select the member that was just added")
@@ -66,7 +67,7 @@ def change_members_role(driver, context, api_test_client):
 
     MemberPage(driver).click_assign_sites_button()
 
-    site_checkbox = driver.find_element_by_id(site["name"])
+    site_checkbox = driver.find_element(by=By.ID, value=site["name"])
     scroll_to_element_by_id(driver, site["name"])
     site_checkbox.click()
     functions.click_submit(driver)
@@ -78,7 +79,7 @@ def change_members_role(driver, context, api_test_client):
 def change_members_role(driver):
     MemberPage(driver).click_change_role_button()
 
-    role_select = Select(driver.find_element_by_id("role"))
+    role_select = Select(driver.find_element(by=By.ID, value="role"))
     role_select.select_by_visible_text("Super User")
     functions.click_submit(driver)
 
@@ -113,4 +114,4 @@ def do_not_see_new_user(driver, context):
 
 @when("I go back to the members page")
 def i_go_back_to_the_members_page(driver):
-    driver.find_element_by_css_selector("a[href='/organisation/members/']").click()
+    driver.find_element(by=By.CSS_SELECTOR, value="a[href='/organisation/members/']").click()

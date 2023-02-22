@@ -1,6 +1,8 @@
 from django import forms
 from django.conf import settings
 
+from requests.exceptions import HTTPError
+
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
     HTML,
@@ -17,6 +19,10 @@ from caseworker.regimes.enums import Regimes
 
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
+from ..report_summary.services import get_report_summary_prefix, get_report_summary_subject
+
+REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
+REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
 
 
 class TAUEditForm(forms.Form):
@@ -43,12 +49,23 @@ class TAUEditForm(forms.Form):
         required=False,
     )
 
-    report_summary = forms.CharField(
-        label="Add a report summary",
+    report_summary_prefix = forms.CharField(
+        label="Add a report summary prefix",
         help_text="Type for suggestions",
         # setting id for javascript to use
-        widget=forms.TextInput(attrs={"id": "report_summary"}),
+        widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_PREFIX_KEY}),
         required=False,
+    )
+
+    report_summary_subject = forms.CharField(
+        label="Add a report summary subject",
+        help_text="Type for suggestions",
+        # setting id for javascript to use
+        widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_SUBJECT_KEY}),
+        required=True,
+        error_messages={
+            "required": "Enter a report summary subject",
+        },
     )
 
     regimes = forms.MultipleChoiceField(
@@ -122,6 +139,7 @@ class TAUEditForm(forms.Form):
 
     def __init__(
         self,
+        request,
         control_list_entries_choices,
         wassenaar_entries,
         mtcr_entries,
@@ -133,6 +151,7 @@ class TAUEditForm(forms.Form):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        self.request = request
         self.document = document
         self.fields["control_list_entries"].choices = control_list_entries_choices
         self.fields["wassenaar_entries"].choices = wassenaar_entries
@@ -140,6 +159,35 @@ class TAUEditForm(forms.Form):
         self.fields["nsg_entries"].choices = nsg_entries
         self.fields["cwc_entries"].choices = cwc_entries
         self.fields["ag_entries"].choices = ag_entries
+
+        # When we get back the report summary prefix and subject values we get the pks of the objects as this is what
+        # is sent through from the form, however we need to pass the name back to the frontend so that the JS component
+        # can use this to populate the autocomplete field
+        # To handle this we grab the item data from the API using the pk that we have so that we can store the name in
+        # a data attribute that the frontend can then present to the user
+        report_summary_prefix_value = self.data.get(REPORT_SUMMARY_PREFIX_KEY)
+        if report_summary_prefix_value:
+            try:
+                report_summary_prefix = get_report_summary_prefix(request, report_summary_prefix_value)
+            except HTTPError:
+                # If we get here then we've ended up with a pk that we can't get any information about so the best
+                # we can do is just present a blank name back to the user
+                report_summary_prefix_name = ""
+            else:
+                report_summary_prefix_name = report_summary_prefix["report_summary_prefix"]["name"]
+            self.fields[REPORT_SUMMARY_PREFIX_KEY].widget.attrs["data-name"] = report_summary_prefix_name
+
+        report_summary_subject_value = self.data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        if report_summary_subject_value:
+            try:
+                report_summary_subject = get_report_summary_subject(request, report_summary_subject_value)
+            except HTTPError:
+                # If we get here then we've ended up with a pk that we can't get any information about so the best
+                # we can do is just present a blank name back to the user
+                report_summary_subject_name = ""
+            else:
+                report_summary_subject_name = report_summary_subject["report_summary_subject"]["name"]
+            self.fields[REPORT_SUMMARY_SUBJECT_KEY].widget.attrs["data-name"] = report_summary_subject_name
 
         self.helper = FormHelper()
 
@@ -164,7 +212,8 @@ class TAUEditForm(forms.Form):
             "control_list_entries",
             HTML.p("Or"),
             "does_not_have_control_list_entries",
-            "report_summary",
+            REPORT_SUMMARY_PREFIX_KEY,
+            REPORT_SUMMARY_SUBJECT_KEY,
             ConditionalCheckboxes(
                 "regimes",
                 ConditionalCheckboxesQuestion(
@@ -205,9 +254,9 @@ class TAUEditForm(forms.Form):
         elif not has_no_cle_entries and not has_some_cle_entries:
             self.add_error("does_not_have_control_list_entries", self.MESSAGE_NO_CLC_REQUIRED)
         # report summary is required when there are CLEs
-        no_report_summary = cleaned_data.get("report_summary", "") == ""
-        if has_some_cle_entries and no_report_summary:
-            self.add_error("report_summary", "This field is required")
+
+        self.validate_report_summary_subject(cleaned_data)
+        self.validate_report_summary_prefix(cleaned_data)
 
         regimes = cleaned_data.get("regimes", [])
 
@@ -254,6 +303,26 @@ class TAUEditForm(forms.Form):
 
         return cleaned_data
 
+    def validate_report_summary_subject(self, cleaned_data):
+        subject_id = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
+        if not subject_id:
+            return
+
+        try:
+            get_report_summary_subject(self.request, subject_id)
+        except HTTPError:
+            self.add_error(REPORT_SUMMARY_SUBJECT_KEY, "Enter a valid report summary subject")
+
+    def validate_report_summary_prefix(self, cleaned_data):
+        prefix_id = cleaned_data.get(REPORT_SUMMARY_PREFIX_KEY)
+        if not prefix_id:
+            return
+
+        try:
+            get_report_summary_prefix(self.request, prefix_id)
+        except HTTPError:
+            self.add_error(REPORT_SUMMARY_PREFIX_KEY, "Enter a valid report summary prefix")
+
 
 class TAUAssessmentForm(TAUEditForm):
     """
@@ -278,9 +347,8 @@ class TAUAssessmentForm(TAUEditForm):
         *args,
         **kwargs,
     ):
-        super().__init__(control_list_entries_choices, wassenaar_entries, mtcr_entries, *args, **kwargs)
+        super().__init__(request, control_list_entries_choices, wassenaar_entries, mtcr_entries, *args, **kwargs)
 
-        self.request = request
         self.queue_pk = queue_pk
         self.application_pk = application_pk
         self.is_user_rfd = is_user_rfd

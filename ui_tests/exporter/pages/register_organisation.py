@@ -1,5 +1,7 @@
 from random import randint
 
+from selenium.webdriver.common.by import By
+
 from faker import Faker
 from faker.providers.phone_number import Provider
 
@@ -37,44 +39,44 @@ class RegisterOrganisation(BasePage):
     INSIDE_OF_UK_RADIO_ID = "location-united_kingdom"
 
     def click_create_an_account_button(self):
-        self.driver.find_element_by_id(self.CREATE_ACCOUNT_ID).click()
+        self.driver.find_element(by=By.ID, value=self.CREATE_ACCOUNT_ID).click()
 
     def select_commercial_or_individual_organisation(self, selection):
-        self.driver.find_element_by_id(self.COMMERCIAL_INDIVIDUAL_PARTIAL_ID + selection).click()
+        self.driver.find_element(by=By.ID, value=self.COMMERCIAL_INDIVIDUAL_PARTIAL_ID + selection).click()
 
     def enter_random_company_name(self):
-        self.driver.find_element_by_id(self.COMPANY_NAME_ID).send_keys(fake.company())
+        self.driver.find_element(by=By.ID, value=self.COMPANY_NAME_ID).send_keys(fake.company())
 
     def click_outside_of_uk_location(self):
-        self.driver.find_element_by_id(self.OUTSIDE_OF_UK_RADIO_ID).click()
+        self.driver.find_element(by=By.ID, value=self.OUTSIDE_OF_UK_RADIO_ID).click()
 
     def click_inside_of_uk_location(self):
-        self.driver.find_element_by_id(self.INSIDE_OF_UK_RADIO_ID).click()
+        self.driver.find_element(by=By.ID, value=self.INSIDE_OF_UK_RADIO_ID).click()
 
     def enter_random_eori_number(self, eori_number):
-        self.driver.find_element_by_id(self.EORI_ID).send_keys(eori_number)
+        self.driver.find_element(by=By.ID, value=self.EORI_ID).send_keys(eori_number)
 
     def enter_random_sic_number(self):
-        self.driver.find_element_by_id(self.SIC_ID).send_keys(randint(10000, 99999))
+        self.driver.find_element(by=By.ID, value=self.SIC_ID).send_keys(randint(10000, 99999))
 
     def enter_random_vat_number(self):
-        self.driver.find_element_by_id(self.VAT_ID).send_keys("GB" + str(randint(100000000, 999999999)))
+        self.driver.find_element(by=By.ID, value=self.VAT_ID).send_keys("GB" + str(randint(100000000, 999999999)))
 
     def enter_random_registration_number(self):
-        self.driver.find_element_by_id(self.REG_ID).send_keys(randint(10000000, 99999999))
+        self.driver.find_element(by=By.ID, value=self.REG_ID).send_keys(randint(10000000, 99999999))
 
     def enter_random_site(self):
-        self.driver.find_element_by_id(self.SITE_NAME_ID).send_keys(fake.secondary_address())
-        self.driver.find_element_by_id(self.SITE_ADDRESS_LINE_1_ID).send_keys(fake.street_address())
-        self.driver.find_element_by_id(self.SITE_CITY_ID).send_keys(fake.city())
-        self.driver.find_element_by_id(self.SITE_REGION_ID).send_keys(fake.county())
-        self.driver.find_element_by_id(self.SITE_POSTCODE_ID).send_keys(fake.postcode())
-        self.driver.find_element_by_id(self.SITE_PHONE_NUMBER_ID).send_keys(fake.uk_phone_number())
+        self.driver.find_element(by=By.ID, value=self.SITE_NAME_ID).send_keys(fake.secondary_address())
+        self.driver.find_element(by=By.ID, value=self.SITE_ADDRESS_LINE_1_ID).send_keys(fake.street_address())
+        self.driver.find_element(by=By.ID, value=self.SITE_CITY_ID).send_keys(fake.city())
+        self.driver.find_element(by=By.ID, value=self.SITE_REGION_ID).send_keys(fake.county())
+        self.driver.find_element(by=By.ID, value=self.SITE_POSTCODE_ID).send_keys(fake.postcode())
+        self.driver.find_element(by=By.ID, value=self.SITE_PHONE_NUMBER_ID).send_keys(fake.uk_phone_number())
 
     def enter_random_site_with_country_and_address_box(self):
-        self.driver.find_element_by_id(self.SITE_NAME_ID).send_keys(fake.secondary_address())
-        self.driver.find_element_by_id(self.SITE_ADDRESS).send_keys(fake.street_address())
-        self.driver.find_element_by_id(self.SITE_ADDRESS).send_keys(fake.city())
-        self.driver.find_element_by_id(self.SITE_ADDRESS).send_keys(fake.state())
-        self.driver.find_element_by_id(self.SITE_ADDRESS).send_keys(fake.postcode())
+        self.driver.find_element(by=By.ID, value=self.SITE_NAME_ID).send_keys(fake.secondary_address())
+        self.driver.find_element(by=By.ID, value=self.SITE_ADDRESS).send_keys(fake.street_address())
+        self.driver.find_element(by=By.ID, value=self.SITE_ADDRESS).send_keys(fake.city())
+        self.driver.find_element(by=By.ID, value=self.SITE_ADDRESS).send_keys(fake.state())
+        self.driver.find_element(by=By.ID, value=self.SITE_ADDRESS).send_keys(fake.postcode())
         functions.send_keys_to_autocomplete(self.driver, self.SITE_COUNTRY_ID, "Canada")

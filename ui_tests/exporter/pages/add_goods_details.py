@@ -88,13 +88,13 @@ class AddGoodDetails(BasePage):
     def select_product_category(self, category):
         # Accept categories "one", "two", "three-software", "three-technology" and match with an id accordingly
         if category == "firearms":
-            self.driver.find_element_by_id(self.GROUP2_FIREARMS_ID).click()
+            self.driver.find_element(by=By.ID, value=self.GROUP2_FIREARMS_ID).click()
         if category == "three-software":
-            self.driver.find_element_by_id(self.GROUP3_SOFTWARE_ID).click()
+            self.driver.find_element(by=By.ID, value=self.GROUP3_SOFTWARE_ID).click()
         if category == "three-technology":
-            self.driver.find_element_by_id(self.GROUP3_TECHNOLOGY_ID).click()
+            self.driver.find_element(by=By.ID, value=self.GROUP3_TECHNOLOGY_ID).click()
         if category == "one":
-            self.driver.find_element_by_id(self.GROUP1_DEVICE_ID).click()
+            self.driver.find_element(by=By.ID, value=self.GROUP1_DEVICE_ID).click()
 
     def select_firearm_category(self, firearm_category):
         value = firearm_category.replace(" ", "_").upper()
@@ -149,42 +149,42 @@ class AddGoodDetails(BasePage):
 
     def set_product_document_sensitive(self, choice):
         choice = choice.lower()
-        self.driver.find_element_by_id(f"is_document_sensitive-{choice}").click()
+        self.driver.find_element(by=By.ID, value=f"is_document_sensitive-{choice}").click()
 
     def set_registered_firearms_dealer(self, choice):
         choice = "True" if choice == "Yes" else "False"
-        self.driver.find_element_by_id(f"is_registered_firearm_dealer-{choice}").click()
+        self.driver.find_element(by=By.ID, value=f"is_registered_firearm_dealer-{choice}").click()
 
     def select_is_product_for_military_use(self, option):
         # yes_designed, yes_modified and no
         if option == "yes_designed":
-            self.driver.find_element_by_id(self.MILITARY_USE_YES_DESIGNED_ID).click()
+            self.driver.find_element(by=By.ID, value=self.MILITARY_USE_YES_DESIGNED_ID).click()
         if option == "yes_modified":
-            self.driver.find_element_by_id(self.MILITARY_USE_YES_MODIFIED_ID).click()
+            self.driver.find_element(by=By.ID, value=self.MILITARY_USE_YES_MODIFIED_ID).click()
             self.enter_related_field_details(self.MILITARY_USE_DETAILS_TEXTAREA_ID)
         if option == "no":
-            self.driver.find_element_by_id(self.NOT_FOR_MILITARY_USE_ID).click()
+            self.driver.find_element(by=By.ID, value=self.NOT_FOR_MILITARY_USE_ID).click()
 
     def select_is_product_a_component(self, option):
         # yes_designed, yes_modified, yes_general and no
         if option == "yes_designed":
-            self.driver.find_element_by_id(self.COMPONENT_YES_DESIGNED_ID).click()
+            self.driver.find_element(by=By.ID, value=self.COMPONENT_YES_DESIGNED_ID).click()
             self.enter_related_field_details(self.COMPONENT_DESIGNED_DETAILS_TEXTAREA_ID)
         if option == "yes_modified":
-            self.driver.find_element_by_id(self.COMPONENT_YES_MODIFIED_ID).click()
+            self.driver.find_element(by=By.ID, value=self.COMPONENT_YES_MODIFIED_ID).click()
             self.enter_related_field_details(self.COMPONENT_MODIFIED_DETAILS_TEXTAREA_ID)
         if option == "yes_general":
-            self.driver.find_element_by_id(self.COMPONENT_YES_GENERAL_PURPOSE_ID).click()
+            self.driver.find_element(by=By.ID, value=self.COMPONENT_YES_GENERAL_PURPOSE_ID).click()
             self.enter_related_field_details(self.COMPONENT_GENERAL_DETAILS_TEXTAREA_ID)
         if option == "no":
-            self.driver.find_element_by_id(self.NOT_A_COMPONENT_ID).click()
+            self.driver.find_element(by=By.ID, value=self.NOT_A_COMPONENT_ID).click()
 
     def does_product_employ_information_security(self, option):
         if option == "Yes":
-            self.driver.find_element_by_id(self.INFORMATION_SECURITY_YES_ID).click()
+            self.driver.find_element(by=By.ID, value=self.INFORMATION_SECURITY_YES_ID).click()
             self.enter_related_field_details(self.INFORMATION_SECURITY_DETAILS_TEXTAREA_ID)
         if option == "No":
-            self.driver.find_element_by_id(self.INFORMATION_SECURITY_NO_ID).click()
+            self.driver.find_element(by=By.ID, value=self.INFORMATION_SECURITY_NO_ID).click()
 
     def enter_related_field_details(self, related_details_field_id, text=None):
         if not text:
@@ -199,7 +199,7 @@ class AddGoodDetails(BasePage):
         if not text:
             self.enter_related_field_details(self.SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID)
         else:
-            details_element = self.driver.find_element_by_id(self.SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID)
+            details_element = self.driver.find_element(by=By.ID, value=self.SOFTWARE_OR_TECHNOLOGY_DETAILS_TEXTAREA_ID)
             details_element.clear()
             details_element.send_keys(text)
 
@@ -228,9 +228,9 @@ class AddGoodDetails(BasePage):
 
     def select_replica_status(self, status, description=""):
         status = self.true_or_false(status)
-        self.driver.find_element_by_id(f"is_replica-{status}").click()
+        self.driver.find_element(by=By.ID, value=f"is_replica-{status}").click()
         if status == "True":
-            desc = self.driver.find_element_by_id("replica_description")
+            desc = self.driver.find_element(by=By.ID, value="replica_description")
             desc.clear()
             desc.send_keys(description)
 
@@ -241,20 +241,20 @@ class AddGoodDetails(BasePage):
 
     def select_do_firearms_act_sections_apply(self, choice):
         if choice == "Yes":
-            self.driver.find_element_by_id(self.FIREARMS_ACT_YES_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARMS_ACT_YES_ID).click()
         if choice == "No":
-            self.driver.find_element_by_id(self.FIREARMS_ACT_NO_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARMS_ACT_NO_ID).click()
         if choice == "Unsure":
-            self.driver.find_element_by_id(self.FIREARMS_ACT_DONTKNOW_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARMS_ACT_DONTKNOW_ID).click()
 
     def select_firearms_act_section(self, section):
         sections = ["Section 1", "Section 2", "Section 5", "Don't know"]
         num = sections.index(section)
-        self.driver.find_element_by_id(f"id_FIREARM_ACT_1968-firearms_act_section_{num}").click()
+        self.driver.find_element(by=By.ID, value=f"id_FIREARM_ACT_1968-firearms_act_section_{num}").click()
         return section != "Don't know"
 
     def enter_firearms_act_section_explanation(self, explanation):
-        self.driver.find_element_by_id(f"id_FIREARM_ACT_1968-not_covered_explanation").send_keys(explanation)
+        self.driver.find_element(by=By.ID, value=f"id_FIREARM_ACT_1968-not_covered_explanation").send_keys(explanation)
 
     def select_has_product_documentation(self, has_product_documentation):
         value = self.true_or_false(has_product_documentation)
@@ -262,25 +262,27 @@ class AddGoodDetails(BasePage):
         return value == "True"
 
     def enter_has_product_documentation_explanation(self, explanation):
-        self.driver.find_element_by_id(f"id_PRODUCT_DOCUMENT_AVAILABILITY-no_document_comments").send_keys(explanation)
+        self.driver.find_element(by=By.ID, value=f"id_PRODUCT_DOCUMENT_AVAILABILITY-no_document_comments").send_keys(
+            explanation
+        )
 
     def choose_firearms_certificate_file(self, path):
-        self.driver.find_element_by_id("file").send_keys(path)
+        self.driver.find_element(by=By.ID, value="file").send_keys(path)
 
     def enter_firearms_act_certificate_number(self, cert_num):
         self.enter_related_field_details(self.SECTION_CERTIFICATE_NUMBER_TEXTFIELD_ID, cert_num)
 
     def enter_certificate_expiry_date(self, day, month, year):
-        self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_DAY_ID).send_keys(day)
-        self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_MONTH_ID).send_keys(month)
-        self.driver.find_element_by_id(self.CERTIFICATE_EXPIRY_DATE_YEAR_ID).send_keys(year)
+        self.driver.find_element(by=By.ID, value=self.CERTIFICATE_EXPIRY_DATE_DAY_ID).send_keys(day)
+        self.driver.find_element(by=By.ID, value=self.CERTIFICATE_EXPIRY_DATE_MONTH_ID).send_keys(month)
+        self.driver.find_element(by=By.ID, value=self.CERTIFICATE_EXPIRY_DATE_YEAR_ID).send_keys(year)
 
     def does_firearm_have_identification_markings(self, has_markings, details="details"):
         if has_markings == "Yes":
-            self.driver.find_element_by_id(self.FIREARMS_IDENTIFICATION_MARKINGS_YES_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARMS_IDENTIFICATION_MARKINGS_YES_ID).click()
             self.enter_related_field_details(self.FIREARMS_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID, text=details)
         if has_markings == "No":
-            self.driver.find_element_by_id(self.FIREARMS_IDENTIFICATION_MARKINGS_NO_ID).click()
+            self.driver.find_element(by=By.ID, value=self.FIREARMS_IDENTIFICATION_MARKINGS_NO_ID).click()
             self.enter_related_field_details(self.FIREARMS_NO_IDENTIFICATION_MARKINGS_DETAILS_TEXTAREA_ID, text=details)
 
     def select_made_before_1938(self, made_before_1938):

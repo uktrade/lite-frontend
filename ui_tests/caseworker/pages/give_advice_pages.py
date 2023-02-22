@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from ui_tests.caseworker.pages.BasePage import BasePage
@@ -15,24 +16,24 @@ class GiveAdvicePages(BasePage):
     FOOTNOTE_TEXTBOX_ID = "footnote"
 
     def click_on_advice_option(self, option):
-        self.driver.find_element_by_id(self.ADVICE_CHECKBOX_OPTION + option).click()
+        self.driver.find_element(by=By.ID, value=self.ADVICE_CHECKBOX_OPTION + option).click()
 
     def click_on_import_link(self, option):
         scroll_to_element_below_header_by_id(self.driver, f"link-{option}-picklist-picker")
-        self.driver.find_element_by_id(f"link-{option}-picklist-picker").click()
+        self.driver.find_element(by=By.ID, value=f"link-{option}-picklist-picker").click()
 
     def click_on_picklist_item(self, option):
-        self.driver.find_element_by_css_selector(self.PICKLIST_ITEM_TEXT).click()
+        self.driver.find_element(by=By.CSS_SELECTOR, value=self.PICKLIST_ITEM_TEXT).click()
         self.driver.execute_script('document.getElementById("button-submit-' + option + '").click()')
 
     def get_text_of_picklist_item(self):
-        return self.driver.find_element_by_css_selector(self.PICKLIST_ITEM_TEXT).get_attribute("data-text")
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.PICKLIST_ITEM_TEXT).get_attribute("data-text")
 
     def type_in_additional_note_text_field(self, text):
-        return self.driver.find_element_by_id(self.TEXTAREA_NOTES_ID).send_keys(text)
+        return self.driver.find_element(by=By.ID, value=self.TEXTAREA_NOTES_ID).send_keys(text)
 
     def select_approve_for_good_country(self, good_id, country_code):
-        self.driver.find_element_by_id(self.APPROVE_RADIO_ID + good_id + "." + country_code).click()
+        self.driver.find_element(by=By.ID, value=self.APPROVE_RADIO_ID + good_id + "." + country_code).click()
 
     def checkbox_present(self):
         return len(self.driver.find_elements_by_css_selector(".input"))
@@ -41,15 +42,17 @@ class GiveAdvicePages(BasePage):
         return self.driver.find_elements_by_id(self.CLEARANCE_LEVEL_DROPDOWN_ID)
 
     def select_clearance_grading(self, clearance_level):
-        Select(self.driver.find_element_by_id(self.CLEARANCE_LEVEL_DROPDOWN_ID)).select_by_visible_text(clearance_level)
+        Select(self.driver.find_element(by=By.ID, value=self.CLEARANCE_LEVEL_DROPDOWN_ID)).select_by_visible_text(
+            clearance_level
+        )
 
     def select_footnote_required(self):
-        self.driver.find_element_by_id(self.FOOTNOTE_REQUIRED_YES_RADIO_ID).click()
+        self.driver.find_element(by=By.ID, value=self.FOOTNOTE_REQUIRED_YES_RADIO_ID).click()
 
     def select_footnote_not_required(self):
-        self.driver.find_element_by_id(self.FOOTNOTE_REQUIRED_NO_RADIO_ID).click()
+        self.driver.find_element(by=By.ID, value=self.FOOTNOTE_REQUIRED_NO_RADIO_ID).click()
 
     def enter_footnote(self, text):
-        footnote_textbox = self.driver.find_element_by_id(self.FOOTNOTE_TEXTBOX_ID)
+        footnote_textbox = self.driver.find_element(by=By.ID, value=self.FOOTNOTE_TEXTBOX_ID)
         footnote_textbox.clear()
         footnote_textbox.send_keys(text)

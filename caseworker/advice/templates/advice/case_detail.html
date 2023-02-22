@@ -83,18 +83,7 @@
                   <tr class="govuk-table__row">
                     <td class="govuk-table__cell govuk-!-font-weight-bold">Serial numbers</td>
                     <td class="govuk-table__cell">
-                      {% if good.good.firearm_details.serial_numbers_available == "LATER" and not good.good.firearm_details.serial_numbers %}
-                        Not added yet
-                      {% else %}
-                        <details class="govuk-details" data-module="govuk-details">
-                          <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">View serial numbers</span>
-                          </summary>
-                          <div class="govuk-details__text">
-                            {{ good.good.firearm_details.serial_numbers|format_serial_numbers:good.quantity|join:"<br>" }}
-                          </div>
-                        </details>
-                      {% endif %}
+                      {% include "goods/includes/serial_numbers.html" with firearm_details=good.good.firearm_details %}
                     </td>
                   </tr>
                 {% endif %}
