@@ -18,3 +18,4 @@ def is_user_assigned(user, case):
 
 
 rules.add_rule("can_user_change_case", is_user_case_adviser | is_user_assigned)
+rules.add_rule("can_user_move_case_forward", is_user_case_adviser | is_user_assigned)

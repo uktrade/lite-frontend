@@ -5,6 +5,7 @@ import pytest
 from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
+import rules
 
 from core import client
 from core.helpers import convert_value_to_query_param
