@@ -487,7 +487,7 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
 @pytest.mark.parametrize(
     "user_role_assigned, expected_url_name",
     (
-        ("CASE_ADVISOR", "case_assignments"),
+        ("CASE_ADVISOR", "case_assignments_assign_user"),
         ("LU_CASE_OFFICER", "case_assignments_case_officer"),
     ),
 )
