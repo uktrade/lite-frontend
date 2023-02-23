@@ -29,9 +29,9 @@ def test_select_advice_post(authorized_client, url, recommendation, redirect):
 
 
 def test_view_serial_numbers_for_firearm_product_in_select_advice_view(authorized_client, data_standard_case, url):
-    good = data_standard_case["case"]["data"]["goods"][0]
-    assert good["good"]["firearm_details"]["serial_numbers"][0] == "12345"
-    assert good["good"]["firearm_details"]["serial_numbers"][1] == "ABC-123"
+    good_on_application = data_standard_case["case"]["data"]["goods"][0]
+    assert good_on_application["firearm_details"]["serial_numbers"][0] == "12345"
+    assert good_on_application["firearm_details"]["serial_numbers"][1] == "ABC-123"
 
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
