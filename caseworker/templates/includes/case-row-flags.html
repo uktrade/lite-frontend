@@ -2,7 +2,7 @@
     <ol class="app-flags app-flags--list expander__expand-list">
     	{% for flag in flags %}
     		<li
-    			class="app-flag app-flag--{{ flag.colour }}"
+    			class="app-flag app-flag--{{ flag.colour }} expander__expand-list__item"
     			{% if flag.label %}data-tooltip="{{ flag.label }}"{% endif %}>{{ flag.name }}</li>
     	{% endfor %}
     	{%if destinations_flags %}
