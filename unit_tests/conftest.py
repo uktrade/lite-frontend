@@ -783,8 +783,6 @@ def data_standard_case(
                                     },
                                 ],
                                 "number_of_items": 2,
-                                "serial_numbers_available": "AVAILABLE",
-                                "serial_numbers": ["12345", "ABC-123"],
                                 "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
                                 "is_covered_by_firearm_act_section_one_two_or_five_explanation": "Not covered by firearm act sections",
                             },
