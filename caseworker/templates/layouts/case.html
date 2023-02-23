@@ -117,7 +117,7 @@
 		</div>
 		{% test_rule 'can_user_change_case' current_user case as can_user_change_case %}
 		{% if not can_user_change_case %}
-			<div class="app-case-warning-banner">
+			<div id="allocation-warning" class="app-case-warning-banner">
 				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
 				<span class="app-case-warning-banner__text">
 					You need to allocate yourself or someone else to this case to work on it <a class="app-case-warning-banner__action" href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate case</a>
