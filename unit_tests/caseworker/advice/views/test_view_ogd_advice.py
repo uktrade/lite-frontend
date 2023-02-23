@@ -49,6 +49,17 @@ def test_advice_view_200(mock_queue, mock_case, authorized_client, data_queue, d
     assert response.status_code == 200
 
 
+def test_user_in_context(
+    authorized_client,
+    mock_gov_user,
+    url,
+):
+    response = authorized_client.get(url)
+    # "current_user" passed in from caseworker context processor
+    # used to test rule "can_user_change_case"
+    assert response.context["current_user"] == mock_gov_user["user"]
+
+
 def test_advice_view_heading_no_advice(
     requests_mock, mock_queue, authorized_client, data_queue, data_standard_case, url
 ):
