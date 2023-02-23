@@ -152,8 +152,8 @@ class SelectAllocateRole(BaseForm):
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     class RoleChoices(models.TextChoices):
-        CASE_ADVISOR = "CASE_ADVISOR", "Case advisor"
-        LU_CASE_OFFICER = "LU_CASE_OFFICER", "Licensing unit case officer"
+        CASE_ADVISOR = "CASE_ADVISOR", "Case adviser"
+        LU_CASE_OFFICER = "LU_CASE_OFFICER", "Licensing Unit case officer"
 
     ROLE_CHOICES = (
         TextChoice(RoleChoices.CASE_ADVISOR, hint="Reviews or gives advice on the case while it is with your team"),
