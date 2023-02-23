@@ -158,7 +158,7 @@
 	<hr class="lite-horizontal-separator">
 
 	<h2 class="govuk-heading-m">{% lcs "sites.SitePage.USERS" %}</h2>
-	<dl class="govuk-summary-list govuk-summary-list--no-border">
+	<dl class="govuk-summary-list govuk-summary-list--no-border" id="users">
 		{% for user in site.users %}
 			<div class="govuk-summary-list__row">
 				<dd class="govuk-summary-list__key">
@@ -185,7 +185,7 @@
 	<hr class="lite-horizontal-separator">
 
 	<h2 class="govuk-heading-m">{% lcs "sites.SitePage.ADMIN_USERS" %}</h2>
-	<dl class="govuk-summary-list govuk-summary-list--no-border">
+	<dl class="govuk-summary-list govuk-summary-list--no-border" id="admin-users">
 		{% for user in site.admin_users %}
 			<div class="govuk-summary-list__row">
 				<dd class="govuk-summary-list__key">
