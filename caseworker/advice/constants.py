@@ -13,3 +13,9 @@ TEAM_DECISION_PROVISO = "has approved with licence conditions"
 TEAM_DECISION_REFUSED = "has refused"
 
 DESTINATION_TYPES = ("consignee", "end_user", "ultimate_end_user", "third_party")
+
+
+class AdviceLevel:
+    USER = "user"
+    TEAM = "team"
+    FINAL = "final"
