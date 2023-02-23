@@ -1,5 +1,5 @@
 from exporter.applications.views.goods.common import constants
-from exporter.core.wizard.payloads import MergingPayloadBuilder
+from core.wizard.payloads import MergingPayloadBuilder
 
 
 def get_cleaned_data(form):

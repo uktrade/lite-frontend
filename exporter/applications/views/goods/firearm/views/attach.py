@@ -25,8 +25,8 @@ from exporter.core.helpers import (
     get_rfd_certificate,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )
-from exporter.core.wizard.conditionals import C
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.conditionals import C
+from core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,
