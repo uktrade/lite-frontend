@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 
 from core.decorators import expect_status
 
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.views import BaseSessionWizardView
 from exporter.organisation.sites.services import get_sites
 
 from exporter.organisation.members.services import post_users

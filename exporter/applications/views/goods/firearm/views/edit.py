@@ -60,8 +60,8 @@ from exporter.core.helpers import (
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
     str_to_bool,
 )
-from exporter.core.wizard.conditionals import C
-from exporter.core.wizard.views import (
+from core.wizard.conditionals import C
+from core.wizard.views import (
     BaseSessionWizardView,
     StepEditView,
 )

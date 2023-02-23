@@ -10,8 +10,8 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 from exporter.core.helpers import get_document_data
-from exporter.core.wizard.conditionals import C
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.conditionals import C
+from core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductDescriptionForm,
     ProductDocumentAvailabilityForm,

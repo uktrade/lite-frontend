@@ -9,7 +9,7 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 from exporter.applications.views.goods.common.actions import ProductDocumentAction
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductDescriptionForm,
@@ -39,7 +39,7 @@ from exporter.applications.views.goods.common.conditionals import (
     is_document_sensitive,
     is_onward_exported,
 )
-from exporter.core.wizard.conditionals import C
+from core.wizard.conditionals import C
 
 from .constants import (
     AddGoodMaterialSteps,
