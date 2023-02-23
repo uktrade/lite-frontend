@@ -76,7 +76,6 @@ class CaseContextMixin:
             for advice in self.case.advice
             if advice.get(dest_type) is not None
         }
-
         return {
             dest["country"]["id"]: dest["country"]["name"]
             for dest in self.case.destinations

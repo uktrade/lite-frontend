@@ -1,6 +1,7 @@
 {% extends 'layouts/case.html' %}
 
 {% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
+{% load rules %}
 
 {% block header_tabs %}
     <div id="tab-bar" class="app-case-tab-bar">
@@ -24,16 +25,19 @@
                     {% endif %}
                 </div>
                 <!-- Move case forward form -->
-                <div class="govuk-grid-column-one-third">
-                    {% if not unassessed_goods and is_tau and not is_all_cases_queue %}
-                        <div class="govuk-grid-column-full" style="text-align: right;">
-                            <form action="{% url 'cases:tau:move_case_forward' queue_id case.id %}" method="POST">
-                                {% csrf_token %}
-                                <input class="govuk-button" type="submit" value="Move case forward">
-                            </form>
-                        </div>
-                    {% endif %}
-                </div>
+                {% test_rule 'can_user_move_case_forward' user case as can_user_move_case_forward %}
+                {% if can_user_move_case_forward  %}
+                    <div class="govuk-grid-column-one-third">
+                        {% if not unassessed_goods and is_tau and not is_all_cases_queue %}
+                            <div class="govuk-grid-column-full" style="text-align: right;">
+                                <form action="{% url 'cases:tau:move_case_forward' queue_id case.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input class="govuk-button" type="submit" value="Move case forward">
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Form -->
