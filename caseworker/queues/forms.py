@@ -177,7 +177,8 @@ class SelectAllocateRole(BaseForm):
 
 class CaseAssignmentUsersForm(BaseForm):
     class Layout:
-        TITLE = "Which users do you want to assign to this case?"
+        TITLE = "Who do you want to allocate as case adviser?"
+        SUBTITLE = "Reviews or gives advice on the case while it is with your team"
         SUBMIT_BUTTON_TEXT = "Save"
 
     users = forms.MultipleChoiceField(
@@ -195,9 +196,11 @@ class CaseAssignmentUsersForm(BaseForm):
         required=False,
     )
 
-    def __init__(self, request, team_id, *args, **kwargs):
+    def __init__(self, request, team_id, *args, is_next_step=False, **kwargs):
         self.request = request
         self.team_id = team_id
+        if is_next_step:
+            self.Layout.SUBMIT_BUTTON_TEXT = "Save and continue"
         self.declared_fields["users"].choices = self.get_user_choices()
         super().__init__(*args, **kwargs)
 

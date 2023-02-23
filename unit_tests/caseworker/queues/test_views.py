@@ -807,7 +807,7 @@ def test_case_assignments_add_user_system_queue(
     assert context["wizard"]["steps"].next == "SELECT_QUEUE"
 
     html = BeautifulSoup(response.content, "html.parser")
-    assert "Which users do you want to assign to this case?" in html.find("h1").get_text()
+    assert "Who do you want to allocate as case adviser?" in html.find("h1").get_text()
 
 
 @pytest.fixture
@@ -964,7 +964,7 @@ def test_case_assignments_add_user_team_queue(
     assert context["wizard"]["steps"].next == None
 
     html = BeautifulSoup(response.content, "html.parser")
-    assert "Which users do you want to assign to this case?" in html.find("h1").get_text()
+    assert "Who do you want to allocate as case adviser?" in html.find("h1").get_text()
 
 
 def test_case_assignments_add_user_team_queue_submit_success(
