@@ -100,6 +100,9 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     def _get_tab_url(self, tab_name):
         params = self.request.GET.copy()
+        # Remove page from params to ensure page is reset when changing tabs
+        if params.get("page"):
+            del params["page"]
         params["selected_tab"] = tab_name
         return f"?{params.urlencode()}"
 
