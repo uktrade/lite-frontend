@@ -21,5 +21,6 @@ class Cases(TemplateView):
         if hidden:
             params["hidden"] = hidden
 
-        data = get_cases_search_data(request, kwargs["pk"], params)
+        cases_search_response = get_cases_search_data(request, kwargs["pk"], params)
+        data = cases_search_response.json()
         return JsonResponse(data=data)

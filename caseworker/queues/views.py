@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.conf import settings
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404, HttpResponseServerError
 from django.views.generic.edit import CreateView
 from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -67,8 +67,14 @@ class Cases(LoginRequiredMixin, TemplateView):
     def data(self):
         params = self.get_params()
 
-        data = get_cases_search_data(self.request, self.queue_pk, params)
-        return data
+        response = get_cases_search_data(self.request, self.queue_pk, params)
+        if not response.ok:
+            if response.status_code == 404:
+                raise Http404()
+            else:
+                raise HttpResponseServerError()
+
+        return response.json()
 
     @property
     def filters(self):

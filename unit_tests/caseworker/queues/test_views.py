@@ -225,7 +225,14 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
 def mock_cases_search(requests_mock, data_cases_search, queue_pk):
     encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
     url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
-    yield requests_mock.get(url=url, json=data_cases_search)
+    return requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
+def mock_cases_search_page_not_found(requests_mock, queue_pk):
+    encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/")
+    return requests_mock.get(url=url, status_code=404, json={"errors": {"detail": "Invalid page."}})
 
 
 def test_queues_cannot_be_created_and_modified(authorized_client, reset_config_users_list):
@@ -378,6 +385,12 @@ def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_sea
         **default_params,
         "is_nca_applicable": ["true"],
     }
+
+
+def test_cases_home_page_case_search_API_page_not_found(authorized_client, mock_cases_search_page_not_found):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    assert response.status_code == 404
 
 
 def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_search):
