@@ -52,7 +52,7 @@
             </div>
             <div class="govuk-grid-column-one-quarter">
               {% if my_advice and advice_completed and buttons.move_case_forward %}
-                {% test_rule 'can_user_move_case_forward' caseworker case as can_user_move_case_forward %}
+                {% test_rule 'can_user_move_case_forward' current_user case as can_user_move_case_forward %}
                     {% if can_user_move_case_forward %}
                         {% crispy form %}
                     {% endif %}
