@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.conf import settings
-from django.http import HttpResponseForbidden, Http404, HttpResponseServerError
+from django.http import HttpResponseForbidden, Http404
 from django.views.generic.edit import CreateView
 from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -17,6 +17,7 @@ from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
+from core.exceptions import ServiceError
 
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
@@ -72,7 +73,13 @@ class Cases(LoginRequiredMixin, TemplateView):
             if response.status_code == 404:
                 raise Http404()
             else:
-                raise HttpResponseServerError()
+                raise ServiceError(
+                    message="Error retrieving cases data from lite-api",
+                    status_code=502,
+                    response=response,
+                    log_message="Error retrieving cases data from lite-api",
+                    user_message="A problem occurred. Please try again later",
+                )
 
         return response.json()
 

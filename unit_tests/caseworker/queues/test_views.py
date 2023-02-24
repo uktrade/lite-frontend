@@ -235,6 +235,13 @@ def mock_cases_search_page_not_found(requests_mock, queue_pk):
     return requests_mock.get(url=url, status_code=404, json={"errors": {"detail": "Invalid page."}})
 
 
+@pytest.fixture
+def mock_cases_search_error(requests_mock, queue_pk):
+    encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/")
+    return requests_mock.get(url=url, status_code=500, json={})
+
+
 def test_queues_cannot_be_created_and_modified(authorized_client, reset_config_users_list):
     url = reverse("queues:manage")
     response = authorized_client.get(url)
@@ -391,6 +398,20 @@ def test_cases_home_page_case_search_API_page_not_found(authorized_client, mock_
     url = reverse("queues:cases")
     response = authorized_client.get(url)
     assert response.status_code == 404
+
+
+def test_cases_home_page_case_search_API_error(authorized_client, mock_cases_search_error):
+    url = reverse("queues:cases")
+    authorized_client.raise_request_exception = True
+    error = None
+    try:
+        response = authorized_client.get(url)
+    except Exception as e:
+        error = e
+    assert error
+    assert error.status_code == 502
+    assert error.log_message == "Error retrieving cases data from lite-api"
+    assert error.user_message == "A problem occurred. Please try again later"
 
 
 def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_search):
