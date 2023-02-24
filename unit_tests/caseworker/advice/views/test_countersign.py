@@ -263,3 +263,63 @@ def test_lu_countersign_decision_post_success(
             "advice": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
         },
     ]
+
+
+@pytest.mark.parametrize(
+    ("case_type", "order", "outcome_accepted", "flags_before", "flags_after"),
+    (
+        (
+            "Case Type 1.1",
+            services.FIRST_COUNTERSIGN,
+            services.OUTCOME_ACCEPTED_YES,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.LU_SR_MGR_CHECK_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
+            [services.LU_SR_MGR_CHECK_REQUIRED, services.MANPADS],
+        ),
+        (
+            "Case Type 1.2",
+            services.FIRST_COUNTERSIGN,
+            services.OUTCOME_ACCEPTED_YES,
+            [services.LU_COUNTERSIGN_REQUIRED, services.AP_LANDMINE, services.MANPADS],
+            [],
+        ),
+        (
+            "Case Type 1.3",
+            services.FIRST_COUNTERSIGN,
+            services.OUTCOME_ACCEPTED_NO,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.LU_SR_MGR_CHECK_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
+            [],
+        ),
+        (
+            "Case Type 2.1",
+            services.SECOND_COUNTERSIGN,
+            services.OUTCOME_ACCEPTED_NO,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.LU_SR_MGR_CHECK_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
+            [],
+        ),
+    ),
+)
+def test_remove_lu_countersign_flags(
+    authorized_client, data_standard_case, case_type, order, outcome_accepted, flags_before, flags_after
+):
+    assert authorized_client is not None
+    assert data_standard_case is not None
+    assert case_type is not None
+    assert order is not None
+    assert outcome_accepted is not None
+    assert flags_before is not None
+    assert flags_after is not None

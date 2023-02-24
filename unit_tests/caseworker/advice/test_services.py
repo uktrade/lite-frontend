@@ -18,9 +18,14 @@ from caseworker.advice.services import (
     MOD_CONSOLIDATE_QUEUES,
     MOD_CONSOLIDATE_TEAMS,
     MOD_ECJU_TEAM,
+    LU_COUNTERSIGN_REQUIRED,
+    LU_SR_MGR_CHECK_REQUIRED,
+    AP_LANDMINE,
+    MANPADS,
     get_advice_tab_context,
     get_advice_to_countersign,
     get_countersigners_decision_advice,
+    remove_lu_countersign_flags,
 )
 from caseworker.cases.objects import Case
 
