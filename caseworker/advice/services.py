@@ -50,12 +50,17 @@ LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 # Flags
 LU_COUNTERSIGN_REQUIRED = "LU_COUNTER_REQUIRED"
 LU_SR_MGR_CHECK_REQUIRED = "LU_SENIOR_MANAGER_CHECK_REQUIRED"
+AP_LANDMINE = "AP_LANDMINE"
+MANPADS = "MANPADS"
 
 NSG_POTENTIAL_TRIGGER_LIST_REGIME = "NSG Potential Trigger List"
 
 # Countersigning
 FIRST_COUNTERSIGN = 1
 SECOND_COUNTERSIGN = 2
+
+OUTCOME_ACCEPTED_YES = "Yes"
+OUTCOME_ACCEPTED_NO = "No"
 
 
 def filter_nlr_products(products):
@@ -359,6 +364,10 @@ def countersign_decision_advice(request, case, queue_id, caseworker, formset_dat
     if queue_alias == LU_SR_LICENSING_MANAGER_QUEUE:
         order = SECOND_COUNTERSIGN
 
+    # for LU countersigning, we expect only one form in the formset
+    outcome_accepted = formset_data[0]["outcome_accepted"]
+    remove_lu_countersign_flags(request, case, queue_id, caseworker, order, outcome_accepted)
+
     advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
     for index, (_, user_advice) in enumerate(advice_to_countersign.items()):
         form_data = formset_data[index]
@@ -382,6 +391,33 @@ def countersign_decision_advice(request, case, queue_id, caseworker, formset_dat
 
     response = client.post(request, f"/cases/{case_pk}/countersign-decision-advice/", data)
     response.raise_for_status()
+
+
+def remove_lu_countersign_flags(request, case, queue_id, caseworker, order, outcome_accepted):
+    # TODO: refactor to move this logic somewhere else
+
+    if order == FIRST_COUNTERSIGN and outcome_accepted == OUTCOME_ACCEPTED_YES:
+        flags_to_remove = [LU_COUNTERSIGN_REQUIRED, AP_LANDMINE]
+    elif order == FIRST_COUNTERSIGN and outcome_accepted == OUTCOME_ACCEPTED_YES:
+        flags_to_remove = [
+            LU_COUNTERSIGN_REQUIRED,
+            AP_LANDMINE,
+            MANPADS,
+        ]
+    elif order == FIRST_COUNTERSIGN and outcome_accepted == OUTCOME_ACCEPTED_NO:
+        flags_to_remove = [LU_COUNTERSIGN_REQUIRED, LU_SR_MGR_CHECK_REQUIRED, AP_LANDMINE, MANPADS]
+    elif order == SECOND_COUNTERSIGN:
+        flags_to_remove = [LU_COUNTERSIGN_REQUIRED, LU_SR_MGR_CHECK_REQUIRED, AP_LANDMINE, MANPADS]
+    else:
+        flags_to_remove = []
+
+    case_id = case["id"]
+
+    # TODO: only use the existing service functions in flags services
+
+    # make api call to assign flags
+
+    pass
 
 
 def move_case_forward(request, case_id, queue_id):
@@ -471,7 +507,6 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
     elif team_alias in (MOD_ECJU_TEAM, LICENSING_UNIT_TEAM):
-
         consolidated_advice = get_consolidated_advice(case.advice, team_alias)
 
         if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):
