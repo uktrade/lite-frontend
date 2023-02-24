@@ -199,7 +199,7 @@ def get_countersigners_decision_advice(case, caseworker):
     countersigned the advice on this case with accept/reject decision.
     """
     countersigned_by = set()
-    for advice in case.countersigned_advice:
+    for advice in case.countersign_advice:
         if advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]:
             countersigned_by.add(advice["countersigned_user"]["id"])
     return countersigned_by
@@ -380,7 +380,7 @@ def countersign_decision_advice(request, case, queue_id, caseworker, formset_dat
                 }
             )
 
-    response = client.post(request, f"/cases/{case_pk}/v2/countersign-advice/", data)
+    response = client.post(request, f"/cases/{case_pk}/countersign-decision-advice/", data)
     response.raise_for_status()
 
 

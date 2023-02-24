@@ -522,6 +522,7 @@ def data_standard_case(
                 "final": False,
             },
             "advice": [],
+            "countersign_advice": [],
             "all_flags": [
                 {
                     "id": "2d2ba1de-3178-4c94-a823-ef6a3dba79af",
