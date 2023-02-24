@@ -230,6 +230,13 @@ def mock_cases_search(requests_mock, data_cases_search, queue_pk):
 
 
 @pytest.fixture
+def mock_cases_search_page_2(requests_mock, data_cases_search, queue_pk):
+    encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
+    return requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
 def mock_cases_search_page_not_found(requests_mock, queue_pk):
     encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
     url = client._build_absolute_uri(f"/cases/")
@@ -623,6 +630,22 @@ def test_tabs_on_team_queue_with_hidden_param(
             "queue_id": [queue_pk],
             "selected_tab": [tab],
         } in head_request_history
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_case_search_tabs_context(url, authorized_client, mock_cases_search_page_2):
+    response = authorized_client.get(url + "?page=2")
+    assert response.context["tab_data"] == {
+        "all_cases": {"count": "350", "is_selected": True, "url": "?selected_tab=all_cases"},
+        "my_cases": {"count": "350", "is_selected": False, "url": "?selected_tab=my_cases"},
+        "open_queries": {"count": "350", "is_selected": False, "url": "?selected_tab=open_queries"},
+    }
 
 
 @pytest.mark.parametrize(
