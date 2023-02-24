@@ -408,9 +408,9 @@ class ViewCountersignedAdvice(AdviceDetailView):
         return context
 
 
-class ReviewCountersignViewV2(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/review_countersign.html"
-    form_class = forms.CountersignAdviceFormV2
+    form_class = forms.CountersignDecisionAdviceForm
 
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
@@ -433,7 +433,7 @@ class ReviewCountersignViewV2(LoginRequiredMixin, CaseContextMixin, TemplateView
         advice = context["advice_to_countersign"]
         formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
         if formset.is_valid():
-            services.countersign_advice_v2(request, self.case, queue_id, self.caseworker, formset.cleaned_data)
+            services.countersign_decision_advice(request, self.case, queue_id, self.caseworker, formset.cleaned_data)
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response({**context, "formset": formset})

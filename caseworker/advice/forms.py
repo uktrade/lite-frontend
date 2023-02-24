@@ -204,7 +204,7 @@ class CountersignAdviceForm(forms.Form):
         self.helper.layout = Layout("approval_reasons")
 
 
-class CountersignAdviceFormV2(forms.Form):
+class CountersignDecisionAdviceForm(forms.Form):
     DECISION_CHOICES = [(True, "Yes"), (False, "No")]
 
     outcome_accepted = forms.TypedChoiceField(

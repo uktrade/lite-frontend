@@ -15,7 +15,11 @@ urlpatterns = [
     path("countersign/review-advice/", views.ReviewCountersignView.as_view(), name="countersign_review"),
     path("countersign/view-advice/", views.ViewCountersignedAdvice.as_view(), name="countersign_view"),
     path("countersign/edit-advice/", views.CountersignEditAdviceView.as_view(), name="countersign_edit"),
-    path("countersign/v2/review-advice/", views.ReviewCountersignViewV2.as_view(), name="countersign_review_v2"),
+    path(
+        "countersign/decision/review-advice/",
+        views.ReviewCountersignDecisionAdviceView.as_view(),
+        name="countersign_decision_review",
+    ),
     path("consolidate/", views.ConsolidateAdviceView.as_view(), name="consolidate_advice_view"),
     path("consolidate/review/<advice_type>/", views.ReviewConsolidateView.as_view()),
     path("consolidate/review/", views.ReviewConsolidateView.as_view(), name="consolidate_review"),

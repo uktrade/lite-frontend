@@ -194,9 +194,9 @@ def get_countersigners(advice_to_countersign):
     return countersigned_by
 
 
-def get_countersigners_v2(case, caseworker):
+def get_countersigners_decision_advice(case, caseworker):
     """Get a set of user ids representing the users that have already
-    countersigned the advice on this case.
+    countersigned the advice on this case with accept/reject decision.
     """
     countersigned_by = set()
     for advice in case.countersigned_advice:
@@ -349,7 +349,7 @@ def countersign_advice(request, case, caseworker, formset_data):
     response.raise_for_status()
 
 
-def countersign_advice_v2(request, case, queue_id, caseworker, formset_data):
+def countersign_decision_advice(request, case, queue_id, caseworker, formset_data):
     data = []
     case_pk = case["id"]
     order = FIRST_COUNTERSIGN  # common case
@@ -474,10 +474,10 @@ def get_advice_tab_context(case, caseworker, queue_id):
 
         consolidated_advice = get_consolidated_advice(case.advice, team_alias)
 
-        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):
+        if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):
+            if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
                 advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
-                countersigned_by = get_countersigners_v2(case, caseworker)
+                countersigned_by = get_countersigners_decision_advice(case, caseworker)
 
                 if advice_to_countersign:
                     if caseworker["id"] not in countersigned_by:
