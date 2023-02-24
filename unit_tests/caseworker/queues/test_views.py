@@ -10,6 +10,7 @@ from django.urls import reverse
 import os
 
 from core import client
+from core.exceptions import ServiceError
 
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 
@@ -403,15 +404,12 @@ def test_cases_home_page_case_search_API_page_not_found(authorized_client, mock_
 def test_cases_home_page_case_search_API_error(authorized_client, mock_cases_search_error):
     url = reverse("queues:cases")
     authorized_client.raise_request_exception = True
-    error = None
-    try:
+    with pytest.raises(ServiceError) as exc_info:
         response = authorized_client.get(url)
-    except Exception as e:
-        error = e
-    assert error
-    assert error.status_code == 502
-    assert error.log_message == "Error retrieving cases data from lite-api"
-    assert error.user_message == "A problem occurred. Please try again later"
+    exception = exc_info.value
+    assert exception.status_code == 502
+    assert exception.log_message == "Error retrieving cases data from lite-api"
+    assert exception.user_message == "A problem occurred. Please try again later"
 
 
 def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_search):
