@@ -816,6 +816,20 @@ def mock_users_team_queues_list(requests_mock, gov_uk_user_id, data_queue):
     return requests_mock.get(url=url, json={"queues": [[data_queue["id"], "Some Queue"]]})
 
 
+@pytest.fixture
+def user_assignment_url(data_standard_case, data_queue):
+    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
+    case = data_standard_case
+    url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
+    url = f"{url_base}?cases={case['case']['id']}"
+    return url
+
+
+@pytest.fixture
+def post_to_step_user_assignment(post_to_step_factory, user_assignment_url):
+    return post_to_step_factory(user_assignment_url)
+
+
 def test_case_assignments_add_user_system_queue_submit_success(
     authorized_client,
     data_queue,
@@ -831,18 +845,18 @@ def test_case_assignments_add_user_system_queue_submit_success(
     mock_standard_case_documents,
     mock_standard_case_additional_contacts,
     mock_standard_case_activity_filters,
+    post_to_step_user_assignment,
 ):
     user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
-    case = data_standard_case
-    url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
-    url = f"{url_base}?cases={case['case']['id']}"
     data = {
-        "case_assignments_case_assignee-current_step": "SELECT_USERS",
-        "SELECT_USERS-users": [user_id],
-        "SELECT_USERS-note": "foobar",
+        "users": [user_id],
+        "note": "foobar",
     }
     # POST step 1
-    response = authorized_client.post(url, data)
+    response = post_to_step_user_assignment(
+        "SELECT_USERS",
+        data,
+    )
     assert response.status_code == 200
     context = response.context
     assert isinstance(context["form"], CaseAssignmentQueueForm)
@@ -852,11 +866,14 @@ def test_case_assignments_add_user_system_queue_submit_success(
     assert "Select a team queue to add the case to" in html.find("h1").get_text()
 
     data = {
-        "case_assignments_case_assignee-current_step": "SELECT_QUEUE",
-        "SELECT_QUEUE-queue": data_queue["id"],
+        "queue": data_queue["id"],
     }
     # POST step 2
-    response = authorized_client.post(url, data, follow=True)
+    response = post_to_step_user_assignment(
+        "SELECT_QUEUE",
+        data,
+        follow=True,
+    )
     assert response.status_code == 200
     assert response.redirect_chain[-1][0] == f"/queues/{data_queue['id']}/"
     messages = [str(msg) for msg in response.context["messages"]]
@@ -893,27 +910,29 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     mock_standard_case_documents,
     mock_standard_case_additional_contacts,
     mock_standard_case_activity_filters,
+    post_to_step_user_assignment,
 ):
     user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
-    case = data_standard_case
-    url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
-    url = f"{url_base}?cases={case['case']['id']}"
     data = {
-        "case_assignments_case_assignee-current_step": "SELECT_USERS",
-        "SELECT_USERS-note": "foobar",
+        "note": "foobar",
     }
     # POST step 1 - validation error
-    response = authorized_client.post(url, data)
+    response = post_to_step_user_assignment(
+        "SELECT_USERS",
+        data,
+    )
     assert response.status_code == 200
     assert response.context["form"]["users"].errors == ["Select a user to allocate"]
 
     data = {
-        "case_assignments_case_assignee-current_step": "SELECT_USERS",
-        "SELECT_USERS-users": [user_id],
-        "SELECT_USERS-note": "foobar",
+        "users": [user_id],
+        "note": "foobar",
     }
     # POST step 1 - valid
-    response = authorized_client.post(url, data)
+    response = post_to_step_user_assignment(
+        "SELECT_USERS",
+        data,
+    )
     assert response.status_code == 200
     assert isinstance(response.context["form"], CaseAssignmentQueueForm)
     assert response.context["wizard"]["steps"].current == "SELECT_QUEUE"
@@ -921,11 +940,12 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     html = BeautifulSoup(response.content, "html.parser")
     assert "Select a team queue to add the case to" in html.find("h1").get_text()
 
-    data = {
-        "case_assignments_case_assignee-current_step": "SELECT_QUEUE",
-    }
+    data = {}
     # POST step 2
-    response = authorized_client.post(url, data)
+    response = post_to_step_user_assignment(
+        "SELECT_QUEUE",
+        data,
+    )
     assert response.status_code == 200
     assert response.context["form"]["queue"].errors == ["Select a queue to add the case to"]
 
@@ -981,18 +1001,19 @@ def test_case_assignments_add_user_team_queue_submit_success(
     mock_standard_case_documents,
     mock_standard_case_additional_contacts,
     mock_standard_case_activity_filters,
+    post_to_step_user_assignment,
 ):
 
     user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
-    case = data_standard_case
-    url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
-    url = f"{url_base}?cases={case['case']['id']}"
     data = {
-        "case_assignments_case_assignee-current_step": "SELECT_USERS",
-        "SELECT_USERS-users": [user_id],
-        "SELECT_USERS-note": "foobar",
+        "users": [user_id],
+        "note": "foobar",
     }
-    response = authorized_client.post(url, data, follow=True)
+    response = post_to_step_user_assignment(
+        "SELECT_USERS",
+        data,
+        follow=True,
+    )
     assert response.status_code == 200
     assert response.redirect_chain[-1][0] == f"/queues/{data_queue['id']}/"
     messages = [str(msg) for msg in response.context["messages"]]
@@ -1028,17 +1049,16 @@ def test_case_assignments_add_user_team_queue_submit_validation_error(
     mock_standard_case_documents,
     mock_standard_case_additional_contacts,
     mock_standard_case_activity_filters,
+    post_to_step_user_assignment,
 ):
 
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
-    case = data_standard_case
-    url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
-    url = f"{url_base}?cases={case['case']['id']}"
     data = {
-        "case_assignments_case_assignee-current_step": "SELECT_USERS",
-        "SELECT_USERS-users": [],
-        "SELECT_USERS-note": "foobar",
+        "users": [],
+        "note": "foobar",
     }
-    response = authorized_client.post(url, data)
+    response = post_to_step_user_assignment(
+        "SELECT_USERS",
+        data,
+    )
     assert response.status_code == 200
     assert response.context["form"]["users"].errors == ["Select a user to allocate"]
