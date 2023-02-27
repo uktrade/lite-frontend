@@ -59,8 +59,8 @@ def get_queue(request, pk):
 
 
 def get_cases_search_data(request, queue_pk, params):
-    data = client.get(request, "/cases/" + f"?queue_id={queue_pk}&" + parse.urlencode(params, doseq=True))
-    return data.json()
+    response = client.get(request, "/cases/" + f"?queue_id={queue_pk}&" + parse.urlencode(params, doseq=True))
+    return response
 
 
 def head_cases_search_count(request, queue_pk, params):

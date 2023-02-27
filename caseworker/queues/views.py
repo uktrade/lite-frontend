@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.conf import settings
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from django.views.generic.edit import CreateView
 from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -17,6 +17,7 @@ from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
+from core.exceptions import ServiceError
 
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
@@ -67,8 +68,20 @@ class Cases(LoginRequiredMixin, TemplateView):
     def data(self):
         params = self.get_params()
 
-        data = get_cases_search_data(self.request, self.queue_pk, params)
-        return data
+        response = get_cases_search_data(self.request, self.queue_pk, params)
+        if not response.ok:
+            if response.status_code == 404:
+                raise Http404()
+            else:
+                raise ServiceError(
+                    message="Error retrieving cases data from lite-api",
+                    status_code=502,
+                    response=response,
+                    log_message="Error retrieving cases data from lite-api",
+                    user_message="A problem occurred. Please try again later",
+                )
+
+        return response.json()
 
     @property
     def filters(self):
@@ -94,6 +107,9 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     def _get_tab_url(self, tab_name):
         params = self.request.GET.copy()
+        # Remove page from params to ensure page is reset when changing tabs
+        if params.get("page"):
+            del params["page"]
         params["selected_tab"] = tab_name
         return f"?{params.urlencode()}"
 
