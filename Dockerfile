@@ -1,4 +1,6 @@
 FROM python:3.7-slim
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 RUN apt-get update --fix-missing
 RUN apt-get install -y gcc build-essential python3-dev libmagic1 wget

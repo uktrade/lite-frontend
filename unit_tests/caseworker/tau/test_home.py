@@ -9,6 +9,22 @@ from core import client
 from caseworker.tau import views
 
 
+@pytest.fixture
+def mock_report_summary_subject(requests_mock, report_summary_subject):
+    requests_mock.get(
+        "/static/report_summary/subjects/?name=scale+compelling+technologies",
+        json={
+            "report_summary_subjects": [report_summary_subject],
+        },
+    )
+    requests_mock.get(
+        f"/static/report_summary/subjects/{report_summary_subject['id']}/",
+        json={
+            "report_summary_subject": report_summary_subject,
+        },
+    )
+
+
 @pytest.fixture(autouse=True)
 def setup(
     mock_queue,
@@ -19,6 +35,7 @@ def setup(
     mock_cwc_entries_get,
     mock_ag_entries_get,
     mock_application_good_documents,
+    mock_report_summary_subject,
 ):
     yield
 
@@ -77,7 +94,7 @@ def test_home_content(
         "ML8a,ML9a",
         "No",
         "w-1\n\nmtcr-1\n\nnsg-1\n\ncwc-1\n\nag-1",
-        "scale compelling technologies",
+        "",
         "test assesment note",
         "Edit",
     ]
@@ -120,6 +137,7 @@ def test_form(
     requests_mock,
     mock_control_list_entries,
     mock_precedents_api,
+    report_summary_subject,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
@@ -140,7 +158,7 @@ def test_form(
     assert unassessed_products[0].attrs["value"] == good["id"]
 
     data = {
-        "report_summary": "test",
+        "report_summary_subject": report_summary_subject["id"],
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         "regimes": ["NONE"],
@@ -151,7 +169,8 @@ def test_form(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary": "test",
+        "report_summary_subject": report_summary_subject["id"],
+        "report_summary_prefix": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
@@ -215,6 +234,7 @@ def test_form_regime_entries(
     mock_precedents_api,
     regimes_form_data,
     regime_entries,
+    report_summary_subject,
 ):
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
@@ -225,7 +245,7 @@ def test_form_regime_entries(
     )
 
     data = {
-        "report_summary": "test",
+        "report_summary_subject": report_summary_subject["id"],
         "goods": [good["id"]],
         "does_not_have_control_list_entries": True,
         **regimes_form_data,
@@ -236,7 +256,8 @@ def test_form_regime_entries(
 
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
-        "report_summary": "test",
+        "report_summary_subject": report_summary_subject["id"],
+        "report_summary_prefix": "",
         "comment": "",
         "current_object": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],

@@ -67,7 +67,7 @@ class ApplicationPage(BasePage):
     PRODUCT_ASSESSMENT_TAB = "tab-assessment"
 
     def get_case_copy_of_field_href(self):
-        return self.driver.find_element_by_id(self.CASE_COPY_OF_ID).get_attribute("href")
+        return self.driver.find_element(by=By.ID, value=self.CASE_COPY_OF_ID).get_attribute("href")
 
     def click_visible_to_exporter_checkbox(self):
         WebDriverWait(self.driver, 30).until(
@@ -82,17 +82,17 @@ class ApplicationPage(BasePage):
         self.driver.find_element(by=By.ID, value=self.COUNTERSIGN_NOTE_ID).send_keys(text)
 
     def set_next_review_date(self, day, month, year, context):
-        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_DAY_ID).clear()
-        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_DAY_ID).send_keys(day)
-        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_MONTH_ID).clear()
-        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_MONTH_ID).send_keys(month)
-        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_YEAR_ID).clear()
-        self.driver.find_element_by_id(self.NEXT_REVIEW_DATE_YEAR_ID).send_keys(year)
+        self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_DAY_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_DAY_ID).send_keys(day)
+        self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_MONTH_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_MONTH_ID).send_keys(month)
+        self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_YEAR_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_YEAR_ID).send_keys(year)
 
         context.next_review_date = f"{year}-{month}-{day}"
 
     def get_text_of_case_note_field(self):
-        return self.driver.find_element_by_id(self.INPUT_CASE_NOTE_ID).text
+        return self.driver.find_element(by=By.ID, value=self.INPUT_CASE_NOTE_ID).text
 
     def click_post_note_btn(self):
         WebDriverWait(self.driver, 30).until(
@@ -116,20 +116,20 @@ class ApplicationPage(BasePage):
 
     def click_progress_application(self):
         scroll_to_element_by_id(self.driver, self.PROGRESS_APP_BTN)
-        self.driver.find_element_by_id(self.PROGRESS_APP_BTN).click()
+        self.driver.find_element(by=By.ID, value=self.PROGRESS_APP_BTN).click()
 
     def click_confirm_rerun_routing_rules(self):
-        self.driver.find_element_by_id(self.CONFIRM_RERUN_ROUTING_RULES).click()
+        self.driver.find_element(by=By.ID, value=self.CONFIRM_RERUN_ROUTING_RULES).click()
 
     def click_documents_button(self):
-        self.driver.find_element_by_id(self.DOCUMENTS_BTN).click()
+        self.driver.find_element(by=By.ID, value=self.DOCUMENTS_BTN).click()
 
     def click_generate_document_button(self):
-        self.driver.find_element_by_id(self.GENERATE_DOCUMENTS_BTN).click()
+        self.driver.find_element(by=By.ID, value=self.GENERATE_DOCUMENTS_BTN).click()
 
     def select_status(self, status):
         scroll_to_element_below_header_by_id(self.driver, self.STATUS)
-        case_status_dropdown = Select(self.driver.find_element_by_id(self.STATUS))
+        case_status_dropdown = Select(self.driver.find_element(by=By.ID, value=self.STATUS))
         case_status_dropdown.select_by_visible_text(status)
 
     def get_text_of_case_note_subject(self, no):
@@ -148,19 +148,19 @@ class ApplicationPage(BasePage):
         self.driver.find_element(by=By.ID, value=self.PRODUCT_ASSESSMENT_TAB).click()
 
     def click_edit_good_flags(self):
-        edit_goods_btn = self.driver.find_element_by_id(self.EDIT_GOODS_FLAGS)
+        edit_goods_btn = self.driver.find_element(by=By.ID, value=self.EDIT_GOODS_FLAGS)
         edit_goods_btn.click()
 
     def click_edit_case_flags(self):
-        edit_cases_btn = self.driver.find_element_by_id(self.EDIT_CASE_FLAGS)
+        edit_cases_btn = self.driver.find_element(by=By.ID, value=self.EDIT_CASE_FLAGS)
         edit_cases_btn.click()
 
     def click_edit_destination_flags(self):
-        edit_destination_flags_btn = self.driver.find_element_by_id(self.BUTTON_EDIT_DESTINATION_FLAGS_ID)
+        edit_destination_flags_btn = self.driver.find_element(by=By.ID, value=self.BUTTON_EDIT_DESTINATION_FLAGS_ID)
         edit_destination_flags_btn.click()
 
     def select_a_good(self):
-        element = self.driver.find_element_by_css_selector(self.CHECKBOX_INPUT)
+        element = self.driver.find_element(by=By.CSS_SELECTOR, value=self.CHECKBOX_INPUT)
         self.driver.execute_script("arguments[0].click();", element)
 
     def click_move_case_button(self):
@@ -175,10 +175,10 @@ class ApplicationPage(BasePage):
         return self.driver.find_elements_by_css_selector(self.AUDIT_TRAIL_ITEM).text
 
     def get_text_of_application_summary_board(self):
-        return self.driver.find_element_by_css_selector(self.APPLICATION_SUMMARY_BOARD).text
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.APPLICATION_SUMMARY_BOARD).text
 
     def get_text_of_eu_table(self):
-        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_ENTITIES).text
 
     def get_case_notification_anchor(self):
         return self.driver.find_elements_by_css_selector(".lite-tabs__tab .lite-tabs__tab-notification")
@@ -192,53 +192,53 @@ class ApplicationPage(BasePage):
         return None
 
     def get_text_of_ueu_table(self):
-        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_ENTITIES).text
 
     def get_text_of_consignee_table(self):
-        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_ENTITIES).text
 
     def get_text_of_third_parties_table(self):
-        return self.driver.find_element_by_id(self.TABLE_ENTITIES).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_ENTITIES).text
 
     def get_text_of_inactive_entities_table(self):
-        return self.driver.find_element_by_id(self.TABLE_INACTIVE_ENTITIES_ID).text
+        return self.driver.find_element(by=By.ID, value=self.TABLE_INACTIVE_ENTITIES_ID).text
 
     def good_document_link_is_enabled(self):
-        return self.driver.find_element_by_id(self.DOWNLOAD_GOOD_DOCUMENT).is_enabled()
+        return self.driver.find_element(by=By.ID, value=self.DOWNLOAD_GOOD_DOCUMENT).is_enabled()
 
     def end_user_document_link_is_enabled(self):
-        return self.driver.find_element_by_id(self.DOWNLOAD_END_USER_DOCUMENT).is_enabled()
+        return self.driver.find_element(by=By.ID, value=self.DOWNLOAD_END_USER_DOCUMENT).is_enabled()
 
     def get_document_element(self):
-        return self.driver.find_element_by_css_selector(self.DOCUMENTS_BTN)
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.DOCUMENTS_BTN)
 
     def get_move_case_element(self):
-        return self.driver.find_element_by_id(self.MOVE_CASE_BUTTON)
+        return self.driver.find_element(by=By.ID, value=self.MOVE_CASE_BUTTON)
 
     def get_ecju_queries_element(self):
-        return self.driver.find_element_by_css_selector(self.ECJU_QUERIES_BTN)
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.ECJU_QUERIES_BTN)
 
     def get_case_officer_element(self):
-        return self.driver.find_element_by_css_selector(self.CASE_OFFICER_CSS)
+        return self.driver.find_element(by=By.CSS_SELECTOR, value=self.CASE_OFFICER_CSS)
 
     def get_assign_user_element(self):
-        return self.driver.find_element_by_id(self.ASSIGN_USER_ID)
+        return self.driver.find_element(by=By.ID, value=self.ASSIGN_USER_ID)
 
     def get_generate_document_element(self):
-        return self.driver.find_element_by_id(self.GENERATE_DOCUMENTS_BTN)
+        return self.driver.find_element(by=By.ID, value=self.GENERATE_DOCUMENTS_BTN)
 
     def is_change_status_available(self):
         return len(self.driver.find_elements_by_id(self.PROGRESS_APP_BTN)) == 1
 
     def additional_document_link_is_enabled(self):
-        return self.driver.find_element_by_id(self.DOWNLOAD_ADDITIONAL_DOCUMENT).is_enabled()
+        return self.driver.find_element(by=By.ID, value=self.DOWNLOAD_ADDITIONAL_DOCUMENT).is_enabled()
 
     def go_to_organisation(self):
-        self.driver.find_element_by_id(self.LINK_ORGANISATION_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_ORGANISATION_ID).click()
 
     def get_action_dropdown_entries_count(self):
         return len(
-            self.driver.find_element_by_id(self.ACTIONS_LIST_CONTAINER_ID).find_elements_by_css_selector(
+            self.driver.find_element(by=By.ID, value=self.ACTIONS_LIST_CONTAINER_ID).find_elements_by_css_selector(
                 self.ACTION_BUTTON_SELECTOR
             )
         )
@@ -247,11 +247,11 @@ class ApplicationPage(BasePage):
         element.self.driver.find_elements_by_css_selector(self.EXPAND_FLAGS_CSS)[num].click()
 
     def get_type_of_case_from_page(self):
-        return self.driver.find_element_by_id(self.TYPE_OF_CASE).text
+        return self.driver.find_element(by=By.ID, value=self.TYPE_OF_CASE).text
 
     def click_assign_user_button(self):
         scroll_to_element_by_id(self.driver, self.ASSIGN_USER_ID)
-        self.driver.find_element_by_id(self.ASSIGN_USER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.ASSIGN_USER_ID).click()
 
     def click_im_done_button(self):
         WebDriverWait(self.driver, 30).until(
@@ -259,14 +259,14 @@ class ApplicationPage(BasePage):
         ).click()
 
     def click_on_case_link(self, case_id):
-        self.driver.find_element_by_id(self.CASE_LINK_PARTIAL_ID + case_id).click()
+        self.driver.find_element(by=By.ID, value=self.CASE_LINK_PARTIAL_ID + case_id).click()
 
     def get_case_queues(self):
-        return self.driver.find_element_by_id(self.CASE_QUEUES_ID)
+        return self.driver.find_element(by=By.ID, value=self.CASE_QUEUES_ID)
 
     def select_filter_user_type_from_dropdown(self, user_type):
         functions.try_open_filters(self.driver)
-        select = Select(self.driver.find_element_by_id(self.USER_TYPE_ID))
+        select = Select(self.driver.find_element(by=By.ID, value=self.USER_TYPE_ID))
         select.select_by_visible_text(user_type)
         functions.click_apply_filters(self.driver)
 

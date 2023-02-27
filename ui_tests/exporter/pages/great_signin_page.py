@@ -12,17 +12,17 @@ class GreatSigninPage(BasePage):
     ACCEPT_COOKIES_TEXT = "Accept all cookies"
 
     def enter_email(self, form, email):
-        email_input = form.find_element_by_id(self.EMAIL_INPUT_ID)
+        email_input = form.find_element(by=By.ID, value=self.EMAIL_INPUT_ID)
         email_input.clear()
         email_input.send_keys(email)
 
     def enter_password(self, form, password):
-        password_input = form.find_element_by_id(self.PASSWORD_INPUT_ID)
+        password_input = form.find_element(by=By.ID, value=self.PASSWORD_INPUT_ID)
         password_input.clear()
         password_input.send_keys(password)
 
     def click_sign_in(self, form):
-        form.find_element_by_css_selector(self.SUBMIT_BUTTON_CSS_SELECTOR).click()
+        form.find_element(by=By.CSS_SELECTOR, value=self.SUBMIT_BUTTON_CSS_SELECTOR).click()
 
     def handle_accept_cookies_popup(self):
         try:

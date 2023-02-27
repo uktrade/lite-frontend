@@ -13,4 +13,4 @@ class StartPage(BasePage):
             self.driver.find_element(by=By.ID, value=self.BUTTON_SIGN_IN_ID).click()
 
     def click_register_link(self):
-        self.driver.find_element_by_id(self.LINK_REGISTER_ID).click()
+        self.driver.find_element(by=By.ID, value=self.LINK_REGISTER_ID).click()

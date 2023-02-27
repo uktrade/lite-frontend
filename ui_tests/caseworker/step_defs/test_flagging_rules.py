@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.caseworker.pages.flagging_rules_pages import FlaggingRulePages
 from ui_tests.caseworker.pages.shared import Shared
 from pytest_bdd import when, then, scenarios, parsers, given
@@ -16,7 +18,7 @@ def go_to_flagging_rules(driver, sso_sign_in, internal_url):
 @then(parsers.parse('I see the flagging rules in the flag list as "{status}"'))
 def see_flag_in_list(driver, context, status):
     for level in context.flags:
-        assert status in driver.find_element_by_id(context.flags[level]["id"]).text
+        assert status in driver.find_element(by=By.ID, value=context.flags[level]["id"]).text
 
 
 @when("I click include deactivated")
@@ -66,7 +68,7 @@ def create_flagging_rule(driver, context, type, condition):
 @when(parsers.parse('I edit my "{type}" flagging rule with condition "{condition}"'))
 def edit_flagging_rule(driver, context, condition):
     flagging_rules_page = FlaggingRulePages(driver)
-    row = driver.find_element_by_id(context.flag_id)
+    row = driver.find_element(by=By.ID, value=context.flag_id)
 
     # select edit for my flagging rule
     flagging_rules_page.click_on_edit_for_element(row)
@@ -83,13 +85,13 @@ def edit_flagging_rule(driver, context, condition):
 
 @then(parsers.parse('I see the flagging rule in the list as "{status}"'))
 def create_flagging_rule(driver, context, status):
-    assert status in driver.find_element_by_id(context.flag_id).text
+    assert status in driver.find_element(by=By.ID, value=context.flag_id).text
 
 
 @when("I deactivate all my new flagging rules")
 def deactivate_first_active_flag(driver, context, internal_url):
     for level in context.flags:
-        row = driver.find_element_by_id(context.flags[level]["id"])
+        row = driver.find_element(by=By.ID, value=context.flags[level]["id"])
         FlaggingRulePages(driver).click_on_deactivate_flag(row)
         FlaggingRulePages(driver).click_confirm_deactivate_activate()
         Shared(driver).click_submit()

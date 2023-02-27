@@ -1,3 +1,6 @@
+{% load rules %}
+{% test_rule 'can_user_change_case' user case as can_user_change_case %}
+
 <dl class="app-case__summary-list">
 	{% if case.case_type.reference.key == "comp_v" %}
 		<div class="app-case__summary-list__row">
@@ -92,9 +95,11 @@
 		<dd class="app-case__summary-list__actions">
 			{% if permissible_statuses %}
 				{% if not is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
-					<a id="link-change-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:manage' queue.id case.id %}">
+					{% if can_user_change_case %}
+					<a  id="link-change-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:manage' queue.id case.id %}">
 						{% lcs 'generic.CHANGE' %}
 					</a>
+					{% endif %}
 				{% endif %}
 			{% endif %}
 		</dd>
@@ -117,9 +122,11 @@
 			{% endif %}
 		</dd>
 		<dd class="app-case__summary-list__actions">
-			<a id="link-change-queues" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:move' queue.id case.id %}">
-				{% lcs 'generic.CHANGE' %}
-			</a>
+			{% if can_user_change_case %}
+				<a id="link-change-queues" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:move' queue.id case.id %}">
+					{% lcs 'generic.CHANGE' %}
+				</a>
+			{% endif %}
 		</dd>
 	</div>
 	{% if not case.case_type.reference.key in "comp_c,comp_v" %}
@@ -213,9 +220,11 @@
 		</dd>
 		<dd class="app-case__summary-list__actions">
 			{% if not is_terminal %}
-				<a id="link-change-review-date" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:review_date' queue.id case.id %}">
-					{% lcs 'generic.CHANGE' %}
-				</a>
+				{% if can_user_change_case %}
+					<a id="link-change-review-date" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:review_date' queue.id case.id %}">
+						{% lcs 'generic.CHANGE' %}
+					</a>
+				{% endif %}
 			{% endif %}
 		</dd>
 	</div>

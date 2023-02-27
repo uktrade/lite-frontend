@@ -1,4 +1,6 @@
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 from tests_common import functions
@@ -13,11 +15,11 @@ class AdditionalDocumentsPage(BasePage):
         return element_with_id_exists(driver, self.REMOVE_ADDITIONAL_DOCUMENT_LINK)
 
     def confirm_delete_additional_document(self):
-        self.driver.find_element_by_id(self.DELETE_ADDITIONAL_DOC_CONFIRM_YES).click()
+        self.driver.find_element(by=By.ID, value=self.DELETE_ADDITIONAL_DOC_CONFIRM_YES).click()
         functions.click_submit(self.driver)
 
     def find_remove_additional_document_link(self):
         try:
-            return self.driver.find_element_by_id(self.REMOVE_ADDITIONAL_DOCUMENT_LINK)
+            return self.driver.find_element(by=By.ID, value=self.REMOVE_ADDITIONAL_DOCUMENT_LINK)
         except NoSuchElementException:
             return None

@@ -65,35 +65,26 @@
 					<li class="app-updates__item">
 						<div class="app-updates__action">
 							{% if forloop.first %}
-								Latest Action
+								Latest action
 							{% else %}
-								Previous Action
+								Previous action
 							{% endif %}
 						</div>
-					</li>
-					<li class="app-updates__item">
 						<div class="app-updates__department">
 							{% if update.user.type == 'exporter' %}
-								Applicant
+								Applicant {{ update.created_at|to_datetime|date:"d F Y" }}
 							{% else %}
-								{{ update.user.team }}
+								{{ update.user.team }} {{ update.created_at|to_datetime|date:"d F Y" }}
 							{% endif %}
 						</div>
-					</li>
-					<li class="app-updates__item">
 						<div class="app-updates__activity">
 							{{ update.user.first_name }} {{ update.user.last_name }} {{ update.text|linebreaksbr }}
 						</div>
-						{% if activity.additional_text %}
+						{% if update.additional_text %}
 							<div class="app-updates__activity">
-								{{ update.additional_text }}
+								{{ update.additional_text|linebreaksbr }}
 							</div>
 						{% endif %}
-					</li>
-					<li class="app-updates__item">
-						<div class="govuk-hint govuk-!-margin-0 govuk-!-margin-bottom-2">
-							{{ update.created_at|to_datetime|date:"d F Y" }}
-						</div>
 					</li>
 				{% endfor %}
 			{% endif %}
@@ -119,7 +110,7 @@
                    {% if not assignment.assignees %}
 				   <li class="app-assignments__item expander__expand-list__item">
 					   <div class="app-assignments__user">
-                                Not Allocated
+                                Not allocated
 					   </div>
 					   <div class="app-assignments__team">
 						   {{ assignment.queue_name }}

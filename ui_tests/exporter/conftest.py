@@ -98,7 +98,7 @@ def click_on_an_application(driver, exporter_url, context):  # noqa
 
 @when("I click on the application just created")  # noqa
 def click_on_application_just_created(driver, context):  # noqa
-    driver.find_element_by_link_text(context.app_name).click()
+    driver.find_element(by=By.LINK_TEXT, value=context.app_name).click()
 
 
 @when("I click edit application")  # noqa
@@ -139,7 +139,7 @@ def only_my_email_is_to_be_processed_by_lite_hmrc(api_client):  # noqa
 def i_logout(driver, exporter_url):  # noqa
     driver.get(exporter_url.rstrip("/") + "/auth/logout")
     if "accounts/logout" in driver.current_url:
-        driver.find_element_by_css_selector("[action='/sso/accounts/logout/'] button").click()
+        driver.find_element(by=By.CSS_SELECTOR, value="[action='/sso/accounts/logout/'] button").click()
         driver.get(exporter_url)
 
 
@@ -218,16 +218,16 @@ def add_new_party(driver, type, name, website, address, country, context):  # no
 
 @when(parsers.parse('I click on the "{section_name}" section'))  # noqa
 def go_to_task_list_section(driver, section_name):  # noqa
-    section = driver.find_element_by_link_text(section_name)
+    section = driver.find_element(by=By.LINK_TEXT, value=section_name)
     section_id = section.get_attribute("id")
     TaskListPage(driver).click_on_task_list_section(section_id)
 
 
 @then(parsers.parse('the section "{section_name}" is now saved'))  # noqa
 def verify_section_is_saved(driver, section_name):  # noqa
-    section = driver.find_element_by_link_text(section_name)
+    section = driver.find_element(by=By.LINK_TEXT, value=section_name)
     section_id = section.get_attribute("id")
-    saved_status_element = driver.find_element_by_id(f"{section_id}-status")
+    saved_status_element = driver.find_element(by=By.ID, value=f"{section_id}-status")
     assert saved_status_element.text == "SAVED"
 
 
@@ -281,7 +281,7 @@ def route_of_goods(driver, choice):  # noqa
 
 @when(parsers.parse("I save and continue on the summary page"))  # noqa
 def save_continue_summary_list(driver):  # noqa
-    element = driver.find_element_by_css_selector("button[value='finish']")
+    element = driver.find_element(by=By.CSS_SELECTOR, value="button[value='finish']")
     driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.execute_script("arguments[0].click();", element)
 
@@ -363,8 +363,8 @@ def application_is_submitted(driver, context):  # noqa
     element_row = elements[element_number].text
     assert utils.search_for_correct_date_regex_in_element(element_row)
     assert "0 Goods" or "1 Good" or "2 Goods" in element_row
-    assert driver.find_element_by_xpath("// th[text()[contains(., 'Status')]]").is_displayed()
-    assert driver.find_element_by_xpath("// th[text()[contains(., 'Last updated')]]").is_displayed()
+    assert driver.find_element(by=By.XPATH, value="// th[text()[contains(., 'Status')]]").is_displayed()
+    assert driver.find_element(by=By.XPATH, value="// th[text()[contains(., 'Last updated')]]").is_displayed()
 
 
 @when("I submit the application")  # noqa
@@ -497,8 +497,8 @@ def get_missing_document_reason(driver, reason):  # noqa
 @when(parsers.parse('I select "{value}" for submitting response and click submit'))  # noqa
 def submit_response_confirmation(driver, value):  # noqa
     # TODO get rid of this xpaths
-    driver.find_element_by_xpath('//input[@value="' + value + '"]').click()
-    driver.find_element_by_xpath('//button[@type="submit"]').click()
+    driver.find_element(by=By.XPATH, value='//input[@value="' + value + '"]').click()
+    driver.find_element(by=By.XPATH, value='//button[@type="submit"]').click()
 
 
 @when(parsers.parse("I enter text for case note"))  # noqa
@@ -601,7 +601,7 @@ def wait_for_download_link(driver):  # noqa
 
 @then("I see my edited reference name")
 def assert_ref_name(context, driver):  # noqa
-    assert context.app_name in driver.find_element_by_css_selector(".lite-task-list").text
+    assert context.app_name in driver.find_element(by=By.CSS_SELECTOR, value=".lite-task-list").text
 
 
 @when("I remove a good from the application")
@@ -785,7 +785,7 @@ def set_status(api_test_client, context, status):  # noqa
 
 @then("I see my edited reference number")
 def assert_ref_num(driver):  # noqa
-    assert "12345678" in driver.find_element_by_css_selector(".lite-task-list").text
+    assert "12345678" in driver.find_element(by=By.CSS_SELECTOR, value=".lite-task-list").text
 
 
 @when("I change my reference number")
@@ -1091,7 +1091,7 @@ def specify_product_component_details(driver, component):  # noqa
 @when(parsers.parse('I specify the "{product_type}" product purpose as "{purpose}"'))  # noqa
 def specify_product_purpose_details(driver, product_type, purpose):  # noqa
     page = AddGoodDetails(driver)
-    heading = driver.find_element_by_class_name("govuk-fieldset__heading").text
+    heading = driver.find_element(by=By.CLASS_NAME, value="govuk-fieldset__heading").text
     assert f"Describe the purpose of the {product_type}" == heading
     page.enter_software_technology_purpose_details(purpose)
     functions.click_submit(driver)
@@ -1134,7 +1134,7 @@ def summary_screen_for_product_type(driver, product_type_value, name, proceed): 
     assert all(key in summary.keys() for key in expected_fields)
 
     if proceed == "continue":
-        driver.find_element_by_link_text("Continue").click()
+        driver.find_element(by=By.LINK_TEXT, value="Continue").click()
 
 
 @when(parsers.parse('I enter product details with value "{value}" and deactivated "{status}" and Save'))  # noqa
@@ -1228,7 +1228,7 @@ def click_link_with_text(driver, link_text):  # noqa
 
 @then("I see the temporary export detail summary")  # noqa
 def i_see_temporary_export_detail_summary(driver):  # noqa
-    heading = driver.find_element_by_tag_name("h1").text
+    heading = driver.find_element(by=By.TAG_NAME, value="h1").text
     assert heading == "Temporary export details summary list"
     elements = driver.find_elements_by_tag_name("dd")
     assert elements[0].text == "Lorem ipsum"
@@ -1256,7 +1256,7 @@ def select_party(driver, consignee_type):  # noqa
     party_rows = driver.find_elements_by_xpath("//tr[@class='govuk-table__row']")
     for party_row in party_rows:
         if consignee_type.lower() in party_row.text.lower():
-            party_row.find_element_by_class_name("lite-button--link").click()
+            party_row.find_element(by=By.CLASS_NAME, value="lite-button--link").click()
             return
 
 
@@ -1311,7 +1311,7 @@ def enter_sig_name(driver, sig_name):  # noqa
 
 @then("I see the end user summary")  # noqa
 def i_see_end_user_summary(driver):  # noqa
-    heading = driver.find_element_by_tag_name("h1").text
+    heading = driver.find_element(by=By.TAG_NAME, value="h1").text
     assert heading == "End user"
     elements = driver.find_elements_by_tag_name("dd")
     assert elements[0].text == "Foo Bar"
@@ -1323,7 +1323,7 @@ def i_see_end_user_summary(driver):  # noqa
 
 @then("I see the consignee summary")  # noqa
 def i_see_consignee_summary(driver):  # noqa
-    heading = driver.find_element_by_tag_name("h1").text
+    heading = driver.find_element(by=By.TAG_NAME, value="h1").text
     assert heading == "Consignee"
     elements = driver.find_elements_by_tag_name("dd")
     assert elements[0].text == "Foo Bar"
@@ -1334,7 +1334,7 @@ def i_see_consignee_summary(driver):  # noqa
 
 @then("I see Government in the consignee summary")  # noqa
 def i_see_consignee_summary(driver):  # noqa
-    heading = driver.find_element_by_tag_name("h1").text
+    heading = driver.find_element(by=By.TAG_NAME, value="h1").text
     assert heading == "Consignee"
     elements = driver.find_elements_by_tag_name("dd")
     assert elements[1].text == "Government"
@@ -1433,13 +1433,13 @@ def i_see_application_summary(driver, clc_rating, end_use, end_user_name, consig
 
 @when("I agree to the declaration")
 def i_agree(driver):  # noqa
-    driver.find_element_by_id("agreed_to_declaration_text").send_keys("I AGREE")
+    driver.find_element(by=By.ID, value="agreed_to_declaration_text").send_keys("I AGREE")
     functions.click_submit(driver)
 
 
 @then("the application is submitted")
 def application_submitted(driver, context):  # noqa
-    assert driver.find_element_by_tag_name("h1").text == "Application submitted"
+    assert driver.find_element(by=By.TAG_NAME, value="h1").text == "Application submitted"
 
 
 @when("I click on my application")
@@ -1463,4 +1463,4 @@ def should_see_notification_check_progress(driver):  # noqa
 def should_see_notification_application(driver, context):  # noqa
     elements = driver.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__row")
     no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    assert "1" in elements[no].find_element_by_css_selector(Shared(driver).NOTIFICATION).text
+    assert "1" in elements[no].find_element(by=By.CSS_SELECTOR, value=Shared(driver).NOTIFICATION).text

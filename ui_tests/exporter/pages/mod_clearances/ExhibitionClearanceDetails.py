@@ -1,3 +1,5 @@
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.pages.BasePage import BasePage
 
 
@@ -11,21 +13,21 @@ class ExhibitionClearanceDetailsPage(BasePage):
     CLEARANCE_REQUIRED_BY_YEAR_ID = "required_by_dateyear"
 
     def enter_exhibition_name(self, name):
-        self.driver.find_element_by_id(self.NAME_FIELD_ID).clear()
-        self.driver.find_element_by_id(self.NAME_FIELD_ID).send_keys(name)
+        self.driver.find_element(by=By.ID, value=self.NAME_FIELD_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.NAME_FIELD_ID).send_keys(name)
 
     def enter_exhibition_start_date(self, day, month, year):
-        self.driver.find_element_by_id(self.EXHIBITION_START_DAY_ID).clear()
-        self.driver.find_element_by_id(self.EXHIBITION_START_DAY_ID).send_keys(day)
-        self.driver.find_element_by_id(self.EXHIBITION_START_MONTH_ID).clear()
-        self.driver.find_element_by_id(self.EXHIBITION_START_MONTH_ID).send_keys(month)
-        self.driver.find_element_by_id(self.EXHIBITION_START_YEAR_ID).clear()
-        self.driver.find_element_by_id(self.EXHIBITION_START_YEAR_ID).send_keys(year)
+        self.driver.find_element(by=By.ID, value=self.EXHIBITION_START_DAY_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.EXHIBITION_START_DAY_ID).send_keys(day)
+        self.driver.find_element(by=By.ID, value=self.EXHIBITION_START_MONTH_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.EXHIBITION_START_MONTH_ID).send_keys(month)
+        self.driver.find_element(by=By.ID, value=self.EXHIBITION_START_YEAR_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.EXHIBITION_START_YEAR_ID).send_keys(year)
 
     def enter_exhibition_required_by_date(self, day, month, year):
-        self.driver.find_element_by_id(self.CLEARANCE_REQUIRED_BY_DAY_ID).clear()
-        self.driver.find_element_by_id(self.CLEARANCE_REQUIRED_BY_DAY_ID).send_keys(day)
-        self.driver.find_element_by_id(self.CLEARANCE_REQUIRED_BY_MONTH_ID).clear()
-        self.driver.find_element_by_id(self.CLEARANCE_REQUIRED_BY_MONTH_ID).send_keys(month)
-        self.driver.find_element_by_id(self.CLEARANCE_REQUIRED_BY_YEAR_ID).clear()
-        self.driver.find_element_by_id(self.CLEARANCE_REQUIRED_BY_YEAR_ID).send_keys(year)
+        self.driver.find_element(by=By.ID, value=self.CLEARANCE_REQUIRED_BY_DAY_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.CLEARANCE_REQUIRED_BY_DAY_ID).send_keys(day)
+        self.driver.find_element(by=By.ID, value=self.CLEARANCE_REQUIRED_BY_MONTH_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.CLEARANCE_REQUIRED_BY_MONTH_ID).send_keys(month)
+        self.driver.find_element(by=By.ID, value=self.CLEARANCE_REQUIRED_BY_YEAR_ID).clear()
+        self.driver.find_element(by=By.ID, value=self.CLEARANCE_REQUIRED_BY_YEAR_ID).send_keys(year)

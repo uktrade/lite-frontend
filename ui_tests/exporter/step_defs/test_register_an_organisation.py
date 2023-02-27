@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 from pytest_bdd import scenarios, then, given, when
 
+from selenium.webdriver.common.by import By
+
 from ui_tests.exporter.fixtures.register_organisation import get_eori_number
 from ui_tests.exporter.pages.govuk_signin_page import GovukSigninPage
 from ui_tests.exporter.pages.register_organisation import RegisterOrganisation
@@ -64,7 +66,7 @@ def go_to_exporter_when(driver, exporter_url, context):  # noqa
 def not_logged_into_LITE(exporter_url, driver, context):
     driver.get(exporter_url.rstrip("/") + "/auth/logout")
     if "accounts/logout" in driver.current_url:
-        driver.find_element_by_css_selector("[action='/sso/accounts/logout/'] button").click()
+        driver.find_element(by=By.CSS_SELECTOR, value="[action='/sso/accounts/logout/'] button").click()
         driver.get(exporter_url)
 
     response = create_govuk_sso_user()

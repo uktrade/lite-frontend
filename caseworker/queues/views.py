@@ -20,6 +20,7 @@ from core.decorators import expect_status
 
 from caseworker.cases.forms.assign_users import assign_users_form
 from caseworker.cases.helpers.filters import case_filters_bar
+from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
     Permission,
@@ -82,13 +83,12 @@ class Cases(LoginRequiredMixin, TemplateView):
         params["flags"] = self.request.GET.getlist("flags[]", [])
 
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
-        # if the hidden param is not true
-        # then cases with open queries are filtered out on team queue views
-        if (
-            params["selected_tab"] == CasesListPage.Tabs.MY_CASES
-            or params["selected_tab"] == CasesListPage.Tabs.OPEN_QUERIES
-        ):
-            params["hidden"] = "True"
+
+        # if the hidden param is 'true' then cases with open queries are included
+        # it should be false on team queues for the 'all cases' tab
+        # but it can be overriden by a checkbox on the frontend
+        is_hidden_by_form = self.request.GET.get("hidden", False)
+        params["hidden"] = self._set_is_hidden(params["selected_tab"], is_hidden_by_form)
 
         return params
 
@@ -98,12 +98,25 @@ class Cases(LoginRequiredMixin, TemplateView):
         return f"?{params.urlencode()}"
 
     def _get_tab_count(self, tab_name):
+        is_hidden_by_form = self.request.GET.get("hidden", None)
         params = self.get_params()
         params["selected_tab"] = tab_name
-        if tab_name != CasesListPage.Tabs.ALL_CASES:
-            params["hidden"] = "True"
+        params["hidden"] = self._set_is_hidden(tab_name, is_hidden_by_form)
 
         return head_cases_search_count(self.request, self.queue_pk, params)
+
+    def _set_is_hidden(self, tab_name, is_hidden_by_form):
+        if is_hidden_by_form:
+            return "True"
+        elif self._is_system_queue():
+            return "True"
+        elif tab_name == CasesListPage.Tabs.MY_CASES or tab_name == CasesListPage.Tabs.OPEN_QUERIES:
+            return "True"
+        else:
+            return "False"
+
+    def _is_system_queue(self):
+        return self.queue.get("is_system_queue", False)
 
     def _tab_data(self):
         selected_tab = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
@@ -127,6 +140,29 @@ class Cases(LoginRequiredMixin, TemplateView):
         unique_destinations = [dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}]
         return unique_destinations
 
+    def _limit_lines(self, text, limit):
+        lines = text.splitlines()
+        if len(lines) > limit:
+            lines = lines[:limit]
+            lines[-1] += "..."
+        return "\n".join(lines)
+
+    def _transform_activity_updates(self, case):
+        try:
+            activity_updates = case["activity_updates"]
+        except KeyError:
+            activity_updates = []
+
+        transformed_updates = []
+        for update in activity_updates:
+            if update["text"]:
+                update["text"] = self._limit_lines(update["text"], 2)
+            if update["additional_text"]:
+                update["additional_text"] = self._limit_lines(update["additional_text"], 2)
+            transformed_updates.append(update)
+
+        return transformed_updates
+
     def _transform_queue_assignments(self, case):
         assigned_queues = {}
         for _, assignment in case["assignments"].items():
@@ -140,7 +176,10 @@ class Cases(LoginRequiredMixin, TemplateView):
                         "assignees": [{k: v for k, v in assignment.items() if k != "queues"}],
                     }
 
-        all_queues = {queue["id"]: {"queue_name": queue["name"], "assignees": []} for queue in case["queues"]}
+        queues_that_hide_assignments = (LU_PRE_CIRC_REVIEW_QUEUE_ALIAS, LU_POST_CIRC_FINALISE_QUEUE_ALIAS)
+        all_queues = {}
+        if self.queue["alias"] not in queues_that_hide_assignments:
+            all_queues = {queue["id"]: {"queue_name": queue["name"], "assignees": []} for queue in case["queues"]}
 
         all_assignments = {**all_queues, **assigned_queues}
 
@@ -149,6 +188,7 @@ class Cases(LoginRequiredMixin, TemplateView):
     def transform_case(self, case):
         case["unique_destinations"] = self._transform_destinations(case)
         case["queue_assignments"] = self._transform_queue_assignments(case)
+        case["activity_updates"] = self._transform_activity_updates(case)
 
     def get_context_data(self, *args, **kwargs):
 
@@ -160,8 +200,6 @@ class Cases(LoginRequiredMixin, TemplateView):
         except IndexError:
             show_updated_cases_banner = False
 
-        is_system_queue = self.queue.get("is_system_queue", False)
-
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
@@ -170,7 +208,7 @@ class Cases(LoginRequiredMixin, TemplateView):
             "sla_circumference": SLA_CIRCUMFERENCE,
             "data": self.data,
             "queue": self.queue,  # Used for showing current queue
-            "filters": case_filters_bar(self.request, self.filters, is_system_queue),
+            "filters": case_filters_bar(self.request, self.filters, self._is_system_queue()),
             "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,

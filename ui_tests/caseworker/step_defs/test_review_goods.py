@@ -49,7 +49,7 @@ def input_clc_entry_during_review(driver, new_clc_entry):
 def clear_clc_entry(driver):
     # clear existing entries (click 'x' for each item which is a link)
     for element in driver.find_elements(by=By.CLASS_NAME, value="tokenfield-set-item"):
-        remove_btn = element.find_element_by_xpath(".//a")
+        remove_btn = element.find_element(by=By.XPATH, value=".//a")
         remove_btn.click()
 
 
@@ -77,6 +77,6 @@ def input_annual_report_summary(driver, summary):
 
 @then(parsers.parse('the product status is "{status}"'))
 def check_product_rating_and_status(driver, status):
-    product_table = driver.find_element_by_id("table-goods")
-    status_element = product_table.find_element_by_xpath("//tbody/tr/td[7]/div/span")
+    product_table = driver.find_element(by=By.ID, value="table-goods")
+    status_element = product_table.find_element(by=By.XPATH, value="//tbody/tr/td[7]/div/span")
     assert status_element.text == status
