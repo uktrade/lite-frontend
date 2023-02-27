@@ -14,6 +14,7 @@ from core.exceptions import ServiceError
 
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.queues.forms import CaseAssignmentUsersForm, CaseAssignmentQueueForm
+from caseworker.queues.views import CaseAssignmentsCaseAssigneeSteps
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
@@ -804,7 +805,7 @@ def test_case_assignments_add_user_system_queue(
     context = response.context
     assert isinstance(context["form"], CaseAssignmentUsersForm)
     # Flow initiated from a system queue, so expect the SELECT_QUEUE step next
-    assert context["wizard"]["steps"].next == "SELECT_QUEUE"
+    assert context["wizard"]["steps"].next == CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Who do you want to allocate as case adviser?" in html.find("h1").get_text()
@@ -854,13 +855,13 @@ def test_case_assignments_add_user_system_queue_submit_success(
     }
     # POST step 1
     response = post_to_step_user_assignment(
-        "SELECT_USERS",
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
         data,
     )
     assert response.status_code == 200
     context = response.context
     assert isinstance(context["form"], CaseAssignmentQueueForm)
-    assert context["wizard"]["steps"].current == "SELECT_QUEUE"
+    assert context["wizard"]["steps"].current == CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Select a team queue to add the case to" in html.find("h1").get_text()
@@ -870,7 +871,7 @@ def test_case_assignments_add_user_system_queue_submit_success(
     }
     # POST step 2
     response = post_to_step_user_assignment(
-        "SELECT_QUEUE",
+        CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE,
         data,
         follow=True,
     )
@@ -918,7 +919,7 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     }
     # POST step 1 - validation error
     response = post_to_step_user_assignment(
-        "SELECT_USERS",
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
         data,
     )
     assert response.status_code == 200
@@ -930,12 +931,12 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     }
     # POST step 1 - valid
     response = post_to_step_user_assignment(
-        "SELECT_USERS",
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
         data,
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], CaseAssignmentQueueForm)
-    assert response.context["wizard"]["steps"].current == "SELECT_QUEUE"
+    assert response.context["wizard"]["steps"].current == CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Select a team queue to add the case to" in html.find("h1").get_text()
@@ -943,7 +944,7 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     data = {}
     # POST step 2
     response = post_to_step_user_assignment(
-        "SELECT_QUEUE",
+        CaseAssignmentsCaseAssigneeSteps.SELECT_QUEUE,
         data,
     )
     assert response.status_code == 200
@@ -1010,7 +1011,7 @@ def test_case_assignments_add_user_team_queue_submit_success(
         "note": "foobar",
     }
     response = post_to_step_user_assignment(
-        "SELECT_USERS",
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
         data,
         follow=True,
     )
@@ -1057,7 +1058,7 @@ def test_case_assignments_add_user_team_queue_submit_validation_error(
         "note": "foobar",
     }
     response = post_to_step_user_assignment(
-        "SELECT_USERS",
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
         data,
     )
     assert response.status_code == 200
