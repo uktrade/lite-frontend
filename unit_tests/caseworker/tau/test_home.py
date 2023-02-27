@@ -2,6 +2,7 @@ import pytest
 import re
 
 from bs4 import BeautifulSoup
+import rules
 
 from django.urls import reverse
 
@@ -73,7 +74,13 @@ def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_p
 
 
 def test_home_content(
-    authorized_client, url, data_queue, data_standard_case, mock_control_list_entries, mock_precedents_api
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
 ):
     """GET /tau would return a case info panel"""
     # Remove assessment from a good
@@ -122,6 +129,10 @@ def test_home_content(
         "Report summary",
         "test-report-summary",
     ]
+
+    # "current_user" passed in from caseworker context processor
+    # used to test rule "can_user_change_case"
+    assert response.context["current_user"] == mock_gov_user["user"]
 
 
 def test_tau_home_noauth(client, url):
@@ -289,6 +300,7 @@ def test_move_case_forward(
     """
     gov_user["user"]["team"]["name"] = team_name
     gov_user["user"]["team"]["alias"] = team_alias
+    data_standard_case["case"]["case_officer"] = gov_user["user"]
 
     requests_mock.get(
         client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
@@ -393,3 +405,39 @@ def test_precedents_starting_point(
         "Report summary",
         "test-report-summary",
     ]
+
+
+@pytest.mark.parametrize(
+    "is_user_case_advisor",
+    [True, False],
+)
+def test_permission_move_case_forward_button(
+    requests_mock,
+    authorized_client,
+    url,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    gov_user,
+    is_user_case_advisor,
+):
+    gov_user["user"]["team"]["name"] = "TAU"
+    gov_user["user"]["team"]["alias"] = views.TAU_ALIAS
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+    if is_user_case_advisor:
+        data_standard_case["case"]["case_officer"] = gov_user["user"]
+    response = authorized_client.get(url)
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    forms = soup.find_all("form")
+    if is_user_case_advisor:
+        assert len(forms) == 1
+        assert forms[0].attrs["action"] == reverse(
+            "cases:tau:move_case_forward",
+            kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
+        )
+    else:
+        assert len(forms) == 0

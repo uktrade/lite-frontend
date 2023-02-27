@@ -1,4 +1,4 @@
-from exporter.core.wizard.steps import Step
+from core.wizard.steps import Step
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductNameForm,

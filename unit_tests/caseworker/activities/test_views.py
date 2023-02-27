@@ -63,11 +63,13 @@ def test_notes_and_timelines_context_data(
     standard_case_activity,
     data_queue,
     mock_standard_case_activity_system_user,
+    mock_gov_user,
 ):
     response = authorized_client.get(notes_and_timelines_url)
     assert response.context["case"] == Case(data_standard_case["case"])
     assert response.context["queue"] == data_queue
     assert response.context["activities"] == standard_case_activity["activity"]
+    assert response.context["current_user"] == mock_gov_user["user"]
     assert not response.context["filtering_by"]
     assert response.context["team_filters"] == [
         (

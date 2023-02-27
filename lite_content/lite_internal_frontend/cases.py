@@ -8,7 +8,7 @@ class CasesListPage:
     ACTIVE_FILTER_NO_CASES = "No cases match your filters"
     EXPORTER_AMENDMENTS_BANNER = "View cases that have changed"
     ASSIGN_USERS = "Assign users_new"
-    ALLOCATE_CASE = "Allocates case(s)"
+    ALLOCATE_CASE = "Allocate cases"
     STATUS = "Status"
     NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
     OPEN_TEAM_ECJU = "This case contains open enquiries by your team"

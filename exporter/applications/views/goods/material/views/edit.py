@@ -48,7 +48,7 @@ from exporter.applications.views.goods.common.steps import (
     ProductNameStep,
     ProductPartNumberStep,
 )
-from exporter.core.wizard.views import (
+from core.wizard.views import (
     BaseSessionWizardView,
     StepEditView,
 )

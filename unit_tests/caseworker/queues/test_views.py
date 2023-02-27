@@ -10,6 +10,7 @@ from django.urls import reverse
 import os
 
 from core import client
+from core.exceptions import ServiceError
 
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 
@@ -225,7 +226,28 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
 def mock_cases_search(requests_mock, data_cases_search, queue_pk):
     encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
     url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
-    yield requests_mock.get(url=url, json=data_cases_search)
+    return requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
+def mock_cases_search_page_2(requests_mock, data_cases_search, queue_pk):
+    encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
+    return requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
+def mock_cases_search_page_not_found(requests_mock, queue_pk):
+    encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/")
+    return requests_mock.get(url=url, status_code=404, json={"errors": {"detail": "Invalid page."}})
+
+
+@pytest.fixture
+def mock_cases_search_error(requests_mock, queue_pk):
+    encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/")
+    return requests_mock.get(url=url, status_code=500, json={})
 
 
 def test_queues_cannot_be_created_and_modified(authorized_client, reset_config_users_list):
@@ -378,6 +400,23 @@ def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_sea
         **default_params,
         "is_nca_applicable": ["true"],
     }
+
+
+def test_cases_home_page_case_search_API_page_not_found(authorized_client, mock_cases_search_page_not_found):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    assert response.status_code == 404
+
+
+def test_cases_home_page_case_search_API_error(authorized_client, mock_cases_search_error):
+    url = reverse("queues:cases")
+    authorized_client.raise_request_exception = True
+    with pytest.raises(ServiceError) as exc_info:
+        response = authorized_client.get(url)
+    exception = exc_info.value
+    assert exception.status_code == 502
+    assert exception.log_message == "Error retrieving cases data from lite-api"
+    assert exception.user_message == "A problem occurred. Please try again later"
 
 
 def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_search):
@@ -600,6 +639,22 @@ def test_tabs_on_team_queue_with_hidden_param(
         (reverse("queues:cases")),
     ),
 )
+def test_case_search_tabs_context(url, authorized_client, mock_cases_search_page_2):
+    response = authorized_client.get(url + "?page=2")
+    assert response.context["tab_data"] == {
+        "all_cases": {"count": "350", "is_selected": True, "url": "?selected_tab=all_cases"},
+        "my_cases": {"count": "350", "is_selected": False, "url": "?selected_tab=my_cases"},
+        "open_queries": {"count": "350", "is_selected": False, "url": "?selected_tab=open_queries"},
+    }
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
 def test_queue_assignments(url, authorized_client):
     response = authorized_client.get(url)
     expected_queue_assignments = {
@@ -631,12 +686,18 @@ def test_queue_assignments(url, authorized_client):
 
     html = BeautifulSoup(response.content, "html.parser")
     li_elems = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
-    assert "John Smith" in li_elems[0]
-    assert "Initial Queue" in li_elems[0]
-    assert "Joe Smith" in li_elems[1]
+    # first case
+    assert "Not allocated" in li_elems[0]
+    assert "Licensing Unit case officer" in li_elems[0]
+    assert "John Smith" in li_elems[1]
     assert "Initial Queue" in li_elems[1]
-    assert "Not allocated" in li_elems[2]
-    assert "Another Queue" in li_elems[2]
+    assert "Joe Smith" in li_elems[2]
+    assert "Initial Queue" in li_elems[2]
+    assert "Not allocated" in li_elems[3]
+    assert "Another Queue" in li_elems[3]
+    # second case
+    assert "Not allocated" in li_elems[4]
+    assert "Licensing Unit case officer" in li_elems[4]
 
 
 @pytest.mark.parametrize(
@@ -654,11 +715,17 @@ def test_unallocated_assignments_hidden(
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
     assignments = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
-    assert len(assignments) == 2
-    assert "John Smith" in assignments[0]
-    assert "Initial Queue" in assignments[0]
-    assert "Joe Smith" in assignments[1]
+    assert len(assignments) == 4
+    # first case
+    assert "Not allocated" in assignments[0]
+    assert "Licensing Unit case officer" in assignments[0]
+    assert "John Smith" in assignments[1]
     assert "Initial Queue" in assignments[1]
+    assert "Joe Smith" in assignments[2]
+    assert "Initial Queue" in assignments[2]
+    # second case
+    assert "Not allocated" in assignments[3]
+    assert "Licensing Unit case officer" in assignments[3]
 
 
 @pytest.mark.parametrize(

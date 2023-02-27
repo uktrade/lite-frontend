@@ -2339,3 +2339,14 @@ def data_ecju_queries():
             },
         ]
     }
+
+
+@pytest.fixture
+def mock_control_list_entries_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/control-list-entries/")
+    return requests_mock.get(
+        url=url,
+        json={
+            "control_list_entries": [{"rating": "ML1a", "text": "some text"}, {"rating": "ML22b", "text": "some text"}]
+        },
+    )
