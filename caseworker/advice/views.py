@@ -101,7 +101,14 @@ class CaseContextMixin:
             "case": self.case,
             "queue_pk": self.kwargs["queue_pk"],
             "caseworker": self.caseworker,
+            "is_lu_countersigning": self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
+            and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING,
+            "ordered_countersign_advice": self.ordered_countersign_advice(),
         }
+
+    def ordered_countersign_advice(self):
+        countersign_advice = [cs for cs in self.case.get("countersign_advice", []) if cs.get("advice", {}).get("good")]
+        return sorted(countersign_advice, key=lambda a: a["order"], reverse=True)
 
 
 class BEISNuclearMixin:
@@ -351,7 +358,6 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
-            "is_lu": self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM,
             **services.get_advice_tab_context(
                 self.case,
                 self.caseworker,

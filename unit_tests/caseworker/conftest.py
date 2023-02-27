@@ -466,7 +466,18 @@ def FCDO_team_user():
 
 
 @pytest.fixture
-def LU_team_user():
+def lu_team():
+    return {
+        "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+        "name": "LU Team",
+        "alias": LICENSING_UNIT_TEAM,
+        "part_of_ecju": False,
+        "is_ogd": True,
+    }
+
+
+@pytest.fixture
+def LU_team_user(lu_team):
     return {
         "email": "lu.team@example.com",
         "first_name": "LU Team",
@@ -474,13 +485,7 @@ def LU_team_user():
         "last_name": "User",
         "role_name": "Super User",
         "status": "Active",
-        "team": {
-            "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
-            "name": "LU Team",
-            "alias": "LICENSING_UNIT",
-            "part_of_ecju": False,
-            "is_ogd": True,
-        },
+        "team": lu_team,
     }
 
 
@@ -608,6 +613,82 @@ def advice_for_countersign(current_user):
                 },
             },
         },
+    ]
+
+
+@pytest.fixture
+def final_advice(current_user, lu_team):
+    return {
+        "consignee": None,
+        "country": None,
+        "created_at": "2021-07-14T15:20:35.713348+01:00",
+        "countersigned_by": None,
+        "denial_reasons": [],
+        "end_user": None,
+        "footnote": None,
+        "good": "de385241-ffe3-4e81-96a6-64c0934bc4e2",
+        "goods_type": None,
+        "id": "825bddc9-4e6c-4a26-8231-9c0500b037a6",
+        "level": "final",
+        "note": "",
+        "proviso": None,
+        "text": "",
+        "third_party": None,
+        "type": {"key": "approve", "value": "Approve"},
+        "ultimate_end_user": None,
+        "user": {
+            "email": "yscott@bob-scott.com",
+            "first_name": "Scott",
+            "id": "5d36079b-e921-4598-b0f9-d7a62da6e9ef",
+            "last_name": "Bob",
+            "role_name": "Adviser",
+            "status": "Active",
+            "team": lu_team,
+        },
+    }
+
+
+@pytest.fixture
+def first_countersignature():
+    countersignature = {
+        "reasons": "I concur",
+        "countersigned_user": {
+            "first_name": "Testy",
+            "last_name": "McTest",
+        },
+        "outcome_accepted": True,
+        "order": 1,
+    }
+    good_id = "3268e0b3-5fa2-46c3-9b20-3620b74f1c44"
+    end_user_id = "bd394902-a86e-45f1-8dd2-6b9a11c218a3"
+    ult_end_user_id = "79a0baff-6a71-4d42-8c9f-0f3bec60e199"
+
+    return [
+        {**countersignature, **{"advice": {"good": good_id, "end_user": None, "ultimate_end_user": None}}},
+        {**countersignature, **{"advice": {"good": None, "end_user": end_user_id, "ultimate_end_user": None}}},
+        {**countersignature, **{"advice": {"good": None, "end_user": None, "ultimate_end_user": ult_end_user_id}}},
+    ]
+
+
+@pytest.fixture
+def countersignature_two():
+    countersignature = {
+        "reasons": "LGTM",
+        "countersigned_user": {
+            "first_name": "Super",
+            "last_name": "Visor",
+        },
+        "outcome_accepted": True,
+        "order": 2,
+    }
+    good_id = "3268e0b3-5fa2-46c3-9b20-3620b74f1c44"
+    end_user_id = "bd394902-a86e-45f1-8dd2-6b9a11c218a3"
+    ult_end_user_id = "79a0baff-6a71-4d42-8c9f-0f3bec60e199"
+
+    return [
+        {**countersignature, **{"advice": {"good": good_id, "end_user": None, "ultimate_end_user": None}}},
+        {**countersignature, **{"advice": {"good": None, "end_user": end_user_id, "ultimate_end_user": None}}},
+        {**countersignature, **{"advice": {"good": None, "end_user": None, "ultimate_end_user": ult_end_user_id}}},
     ]
 
 
