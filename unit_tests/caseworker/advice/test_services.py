@@ -68,6 +68,21 @@ def advice_for_countersign(advice):
     return for_countersign
 
 
+@pytest.fixture
+def countersign_advice(data_standard_case, advice_for_countersign, current_user):
+    return [
+        {
+            "order": 1,
+            "outcome_accepted": True,
+            "reasons": "reasons",
+            "countersigned_user": current_user,
+            "case": data_standard_case["case"]["id"],
+            "advice": item["id"],
+        }
+        for item in advice_for_countersign
+    ]
+
+
 def test_get_advice_for_countersign_without_post_circ_countersigning(
     current_user, advice_for_countersign, with_lu_countersigning_disabled
 ):
@@ -130,11 +145,13 @@ advice_tab_test_data = [
 # fmt: on
 
 
-def _test_get_advice_tab_context(
+@pytest.mark.parametrize("test_data", advice_tab_test_data)
+def test_get_advice_tab_context(
     advice,
     data_standard_case_with_potential_trigger_list_product,
     current_user,
     test_data,
+    with_lu_countersigning_disabled,
 ):
     has_advice, advice_level, countersigned, team_alias, queue_alias, url, buttons = test_data
     queue_detail = data_standard_case_with_potential_trigger_list_product["case"]["queue_details"][0]
@@ -155,25 +172,14 @@ def _test_get_advice_tab_context(
         assert buttons.get(button_name, False) == enabled
 
 
-@pytest.mark.parametrize("test_data", advice_tab_test_data)
-def test_get_advice_tab_context(
-    advice,
-    data_standard_case_with_potential_trigger_list_product,
-    current_user,
-    test_data,
-    with_lu_countersigning_disabled,
-):
-    _test_get_advice_tab_context(
-        advice, data_standard_case_with_potential_trigger_list_product, current_user, test_data
-    )
-
-
 # fmt: off
 countersign_advice_tab_test_data = [
     # Fields: Has Advice, Advice Level, Countersigned, User Team, Current Queue, Expected Tab URL, Expected Buttons Enabled (dict)
     # An LU caseworker trying to countersign advice on a case for the first time
     (True, "final", False, LICENSING_UNIT_TEAM, LU_LICENSING_MANAGER_QUEUE, "cases:countersign_advice_view", {"review_and_countersign": True},),
     (True, "final", False, LICENSING_UNIT_TEAM, LU_SR_LICENSING_MANAGER_QUEUE, "cases:countersign_advice_view", {"review_and_countersign": True},),
+    (True, "final", True, LICENSING_UNIT_TEAM, LU_LICENSING_MANAGER_QUEUE, "cases:countersign_view", {"move_case_forward": True, "edit_recommendation": True},),
+    (True, "final", True, LICENSING_UNIT_TEAM, LU_SR_LICENSING_MANAGER_QUEUE, "cases:countersign_view", {"move_case_forward": True, "edit_recommendation": True},),
 ]
 # fmt: on
 
@@ -181,11 +187,24 @@ countersign_advice_tab_test_data = [
 @pytest.mark.parametrize("test_data", countersign_advice_tab_test_data)
 def test_get_countersign_advice_tab_context(
     advice,
-    data_standard_case_with_potential_trigger_list_product,
+    data_standard_case,
     current_user,
+    countersign_advice,
     test_data,
     with_lu_countersigning_enabled,
 ):
-    _test_get_advice_tab_context(
-        advice, data_standard_case_with_potential_trigger_list_product, current_user, test_data
-    )
+    has_advice, advice_level, countersigned, team_alias, queue_alias, url, buttons = test_data
+    queue_detail = data_standard_case["case"]["queue_details"][0]
+    if has_advice:
+        advice[0]["level"] = advice_level
+        if countersigned:
+            data_standard_case["case"]["countersign_advice"] = countersign_advice
+        data_standard_case["case"]["advice"] = advice
+    current_user["team"]["alias"] = team_alias
+    queue_detail["alias"] = queue_alias
+    context = get_advice_tab_context(Case(data_standard_case["case"]), current_user, queue_detail["id"])
+
+    assert context["url"] == url
+
+    for button_name, enabled in context["buttons"].items():
+        assert buttons.get(button_name, False) == enabled
