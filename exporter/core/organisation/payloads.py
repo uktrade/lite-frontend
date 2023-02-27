@@ -1,5 +1,5 @@
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
-from exporter.core.wizard.payloads import MergingPayloadBuilder
+from core.wizard.payloads import MergingPayloadBuilder
 
 from .constants import RegistrationSteps
 

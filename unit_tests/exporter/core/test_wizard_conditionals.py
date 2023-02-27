@@ -1,6 +1,6 @@
 import pytest
 
-from exporter.core.wizard.conditionals import C, Flag
+from core.wizard.conditionals import C, Flag
 
 
 class FakeWizard:

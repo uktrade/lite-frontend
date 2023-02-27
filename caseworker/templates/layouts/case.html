@@ -115,12 +115,12 @@
 				</div>
 			{% endif %}
 		</div>
-		{% test_rule 'can_user_change_case' user case as can_user_change_case %}
+		{% test_rule 'can_user_change_case' current_user case as can_user_change_case %}
 		{% if not can_user_change_case %}
-			<div class="app-case-warning-banner">
+			<div id="allocation-warning" class="app-case-warning-banner">
 				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
 				<span class="app-case-warning-banner__text">
-					You need to allocate yourself to this case to work on it <a class="app-case-warning-banner__action" href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate Case </a>
+					You need to allocate yourself or someone else to this case to work on it <a class="app-case-warning-banner__action" href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}">Allocate case</a>
 				</span>
 			</div>
 		{% endif %}
@@ -141,7 +141,10 @@
 							{% endif %}
 							{% govuk_link_button id='rerun-routing-rules' text='cases.ApplicationPage.Actions.RERUN_ROUTING_RULES' url='cases:rerun_routing_rules' url_param=button_params query_params='?return_to='|add:CURRENT_PATH classes='govuk-button--secondary' %}
 							{% if can_set_done and case.case_type.reference.key != "comp_c" %}
-								{% govuk_link_button id='done' text='cases.ApplicationPage.DONE_WITH_CASE' url='cases:done' url_param=button_params classes='govuk-button--secondary' hidden=hide_im_done %}
+							{% test_rule 'can_user_move_case_forward' current_user case as can_user_move_case_forward %}
+                                {% if can_user_move_case_forward %}
+									{% govuk_link_button id='done' text='cases.ApplicationPage.DONE_WITH_CASE' url='cases:done' url_param=button_params classes='govuk-button--secondary' hidden=hide_im_done %}
+								{% endif %}
 							{% endif %}
 						</div>
 					</div>

@@ -9,7 +9,7 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.constants import SecurityClassifiedApprovalsType
 
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.views import BaseSessionWizardView
 from exporter.applications.services import put_application
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 
