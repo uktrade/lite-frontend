@@ -31,7 +31,11 @@
 
     {% if not consolidated_advice %}
         {% if countersign and buttons.review_and_countersign %}
-            <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
+            {% if is_lu %}
+                <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_decision_review' queue_pk case.id %}">Review and countersign</a>
+            {% else %}
+                <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
+            {% endif %}
         {% elif consolidate and buttons.review_and_combine %}
             <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Review and combine</a>
         {% else %}

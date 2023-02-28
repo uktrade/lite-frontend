@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
@@ -350,6 +351,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
+            "is_lu": self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM,
             **services.get_advice_tab_context(
                 self.case,
                 self.caseworker,
@@ -404,6 +406,40 @@ class ViewCountersignedAdvice(AdviceDetailView):
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
         return context
+
+
+class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    template_name = "advice/review_countersign.html"
+    form_class = forms.CountersignDecisionAdviceForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            raise Http404("LU Countersigning feature not enabled")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        advice = services.get_advice_to_countersign(self.case.advice, self.caseworker)
+        context["formset"] = forms.get_formset(self.form_class, len(advice))
+        context["advice_to_countersign"] = advice.values()
+        context["denial_reasons_display"] = self.denial_reasons_display
+        context["security_approvals_classified_display"] = self.security_approvals_classified_display
+        return context
+
+    def post(self, request, *args, **kwargs):
+        queue_id = str(kwargs["queue_pk"])
+        context = self.get_context_data()
+        advice = context["advice_to_countersign"]
+        formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
+        if formset.is_valid():
+            services.countersign_decision_advice(request, self.case, queue_id, self.caseworker, formset.cleaned_data)
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response({**context, "formset": formset})
+
+    def get_success_url(self):
+        return reverse("cases:countersign_view", kwargs=self.kwargs)
 
 
 class CountersignEditAdviceView(ReviewCountersignView):
