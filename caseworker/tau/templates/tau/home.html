@@ -52,6 +52,10 @@
                         <div class="govuk-grid-column-one-third assessment-form__second-column">
                             <h1 class="govuk-heading-m assessment-form__headline"></h1>
                             {% crispy form %}
+                            {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}
+                            {% if can_user_assess_products %}
+                                <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit" />
+                            {% endif %}
                         </div>
                     </form>
                 {% endif %}
