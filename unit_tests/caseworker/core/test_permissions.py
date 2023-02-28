@@ -24,6 +24,17 @@ mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
         (
             {
                 "fake queue": [
+                    {"id": "12345zyz"},
+                ],
+                "fake queue 2": [
+                    {"id": mock_gov_user_id},
+                ],
+            },
+            True,
+        ),
+        (
+            {
+                "fake queue": [
                     {"id": "00c341d1-d83e-4a12-b103-c3fb575a5962"},  # /PS-IGNORE
                 ]
             },
