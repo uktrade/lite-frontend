@@ -5,7 +5,6 @@ from django.template.loader import render_to_string
 
 
 def test_pending_users_in_team_members(john_smith, gov_uk_user_id):
-    john_smith["pending"] = False
     context = {}
     context["users"] = [
         {
