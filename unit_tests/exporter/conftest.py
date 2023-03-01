@@ -5,14 +5,9 @@ import requests
 
 from dotenv import load_dotenv
 
-from urllib.parse import urljoin, urlparse
-
 from django.conf import settings
 from django.core.files.storage import Storage
 from django.test import Client
-from django.urls import resolve
-
-from formtools.wizard.views import normalize_name
 
 from conf import exporter
 
@@ -297,62 +292,7 @@ def no_op_storage(mocker):
         def delete(self, name):
             pass
 
-    mocker.patch("exporter.core.wizard.views.BaseSessionWizardView.file_storage", new=NoOpStorage())
-
-
-class WizardStepPoster:
-    def __init__(self, authorized_client, url):
-        self.authorized_client = authorized_client
-        self.url = url
-
-    def post(self, post_data):
-        return self.authorized_client.post(
-            self.url,
-            data=post_data,
-        )
-
-
-class WizardStepGoto(WizardStepPoster):
-    def __call__(self, step_name):
-        return self.post(
-            {
-                "wizard_goto_step": step_name,
-            }
-        )
-
-
-@pytest.fixture
-def goto_step_factory(authorized_client):
-    def goto_step(url):
-        step_gotoer = WizardStepGoto(authorized_client, url)
-        return step_gotoer
-
-    return goto_step
-
-
-class WizardStepPost(WizardStepPoster):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        url = urljoin(self.url, urlparse(self.url).path)
-        match = resolve(url)
-        self.view_name = normalize_name(match.func.__name__)
-
-    def __call__(self, step_name, data):
-        return self.post(
-            {
-                f"{self.view_name}-current_step": step_name,
-                **{f"{step_name}-{key}": value for key, value in data.items()},
-            }
-        )
-
-
-@pytest.fixture
-def post_to_step_factory(authorized_client):
-    def post_to_step(url):
-        step_poster = WizardStepPost(authorized_client, url)
-        return step_poster
-
-    return post_to_step
+    mocker.patch("core.wizard.views.BaseSessionWizardView.file_storage", new=NoOpStorage())
 
 
 @pytest.fixture

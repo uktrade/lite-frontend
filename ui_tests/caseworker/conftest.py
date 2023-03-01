@@ -197,7 +197,7 @@ def prepare_case(api_test_client, nlr):  # noqa
 def submit_form(driver):  # noqa
     old_page = driver.find_element(by=By.TAG_NAME, value="html")
     Shared(driver).click_submit()
-    WebDriverWait(driver, 20).until(expected_conditions.staleness_of(old_page))
+    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
 
 
 @when(parsers.parse('I click "{button_text}"'))
@@ -797,16 +797,17 @@ def note_is_displayed(driver, case_note):  # noqa
 
 
 @when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case'))
-def submit_case_as_team(driver, team, queue, context, internal_url):  # noqa
-    submit_case_as_team_with_decision(driver, team, queue, None, context, internal_url)
+def submit_case_as_team(driver, team, queue, context, internal_url, internal_info):  # noqa
+    submit_case_as_team_with_decision(driver, team, queue, None, context, internal_url, internal_info)
 
 
 @when(parsers.parse('I switch to "{team}" with queue "{queue}" and I submit the case with decision "{decision}"'))
-def submit_case_as_team_with_decision(driver, team, queue, decision, context, internal_url):  # noqa
+def submit_case_as_team_with_decision(driver, team, queue, decision, context, internal_url, internal_info):  # noqa
     get_profile_page(driver)
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
     i_click_application_previously_created(driver, context)
+    i_assign_myself_to_case(driver, internal_info)
     im_done_button(driver)
 
     if decision:
@@ -875,7 +876,7 @@ def add_cle_value(driver, control_code):  # noqa
 
 
 @when("I assign myself to the case")
-def assign_myself_to_case(driver, internal_info):  # noqa
+def i_assign_myself_to_case(driver, internal_info):  # noqa
     # go to Assign case officer page
     CasePage(driver).click_assign_case_officer()
     # search for myself

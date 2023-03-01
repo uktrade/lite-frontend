@@ -1,13 +1,12 @@
 import pytest
-from django.urls import reverse
+import re
+from core import client
 
-import rules
 from bs4 import BeautifulSoup
-from caseworker.core import rules as caseworker_rules
 from django.urls import reverse
 
 
-mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
+mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
 
 
 @pytest.fixture(autouse=True)
@@ -28,102 +27,6 @@ def setup(
 
 
 @pytest.mark.parametrize(
-    "data, expected_result",
-    (
-        ({"case_officer": {"id": "00c341d1-d83e-4a12-b103-c3fb575a5962"}}, False),  # /PS-IGNORE
-        ({"case_officer": {"id": mock_gov_user_id}}, True),
-        ({"case_officer": None}, False),
-    ),
-)
-def test_is_user_case_officer(data, mock_gov_user, expected_result):
-    assert caseworker_rules.is_user_case_adviser(mock_gov_user["user"], data) == expected_result
-
-
-def test_is_user_case_officer_none():
-    assert caseworker_rules.is_user_case_adviser(None, {"case_officer": None}) == False
-
-
-@pytest.mark.parametrize(
-    "data, expected_result",
-    (
-        (
-            {
-                "fake queue": [
-                    {"id": mock_gov_user_id},
-                ]
-            },
-            True,
-        ),
-        (
-            {
-                "fake queue": [
-                    {"id": "00c341d1-d83e-4a12-b103-c3fb575a5962"},  # /PS-IGNORE
-                ]
-            },
-            False,
-        ),
-        ({"fake queue": []}, False),
-    ),
-)
-def test_is_user_assigned(data, mock_gov_user, expected_result):
-    assigned_users = {"assigned_users": data}
-    assert caseworker_rules.is_user_assigned(mock_gov_user["user"], assigned_users) == expected_result
-
-
-@pytest.mark.parametrize(
-    "data, expected_result",
-    (
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": mock_gov_user_id},
-                    ]
-                },
-                "case_officer": {"id": mock_gov_user_id},
-            },
-            True,
-        ),
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": mock_gov_user_id},
-                    ]
-                },
-                "case_officer": {"id": "fake_id"},
-            },
-            True,
-        ),
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": "fake_id"},
-                    ]
-                },
-                "case_officer": {"id": mock_gov_user_id},
-            },
-            True,
-        ),
-        (
-            {
-                "assigned_users": {
-                    "fake queue": [
-                        {"id": "fake_id"},
-                    ]
-                },
-                "case_officer": {"id": "fake_id"},
-            },
-            False,
-        ),
-    ),
-)
-def test_can_user_change_case(data, mock_gov_user, expected_result):
-    assert rules.test_rule("can_user_change_case", mock_gov_user["user"], data) == expected_result
-
-
-@pytest.mark.parametrize(
     "id_element_name, is_user_case_advisor, id_element_name_visible",
     (
         ["link-change-status", True, True],
@@ -135,11 +38,17 @@ def test_can_user_change_case(data, mock_gov_user, expected_result):
     ),
 )
 def test_permission_summary_change_links(
-    authorized_client, data_queue, data_standard_case, id_element_name, is_user_case_advisor, id_element_name_visible
+    authorized_client,
+    data_queue,
+    mock_gov_user,
+    data_standard_case,
+    id_element_name,
+    is_user_case_advisor,
+    id_element_name_visible,
 ):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
-    # We are changing rule here since mocking doesn't seem straight forward
-    rules.set_rule("can_user_change_case", lambda: is_user_case_advisor)
+    if is_user_case_advisor:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     id_html_find_result = soup.find(id=id_element_name)
@@ -147,3 +56,92 @@ def test_permission_summary_change_links(
         assert id_html_find_result
     else:
         assert id_html_find_result is None
+
+
+@pytest.mark.parametrize(
+    "id_element_name, is_user_case_advisor, id_element_name_visible",
+    (
+        ["button-done", True, True],
+        ["button-done", False, False],
+    ),
+)
+def test_permission_move_case_forward_done_button(
+    mock_status_properties,
+    mock_queue,
+    data_queue,
+    mock_gov_user,
+    authorized_client,
+    data_standard_case,
+    id_element_name,
+    is_user_case_advisor,
+    id_element_name_visible,
+):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    if is_user_case_advisor:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
+    mock_status_properties["is_terminal"] = True
+    data_queue["is_system_queue"] = False
+    mock_queue.return_value = data_queue
+    response = authorized_client.get(url)
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    id_html_find_result = soup.find(id=id_element_name)
+    if id_element_name_visible:
+        assert id_html_find_result
+    else:
+        assert id_html_find_result is None
+
+
+@pytest.fixture
+def mock_regime_entries_get(requests_mock, wassenaar_regime_entry):
+    regime_entries_url = client._build_absolute_uri("/static/regimes/entries/")
+    requests_mock.get(
+        re.compile(f"{regime_entries_url}ag|cwc|mtcr|nsg|wassenaar"),
+        json=[wassenaar_regime_entry],
+    )
+
+
+@pytest.mark.parametrize(
+    "view_name, is_user_case_officer, is_user_assigned",
+    (
+        ["cases:case", False, False],
+        ["cases:activities:notes-and-timeline", False, False],
+        ["cases:advice_view", False, False],
+        ["cases:tau:home", False, False],
+        ["cases:case", True, False],
+        ["cases:activities:notes-and-timeline", True, False],
+        ["cases:advice_view", True, False],
+        ["cases:tau:home", True, False],
+        ["cases:case", False, True],
+        ["cases:activities:notes-and-timeline", False, True],
+        ["cases:advice_view", False, True],
+        ["cases:tau:home", False, True],
+    ),
+)
+def test_warning_renders_when_expected(
+    authorized_client,
+    data_queue,
+    mock_gov_user,
+    mock_denial_reasons,
+    mock_control_list_entries_get,
+    mock_regime_entries_get,
+    mock_precedents_api,
+    data_standard_case,
+    view_name,
+    is_user_case_officer,
+    is_user_assigned,
+):
+    if is_user_case_officer:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
+    elif is_user_assigned:
+        data_standard_case["case"]["assigned_users"] = {data_queue["name"]: [mock_gov_user["user"]]}
+    else:
+        data_standard_case["case"]["case_officer"] = None
+        data_standard_case["case"]["assigned_users"] = {}
+    url = reverse(view_name, kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    if is_user_case_officer or is_user_assigned:
+        assert not soup.find(id="allocation-warning")
+    else:
+        assert soup.find(id="allocation-warning")

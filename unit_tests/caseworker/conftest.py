@@ -5,6 +5,7 @@ import pytest
 from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
+import rules
 
 from core import client
 from core.helpers import convert_value_to_query_param
@@ -1525,3 +1526,38 @@ def mock_gov_users(requests_mock):
         },
     )
     return data
+
+
+@pytest.fixture
+def data_assignment(data_standard_case, data_queue):
+    assignment_id = "4ccc09d8-04e1-426d-a69d-eda2d3854788"
+    user_id = "9ac96323-d519-4781-8424-84b9c7cc3186"
+    return {
+        "case": data_standard_case["case"]["id"],
+        "id": assignment_id,
+        "queue": data_queue["id"],
+        "user": {
+            "email": "example@example.net",
+            "first_name": "some",
+            "id": user_id,
+            "last_name": "user",
+            "team": "The A Team",
+        },
+    }
+
+
+@pytest.fixture
+def mock_standard_case_with_assignments(requests_mock, data_standard_case, data_assignment, data_queue):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    data_standard_case["case"]["assigned_users"] = {
+        data_queue["name"]: [
+            {
+                "id": data_assignment["user"]["id"],
+                "first_name": data_assignment["user"]["first_name"],
+                "last_name": data_assignment["user"]["last_name"],
+                "email": data_assignment["user"]["email"],
+                "assignment_id": data_assignment["id"],
+            }
+        ]
+    }
+    return requests_mock.get(url=url, json=data_standard_case)

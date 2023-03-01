@@ -24,6 +24,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I go to my case list
     Then I see previously created application
     When I click on the application previously created
+    And I assign myself to the case
     Then I click on Product Assessment
     And I select good
     And I select the CLE "ML1a"
@@ -63,6 +64,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I switch to queue "Licensing Reception SIEL applications"
     Then I see previously created application
     When I click on the application previously created
+    And I assign myself to the case
     Then I should see the button "I'm done"
     When I click I'm done
     And I click submit

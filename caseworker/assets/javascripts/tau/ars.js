@@ -54,7 +54,6 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
     showNoOptionsFound: true,
     autoselect: true,
     showAllValues: true,
-    required: "subject" == summaryFieldType,
     confirmOnBlur: true,
   });
 };

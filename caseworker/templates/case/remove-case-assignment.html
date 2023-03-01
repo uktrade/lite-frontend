@@ -9,7 +9,7 @@
                 <form method="post">{% csrf_token %}
                     {{ form.as_p }}
                     <input type="submit" class="govuk-button" value="Confirm and remove">
-                    <a href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}" class="govuk-button govuk-button--secondary govuk-button--secondary-white">
+                    <a href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}" class="govuk-button govuk-button--secondary govuk-button--secondary-grey">
                         Cancel
                     </a>
                 </form>

@@ -48,7 +48,7 @@ from exporter.applications.views.goods.common.payloads import (
     get_quantity_and_value_payload,
     ProductEditPVGradingPayloadBuilder,
 )
-from exporter.core.wizard.views import (
+from core.wizard.views import (
     BaseSessionWizardView,
     StepEditView,
 )

@@ -1,6 +1,6 @@
 {% extends 'layouts/case.html' %}
 {% load crispy_forms_tags advice_tags %}
-
+{% load rules %}
 {% block header_tabs %}
   <div id="tab-bar" class="app-case-tab-bar">
     <div class="govuk-width-container lite-tabs__container">
@@ -52,7 +52,10 @@
             </div>
             <div class="govuk-grid-column-one-quarter">
               {% if my_advice and advice_completed and buttons.move_case_forward %}
-                {% crispy form %}
+                {% test_rule 'can_user_move_case_forward' current_user case as can_user_move_case_forward %}
+                    {% if can_user_move_case_forward %}
+                        {% crispy form %}
+                    {% endif %}
               {% endif %}
             </div>
         </div>

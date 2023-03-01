@@ -1,4 +1,4 @@
-from exporter.core.wizard.payloads import MergingPayloadBuilder
+from core.wizard.payloads import MergingPayloadBuilder
 from exporter.applications.views.goods.common.payloads import get_unit_quantity_and_value_payload
 from .constants import AddGoodMaterialSteps, AddGoodMaterialToApplicationSteps
 from exporter.applications.views.goods.common.payloads import (

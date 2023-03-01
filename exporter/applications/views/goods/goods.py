@@ -73,8 +73,8 @@ from exporter.core.helpers import (
     str_to_bool,
 )
 from exporter.core.validators import validate_expiry_date
-from exporter.core.wizard.conditionals import C
-from exporter.core.wizard.views import BaseSessionWizardView
+from core.wizard.conditionals import C
+from core.wizard.views import BaseSessionWizardView
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,

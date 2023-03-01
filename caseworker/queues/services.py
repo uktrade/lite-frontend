@@ -59,8 +59,8 @@ def get_queue(request, pk):
 
 
 def get_cases_search_data(request, queue_pk, params):
-    data = client.get(request, "/cases/" + f"?queue_id={queue_pk}&" + parse.urlencode(params, doseq=True))
-    return data.json()
+    response = client.get(request, "/cases/" + f"?queue_id={queue_pk}&" + parse.urlencode(params, doseq=True))
+    return response
 
 
 def head_cases_search_count(request, queue_pk, params):
@@ -79,12 +79,11 @@ def get_queue_case_assignments(request, pk):
     return data.json(), data.status_code
 
 
-def put_queue_case_assignments(request, pk, _):
-    case_ids = request.GET.getlist("cases")
-    json = {"case_assignments": [], "remove_existing_assignments": True, "note": request.POST.get("note")}
+def put_queue_case_assignments(request, queue_id, case_ids, user_ids, note):
+    data = {"case_assignments": [], "remove_existing_assignments": False, "note": note}
     for case_id in case_ids:
-        json["case_assignments"].append({"case_id": case_id, "users": request.POST.getlist("users")})
-    response = client.put(request, f"/queues/{pk}/case-assignments/", json)
+        data["case_assignments"].append({"case_id": case_id, "users": user_ids})
+    response = client.put(request, f"/queues/{queue_id}/case-assignments/", data)
     return response.json(), response.status_code
 
 

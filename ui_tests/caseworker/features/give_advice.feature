@@ -56,6 +56,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to my case list
     Then I see previously created application
     When I click on the application previously created
+    And I assign myself to the case
     Then I click on Product Assessment
     And I select good
     And I select the CLE "ML1a"
@@ -77,6 +78,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to my case list
     Then I should see my case in the cases list
     When I click the application previously created
+    And I assign myself to the case
     And I click the recommendations and decision tab
     And I click make recommendation
     And I click approve all
@@ -105,6 +107,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to my case list
     Then I should see my case in the cases list
     When I click the application previously created
+    And I assign myself to the case
     And I click the recommendations and decision tab
     And I expand the details for "MOD-ECJU has approved with licence conditions"
     Then I see "reason for approving" as the reasons for approving
@@ -336,6 +339,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
     And I go to my case list
     And I click the application previously created
+    And I assign myself to the case
     Then I see the application destinations
     When I click edit flags on the last destination
     And I set a "LU Countersign Required" flag
@@ -344,11 +348,13 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I enter "Decision has been made with reasons" as the countersign note
     And I click submit
     And I go to application previously created
+    And I assign myself to the case
     Then I see the case status is now "Under final review"
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Senior licensing manager countersigning"
     And I go to my case list
     And I click the application previously created
+    And I assign myself to the case
     Then I click on Notes and timeline
     Then I should see "Decision has been made with reasons" appear in the timeline
     When I click on "Details" tab

@@ -2,6 +2,7 @@ import pytest
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
+import rules
 
 from caseworker.advice.services import FCDO_TEAM
 from core import client
@@ -61,6 +62,13 @@ def refusal_advice(request, advice):
     for item in advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
         item["denial_reasons"] = ["5a", "5b"]
+    return advice
+
+
+@pytest.fixture
+def advice_with_consignee(request, advice):
+    for item in advice:
+        item["consignee"] = "cd2263b4-a427-4f14-8552-505e1d192bb8"
     return advice
 
 
@@ -166,6 +174,12 @@ def test_move_case_forward(
     advice_with_and_without_consignee[0]["user"]["team"]["alias"] = FCDO_TEAM
     data_standard_case["case"]["advice"] = advice_with_and_without_consignee
     case_id = data_standard_case["case"]["id"]
+
+    advice_completed = advice_with_and_without_consignee.pop()["consignee"] is not None
+
+    if advice_completed:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
+
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     requests_mock.get(
         client._build_absolute_uri(f"/gov_users/{case_id}"),
@@ -175,7 +189,7 @@ def test_move_case_forward(
 
     response = authorized_client.get(url)
     assert response.status_code == 200
-    advice_completed = advice_with_and_without_consignee.pop()["consignee"] is not None
+
     assert response.context["advice_completed"] == advice_completed
     # Check if the MoveCaseForwardForm is rendered only when advice_completed
     soup = BeautifulSoup(response.content, "html.parser")
@@ -208,3 +222,43 @@ def test_view_security_approvals(
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert response.context["security_approvals_classified_display"] == display_expected
+
+
+@pytest.mark.parametrize(
+    "is_user_case_advisor",
+    [True, False],
+)
+def test_move_case_forward_permission(
+    mock_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    queue_pk,
+    advice_with_consignee,
+    is_user_case_advisor,
+):
+    url = reverse(
+        "cases:view_my_advice",
+        kwargs={"queue_pk": "f458094c-1fed-4222-ac70-ff5fa20ff649", "pk": data_standard_case["case"]["id"]},
+    )
+    mock_gov_user["user"]["team"]["alias"] = FCDO_TEAM
+    advice_with_consignee[0]["user"]["team"]["alias"] = FCDO_TEAM
+    data_standard_case["case"]["advice"] = advice_with_consignee
+    case_id = data_standard_case["case"]["id"]
+
+    if is_user_case_advisor:
+        data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
+
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov_users/{case_id}"),
+        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+    )
+    requests_mock.put(client._build_absolute_uri(f"/cases/{case_id}/assigned-queues/"), json={"queues": [queue_pk]})
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    # Check if the MoveCaseForwardForm is rendered only when user has permission can_user_move_case_forward
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert len(soup.find_all("form")) == (1 if is_user_case_advisor else 0)

@@ -8,7 +8,7 @@ from exporter.core.helpers import (
     get_organisation_firearm_act_document,
     has_organisation_firearm_act_document,
 )
-from exporter.core.wizard.payloads import MergingPayloadBuilder
+from core.wizard.payloads import MergingPayloadBuilder
 from exporter.applications.views.goods.common.payloads import (
     get_cleaned_data,
     get_pv_grading_payload,
