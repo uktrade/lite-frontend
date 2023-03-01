@@ -96,6 +96,11 @@ def click_on_an_application(driver, exporter_url, context):  # noqa
     driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id + "/task-list/")
 
 
+@when("I go to the application detail page")  # noqa
+def click_on_an_application(driver, exporter_url, context):  # noqa
+    driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)
+
+
 @when("I click on the application just created")  # noqa
 def click_on_application_just_created(driver, context):  # noqa
     driver.find_element(by=By.LINK_TEXT, value=context.app_name).click()
@@ -104,6 +109,11 @@ def click_on_application_just_created(driver, context):  # noqa
 @when("I click edit application")  # noqa
 def i_click_edit_application(driver):  # noqa
     ApplicationPage(driver).click_edit_application_link()
+
+
+@then("I see the edit button")  # noqa
+def i_see_edit_button(driver):  # noqa
+    driver.find_element(by=By.ID, value="button-edit-application")
 
 
 @given("I signin and go to exporter homepage and choose Test Org")  # noqa
