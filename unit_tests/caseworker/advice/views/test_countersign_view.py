@@ -39,7 +39,14 @@ def test_countersign_view_security_approvals(authorized_client, requests_mock, d
 
 @patch("caseworker.advice.views.get_gov_user")
 def test_single_lu_countersignature(
-    mock_get_gov_user, authorized_client, requests_mock, data_standard_case, final_advice, first_countersignature, url
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    final_advice,
+    first_countersignature,
+    url,
+    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
@@ -72,6 +79,7 @@ def test_double_lu_countersignature(
     first_countersignature,
     countersignature_two,
     url,
+    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]

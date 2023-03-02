@@ -95,14 +95,14 @@ class CaseContextMixin:
         # P.S. the case here is needed for rendering the base
         # template (layouts/case.html) from which we are inheriting.
 
+        is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         return {
             **context,
             **self.get_context(case=self.case),
             "case": self.case,
             "queue_pk": self.kwargs["queue_pk"],
             "caseworker": self.caseworker,
-            "is_lu_countersigning": self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
-            and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING,
+            "is_lu_countersigning": (is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),
             "ordered_countersign_advice": self.ordered_countersign_advice(),
         }
 
