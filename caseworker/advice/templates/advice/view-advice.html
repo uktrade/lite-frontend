@@ -29,18 +29,18 @@
     {% endfor %}
 
     {% if not consolidated_advice %}
-        {% if countersign and buttons.review_and_countersign and can_user_change_case %}
-            {% test_rule 'can_user_review_and_countersign' current_user case as can_user_review_and_countersign %}
+        {% test_rule 'can_user_review_and_countersign' current_user case as can_user_review_and_countersign %}
+        {% test_rule 'can_user_review_and_combine' current_user case as can_user_review_and_combine %}
+        {% test_rule 'can_user_make_recommendation' current_user case as can_user_make_recommendation %}
+        {% if countersign and buttons.review_and_countersign and can_user_review_and_countersign %}
             {% if is_lu_countersigning %}
                 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_decision_review' queue_pk case.id %}">Review and countersign</a>
             {% else %}
                 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
             {% endif %}
-        {% elif consolidate and buttons.review_and_combine and can_user_change_case %}
-            {% test_rule 'can_user_review_and_combine' current_user case as can_user_review_and_combine %}
+        {% elif consolidate and buttons.review_and_combine and can_user_review_and_combine %}
             <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Review and combine</a>
         {% else %}
-            {% test_rule 'can_user_make_recommendation' current_user case as can_user_make_recommendation %}
             {% if can_advise and buttons.make_recommendation and can_user_make_recommendation %}
                 <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make recommendation</a>
                 {% if assessed_trigger_list_goods %}
