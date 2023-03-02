@@ -141,7 +141,7 @@ def test_lu_countersign_decision_post_form_errors(
 
 
 @pytest.mark.parametrize(
-    "queue_details,outcome_accepted",
+    ("queue_details", "outcome_accepted"),
     (
         (
             {
@@ -263,4 +263,15 @@ def test_lu_countersign_decision_post_success(
             "case": "8fb76bed-fd45-4293-95b8-eda9468aa254",
             "advice": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
         },
+    ]
+
+    assign_flags_url = client._build_absolute_uri(f"/flags/assign/")
+    request_history = [item.json() for item in requests_mock.request_history if assign_flags_url in item.url]
+    assert request_history == [
+        {
+            "level": "destination",
+            "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"],
+            "flags": [],
+        },
+        {"level": "good", "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"], "flags": []},
     ]
