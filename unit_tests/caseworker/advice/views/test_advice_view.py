@@ -22,20 +22,23 @@ def url(data_standard_case):
     )
 
 
-def setup_mock_api(requests_mock, data):
-    application_id = data["case"]["id"]
-    requests_mock.get(client._build_absolute_uri(f"/cases/{application_id}"), json=data)
+@pytest.fixture
+def mock_application(requests_mock):
+    def _setup_mock_application(data):
+        application_id = data["case"]["id"]
+        requests_mock.get(client._build_absolute_uri(f"/cases/{application_id}"), json=data)
+
+    return _setup_mock_application
 
 
 def test_user_in_context(
     authorized_client,
     data_standard_case_with_all_trigger_list_products_assessed,
     mock_gov_user,
-    requests_mock,
     url,
+    mock_application,
 ):
-    data = data_standard_case_with_all_trigger_list_products_assessed
-    setup_mock_api(requests_mock, data)
+    mock_application(data_standard_case_with_all_trigger_list_products_assessed)
     response = authorized_client.get(url)
     # "current_user" passed in from caseworker context processor
     # used to test rule "can_user_change_case"
@@ -44,12 +47,12 @@ def test_user_in_context(
 
 def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assessed(
     authorized_client,
-    requests_mock,
     url,
     data_standard_case_with_potential_trigger_list_product,
     mock_gov_beis_nuclear_user,
+    mock_application,
 ):
-    setup_mock_api(requests_mock, data_standard_case_with_potential_trigger_list_product)
+    mock_application(data_standard_case_with_potential_trigger_list_product)
 
     response = authorized_client.get(url)
 
@@ -66,9 +69,9 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     url,
     data_standard_case_with_all_trigger_list_products_assessed,
     mock_gov_beis_nuclear_user,
+    mock_application,
 ):
-    data = data_standard_case_with_all_trigger_list_products_assessed
-    setup_mock_api(requests_mock, data)
+    mock_application(data_standard_case_with_all_trigger_list_products_assessed)
 
     response = authorized_client.get(url)
 
@@ -79,4 +82,4 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     assert product_table is not None
 
     rows = product_table.tbody.find_all("tr")
-    assert len(rows) == len(data["case"]["data"]["goods"])
+    assert len(rows) == len(data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"])
