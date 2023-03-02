@@ -205,7 +205,10 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
                     {"key": "conflicting", "value": "Conflicting"},
                 ],
                 "case_types": data_case_types,
-                "gov_users": [{"full_name": "John Smith", "id": gov_uk_user_id}],
+                "gov_users": [
+                    {"full_name": "John Smith", "id": gov_uk_user_id, "pending": False},
+                    {"full_name": "", "id": gov_uk_user_id, "pending": True},
+                ],
                 "statuses": mock_case_statuses["statuses"],
                 "is_system_queue": True,
                 "is_work_queue": False,
@@ -1063,3 +1066,10 @@ def test_case_assignments_add_user_team_queue_submit_validation_error(
     )
     assert response.status_code == 200
     assert response.context["form"]["users"].errors == ["Select a user to allocate"]
+
+
+def test_filter_none_pending_gov_users(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    gov_users = response.context["data"]["results"]["filters"]["gov_users"]
+    assert gov_users == [{"full_name": "John Smith", "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "pending": False}]
