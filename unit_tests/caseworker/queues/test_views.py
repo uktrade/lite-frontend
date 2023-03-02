@@ -18,12 +18,16 @@ from caseworker.queues.views import CaseAssignmentsCaseAssigneeSteps
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
+gov_user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
+
 default_params = {
     "page": ["1"],
     "queue_id": ["00000000-0000-0000-0000-000000000001"],
     "selected_tab": ["all_cases"],
     "hidden": ["true"],
 }
+
+example_return_to_url = "www.example.com"
 
 
 @pytest.fixture(autouse=True)
@@ -470,7 +474,25 @@ def test_case_assignment_case_office_no_user_selected(authorized_client, mock_go
     }
 
 
-def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_users):
+def test_case_assignment_case_adviser(
+    mock_gov_users,
+    mock_team_queue,
+    mock_put_assignments,
+    post_to_step_user_assignment_with_return_to,
+):
+    data = {
+        "users": [gov_user_id],
+        "note": "foobar",
+    }
+    response = post_to_step_user_assignment_with_return_to(
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
+        data,
+    )
+    assert response.status_code == 302
+    assert response.url == example_return_to_url
+
+
+def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov_users):
     cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
     url = (
         reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
@@ -489,6 +511,21 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
     }
 
 
+def test_case_assignment_case_officer_with_return_to(authorized_client, requests_mock, mock_gov_users):
+    cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={cases_ids[0]}&cases={cases_ids[1]}&return_to={example_return_to_url}"
+    )
+    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
+    mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
+
+    data = {"users": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    response = authorized_client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == example_return_to_url
+
+
 @pytest.mark.parametrize(
     "user_role_assigned, expected_url_name",
     (
@@ -497,7 +534,7 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
     ),
 )
 def test_case_assignment_select_role(authorized_client, mock_gov_user, user_role_assigned, expected_url_name):
-    url_params = f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
+    url_params = f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}&return_to={example_return_to_url}"
 
     url = reverse("queues:case_assignment_select_role", kwargs={"pk": queue_pk}) + url_params
     response = authorized_client.get(url)
