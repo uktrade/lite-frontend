@@ -222,6 +222,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   Scenario: LU consolidate advice journey
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    And I assign myself to the case
     And I prepare the application for final review
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
@@ -300,6 +301,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     # Setup
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    And I assign myself to the case
     And I prepare the application for final review NLR
     # Scenario starts
     When I go to my profile page

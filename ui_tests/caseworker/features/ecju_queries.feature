@@ -10,6 +10,7 @@ Feature: I want to create ECJU queries
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     When I go to application previously created
+    And I assign myself to the case
     And I click the queries tab
     And I click "Add an ECJU query"
     And I enter "Some unique query" as the query
