@@ -384,6 +384,56 @@ def countersign_decision_advice(request, case, queue_id, caseworker, formset_dat
     response.raise_for_status()
 
 
+def remove_lu_flags_on_case(request, case, formset_data):
+    outcome_accepted = formset_data[0]["outcome_accepted"]
+    queue_alias = case["queue_details"]["alias"]
+    case_id = case["id"]
+
+    is_lu_senior_manager_flag_set = LU_SR_MGR_CHECK_REQUIRED in [flag["alias"] for flag in case["flags"]]
+
+    if queue_alias == LU_LICENSING_MANAGER_QUEUE and outcome_accepted and is_lu_senior_manager_flag_set:
+        _remove_lu_first_countersign_flag_on_destination(request, case_id)
+        _remove_all_lu_flags_on_good(request, case_id)
+    else:
+        _remove_all_lu_flags_on_destination(request, case_id)
+        _remove_all_lu_flags_on_good(request, case_id)
+
+
+def _remove_lu_first_countersign_flag_on_destination(request, case_id):
+    data = {
+        "level": "destination",
+        "objects": [case_id],
+        "flags": [
+            {
+                "id": "3e30f39c-ed82-41e9-b180-493a9fd0f169",
+                "name": "LU Senior Manager check required",
+                "alias": "LU_SENIOR_MANAGER_CHECK_REQUIRED",
+                "colour": "default",
+                "priority": 0,
+                "level": "Destination",
+            }
+        ],
+    }
+    response = client.put(request, f"/cases/{case_id}/assign-flags/", data=data)
+    response.raise_for_status()
+
+
+def _remove_all_lu_flags_on_destination(request, case_id):
+    data = {
+        "level": "destination",
+        "objects": [case_id],
+        "flags": [],
+    }
+    response = client.put(request, f"/cases/{case_id}/assign-flags/", data=data)
+    response.raise_for_status()
+
+
+def _remove_all_lu_flags_on_good(request, case_id):
+    data = {"level": "good", "objects": [case_id], "flags": []}
+    response = client.put(request, f"/cases/{case_id}/assign-flags/", data=data)
+    response.raise_for_status()
+
+
 def move_case_forward(request, case_id, queue_id):
     """This utility function calls the /assigned-queues/ endpoint in the API.
     In turn, /assigned-queues/ runs the routing rules and moves the case forward.
@@ -471,7 +521,6 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
     elif team_alias in (MOD_ECJU_TEAM, LICENSING_UNIT_TEAM):
-
         consolidated_advice = get_consolidated_advice(case.advice, team_alias)
 
         if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):

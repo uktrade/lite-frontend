@@ -191,7 +191,6 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
     def get_context_data(self, **kwargs):
@@ -434,6 +433,7 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
         formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
         if formset.is_valid():
             services.countersign_decision_advice(request, self.case, queue_id, self.caseworker, formset.cleaned_data)
+            services.remove_lu_flags_on_case(request, self.case, formset.cleaned_data)
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response({**context, "formset": formset})
