@@ -14,18 +14,8 @@ def setup(
     yield
 
 
-@pytest.fixture(autouse=True)
-def assign_users_to_cases(
-    mock_gov_user,
-    mock_gov_beis_nuclear_user,
-    data_standard_case_with_all_trigger_list_products_assessed,
-    data_standard_case_with_potential_trigger_list_product,
-):
-    for case in [
-        data_standard_case_with_all_trigger_list_products_assessed,
-        data_standard_case_with_potential_trigger_list_product,
-    ]:
-        case["case"]["assigned_users"]["queue"] = [mock_gov_user["user"]]
+def assign_user_to_case(user, case):
+    case["case"]["assigned_users"]["queue"] = [user["user"]]
 
 
 @pytest.fixture
@@ -52,7 +42,12 @@ def test_user_in_context(
     url,
     mock_application,
 ):
-    mock_application(data_standard_case_with_all_trigger_list_products_assessed)
+    case = data_standard_case_with_all_trigger_list_products_assessed
+    mock_application(case)
+    assign_user_to_case(
+        mock_gov_user,
+        case,
+    )
     response = authorized_client.get(url)
     # "current_user" passed in from caseworker context processor
     # used to test rule "can_user_change_case"
@@ -65,8 +60,14 @@ def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assess
     data_standard_case_with_potential_trigger_list_product,
     mock_gov_beis_nuclear_user,
     mock_application,
+    mock_gov_user,
 ):
-    mock_application(data_standard_case_with_potential_trigger_list_product)
+    case = data_standard_case_with_potential_trigger_list_product
+    mock_application(case)
+    assign_user_to_case(
+        mock_gov_user,
+        case,
+    )
 
     response = authorized_client.get(url)
 
@@ -76,6 +77,9 @@ def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assess
     product_table = soup.find(id="assessed-products")
     assert product_table is None
 
+    make_recommendation_button = soup.find(text="Make recommendation")
+    assert make_recommendation_button is None
+
 
 def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     authorized_client,
@@ -84,8 +88,14 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     data_standard_case_with_all_trigger_list_products_assessed,
     mock_gov_beis_nuclear_user,
     mock_application,
+    mock_gov_user,
 ):
+    case = data_standard_case_with_all_trigger_list_products_assessed
     mock_application(data_standard_case_with_all_trigger_list_products_assessed)
+    assign_user_to_case(
+        mock_gov_user,
+        case,
+    )
 
     response = authorized_client.get(url)
 
@@ -97,3 +107,29 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
 
     rows = product_table.tbody.find_all("tr")
     assert len(rows) == len(data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"])
+
+    make_recommendation_button = soup.find(text="Make recommendation")
+    assert make_recommendation_button is not None
+
+
+def test_unallocated_user_does_not_see_assessed_products_or_make_recommendation(
+    authorized_client,
+    requests_mock,
+    url,
+    data_standard_case_with_all_trigger_list_products_assessed,
+    mock_gov_beis_nuclear_user,
+    mock_application,
+):
+    case = data_standard_case_with_all_trigger_list_products_assessed
+    mock_application(case)
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    product_table = soup.find(id="assessed-products")
+    assert product_table is None
+
+    make_recommendation_button = soup.find(text="Make recommendation")
+    assert make_recommendation_button is None
