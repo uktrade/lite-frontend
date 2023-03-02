@@ -14,6 +14,20 @@ def setup(
     yield
 
 
+@pytest.fixture(autouse=True)
+def assign_users_to_cases(
+    mock_gov_user,
+    mock_gov_beis_nuclear_user,
+    data_standard_case_with_all_trigger_list_products_assessed,
+    data_standard_case_with_potential_trigger_list_product,
+):
+    for case in [
+        data_standard_case_with_all_trigger_list_products_assessed,
+        data_standard_case_with_potential_trigger_list_product,
+    ]:
+        case["case"]["assigned_users"]["queue"] = [mock_gov_user["user"]]
+
+
 @pytest.fixture
 def url(data_standard_case):
     return reverse(
