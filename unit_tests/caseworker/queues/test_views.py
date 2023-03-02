@@ -474,6 +474,12 @@ def test_case_assignment_case_office_no_user_selected(authorized_client, mock_go
     }
 
 
+@pytest.fixture
+def post_to_step_user_assignment_with_return_to(post_to_step_factory, user_assignment_url):
+    user_assignment_url = user_assignment_url + f"&return_to={example_return_to_url}"
+    return post_to_step_factory(user_assignment_url)
+
+
 def test_case_assignment_case_adviser(
     mock_gov_users,
     mock_team_queue,
@@ -492,34 +498,37 @@ def test_case_assignment_case_adviser(
     assert response.url == example_return_to_url
 
 
-def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov_users):
+@pytest.fixture
+def mock_put_case_case_officer(requests_mock):
+    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
+    return requests_mock.put(url=case_officer_put_url, json={})
+
+
+def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov_users, mock_put_case_case_officer):
     cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
     url = (
         reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
         + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
     )
-    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
-    mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
 
     data = {"users": gov_user_id}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
     assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
-    assert mock_put_case_case_office.last_request.json() == {
+    assert mock_put_case_case_officer.last_request.json() == {
         "gov_user_pk": gov_user_id,
         "case_ids": cases_ids,
     }
 
 
-def test_case_assignment_case_officer_with_return_to(authorized_client, requests_mock, mock_gov_users):
+def test_case_assignment_case_officer_with_return_to(
+    authorized_client, requests_mock, mock_gov_users, mock_put_case_case_officer
+):
     cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
     url = (
         reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
         + f"?cases={cases_ids[0]}&cases={cases_ids[1]}&return_to={example_return_to_url}"
     )
-    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
-    requests_mock.put(url=case_officer_put_url, json={})
-
     data = {"users": gov_user_id}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
