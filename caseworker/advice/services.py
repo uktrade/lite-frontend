@@ -386,7 +386,7 @@ def countersign_decision_advice(request, case, queue_id, caseworker, formset_dat
 
 def remove_lu_flags_on_case(request, case, formset_data):
     outcome_accepted = formset_data[0]["outcome_accepted"]
-    queue_alias = case["queue_details"]["alias"]
+    queue_alias = case["queue_details"][0]["alias"]
     case_id = case["id"]
 
     is_lu_senior_manager_flag_set = LU_SR_MGR_CHECK_REQUIRED in [flag["alias"] for flag in case["flags"]]
@@ -414,7 +414,7 @@ def _remove_lu_first_countersign_flag_on_destination(request, case_id):
             }
         ],
     }
-    response = client.put(request, f"/cases/{case_id}/assign-flags/", data=data)
+    response = client.put(request, f"/flags/assign/", data=data)
     response.raise_for_status()
 
 
@@ -424,13 +424,13 @@ def _remove_all_lu_flags_on_destination(request, case_id):
         "objects": [case_id],
         "flags": [],
     }
-    response = client.put(request, f"/cases/{case_id}/assign-flags/", data=data)
+    response = client.put(request, f"/flags/assign/", data=data)
     response.raise_for_status()
 
 
 def _remove_all_lu_flags_on_good(request, case_id):
     data = {"level": "good", "objects": [case_id], "flags": []}
-    response = client.put(request, f"/cases/{case_id}/assign-flags/", data=data)
+    response = client.put(request, f"/flags/assign/", data=data)
     response.raise_for_status()
 
 
