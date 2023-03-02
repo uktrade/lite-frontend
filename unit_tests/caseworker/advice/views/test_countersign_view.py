@@ -11,6 +11,7 @@ from django.urls import reverse
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from core import client
 from caseworker.advice import services
+from unit_tests.caseworker.conftest import countersignatures
 
 
 @pytest.fixture(autouse=True)
@@ -44,14 +45,13 @@ def test_single_lu_countersignature(
     requests_mock,
     data_standard_case,
     final_advice,
-    first_countersignature,
     url,
     with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = first_countersignature
+    data_standard_case["case"]["countersign_advice"] = countersignatures(4)
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
@@ -76,15 +76,13 @@ def test_double_lu_countersignature(
     requests_mock,
     data_standard_case,
     final_advice,
-    first_countersignature,
-    countersignature_two,
     url,
     with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = first_countersignature + countersignature_two
+    data_standard_case["case"]["countersign_advice"] = countersignatures() + countersignatures(second_countersign=True)
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},

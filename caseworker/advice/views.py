@@ -1,17 +1,14 @@
+import itertools
 from http import HTTPStatus
 
+import sentry_sdk
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
-from django.views.generic import FormView, TemplateView
-from django.urls import reverse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.functional import cached_property
+from django.views.generic import FormView, TemplateView
 from requests.exceptions import HTTPError
-import sentry_sdk
-
-from core import client
-from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
-from core.decorators import expect_status
 
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
@@ -21,7 +18,10 @@ from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
+from core import client
 from core.auth.views import LoginRequiredMixin
+from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
+from core.decorators import expect_status
 
 
 class CaseContextMixin:
@@ -107,8 +107,12 @@ class CaseContextMixin:
         }
 
     def ordered_countersign_advice(self):
-        countersign_advice = [cs for cs in self.case.get("countersign_advice", []) if cs.get("advice", {}).get("good")]
-        return sorted(countersign_advice, key=lambda a: a["order"], reverse=True)
+        def order_fn(case):
+            return case["order"]
+
+        ordered_advice = sorted(self.case.get("countersign_advice", []), key=order_fn)
+        countersign_advice = [list(g)[0] for k, g in itertools.groupby(ordered_advice, key=order_fn)]
+        return sorted(countersign_advice, key=order_fn, reverse=True)
 
 
 class BEISNuclearMixin:

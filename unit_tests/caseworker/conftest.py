@@ -1,5 +1,6 @@
 import re
 import os
+import uuid
 
 import pytest
 from dotenv import load_dotenv
@@ -648,9 +649,8 @@ def final_advice(current_user, lu_team):
     }
 
 
-@pytest.fixture
-def first_countersignature():
-    countersignature = {
+def countersignatures(good_with_advice_count=2, second_countersign=False, end_user=True, ultimate_end_user=True):
+    first_countersignature = {
         "reasons": "I concur",
         "countersigned_user": {
             "first_name": "Testy",
@@ -659,15 +659,32 @@ def first_countersignature():
         "outcome_accepted": True,
         "order": 1,
     }
-    good_id = "3268e0b3-5fa2-46c3-9b20-3620b74f1c44"
-    end_user_id = "bd394902-a86e-45f1-8dd2-6b9a11c218a3"
-    ult_end_user_id = "79a0baff-6a71-4d42-8c9f-0f3bec60e199"
+    second_countersignature = {
+        "reasons": "LGTM",
+        "countersigned_user": {
+            "first_name": "Super",
+            "last_name": "Visor",
+        },
+        "outcome_accepted": True,
+        "order": 2,
+    }
+    countersignature = second_countersignature if second_countersign else first_countersignature
+    out = []
 
-    return [
-        {**countersignature, **{"advice": {"good": good_id, "end_user": None, "ultimate_end_user": None}}},
-        {**countersignature, **{"advice": {"good": None, "end_user": end_user_id, "ultimate_end_user": None}}},
-        {**countersignature, **{"advice": {"good": None, "end_user": None, "ultimate_end_user": ult_end_user_id}}},
-    ]
+    if end_user:
+        out.append(
+            {**countersignature, **{"advice": {"good": None, "end_user": str(uuid.uuid4()), "ultimate_end_user": None}}}
+        )
+    if ultimate_end_user:
+        out.append(
+            {**countersignature, **{"advice": {"good": None, "end_user": None, "ultimate_end_user": str(uuid.uuid4())}}}
+        )
+    for i in range(good_with_advice_count):
+        out.append(
+            {**countersignature, **{"advice": {"good": str(uuid.uuid4()), "end_user": None, "ultimate_end_user": None}}}
+        )
+
+    return out
 
 
 @pytest.fixture
