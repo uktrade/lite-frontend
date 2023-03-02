@@ -14,10 +14,6 @@ def setup(
     yield
 
 
-def assign_user_to_case(user, case):
-    case["case"]["assigned_users"]["queue"] = [user["user"]]
-
-
 @pytest.fixture
 def url(data_standard_case):
     return reverse(
@@ -41,6 +37,7 @@ def test_user_in_context(
     mock_gov_user,
     url,
     mock_application,
+    assign_user_to_case,
 ):
     case = data_standard_case_with_all_trigger_list_products_assessed
     mock_application(case)
@@ -61,6 +58,7 @@ def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assess
     mock_gov_beis_nuclear_user,
     mock_application,
     mock_gov_user,
+    assign_user_to_case,
 ):
     case = data_standard_case_with_potential_trigger_list_product
     mock_application(case)
@@ -89,6 +87,7 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     mock_gov_beis_nuclear_user,
     mock_application,
     mock_gov_user,
+    assign_user_to_case,
 ):
     case = data_standard_case_with_all_trigger_list_products_assessed
     mock_application(data_standard_case_with_all_trigger_list_products_assessed)
