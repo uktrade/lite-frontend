@@ -85,7 +85,6 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-three-quarters">
         {% if is_lu_countersigning %}
-            {# pp([(ca['reasons'],ca['countersigned_user']['first_name']) for ca in  context['case']['countersign_advice']]) #}
             <div id="countersignatures">
                 {% for countersign_advice in ordered_countersign_advice %}
                 <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
