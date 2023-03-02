@@ -75,7 +75,7 @@ def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assess
     product_table = soup.find(id="assessed-products")
     assert product_table is None
 
-    make_recommendation_button = soup.find(text="Make recommendation")
+    make_recommendation_button = soup.find(id="make-recommendation-button")
     assert make_recommendation_button is None
 
 
@@ -107,7 +107,7 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     rows = product_table.tbody.find_all("tr")
     assert len(rows) == len(data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"])
 
-    make_recommendation_button = soup.find(text="Make recommendation")
+    make_recommendation_button = soup.find(id="make-recommendation-button")
     assert make_recommendation_button is not None
 
 
@@ -130,5 +130,5 @@ def test_unallocated_user_does_not_see_assessed_products_or_make_recommendation(
     product_table = soup.find(id="assessed-products")
     assert product_table is None
 
-    make_recommendation_button = soup.find(text="Make recommendation")
+    make_recommendation_button = soup.find(id="make-recommendation-button")
     assert make_recommendation_button is None
