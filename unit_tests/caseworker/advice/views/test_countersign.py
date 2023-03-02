@@ -1,5 +1,4 @@
 import pytest
-from bs4 import BeautifulSoup
 
 from django.urls import reverse
 
@@ -140,8 +139,56 @@ def test_lu_countersign_decision_post_form_errors(
     assert response.context["formset"].errors == [{"approval_reasons": ["Enter a reason for countersigning"]}]
 
 
+@pytest.fixture
+def flag_lu_countersign_required():
+    return {
+        "id": "bbf29b42-0aae-4ebc-b77a-e502ddea30a8",
+        "name": "LU Countersign Required",
+        "alias": "LU_COUNTER_REQUIRED",
+        "colour": "default",
+        "priority": 0,
+        "level": "Destination",
+    }
+
+
+@pytest.fixture
+def flag_lu_senior_manager_check_required():
+    return {
+        "id": "3e30f39c-ed82-41e9-b180-493a9fd0f169",
+        "name": "LU Senior Manager check required",
+        "alias": "LU_SENIOR_MANAGER_CHECK_REQUIRED",
+        "colour": "default",
+        "priority": 0,
+        "level": "Destination",
+    }
+
+
+@pytest.fixture
+def flag_manpads():
+    return {
+        "id": "a6bf56e8-dda7-491c-aa43-0edf249beca4",
+        "name": "Manpads",
+        "alias": "MANPADS",
+        "colour": "default",
+        "priority": 0,
+        "level": "Good",
+    }
+
+
+@pytest.fixture
+def flag_ap_landmine():
+    return {
+        "id": "b8000761-14fa-4a6c-8532-6d21db337c2d",
+        "name": "AP Landmine",
+        "alias": "AP_LANDMINE",
+        "colour": "default",
+        "priority": 0,
+        "level": "Good",
+    }
+
+
 @pytest.mark.parametrize(
-    ("queue_details", "outcome_accepted"),
+    ("queue_details", "outcome_accepted", "flag_aliases"),
     (
         (
             {
@@ -150,6 +197,25 @@ def test_lu_countersign_decision_post_form_errors(
                 "alias": services.LU_LICENSING_MANAGER_QUEUE,
             },
             True,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.LU_SR_MGR_CHECK_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
+        ),
+        (
+            {
+                "id": "566fd526-bd6d-40c1-94bd-60d10c961234",
+                "name": "Licensing manager",
+                "alias": services.LU_LICENSING_MANAGER_QUEUE,
+            },
+            True,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
         ),
         (
             {
@@ -158,6 +224,12 @@ def test_lu_countersign_decision_post_form_errors(
                 "alias": services.LU_LICENSING_MANAGER_QUEUE,
             },
             False,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.LU_SR_MGR_CHECK_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
         ),
         (
             {
@@ -166,6 +238,12 @@ def test_lu_countersign_decision_post_form_errors(
                 "alias": services.LU_SR_LICENSING_MANAGER_QUEUE,
             },
             True,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.LU_SR_MGR_CHECK_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
         ),
         (
             {
@@ -174,6 +252,12 @@ def test_lu_countersign_decision_post_form_errors(
                 "alias": services.LU_SR_LICENSING_MANAGER_QUEUE,
             },
             False,
+            [
+                services.LU_COUNTERSIGN_REQUIRED,
+                services.LU_SR_MGR_CHECK_REQUIRED,
+                services.AP_LANDMINE,
+                services.MANPADS,
+            ],
         ),
     ),
 )
@@ -187,6 +271,11 @@ def test_lu_countersign_decision_post_success(
     with_lu_countersigning_enabled,
     queue_details,
     outcome_accepted,
+    flag_aliases,
+    flag_lu_countersign_required,
+    flag_lu_senior_manager_check_required,
+    flag_ap_landmine,
+    flag_manpads,
 ):
     case_id = data_standard_case["case"]["id"]
     user_id = current_user["id"]
@@ -199,6 +288,18 @@ def test_lu_countersign_decision_post_success(
     for item in advice_for_countersign:
         item["user"] = current_user
         item["level"] = "final"
+
+    # Set up flags
+    flags = []
+    if services.LU_COUNTERSIGN_REQUIRED in flag_aliases:
+        flags.append(flag_lu_countersign_required)
+    if services.LU_SR_MGR_CHECK_REQUIRED in flag_aliases:
+        flags.append(flag_lu_senior_manager_check_required)
+    if services.AP_LANDMINE in flag_aliases:
+        flags.append(flag_ap_landmine)
+    if services.MANPADS in flag_aliases:
+        flags.append(flag_manpads)
+    data_standard_case["case"]["flags"] = flags
 
     # Setup mock API requests
     countersign_advice_url = client._build_absolute_uri(f"/cases/{case_id}/countersign-decision-advice/")
@@ -267,11 +368,36 @@ def test_lu_countersign_decision_post_success(
 
     assign_flags_url = client._build_absolute_uri(f"/flags/assign/")
     request_history = [item.json() for item in requests_mock.request_history if assign_flags_url in item.url]
-    assert request_history == [
-        {
-            "level": "destination",
-            "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"],
-            "flags": [],
-        },
-        {"level": "good", "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"], "flags": []},
-    ]
+
+    predicate = (
+        queue_details["alias"] == services.LU_LICENSING_MANAGER_QUEUE
+        and outcome_accepted
+        and services.LU_SR_MGR_CHECK_REQUIRED in flag_aliases
+    )
+
+    # The predicate evaluates to True for the special case type given above.
+    # In this case we do not want to remove the `LU_SR_MGR_CHECK_REQUIRED` flag.
+    if predicate:
+        assert request_history == [
+            {
+                "level": "destination",
+                "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"],
+                "flags": [
+                    {
+                        "id": "3e30f39c-ed82-41e9-b180-493a9fd0f169",
+                        "name": "LU Senior Manager check required",
+                        "alias": "LU_SENIOR_MANAGER_CHECK_REQUIRED",
+                        "colour": "default",
+                        "priority": 0,
+                        "level": "Destination",
+                    }
+                ],
+            },
+            {"level": "good", "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"], "flags": []},
+        ]
+    # For all other case types we expect no LU flags to be set on the case.
+    else:
+        assert request_history == [
+            {"level": "destination", "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"], "flags": []},
+            {"level": "good", "objects": ["8fb76bed-fd45-4293-95b8-eda9468aa254"], "flags": []},
+        ]
