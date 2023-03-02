@@ -501,12 +501,12 @@ def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov
     case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
     mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
 
-    data = {"users": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    data = {"users": gov_user_id}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
     assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
     assert mock_put_case_case_office.last_request.json() == {
-        "gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
+        "gov_user_pk": gov_user_id,
         "case_ids": cases_ids,
     }
 
@@ -518,9 +518,9 @@ def test_case_assignment_case_officer_with_return_to(authorized_client, requests
         + f"?cases={cases_ids[0]}&cases={cases_ids[1]}&return_to={example_return_to_url}"
     )
     case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
-    mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
+    requests_mock.put(url=case_officer_put_url, json={})
 
-    data = {"users": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    data = {"users": gov_user_id}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
     assert response.url == example_return_to_url
@@ -859,7 +859,6 @@ def mock_users_team_queues_list(requests_mock, gov_uk_user_id, data_queue):
 
 @pytest.fixture
 def user_assignment_url(data_standard_case, data_queue):
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     case = data_standard_case
     url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
     url = f"{url_base}?cases={case['case']['id']}"
@@ -888,9 +887,8 @@ def test_case_assignments_add_user_system_queue_submit_success(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     data = {
-        "users": [user_id],
+        "users": [gov_user_id],
         "note": "foobar",
     }
     # POST step 1
@@ -925,7 +923,7 @@ def test_case_assignments_add_user_system_queue_submit_success(
         "case_assignments": [
             {
                 "case_id": data_standard_case["case"]["id"],
-                "users": [user_id],
+                "users": [gov_user_id],
             }
         ],
         "note": "foobar",
@@ -953,7 +951,6 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     data = {
         "note": "foobar",
     }
@@ -966,7 +963,7 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     assert response.context["form"]["users"].errors == ["Select a user to allocate"]
 
     data = {
-        "users": [user_id],
+        "users": [gov_user_id],
         "note": "foobar",
     }
     # POST step 1 - valid
@@ -1044,10 +1041,8 @@ def test_case_assignments_add_user_team_queue_submit_success(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     data = {
-        "users": [user_id],
+        "users": [gov_user_id],
         "note": "foobar",
     }
     response = post_to_step_user_assignment(
@@ -1065,7 +1060,7 @@ def test_case_assignments_add_user_team_queue_submit_success(
         "case_assignments": [
             {
                 "case_id": data_standard_case["case"]["id"],
-                "users": [user_id],
+                "users": [gov_user_id],
             }
         ],
         "note": "foobar",
