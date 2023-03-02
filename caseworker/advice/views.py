@@ -1,17 +1,13 @@
 from http import HTTPStatus
 
+import sentry_sdk
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
-from django.views.generic import FormView, TemplateView
-from django.urls import reverse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.functional import cached_property
+from django.views.generic import FormView, TemplateView
 from requests.exceptions import HTTPError
-import sentry_sdk
-
-from core import client
-from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
-from core.decorators import expect_status
 
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
@@ -21,7 +17,10 @@ from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
+from core import client
 from core.auth.views import LoginRequiredMixin
+from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
+from core.decorators import expect_status
 
 
 class CaseContextMixin:
@@ -95,20 +94,24 @@ class CaseContextMixin:
         # P.S. the case here is needed for rendering the base
         # template (layouts/case.html) from which we are inheriting.
 
+        is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         return {
             **context,
             **self.get_context(case=self.case),
             "case": self.case,
             "queue_pk": self.kwargs["queue_pk"],
             "caseworker": self.caseworker,
-            "is_lu_countersigning": self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
-            and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING,
+            "is_lu_countersigning": (is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),
             "ordered_countersign_advice": self.ordered_countersign_advice(),
         }
 
     def ordered_countersign_advice(self):
-        countersign_advice = [cs for cs in self.case.get("countersign_advice", []) if cs.get("advice", {}).get("good")]
-        return sorted(countersign_advice, key=lambda a: a["order"], reverse=True)
+        """
+        Return a single countersignature per order value in order to filter out duplicates
+        for display in the templates
+        """
+        one_countersignature_per_order_value = {cs["order"]: cs for cs in self.case.get("countersign_advice", [])}
+        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
 
 
 class BEISNuclearMixin:
