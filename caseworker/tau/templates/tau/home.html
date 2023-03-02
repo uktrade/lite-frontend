@@ -69,7 +69,7 @@
                             <h2 class="govuk-heading-m">Assessed products</h2>
                             {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}
                             {% if can_user_assess_products %}
-                                <a href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+                                <a id="clear-assessments-button" href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
                             {% endif %}
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">

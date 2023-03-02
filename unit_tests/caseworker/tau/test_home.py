@@ -81,8 +81,11 @@ def test_home_content(
     mock_control_list_entries,
     mock_precedents_api,
     mock_gov_user,
+    assign_user_to_case,
 ):
     """GET /tau would return a case info panel"""
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
@@ -118,6 +121,8 @@ def test_home_content(
     )
     assert edit_url == soup.find(id="assessed-products").find("tbody").find("a").attrs["href"]
 
+    assert soup.find(id="clear-assessments-button") is not None
+
     # The precedent for the unassessed product
 
     assert get_cells(soup, "table-precedents-1") == [
@@ -133,6 +138,29 @@ def test_home_content(
     # "current_user" passed in from caseworker context processor
     # used to test rule "can_user_change_case"
     assert response.context["current_user"] == mock_gov_user["user"]
+
+
+def test_home_content_without_allocated_user_hides_clear_assessment_button(
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="clear-assessments-button") is None
 
 
 def test_tau_home_noauth(client, url):
