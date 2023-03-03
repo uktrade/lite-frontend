@@ -223,9 +223,11 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
-    When I assign myself to the case
-    And I go to my profile page
+    When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I assign myself to the case
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -303,9 +305,11 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I create standard application or standard application has been previously created
     And I prepare the application for final review NLR
     # Scenario starts
-    When I assign myself to the case
-    And I go to my profile page
+    When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I assign myself to the case
     And I go to my case list
     And I click the application previously created
     Then for the first good I see "N/A" for "Control entry"
