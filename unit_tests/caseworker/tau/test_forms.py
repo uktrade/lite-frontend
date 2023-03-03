@@ -123,7 +123,6 @@ def report_summary_requests_mock(requests_mock):
             "Valid form",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -134,7 +133,6 @@ def report_summary_requests_mock(requests_mock):
             "Valid form - with comments",
             {
                 "goods": ["test-id"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
                 "comments": "test",
@@ -146,7 +144,6 @@ def report_summary_requests_mock(requests_mock):
             "Invalid good-id",
             {
                 "goods": ["test-id-not"],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -157,7 +154,6 @@ def report_summary_requests_mock(requests_mock):
             "Missing goods",
             {
                 "goods": [],
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -168,8 +164,20 @@ def report_summary_requests_mock(requests_mock):
             "Missing report-summary-subject",
             {
                 "goods": ["test-id"],
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
+                "regimes": ["NONE"],
+            },
+            False,
+            {"report_summary_subject": ["Enter a report summary subject"]},
+        ),
+        (
+            "Blank report-summary-subject",
+            {
+                "goods": ["test-id"],
                 "report_summary_subject": "",
-                "does_not_have_control_list_entries": True,
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
                 "regimes": ["NONE"],
             },
             False,
@@ -755,7 +763,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Valid form",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
+                "report_summary_subject": "",
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
             },
@@ -765,7 +773,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Valid form with comments",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
+                "report_summary_subject": "",
                 "does_not_have_control_list_entries": True,
                 "regimes": ["NONE"],
                 "comments": "test",
@@ -778,7 +786,8 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
             {
                 "report_summary_prefix": "madeupid",
                 "report_summary_subject": "",
-                "does_not_have_control_list_entries": True,
+                "does_not_have_control_list_entries": False,
+                "control_list_entries": ["test-rating"],
                 "regimes": ["NONE"],
             },
             False,
@@ -815,7 +824,7 @@ def test_tau_assessment_form_goods_choices_summary_has_fields_removed(
         (
             "Marked as not have CLEs but has CLEs",
             {
-                "report_summary_subject": SUBJECT_API_RESPONSE[1]["id"],
+                "report_summary_subject": "",
                 "does_not_have_control_list_entries": True,
                 "control_list_entries": ["test-rating"],
                 "regimes": ["NONE"],

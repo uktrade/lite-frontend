@@ -23,6 +23,7 @@ from ..report_summary.services import get_report_summary_prefix, get_report_summ
 
 REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
 REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
+MISSING_REPORT_SUMMARY_SUBJECT = "Enter a report summary subject"
 INVALID_REPORT_SUMMARY_SUBJECT = "Enter a valid report summary subject"
 INVALID_REPORT_SUMMARY_PREFIX = "Enter a valid report summary prefix"
 
@@ -64,10 +65,7 @@ class TAUEditForm(forms.Form):
         help_text="Type for suggestions",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_SUBJECT_KEY}),
-        required=True,
-        error_messages={
-            "required": "Enter a report summary subject",
-        },
+        required=False,
     )
 
     regimes = forms.MultipleChoiceField(
@@ -257,7 +255,10 @@ class TAUEditForm(forms.Form):
             self.add_error("does_not_have_control_list_entries", self.MESSAGE_NO_CLC_REQUIRED)
         # report summary is required when there are CLEs
 
-        self.validate_report_summary_subject(cleaned_data)
+        # We pass in has_no_cle_entries here because throwing the errors above will clear out the value from
+        # cleaned_data so if we try to get it in the below method we won't have the original value which we want to be
+        # able to set the right validation for the report summary subject
+        self.validate_report_summary_subject(cleaned_data, not has_no_cle_entries)
         self.validate_report_summary_prefix(cleaned_data)
 
         regimes = cleaned_data.get("regimes", [])
@@ -305,9 +306,13 @@ class TAUEditForm(forms.Form):
 
         return cleaned_data
 
-    def validate_report_summary_subject(self, cleaned_data):
+    def validate_report_summary_subject(self, cleaned_data, has_cle_entries):
         subject_id = cleaned_data.get(REPORT_SUMMARY_SUBJECT_KEY)
         subject_name_as_typed = self.data.get("_report_summary_subject")
+
+        if has_cle_entries and not subject_id:
+            self.add_error(REPORT_SUMMARY_SUBJECT_KEY, MISSING_REPORT_SUMMARY_SUBJECT)
+            return
 
         if not subject_id:
             if subject_name_as_typed:
