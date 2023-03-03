@@ -1319,6 +1319,7 @@ def john_smith(team1):
         "role_name": "Super User",
         "status": "Active",
         "team": team1,
+        "pending": False,
     }
 
 

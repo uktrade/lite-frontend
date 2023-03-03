@@ -87,6 +87,11 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @property
     def filters(self):
+        gov_users = self.data["results"]["filters"]["gov_users"]
+        filtered_gov_users = [gov_user for gov_user in gov_users if not gov_user["pending"]]
+
+        self.data["results"]["filters"]["gov_users"] = filtered_gov_users
+
         return self.data["results"]["filters"]
 
     def get_params(self):

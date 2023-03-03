@@ -49,7 +49,7 @@
 				{% for user in users %}
 					<tr class="govuk-table__row" id="row-{{ forloop.counter }}">
 						<td class="govuk-table__header" scope="row">
-							{% if user.first_name %}
+							{% if not user.pending %}
 								{{ user.first_name }} {{ user.last_name }}
 							{% else %}
 								<strong class="govuk-tag govuk-tag--blue">

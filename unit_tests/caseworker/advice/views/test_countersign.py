@@ -1,6 +1,5 @@
 import pytest
 
-from copy import deepcopy
 from django.urls import reverse
 
 from core import client
@@ -16,6 +15,14 @@ def setup(mock_queue, mock_denial_reasons, mock_case):
 def url(request, data_queue, data_standard_case):
     return reverse(
         f"cases:countersign_review", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+
+
+@pytest.fixture
+def countersign_decision_url(request, data_queue, data_standard_case):
+    return reverse(
+        f"cases:countersign_decision_review",
+        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
     )
 
 
@@ -76,5 +83,183 @@ def test_countersign_approve_all_put(
             "id": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
             "countersigned_by": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
             "countersign_comments": "reason0",
+        },
+    ]
+
+
+def test_lu_countersign_decision_raises_error_when_feature_flag_disabled(
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    countersign_decision_url,
+    with_lu_countersigning_disabled,
+):
+    response = authorized_client.get(countersign_decision_url, data={})
+    assert response.status_code == 404
+
+
+def test_lu_countersign_decision_post_form_errors(
+    authorized_client,
+    requests_mock,
+    standard_case_with_advice,
+    advice_for_countersign,
+    current_user,
+    countersign_decision_url,
+    with_lu_countersigning_enabled,
+):
+    case_id = standard_case_with_advice["id"]
+
+    # Set up advice on the case
+    standard_case_with_advice["advice"] = advice_for_countersign
+    current_user["team"]["alias"] = services.LICENSING_UNIT_TEAM
+    for item in advice_for_countersign:
+        item["user"] = current_user
+        item["level"] = "final"
+
+    # Setup mock API requests
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=standard_case_with_advice)
+
+    advice_to_countersign = services.get_advice_to_countersign(advice_for_countersign, current_user)
+
+    data = {
+        "form-TOTAL_FORMS": [f"{len(advice_to_countersign)}"],
+        "form-INITIAL_FORMS": ["0"],
+        "form-MIN_NUM_FORMS": [f"{len(advice_to_countersign)}"],
+        "form-MAX_NUM_FORMS": [f"{len(advice_to_countersign)}"],
+        "submit": ["Submit"],
+    }
+
+    for index, item in enumerate(advice_to_countersign.keys()):
+        data[f"form-{index}-outcome_accepted"] = [True]
+        data[f"form-{index}-approval_reasons"] = [""]
+        requests_mock.get(client._build_absolute_uri(f"/users/{item}/team-queues/"), json={"queues": []})
+
+    response = authorized_client.post(countersign_decision_url, data=data)
+    assert response.status_code == 200
+    assert response.context["formset"].errors == [{"approval_reasons": ["Enter a reason for countersigning"]}]
+
+
+@pytest.mark.parametrize(
+    "queue_details,outcome_accepted",
+    (
+        (
+            {
+                "id": "566fd526-bd6d-40c1-94bd-60d10c961234",
+                "name": "Licensing manager",
+                "alias": services.LU_LICENSING_MANAGER_QUEUE,
+            },
+            True,
+        ),
+        (
+            {
+                "id": "566fd526-bd6d-40c1-94bd-60d10c961234",
+                "name": "Licensing manager",
+                "alias": services.LU_LICENSING_MANAGER_QUEUE,
+            },
+            False,
+        ),
+        (
+            {
+                "id": "566fd526-bd6d-40c1-94bd-60d10c961234",
+                "name": "Senior licensing manager",
+                "alias": services.LU_SR_LICENSING_MANAGER_QUEUE,
+            },
+            True,
+        ),
+        (
+            {
+                "id": "566fd526-bd6d-40c1-94bd-60d10c961234",
+                "name": "Senior licensing manager",
+                "alias": services.LU_SR_LICENSING_MANAGER_QUEUE,
+            },
+            False,
+        ),
+    ),
+)
+def test_lu_countersign_decision_post_success(
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    standard_case_with_advice,
+    advice_for_countersign,
+    current_user,
+    with_lu_countersigning_enabled,
+    queue_details,
+    outcome_accepted,
+):
+    case_id = data_standard_case["case"]["id"]
+    user_id = current_user["id"]
+
+    # Set up advice on the case
+    data_standard_case["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
+    data_standard_case["case"]["queue_details"] = [queue_details]
+    data_standard_case["case"]["advice"] = advice_for_countersign
+    current_user["team"]["alias"] = services.LICENSING_UNIT_TEAM
+    for item in advice_for_countersign:
+        item["user"] = current_user
+        item["level"] = "final"
+
+    # Setup mock API requests
+    countersign_advice_url = client._build_absolute_uri(f"/cases/{case_id}/countersign-decision-advice/")
+    requests_mock.post(countersign_advice_url, json={})
+    case_url = reverse("cases:case", kwargs={"queue_pk": queue_details["id"], "pk": case_id})
+    requests_mock.get(client._build_absolute_uri(case_url), json=data_standard_case)
+    requests_mock.get(client._build_absolute_uri(f"/gov-users/{user_id}"), json={"user": current_user})
+
+    advice_to_countersign = services.get_advice_to_countersign(advice_for_countersign, current_user)
+
+    case_queues_url = client._build_absolute_uri(f"/cases/{case_id}/queues/")
+    requests_mock.put(case_queues_url, json={})
+
+    data = {
+        "form-TOTAL_FORMS": [f"{len(advice_to_countersign)}"],
+        "form-INITIAL_FORMS": ["0"],
+        "form-MIN_NUM_FORMS": [f"{len(advice_to_countersign)}"],
+        "form-MAX_NUM_FORMS": [f"{len(advice_to_countersign)}"],
+        "submit": ["Submit"],
+    }
+
+    for index, item in enumerate(advice_to_countersign.keys()):
+        data[f"form-{index}-outcome_accepted"] = [outcome_accepted]
+        data[f"form-{index}-approval_reasons"] = [f"reason{index}" if outcome_accepted else ""]
+        data[f"form-{index}-rejected_reasons"] = [f"reason{index}" if not outcome_accepted else ""]
+        requests_mock.get(client._build_absolute_uri(f"/users/{item}/team-queues/"), json={"queues": []})
+
+    countersign_decision_url = reverse(
+        f"cases:countersign_decision_review",
+        kwargs={"queue_pk": queue_details["id"], "pk": case_id},
+    )
+    response = authorized_client.post(countersign_decision_url, data=data)
+    assert response.status_code == 302
+
+    expected_order = 2 if queue_details["alias"] == services.LU_SR_LICENSING_MANAGER_QUEUE else 1
+    history = [item for item in requests_mock.request_history if countersign_advice_url in item.url]
+    assert len(history) == 1
+    history = history.pop()
+    assert history.method == "POST"
+    assert history.json() == [
+        {
+            "order": expected_order,
+            "outcome_accepted": outcome_accepted,
+            "reasons": "reason0",
+            "countersigned_user": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+            "case": "8fb76bed-fd45-4293-95b8-eda9468aa254",
+            "advice": "825bddc9-4e6c-4a26-8231-9c0500b037a6",
+        },
+        {
+            "order": expected_order,
+            "outcome_accepted": outcome_accepted,
+            "reasons": "reason0",
+            "countersigned_user": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+            "case": "8fb76bed-fd45-4293-95b8-eda9468aa254",
+            "advice": "b32d7dfa-a90d-4b37-adac-db231d4b83be",
+        },
+        {
+            "order": expected_order,
+            "outcome_accepted": outcome_accepted,
+            "reasons": "reason0",
+            "countersigned_user": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+            "case": "8fb76bed-fd45-4293-95b8-eda9468aa254",
+            "advice": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
         },
     ]
