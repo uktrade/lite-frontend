@@ -1,4 +1,3 @@
-import itertools
 from http import HTTPStatus
 
 import sentry_sdk
@@ -107,12 +106,12 @@ class CaseContextMixin:
         }
 
     def ordered_countersign_advice(self):
-        def order_fn(case):
-            return case["order"]
-
-        ordered_advice = sorted(self.case.get("countersign_advice", []), key=order_fn)
-        countersign_advice = [list(g)[0] for k, g in itertools.groupby(ordered_advice, key=order_fn)]
-        return sorted(countersign_advice, key=order_fn, reverse=True)
+        """
+        Return a single countersignature per order value in order to filter out duplicates
+        for display in the templates
+        """
+        one_countersignature_per_order_value = {cs["order"]: cs for cs in self.case.get("countersign_advice", [])}
+        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
 
 
 class BEISNuclearMixin:
