@@ -38,6 +38,10 @@
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_edit' queue_pk case.id %}">
                     Edit recommendation
                 </a>
+                {% elif lu_can_edit and buttons.edit_recommendation %}
+                <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_decision_edit' queue_pk case.id %}">
+                    Edit countersigning decision
+                </a>
                 {% endif %}
                 {% for advice in advice_to_countersign %}
                     <br><br>

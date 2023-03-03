@@ -204,6 +204,18 @@ def get_countersigners_decision_advice(case, caseworker):
     return countersigned_by
 
 
+def get_decision_advices_by_countersigner(case, caseworker):
+    """Get users countersign advice on this case with accept/reject decision."""
+    advices = []
+    for advice in case.countersign_advice:
+        if (
+            advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]
+            and advice["countersigned_user"]["id"] == caseworker["id"]
+        ):
+            advices.append(advice)
+    return advices
+
+
 def get_advice_to_consolidate(advice, user_team_alias):
     """For MOD consolidate, we need to be able to review advice from other
     teams - which is the only difference between this function and
@@ -380,6 +392,11 @@ def countersign_decision_advice(request, case, queue_id, caseworker, formset_dat
             )
 
     response = client.post(request, f"/cases/{case_pk}/countersign-decision-advice/", data)
+    response.raise_for_status()
+
+
+def update_countersign_decision_advice(request, case_pk, data):
+    response = client.put(request, f"/cases/{case_pk}/countersign-decision-advice/", data)
     response.raise_for_status()
 
 
