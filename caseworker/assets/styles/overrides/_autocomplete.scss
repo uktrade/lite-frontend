@@ -6,3 +6,11 @@
 .lite-autocomplete__option {
     min-height: 2ex;
 }
+.lite-autocomplete__option--focused {
+    div.govuk-body {
+        color: white;
+    }
+}
+.lite-autocomplete__hint {
+    padding-left: 3px;
+}

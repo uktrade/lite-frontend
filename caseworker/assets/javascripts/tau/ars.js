@@ -53,7 +53,6 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
         : originalInput.dataset.name || "",
     showNoOptionsFound: true,
     autoselect: true,
-    showAllValues: true,
     confirmOnBlur: true,
   });
 };
