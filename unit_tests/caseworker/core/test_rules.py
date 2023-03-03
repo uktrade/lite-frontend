@@ -114,5 +114,16 @@ def test_is_user_case_officer(data, mock_gov_user, expected_result):
     ),
 )
 def test_user_can_change_case_and_move_case_forward_rule(data, mock_gov_user, expected_result):
-    assert rules.test_rule("can_user_change_case", mock_gov_user["user"], data) == expected_result
-    assert rules.test_rule("can_user_move_case_forward", mock_gov_user["user"], data) == expected_result
+    for rule_name in (
+        "can_user_change_case",
+        "can_user_move_case_forward",
+        "can_user_review_and_countersign",
+        "can_user_review_and_combine",
+        "can_user_make_recommendation",
+        "can_user_assess_products",
+        "can_user_add_an_ejcu_query",
+        "can_user_attach_document",
+        "can_user_generate_document",
+        "can_user_add_contact",
+    ):
+        assert rules.test_rule(rule_name, mock_gov_user["user"], data) == expected_result
