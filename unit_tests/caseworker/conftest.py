@@ -653,8 +653,16 @@ def countersignatures(good_with_advice_count=2, second_countersign=False, end_us
     first_countersignature = {
         "reasons": "I concur",
         "countersigned_user": {
+            "id": "654165",
             "first_name": "Testy",
             "last_name": "McTest",
+            "team": {
+                "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+                "name": "LU Team",
+                "alias": LICENSING_UNIT_TEAM,
+                "part_of_ecju": False,
+                "is_ogd": True,
+            },
         },
         "outcome_accepted": True,
         "order": 1,
@@ -662,8 +670,16 @@ def countersignatures(good_with_advice_count=2, second_countersign=False, end_us
     second_countersignature = {
         "reasons": "LGTM",
         "countersigned_user": {
+            "id": "546544",
             "first_name": "Super",
             "last_name": "Visor",
+            "team": {
+                "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+                "name": "LU Team",
+                "alias": LICENSING_UNIT_TEAM,
+                "part_of_ecju": False,
+                "is_ogd": True,
+            },
         },
         "outcome_accepted": True,
         "order": 2,
