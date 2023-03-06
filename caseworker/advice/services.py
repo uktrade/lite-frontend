@@ -400,23 +400,17 @@ def update_countersign_decision_advice(request, case, caseworker, form_data):
     # not tracking id through process so currently unable to identify advice individually
     # retrieve countersign decision advices for countersigner and updating them with the same form data
     countersign_advices = get_decision_advices_by_countersigner(case, caseworker)
-    print(f"countersign advice length: {len(countersign_advices)}")
     if len(countersign_advices) == 0:
         return {"error": "countersigner decision advice not found"}, status.HTTP_400_BAD_REQUEST
-    countersign_data = {
-        "outcome_accepted": form_data["outcome_accepted"],
-        "reasons": form_data["approval_reasons"]
-        if form_data["outcome_accepted"]
-        else form_data["rejected_reasons"],
-    }
-    data = [
+    countersign_data = [
         {
             "id": countersign_advice["id"],
-            **countersign_data,
+            "outcome_accepted": form_data["outcome_accepted"],
+            "reasons": form_data["approval_reasons"] if form_data["outcome_accepted"] else form_data["rejected_reasons"],
         }
         for countersign_advice in countersign_advices
     ]
-    response = client.put(request, f"/cases/{case['id']}/countersign-decision-advice/", data)
+    response = client.put(request, f"/cases/{case['id']}/countersign-decision-advice/", countersign_data)
     response.raise_for_status()
     return response.json(), response.status_code
 

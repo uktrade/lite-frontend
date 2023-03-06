@@ -28,6 +28,7 @@ from caseworker.advice.services import (
 from caseworker.cases.objects import Case
 from uuid import uuid4
 
+
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case):
     yield
@@ -55,7 +56,11 @@ def advice(current_user):
             "user": current_user,
             "countersigned_by": {},
         }
-        for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e", "56273dd4-4634-4ad7-a782-e480f85a85a9")
+        for good_id in (
+            "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "56273dd4-4634-4ad7-a782-e480f85a85a9",
+        )
     ]
 
 
@@ -237,7 +242,8 @@ def put_request(rf, client, url, data=None):
     request.requests_session = requests.Session()
     return request
 
-def setup_requests_mock(requests_mock, client) :
+
+def setup_requests_mock(requests_mock, client):
     requests_mock.requests_session = requests.Session()
     requests_mock.session = client.session
     requests_mock.headers = {}
@@ -267,11 +273,11 @@ def test_update_countersign_decision_advice(
     countersign_data = {
         "id": countersign_advice[0]["id"],
         "outcome_accepted": data["outcome_accepted"],
-        "reasons": data["rejected_reasons"]
+        "reasons": data["rejected_reasons"],
     }
     countersign_advice_url = f"/cases/{case.id}/countersign-decision-advice/"
     setup_requests_mock(requests_mock, client)
-    requests_mock.put(countersign_advice_url, json = {"countersign_advice": countersign_data})
+    requests_mock.put(countersign_advice_url, json={"countersign_advice": countersign_data})
 
     update_countersign_decision_advice(requests_mock, case, current_user, data)
 
@@ -284,7 +290,7 @@ def test_update_countersign_decision_advice(
     assert len(history.json()) == 1
     api_data = history.json()[0]
     assert api_data["reasons"] == data["rejected_reasons"]
-    assert api_data["outcome_accepted"] == data ["outcome_accepted"]
+    assert api_data["outcome_accepted"] == data["outcome_accepted"]
 
 
 def test_no_update_countersign_decision_advice_incorrect_user(
@@ -309,7 +315,7 @@ def test_no_update_countersign_decision_advice_incorrect_user(
     }
     countersign_advice_url = f"/cases/{case.id}/countersign-decision-advice/"
     setup_requests_mock(requests_mock, client)
-    requests_mock.put(countersign_advice_url, json = {})
+    requests_mock.put(countersign_advice_url, json={})
     response, status = update_countersign_decision_advice(requests_mock, case, current_user, data)
 
     assert not requests_mock.called

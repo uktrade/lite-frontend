@@ -479,7 +479,9 @@ class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
         formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
         if formset.is_valid():
             # single form item returned currently so using it to update decisions
-            services.update_countersign_decision_advice(request, self.case, self.caseworker, form_data = formset.cleaned_data[0])
+            services.update_countersign_decision_advice(
+                request, self.case, self.caseworker, form_data=formset.cleaned_data[0]
+            )
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response({**context, "formset": formset})
