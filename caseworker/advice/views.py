@@ -478,24 +478,8 @@ class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
         advice = context["advice_to_countersign"]
         formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
         if formset.is_valid():
-            # not tracking id through process so currently unable to identify advice individually
-            # retrieve countersign decision advices for countersigner and updating them with the same form data
-            countersign_advices = services.get_decision_advices_by_countersigner(self.case, self.caseworker)
-            form_data = formset.cleaned_data[0]
-            countersign_data = {
-                "outcome_accepted": form_data["outcome_accepted"],
-                "reasons": form_data["approval_reasons"]
-                if form_data["outcome_accepted"]
-                else form_data["rejected_reasons"],
-            }
-            data = [
-                {
-                    "id": countersign_advice["id"],
-                    **countersign_data,
-                }
-                for countersign_advice in countersign_advices
-            ]
-            services.update_countersign_decision_advice(request, str(kwargs["pk"]), data)
+            # single form item returned currently so using it to update decisions
+            services.update_countersign_decision_advice(request, self.case, self.caseworker, form_data = formset.cleaned_data[0])
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response({**context, "formset": formset})

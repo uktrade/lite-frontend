@@ -1,5 +1,6 @@
+from caseworker.advice import services
 import pytest
-
+import requests
 from caseworker.advice.services import (
     BEIS_CHEMICAL_CASES_TO_REVIEW,
     BEIS_NUCLEAR_CASES_TO_REVIEW,
@@ -21,9 +22,11 @@ from caseworker.advice.services import (
     get_advice_tab_context,
     get_advice_to_countersign,
     get_countersigners_decision_advice,
+    get_decision_advices_by_countersigner,
+    update_countersign_decision_advice,
 )
 from caseworker.cases.objects import Case
-
+from uuid import uuid4
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case):
@@ -52,7 +55,7 @@ def advice(current_user):
             "user": current_user,
             "countersigned_by": {},
         }
-        for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
+        for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e", "56273dd4-4634-4ad7-a782-e480f85a85a9")
     ]
 
 
@@ -72,6 +75,7 @@ def advice_for_countersign(advice):
 def countersign_advice(data_standard_case, advice_for_countersign, current_user):
     return [
         {
+            "id": str(uuid4()),
             "order": 1,
             "outcome_accepted": True,
             "reasons": "reasons",
@@ -96,7 +100,7 @@ def test_get_advice_for_countersign_with_post_circ_countersigning(
     countersign_advice = get_advice_to_countersign(advice_for_countersign, current_user)
     for user_id, advice in countersign_advice.items():
         assert user_id == current_user["id"]
-        assert len(advice) == 2
+        assert len(advice) == 3
 
 
 # fmt: off
@@ -208,3 +212,105 @@ def test_get_countersign_advice_tab_context(
 
     for button_name, enabled in context["buttons"].items():
         assert buttons.get(button_name, False) == enabled
+
+
+def test_get_decision_advices_by_countersigner(
+    advice,
+    data_standard_case,
+    current_user,
+    countersign_advice,
+    LU_team_user,
+    team1_user,
+):
+    # test incorrect team and also incorrect user are not included in results
+    countersign_advice[0]["countersigned_user"] = LU_team_user
+    countersign_advice[1]["countersigned_user"] = team1_user
+    data_standard_case["case"]["countersign_advice"] = countersign_advice
+    data_standard_case["case"]["advice"] = advice
+    advices = get_decision_advices_by_countersigner(Case(data_standard_case["case"]), current_user)
+    assert len(advices) == 1
+
+
+def put_request(rf, client, url, data=None):
+    request = rf.put(url, data if data else {})
+    request.session = client.session
+    request.requests_session = requests.Session()
+    return request
+
+def setup_requests_mock(requests_mock, client) :
+    requests_mock.requests_session = requests.Session()
+    requests_mock.session = client.session
+    requests_mock.headers = {}
+
+
+def test_update_countersign_decision_advice(
+    advice,
+    data_standard_case,
+    current_user,
+    team1_user,
+    LU_team_user,
+    countersign_advice,
+    client,
+    requests_mock,
+):
+    case = Case(data_standard_case["case"])
+    # incorrect team, advice not updated
+    countersign_advice[0]["countersigned_user"] = team1_user
+    # incorrect countersigner, advice not updated
+    countersign_advice[1]["countersigned_user"] = LU_team_user
+    case.countersign_advice = countersign_advice
+    case.advice = advice
+    data = {
+        "outcome_accepted": False,
+        "rejected_reasons": "this part can be used in H bombs",
+    }
+    countersign_data = {
+        "id": countersign_advice[0]["id"],
+        "outcome_accepted": data["outcome_accepted"],
+        "reasons": data["rejected_reasons"]
+    }
+    countersign_advice_url = f"/cases/{case.id}/countersign-decision-advice/"
+    setup_requests_mock(requests_mock, client)
+    requests_mock.put(countersign_advice_url, json = {"countersign_advice": countersign_data})
+
+    update_countersign_decision_advice(requests_mock, case, current_user, data)
+
+    assert requests_mock.called
+    history = [item for item in requests_mock.request_history if countersign_advice_url in item.url]
+    assert len(history) == 1
+    history = history[0]
+    assert history.method == "PUT"
+    api_data = history.json()
+    assert len(history.json()) == 1
+    api_data = history.json()[0]
+    assert api_data["reasons"] == data["rejected_reasons"]
+    assert api_data["outcome_accepted"] == data ["outcome_accepted"]
+
+
+def test_no_update_countersign_decision_advice_incorrect_user(
+    advice,
+    data_standard_case,
+    current_user,
+    LU_team_user,
+    countersign_advice,
+    client,
+    requests_mock,
+):
+    case = Case(data_standard_case["case"])
+    # all advice belongs to a different user
+    countersign_advice[0]["countersigned_user"] = LU_team_user
+    countersign_advice[1]["countersigned_user"] = LU_team_user
+    countersign_advice[2]["countersigned_user"] = LU_team_user
+    case.countersign_advice = countersign_advice
+    case.advice = advice
+    data = {
+        "outcome_accepted": False,
+        "rejected_reasons": "this part can be used in H bombs",
+    }
+    countersign_advice_url = f"/cases/{case.id}/countersign-decision-advice/"
+    setup_requests_mock(requests_mock, client)
+    requests_mock.put(countersign_advice_url, json = {})
+    response, status = update_countersign_decision_advice(requests_mock, case, current_user, data)
+
+    assert not requests_mock.called
+    assert status == 400
