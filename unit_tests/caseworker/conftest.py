@@ -534,21 +534,7 @@ def advice_for_countersign(current_user):
             "third_party": None,
             "type": {"key": "approve", "value": "Approve"},
             "ultimate_end_user": None,
-            "user": {
-                "email": "yscott@bob-scott.com",
-                "first_name": "Scott",
-                "id": "5d36079b-e921-4598-b0f9-d7a62da6e9ef",
-                "last_name": "Bob",
-                "role_name": "Adviser",
-                "status": "Active",
-                "team": {
-                    "id": "2e5fab3c-4599-432e-9540-74ccfafb18ee",
-                    "is_ogd": False,
-                    "name": "Team-A",
-                    "alias": None,
-                    "part_of_ecju": False,
-                },
-            },
+            "user": current_user,
         },
         {
             "id": "b32d7dfa-a90d-4b37-adac-db231d4b83be",
