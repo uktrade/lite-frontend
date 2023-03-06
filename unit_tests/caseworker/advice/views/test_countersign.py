@@ -1,9 +1,14 @@
+from unittest.mock import patch
+
 import pytest
+from bs4 import BeautifulSoup
 
 from django.urls import reverse
 
+from caseworker.advice.services import LICENSING_UNIT_TEAM
 from core import client
 from caseworker.advice import services
+from unit_tests.caseworker.conftest import countersignatures
 
 
 @pytest.fixture(autouse=True)
@@ -263,3 +268,45 @@ def test_lu_countersign_decision_post_success(
             "advice": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
         },
     ]
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_lu_countersign_get_shows_previous_countersignature(
+    mock_get_gov_user,
+    authorized_client,
+    data_standard_case,
+    standard_case_with_advice,
+    current_user,
+    with_lu_countersigning_enabled,
+    final_advice,
+):
+    case_id = data_standard_case["case"]["id"]
+
+    queue_details = {
+        "id": "566fd526-bd6d-40c1-94bd-60d10c961234",
+        "name": "Senior licensing manager",
+        "alias": services.LU_SR_LICENSING_MANAGER_QUEUE,
+    }
+    # Set up advice on the case
+    team_id = final_advice["user"]["team"]["id"]
+    data_standard_case["case"]["advice"] = [final_advice]
+    data_standard_case["case"]["countersign_advice"] = countersignatures()
+    # Setup mock API requests
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
+        None,
+    )
+
+    countersign_decision_url = reverse(
+        f"cases:countersign_decision_review",
+        kwargs={"queue_pk": queue_details["id"], "pk": case_id},
+    )
+    response = authorized_client.get(countersign_decision_url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    countersignature_block = soup.find(id="countersignatures")
+    assert response.status_code == 200
+
+    counter_sigs = countersignature_block.find_all("div", recursive=False)
+    assert len(counter_sigs) == 1
+    assert counter_sigs[0].find(class_="govuk-heading-m").text == "Countersigned by Testy McTest"
+    assert counter_sigs[0].find(class_="govuk-body").text == "I concur"
