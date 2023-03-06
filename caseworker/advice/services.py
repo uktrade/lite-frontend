@@ -406,7 +406,9 @@ def update_countersign_decision_advice(request, case, caseworker, form_data):
         {
             "id": countersign_advice["id"],
             "outcome_accepted": form_data["outcome_accepted"],
-            "reasons": form_data["approval_reasons"] if form_data["outcome_accepted"] else form_data["rejected_reasons"],
+            "reasons": form_data["approval_reasons"]
+            if form_data["outcome_accepted"]
+            else form_data["rejected_reasons"],
         }
         for countersign_advice in countersign_advices
     ]
