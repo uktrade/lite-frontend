@@ -53,16 +53,16 @@ class TAUEditForm(forms.Form):
     )
 
     report_summary_prefix = forms.CharField(
-        label="Add a report summary prefix",
-        help_text="Type for suggestions",
+        label="Add a prefix for report summary (optional)",
+        help_text="For example 'components for'. Type for suggestions.",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_PREFIX_KEY}),
         required=False,
     )
 
     report_summary_subject = forms.CharField(
-        label="Add a report summary subject",
-        help_text="Type for suggestions",
+        label="Add a subject for the report summary",
+        help_text="For example 'sniper rifles'. Type for suggestions.",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"id": REPORT_SUMMARY_SUBJECT_KEY}),
         required=False,

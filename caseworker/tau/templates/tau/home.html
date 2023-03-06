@@ -93,7 +93,7 @@
                                                 {{ regime_entry.shortened_name|default:regime_entry.name }}<br>
                                             {% endfor %}
                                         </td>
-                                        <td class="govuk-table__cell">{{ good.report_summary }}</td>
+                                        <td class="govuk-table__cell">{{ good.report_summary|default:"" }}</td>
                                         <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
                                         <td class="govuk-table__cell">
                                             <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a>
