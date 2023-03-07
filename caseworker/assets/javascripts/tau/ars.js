@@ -34,9 +34,7 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
           return suggestion;
         }
         return `
-          <div class="govuk-body govuk-!-margin-bottom-0">
-            ${suggestion.name}
-          </div>
+          <div class="govuk-body govuk-!-margin-bottom-0">${suggestion.name}</div>
         `;
       },
     },
